@@ -1,0 +1,22 @@
+{
+  "all_cities": "All Cities",
+  "all_statuses": "All Statuses",
+  "lbl_contact_person": "Contact Person",
+  "lbl_contact_person_1": "Contact Person",
+  "lbl_payment_terms": "Payment Terms",
+  "lbl_payment_terms_1": "Payment Terms",
+  "lbl_tax_id": "Tax ID",
+  "lbl_tax_id_1": "Tax ID",
+  "lbl_user_id": "User ID",
+  "lbl_user_id_1": "User ID",
+  "ph_search_customers": "Search customers...",
+  "th_contact_person": "Contact Person",
+  "th_contact_person_1": "Contact Person",
+  "ttl_create_customer": "Create Customer",
+  "ttl_create_customer_1": "Create Customer",
+  "ttl_customer_details": "Customer Details",
+  "ttl_customer_details_1": "Customer Details",
+  "ttl_customers": "Customers",
+  "ttl_edit_customer": "Edit Customer",
+  "ttl_edit_customer_1": "Edit Customer"
+}

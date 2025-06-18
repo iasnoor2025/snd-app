@@ -1,0 +1,35 @@
+{
+    "name": "modules/localization",
+    "description": "Localization module for SND Rental application",
+    "authors": [
+        {
+            "name": "SND Rental",
+            "email": "info@sndrental.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\Localization\\Providers\\LocalizationServiceProvider"
+            ]
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Localization\\": "",
+            "Modules\\Localization\\Tests\\": "Tests/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Localization\\Tests\\": "Tests/"
+        }
+    },
+    "require": {
+        "php": "^8.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0",
+        "mockery/mockery": "^1.5"
+    }
+}

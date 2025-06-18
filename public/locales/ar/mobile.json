@@ -1,0 +1,38 @@
+{
+  "dashboard": {
+    "title": "لوحة التحكم",
+    "welcome": "مرحباً بعودتك!",
+    "quick_actions": "الإجراءات السريعة",
+    "recent_activity": "النشاط الأخير",
+    "stats": {
+      "total_bookings": "إجمالي الحجوزات",
+      "active_rentals": "الإيجارات النشطة",
+      "revenue": "الإيرادات",
+      "equipment_utilization": "استخدام المعدات"
+    },
+    "actions": {
+      "new_booking": "حجز جديد",
+      "browse_equipment": "تصفح المعدات",
+      "view_analytics": "عرض التحليلات",
+      "manage_profile": "إدارة الملف الشخصي"
+    },
+    "activity": {
+      "no_activity": "لا يوجد نشاط حديث",
+      "booking_created": "تم إنشاء الحجز",
+      "equipment_returned": "تم إرجاع المعدات",
+      "payment_received": "تم استلام الدفع"
+    }
+  },
+  "navigation": {
+    "dashboard": "لوحة التحكم",
+    "bookings": "الحجوزات",
+    "equipment": "المعدات",
+    "analytics": "التحليلات",
+    "profile": "الملف الشخصي"
+  },
+  "offline": {
+    "title": "أنت غير متصل",
+    "message": "قد تكون بعض الميزات محدودة أثناء عدم الاتصال",
+    "retry": "إعادة محاولة الاتصال"
+  }
+}

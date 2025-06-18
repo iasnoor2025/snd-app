@@ -1,0 +1,55 @@
+{
+  "steps": {
+    "dates_delivery": "التواريخ والتوصيل",
+    "customer_info": "معلومات العميل",
+    "options_payment": "الخيارات والدفع",
+    "review_confirm": "المراجعة والتأكيد",
+    "step_of": "الخطوة {{currentStep}} من {{totalSteps}}: {{title}}"
+  },
+  "delivery": {
+    "method": "طريقة التوصيل",
+    "pickup": "الاستلام من الموقع",
+    "delivery": "التوصيل (+50$)",
+    "address": "عنوان التوصيل",
+    "address_placeholder": "أدخل عنوان التوصيل الكامل...",
+    "notes": "ملاحظات التوصيل (اختياري)",
+    "notes_placeholder": "تعليمات توصيل خاصة..."
+  },
+  "rental": {
+    "duration": "مدة الإيجار:",
+    "days": "أيام",
+    "estimated_total": "المجموع التقديري:"
+  },
+  "customer": {
+    "information": "معلومات العميل",
+    "full_name": "الاسم الكامل *",
+    "name_placeholder": "أدخل اسمك الكامل",
+    "email": "عنوان البريد الإلكتروني *",
+    "email_placeholder": "أدخل عنوان بريدك الإلكتروني",
+    "phone": "رقم الهاتف *",
+    "phone_placeholder": "أدخل رقم هاتفك"
+  },
+  "pricing": {
+    "breakdown": "تفاصيل الأسعار",
+    "rental": "الإيجار",
+    "security_deposit": "تأمين",
+    "insurance": "التأمين",
+    "delivery": "التوصيل",
+    "tax": "الضريبة",
+    "total": "المجموع"
+  },
+  "terms": {
+    "agree": "أوافق على الشروط والأحكام واتفاقية الإيجار",
+    "marketing": "أرغب في تلقي رسائل تسويقية وعروض خاصة (اختياري)"
+  },
+  "offline": {
+    "message": "أنت غير متصل حالياً. سيتم إرسال حجزك عند عودة الاتصال."
+  },
+  "buttons": {
+    "book": "حجز المعدات",
+    "previous": "السابق",
+    "next": "التالي",
+    "submitting": "جاري الإرسال...",
+    "confirm": "تأكيد الحجز"
+  }
+}

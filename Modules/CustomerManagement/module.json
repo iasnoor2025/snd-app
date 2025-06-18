@@ -1,0 +1,13 @@
+{
+    "name": "CustomerManagement",
+    "alias": "customermanagement",
+    "description": "Customer Management module for handling customers and their data",
+    "keywords": ["customers", "crm", "customer management"],
+    "priority": 10,
+    "providers": [
+        "Modules\\CustomerManagement\\Providers\\CustomerManagementServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": ["Core", "RentalManagement"]
+}

@@ -1,0 +1,13 @@
+{
+    "name": "LeaveManagement",
+    "alias": "leavemanagement",
+    "description": "Leave Management module for HR & Payroll system",
+    "keywords": ["leave", "hr", "human-resources"],
+    "priority": 0,
+    "providers": [
+        "Modules\\LeaveManagement\\Providers\\LeaveManagementServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": ["Employee"]
+}

@@ -1,0 +1,55 @@
+{
+  "steps": {
+    "dates_delivery": "Dates & Delivery",
+    "customer_info": "Customer Info",
+    "options_payment": "Options & Payment",
+    "review_confirm": "Review & Confirm",
+    "step_of": "Step {{currentStep}} of {{totalSteps}}: {{title}}"
+  },
+  "delivery": {
+    "method": "Delivery Method",
+    "pickup": "Pickup from location",
+    "delivery": "Delivery (+$50)",
+    "address": "Delivery Address",
+    "address_placeholder": "Enter full delivery address...",
+    "notes": "Delivery Notes (Optional)",
+    "notes_placeholder": "Special delivery instructions..."
+  },
+  "rental": {
+    "duration": "Rental Duration:",
+    "days": "days",
+    "estimated_total": "Estimated Total:"
+  },
+  "customer": {
+    "information": "Customer Information",
+    "full_name": "Full Name *",
+    "name_placeholder": "Enter your full name",
+    "email": "Email Address *",
+    "email_placeholder": "Enter your email address",
+    "phone": "Phone Number *",
+    "phone_placeholder": "Enter your phone number"
+  },
+  "pricing": {
+    "breakdown": "Pricing Breakdown",
+    "rental": "Rental",
+    "security_deposit": "Security Deposit",
+    "insurance": "Insurance",
+    "delivery": "Delivery",
+    "tax": "Tax",
+    "total": "Total"
+  },
+  "terms": {
+    "agree": "I agree to the Terms and Conditions and Rental Agreement",
+    "marketing": "I would like to receive marketing communications and special offers (optional)"
+  },
+  "offline": {
+    "message": "You're currently offline. Your booking will be submitted when you're back online."
+  },
+  "buttons": {
+    "book": "Book Equipment",
+    "previous": "Previous",
+    "next": "Next",
+    "submitting": "Submitting...",
+    "confirm": "Confirm Booking"
+  }
+}

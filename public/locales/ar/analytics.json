@@ -1,0 +1,50 @@
+{
+  "title": "التحليلات",
+  "last_updated": "آخر تحديث:",
+  "time_periods": {
+    "today": "اليوم",
+    "7_days": "7 أيام",
+    "30_days": "30 يوم",
+    "90_days": "90 يوم"
+  },
+  "tabs": {
+    "overview": "نظرة عامة",
+    "charts": "الرسوم البيانية",
+    "equipment": "المعدات",
+    "activity": "النشاط"
+  },
+  "metrics": {
+    "revenue": "الإيرادات",
+    "bookings": "الحجوزات",
+    "active_rentals": "الإيجارات النشطة",
+    "currently_rented": "مؤجرة حالياً",
+    "customers": "العملاء",
+    "total_customers": "إجمالي العملاء",
+    "equipment_utilization": "استخدام المعدات",
+    "target_current": "الهدف: 75% • الحالي:"
+  },
+  "insights": {
+    "title": "الرؤى الرئيسية",
+    "revenue_trend": "اتجاه الإيرادات",
+    "days_ago": "قبل {{count}} أيام",
+    "today": "اليوم"
+  },
+  "categories": {
+    "construction": "البناء",
+    "landscaping": "تنسيق الحدائق",
+    "events": "الفعاليات",
+    "moving": "النقل"
+  },
+  "locations": {
+    "downtown": "وسط المدينة",
+    "north_side": "الجانب الشمالي",
+    "south_side": "الجانب الجنوبي",
+    "west_end": "الطرف الغربي",
+    "east_side": "الجانب الشرقي"
+  },
+  "insight_types": {
+    "revenue_growth": "نمو الإيرادات",
+    "booking_decline": "انخفاض الحجوزات",
+    "high_utilization": "استخدام عالي"
+  }
+}

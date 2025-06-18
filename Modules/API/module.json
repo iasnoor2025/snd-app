@@ -1,0 +1,13 @@
+{
+    "name": "API",
+    "alias": "api",
+    "description": "API module for HR & Payroll system",
+    "keywords": ["api", "hr", "payroll", "rest", "graphql"],
+    "priority": 0,
+    "providers": [
+        "Modules\\API\\Providers\\APIServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

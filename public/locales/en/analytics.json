@@ -1,0 +1,50 @@
+{
+  "title": "Analytics",
+  "last_updated": "Last updated:",
+  "time_periods": {
+    "today": "Today",
+    "7_days": "7 Days",
+    "30_days": "30 Days",
+    "90_days": "90 Days"
+  },
+  "tabs": {
+    "overview": "Overview",
+    "charts": "Charts",
+    "equipment": "Equipment",
+    "activity": "Activity"
+  },
+  "metrics": {
+    "revenue": "Revenue",
+    "bookings": "Bookings",
+    "active_rentals": "Active Rentals",
+    "currently_rented": "Currently rented",
+    "customers": "Customers",
+    "total_customers": "Total customers",
+    "equipment_utilization": "Equipment Utilization",
+    "target_current": "Target: 75% • Current:"
+  },
+  "insights": {
+    "title": "Key Insights",
+    "revenue_trend": "Revenue Trend",
+    "days_ago": "{{count}} days ago",
+    "today": "Today"
+  },
+  "categories": {
+    "construction": "Construction",
+    "landscaping": "Landscaping",
+    "events": "Events",
+    "moving": "Moving"
+  },
+  "locations": {
+    "downtown": "Downtown",
+    "north_side": "North Side",
+    "south_side": "South Side",
+    "west_end": "West End",
+    "east_side": "East Side"
+  },
+  "insight_types": {
+    "revenue_growth": "Revenue Growth",
+    "booking_decline": "Booking Decline",
+    "high_utilization": "High Utilization"
+  }
+}

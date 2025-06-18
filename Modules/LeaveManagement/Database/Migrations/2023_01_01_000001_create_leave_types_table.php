@@ -1,0 +1,47 @@
+<?php
+
+namespace Modules\LeaveManagement\Database\Migrations;
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void;
+     */
+    public function up()
+    {
+        Schema::create('leave_types', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('description')->nullable();
+            $table->integer('days_per_year')->nullable();
+            $table->string('color')->nullable();
+            $table->integer('days_allowed')->default(0);
+            $table->boolean('requires_approval')->default(true);
+            $table->boolean('requires_attachment')->default(false);
+            $table->boolean('is_paid')->default(true);
+            $table->boolean('is_active')->default(true);
+            $table->string('color_code')->nullable();
+            $table->enum('applies_to_gender', ['male', 'female'])->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void;
+     */
+    public function down()
+    {
+        Schema::dropIfExists('leave_types');
+    }
+};
+
+

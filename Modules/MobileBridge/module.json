@@ -1,0 +1,13 @@
+{
+    "name": "MobileBridge",
+    "alias": "mobilebridge",
+    "description": "MobileBridge module for the application",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\MobileBridge\\Providers\\MobileBridgeServiceProvider"
+    ],
+    "aliases": [],
+    "files": [],
+    "requires": []
+}

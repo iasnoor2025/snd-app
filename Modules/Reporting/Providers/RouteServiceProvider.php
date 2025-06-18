@@ -1,0 +1,75 @@
+<?php
+
+namespace Modules\Reporting\Providers;
+
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider as BaseRouteServiceProvider;
+use Illuminate\Support\Facades\Route;
+
+class RouteServiceProvider extends BaseRouteServiceProvider
+{
+    protected string $modulenamespace = 'Modules\Reporting\Http\Controllers';
+    protected string $modulePath;
+
+    /**
+     * Constructor.
+     */
+    public function __construct($app)
+    {
+        parent::__construct($app);
+        $this->modulePath = __DIR__ . '/../';
+    }
+
+    /**
+     * Called before routes are registered.
+     *
+     * Register any model bindings or pattern based filters.
+     */
+    public function boot(): void
+    {
+        parent::boot();
+    }
+
+    /**
+     * Define the routes for the application.
+     */
+    public function map(): void
+    {
+        $this->mapApiRoutes();
+        $this->mapWebRoutes();
+    }
+
+    /**
+     * Define the "web" routes for the application.
+     *
+     * These routes all receive session state, CSRF protection, etc.
+     */
+    protected function mapWebRoutes(): void
+    {
+        Route::middleware('web')
+            ->group(function () {
+                $webRoutePath = $this->modulePath . 'Routes/web.php';
+                if (file_exists($webRoutePath)) {
+                    require $webRoutePath;
+                }
+            });
+    }
+
+    /**
+     * Define the "api" routes for the application.
+     *
+     * These routes are typically stateless.
+     */
+    protected function mapApiRoutes(): void
+    {
+        Route::middleware('api')
+            ->prefix('api')
+            ->name('api.')
+            ->group(function () {
+                $apiRoutePath = $this->modulePath . 'Routes/api.php';
+                if (file_exists($apiRoutePath)) {
+                    require $apiRoutePath;
+                }
+            });
+    }
+}
+

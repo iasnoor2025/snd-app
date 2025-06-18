@@ -1,0 +1,12 @@
+{
+    "name": "RentalManagement",
+    "alias": "rentalmanagement",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\RentalManagement\\Providers\\RentalManagementServiceProvider",
+        "Modules\\RentalManagement\\Providers\\RentalServiceProvider"
+    ],
+    "files": []
+}

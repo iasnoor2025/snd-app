@@ -1,0 +1,38 @@
+{
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back!",
+    "quick_actions": "Quick Actions",
+    "recent_activity": "Recent Activity",
+    "stats": {
+      "total_bookings": "Total Bookings",
+      "active_rentals": "Active Rentals",
+      "revenue": "Revenue",
+      "equipment_utilization": "Equipment Utilization"
+    },
+    "actions": {
+      "new_booking": "New Booking",
+      "browse_equipment": "Browse Equipment",
+      "view_analytics": "View Analytics",
+      "manage_profile": "Manage Profile"
+    },
+    "activity": {
+      "no_activity": "No recent activity",
+      "booking_created": "Booking created",
+      "equipment_returned": "Equipment returned",
+      "payment_received": "Payment received"
+    }
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "bookings": "Bookings",
+    "equipment": "Equipment",
+    "analytics": "Analytics",
+    "profile": "Profile"
+  },
+  "offline": {
+    "title": "You're offline",
+    "message": "Some features may be limited while offline",
+    "retry": "Retry connection"
+  }
+}

@@ -1,0 +1,13 @@
+{
+    "name": "AuditCompliance",
+    "alias": "auditcompliance",
+    "description": "AuditCompliance module for the application",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\AuditCompliance\\Providers\\AuditComplianceServiceProvider"
+    ],
+    "aliases": [],
+    "files": [],
+    "requires": []
+}

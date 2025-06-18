@@ -1,0 +1,19 @@
+{
+    "name": "Settings",
+    "alias": "settings",
+    "description": "Settings module for HR & Payroll system",
+    "keywords": ["settings", "hr", "payroll", "configuration"],
+    "priority": 0,
+    "providers": [
+        "Modules\\Settings\\Providers\\SettingsServiceProvider",
+        "Modules\\Settings\\Providers\\RouteServiceProvider",
+        "Modules\\Settings\\Providers\\EventServiceProvider"
+    ],
+    "aliases": {
+        "Setting": "Modules\\Settings\\Facades\\Setting"
+    },
+    "files": [
+        "Helpers/settings.php"
+    ],
+    "requires": []
+}

@@ -1,0 +1,21 @@
+{
+    "name": "snd/leave-management",
+    "description": "Leave Management module for HR & Payroll system",
+    "authors": [
+        {
+            "name": "SND Development Team",
+            "email": "dev@example.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\LeaveManagement\\": ""
+        }
+    }
+}

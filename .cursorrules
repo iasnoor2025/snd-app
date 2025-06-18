@@ -1,0 +1,144 @@
+# Cursor Rules for Laravel 12 Rental Management System
+
+## Project Structure Patterns
+
+### Module Organization
+- All business logic is organized into modules under the `Modules/` directory
+- Each module follows Domain-Driven Design principles
+- Module names are PascalCase singular (e.g., `CustomerManagement`, not `customer-management`)
+- Module resources are organized in standard Laravel structure
+
+### Frontend Organization
+- React components use TypeScript (.tsx extension)
+- Global components are in `resources/js/components/`
+- Module-specific components are in `Modules/{ModuleName}/resources/js/components/`
+- Shadcn UI components are used for consistent design
+- Component names are PascalCase
+
+### Naming Conventions
+- Controllers: PascalCase, suffixed with `Controller` (e.g., `CustomerController`)
+- Models: PascalCase singular (e.g., `Customer`, not `Customers`)
+- Database tables: snake_case plural (e.g., `customers`, not `customer`)
+- JavaScript/TypeScript files: PascalCase for components, camelCase for utilities
+- CSS classes: kebab-case following Tailwind conventions
+
+## Code Style Preferences
+
+### PHP Style
+- PSR-12 coding standard
+- Type hints for parameters and return types
+- DocBlocks for classes and methods
+- Laravel Pint for code formatting
+
+### TypeScript/React Style
+- Functional components with hooks
+- TypeScript interfaces for props and state
+- ESLint and Prettier for code formatting
+- Import organization with prettier-plugin-organize-imports
+
+### Database Conventions
+- InnoDB engine for MySQL
+- UTF-8mb4 character set and collation
+- Timestamps on all tables (created_at, updated_at)
+- Soft deletes where appropriate (deleted_at)
+- Foreign keys for relationships
+
+## Development Workflow
+
+### Module Development
+- Create new modules with `php artisan module:make ModuleName`
+- Register module in `modules_statuses.json`
+- Follow existing module structure for consistency
+- Create module-specific routes in `Modules/{ModuleName}/Routes/`
+
+### Frontend Development
+- Use Vite for asset compilation
+- Run `npm run dev` for development
+- Use TypeScript for type safety
+- Follow component composition pattern
+- Use Shadcn UI components for consistent design
+
+### Testing Strategy
+- Use Pest for PHP testing
+- Use Jest for JavaScript testing
+- Write tests for all business logic
+- Follow TDD where appropriate
+
+## Critical Implementation Paths
+
+### Authentication Flow
+- Laravel Sanctum for API authentication
+- Inertia.js for SPA-like authentication
+- Role-based access control with Spatie Permission
+
+### Internationalization
+- i18next for translations
+- Automated key extraction with i18next-scanner
+- RTL support for Arabic and Hebrew
+
+### Module Integration
+- Module service providers for registration
+- Module-specific routes and controllers
+- Shared services through dependency injection
+
+## Known Challenges
+
+### Performance Optimization
+- Use eager loading for relationships
+- Implement caching for expensive queries
+- Use pagination for large datasets
+- Optimize asset loading with code splitting
+
+### Mobile Responsiveness
+- Design for mobile-first
+- Test on multiple device sizes
+- Use responsive Tailwind utilities
+- Implement PWA capabilities
+
+### Security Considerations
+- Validate all input
+- Use CSRF protection
+- Implement proper authorization
+- Sanitize output
+
+## Tool Usage Patterns
+
+### Laravel Artisan
+- `php artisan serve` for local development
+- `php artisan migrate --seed` for database setup
+- `php artisan module:make ModuleName` for new modules
+- `php artisan make:model --module=ModuleName ModelName` for module models
+
+### NPM Scripts
+- `npm run dev` for development
+- `npm run build` for production
+- `npm run lint` for code linting
+- `npm run format` for code formatting
+- `npm run type-check` for TypeScript validation
+
+### i18n Tools
+- `npm run scan-i18n` for translation key extraction
+- `npm run i18n-report` for translation coverage reporting
+- `npm run i18n-unused` for finding unused translation keys
+
+## Project Evolution
+
+### Phase 1: Foundation
+- Complete authentication system
+- Establish module patterns
+- Set up shared components
+
+### Phase 2: Core Modules
+- Implement customer management
+- Implement equipment management
+- Implement rental management
+
+### Phase 3: Supporting Modules
+- Implement project management
+- Implement employee management
+- Implement timesheet management
+
+### Phase 4: Advanced Features
+- Implement reporting and analytics
+- Implement mobile optimization
+- Implement advanced integrations

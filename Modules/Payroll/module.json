@@ -1,0 +1,17 @@
+{
+    "name": "Payroll",
+    "alias": "payroll",
+    "description": "Payroll management module for handling employee salaries, deductions, and payments",
+    "keywords": ["payroll", "salary", "employee", "payment"],
+    "priority": 0,
+    "providers": [
+        "Modules\\Payroll\\Providers\\PayrollServiceProvider"
+    ],
+    "files": [],
+    "requires": ["Employee"],
+    "minimumCoreVersion": "10.0",
+    "title": "Payroll Management",
+    "version": "1.0.0",
+    "author": "SND Rental",
+    "enabled": true
+}
