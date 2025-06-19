@@ -42,7 +42,6 @@ export {
 
 export {
   useTranslation,
-  useTranslationStatus,
   I18nextProvider
 } from 'react-i18next';
 
