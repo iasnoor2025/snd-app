@@ -60,7 +60,7 @@ function Content({ align = 'right', width = '48', contentClasses = 'py-1 bg-whit
     );
 }
 
-function Link({ className = '', children, ...props }: InertiaLinkProps) {
+function DropdownLink({ className = '', children, ...props }: InertiaLinkProps) {
     return (
         <Link
             {...props}
@@ -76,7 +76,7 @@ function Link({ className = '', children, ...props }: InertiaLinkProps) {
 
 Dropdown.Trigger = Trigger;
 Dropdown.Content = Content;
-Dropdown.Link = Link;
+Dropdown.Link = DropdownLink;
 
 
 

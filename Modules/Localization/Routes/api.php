@@ -14,7 +14,6 @@ use Modules\Localization\Http\Controllers\Api\LocalizationApiController;
 |
 */
 
-// TODO: Temporarily comment out all routes in this file to debug EmployeeManagement API
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     // Translations and localization management
     Route::get('translations', [LocalizationApiController::class, 'getTranslations']);

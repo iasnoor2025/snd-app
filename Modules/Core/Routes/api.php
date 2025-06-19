@@ -32,7 +32,6 @@ Route::middleware('auth:sanctum')->get('/core', function (Request $request) {
 |
 */
 
-// TODO: Temporarily comment out all routes in this file to debug EmployeeManagement API
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     // User management
     Route::get('users', [UserController::class, 'index']);

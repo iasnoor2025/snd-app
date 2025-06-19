@@ -388,7 +388,67 @@ class TimesheetReportController extends Controller
         return $query->orderBy('date', 'desc')->get();
     }
 
+    /**
+     * Generate a payslip for an employee.
+     * @param int $employeeId
+     * @param string $month
+     * @return \Illuminate\View\View;
+     */
+    public function generatePaySlip($employeeId, $month)
+    {
+        $employee = Employee::findOrFail($employeeId);
+        $monthDate = Carbon::parse($month);
 
+        // Get all timesheets for this employee in the specified month
+        $timesheets = Timesheet::where('employee_id', $employeeId)
+            ->whereMonth('date', $monthDate->month)
+            ->whereYear('date', $monthDate->year)
+            ->where('status', Timesheet::STATUS_MANAGER_APPROVED)
+            ->get();
+
+        $totalRegularHours = $timesheets->sum('hours_worked');
+        $totalOvertimeHours = $timesheets->sum('overtime_hours');
+
+        // Calculate payslip data
+        $hourlyRate = $employee->hourly_rate ?? 0;
+        $overtimeRate = $hourlyRate * 1.5; // 1.5x overtime rate
+        
+        $regularPay = $totalRegularHours * $hourlyRate;
+        $overtimePay = $totalOvertimeHours * $overtimeRate;
+        $grossPay = $regularPay + $overtimePay;
+        
+        // Calculate deductions
+        $taxRate = 0.15; // 15% tax rate
+        $socialSecurityRate = 0.095; // 9.5% social security
+        $medicalInsuranceRate = 0.02; // 2% medical insurance
+        
+        $tax = $grossPay * $taxRate;
+        $socialSecurity = $grossPay * $socialSecurityRate;
+        $medicalInsurance = $grossPay * $medicalInsuranceRate;
+        $totalDeductions = $tax + $socialSecurity + $medicalInsurance;
+        
+        $netPay = $grossPay - $totalDeductions;
+
+        $data = [
+            'employee' => $employee,
+            'month' => $monthDate->format('F Y'),
+            'timesheets' => $timesheets,
+            'totalRegularHours' => $totalRegularHours,
+            'totalOvertimeHours' => $totalOvertimeHours,
+            'hourlyRate' => $hourlyRate,
+            'overtimeRate' => $overtimeRate,
+            'regularPay' => $regularPay,
+            'overtimePay' => $overtimePay,
+            'grossPay' => $grossPay,
+            'tax' => $tax,
+            'socialSecurity' => $socialSecurity,
+            'medicalInsurance' => $medicalInsurance,
+            'totalDeductions' => $totalDeductions,
+            'netPay' => $netPay,
+        ];
+
+        return view('timesheetmanagement::payslips.show', $data);
+    }
 
     /**
      * Generate payslip for employee
@@ -461,6 +521,5 @@ class TimesheetReportController extends Controller
         }
     }
 }
-
 
 

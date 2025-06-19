@@ -1,10 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Notifications\Http\Controllers\Api\NotificationsApiController;
-use Modules\Notifications\Http\Controllers\Api\NotificationPreferencesApiController;
-use Modules\Notifications\Http\Controllers\Api\NotificationChannelsApiController;
-use Modules\Notifications\Http\Controllers\Api\NotificationDevicesApiController;
+use Modules\Notifications\Http\Controllers\Api\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,30 +14,16 @@ use Modules\Notifications\Http\Controllers\Api\NotificationDevicesApiController;
 |
 */
 
-// TODO: Temporarily comment out all routes in this file to debug EmployeeManagement API
-
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     // User notifications
-    // Route::get('notifications', [NotificationsApiController::class, 'index']);
-    // Route::get('notifications/unread', [NotificationsApiController::class, 'unread']);
-    // Route::get('notifications/{id}', [NotificationsApiController::class, 'show']);
-    // Route::post('notifications/mark-as-read/{id}', [NotificationsApiController::class, 'markAsRead']);
-    // Route::post('notifications/mark-all-as-read', [NotificationsApiController::class, 'markAllAsRead']);
-    // Route::delete('notifications/{id}', [NotificationsApiController::class, 'destroy']);
-    // Route::delete('notifications/clear-all', [NotificationsApiController::class, 'clearAll']);
-
-    // Notification preferences
-    // Route::get('notifications/preferences', [NotificationPreferencesApiController::class, 'getPreferences']);
-    // Route::post('notifications/preferences', [NotificationPreferencesApiController::class, 'updatePreferences']);
-    // Route::post('notifications/preferences/reset', [NotificationPreferencesApiController::class, 'resetToDefault']);
-
-    // Notification channels
-    // Route::get('notifications/channels', [NotificationChannelsApiController::class, 'getChannels']);
-    // Route::post('notifications/channels/email/verify', [NotificationChannelsApiController::class, 'verifyEmail']);
-    // Route::post('notifications/channels/sms/verify', [NotificationChannelsApiController::class, 'verifySms']);
-
-    // Push notifications
-    // Route::post('notifications/devices/register', [NotificationDevicesApiController::class, 'register']);
-    // Route::delete('notifications/devices/{token}', [NotificationDevicesApiController::class, 'unregister']);
+    Route::get('notifications', [NotificationController::class, 'index']);
+    Route::get('notifications/unread', [NotificationController::class, 'unread']);
+    Route::get('notifications/stats', [NotificationController::class, 'stats']);
+    Route::get('notifications/types', [NotificationController::class, 'types']);
+    Route::get('notifications/{id}', [NotificationController::class, 'show']);
+    Route::post('notifications/mark-as-read/{id}', [NotificationController::class, 'markAsRead']);
+    Route::post('notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
+    Route::post('notifications/bulk-action', [NotificationController::class, 'bulkAction']);
+    Route::delete('notifications/{id}', [NotificationController::class, 'destroy']);
+    Route::delete('notifications/clear-all', [NotificationController::class, 'destroyAll']);
 });
-

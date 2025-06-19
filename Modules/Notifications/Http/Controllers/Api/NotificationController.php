@@ -83,6 +83,31 @@ class NotificationController extends Controller
     }
 
     /**
+     * Get unread notifications for the authenticated user.
+     */
+    public function unread(Request $request): JsonResponse
+    {
+        try {
+            $user = Auth::user();
+            $notifications = $user->unreadNotifications()
+                                  ->orderBy('created_at', 'desc')
+                                  ->paginate($request->get('per_page', 20));
+
+            return response()->json([
+                'success' => true,
+                'data' => $notifications,
+                'message' => 'Unread notifications retrieved successfully'
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve unread notifications',
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
      * Mark notification as read.
      */
     public function markAsRead(string $id): JsonResponse
