@@ -12,6 +12,24 @@
   --color-sidebar-accent-foreground: 222.2 84% 4.9%;
   --color-sidebar-primary: 221.2 83.2% 53.3%;
   --color-sidebar-primary-foreground: 210 40% 98%;
+  --sidebar-width: 16rem;
+  --sidebar-width-icon: 3rem;
+  --sidebar-width-mobile: 18rem;
+}
+
+/* Force generation of critical sidebar classes */
+.transition-\[margin-left\] {
+  transition-property: margin-left;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.ml-\[var\(--sidebar-width\)\] {
+  margin-left: var(--sidebar-width);
+}
+
+.peer-data-\[state\=collapsed\]\:ml-0:is(:where(.peer)[data-state=collapsed]~*) {
+  margin-left: 0;
 }
 
 @layer base {
@@ -45,6 +63,9 @@
     --sidebar-accent-foreground: 222.2 84% 4.9%;
     --sidebar-primary: 221.2 83.2% 53.3%;
     --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-width: 16rem;
+    --sidebar-width-icon: 3rem;
+    --sidebar-width-mobile: 18rem;
   }
 
   .dark {
@@ -76,6 +97,9 @@
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-primary: 217.2 91.2% 59.8%;
     --sidebar-primary-foreground: 222.2 84% 4.9%;
+    --sidebar-width: 16rem;
+    --sidebar-width-icon: 3rem;
+    --sidebar-width-mobile: 18rem;
   }
 }
 
