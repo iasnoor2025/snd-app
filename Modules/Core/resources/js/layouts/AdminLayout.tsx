@@ -38,8 +38,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ title, breadcrumbs = [], requ
   return (
     <AppShell variant="sidebar">
       <AppSidebar />
-      <div className="flex-1 flex flex-col min-h-screen overflow-hidden">
-        <header className="admin-layout-header sticky top-0 z-10">
+      <div className="flex-1 flex flex-col min-h-screen overflow-hidden ml-0 md:ml-64">
+        <header className="admin-layout-header sticky top-0 z-10 bg-white border-b border-gray-200 px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-semibold text-gray-900 mb-1">{title}</h1>

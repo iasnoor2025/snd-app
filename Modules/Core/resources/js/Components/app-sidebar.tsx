@@ -216,7 +216,7 @@ export function AppSidebar() {
 
     // --- UI ---
     return (
-        <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-white border-r border-gray-200 flex flex-col shadow-lg overflow-x-hidden">
+        <div className="flex flex-col h-full">
             <div className="flex items-center gap-2 h-16 px-6 border-b border-gray-100">
                 <Link href="/dashboard" prefetch className="flex items-center gap-2">
                     <AppLogo />
@@ -243,7 +243,7 @@ export function AppSidebar() {
                 <NavFooter items={footerNavItems} />
                 <NavUser />
             </div>
-        </aside>
+        </div>
     );
 }
 
