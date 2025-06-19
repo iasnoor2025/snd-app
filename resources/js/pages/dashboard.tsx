@@ -1,8 +1,8 @@
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem, type NavItem } from '@/types';
+import { PlaceholderPattern } from '../Modules/Core/resources/js/components/ui/placeholder-pattern';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../Modules/Core/resources/js/components/ui/card';
+import { Badge } from '../Modules/Core/resources/js/components/ui/badge';
+import AppLayout from '../Modules/Core/resources/js/layouts/app-layout';
+import { type BreadcrumbItem, type NavItem } from '../Modules/Core/resources/js/types';
 import { Head, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import { LayoutGrid, Folder, Users, Truck, FileText, DollarSign, Wrench, UserCog, Calendar,
@@ -300,4 +300,5 @@ export default function Dashboard() {
         </AppLayout>
     );
 }
+
 

@@ -24,3 +24,4 @@ export interface SettingFormData {
   is_system?: boolean;
   order?: number;
 }
+

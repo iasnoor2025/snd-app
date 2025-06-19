@@ -1,19 +1,19 @@
 import React from 'react';
 import { Head, Link, useForm, router } from '@inertiajs/react';
-import type { PageProps } from '../../../../../../resources/js/types';
-import AdminLayout from '@/layouts/app-layout';
+import type { PageProps } from '@/Modules/Core/resources/js/types';
+import { AdminLayout } from '@/Modules/Core/resources/js';
 import { format } from 'date-fns';
-import { Button } from '../../../../../../resources/js/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../../../../resources/js/components/ui/card';
-import { Input } from '../../../../../../resources/js/components/ui/input';
-import { Textarea } from '../../../../../../resources/js/components/ui/textarea';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/Modules/Core/resources/js/components/ui/card';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../../../../../../resources/js/components/ui/select';
+} from '@/Modules/Core/resources/js/components/ui/select';
 import {
   Form,
   FormControl,
@@ -21,17 +21,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../../../../../../resources/js/components/ui/form';
+} from '@/Modules/Core/resources/js/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useForm as useReactHookForm, Controller } from 'react-hook-form';
-import { Calendar } from '../../../../../../resources/js/components/ui/calendar';
+import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '../../../../../../resources/js/components/ui/popover';
-import { cn } from '../../../../../../resources/js/lib/utils';
+} from '@/Modules/Core/resources/js/components/ui/popover';
+import { cn } from '@/Modules/Core/resources/js/lib/utils';
 import {
   CalendarIcon,
   ArrowLeft,
@@ -51,11 +51,11 @@ import {
   Building2,
   Package
 } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../../../../resources/js/components/ui/tabs';
-import { Separator } from '../../../../../../resources/js/components/ui/separator';
-import { Badge } from '../../../../../../resources/js/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Modules/Core/resources/js/components/ui/tabs';
+import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import { useTranslation } from 'react-i18next';
-import { useEquipmentCategories } from '../../../../../../resources/js/hooks/useEquipmentCategories';
+import { useEquipmentCategories } from '@/Modules/Core/resources/js/hooks/useEquipmentCategories';
 import { Equipment, EquipmentFormData } from '../../types';
 
 interface Props extends PageProps {
@@ -861,4 +861,21 @@ export default function Edit({ auth, equipment, categories = [], locations = [] 
     </AdminLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -2,15 +2,15 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, router } from '@inertiajs/react';
 import { PageProps } from '@/Modules/EmployeeManagement/Resources/js/types';
-import AdminLayout from '../../../layouts/AdminLayout';
-import { Breadcrumb } from '@/components/ui/breadcrumb';
+import { AdminLayout } from '@/Modules/Core/resources/js';
+import { Breadcrumb } from '@/Modules/Core/resources/js/components/ui/breadcrumb';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from '@/Modules/Core/resources/js/components/ui/card';
 import {
   Table,
   TableBody,
@@ -18,10 +18,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
+} from '@/Modules/Core/resources/js/components/ui/table';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import { format } from 'date-fns';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import { Trash2, Check, X, ArrowLeft, History } from 'lucide-react';
 import {
   Dialog,
@@ -30,15 +30,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@/Modules/Core/resources/js/components/ui/dialog';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { usePermission } from '@/hooks/usePermission';
-import { ToastService } from '@/components/shared/ToastManager';
+} from '@/Modules/Core/resources/js/components/ui/tooltip';
+import { usePermission } from '@/Modules/Core/resources/js/hooks/usePermission';
+import { ToastService } from '@/Modules/Core/resources/js/components/shared/ToastManager';
 
 interface Advance {
   id: number;
@@ -282,4 +282,20 @@ export default function Index({ auth, employee, advances, total_balance }: Props
     </AdminLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
+use Exception;
 
 class LocalizationController extends Controller
 {
@@ -209,38 +211,79 @@ class LocalizationController extends Controller
     }
 
     /**
-     * Store a new locale.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse
+     * Store a new locale
      */
     public function storeLocale(Request $request)
     {
-        $request->validate([
-            'code' => 'required|string|max:5|unique:locales,code',
-            'name' => 'required|string|max:100',
-            'native_name' => 'required|string|max:100',
+        $validated = $request->validate([
+            'code' => 'required|string|max:10|unique:locales,code',
+            'name' => 'required|string|max:255',
+            'native_name' => 'required|string|max:255',
             'direction' => 'required|in:ltr,rtl',
+            'is_active' => 'boolean',
         ]);
 
-        // TODO: Implement actual locale storage
-        // This would typically involve updating configuration or database
+        try {
+            $locale = DB::table('locales')->insertGetId([
+                'code' => $validated['code'],
+                'name' => $validated['name'],
+                'native_name' => $validated['native_name'],
+                'direction' => $validated['direction'],
+                'is_active' => $validated['is_active'] ?? true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
-        return redirect()->back()->with('message', 'Locale added successfully.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Locale created successfully',
+                'data' => [
+                    'id' => $locale,
+                    'code' => $validated['code'],
+                    'name' => $validated['name'],
+                    'native_name' => $validated['native_name'],
+                    'direction' => $validated['direction'],
+                    'is_active' => $validated['is_active'] ?? true,
+                ]
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create locale',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
-     * Delete a locale.
-     *
-     * @param string $locale
-     * @return \Illuminate\Http\RedirectResponse
+     * Delete a locale
      */
-    public function destroyLocale($locale)
+    public function deleteLocale($id)
     {
-        // TODO: Implement actual locale deletion
-        // This would typically involve updating configuration or database
+        try {
+            $deleted = DB::table('locales')->where('id', $id)->delete();
+            
+            if (!$deleted) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Locale not found'
+                ], 404);
+            }
 
-        return redirect()->back()->with('message', 'Locale deleted successfully.');
+            // Also delete associated translations
+            DB::table('translations')->where('locale', $id)->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Locale deleted successfully'
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete locale',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -327,155 +370,260 @@ class LocalizationController extends Controller
     }
 
     /**
-     * Store a new language.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse
+     * Store a new language
      */
     public function storeLanguage(Request $request)
     {
-        $request->validate([
-            'code' => 'required|string|max:5',
-            'name' => 'required|string|max:100',
-            'native_name' => 'required|string|max:100',
-            'direction' => 'required|in:ltr,rtl',
+        $validated = $request->validate([
+            'code' => 'required|string|max:10|unique:languages,code',
+            'name' => 'required|string|max:255',
+            'native_name' => 'required|string|max:255',
+            'flag' => 'nullable|string|max:255',
+            'is_active' => 'boolean',
         ]);
 
-        // TODO: Implement actual language storage
+        try {
+            $language = DB::table('languages')->insertGetId([
+                'code' => $validated['code'],
+                'name' => $validated['name'],
+                'native_name' => $validated['native_name'],
+                'flag' => $validated['flag'] ?? null,
+                'is_active' => $validated['is_active'] ?? true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
-        return redirect()->back()->with('message', 'Language added successfully.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Language created successfully',
+                'data' => [
+                    'id' => $language,
+                    'code' => $validated['code'],
+                    'name' => $validated['name'],
+                    'native_name' => $validated['native_name'],
+                    'flag' => $validated['flag'] ?? null,
+                    'is_active' => $validated['is_active'] ?? true,
+                ]
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create language',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
-     * Update a language.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param string $language
-     * @return \Illuminate\Http\RedirectResponse
+     * Update a language
      */
-    public function updateLanguage(Request $request, $language)
+    public function updateLanguage(Request $request, $id)
     {
-        $request->validate([
-            'name' => 'required|string|max:100',
-            'native_name' => 'required|string|max:100',
-            'direction' => 'required|in:ltr,rtl',
+        $validated = $request->validate([
+            'code' => 'required|string|max:10|unique:languages,code,' . $id,
+            'name' => 'required|string|max:255',
+            'native_name' => 'required|string|max:255',
+            'flag' => 'nullable|string|max:255',
+            'is_active' => 'boolean',
         ]);
 
-        // TODO: Implement actual language update
+        try {
+            $updated = DB::table('languages')
+                ->where('id', $id)
+                ->update([
+                    'code' => $validated['code'],
+                    'name' => $validated['name'],
+                    'native_name' => $validated['native_name'],
+                    'flag' => $validated['flag'] ?? null,
+                    'is_active' => $validated['is_active'] ?? true,
+                    'updated_at' => now(),
+                ]);
 
-        return redirect()->back()->with('message', 'Language updated successfully.');
-    }
+            if (!$updated) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Language not found'
+                ], 404);
+            }
 
-    /**
-     * Delete a language.
-     *
-     * @param string $language
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function destroyLanguage($language)
-    {
-        // TODO: Implement actual language deletion
-
-        return redirect()->back()->with('message', 'Language deleted successfully.');
-    }
-
-    /**
-     * Get translation statistics.
-     *
-     * @return array
-     */
-    private function getTranslationStats()
-    {
-        // TODO: Implement actual translation statistics
-        return [
-            'total_keys' => 150,
-            'translated_keys' => 120,
-            'missing_keys' => 30,
-            'completion_percentage' => 80,
-            'last_updated' => now()->format('Y-m-d H:i:s'),
-        ];
-    }
-
-    /**
-     * Get translations for a specific locale and group.
-     *
-     * @param string $locale
-     * @param string $group
-     * @param string $search
-     * @return array
-     */
-    private function getTranslations($locale, $group, $search = '')
-    {
-        // TODO: Implement actual translation retrieval
-        $sampleTranslations = [
-            'welcome' => 'Welcome',
-            'login' => 'Login',
-            'logout' => 'Logout',
-            'dashboard' => 'Dashboard',
-            'employees' => 'Employees',
-            'settings' => 'Settings',
-            'profile' => 'Profile',
-            'save' => 'Save',
-            'cancel' => 'Cancel',
-            'delete' => 'Delete',
-        ];
-
-        if ($search) {
-            return array_filter($sampleTranslations, function($value, $key) use ($search) {
-                return stripos($key, $search) !== false || stripos($value, $search) !== false;
-            }, ARRAY_FILTER_USE_BOTH);
+            return response()->json([
+                'success' => true,
+                'message' => 'Language updated successfully'
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update language',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        return $sampleTranslations;
     }
 
     /**
-     * Get available translation groups.
-     *
-     * @return array
+     * Delete a language
      */
-    private function getTranslationGroups()
+    public function deleteLanguage($id)
     {
-        // TODO: Implement actual translation groups retrieval
-        return [
-            'common',
-            'auth',
-            'validation',
-            'pagination',
-            'passwords',
-            'employees',
-            'leaves',
-            'timesheets',
-            'payroll',
-            'projects',
-            'equipment',
-            'customers',
-            'rentals',
-        ];
-    }
+        try {
+            $deleted = DB::table('languages')->where('id', $id)->delete();
+            
+            if (!$deleted) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Language not found'
+                ], 404);
+            }
 
-    /**
-     * Save translations to file.
-     *
-     * @param string $locale
-     * @param string $group
-     * @param array $translations
-     * @return void
-     */
-    private function saveTranslations($locale, $group, $translations)
-    {
-        // TODO: Implement actual translation saving
-        // This would typically save to language files or database
-
-        $langPath = resource_path("lang/{$locale}");
-
-        if (!File::exists($langPath)) {
-            File::makeDirectory($langPath, 0755, true);
+            return response()->json([
+                'success' => true,
+                'message' => 'Language deleted successfully'
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete language',
+                'error' => $e->getMessage()
+            ], 500);
         }
+    }
 
-        $filePath = "{$langPath}/{$group}.php";
-        $content = "<?php\n\nreturn " . var_export($translations, true) . ";\n";
+    /**
+     * Get translation statistics
+     */
+    public function getTranslationStatistics()
+    {
+        try {
+            $stats = [
+                'total_keys' => DB::table('translation_keys')->count(),
+                'total_translations' => DB::table('translations')->count(),
+                'languages' => DB::table('languages')->where('is_active', true)->count(),
+                'completion_rate' => 0,
+            ];
 
-        File::put($filePath, $content);
+            // Calculate completion rate
+            if ($stats['total_keys'] > 0 && $stats['languages'] > 0) {
+                $expectedTranslations = $stats['total_keys'] * $stats['languages'];
+                $stats['completion_rate'] = ($stats['total_translations'] / $expectedTranslations) * 100;
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $stats
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to get translation statistics',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get translations for a specific language
+     */
+    public function getTranslations($language)
+    {
+        try {
+            $translations = DB::table('translations')
+                ->join('translation_keys', 'translations.key_id', '=', 'translation_keys.id')
+                ->where('translations.language', $language)
+                ->select('translation_keys.key', 'translations.value', 'translations.updated_at')
+                ->get()
+                ->keyBy('key')
+                ->map(function ($item) {
+                    return $item->value;
+                });
+
+            return response()->json([
+                'success' => true,
+                'data' => $translations
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to get translations',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get translation groups
+     */
+    public function getTranslationGroups()
+    {
+        try {
+            $groups = DB::table('translation_keys')
+                ->select(DB::raw('SUBSTRING_INDEX(key, ".", 1) as group_name'))
+                ->distinct()
+                ->get()
+                ->pluck('group_name')
+                ->filter()
+                ->values();
+
+            return response()->json([
+                'success' => true,
+                'data' => $groups
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to get translation groups',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Save translations
+     */
+    public function saveTranslations(Request $request)
+    {
+        $validated = $request->validate([
+            'language' => 'required|string|max:10',
+            'translations' => 'required|array',
+            'translations.*' => 'required|string',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            foreach ($validated['translations'] as $key => $value) {
+                // Find or create translation key
+                $keyId = DB::table('translation_keys')
+                    ->where('key', $key)
+                    ->value('id');
+
+                if (!$keyId) {
+                    $keyId = DB::table('translation_keys')->insertGetId([
+                        'key' => $key,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+
+                // Update or insert translation
+                DB::table('translations')
+                    ->updateOrInsert(
+                        ['key_id' => $keyId, 'language' => $validated['language']],
+                        ['value' => $value, 'updated_at' => now()]
+                    );
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Translations saved successfully'
+            ]);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to save translations',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

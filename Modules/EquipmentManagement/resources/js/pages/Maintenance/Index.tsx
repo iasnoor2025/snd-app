@@ -8,17 +8,17 @@ type MaintenanceRecord = { id: number; [key: string]: any };
 type Equipment = { id: number; name: string };
 // ... existing code ...
 import { formatCurrency, formatDate } from '../../utils/format';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/Modules/Core/resources/js/components/ui/select';
 import {
   Table,
   TableBody,
@@ -26,8 +26,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { useToast } from '@/components/ui/use-toast';
+} from '@/Modules/Core/resources/js/components/ui/table';
+import { useToast } from '@/Modules/Core/resources/js/components/ui/use-toast';
 import {
   Eye as EyeIcon,
   Pencil as EditIcon,
@@ -42,11 +42,11 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
+} from '@/Modules/Core/resources/js/components/ui/popover';
+import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
 import { format } from 'date-fns';
 import dayjs from 'dayjs';
-import AdminLayout from '@/layouts/AdminLayout';
+import { AdminLayout } from '@/Modules/Core/resources/js';
 // ErrorBoundary import removed for build
 // import { usePermission } from '@/Modules/EquipmentManagement/Resources/js/hooks/usePermission';
 
@@ -460,3 +460,20 @@ const { toast } = useToast();
     </AdminLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

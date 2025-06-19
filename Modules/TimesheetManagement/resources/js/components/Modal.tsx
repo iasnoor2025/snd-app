@@ -11,3 +11,17 @@ const Modal: React.FC<ModalProps> = ({ open = true, children }) => {
 };
 
 export default Modal;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

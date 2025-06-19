@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from "@inertiajs/react";
 import { Rental, customer } from "@/types/models";
 import { format, isAfter } from "date-fns";
-import { usePermission } from "@/hooks/usePermission";
+import { usePermission } from "@/Modules/Core/resources/js/hooks/usePermission";
 
 // Extend the Rental interface to include our has_operators property
 interface ExtendedRental extends Rental {
@@ -18,9 +18,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+} from "@/Modules/Core/resources/js/components/ui/table";
+import { Button } from "@/Modules/Core/resources/js/components/ui/button";
+import { Badge } from "@/Modules/Core/resources/js/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,14 +28,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+} from "@/Modules/Core/resources/js/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/Modules/Core/resources/js/components/ui/avatar";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@/Modules/Core/resources/js/components/ui/tooltip";
 
 // Icons
 import {
@@ -272,3 +272,17 @@ export default function RentalsList({ rentals, onDelete }: Props) {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

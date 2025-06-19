@@ -7,8 +7,8 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
+} from '@/Modules/Core/resources/js/components/ui/table';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import { format } from 'date-fns';
 
 interface LeaveRecord {
@@ -101,3 +101,19 @@ export default function LeaveHistory({ records }: Props) {
         </div>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

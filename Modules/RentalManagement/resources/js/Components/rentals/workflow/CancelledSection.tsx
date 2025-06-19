@@ -1,13 +1,13 @@
 import React from "react";
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Modules/Core/resources/js/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/Modules/Core/resources/js/components/ui/alert";
+import { Button } from "@/Modules/Core/resources/js/components/ui/button";
+import { Badge } from "@/Modules/Core/resources/js/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Modules/Core/resources/js/components/ui/tabs";
 import { X, Calendar, FileText, Copy, RotateCcw } from "lucide-react";
-import RentalItemsCard from "@/components/rentals/RentalItemsCard";
-import DocumentsCard from "@/components/rentals/DocumentsCard";
+import RentalItemsCard from "@/Modules/Core/resources/js/components/rentals/RentalItemsCard";
+import DocumentsCard from "@/Modules/Core/resources/js/components/rentals/DocumentsCard";
 import { format } from "date-fns";
 
 // Define interface for document
@@ -222,3 +222,17 @@ export default function CancelledSection({
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

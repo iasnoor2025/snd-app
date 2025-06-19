@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { router } from '@inertiajs/react';
-import { toast } from '@/components/ui/use-toast'; 
+import { toast } from '@/Modules/Core/resources/js/components/ui/use-toast'; 
 
 interface UseResourceSubmitProps {
     projectId: number;
@@ -107,3 +107,4 @@ export function useResourceSubmit({
         handleDelete,
     };
 }
+

@@ -2,17 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from "@inertiajs/react";
 import { PageProps } from '@/types'; // Uncommented and adjusted
-import AdminLayout from '@/layouts/AdminLayout';
+import { AdminLayout } from '@/Modules/Core/resources/js';
 import { format } from "date-fns";
-import { usePermission } from '@/hooks/usePermission'; // Uncommented and adjusted path
-import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import { usePermission } from '@/Modules/Core/resources/js/hooks/usePermission'; // Uncommented and adjusted path
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/Modules/Core/resources/js/components/ui/tooltip';
 import { toast } from "sonner";
 import axios from "axios";
 import { useEffect, useState } from 'react';
 
 // Shadcn UI Components
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import {
   Card,
   CardContent,
@@ -20,7 +20,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from '@/Modules/Core/resources/js/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -28,20 +28,20 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@/Modules/Core/resources/js/components/ui/dialog';
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from '@/components/ui/avatar';
-import { Input } from '@/components/ui/input';
+} from '@/Modules/Core/resources/js/components/ui/avatar';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/Modules/Core/resources/js/components/ui/select';
 import {
   Table,
   TableBody,
@@ -49,7 +49,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from '@/Modules/Core/resources/js/components/ui/table';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -57,9 +57,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import CreateButton from '../../../../../../resources/js/components/shared/CreateButton';
-import CrudButtons from '../../../../../../resources/js/components/shared/CrudButtons';
+} from '@/Modules/Core/resources/js/components/ui/dropdown-menu';
+import CreateButton from '@/Modules/Core/resources/js/components/shared/CreateButton';
+import CrudButtons from '@/Modules/Core/resources/js/components/shared/CrudButtons';
 
 // Icons
 import {
@@ -820,3 +820,17 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
     </AdminLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

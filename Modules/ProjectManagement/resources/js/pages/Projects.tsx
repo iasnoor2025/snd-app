@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Head } from '@inertiajs/react';
-import AdminLayout from '../../../../../resources/js/layouts/AdminLayout';
+import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
 import { ProjectList } from '../components/ProjectList';
 import { ProjectForm } from '../components/ProjectForm';
 import {
@@ -8,8 +8,8 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+} from '@/Modules/Core/resources/js/components/ui/dialog';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import { PlusIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -180,3 +180,17 @@ export default function Projects({ projects: initialProjects, managers }: Projec
         </AdminLayout>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

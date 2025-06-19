@@ -7,11 +7,11 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
+} from '@/Modules/Core/resources/js/components/ui/table';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import { Pencil, Trash2, UserX } from 'lucide-react';
 import { format } from 'date-fns';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import axios from 'axios';
 import { usePage } from '@inertiajs/react';
 import { getTranslation } from '@/utils/translation';
@@ -344,5 +344,19 @@ export default function ResourceList({
         </div>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

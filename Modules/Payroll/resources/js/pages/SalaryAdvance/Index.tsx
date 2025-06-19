@@ -1,10 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
-import { PageProps } from '../../../../../../resources/js/types';
-import AdminLayout from '../../../../../../resources/js/layouts/AdminLayout';
-import { Button } from '../../../../../../resources/js/components/ui/button';
-import { Badge } from '../../../../../../resources/js/components/ui/badge';
+import { PageProps } from '@/Modules/Core/resources/js/types';
+import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import {
     Table,
     TableBody,
@@ -12,23 +12,23 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '../../../../../../resources/js/components/ui/table';
+} from '@/Modules/Core/resources/js/components/ui/table';
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from '../../../../../../resources/js/components/ui/card';
-import { Input } from '../../../../../../resources/js/components/ui/input';
-import { Label } from '../../../../../../resources/js/components/ui/label';
+} from '@/Modules/Core/resources/js/components/ui/card';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Label } from '@/Modules/Core/resources/js/components/ui/label';
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '../../../../../../resources/js/components/ui/select';
+} from '@/Modules/Core/resources/js/components/ui/select';
 import { Plus, Search, Filter } from 'lucide-react';
 import { format } from 'date-fns';
 import { useState } from 'react';
@@ -269,3 +269,17 @@ export default function Index({ auth, salaryAdvances, filters }: Props) {
         </AdminLayout>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

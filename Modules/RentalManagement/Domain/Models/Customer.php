@@ -12,7 +12,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use App\Traits\HasAvatar;
+use Modules\Core\Traits\HasAvatar;
 use Modules\Core\Domain\Models\User;
 
 class Customer extends Model implements HasMedia

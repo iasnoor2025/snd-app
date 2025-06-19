@@ -6,3 +6,4 @@ declare module '@/components/*';
 declare module '@/hooks/*';
 declare module 'sonner';
 declare module 'lodash';
+

@@ -18,3 +18,4 @@ export default function useLoadingState(_key: string) {
 
   return { isLoading, error, withLoading };
 }
+

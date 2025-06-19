@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import {
   Card,
   CardContent,
@@ -9,19 +9,19 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+} from '@/Modules/Core/resources/js/components/ui/card';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import { CalendarDays, ArrowLeft, Edit, Trash2, Check, X, RotateCw } from 'lucide-react';
 import { toast } from 'sonner';
-import AdminLayout from '@/layouts/AdminLayout';
+import { AdminLayout } from '@/Modules/Core/resources/js';
 // Placeholder type
 type LeaveRequest = any;
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@/components/ui/breadcrumb';
-import { formatDate } from '@/utils/format';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@/Modules/Core/resources/js/components/ui/breadcrumb';
+import { formatDate } from '@/Modules/Core/resources/js/utils/format';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/Modules/Core/resources/js/components/ui/dialog';
+import { Label } from '@/Modules/Core/resources/js/components/ui/label';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
 import { useState } from 'react';
 
 interface Props {
@@ -411,3 +411,17 @@ export default function LeaveRequestShow({ leaveRequest }: Props) {
     </AdminLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

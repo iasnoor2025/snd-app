@@ -1,10 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, router } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import {
   Dialog,
   DialogContent,
@@ -12,8 +12,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import AdminLayout from '@/layouts/AdminLayout';
+} from '@/Modules/Core/resources/js/components/ui/dialog';
+import { AdminLayout } from '@/Modules/Core/resources/js';
 import {
   Card,
   CardContent,
@@ -21,7 +21,7 @@ import {
   CardHeader,
   CardTitle,
   CardFooter,
-} from '@/components/ui/card';
+} from '@/Modules/Core/resources/js/components/ui/card';
 
 interface User {
   id: number;
@@ -288,5 +288,21 @@ const ToastService = {
   success: (msg: string) => alert(msg),
   error: (msg: string) => alert(msg),
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

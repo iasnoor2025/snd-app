@@ -2,8 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import axios from 'axios';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/Modules/Core/resources/js/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Modules/Core/resources/js/components/ui/tabs';
 import ResourceForm from '../components/project/ResourceForm';
 import ResourceList from '../components/project/ResourceList';
 import {
@@ -14,15 +14,15 @@ import {
     DialogTrigger,
     DialogDescription,
     DialogFooter,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+} from '@/Modules/Core/resources/js/components/ui/dialog';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import { Plus, ArrowLeft, Layers, PieChart, BarChart, DollarSign, Users, Search, Filter, SlidersHorizontal, X, CheckSquare, FileText, Package, Calendar as CalendarIcon } from 'lucide-react';
-import AdminLayout from '../layouts/AdminLayout';
+import { AdminLayout } from '@/Modules/Core/resources/js';
 import { toast } from "sonner";
-import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Input } from '@/components/ui/input';
+import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Progress } from '@/Modules/Core/resources/js/components/ui/progress';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
 import { format } from 'date-fns';
 import {
     DropdownMenu,
@@ -37,12 +37,12 @@ import {
     DropdownMenuSubContent,
     DropdownMenuSubTrigger,
     DropdownMenuPortal,
-} from '@/components/ui/dropdown-menu';
+} from '@/Modules/Core/resources/js/components/ui/dropdown-menu';
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from '@/components/ui/popover';
+} from '@/Modules/Core/resources/js/components/ui/popover';
 import {
     Form,
     FormControl,
@@ -50,14 +50,14 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@/components/ui/form';
+} from '@/Modules/Core/resources/js/components/ui/form';
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '@/components/ui/select';
+} from '@/Modules/Core/resources/js/components/ui/select';
 import TaskList, { ProjectTask } from '../components/project/TaskList';
 import TaskDialog from '../components/project/TaskDialog';
 import { DialogErrorBoundary } from '../components/DialogErrorBoundary';
@@ -67,8 +67,8 @@ import TaskForm from '../components/project/TaskForm';
 import ResourceFilters from '../components/project/ResourceFilters';
 import ResourcePagination from '../components/project/ResourcePagination';
 import ResourceSearch from '../components/project/ResourceSearch';
-import { cn } from '@/lib/utils';
-import { Calendar } from '@/components/ui/calendar';
+import { cn } from '@/Modules/Core/resources/js/lib/utils';
+import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
 
 // Import tab components
 import { ManpowerTab } from './Resources/Tabs/ManpowerTab';
@@ -1500,6 +1500,20 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
         );
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

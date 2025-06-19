@@ -34,3 +34,4 @@ export interface Customer {
   updated_at?: string;
   deleted_at?: string;
 }
+

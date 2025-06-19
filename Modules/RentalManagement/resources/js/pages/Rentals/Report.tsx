@@ -4,11 +4,11 @@ import { Head, router } from '@inertiajs/react';
 import { format, parseISO } from 'date-fns';
 import { PageProps } from '@/types';
 import { Rental, customer } from '@/types/models';
-import AdminLayout from '@/layouts/AdminLayout';
+import { AdminLayout } from '@/Modules/Core/resources/js';
 
 // Shadcn UI components
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import {
   Card,
   CardContent,
@@ -16,14 +16,14 @@ import {
   CardTitle,
   CardDescription,
   CardFooter,
-} from '@/components/ui/card';
+} from '@/Modules/Core/resources/js/components/ui/card';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/Modules/Core/resources/js/components/ui/select';
 import {
   Table,
   TableBody,
@@ -32,18 +32,18 @@ import {
   TableHeader,
   TableRow,
   TableFooter,
-} from '@/components/ui/table';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { Calendar } from '@/components/ui/calendar';
+} from '@/Modules/Core/resources/js/components/ui/table';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Label } from '@/Modules/Core/resources/js/components/ui/label';
+import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
+import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+} from '@/Modules/Core/resources/js/components/ui/popover';
+import { Skeleton } from '@/Modules/Core/resources/js/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Modules/Core/resources/js/components/ui/tabs';
 
 // Icons
 import {
@@ -931,5 +931,19 @@ export default function Report({ auth, rentals, customers, filters }: Props) {
     </AdminLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

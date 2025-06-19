@@ -6,7 +6,7 @@ use App\Http\Requests\MaintenanceTaskRequest;
 use Modules\EquipmentManagement\Domain\Models\Equipment;
 use Modules\EquipmentManagement\Domain\Models\MaintenanceTask;
 use Modules\Core\Domain\Models\User;
-use App\Services\MaintenanceTaskService;
+use Modules\EquipmentManagement\Services\MaintenanceTaskService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

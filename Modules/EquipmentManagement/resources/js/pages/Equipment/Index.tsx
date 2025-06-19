@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Head, router } from '@inertiajs/react';
-import type { PageProps } from '../../../../../../resources/js/types';
-import AdminLayout from '../../../../../../resources/js/layouts/AdminLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../../../resources/js/components/ui/card';
-import { Button } from '../../../../../../resources/js/components/ui/button';
-import { Badge } from '../../../../../../resources/js/components/ui/badge';
-import { Input } from '../../../../../../resources/js/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../../../../resources/js/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../../../../resources/js/components/ui/table';
+import type { PageProps } from '@/Modules/Core/resources/js/types';
+import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Modules/Core/resources/js/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Modules/Core/resources/js/components/ui/table';
 import { Search } from 'lucide-react';
-import CreateButton from '../../../../../../resources/js/components/shared/CreateButton';
-import CrudButtons from '../../../../../../resources/js/components/shared/CrudButtons';
-import { formatCurrency } from '../../../../../../resources/js/utils/format';
+import CreateButton from '@/Modules/Core/resources/js/components/shared/CreateButton';
+import CrudButtons from '@/Modules/Core/resources/js/components/shared/CrudButtons';
+import { formatCurrency } from '@/Modules/Core/resources/js/utils/format';
 import { useTranslation } from 'react-i18next';
 import { Equipment, PaginatedData } from '../../types';
 
@@ -299,3 +299,20 @@ export default function Index({ equipment, categories = [], statuses = {}, filte
     </AdminLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

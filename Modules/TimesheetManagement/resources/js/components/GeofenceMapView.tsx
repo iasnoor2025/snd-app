@@ -6,26 +6,26 @@ import {
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+} from '@/Modules/Core/resources/js/components/ui/card';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '@/components/ui/select';
+} from '@/Modules/Core/resources/js/components/ui/select';
 import {
     Dialog,
     DialogContent,
     DialogDescription,
     DialogHeader,
     DialogTitle,
-} from '@/components/ui/dialog';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
+} from '@/Modules/Core/resources/js/components/ui/dialog';
+import { Switch } from '@/Modules/Core/resources/js/components/ui/switch';
+import { Label } from '@/Modules/Core/resources/js/components/ui/label';
 import {
     MapPin,
     Layers,
@@ -669,3 +669,17 @@ const GeofenceMapView: React.FC = () => {
 };
 
 export default GeofenceMapView;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

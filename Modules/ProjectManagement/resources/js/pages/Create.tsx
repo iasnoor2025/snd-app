@@ -1,19 +1,19 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, useForm, Link } from '@inertiajs/react';
-import AdminLayout from '../../../../../resources/js/layouts/AdminLayout';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../../../resources/js/components/ui/card';
-import { Input } from '../../../../../resources/js/components/ui/input';
-import { Label } from '../../../../../resources/js/components/ui/label';
-import { Button } from '../../../../../resources/js/components/ui/button';
-import { Textarea } from '../../../../../resources/js/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../../../resources/js/components/ui/select';
-import { Calendar } from '../../../../../resources/js/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '../../../../../resources/js/components/ui/popover';
+import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/Modules/Core/resources/js/components/ui/card';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Label } from '@/Modules/Core/resources/js/components/ui/label';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Modules/Core/resources/js/components/ui/select';
+import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/Modules/Core/resources/js/components/ui/popover';
 import { format } from 'date-fns';
 import { CalendarIcon, ArrowLeft, Plus } from 'lucide-react';
-import { cn } from '../../../../../resources/js/lib/utils';
-import { Separator } from '../../../../../resources/js/components/ui/separator';
+import { cn } from '@/Modules/Core/resources/js/lib/utils';
+import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
 
 interface Customer {
     id: number;
@@ -325,4 +325,18 @@ export default function Create({ customers, locations }: Props) {
         </AdminLayout>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

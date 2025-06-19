@@ -9,3 +9,20 @@ const EquipmentPage: FC<EquipmentPageProps> = () => {
 };
 
 export default EquipmentPage;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

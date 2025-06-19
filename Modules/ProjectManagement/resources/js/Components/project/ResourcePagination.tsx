@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '../../../../../../resources/js/components/ui/button';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface ResourcePaginationProps {
@@ -74,3 +74,17 @@ const ResourcePagination: React.FC<ResourcePaginationProps> = ({
 };
 
 export default ResourcePagination;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

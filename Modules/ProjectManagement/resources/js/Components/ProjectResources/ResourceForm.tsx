@@ -1,10 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Form } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+import { Form } from '@/Modules/Core/resources/js/components/ui/form';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Label } from '@/Modules/Core/resources/js/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Modules/Core/resources/js/components/ui/select';
+import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
 import { UseFormReturn } from 'react-hook-form';
 
 interface ResourceFormProps {
@@ -104,3 +104,17 @@ export function ResourceTextarea({ form, name, label, placeholder }: ResourceTex
         </div>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

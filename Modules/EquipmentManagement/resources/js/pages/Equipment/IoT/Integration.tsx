@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Head } from '@inertiajs/react';
-import AdminLayout from '../../../../../../../resources/js/layouts/AdminLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../../../../resources/js/components/ui/card';
-import { Badge } from '../../../../../../../resources/js/components/ui/badge';
-import { Button } from '../../../../../../../resources/js/components/ui/button';
-import { Progress } from '../../../../../../../resources/js/components/ui/progress';
-import { Alert, AlertDescription } from '../../../../../../../resources/js/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../../../../../resources/js/components/ui/tabs';
-import { Input } from '../../../../../../../resources/js/components/ui/input';
-import { Label } from '../../../../../../../resources/js/components/ui/label';
-import { Switch } from 'Modules/Core/resources/js/components/ui/switch';
+import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Progress } from '@/Modules/Core/resources/js/components/ui/progress';
+import { Alert, AlertDescription } from '@/Modules/Core/resources/js/components/ui/alert';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Modules/Core/resources/js/components/ui/tabs';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Label } from '@/Modules/Core/resources/js/components/ui/label';
+import { Switch } from '@/Modules/Core/resources/js/components/ui/switch';
 import {
   LineChart,
   Line,
@@ -52,7 +52,7 @@ import {
   Network,
   Shield
 } from 'lucide-react';
-import { formatCurrency } from '../../../../../../../resources/js/utils/format';
+import { formatCurrency } from '@/Modules/Core/resources/js/utils/format';
 
 interface IoTDevice {
   id: string;
@@ -750,3 +750,20 @@ const IoTIntegration: React.FC<Props> = ({ devices = [], equipment = [] }) => {
 };
 
 export default IoTIntegration;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

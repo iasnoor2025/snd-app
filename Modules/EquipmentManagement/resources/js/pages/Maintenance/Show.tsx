@@ -1,16 +1,16 @@
 import { Head, Link, router } from '@inertiajs/react';
-import AdminLayout from '@/layouts/AdminLayout';
+import { AdminLayout } from '@/Modules/Core/resources/js';
 import { useState, useEffect } from 'react';
-import { formatCurrency, formatDate } from '@/utils/format';
+import { formatCurrency, formatDate } from '@/Modules/Core/resources/js/utils/format';
 import {
   ArrowLeft as ArrowLeftIcon,
   Edit as EditIcon,
   Trash as TrashIcon
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
 import {
   Table,
   TableBody,
@@ -18,8 +18,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { useToast } from '@/components/ui/use-toast';
+} from '@/Modules/Core/resources/js/components/ui/table';
+import { useToast } from '@/Modules/Core/resources/js/components/ui/use-toast';
 
 // Placeholder types
 type BreadcrumbItem = any;
@@ -186,3 +186,20 @@ export default function Show({ maintenanceRecord }: Props) {
         </AdminLayout>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,29 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { Head, Link, router, useForm } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/Modules/Core/resources/js/components/ui/card';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Label } from '@/Modules/Core/resources/js/components/ui/label';
+import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/Modules/Core/resources/js/components/ui/select';
 import { ArrowLeft as ArrowLeftIcon } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/Modules/Core/resources/js/components/ui/use-toast';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
+} from '@/Modules/Core/resources/js/components/ui/popover';
+import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
 import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
+import { cn } from '@/Modules/Core/resources/js/lib/utils';
 import { CalendarIcon } from 'lucide-react';
-import AdminLayout from '@/layouts/AdminLayout';
+import { AdminLayout } from '@/Modules/Core/resources/js';
 
 // Minimal type definitions for build
 type PageProps = { [key: string]: any };
@@ -215,3 +215,20 @@ export default function MaintenanceEdit({ equipment, maintenance }: Props) {
     </AdminLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

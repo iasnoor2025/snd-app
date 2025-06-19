@@ -2,60 +2,50 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\Core\Domain\Models\User as CoreUser;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
-use Spatie\Permission\Traits\HasRoles;
-use Spatie\Permission\Models\Permission;
-use App\Traits\HasAvatar;
+use Modules\Core\Traits\HasAvatar;
 use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends CoreUser implements HasMedia
 {
-    protected $guard_name = 'web';
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable, HasRoles, HasAvatar;
+    use HasApiTokens, HasAvatar, InteractsWithMedia;
 
     /**
-     * The attributes that are mass assignable.
+     * Additional fillable attributes for the main User model
      *
-     * @var array<int, string>
+     * @var array<string>
      */
     protected $fillable = [
         'name',
         'email',
         'password',
         'avatar',
-    ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+        'is_active',
+        'last_login_at',
+        'locale',
+        'password_changed_at',
+        'is_customer'
     ];
 
     /**
      * Register media conversions for the model
      */
-    public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
+    public function registerMediaConversions(?Media $media = null): void
     {
         // Register avatar conversions from HasAvatar trait
         $this->registerAvatarMediaConversions($media);
     }
-}
+
+    /**
+     * Define the avatar media collection
+     */
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('avatars')
+            ->singleFile()
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp']);
+    }
+} 

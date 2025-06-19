@@ -1,11 +1,11 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, router } from '@inertiajs/react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/Modules/Core/resources/js/components/ui/breadcrumb';
 import { ArrowLeftIcon, EditIcon, TrashIcon, CalendarIcon, ClockIcon, UsersIcon, CreditCardIcon, CheckCircleIcon, XCircleIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -18,7 +18,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+} from '@/Modules/Core/resources/js/components/ui/alert-dialog';
 
 // Temporary inline permission hook
 const usePermission = () => {
@@ -400,3 +400,17 @@ export default function ShowLeaveType({ leaveType }: Props) {
         </>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, useForm, router } from '@inertiajs/react';
-import AdminLayout from '../../../../../../resources/js/layouts/AdminLayout';
-import { PageProps } from '../../../../../../resources/js/types';
-import { Button } from '../../../../../../resources/js/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../../../resources/js/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../../../../resources/js/components/ui/table';
-import { Badge } from '../../../../../../resources/js/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '../../../../../../resources/js/components/ui/dialog';
-import { Input } from '../../../../../../resources/js/components/ui/input';
-import { Label } from '../../../../../../resources/js/components/ui/label';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../../../../../resources/js/components/ui/select';
+import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
+import { PageProps } from '@/Modules/Core/resources/js/types';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Modules/Core/resources/js/components/ui/table';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/Modules/Core/resources/js/components/ui/dialog';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Label } from '@/Modules/Core/resources/js/components/ui/label';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/Modules/Core/resources/js/components/ui/select';
 import { format } from 'date-fns';
 import { route } from 'ziggy-js';
 
@@ -283,3 +283,17 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
         </AdminLayout>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

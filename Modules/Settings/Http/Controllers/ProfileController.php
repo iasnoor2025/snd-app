@@ -2,7 +2,7 @@
 
 namespace Modules\Settings\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use Modules\Settings\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
@@ -18,12 +18,12 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
-        $user = $request->user();
-        $user->load('roles');
+        $user = $request->user()->load('roles');
 
         return Inertia::render('settings/profile', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
+            'user' => $user,
         ]);
     }
 
@@ -40,7 +40,7 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return to_route('settings.profile');
+        return to_route('profile.edit');
     }
 
     /**
@@ -49,7 +49,7 @@ class ProfileController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         $request->validate([
-            'password' => ['required', 'current_password']
+            'password' => ['required', 'current_password'],
         ]);
 
         $user = $request->user();
@@ -64,5 +64,3 @@ class ProfileController extends Controller
         return redirect('/');
     }
 }
-
-

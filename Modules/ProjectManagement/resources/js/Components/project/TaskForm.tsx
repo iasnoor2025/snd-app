@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { router } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import {
     Form,
     FormControl,
@@ -12,18 +12,18 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@/components/ui/form';
+} from '@/Modules/Core/resources/js/components/ui/form';
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { DatePicker } from '@/components/ui/date-picker';
-import { cn } from '@/lib/utils';
+} from '@/Modules/Core/resources/js/components/ui/select';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
+import { DatePicker } from '@/Modules/Core/resources/js/components/ui/date-picker';
+import { cn } from '@/Modules/Core/resources/js/lib/utils';
 import { format } from 'date-fns';
 import { ProjectTask } from './TaskList';
 
@@ -314,5 +314,19 @@ const TaskForm = memo(function TaskForm({ projectId, initialData = null, assigna
 })
 
 export default TaskForm;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

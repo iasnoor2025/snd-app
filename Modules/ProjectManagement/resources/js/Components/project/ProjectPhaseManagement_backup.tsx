@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../../../../resources/js/components/ui/card';
-import { Button } from '../../../../../../resources/js/components/ui/button';
-import { Input } from '../../../../../../resources/js/components/ui/input';
-import { Label } from '../../../../../../resources/js/components/ui/label';
-import { DatePicker } from '../../../../../../resources/js/components/ui/date-picker';
-import { Textarea } from '../../../../../../resources/js/components/ui/textarea';
-import { Badge } from '../../../../../../resources/js/components/ui/badge';
-import { Progress } from '../../../../../../resources/js/components/ui/progress';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Label } from '@/Modules/Core/resources/js/components/ui/label';
+import { DatePicker } from '@/Modules/Core/resources/js/components/ui/date-picker';
+import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Progress } from '@/Modules/Core/resources/js/components/ui/progress';
 import {
   Table,
   TableBody,
@@ -621,3 +621,17 @@ export const ProjectPhaseManagement: React.FC<{ projectId: number }> = ({ projec
 };
 
 export default ProjectPhaseManagement;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

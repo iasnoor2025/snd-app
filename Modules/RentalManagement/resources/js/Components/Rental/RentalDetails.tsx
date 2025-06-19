@@ -112,3 +112,17 @@ export const RentalDetails: FC<Props> = ({ rental, onEdit }) => {
         </div>
     );
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -2,16 +2,16 @@ import React, { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from "@inertiajs/react";
 import { PageProps } from '@/types';
-import AdminLayout from '@/layouts/AdminLayout';
+import { AdminLayout } from '@/Modules/Core/resources/js';
 import { format } from "date-fns";
-import ErrorAlert from '@/components/ui/error-alert';
+import ErrorAlert from '@/Modules/Core/resources/js/components/ui/error-alert';
 import { toast } from 'sonner';
-import ErrorBoundary from '@/components/ErrorBoundary';
-import { usePermission } from '@/hooks/usePermission';
+import ErrorBoundary from '@/Modules/Core/resources/js/components/ErrorBoundary';
+import { usePermission } from '@/Modules/Core/resources/js/hooks/usePermission';
 
 // Shadcn UI Components
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import {
   Card,
   CardContent,
@@ -19,7 +19,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from '@/Modules/Core/resources/js/components/ui/card';
 import {
   Table,
   TableBody,
@@ -27,7 +27,7 @@ import {
   TableHeader,
   TableRow,
   TableCell,
-} from '@/components/ui/table';
+} from '@/Modules/Core/resources/js/components/ui/table';
 import {
   Dialog,
   DialogContent,
@@ -36,24 +36,24 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Separator } from '@/components/ui/separator';
+} from '@/Modules/Core/resources/js/components/ui/dialog';
+import { Checkbox } from '@/Modules/Core/resources/js/components/ui/checkbox';
+import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
+} from '@/Modules/Core/resources/js/components/ui/select';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { Progress } from '@/components/ui/progress';
+} from '@/Modules/Core/resources/js/components/ui/tooltip';
+import { Progress } from '@/Modules/Core/resources/js/components/ui/progress';
 
 // Icons
 import {
@@ -1106,5 +1106,19 @@ export default function ForRental({ auth, rental, timesheets, debug }: Props) {
     </ErrorBoundary>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

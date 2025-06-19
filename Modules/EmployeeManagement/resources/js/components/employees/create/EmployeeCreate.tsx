@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
 import { PageProps } from '@/types';
-import AdminLayout from '@/layouts/AdminLayout';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { AdminLayout } from '@/Modules/Core/resources/js';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Modules/Core/resources/js/components/ui/tabs';
 import { ArrowLeft } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
-import { usePermission } from '@/hooks/usePermission';
+import { useToast } from '@/Modules/Core/resources/js/components/ui/use-toast';
+import { usePermission } from '@/Modules/Core/resources/js/hooks/usePermission';
 
 // Import tab components
 import PersonalInfoTab from './tabs/PersonalInfoTab';
@@ -236,3 +236,19 @@ export default function EmployeeCreate({ auth, positions }: Props) {
     </AdminLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

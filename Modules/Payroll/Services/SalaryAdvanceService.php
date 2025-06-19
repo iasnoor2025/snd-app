@@ -2,6 +2,11 @@
 
 namespace Modules\Payroll\Services;
 
+use Modules\Payroll\Domain\Models\SalaryAdvance;
+use Modules\EmployeeManagement\Domain\Models\Employee;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Exception;
@@ -9,81 +14,84 @@ use Exception;
 class SalaryAdvanceService
 {
     /**
-     * Create a new salary advance request
-     *
-     * @param array $data
-     * @return array
+     * Get all salary advances with optional filtering
      */
-    public function createAdvanceRequest(array $data): array
+    public function getAdvances(array $filters = []): LengthAwarePaginator
     {
-        try {
-            DB::beginTransaction();
+        $query = SalaryAdvance::with(['employee', 'approvedBy']);
 
-            // TODO: Implement salary advance creation logic
-            // This is a stub implementation based on memory bank requirements
-
-            $advance = [
-                'id' => rand(1000, 9999), // Temporary ID for stub
-                'employee_id' => $data['employee_id'] ?? null,
-                'amount' => $data['amount'] ?? 0,
-                'reason' => $data['reason'] ?? '',
-                'status' => 'pending',
-                'requested_at' => now(),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-
-            DB::commit();
-
-            Log::info('Salary advance request created', ['advance_id' => $advance['id']]);
-
-            return [
-                'success' => true,
-                'data' => $advance,
-                'message' => 'Salary advance request created successfully'
-            ];
-        } catch (Exception $e) {
-            DB::rollBack();
-            Log::error('Failed to create salary advance request', ['error' => $e->getMessage()]);
-
-            return [
-                'success' => false,
-                'message' => 'Failed to create salary advance request',
-                'error' => $e->getMessage()
-            ];
+        // Apply filters
+        if (isset($filters['employee_id'])) {
+            $query->where('employee_id', $filters['employee_id']);
         }
+
+        if (isset($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        if (isset($filters['date_from'])) {
+            $query->whereDate('requested_date', '>=', $filters['date_from']);
+        }
+
+        if (isset($filters['date_to'])) {
+            $query->whereDate('requested_date', '<=', $filters['date_to']);
+        }
+
+        if (isset($filters['amount_min'])) {
+            $query->where('amount', '>=', $filters['amount_min']);
+        }
+
+        if (isset($filters['amount_max'])) {
+            $query->where('amount', '<=', $filters['amount_max']);
+        }
+
+        return $query->orderBy('requested_date', 'desc')
+                    ->paginate($filters['per_page'] ?? 15);
     }
 
     /**
-     * Get salary advance requests for an employee
-     *
-     * @param int $employeeId
-     * @return array
+     * Create a new salary advance request
      */
-    public function getEmployeeAdvances(int $employeeId): array
+    public function createAdvance(array $data): SalaryAdvance
     {
-        try {
-            // TODO: Implement database query to fetch employee advances
-            // This is a stub implementation
+        $employee = Employee::findOrFail($data['employee_id']);
+        
+        // Validate advance eligibility
+        $this->validateAdvanceEligibility($employee, $data['amount']);
 
-            $advances = [
-                // Stub data
-            ];
+        $advance = SalaryAdvance::create([
+            'employee_id' => $data['employee_id'],
+            'amount' => $data['amount'],
+            'reason' => $data['reason'] ?? null,
+            'requested_date' => now(),
+            'status' => 'pending',
+            'repayment_method' => $data['repayment_method'] ?? 'monthly_deduction',
+            'installments' => $data['installments'] ?? 1,
+            'notes' => $data['notes'] ?? null,
+        ]);
 
-            return [
-                'success' => true,
-                'data' => $advances,
-                'message' => 'Employee advances retrieved successfully'
-            ];
-        } catch (Exception $e) {
-            Log::error('Failed to retrieve employee advances', ['error' => $e->getMessage()]);
+        return $advance->load(['employee', 'approvedBy']);
+    }
 
-            return [
-                'success' => false,
-                'message' => 'Failed to retrieve employee advances',
-                'error' => $e->getMessage()
-            ];
+    /**
+     * Update salary advance
+     */
+    public function updateAdvance(SalaryAdvance $advance, array $data): SalaryAdvance
+    {
+        // Only allow updates for pending advances
+        if ($advance->status !== 'pending') {
+            throw new \Exception('Only pending advances can be updated');
         }
+
+        $advance->update([
+            'amount' => $data['amount'] ?? $advance->amount,
+            'reason' => $data['reason'] ?? $advance->reason,
+            'repayment_method' => $data['repayment_method'] ?? $advance->repayment_method,
+            'installments' => $data['installments'] ?? $advance->installments,
+            'notes' => $data['notes'] ?? $advance->notes,
+        ]);
+
+        return $advance->fresh(['employee', 'approvedBy']);
     }
 
     /**
@@ -98,8 +106,24 @@ class SalaryAdvanceService
         try {
             DB::beginTransaction();
 
-            // TODO: Implement approval logic
-            // This is a stub implementation
+            // Update advance status to approved
+            $updated = DB::table('salary_advances')
+                ->where('id', $advanceId)
+                ->update([
+                    'status' => 'approved',
+                    'approved_date' => now(),
+                    'approved_by' => $approverId,
+                    'updated_at' => now(),
+                ]);
+
+            if (!$updated) {
+                DB::rollBack();
+                return [
+                    'success' => false,
+                    'message' => 'Salary advance not found',
+                    'data' => null
+                ];
+            }
 
             Log::info('Salary advance approved', [
                 'advance_id' => $advanceId,
@@ -110,7 +134,12 @@ class SalaryAdvanceService
 
             return [
                 'success' => true,
-                'message' => 'Salary advance approved successfully'
+                'message' => 'Salary advance approved successfully',
+                'data' => [
+                    'id' => $advanceId,
+                    'status' => 'approved',
+                    'approved_date' => now()->toDateString(),
+                ]
             ];
         } catch (Exception $e) {
             DB::rollBack();
@@ -137,8 +166,25 @@ class SalaryAdvanceService
         try {
             DB::beginTransaction();
 
-            // TODO: Implement rejection logic
-            // This is a stub implementation
+            // Update advance status to rejected
+            $updated = DB::table('salary_advances')
+                ->where('id', $advanceId)
+                ->update([
+                    'status' => 'rejected',
+                    'rejected_date' => now(),
+                    'rejected_by' => $rejectorId,
+                    'rejection_reason' => $reason,
+                    'updated_at' => now(),
+                ]);
+
+            if (!$updated) {
+                DB::rollBack();
+                return [
+                    'success' => false,
+                    'message' => 'Salary advance not found',
+                    'data' => null
+                ];
+            }
 
             Log::info('Salary advance rejected', [
                 'advance_id' => $advanceId,
@@ -150,7 +196,12 @@ class SalaryAdvanceService
 
             return [
                 'success' => true,
-                'message' => 'Salary advance rejected successfully'
+                'message' => 'Salary advance rejected successfully',
+                'data' => [
+                    'id' => $advanceId,
+                    'status' => 'rejected',
+                    'rejection_reason' => $reason,
+                ]
             ];
         } catch (Exception $e) {
             DB::rollBack();
@@ -159,6 +210,189 @@ class SalaryAdvanceService
             return [
                 'success' => false,
                 'message' => 'Failed to reject salary advance',
+                'error' => $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Process advance payment
+     */
+    public function processPayment(SalaryAdvance $advance, array $paymentData): SalaryAdvance
+    {
+        if ($advance->status !== 'approved') {
+            throw new \Exception('Only approved advances can be paid');
+        }
+
+        $advance->update([
+            'status' => 'paid',
+            'paid_date' => now(),
+            'payment_method' => $paymentData['payment_method'] ?? 'bank_transfer',
+            'payment_reference' => $paymentData['payment_reference'] ?? null,
+            'payment_notes' => $paymentData['payment_notes'] ?? null,
+        ]);
+
+        return $advance->fresh(['employee', 'approvedBy']);
+    }
+
+    /**
+     * Get employee advances
+     */
+    public function getEmployeeAdvances(int $employeeId): Collection
+    {
+        return SalaryAdvance::where('employee_id', $employeeId)
+                          ->orderBy('created_at', 'desc')
+                          ->get();
+    }
+
+    /**
+     * Get advance statistics
+     */
+    public function getAdvanceStatistics(array $filters = []): array
+    {
+        $query = SalaryAdvance::query();
+
+        // Apply date filters
+        if (isset($filters['date_from'])) {
+            $query->whereDate('requested_date', '>=', $filters['date_from']);
+        }
+
+        if (isset($filters['date_to'])) {
+            $query->whereDate('requested_date', '<=', $filters['date_to']);
+        }
+
+        $advances = $query->get();
+
+        return [
+            'total_requests' => $advances->count(),
+            'pending_requests' => $advances->where('status', 'pending')->count(),
+            'approved_requests' => $advances->where('status', 'approved')->count(),
+            'rejected_requests' => $advances->where('status', 'rejected')->count(),
+            'paid_requests' => $advances->where('status', 'paid')->count(),
+            'total_amount_requested' => $advances->sum('amount'),
+            'total_amount_approved' => $advances->where('status', '!=', 'rejected')->sum('approved_amount'),
+            'total_amount_paid' => $advances->where('status', 'paid')->sum('approved_amount'),
+            'average_advance_amount' => $advances->avg('amount'),
+            'approval_rate' => $advances->count() > 0 ? 
+                ($advances->whereIn('status', ['approved', 'paid'])->count() / $advances->count()) * 100 : 0,
+        ];
+    }
+
+    /**
+     * Validate advance eligibility
+     */
+    protected function validateAdvanceEligibility(Employee $employee, float $amount): void
+    {
+        // Check if employee has pending advances
+        $pendingAdvances = SalaryAdvance::where('employee_id', $employee->id)
+                                       ->whereIn('status', ['pending', 'approved'])
+                                       ->count();
+
+        if ($pendingAdvances > 0) {
+            throw new \Exception('Employee has pending advance requests');
+        }
+
+        // Check if amount exceeds monthly salary
+        $monthlySalary = $employee->basic_salary ?? 0;
+        $maxAdvanceAmount = $monthlySalary * 0.5; // 50% of monthly salary
+
+        if ($amount > $maxAdvanceAmount) {
+            throw new \Exception("Advance amount cannot exceed 50% of monthly salary (Max: {$maxAdvanceAmount})");
+        }
+
+        // Check employment duration (minimum 3 months)
+        $employmentDuration = $employee->joining_date ? 
+            Carbon::parse($employee->joining_date)->diffInMonths(now()) : 0;
+
+        if ($employmentDuration < 3) {
+            throw new \Exception('Employee must complete at least 3 months of employment to request advance');
+        }
+    }
+
+    /**
+     * Create repayment schedule
+     */
+    protected function createRepaymentSchedule(SalaryAdvance $advance): void
+    {
+        // This would create a repayment schedule based on installments
+        // For now, we'll just add a note that repayment schedule is created
+        $advance->update([
+            'repayment_schedule_created' => true,
+            'next_deduction_date' => now()->addMonth(),
+        ]);
+    }
+
+    /**
+     * Calculate monthly deduction amount
+     */
+    public function calculateMonthlyDeduction(SalaryAdvance $advance): float
+    {
+        if ($advance->status !== 'paid' || !$advance->installments) {
+            return 0;
+        }
+
+        return $advance->approved_amount / $advance->installments;
+    }
+
+    /**
+     * Get advances due for deduction
+     */
+    public function getAdvancesDueForDeduction(): Collection
+    {
+        return SalaryAdvance::where('status', 'paid')
+                          ->where('repayment_method', 'monthly_deduction')
+                          ->whereDate('next_deduction_date', '<=', now())
+                          ->with(['employee'])
+                          ->get();
+    }
+
+    /**
+     * Create a new salary advance request
+     *
+     * @param array $data
+     * @return array
+     */
+    public function createAdvanceRequest(array $data): array
+    {
+        try {
+            DB::beginTransaction();
+
+            // Create the salary advance record
+            $advanceId = DB::table('salary_advances')->insertGetId([
+                'employee_id' => $data['employee_id'],
+                'amount' => $data['amount'],
+                'reason' => $data['reason'] ?? null,
+                'repayment_months' => $data['repayment_months'] ?? 12,
+                'monthly_deduction' => $data['amount'] / ($data['repayment_months'] ?? 12),
+                'remaining_balance' => $data['amount'],
+                'status' => 'pending',
+                'requested_date' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::commit();
+
+            Log::info('Salary advance request created', ['advance_id' => $advanceId]);
+
+            return [
+                'success' => true,
+                'data' => [
+                    'id' => $advanceId,
+                    'employee_id' => $data['employee_id'],
+                    'amount' => $data['amount'],
+                    'status' => 'pending',
+                    'monthly_deduction' => $data['amount'] / ($data['repayment_months'] ?? 12),
+                ],
+                'message' => 'Salary advance request created successfully'
+            ];
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to create salary advance request', ['error' => $e->getMessage()]);
+
+            return [
+                'success' => false,
+                'message' => 'Failed to create salary advance request',
                 'error' => $e->getMessage()
             ];
         }

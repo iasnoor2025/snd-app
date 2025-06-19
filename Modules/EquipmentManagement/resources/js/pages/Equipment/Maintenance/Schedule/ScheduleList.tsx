@@ -7,18 +7,18 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+} from '@/Modules/Core/resources/js/components/ui/table';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Dialog, DialogContent, DialogTrigger } from '@/Modules/Core/resources/js/components/ui/dialog';
 import { AlertTriangle, Calendar, MoreHorizontal, WrenchIcon, User } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+} from '@/Modules/Core/resources/js/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/Modules/Core/resources/js/components/ui/avatar';
 import { MaintenanceDetailView } from './MaintenanceDetailView';
 
 interface Equipment {
@@ -209,3 +209,20 @@ export function ScheduleList({ schedule, technicians, isConflict = false }: Sche
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

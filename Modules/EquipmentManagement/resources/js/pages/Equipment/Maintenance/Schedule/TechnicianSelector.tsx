@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Modules/Core/resources/js/components/ui/select';
+import { Avatar, AvatarFallback, AvatarImage } from '@/Modules/Core/resources/js/components/ui/avatar';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 
 interface User {
   id: number;
@@ -61,3 +61,20 @@ function getBadgeVariant(workload: number): 'default' | 'secondary' | 'destructi
   if (workload <= 6) return 'secondary';
   return 'destructive';
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

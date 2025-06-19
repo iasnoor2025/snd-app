@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\AvatarController;
+use Modules\Core\Http\Controllers\AvatarController;
 use Illuminate\Support\Facades\Route;
 
 /*

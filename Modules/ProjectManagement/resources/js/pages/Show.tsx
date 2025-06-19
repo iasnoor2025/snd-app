@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, router } from '@inertiajs/react';
-import AdminLayout from '../../../../../resources/js/layouts/AdminLayout';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '../../../../../resources/js/components/ui/card';
-import { Button } from '../../../../../resources/js/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../../../resources/js/components/ui/tabs';
+import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/Modules/Core/resources/js/components/ui/card';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Modules/Core/resources/js/components/ui/tabs';
 import { format } from 'date-fns';
 import {
     Edit,
@@ -24,10 +24,10 @@ import {
 } from 'lucide-react';
 import ResourceList from '../components/project/ResourceList';
 import ResourceForm from '../components/project/ResourceForm';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../../../../../resources/js/components/ui/dialog';
-import { Badge } from '../../../../../resources/js/components/ui/badge';
-import { Separator } from '../../../../../resources/js/components/ui/separator';
-import { Progress } from '../../../../../resources/js/components/ui/progress';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/Modules/Core/resources/js/components/ui/dialog';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
+import { Progress } from '@/Modules/Core/resources/js/components/ui/progress';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import TaskList, { ProjectTask } from '../components/project/TaskList';
@@ -1056,4 +1056,18 @@ export default function Show({ project, manpower = [], equipment = [], materials
         </AdminLayout>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

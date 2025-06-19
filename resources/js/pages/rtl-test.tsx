@@ -1,5 +1,5 @@
 import React from 'react';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
+import LanguageSwitcher from '../Modules/Core/resources/js/components/LanguageSwitcher';
 
 export default function RTLTest() {
     return (
@@ -47,3 +47,4 @@ export default function RTLTest() {
         </div>
     );
 }
+

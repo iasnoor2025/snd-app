@@ -1,13 +1,13 @@
 import React from "react";
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Modules/Core/resources/js/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Modules/Core/resources/js/components/ui/tabs";
+import { Alert, AlertDescription, AlertTitle } from "@/Modules/Core/resources/js/components/ui/alert";
+import { Button } from "@/Modules/Core/resources/js/components/ui/button";
 import { Clock, FileText, Loader2 } from "lucide-react";
 import RentalItemsCard from "../../rentals/RentalItemsCard";
 import { format } from "date-fns";
-import { Progress } from '@/components/ui/progress';
+import { Progress } from '@/Modules/Core/resources/js/components/ui/progress';
 
 // Interface for PendingSection props
 interface PendingSectionProps {
@@ -148,3 +148,17 @@ export default function PendingSection({
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

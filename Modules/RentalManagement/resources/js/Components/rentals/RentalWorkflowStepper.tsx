@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { cn } from '@/lib/utils';
+import { cn } from '@/Modules/Core/resources/js/lib/utils';
 // import { RentalStatus } from '@/types/models';
 type RentalStatus = string;
 import { Check, Clock, AlertCircle } from 'lucide-react';
@@ -177,5 +177,19 @@ export function RentalWorkflowStepper({
         </div>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

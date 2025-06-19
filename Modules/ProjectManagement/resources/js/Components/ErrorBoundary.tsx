@@ -1,8 +1,8 @@
 import React, { Component, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/Modules/Core/resources/js/components/ui/alert';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 
 interface Props {
@@ -91,3 +91,17 @@ class ErrorBoundary extends Component<Props, State> {
 }
 
 export default ErrorBoundary;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

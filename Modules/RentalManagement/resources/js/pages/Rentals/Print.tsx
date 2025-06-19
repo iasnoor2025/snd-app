@@ -211,3 +211,17 @@ export default function Print({ rental }: Props) {
   );
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

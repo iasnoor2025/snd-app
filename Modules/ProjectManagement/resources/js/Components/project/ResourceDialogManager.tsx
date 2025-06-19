@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/Modules/Core/resources/js/components/ui/dialog';
 import ResourceForm from './ResourceForm';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/Modules/Core/resources/js/components/ui/use-toast';
 
 // Define a type for resource types
 export type ResourceType = 'manpower' | 'equipment' | 'material' | 'fuel' | 'expense';
@@ -90,3 +90,17 @@ export default function ResourceDialogManager({
         </Dialog>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

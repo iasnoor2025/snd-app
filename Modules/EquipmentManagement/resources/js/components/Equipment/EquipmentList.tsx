@@ -200,3 +200,20 @@ export const EquipmentList: FC<Props> = ({ equipment }) => {
     );
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\TechnicianRequest;
 use Modules\EquipmentManagement\Domain\Models\Technician;
 use Modules\Core\Domain\Models\User;
-use App\Services\MaintenanceTaskService;
+use Modules\EquipmentManagement\Services\MaintenanceTaskService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

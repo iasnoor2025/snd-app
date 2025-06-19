@@ -6,7 +6,7 @@ import {
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@/components/ui/card';
+} from '@/Modules/Core/resources/js/components/ui/card';
 import {
     Table,
     TableBody,
@@ -14,22 +14,22 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+} from '@/Modules/Core/resources/js/components/ui/table';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '@/components/ui/select';
+} from '@/Modules/Core/resources/js/components/ui/select';
 import {
     Tabs,
     TabsContent,
     TabsList,
     TabsTrigger,
-} from '@/components/ui/tabs';
+} from '@/Modules/Core/resources/js/components/ui/tabs';
 import {
     BarChart,
     Bar,
@@ -664,3 +664,17 @@ const GeofenceStatsDashboard: React.FC = () => {
 };
 
 export default GeofenceStatsDashboard;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

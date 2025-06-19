@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
 import { PageProps, BreadcrumbItem } from '../../types/index';
-import AdminLayout from '../../layouts/AdminLayout';
+import { AdminLayout } from '@/Modules/Core/resources/js';
 import { Employee, Position } from '../../types/models';
 import {
   Card,
@@ -10,17 +10,17 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
+} from '@/Modules/Core/resources/js/components/ui/card';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/Modules/Core/resources/js/components/ui/select';
 import {
   Table,
   TableBody,
@@ -28,17 +28,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from '@/Modules/Core/resources/js/components/ui/table';
 import { Search, Plus, LoaderCircle, BriefcaseBusiness, Banknote, MapPin, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
-import { usePermission } from '@/hooks/usePermission';
+import { usePermission } from '@/Modules/Core/resources/js/hooks/usePermission';
 import { toast } from 'sonner';
-import CreateButton from '@/components/shared/CreateButton';
-import CrudButtons from '@/components/shared/CrudButtons';
-import Permission from '@/components/Permission';
+import CreateButton from '@/Modules/Core/resources/js/components/shared/CreateButton';
+import CrudButtons from '@/Modules/Core/resources/js/components/shared/CrudButtons';
+import Permission from '@/Modules/Core/resources/js/components/Permission';
 import { debounce } from 'lodash';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { getTranslation } from '@/utils/translation';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/Modules/Core/resources/js/components/ui/tooltip';
+import { getTranslation } from '@/Modules/Core/resources/js/utils/translation';
 
 const breadcrumbs = [
   { title: 'Dashboard', href: '/dashboard' },
@@ -408,3 +408,19 @@ export default function Index({ auth, employees, filters, departments, positions
     </AdminLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

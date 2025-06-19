@@ -1,7 +1,7 @@
 import React, { Component, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/Modules/Core/resources/js/components/ui/alert';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import { AlertTriangle } from 'lucide-react';
 
 interface Props {
@@ -61,3 +61,17 @@ export class DialogErrorBoundary extends Component<Props, State> {
 }
 
 export default DialogErrorBoundary;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

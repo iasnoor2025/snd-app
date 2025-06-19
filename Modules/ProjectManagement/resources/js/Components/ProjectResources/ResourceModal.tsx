@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/Modules/Core/resources/js/components/ui/dialog';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import { Loader2 } from 'lucide-react';
 
 interface ResourceModalProps {
@@ -52,3 +52,17 @@ export function ResourceModal({
         </Dialog>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

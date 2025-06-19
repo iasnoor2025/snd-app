@@ -1,15 +1,15 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { Button } from '../../../../../../resources/js/components/ui/button';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from '../../../../../../resources/js/components/ui/card';
-import { Badge } from '../../../../../../resources/js/components/ui/badge';
+} from '@/Modules/Core/resources/js/components/ui/card';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import {
   Table,
   TableBody,
@@ -17,10 +17,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '../../../../../../resources/js/components/ui/table';
+} from '@/Modules/Core/resources/js/components/ui/table';
 import {
   Progress,
-} from '../../../../../../resources/js/components/ui/progress';
+} from '@/Modules/Core/resources/js/components/ui/progress';
 import {
   ArrowLeft as ArrowLeftIcon,
   Calendar as CalendarIcon,
@@ -36,8 +36,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '../../../../../../resources/js/components/ui/breadcrumb';
-import AdminLayout from '../../../../../EmployeeManagement/resources/js/layouts/AdminLayout';
+} from '@/Modules/Core/resources/js/components/ui/breadcrumb';
+import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
 import { format } from 'date-fns';
 
 interface Employee {
@@ -384,3 +384,17 @@ const LeaveBalanceShow: React.FC = () => {
 };
 
 export default LeaveBalanceShow;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

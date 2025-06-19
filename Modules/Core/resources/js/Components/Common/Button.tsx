@@ -1,8 +1,8 @@
-import { Button as ShadcnButton } from '@/Modules/Core/Resources/js/components/ui/button';
-import { cn } from '@/Modules/Core/Resources/js/lib/utils';
+import { Button as ShadcnButton } from '../../components/ui/button';
+import { cn } from '../../lib/utils';
 import { ButtonHTMLAttributes, forwardRef } from "react";
 import { VariantProps } from "class-variance-authority";
-import { buttonVariants } from '@/Modules/Core/Resources/js/components/ui/button';
+import { buttonVariants } from '../../components/ui/button';
 import { Loader2 } from "lucide-react";
 
 /**
@@ -109,5 +109,26 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(;
 Button.displayName = "Button";
 
 export { Button };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

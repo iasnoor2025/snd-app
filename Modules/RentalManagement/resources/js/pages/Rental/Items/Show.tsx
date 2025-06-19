@@ -1,9 +1,9 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head } from '@inertiajs/react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import { ArrowLeft, Edit, History, Calendar } from 'lucide-react';
 import { RentalItem } from '@/Modules/RentalManagement/Resources/js/Types/rental';
 
@@ -176,3 +176,17 @@ export const Show: FC<Props> = ({ item, rentalHistory }) => {
 };
 
 export default Show;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

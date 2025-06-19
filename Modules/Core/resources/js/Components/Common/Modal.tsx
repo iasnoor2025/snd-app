@@ -6,8 +6,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "../../../../../../resources/js/components/ui/dialog";
-import { cn } from "../../../../../../resources/js/lib/utils";
+} from "../../components/ui/dialog";
+import { cn } from "../../lib/utils";
 import { Button } from "./Button";
 import { X, Loader2 } from "lucide-react";
 
@@ -207,5 +207,26 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(;
 Modal.displayName = "Modal";
 
 export { Modal };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

@@ -1,14 +1,14 @@
 import React from "react";
 import { useTranslation } from 'react-i18next';
-import { cn } from "@/lib/utils";
+import { cn } from "@/Modules/Core/resources/js/lib/utils";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardContent,
   CardFooter
-} from "../../../../../../resources/js/components/ui/card";
-// import { Progress } from 'resources/js/components/ui/progress'; // TODO: Progress component import unresolved, revisit if file is added
+} from "@/Modules/Core/resources/js/components/ui/card";
+// import { Progress } from '@/Modules/Core/resources/js/components/ui/progress'; // TODO: Progress component import unresolved, revisit if file is added
 import { CheckCircle2, Calendar, Clock } from "lucide-react";
 
 interface ProjectProgressProps {
@@ -131,3 +131,17 @@ export function ProjectProgress({
     </Card>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

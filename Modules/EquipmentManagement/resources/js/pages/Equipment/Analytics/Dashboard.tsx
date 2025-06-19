@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Head } from '@inertiajs/react';
-import AdminLayout from '@/layouts/AdminLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { AdminLayout } from '@/Modules/Core/resources/js';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Modules/Core/resources/js/components/ui/tabs';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import {
   LineChart,
   Line,
@@ -40,7 +40,7 @@ import {
   Filter,
   RefreshCw
 } from 'lucide-react';
-import { formatCurrency } from '@/utils/format';
+import { formatCurrency } from '@/Modules/Core/resources/js/utils/format';
 
 interface EquipmentAnalytics {
   totalEquipment: number;
@@ -414,3 +414,20 @@ const EquipmentAnalyticsDashboard: React.FC<Props> = ({ analytics }) => {
 };
 
 export default EquipmentAnalyticsDashboard;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

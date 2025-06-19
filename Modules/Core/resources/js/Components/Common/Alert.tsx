@@ -3,8 +3,8 @@ import {
   Alert as ShadcnAlert,
   AlertTitle,
   AlertDescription,
-} from "../../../../../../resources/js/components/ui/alert";
-import { cn } from "../../../../../../resources/js/lib/utils";
+} from "../../components/ui/alert";
+import { cn } from "../../lib/utils";
 import { AlertCircle, CheckCircle, Info, XCircle, X } from "lucide-react";
 
 /**
@@ -207,5 +207,26 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(
 Alert.displayName = "Alert";
 
 export { Alert };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

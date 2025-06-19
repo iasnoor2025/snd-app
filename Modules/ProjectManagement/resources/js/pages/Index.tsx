@@ -2,18 +2,18 @@ import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '../../../../../resources/js/components/ui/card';
-import { Button } from '../../../../../resources/js/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../../../resources/js/components/ui/table';
-import { Badge } from '../../../../../resources/js/components/ui/badge';
-import { Separator } from '../../../../../resources/js/components/ui/separator';
-import { Input } from '../../../../../resources/js/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/Modules/Core/resources/js/components/ui/card';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Modules/Core/resources/js/components/ui/table';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
 import { format } from 'date-fns';
 import {
     Eye, Edit, Plus, LayoutGrid, CheckCircle, Clock, AlertCircle, XCircle,
     Filter, Search
 } from 'lucide-react';
-import AdminLayout from '../../../../../resources/js/layouts/AdminLayout';
+import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
 // Declare window.route for TypeScript
 // @ts-ignore
 // eslint-disable-next-line
@@ -291,3 +291,17 @@ export default function Index({ projects }: Props) {
         </AdminLayout>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

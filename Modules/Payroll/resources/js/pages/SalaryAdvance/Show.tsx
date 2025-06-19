@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, useForm, router } from '@inertiajs/react';
-import { PageProps } from '../../../../../../resources/js/types';
-import AdminLayout from '../../../../../../resources/js/layouts/AdminLayout';
-import { Button } from '../../../../../../resources/js/components/ui/button';
-import { Badge } from '../../../../../../resources/js/components/ui/badge';
+import { PageProps } from '@/Modules/Core/resources/js/types';
+import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from '../../../../../../resources/js/components/ui/card';
+} from '@/Modules/Core/resources/js/components/ui/card';
 import {
     Dialog,
     DialogContent,
@@ -19,11 +19,11 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from '../../../../../../resources/js/components/ui/dialog';
+} from '@/Modules/Core/resources/js/components/ui/dialog';
 
-import { Textarea } from '../../../../../../resources/js/components/ui/textarea';
-import { Label } from '../../../../../../resources/js/components/ui/label';
-import { Separator } from '../../../../../../resources/js/components/ui/separator';
+import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
+import { Label } from '@/Modules/Core/resources/js/components/ui/label';
+import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
 import {
     ArrowLeft,
     Check,
@@ -37,7 +37,7 @@ import {
 import { Link } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { route } from 'ziggy-js';
-import { usePermission } from '../../../../../../resources/js/hooks/usePermission';
+import { usePermission } from '@/Modules/Core/resources/js/hooks/usePermission';
 
 interface Employee {
     id: number;
@@ -362,3 +362,17 @@ export default function Show({ auth, salaryAdvance }: Props) {
         </AdminLayout>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

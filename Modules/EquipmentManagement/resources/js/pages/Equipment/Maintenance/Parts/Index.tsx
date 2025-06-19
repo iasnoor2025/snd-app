@@ -1,8 +1,8 @@
 import { Head } from '@inertiajs/react';
-import AdminLayout from '@/layouts/AdminLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { AdminLayout } from '@/Modules/Core/resources/js';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import { format, parseISO } from 'date-fns';
 import { PageBreadcrumb } from '../../../../components/PageBreadcrumb';
 import { MaintenanceParts } from '../Schedule/MaintenanceParts';
@@ -224,4 +224,21 @@ export default function Index({ maintenanceRecord, availableParts }: IndexProps)
     </AdminLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

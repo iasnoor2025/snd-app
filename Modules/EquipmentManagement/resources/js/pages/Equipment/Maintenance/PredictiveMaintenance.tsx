@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Head } from '@inertiajs/react';
-import AdminLayout from '../../../../../../../resources/js/layouts/AdminLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../../../../resources/js/components/ui/card';
-import { Badge } from '../../../../../../../resources/js/components/ui/badge';
-import { Button } from '../../../../../../../resources/js/components/ui/button';
-import { Progress } from '../../../../../../../resources/js/components/ui/progress';
-import { Alert, AlertDescription } from '../../../../../../../resources/js/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../../../../../resources/js/components/ui/tabs';
-import { Input } from '../../../../../../../resources/js/components/ui/input';
-import { Label } from '../../../../../../../resources/js/components/ui/label';
-import { Textarea } from '../../../../../../../resources/js/components/ui/textarea';
+import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Progress } from '@/Modules/Core/resources/js/components/ui/progress';
+import { Alert, AlertDescription } from '@/Modules/Core/resources/js/components/ui/alert';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Modules/Core/resources/js/components/ui/tabs';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Label } from '@/Modules/Core/resources/js/components/ui/label';
+import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
 import {
   LineChart,
   Line,
@@ -50,7 +50,7 @@ import {
   Shield,
   Cpu
 } from 'lucide-react';
-import { formatCurrency } from '../../../../../../../resources/js/utils/format';
+import { formatCurrency } from '@/Modules/Core/resources/js/utils/format';
 
 interface Equipment {
   id: number;
@@ -594,3 +594,20 @@ const PredictiveMaintenance: React.FC<Props> = ({
 };
 
 export default PredictiveMaintenance;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

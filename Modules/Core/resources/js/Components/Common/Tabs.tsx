@@ -4,8 +4,8 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "../../../../../../resources/js/components/ui/tabs";
-import { cn } from "../../../../../../resources/js/lib/utils";
+} from "../../components/ui/tabs";
+import { cn } from "../../lib/utils";
 import { Loader2 } from "lucide-react";
 
 /**
@@ -249,4 +249,25 @@ export { Tabs };
 
 
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

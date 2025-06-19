@@ -88,3 +88,17 @@ export const MapChart: FC<MapChartProps> = ({ data, height = 400, showPaths = fa
     );
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

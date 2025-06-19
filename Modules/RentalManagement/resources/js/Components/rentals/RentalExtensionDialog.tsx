@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from 'react-i18next';
 import { format, addDays } from "date-fns";
 import { router } from "@inertiajs/react";
-import { Calendar } from "@/components/ui/calendar";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { Calendar } from "@/Modules/Core/resources/js/components/ui/calendar";
+import { Textarea } from "@/Modules/Core/resources/js/components/ui/textarea";
+import { Button } from "@/Modules/Core/resources/js/components/ui/button";
 import { Loader2 } from "lucide-react";
 import {
   Dialog,
@@ -13,17 +13,17 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/Modules/Core/resources/js/components/ui/dialog";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Label } from "@/components/ui/label";
+} from "@/Modules/Core/resources/js/components/ui/popover";
+import { Label } from "@/Modules/Core/resources/js/components/ui/label";
 import { CalendarIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/Modules/Core/resources/js/lib/utils";
 import axios from "axios";
-import ToastManager from "@/utils/toast-manager";
+import ToastManager from "@/Modules/Core/resources/js/utils/toast-manager";
 
 interface RentalExtensionDialogProps {
   rentalId: number;
@@ -175,5 +175,19 @@ export default function RentalExtensionDialog({
     </Dialog>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

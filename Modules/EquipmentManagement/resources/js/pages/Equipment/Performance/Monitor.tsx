@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Head } from '@inertiajs/react';
-import AdminLayout from '../../../../../../../resources/js/layouts/AdminLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../../../../resources/js/components/ui/card';
-import { Badge } from '../../../../../../../resources/js/components/ui/badge';
-import { Button } from '../../../../../../../resources/js/components/ui/button';
-import { Progress } from '../../../../../../../resources/js/components/ui/progress';
-import { Alert, AlertDescription } from '../../../../../../../resources/js/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../../../../../resources/js/components/ui/tabs';
+import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Progress } from '@/Modules/Core/resources/js/components/ui/progress';
+import { Alert, AlertDescription } from '@/Modules/Core/resources/js/components/ui/alert';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Modules/Core/resources/js/components/ui/tabs';
 import {
   LineChart,
   Line,
@@ -37,7 +37,7 @@ import {
   TrendingUp,
   TrendingDown
 } from 'lucide-react';
-import { formatCurrency } from '../../../../../../../resources/js/utils/format';
+import { formatCurrency } from '@/Modules/Core/resources/js/utils/format';
 
 interface EquipmentStatus {
   id: number;
@@ -482,3 +482,20 @@ const EquipmentPerformanceMonitor: React.FC<Props> = ({ equipment, selectedEquip
 };
 
 export default EquipmentPerformanceMonitor;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

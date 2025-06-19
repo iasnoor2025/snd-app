@@ -1,15 +1,15 @@
 import React from "react";
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/Modules/Core/resources/js/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/Modules/Core/resources/js/components/ui/alert";
+import { Button } from "@/Modules/Core/resources/js/components/ui/button";
+import { Badge } from "@/Modules/Core/resources/js/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Modules/Core/resources/js/components/ui/tabs";
 import { Clock, Download, CheckCircle2, FileText, Send, X } from "lucide-react";
 import RentalItemsCard from "../../rentals/RentalItemsCard";
 import { format } from "date-fns";
-import { formatCurrency } from "@/utils/format";
-import { Progress } from '@/components/ui/progress';
+import { formatCurrency } from "@/Modules/Core/resources/js/utils/format";
+import { Progress } from '@/Modules/Core/resources/js/components/ui/progress';
 
 // Interface for QuotationSection props
 interface QuotationSectionProps {
@@ -234,3 +234,17 @@ export default function QuotationSection({
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -5,13 +5,13 @@ import { Head, Link, router } from "@inertiajs/react";
 type PageProps = any;
 type Rental = any;
 type RentalTimesheet = any;
-import AdminLayout from '@/layouts/AdminLayout';
+import { AdminLayout } from '@/Modules/Core/resources/js';
 import { format, differenceInHours, differenceInMinutes } from "date-fns";
-import ErrorAlert from '@/components/ui/error-alert';
+import ErrorAlert from '@/Modules/Core/resources/js/components/ui/error-alert';
 
 // Shadcn UI Components
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import {
   Card,
   CardContent,
@@ -19,7 +19,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from '@/Modules/Core/resources/js/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -27,16 +27,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Separator } from '@/components/ui/separator';
+} from '@/Modules/Core/resources/js/components/ui/dialog';
+import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { Progress } from '@/components/ui/progress';
-import { Label } from '@/components/ui/label';
+} from '@/Modules/Core/resources/js/components/ui/tooltip';
+import { Progress } from '@/Modules/Core/resources/js/components/ui/progress';
+import { Label } from '@/Modules/Core/resources/js/components/ui/label';
 
 // Icons
 import {
@@ -852,4 +852,18 @@ export default function Show({ auth, rental, timesheet }: Props) {
     </ErrorBoundary>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

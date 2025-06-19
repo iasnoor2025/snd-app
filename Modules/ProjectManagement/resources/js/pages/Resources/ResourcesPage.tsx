@@ -8,10 +8,10 @@
 
 import React, { Suspense, lazy, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Modules/Core/resources/js/components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
 import { useResourceStore } from '../../stores/resourceStore';
-import AdminLayout from '../../layouts/AdminLayout';
+import { AdminLayout } from '@/Modules/Core/resources/js';
 import type {
     ManpowerResource,
     EquipmentResource,
@@ -180,4 +180,18 @@ export function ResourcesPage({
 }
 
 export default ResourcesPage;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

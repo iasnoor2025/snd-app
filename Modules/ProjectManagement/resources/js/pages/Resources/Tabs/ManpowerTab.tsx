@@ -7,8 +7,8 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Modules/Core/resources/js/components/ui/table';
 import { Pencil, Trash2 } from 'lucide-react';
 import { ResourceFormModal } from '../../../components/project/resources/ResourceModal';
 import { useResourceFormModal } from '../../../hooks/useResourceFormModal';
@@ -184,4 +184,18 @@ export function ManpowerTab({ project, manpowers }: ManpowerTabProps) {
     );
 }
 export default ManpowerTab;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

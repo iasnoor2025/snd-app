@@ -8,9 +8,9 @@ import {
   PerformanceReviewFilter,
   PERFORMANCE_RATING_CATEGORIES
 } from '../../types/performance';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
 import {
   Table,
   TableBody,
@@ -18,23 +18,23 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from '@/components/ui/table';
+} from '@/Modules/Core/resources/js/components/ui/table';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
+} from '@/Modules/Core/resources/js/components/ui/dropdown-menu';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '@/components/ui/select';
-import { DatePicker } from '@/components/ui/date-picker';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+} from '@/Modules/Core/resources/js/components/ui/select';
+import { DatePicker } from '@/Modules/Core/resources/js/components/ui/date-picker';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Alert, AlertDescription, AlertTitle } from '@/Modules/Core/resources/js/components/ui/alert';
 import {
   AlertCircle,
   MoreHorizontal,
@@ -54,9 +54,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogClose
-} from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+} from '@/Modules/Core/resources/js/components/ui/dialog';
+import { Label } from '@/Modules/Core/resources/js/components/ui/label';
+import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
 
 interface PerformanceReviewListProps {
   employeeId?: number;
@@ -437,5 +437,21 @@ export const PerformanceReviewList: React.FC<PerformanceReviewListProps> = ({
 };
 
 export default PerformanceReviewList;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

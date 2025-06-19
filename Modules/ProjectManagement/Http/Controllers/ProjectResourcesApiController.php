@@ -8,7 +8,7 @@ use Modules\ProjectManagement\Domain\Models\ProjectEquipment;
 use Modules\ProjectManagement\Domain\Models\ProjectMaterial;
 use Modules\ProjectManagement\Domain\Models\ProjectFuel;
 use Modules\ProjectManagement\Domain\Models\ProjectExpense;
-use App\Services\ProjectResourceService;
+use Modules\ProjectManagement\Services\ProjectResourceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;

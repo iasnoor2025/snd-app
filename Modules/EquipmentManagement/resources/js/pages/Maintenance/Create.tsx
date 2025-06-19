@@ -1,26 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { Head, Link, useForm, router } from '@inertiajs/react';
 import { PageProps } from '@/types';
-import AdminLayout from '@/layouts/AdminLayout';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { AdminLayout } from '@/Modules/Core/resources/js';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
+import { Label } from '@/Modules/Core/resources/js/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/Modules/Core/resources/js/components/ui/radio-group';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+} from '@/Modules/Core/resources/js/components/ui/select';
+import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/Modules/Core/resources/js/components/ui/popover';
 import { format } from 'date-fns';
 import { CalendarIcon, Plus, Minus, ArrowLeft } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
-import { useToast } from '@/components/ui/use-toast';
+import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
+import { useToast } from '@/Modules/Core/resources/js/components/ui/use-toast';
 
 // Placeholder types
 type Equipment = any;
@@ -437,3 +437,20 @@ export default function Create({ auth, equipment, employees, inventoryItems, par
     </AdminLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

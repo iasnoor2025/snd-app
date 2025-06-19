@@ -5,20 +5,20 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import useLoadingState from '../../../resources/js/hooks/useLoadingState';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../resources/js/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../resources/js/components/ui/tabs';
-import { Alert, AlertDescription, AlertTitle } from '../../../resources/js/components/ui/alert';
-import { Button } from '../../../resources/js/components/ui/button';
-import { Input } from '../../../resources/js/components/ui/input';
-import { Textarea } from '../../../resources/js/components/ui/textarea';
-import { Label } from '../../../resources/js/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../resources/js/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../@/Modules/Core/resources/js/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../@/Modules/Core/resources/js/components/ui/tabs';
+import { Alert, AlertDescription, AlertTitle } from '../../@/Modules/Core/resources/js/components/ui/alert';
+import { Button } from '../../@/Modules/Core/resources/js/components/ui/button';
+import { Input } from '../../@/Modules/Core/resources/js/components/ui/input';
+import { Textarea } from '../../@/Modules/Core/resources/js/components/ui/textarea';
+import { Label } from '../../@/Modules/Core/resources/js/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../@/Modules/Core/resources/js/components/ui/select';
 import { format } from 'date-fns';
-import { DatePicker } from '../../../resources/js/components/ui/date-picker';
+import { DatePicker } from '../../@/Modules/Core/resources/js/components/ui/date-picker';
 import { AlertCircle, Loader2, Save, Plus, Trash } from 'lucide-react';
-import DocumentManager from '../../../resources/js/components/DocumentManager';
+import DocumentManager from '../../@/Modules/Core/resources/js/components/DocumentManager';
 import { Employee, Department, Position } from '../types/employee';
-import { getTranslation } from '@/utils/translation';
+import { getTranslation } from '@/Modules/Core/resources/js/utils/translation';
 
 interface EmployeeFormProps {
   employee?: Employee;
@@ -623,4 +623,20 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onSave, onCancel 
 };
 
 export default EmployeeForm;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

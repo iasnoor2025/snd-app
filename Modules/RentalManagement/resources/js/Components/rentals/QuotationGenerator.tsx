@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Modules/Core/resources/js/components/ui/button";
 import { FileText, Loader2 } from "lucide-react";
-import { usePermission } from "@/hooks/usePermission";
-import ToastManager from "@/utils/toast-manager";
+import { usePermission } from "@/Modules/Core/resources/js/hooks/usePermission";
+import ToastManager from "@/Modules/Core/resources/js/utils/toast-manager";
 import { router } from "@inertiajs/react";
 
 interface QuotationGeneratorProps {
@@ -90,3 +90,17 @@ export default function QuotationGenerator({
     </Button>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -4,8 +4,8 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "../../../../../../resources/js/components/ui/accordion";
-import { cn } from "../../../../../../resources/js/lib/utils";
+} from "../../components/ui/accordion";
+import { cn } from "../../lib/utils";
 
 export interface AccordionItem {
   value: string;
@@ -119,6 +119,27 @@ const Accordion = forwardRef<HTMLDivElement, AccordionProps>(
 Accordion.displayName = "Accordion";
 
 export { Accordion };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

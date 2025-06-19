@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2, Clock, AlertCircle, MoreHorizontal, Edit, Trash2 } from 'lucide-react';
-import { Badge } from '../../../../../../resources/js/components/ui/badge';
-import { Progress } from '../../../../../../resources/js/components/ui/progress';
-import { Button } from '../../../../../../resources/js/components/ui/button';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Progress } from '@/Modules/Core/resources/js/components/ui/progress';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from '../../../../../../resources/js/components/ui/dropdown-menu';
+} from '@/Modules/Core/resources/js/components/ui/dropdown-menu';
 import { formatDistanceToNow } from 'date-fns';
 
 export interface ProjectTask {
@@ -196,3 +196,17 @@ export default function TaskList({ tasks, onEdit, onDelete, onStatusChange, onCo
         </div>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

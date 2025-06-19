@@ -98,3 +98,17 @@ export const RentalManagement: FC<Props> = ({ initialRentals = [], customers = [
         </>
     );
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+

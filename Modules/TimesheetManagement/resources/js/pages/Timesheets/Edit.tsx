@@ -4,14 +4,14 @@ import { Head, Link, router } from '@inertiajs/react';
 // Placeholder types
 type PageProps = any;
 type BreadcrumbItem = any;
-import { Button } from '@/components/ui/button';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import {
   Card,
   CardHeader,
   CardTitle,
   CardContent,
   CardDescription
-} from '@/components/ui/card';
+} from '@/Modules/Core/resources/js/components/ui/card';
 import {
   Form,
   FormField,
@@ -19,23 +19,23 @@ import {
   FormLabel,
   FormControl,
   FormMessage
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+} from '@/Modules/Core/resources/js/components/ui/form';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/Modules/Core/resources/js/components/ui/select';
 import {
   ArrowLeft as ArrowLeftIcon,
   Calendar as CalendarIcon,
   Clock as ClockIcon,
   Save as SaveIcon
 } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
-import { formatDate, formatCurrency } from '@/utils/format';
+import { useToast } from '@/Modules/Core/resources/js/components/ui/use-toast';
+import { formatDate, formatCurrency } from '@/Modules/Core/resources/js/utils/format';
 import { useForm as useReactHookForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/Modules/Core/resources/js/components/ui/popover';
+import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
 import { format } from 'date-fns';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -388,4 +388,18 @@ export default function TimesheetEdit({ auth, timesheet, employees = [], project
     </AdminLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import { PageProps, BreadcrumbItem } from '@/Modules/EquipmentManagement/Resources/js/types';
-import AdminLayout from '@/layouts/AdminLayout';
+import { AdminLayout } from '@/Modules/Core/resources/js';
 import { Equipment, MaintenanceRecord } from '@/Modules/EquipmentManagement/Resources/js/types/models';
-import { formatDate, formatCurrency } from '@/utils/format';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+// Simple format functions
+const formatDate = (date: string) => new Date(date).toLocaleDateString();
+const formatCurrency = (amount: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import {
   Table,
   TableBody,
@@ -14,8 +16,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { useToast } from '@/components/ui/use-toast';
+} from '@/Modules/Core/resources/js/components/ui/table';
+import { useToast } from '@/Modules/Core/resources/js/components/ui/use-toast';
 import {
   Calendar as CalendarIcon,
   Clock as ClockIcon,
@@ -27,7 +29,7 @@ import {
   Eye as EyeIcon,
   XCircle as XCircleIcon
 } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Modules/Core/resources/js/components/ui/tabs';
 
 interface Props extends PageProps {
   equipment: Equipment;
@@ -367,3 +369,20 @@ export default function MaintenanceIndex({ equipment, history, costs, performanc
     </AdminLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

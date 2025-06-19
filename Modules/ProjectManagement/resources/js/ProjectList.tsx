@@ -7,10 +7,10 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
+} from '@/Modules/Core/resources/js/components/ui/table';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Progress } from '@/Modules/Core/resources/js/components/ui/progress';
 import { format } from 'date-fns';
 
 interface Project {
@@ -121,3 +121,17 @@ export const ProjectList: React.FC<ProjectListProps> = ({
         </div>
     );
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+

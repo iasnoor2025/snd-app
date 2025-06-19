@@ -1,8 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from '@/components/ui/progress';
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Modules/Core/resources/js/components/ui/card";
+import { Progress } from '@/Modules/Core/resources/js/components/ui/progress';
+import { Badge } from "@/Modules/Core/resources/js/components/ui/badge";
 import {
   BarChart3,
   Activity,
@@ -18,7 +18,7 @@ import {
   Wrench,
   CloudSun,
 } from "lucide-react";
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency } from '@/Modules/Core/resources/js/lib/utils';
 
 interface RentalAnalyticsProps {
   rental: any;
@@ -236,5 +236,19 @@ export default function RentalAnalytics({
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

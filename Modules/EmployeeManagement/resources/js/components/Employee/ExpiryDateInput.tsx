@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
 import { ExpiryDateInputProps } from '@/types/employee';
 import { format, isBefore } from 'date-fns';
 
@@ -31,3 +31,19 @@ export const ExpiryDateInput: React.FC<ExpiryDateInputProps> = ({ field, name })
     />
   );
 }; 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

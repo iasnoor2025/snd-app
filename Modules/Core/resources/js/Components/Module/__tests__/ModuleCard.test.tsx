@@ -58,3 +58,24 @@ describe('ModuleCard', () => {
         expect(link).toHaveAttribute('href', route('core.modules.show', { name: 'Test Module' }));
     });
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

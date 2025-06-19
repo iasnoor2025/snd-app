@@ -16,3 +16,17 @@ const PayrollDetails: React.FC = () => {
 };
 
 export default PayrollDetails;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

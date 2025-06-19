@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from 'react-i18next';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Card, CardHeader, CardTitle, CardContent } from "@/Modules/Core/resources/js/components/ui/card";
+import { Avatar, AvatarFallback } from "@/Modules/Core/resources/js/components/ui/avatar";
 import { Home, Mail, Phone, User } from "lucide-react";
 
 interface CustomerCardProps {
@@ -100,3 +100,17 @@ const CustomerCard: React.FC<CustomerCardProps> = ({ customer }) => {
 };
 
 export default CustomerCard;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

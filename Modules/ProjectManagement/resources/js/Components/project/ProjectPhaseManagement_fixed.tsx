@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../../../../resources/js/components/ui/card';
-import { Button } from '../../../../../../resources/js/components/ui/button';
-import { Badge } from '../../../../../../resources/js/components/ui/badge';
-import { Progress } from '../../../../../../resources/js/components/ui/progress'; 
-import { Input } from '../../../../../../resources/js/components/ui/input';
-import { Label } from '../../../../../../resources/js/components/ui/label';
-import { Textarea } from '../../../../../../resources/js/components/ui/textarea';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../../../../../../resources/js/components/ui/dialog';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Progress } from '@/Modules/Core/resources/js/components/ui/progress'; 
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Label } from '@/Modules/Core/resources/js/components/ui/label';
+import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/Modules/Core/resources/js/components/ui/dialog';
 import { Calendar, Plus, Edit, Trash2, Loader2 } from 'lucide-react';
-import { toast } from '../../../../../../resources/js/components/ui/use-toast';
+import { toast } from '@/Modules/Core/resources/js/components/ui/use-toast';
 
 interface Phase {
   id: number;
@@ -389,3 +389,17 @@ const ProjectPhaseManagement: React.FC<ProjectPhaseManagementProps> = ({ project
 };
 
 export default ProjectPhaseManagement;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

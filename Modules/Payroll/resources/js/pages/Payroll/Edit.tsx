@@ -20,3 +20,17 @@ export const Edit: FC<Props> = ({ payroll }) => {
 };
 
 export default Edit;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

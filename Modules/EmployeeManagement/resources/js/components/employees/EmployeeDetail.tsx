@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Badge } from '../ui/badge';
 import { ArrowLeft, Edit, FileText, ClipboardList, Clock, CreditCard, BarChart } from 'lucide-react';
-import { getTranslation } from '@/utils/translation';
+import { getTranslation } from '@/Modules/Core/resources/js/utils/translation';
 import { FinalSettlementTab } from './FinalSettlementTab';
 import PerformanceReviewList from './PerformanceReviewList';
 
@@ -447,3 +447,19 @@ const calculateTotalCompensation = (employee: Employee): string => {
 };
 
 export default EmployeeDetail;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import { RentalStatus } from '@/types/models';
 import { router } from '@inertiajs/react';
 import { toast } from 'sonner';
@@ -180,3 +180,17 @@ export function RentalWorkflowActions({
         </div>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -10,8 +10,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\Translatable\HasTranslations;
-use App\Traits\HasMediaAttachments;
-use App\Traits\AutoLoadsRelations;
+use Modules\Core\Traits\HasMediaAttachments;
+use Modules\Core\Traits\AutoLoadsRelations;
 use Modules\Core\Domain\Models\Category;
 use Modules\Core\Domain\Models\Location;
 

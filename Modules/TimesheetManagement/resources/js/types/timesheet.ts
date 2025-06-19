@@ -5,3 +5,4 @@ export interface EmployeeTimesheet {
   hours_worked: number;
   status: string;
 }
+

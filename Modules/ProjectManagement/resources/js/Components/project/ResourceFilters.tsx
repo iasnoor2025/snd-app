@@ -1,22 +1,22 @@
 import React from 'react';
-import { Button } from '../../../../../../resources/js/components/ui/button';
-import { Input } from '../../../../../../resources/js/components/ui/input';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '../../../../../../resources/js/components/ui/select';
+} from '@/Modules/Core/resources/js/components/ui/select';
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from '../../../../../../resources/js/components/ui/popover';
-import { Calendar } from '../../../../../../resources/js/components/ui/calendar';
+} from '@/Modules/Core/resources/js/components/ui/popover';
+import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
 import { format } from 'date-fns';
 import { CalendarIcon, Filter, X } from 'lucide-react';
-import { cn } from '../../../../../../resources/js/lib/utils';
+import { cn } from '@/Modules/Core/resources/js/lib/utils';
 import { useTranslation } from 'react-i18next';
 
 interface ResourceFiltersProps {
@@ -197,4 +197,18 @@ export default function ResourceFilters({
         </div>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

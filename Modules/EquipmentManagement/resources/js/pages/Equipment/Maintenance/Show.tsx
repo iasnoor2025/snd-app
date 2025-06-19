@@ -1,9 +1,9 @@
 import React from 'react';
 import { Head, Link, router } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/components/ui/use-toast';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/Modules/Core/resources/js/components/ui/card';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { useToast } from '@/Modules/Core/resources/js/components/ui/use-toast';
 import {
   Calendar as CalendarIcon,
   Clock as ClockIcon,
@@ -26,9 +26,9 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose,
-} from '@/components/ui/dialog';
-import { Separator } from '@/components/ui/separator';
-import AdminLayout from '@/layouts/AdminLayout';
+} from '@/Modules/Core/resources/js/components/ui/dialog';
+import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
+import { AdminLayout } from '@/Modules/Core/resources/js';
 
 // Inline type definitions
 interface Equipment {
@@ -345,3 +345,20 @@ export default function MaintenanceShow({ maintenance }: Props) {
     </AdminLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

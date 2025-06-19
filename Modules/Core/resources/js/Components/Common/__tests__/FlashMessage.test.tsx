@@ -104,3 +104,24 @@ describe('FlashMessageContainer', () => {
         expect(screen.queryByText('Error message')).not.toBeInTheDocument();
     });
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

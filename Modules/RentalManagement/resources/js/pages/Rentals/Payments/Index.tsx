@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link } from '@inertiajs/react';
 import PaymentTracker from '../../../Components/rentals/PaymentTracker';
-// import PaymentListing from '@/Modules/RentalManagement/resources/js/Components/payments/PaymentListing';
-import { formatCurrency } from '@/utils/format';
-import AdminLayout from '@/layouts/AdminLayout';
+// import PaymentListing from '@/Modules/Core/resources/js/components/payments/PaymentListing';
+import { formatCurrency } from '@/Modules/Core/resources/js/utils/format';
+import { AdminLayout } from '@/Modules/Core/resources/js';
 // Placeholder usePermission hook
 const usePermission = () => ({ hasPermission: () => true });
 import {
@@ -12,8 +12,8 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger
-} from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
+} from '@/Modules/Core/resources/js/components/ui/tabs';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -213,4 +213,18 @@ const [activeTab, setActiveTab] = useState<string>('tracker');
     </AdminLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

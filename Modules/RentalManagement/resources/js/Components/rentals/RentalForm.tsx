@@ -23,3 +23,17 @@ const RentalForm: React.FC = () => {
 };
 
 export default RentalForm;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

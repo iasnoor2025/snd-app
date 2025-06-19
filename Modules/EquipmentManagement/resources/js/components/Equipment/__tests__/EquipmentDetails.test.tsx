@@ -109,3 +109,20 @@ describe('EquipmentDetails', () => {
     })
 })
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

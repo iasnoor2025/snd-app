@@ -12,14 +12,14 @@ import {
   isWeekend
 } from 'date-fns';
 import { Employee } from '../../types/employee';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/Modules/Core/resources/js/components/ui/dialog';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { Card } from '@/components/ui/card';
+} from '@/Modules/Core/resources/js/components/ui/tooltip';
+import { Card } from '@/Modules/Core/resources/js/components/ui/card';
 import {
   Calendar,
   Clock,
@@ -246,3 +246,17 @@ const TimesheetCalendar: React.FC<TimesheetCalendarProps> = ({
 };
 
 export default TimesheetCalendar;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/Modules/Core/resources/js/components/ui/dialog';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import ResourceForm from '../ResourceForm';
 
 type ResourceType = 'manpower' | 'equipment' | 'material' | 'fuel' | 'expense';
@@ -175,3 +175,17 @@ export default function ResourceDialogDebug({ projectId = 1 }: { projectId: numb
         </div>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

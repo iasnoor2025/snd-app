@@ -9,3 +9,20 @@ const EquipmentForm: FC<EquipmentFormProps> = () => {
 };
 
 export default EquipmentForm;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

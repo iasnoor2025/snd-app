@@ -1,10 +1,10 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { formatCurrency } from '@/utils/format';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Modules/Core/resources/js/components/ui/table';
+import { formatCurrency } from '@/Modules/Core/resources/js/utils/format';
 import { getTranslation } from '@/utils/translation';
 
 // Placeholder type for RentalItem
@@ -87,3 +87,17 @@ export const Index: FC<Props> = ({ rental }) => {
 };
 
 export default Index;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

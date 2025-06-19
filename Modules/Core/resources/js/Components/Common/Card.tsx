@@ -6,8 +6,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../../../../../../resources/js/components/ui/card";
-import { cn } from "../../../../../../resources/js/lib/utils";
+} from "../../components/ui/card";
+import { cn } from "../../lib/utils";
 import { Loader2 } from "lucide-react";
 
 /**
@@ -214,4 +214,25 @@ export { Card };
 
 
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

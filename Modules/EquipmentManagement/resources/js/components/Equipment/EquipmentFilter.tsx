@@ -9,3 +9,20 @@ const EquipmentFilter: FC<EquipmentFilterProps> = () => {
 };
 
 export default EquipmentFilter;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

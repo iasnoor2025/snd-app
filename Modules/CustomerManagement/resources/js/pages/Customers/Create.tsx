@@ -2,12 +2,9 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm, Head, Link } from '@inertiajs/react';
 import type { PageProps } from '../../types/index.d';
-import AdminLayout from '../../../../../../resources/js/layouts/AdminLayout';
-import { Input } from '../../../../../../resources/js/components/ui/input';
-import { Button } from '../../../../../../resources/js/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../../../resources/js/components/ui/card';
+import { AdminLayout, Input, Button, Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js';
 import { route } from 'ziggy-js';
-// import Permission from '@/components/Permission';
+// import Permission from '@/Modules/Core/resources/js/components/Permission';
 
 const breadcrumbs = [
   { title: 'Dashboard', href: '/dashboard' },
@@ -182,3 +179,17 @@ const CreateCustomer: React.FC<PageProps> = (props) => {
 };
 
 export default CreateCustomer;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -4,18 +4,18 @@ import { router, useForm } from "@inertiajs/react";
 import { Rental } from "@/types/models";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { usePermission } from '@/hooks/usePermission';
-import { cn } from "@/lib/utils";
+import { usePermission } from '@/Modules/Core/resources/js/hooks/usePermission';
+import { cn } from "@/Modules/Core/resources/js/lib/utils";
 
 // ShadCN UI Components
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Modules/Core/resources/js/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from "@/components/ui/card";
+} from "@/Modules/Core/resources/js/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -23,14 +23,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/Modules/Core/resources/js/components/ui/dialog";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Badge } from "@/components/ui/badge";
+} from "@/Modules/Core/resources/js/components/ui/tooltip";
+import { Badge } from "@/Modules/Core/resources/js/components/ui/badge";
 
 // Icons
 import {
@@ -509,6 +509,20 @@ export default function RentalWorkflowStatus({
     </Card>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

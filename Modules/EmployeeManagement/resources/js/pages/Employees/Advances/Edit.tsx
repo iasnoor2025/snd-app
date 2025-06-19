@@ -2,21 +2,21 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, router } from '@inertiajs/react';
 import { PageProps } from '@/Modules/EmployeeManagement/Resources/js/types';
-import AdminLayout from '../../../layouts/AdminLayout';
+import { AdminLayout } from '@/Modules/Core/resources/js';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
+} from '@/Modules/Core/resources/js/components/ui/card';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Label } from '@/Modules/Core/resources/js/components/ui/label';
+import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import { ArrowLeft, Save } from 'lucide-react';
 import { format } from 'date-fns';
-import { ToastService } from '@/components/shared/ToastManager';
+import { ToastService } from '@/Modules/Core/resources/js/components/shared/ToastManager';
 
 interface User {
   id: number;
@@ -210,4 +210,20 @@ export default function Edit({ auth, employee, advance }: Props) {
     </AdminLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

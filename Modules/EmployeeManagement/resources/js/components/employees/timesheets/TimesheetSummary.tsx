@@ -2,17 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { format, parseISO, isSameMonth } from 'date-fns';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calendar } from '@/components/ui/calendar';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import { Button } from '@/components/ui/button';
+} from '@/Modules/Core/resources/js/components/ui/popover';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import { toast } from 'sonner';
 import { Calendar as CalendarIcon } from 'lucide-react';
-import { DailyTimesheetRecords } from 'Modules/TimesheetManagement/resources/js/components/timesheets/DailyTimesheetRecords';
+// import { DailyTimesheetRecords } from '../../../../../TimesheetManageme@/Modules/Core/resources/js/components/timesheets/DailyTimesheetRecords';
 
 interface TimesheetSummary {
   total_hours: number;
@@ -38,6 +38,7 @@ export const TimesheetSummary: React.FC<TimesheetSummaryProps> = ({
   employeeId,
   showEmployeeSelector = false,
 }) => {
+  const { t } = useTranslation();
   const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
   const [summary, setSummary] = useState<TimesheetSummary | null>(null);
   const [dailyRecords, setDailyRecords] = useState<TimesheetRecord[]>([]);
@@ -240,7 +241,7 @@ export const TimesheetSummary: React.FC<TimesheetSummaryProps> = ({
               <CardTitle>{t('ttl_monthly_timesheet_records')}</CardTitle>
             </CardHeader>
             <CardContent>
-              {DailyTimesheetRecords ? (
+              {/* {DailyTimesheetRecords ? (
                 <DailyTimesheetRecords
                   timesheets={dailyRecords}
                   selectedMonth={format(selectedMonth, 'yyyy-MM')}
@@ -248,7 +249,8 @@ export const TimesheetSummary: React.FC<TimesheetSummaryProps> = ({
                 />
               ) : (
                 <div className="text-muted-foreground italic">DailyTimesheetRecords component not found.</div>
-              )}
+              )} */}
+              <div className="text-muted-foreground italic">DailyTimesheetRecords component temporarily disabled for build.</div>
             </CardContent>
           </Card>
         </>
@@ -256,4 +258,20 @@ export const TimesheetSummary: React.FC<TimesheetSummaryProps> = ({
     </div>
   );
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

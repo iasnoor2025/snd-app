@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { format, parseISO } from 'date-fns';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import { useToast } from '@/hooks/useToast';
 import { toast } from 'sonner';
 import {
@@ -13,21 +13,21 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from '@/Modules/Core/resources/js/components/ui/table';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Calendar } from '@/components/ui/calendar';
+} from '@/Modules/Core/resources/js/components/ui/dropdown-menu';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
+} from '@/Modules/Core/resources/js/components/ui/popover';
 import { Calendar as CalendarIcon, Ellipsis, Plus } from 'lucide-react';
 
 interface Timesheet {
@@ -277,4 +277,20 @@ export const TimesheetList: React.FC<TimesheetListProps> = ({
     </Card>
   );
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

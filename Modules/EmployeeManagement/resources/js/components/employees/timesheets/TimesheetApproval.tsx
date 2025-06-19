@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { format, parseISO } from 'date-fns';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/Modules/Core/resources/js/components/ui/card';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import { useToast } from '@/hooks/useToast';
-import { Calendar } from '@/components/ui/calendar';
+import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
+} from '@/Modules/Core/resources/js/components/ui/popover';
 import {
   Table,
   TableBody,
@@ -18,12 +18,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { DialogDescription } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
+} from '@/Modules/Core/resources/js/components/ui/table';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Checkbox } from '@/Modules/Core/resources/js/components/ui/checkbox';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/Modules/Core/resources/js/components/ui/dialog';
+import { DialogDescription } from '@/Modules/Core/resources/js/components/ui/dialog';
+import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
 import { CalendarIcon, CheckIcon, Cross2Icon } from '@radix-ui/react-icons';
 
 interface Employee {
@@ -354,3 +354,19 @@ export const TimesheetApproval: React.FC = () => {
     </>
   );
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

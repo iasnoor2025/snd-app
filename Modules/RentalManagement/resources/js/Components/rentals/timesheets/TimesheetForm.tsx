@@ -4,10 +4,10 @@ import { Head, Link, router, useForm } from "@inertiajs/react";
 import { format } from "date-fns";
 import { z } from "zod";
 
-// Standardize all UI imports to '@/components/ui/'
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+// Standardize all UI imports to '@/Modules/Core/resources/js/components/ui/'
+import { Button } from "@/Modules/Core/resources/js/components/ui/button";
+import { Input } from "@/Modules/Core/resources/js/components/ui/input";
+import { Label } from "@/Modules/Core/resources/js/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
   SelectLabel,
-} from "@/components/ui/select";
+} from "@/Modules/Core/resources/js/components/ui/select";
 import {
   Card,
   CardContent,
@@ -24,16 +24,16 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
+} from "@/Modules/Core/resources/js/components/ui/card";
+import { Textarea } from "@/Modules/Core/resources/js/components/ui/textarea";
+import { Separator } from "@/Modules/Core/resources/js/components/ui/separator";
 import { AlertCircle, CalendarIcon, Clock, Loader2, MoreHorizontal, UserX } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
+import { Calendar } from "@/Modules/Core/resources/js/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/Modules/Core/resources/js/components/ui/popover";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,12 +41,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
+} from "@/Modules/Core/resources/js/components/ui/dropdown-menu";
+import { cn } from "@/Modules/Core/resources/js/lib/utils";
 import { toast } from "sonner";
-import TimePicker from "@/components/ui/time-picker";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Checkbox } from "@/components/ui/checkbox";
+import TimePicker from "@/Modules/Core/resources/js/components/ui/time-picker";
+import { Alert, AlertDescription, AlertTitle } from "@/Modules/Core/resources/js/components/ui/alert";
+import { Checkbox } from "@/Modules/Core/resources/js/components/ui/checkbox";
 
 interface Props {
   rentals?: any[];
@@ -1036,4 +1036,18 @@ export default function TimesheetForm({ rentals = [], rentalItems = [], operator
     </form>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

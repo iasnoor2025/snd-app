@@ -5,7 +5,7 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-} from '@/components/ui/dialog';
+} from '@/Modules/Core/resources/js/components/ui/dialog';
 import {
     Form,
     FormControl,
@@ -13,9 +13,9 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+} from '@/Modules/Core/resources/js/components/ui/form';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -25,8 +25,8 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+} from '@/Modules/Core/resources/js/components/ui/select';
+import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
 
 interface ResourceModalProps {
     open: boolean;
@@ -440,4 +440,18 @@ export const ResourceFormModal = (props: any) => (
     {props.children || 'Resource Form Modal'}
   </div>
 );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

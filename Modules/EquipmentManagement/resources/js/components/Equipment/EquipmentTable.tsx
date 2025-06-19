@@ -9,3 +9,20 @@ const EquipmentTable: FC<EquipmentTableProps> = () => {
 };
 
 export default EquipmentTable;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

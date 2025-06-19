@@ -2,67 +2,66 @@
 
 namespace Modules\CustomerManagement\Policies;
 
-use Illuminate\Auth\Access\HandlesAuthorization;
 use Modules\Core\Domain\Models\User;
 use Modules\CustomerManagement\Domain\Models\Customer;
 
 class CustomerPolicy
 {
-    use HandlesAuthorization;
-
     /**
      * Determine whether the user can view any customers.
      */
-    public function viewAny(User $user): bool
+    public function viewAny(User $user)
     {
-        return $user->hasAnyRole(['admin', 'manager', 'employee', 'HR', 'accountant']);
+        return $this->isAdmin($user);
     }
 
     /**
      * Determine whether the user can view the customer.
      */
-    public function view(User $user, Customer $customer): bool
+    public function view(User $user, Customer $customer)
     {
-        return $user->hasAnyRole(['admin', 'manager', 'employee', 'HR', 'accountant']);
+        return $this->isAdmin($user);
     }
 
     /**
      * Determine whether the user can create customers.
      */
-    public function create(User $user): bool
+    public function create(User $user)
     {
-        return $user->hasAnyRole(['admin', 'manager', 'HR']);
+        return $this->isAdmin($user);
     }
 
     /**
      * Determine whether the user can update the customer.
      */
-    public function update(User $user, Customer $customer): bool
+    public function update(User $user, Customer $customer)
     {
-        return $user->hasAnyRole(['admin', 'manager', 'HR']);
+        return $this->isAdmin($user);
     }
 
     /**
      * Determine whether the user can delete the customer.
      */
-    public function delete(User $user, Customer $customer): bool
+    public function delete(User $user, Customer $customer)
     {
-        return $user->hasAnyRole(['admin', 'manager']);
+        return $this->isAdmin($user);
     }
 
     /**
-     * Determine whether the user can restore the customer.
+     * Helper to check if user is admin (supports string or object roles)
      */
-    public function restore(User $user, Customer $customer): bool
+    protected function isAdmin(User $user)
     {
-        return $user->hasRole('admin');
-    }
-
-    /**
-     * Determine whether the user can permanently delete the customer.
-     */
-    public function forceDelete(User $user, Customer $customer): bool
-    {
-        return $user->hasRole('admin');
+        $roles = $user->roles ?? [];
+        foreach ($roles as $role) {
+            if (
+                (is_string($role) && strtolower($role) === 'admin') ||
+                (is_object($role) && isset($role->name) && strtolower($role->name) === 'admin') ||
+                (is_array($role) && isset($role['name']) && strtolower($role['name']) === 'admin')
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 }

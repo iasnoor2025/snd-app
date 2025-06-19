@@ -5,16 +5,16 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../../../../../resources/js/components/ui/select";
-import { cn } from "../../../../../../resources/js/lib/utils";
-import { Label } from "../../../../../../resources/js/components/ui/label";
+} from "../../components/ui/select";
+import { cn } from "../../lib/utils";
+import { Label } from "../../components/ui/label";
 import { HelpCircle } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "../../../../../../resources/js/components/ui/tooltip";
+} from "../../components/ui/tooltip";
 
 /**
  * Option interface for Select component
@@ -234,4 +234,25 @@ export { Select };
 </Select>
 </Select>
 </Select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

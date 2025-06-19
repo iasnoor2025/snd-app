@@ -5,3 +5,4 @@ export interface Payroll {
   amount: number;
   status: string;
 }
+

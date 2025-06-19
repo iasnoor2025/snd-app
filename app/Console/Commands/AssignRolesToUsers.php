@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\User;
+use Modules\Core\Domain\Models\User;
 use Spatie\Permission\Models\Role;
 
 class AssignRolesToUsers extends Command

@@ -6,8 +6,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../../../../../resources/js/components/ui/table";
-import { cn } from "../../../../../../resources/js/lib/utils";
+} from "../../components/ui/table";
+import { cn } from "../../lib/utils";
 import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { Button } from "./Button";
 
@@ -331,4 +331,25 @@ export { Table };
 
 
 </Table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from "@inertiajs/react";
 import { PageProps } from '@/types';
-import AdminLayout from '@/layouts/AdminLayout';
+import { AdminLayout } from '@/Modules/Core/resources/js';
 import { format } from "date-fns";
 import { toast } from "sonner";
 
 // Shadcn UI Components
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
 
 // Icons
 import { ArrowLeft } from "lucide-react";
@@ -130,6 +130,20 @@ export default function Edit({ customers, equipment, rental, employees = [] }: P
     </AdminLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

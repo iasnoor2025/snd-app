@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Head, router, usePage } from '@inertiajs/react';
-import AdminLayout from '../../../../../../resources/js/layouts/AdminLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../../../resources/js/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../../../../resources/js/components/ui/table';
-import { Button } from '../../../../../../resources/js/components/ui/button';
-import { Input } from '../../../../../../resources/js/components/ui/input';
-import { Select } from '../../../../../../resources/js/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../../../../../resources/js/components/ui/dialog';
+import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Modules/Core/resources/js/components/ui/table';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Select } from '@/Modules/Core/resources/js/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/Modules/Core/resources/js/components/ui/dialog';
 import RevenueChart from './RevenueChart';
-// import Chart from '@/components/Chart'; // TODO: Integrate chart library
+// import Chart from '@/Modules/Core/resources/js/components/Chart'; // TODO: Integrate chart library
 
 interface Stats {
   clients: number;
@@ -557,3 +557,17 @@ const RecentActivityTables: React.FC<{ recentActivity: any }> = ({ recentActivit
 
 // Export the component
 export default ReportsIndex;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

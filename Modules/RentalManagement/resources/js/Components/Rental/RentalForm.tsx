@@ -237,3 +237,17 @@ export const RentalForm: FC<Props> = ({ rental, customers, equipment, onSubmit, 
         </div>
     );
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,7 +1,7 @@
 import { FC, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
 import { Upload, X } from 'lucide-react';
 import { ControllerRenderProps } from 'react-hook-form';
 
@@ -62,3 +62,19 @@ export const FileUpload: FC<FileUploadProps> = ({ field, name, onFileSelect }) =
     </div>
   );
 }; 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -54,7 +54,7 @@ import {
   Eye
 } from 'lucide-react';
 import { Checkbox } from '../ui/checkbox';
-import { getTranslation } from '@/utils/translation';
+import { getTranslation } from '@/Modules/Core/resources/js/utils/translation';
 
 interface Project {
   id: number;
@@ -742,3 +742,19 @@ export const TimesheetApproval: React.FC<TimesheetApprovalProps> = ({
 };
 
 export default TimesheetApproval;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

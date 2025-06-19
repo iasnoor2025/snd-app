@@ -6,8 +6,8 @@ import {
   ToastClose,
   ToastProvider,
   ToastViewport,
-} from "../../../../../../resources/js/components/ui/toast";
-import { cn } from "../../../../../../resources/js/lib/utils";
+} from "../../components/ui/toast";
+import { cn } from "../../lib/utils";
 import { AlertCircle, CheckCircle, Info, XCircle, X, Loader2 } from "lucide-react";
 
 /**
@@ -239,4 +239,25 @@ const Toast = forwardRef<HTMLDivElement, ToastProps>((
 Toast.displayName = "Toast";
 
 export { Toast, ToastProvider, ToastViewport };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

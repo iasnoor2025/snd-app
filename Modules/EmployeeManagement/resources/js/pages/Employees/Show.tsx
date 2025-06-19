@@ -2,11 +2,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
 import { PageProps, BreadcrumbItem } from '../../types';
-import AdminLayout from '../../layouts/AdminLayout';
+import { AdminLayout } from '@/Modules/Core/resources/js';
 import { Employee as BaseEmployee } from '../../types/models';
 import { route } from 'ziggy-js';
-import { getTranslation } from '@/utils/translation';
-import { Breadcrumb } from '../../../../../../resources/js/components/ui/breadcrumb';
+import { getTranslation } from '@/Modules/Core/resources/js/utils/translation';
+import { Breadcrumb } from '@/Modules/Core/resources/js/components/ui/breadcrumb';
 import {
   Card,
   CardContent,
@@ -14,10 +14,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '../../../../../../resources/js/components/ui/card';
-import { Button } from '../../../../../../resources/js/components/ui/button';
-import { Badge } from '../../../../../../resources/js/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../../../../resources/js/components/ui/tabs';
+} from '@/Modules/Core/resources/js/components/ui/card';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Modules/Core/resources/js/components/ui/tabs';
 import {
   Table,
   TableBody,
@@ -25,7 +25,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '../../../../../../resources/js/components/ui/table';
+} from '@/Modules/Core/resources/js/components/ui/table';
 import {
   Dialog,
   DialogContent,
@@ -34,37 +34,49 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '../../../../../../resources/js/components/ui/dialog';
-import { Input } from '../../../../../../resources/js/components/ui/input';
-import { Label } from '../../../../../../resources/js/components/ui/label';
+} from '@/Modules/Core/resources/js/components/ui/dialog';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Label } from '@/Modules/Core/resources/js/components/ui/label';
 import { ArrowLeft, Edit, Trash2, FileText, Calendar, Check, X, AlertCircle, RefreshCw, ExternalLink, Download, User, Briefcase, CreditCard, FileBox, Upload, Printer, Car, Truck, Award, IdCard, Plus, History, Receipt, XCircle, CheckCircle, Clock } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
-import { usePermission } from '../../../../../../resources/js/hooks/usePermission';
+import { usePermission } from '@/Modules/Core/resources/js/hooks/usePermission';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '../../../../../../resources/js/components/ui/tooltip';
-import { Alert, AlertDescription } from '../../../../../../resources/js/components/ui/alert';
+} from '@/Modules/Core/resources/js/components/ui/tooltip';
+import { Alert, AlertDescription } from '@/Modules/Core/resources/js/components/ui/alert';
 import axios from 'axios';
 import DocumentManager from '../../components/employees/EmployeeDocumentManager';
 import { useQueryClient } from '@tanstack/react-query';
-import { Separator } from '../../../../../../resources/js/components/ui/separator';
-import { Avatar, AvatarFallback } from '../../../../../../resources/js/components/ui/avatar';
-// import { MediaLibrary } from '@/Modules/EmployeeManagement/Resources/js/components/media-library/MediaLibrary'; // TODO: Fix or replace MediaLibrary import
-// import { DailyTimesheetRecords } from '@/Modules/EmployeeManagement/Resources/js/components/timesheets/DailyTimesheetRecords'; // TODO: Fix or replace DailyTimesheetRecords import
-import { useToast } from '../../../../../../resources/js/components/ui/use-toast';
-import { PaymentHistory } from '../../../../../../Modules/Payroll/resources/js/components/advances/PaymentHistory';
+import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
+import { Avatar, AvatarFallback } from '@/Modules/Core/resources/js/components/ui/avatar';
+// import { MediaLibrary } from '@/Modules/Core/resources/js/components/media-library/MediaLibrary'; // TODO: Fix or replace MediaLibrary import
+// import { DailyTimesheetRecords } from '@/Modules/Core/resources/js/components/timesheets/DailyTimesheetRecords'; // TODO: Fix or replace DailyTimesheetRecords import
+import { useToast } from '@/Modules/Core/resources/js/components/ui/use-toast';
+// PaymentHistory component placeholder
+const PaymentHistory = ({ employeeId, initialMonthlyHistory, initialTotalRepaid, initialPagination, showOnlyLast }: any) => (
+  <div className="p-4 text-center text-muted-foreground">
+    Payment History component not yet implemented
+  </div>
+);
 // import { AssignmentHistory } from '../../components/assignments/AssignmentHistory';
-import { AssignmentHistory } from '../../../../../../Modules/EmployeeManagement/resources/js/components/assignments/AssignmentHistory';
+// AssignmentHistory component placeholder
+// const AssignmentHistory = ({ employeeId }: any) => (
+//   <div className="p-4 text-center text-muted-foreground">
+//     Assignment History component not yet implemented
+//   </div>
+// );
 import { toast } from 'sonner';
+import ToastService from '@/services/ToastService';
 import FinalSettlementTab from '../../components/employees/FinalSettlementTab';
 // import { route } from 'ziggy-js';
-import { Textarea } from '../../../../../../resources/js/components/ui/textarea';
+import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
 import { TimesheetSummary } from '../../components/employees/timesheets/TimesheetSummary';
 import { TimesheetList } from '../../components/employees/timesheets/TimesheetList';
 import { TimesheetForm } from '../../components/employees/timesheets/TimesheetForm';
+import { AssignmentHistory } from '../../components/assignments/AssignmentHistory';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -317,10 +329,10 @@ const DocumentTab = ({ employeeId }: { employeeId: number }) => {
                   if (confirm('Are you sure you want to delete this document?')) {
                     axios.delete(`/api/employee/${employeeId}/documents/${doc.id}`)
                       .then(() => {
-                        // TODO: Replace with toast('message')
+                        toast.success('Document deleted successfully');
                       })
                       .catch((error) => {
-                        // TODO: Replace with toast('message')
+                        toast.error('Failed to delete document');
                       });
                   }
                 }}
@@ -415,19 +427,64 @@ export default function Show({
     { title: employee.first_name + ' ' + (employee.last_name || ''), href: window.location.pathname },
   ];
 
+  // File upload handler
+  const handleFileUpload = async (file: File, documentType: string) => {
+    if (!file) {
+      toast.error('Please select a file to upload');
+      return;
+    }
+
+    // Validate file type
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Please upload a PDF, JPG, JPEG, or PNG file');
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    const maxSize = 10 * 1024 * 1024;
+    if (file.size > maxSize) {
+      toast.error('File size must be less than 10MB');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('document_type', documentType);
+
+    const uploadPromise = router.post(route('employees.documents.upload', { employee: employee.id }), formData, {
+      forceFormData: true,
+      onSuccess: () => {
+        toast.success(`${documentType.replace('_', ' ')} uploaded successfully`);
+        // Refresh the page to show the updated document
+        router.reload();
+      },
+      onError: (errors) => {
+        console.error('Upload error:', errors);
+        const errorMessage = errors?.file?.[0] || errors?.message || 'Failed to upload document';
+        toast.error(errorMessage);
+      }
+    });
+
+    // Show loading toast
+    toast.promise(uploadPromise, {
+      loading: `Uploading ${documentType.replace('_', ' ')}...`,
+    });
+  };
+
   const handleAdvanceRequest = () => {
     if (!advanceAmount || isNaN(Number(advanceAmount)) || Number(advanceAmount) <= 0) {
-      // TODO: Replace with toast('message')
+      toast.error('Please enter a valid advance amount');
       return;
     }
 
     if (!monthlyDeduction || isNaN(Number(monthlyDeduction)) || Number(monthlyDeduction) <= 0) {
-      // TODO: Replace with toast('message')
+      toast.error('Please enter a valid monthly deduction amount');
       return;
     }
 
     if (!advanceReason.trim()) {
-      // TODO: Replace with toast('message')
+      toast.error('Please provide a reason for the advance request');
       return;
     }
 
@@ -448,12 +505,13 @@ export default function Show({
         setMonthlyDeduction('');
         setAdvanceReason('');
         setIsAdvanceRequestDialogOpen(false);
+        toast.success('Advance request created successfully');
         // Force reload to get updated balances
         router.reload();
       },
       onError: (errors) => {
         console.error('Advance request error:', errors);
-        // TODO: Replace with toast('message')
+        toast.error('Failed to create advance request. Please try again.');
       }
     });
   };
@@ -467,12 +525,12 @@ export default function Show({
       setIsDeleting(true);
       router.delete(route('employees.destroy', { employee: employee.id }), {
         onSuccess: () => {
-          // TODO: Replace with toast('message')
+          toast.success('Employee deleted successfully');
           window.location.href = route('employees.index');
           setIsDeleting(false);
         },
         onError: () => {
-          // TODO: Replace with toast('message')
+          toast.error('Failed to delete employee. Please try again.');
           setIsDeleting(false);
         }
       });
@@ -547,13 +605,13 @@ export default function Show({
   const handleApproveAdvance = (advanceId: number, type: 'advance' | 'advance_payment', status: Advance['status']) => {
     // For advance payments, we need to check if it's not already approved or rejected
     if (type === 'advance_payment' && (status === 'paid')) {
-      // TODO: Replace with toast('message')
+      toast.warning('This advance payment has already been processed');
       return;
     }
 
     // For regular advances, we only check for pending status
     if (type === 'advance' && status !== 'pending') {
-      // TODO: Replace with toast('message')
+      toast.warning('This advance has already been processed');
       return;
     }
 
@@ -562,19 +620,19 @@ export default function Show({
       advance: advanceId
     }), {}, {
       onSuccess: () => {
-        // TODO: Replace with toast('message')
+        toast.success('Advance approved successfully');
         router.reload();
       },
       onError: (errors) => {
         console.error('Approval error:', errors);
-        // TODO: Replace with toast('message')
+        toast.error('Failed to approve advance. Please try again.');
       }
     });
   };
 
   const handleRejectAdvance = (advanceId: number, rejectionReason: string) => {
     if (!rejectionReason.trim()) {
-      // TODO: Replace with toast('message')
+      toast.error('Please provide a reason for rejection');
       return;
     }
 
@@ -585,20 +643,20 @@ export default function Show({
       rejection_reason: rejectionReason.trim()
     }, {
       onSuccess: () => {
-        // TODO: Replace with toast('message')
+        toast.success('Advance rejected successfully');
         setRejectionReason('');
         setIsRejectDialogOpen(false);
         router.reload();
       },
       onError: () => {
-        // TODO: Replace with toast('message')
+        toast.error('Failed to reject advance. Please try again.');
       }
     });
   };
 
   const handleDeleteAdvance = (advanceId: number) => {
     if (!advanceId) {
-      // TODO: Replace with toast('message')
+      toast.error('Invalid advance ID');
       return;
     }
 
@@ -618,14 +676,14 @@ export default function Show({
     // Use Inertia's router.delete with the correct route
     router.delete(url, {
       onSuccess: () => {
-        // TODO: Replace with toast('message')
+        toast.success('Advance deleted successfully');
         setIsDeleteDialogOpen(false);
         // Force reload the page to ensure all data is updated
         router.visit(route('employees.show', { employee: employee.id }));
       },
       onError: (errors) => {
         console.error('Delete error:', errors);
-        // TODO: Replace with toast('message')
+        toast.error('Failed to delete advance. Please try again.');
         setIsDeleteDialogOpen(false);
       }
     });
@@ -818,10 +876,10 @@ export default function Show({
     if (confirm('Are you sure you want to approve this settlement?')) {
       router.post(route('final-settlements.approve', { settlement: id }), {}, {
         onSuccess: () => {
-          // TODO: Replace with toast('message')
+          toast.success('Settlement approved successfully');
         },
         onError: () => {
-          // TODO: Replace with toast('message')
+          toast.error('Failed to approve settlement. Please try again.');
         }
       });
     }
@@ -831,10 +889,10 @@ export default function Show({
     if (confirm('Are you sure you want to reject this settlement?')) {
       router.post(route('final-settlements.reject', { settlement: id }), {}, {
         onSuccess: () => {
-          // TODO: Replace with toast('message')
+          toast.success('Settlement rejected successfully');
         },
         onError: () => {
-          // TODO: Replace with toast('message')
+          toast.error('Failed to reject settlement. Please try again.');
         }
       });
     }
@@ -1546,7 +1604,7 @@ export default function Show({
                             }, 1000);
                           } catch (error) {
                             console.error('Error generating document summary:', error);
-                            // TODO: Replace with toast('message')
+                            toast.error('Failed to generate document summary. Please try again.');
                           }
                         }}
                       >
@@ -1703,7 +1761,12 @@ export default function Show({
                             accept=".pdf,.jpg,.jpeg,.png"
                             className="hidden"
                             id="iqama-upload"
-                            onChange={e => {/* TODO: handle upload */}}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                handleFileUpload(file, 'iqama');
+                              }
+                            }}
                           />
                           <Button
                             type="button"
@@ -1741,7 +1804,12 @@ export default function Show({
                             accept=".pdf,.jpg,.jpeg,.png"
                             className="hidden"
                             id="passport-upload"
-                            onChange={e => {/* TODO: handle upload */}}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                handleFileUpload(file, 'passport');
+                              }
+                            }}
                           />
                           <Button
                             type="button"
@@ -1784,7 +1852,12 @@ export default function Show({
                             accept=".pdf,.jpg,.jpeg,.png"
                             className="hidden"
                             id="driving-license-upload"
-                            onChange={e => {/* TODO: handle upload */}}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                handleFileUpload(file, 'driving_license');
+                              }
+                            }}
                           />
                           <Button
                             type="button"
@@ -1826,7 +1899,12 @@ export default function Show({
                             accept=".pdf,.jpg,.jpeg,.png"
                             className="hidden"
                             id="operator-license-upload"
-                            onChange={e => {/* TODO: handle upload */}}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                handleFileUpload(file, 'operator_license');
+                              }
+                            }}
                           />
                           <Button
                             type="button"
@@ -1868,7 +1946,12 @@ export default function Show({
                             accept=".pdf,.jpg,.jpeg,.png"
                             className="hidden"
                             id="tuv-cert-upload"
-                            onChange={e => {/* TODO: handle upload */}}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                handleFileUpload(file, 'tuv_certification');
+                              }
+                            }}
                           />
                           <Button
                             type="button"
@@ -1910,7 +1993,12 @@ export default function Show({
                             accept=".pdf,.jpg,.jpeg,.png"
                             className="hidden"
                             id="spsp-license-upload"
-                            onChange={e => {/* TODO: handle upload */}}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                handleFileUpload(file, 'spsp_license');
+                              }
+                            }}
                           />
                           <Button
                             type="button"
@@ -2259,18 +2347,18 @@ export default function Show({
                                     <Button
                                       onClick={() => {
                                         if (!repaymentAmount) {
-                                          // TODO: Replace with toast('message')
+                                          toast.error('Please enter a repayment amount');
                                           return;
                                         }
 
                                         const amount = Number(repaymentAmount);
                                         if (amount < totalMonthlyDeduction) {
-                                          // TODO: Replace with toast('message')
+                                          toast.error(`Minimum repayment amount is SAR ${totalMonthlyDeduction.toFixed(2)}`);
                                           return;
                                         }
 
                                         if (amount > totalRemainingBalance) {
-                                          // TODO: Replace with toast('message')
+                                          toast.error(`Repayment amount cannot exceed remaining balance of SAR ${totalRemainingBalance.toFixed(2)}`);
                                           return;
                                         }
 
@@ -2375,7 +2463,7 @@ export default function Show({
                                 onError: (errors) => {
                                   // Revert the value if there's an error
                                   setMonthlyDeduction(advances?.data?.[0]?.monthly_deduction?.toString() || '');
-                                  // TODO: Replace with toast('message')
+                                  toast.error('Failed to update monthly deduction. Please try again.');
                                 },
                                 onCancel: () => {
                                   // Revert the value if request is cancelled
@@ -2389,7 +2477,7 @@ export default function Show({
                             const value = e.target.value;
                             if (!value || isNaN(Number(value)) || Number(value) < 0) {
                               setMonthlyDeduction(advances?.data?.[0]?.monthly_deduction?.toString() || '');
-                              // TODO: Replace with toast('message')
+                              toast.error('Please enter a valid monthly deduction amount');
                             }
                           }}
                           className="text-2xl font-bold text-primary w-32"
@@ -2864,7 +2952,7 @@ export default function Show({
                   if (selectedAdvance) {
                     handleDeleteAdvance(selectedAdvance);
                   } else {
-                    // TODO: Replace with toast('message')
+                    toast.error('No advance selected for deletion');
                   }
                 }}
               >
@@ -2877,5 +2965,21 @@ export default function Show({
     </AdminLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

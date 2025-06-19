@@ -7,7 +7,7 @@ use Modules\MobileBridge\Entities\NotificationLog;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Collection;
-use App\Models\User;
+use Modules\Core\Domain\Models\User;
 use Carbon\Carbon;
 use Minishlink\WebPush\WebPush;
 use Minishlink\WebPush\Subscription;
@@ -21,7 +21,21 @@ class NotificationService
     public function __construct()
     {
         $this->config = config('mobilebridge');
-        $this->initializeWebPush();
+        
+        // Only initialize WebPush if VAPID keys are configured
+        if ($this->hasValidVapidConfiguration()) {
+            $this->initializeWebPush();
+        }
+    }
+
+    /**
+     * Check if VAPID configuration is valid
+     */
+    private function hasValidVapidConfiguration(): bool
+    {
+        return !empty($this->config['push_notifications']['vapid']['public_key']) &&
+               !empty($this->config['push_notifications']['vapid']['private_key']) &&
+               !empty($this->config['push_notifications']['vapid']['subject']);
     }
 
     /**
@@ -54,6 +68,11 @@ class NotificationService
         string $body,
         array $options = []
     ): array {
+        if (!$this->hasValidVapidConfiguration()) {
+            Log::warning('VAPID keys not configured. Push notifications disabled.');
+            return ['sent' => 0, 'failed' => 0, 'logs' => [], 'error' => 'VAPID keys not configured'];
+        }
+
         $user = User::find($userId);
         if (!$user) {
             throw new Exception("User not found: {$userId}");
@@ -80,6 +99,11 @@ class NotificationService
         string $body,
         array $options = []
     ): array {
+        if (!$this->hasValidVapidConfiguration()) {
+            Log::warning('VAPID keys not configured. Push notifications disabled.');
+            return ['sent' => 0, 'failed' => 0, 'logs' => [], 'error' => 'VAPID keys not configured'];
+        }
+
         $subscriptions = PushSubscription::active()
             ->whereIn('user_id', $userIds)
             ->get();
@@ -100,6 +124,11 @@ class NotificationService
         string $body,
         array $options = []
     ): array {
+        if (!$this->hasValidVapidConfiguration()) {
+            Log::warning('VAPID keys not configured. Push notifications disabled.');
+            return ['sent' => 0, 'failed' => 0, 'logs' => [], 'error' => 'VAPID keys not configured'];
+        }
+
         // For large-scale notifications, use chunking to avoid memory issues
         $results = ['sent' => 0, 'failed' => 0, 'logs' => []];
 
@@ -123,6 +152,11 @@ class NotificationService
         string $body,
         array $options = []
     ): array {
+        if (!$this->hasValidVapidConfiguration()) {
+            Log::warning('VAPID keys not configured. Push notifications disabled.');
+            return ['sent' => 0, 'failed' => 0, 'logs' => [], 'error' => 'VAPID keys not configured'];
+        }
+
         $userIds = User::role($role)->pluck('id')->toArray();
 
         if (empty($userIds)) {

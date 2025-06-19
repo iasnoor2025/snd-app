@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Label } from '@/Modules/Core/resources/js/components/ui/label';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import {
   Table,
   TableBody,
@@ -12,10 +12,10 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from '@/components/ui/table';
+} from '@/Modules/Core/resources/js/components/ui/table';
 import { PlusCircle, Trash2 } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
-import { Numeric } from '@/components/ui/numeric';
+import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
+import { Numeric } from '@/Modules/Core/resources/js/components/ui/numeric';
 
 interface Part {
   id: number;
@@ -199,3 +199,20 @@ export function MaintenanceParts({ maintenanceId, parts, availableParts, onSucce
     </Card>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

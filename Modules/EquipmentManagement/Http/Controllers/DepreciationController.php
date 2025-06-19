@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Modules\EquipmentManagement\Domain\Models\Equipment;
 use Modules\EquipmentManagement\Domain\Models\EquipmentDepreciation;
 use Modules\EquipmentManagement\Domain\Models\EquipmentValuationRecord;
-use App\Services\DepreciationTrackingService;
+use Modules\EquipmentManagement\Services\DepreciationTrackingService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;

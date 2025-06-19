@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
-use App\Traits\HasProjectResource;
+use Modules\Core\Traits\HasProjectResource;
 
 class ProjectExpense extends Model
 {

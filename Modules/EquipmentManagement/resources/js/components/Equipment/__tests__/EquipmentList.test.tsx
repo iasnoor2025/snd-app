@@ -120,3 +120,20 @@ describe('EquipmentList', () => {
     })
 })
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

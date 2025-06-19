@@ -7,8 +7,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+} from '@/Modules/Core/resources/js/components/ui/card';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -16,14 +16,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
+} from '@/Modules/Core/resources/js/components/ui/dialog';
+import { Label } from '@/Modules/Core/resources/js/components/ui/label';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import { format } from 'date-fns';
-import { useToast } from '@/components/ui/use-toast';
-import { usePermission } from '@/hooks/usePermission';
+import { useToast } from '@/Modules/Core/resources/js/components/ui/use-toast';
+import { usePermission } from '@/Modules/Core/resources/js/hooks/usePermission';
 import { Download, Receipt } from 'lucide-react';
-import { Textarea } from '@/components/ui/textarea';
+import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
 
 interface Deduction {
   id: number;
@@ -245,3 +245,19 @@ export default function FinalSettlementTab({ employee, settlements }: Props) {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

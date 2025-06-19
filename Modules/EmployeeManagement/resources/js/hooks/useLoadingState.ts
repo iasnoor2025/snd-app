@@ -5,3 +5,4 @@ const useLoadingState = (key?: string) => ({
 });
 
 export default useLoadingState;
+

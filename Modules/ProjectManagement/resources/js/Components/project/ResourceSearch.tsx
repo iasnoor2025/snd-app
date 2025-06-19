@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
 import { Search, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/Modules/Core/resources/js/lib/utils';
 
 interface ResourceSearchProps {
     value: string;
@@ -59,3 +59,17 @@ export default function ResourceSearch({
         </div>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -57,3 +57,4 @@ export const PERFORMANCE_RATING_CATEGORIES = [
   { value: 4, label: 'Exceeds Expectations', min: 3.5, max: 4.4 },
   { value: 5, label: 'Outstanding', min: 4.5, max: 5 },
 ];
+

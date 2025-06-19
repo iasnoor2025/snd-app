@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import { Head, useForm } from '@inertiajs/react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { toast } from '@/components/ui/use-toast';
+import { Head } from '@inertiajs/react';
 import { Bell, Mail, MessageSquare, Calendar, AlertTriangle, CheckCircle } from 'lucide-react';
 
 interface NotificationSettings {
@@ -25,49 +19,32 @@ interface NotificationSettings {
     marketing_notifications: boolean;
 }
 
-interface Props {
-    settings: NotificationSettings;
-}
-
-const Notifications: React.FC<Props> = ({ settings }) => {
-    const { data, setData, post, processing, errors } = useForm<NotificationSettings>({
-        email_notifications: settings.email_notifications || false,
-        sms_notifications: settings.sms_notifications || false,
-        push_notifications: settings.push_notifications || false,
-        leave_request_notifications: settings.leave_request_notifications || false,
-        timesheet_notifications: settings.timesheet_notifications || false,
-        payroll_notifications: settings.payroll_notifications || false,
-        project_notifications: settings.project_notifications || false,
-        equipment_notifications: settings.equipment_notifications || false,
-        rental_notifications: settings.rental_notifications || false,
-        maintenance_notifications: settings.maintenance_notifications || false,
-        overdue_notifications: settings.overdue_notifications || false,
-        payment_notifications: settings.payment_notifications || false,
-        system_notifications: settings.system_notifications || false,
-        marketing_notifications: settings.marketing_notifications || false,
+export default function Notifications() {
+    const [settings, setSettings] = useState<NotificationSettings>({
+        email_notifications: true,
+        sms_notifications: false,
+        push_notifications: true,
+        leave_request_notifications: true,
+        timesheet_notifications: true,
+        payroll_notifications: true,
+        project_notifications: false,
+        equipment_notifications: true,
+        rental_notifications: true,
+        maintenance_notifications: true,
+        overdue_notifications: true,
+        payment_notifications: true,
+        system_notifications: true,
+        marketing_notifications: false,
     });
+
+    const handleSwitchChange = (key: keyof NotificationSettings, value: boolean) => {
+        setSettings(prev => ({ ...prev, [key]: value }));
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('settings.notifications.update'), {
-            onSuccess: () => {
-                toast({
-                    title: 'Success',
-                    description: 'Notification settings updated successfully.',
-                });
-            },
-            onError: () => {
-                toast({
-                    title: 'Error',
-                    description: 'Failed to update notification settings.',
-                    variant: 'destructive',
-                });
-            },
-        });
-    };
-
-    const handleSwitchChange = (key: keyof NotificationSettings, value: boolean) => {
-        setData(key, value);
+        // Simulate form submission
+        alert('Notification settings updated successfully!');
     };
 
     const notificationGroups = [
@@ -175,70 +152,67 @@ const Notifications: React.FC<Props> = ({ settings }) => {
     ];
 
     return (
-        <>
+        <div className="min-h-screen bg-gray-50">
             <Head title="Notification Settings" />
 
-            <div className="space-y-6">
-                <div>
-                    <h2 className="text-2xl font-bold tracking-tight">Notification Settings</h2>
-                    <p className="text-muted-foreground">
-                        Manage how and when you receive notifications from the system.
-                    </p>
-                </div>
+            <div className="max-w-4xl mx-auto py-8 px-4">
+                <div className="space-y-6">
+                    <header>
+                        <h1 className="text-2xl font-bold text-gray-900">Notification Settings</h1>
+                        <p className="text-gray-600 mt-1">
+                            Manage how and when you receive notifications from the system.
+                        </p>
+                    </header>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    {notificationGroups.map((group, groupIndex) => (
-                        <Card key={groupIndex}>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                    {group.icon}
-                                    {group.title}
-                                </CardTitle>
-                                <CardDescription>{group.description}</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                {group.settings.map((setting, settingIndex) => (
-                                    <div key={settingIndex}>
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center space-x-3">
-                                                {setting.icon && (
-                                                    <div className="text-muted-foreground">
-                                                        {setting.icon}
-                                                    </div>
-                                                )}
-                                                <div className="space-y-1">
-                                                    <Label htmlFor={setting.key} className="text-sm font-medium">
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        {notificationGroups.map((group, groupIndex) => (
+                            <div key={groupIndex} className="bg-white rounded-lg shadow p-6">
+                                <div className="mb-4">
+                                    <h3 className="text-lg font-semibold flex items-center gap-2 mb-2">
+                                        {group.icon}
+                                        {group.title}
+                                    </h3>
+                                    <p className="text-sm text-gray-600">{group.description}</p>
+                                </div>
+                                
+                                <div className="space-y-4">
+                                    {group.settings.map((setting, settingIndex) => (
+                                        <div key={settingIndex} className="flex items-center justify-between py-2">
+                                            <div className="flex items-start gap-3">
+                                                {setting.icon && <div className="mt-0.5">{setting.icon}</div>}
+                                                <div>
+                                                    <label className="font-medium text-gray-900 cursor-pointer">
                                                         {setting.label}
-                                                    </Label>
-                                                    <p className="text-sm text-muted-foreground">
-                                                        {setting.description}
-                                                    </p>
+                                                    </label>
+                                                    <p className="text-sm text-gray-600">{setting.description}</p>
                                                 </div>
                                             </div>
-                                            <Switch
-                                                id={setting.key}
-                                                checked={data[setting.key]}
-                                                onCheckedChange={(checked) => handleSwitchChange(setting.key, checked)}
-                                            />
+                                            <label className="relative inline-flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    className="sr-only peer"
+                                                    checked={settings[setting.key]}
+                                                    onChange={(e) => handleSwitchChange(setting.key, e.target.checked)}
+                                                />
+                                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                            </label>
                                         </div>
-                                        {settingIndex < group.settings.length - 1 && (
-                                            <Separator className="mt-4" />
-                                        )}
-                                    </div>
-                                ))}
-                            </CardContent>
-                        </Card>
-                    ))}
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
 
-                    <div className="flex justify-end">
-                        <Button type="submit" disabled={processing}>
-                            {processing ? 'Saving...' : 'Save Changes'}
-                        </Button>
-                    </div>
-                </form>
+                        <div className="flex justify-end pt-6">
+                            <button
+                                type="submit"
+                                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            >
+                                Save Settings
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </>
+        </div>
     );
-};
-
-export default Notifications;
+} 

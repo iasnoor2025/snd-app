@@ -31,3 +31,17 @@ describe('ReportsIndex', () => {
     expect(screen.getByText(/Create Custom Report/i)).toBeInTheDocument();
   });
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+

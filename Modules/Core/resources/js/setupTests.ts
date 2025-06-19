@@ -20,3 +20,6 @@ jest.mock('@inertiajs/react', () => ({
 
 </$tagName>
 
+
+
+

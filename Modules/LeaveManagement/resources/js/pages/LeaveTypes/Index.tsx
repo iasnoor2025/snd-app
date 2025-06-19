@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Button } from '../../../../../../resources/js/components/ui/button';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from '../../../../../../resources/js/components/ui/card';
-import { Input } from '../../../../../../resources/js/components/ui/input';
-import { Badge } from '../../../../../../resources/js/components/ui/badge';
+} from '@/Modules/Core/resources/js/components/ui/card';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../../../../../../resources/js/components/ui/select';
+} from '@/Modules/Core/resources/js/components/ui/select';
 import {
   Table,
   TableBody,
@@ -25,7 +25,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '../../../../../../resources/js/components/ui/table';
+} from '@/Modules/Core/resources/js/components/ui/table';
 import {
   Dialog,
   DialogContent,
@@ -34,7 +34,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '../../../../../../resources/js/components/ui/dialog';
+} from '@/Modules/Core/resources/js/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,7 +42,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '../../../../../../resources/js/components/ui/dropdown-menu';
+} from '@/Modules/Core/resources/js/components/ui/dropdown-menu';
 import {
   Plus as PlusIcon,
   Search as SearchIcon,
@@ -62,8 +62,8 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '../../../../../../resources/js/components/ui/tooltip';
-import AdminLayout from '../../../../../EmployeeManagement/resources/js/layouts/AdminLayout';
+} from '@/Modules/Core/resources/js/components/ui/tooltip';
+import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
 
 interface LeaveType {
   id: number;
@@ -558,3 +558,17 @@ const LeaveTypesIndex: React.FC = () => {
 };
 
 export default LeaveTypesIndex;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

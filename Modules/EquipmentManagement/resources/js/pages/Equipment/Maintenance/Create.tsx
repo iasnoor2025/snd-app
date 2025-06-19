@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 // Define PageProps inline if needed
 type PageProps = Record<string, unknown>;
-import AdminLayout from '@/layouts/AdminLayout';
+import { AdminLayout } from '@/Modules/Core/resources/js';
 // Define Equipment inline if needed
 interface Equipment {
   id: number;
@@ -14,20 +14,20 @@ interface Equipment {
   purchase_date?: string;
   door_number?: string;
 }
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Label } from '@/Modules/Core/resources/js/components/ui/label';
+import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/Modules/Core/resources/js/components/ui/select';
 import { ArrowLeft as ArrowLeftIcon } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/Modules/Core/resources/js/components/ui/use-toast';
 import {
   Form,
   FormField,
@@ -35,17 +35,17 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-} from '@/components/ui/form';
+} from '@/Modules/Core/resources/js/components/ui/form';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
+} from '@/Modules/Core/resources/js/components/ui/popover';
+import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
 import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
+import { cn } from '@/Modules/Core/resources/js/lib/utils';
 import { CalendarIcon } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import {
   Dialog,
   DialogTrigger,
@@ -55,8 +55,8 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose,
-} from '@/components/ui/dialog';
-import { Separator } from '@/components/ui/separator';
+} from '@/Modules/Core/resources/js/components/ui/dialog';
+import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
 // Define BreadcrumbItem inline
 type BreadcrumbItem = { title: string; href: string };
 
@@ -234,3 +234,20 @@ export default function MaintenanceCreate({ equipment }: Props) {
     </AdminLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

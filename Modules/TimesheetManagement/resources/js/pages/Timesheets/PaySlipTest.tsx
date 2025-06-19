@@ -5,14 +5,14 @@ import { Head, Link } from '@inertiajs/react';
 type PageProps = any;
 // Minimal placeholder AdminLayout component
 const AdminLayout = ({ children }: { children: React.ReactNode }) => <div className="admin-layout-placeholder">{children}</div>;
-import { Button } from '@/components/ui/button';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from '@/Modules/Core/resources/js/components/ui/card';
 import { ArrowLeft as ArrowLeftIcon } from 'lucide-react';
 
 interface Props extends PageProps {
@@ -58,3 +58,17 @@ export default function PaySlipTest(props: any) {
     </AdminLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

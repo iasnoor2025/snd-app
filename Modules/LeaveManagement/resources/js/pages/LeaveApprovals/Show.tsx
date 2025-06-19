@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Button } from '../../../../../../resources/js/components/ui/button';
+import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from '../../../../../../resources/js/components/ui/card';
-import { Badge } from '../../../../../../resources/js/components/ui/badge';
-import { Textarea } from '../../../../../../resources/js/components/ui/textarea';
+} from '@/Modules/Core/resources/js/components/ui/card';
+import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
 import {
   Dialog,
   DialogContent,
@@ -18,7 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '../../../../../../resources/js/components/ui/dialog';
+} from '@/Modules/Core/resources/js/components/ui/dialog';
 import {
   ArrowLeft as ArrowLeftIcon,
   Check as CheckIcon,
@@ -36,8 +36,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '../../../../../../resources/js/components/ui/breadcrumb';
-import AdminLayout from '../../../../../EmployeeManagement/resources/js/layouts/AdminLayout';
+} from '@/Modules/Core/resources/js/components/ui/breadcrumb';
+import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
 import { format } from 'date-fns';
 
 interface Employee {
@@ -519,3 +519,17 @@ const LeaveApprovalShow: React.FC = () => {
 };
 
 export default LeaveApprovalShow;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

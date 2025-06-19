@@ -32,10 +32,10 @@ Route::prefix('pwa')->name('pwa.')->group(function() {
     Route::post('/unsubscribe', [PWAController::class, 'unsubscribe'])->name('unsubscribe');
 });
 
-// Legacy MobileBridge routes
-Route::prefix('mobilebridge')->group(function() {
-    Route::get('/', 'MobileBridgeController@index');
-});
+// Legacy MobileBridge routes - Temporarily disabled until controller is created
+// Route::prefix('mobilebridge')->group(function() {
+//     Route::get('/', 'MobileBridgeController@index');
+// });
 
 // TODO: Temporarily comment out all routes in this file to debug EmployeeManagement API and missing MobileBridgeController
 

@@ -1,8 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Label } from '@/Modules/Core/resources/js/components/ui/label';
 import PositionSelector from './PositionSelector';
 
 interface Position {
@@ -99,3 +99,19 @@ export function EmploymentDetailsTab({ data, positions, onSaveDraft, isSubmittin
         </Card>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
