@@ -72,9 +72,13 @@ class PushNotificationService {
       if (response.ok) {
         const data = await response.json();
         this.vapidPublicKey = data.publicKey;
+      } else {
+        console.warn('VAPID key not available - push notifications disabled');
+        this.isSupported = false;
       }
     } catch (error) {
-      console.warn('Failed to load VAPID key:', error);
+      console.warn('Failed to load VAPID key - push notifications disabled:', error);
+      this.isSupported = false;
     }
   }
 

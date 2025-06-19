@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import AuthenticatedLayout from '@/Modules/Core/resources/js/layouts/AuthenticatedLayout';
+import { AdminLayout } from '@/Modules/Core/resources/js';
 import { Head, Link, router } from '@inertiajs/react';
+import { BreadcrumbItem } from '@/types/index';
 import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import { 
@@ -76,6 +77,11 @@ export default function Index({ users, roles }: Props) {
     const [userToDelete, setUserToDelete] = useState<User | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('common:dashboard'), href: route('dashboard') },
+        { title: t('common:users'), href: '' },
+    ];
+
     // Filter users based on search term
     const filteredUsers = users.filter(user =>
         user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -108,7 +114,7 @@ export default function Index({ users, roles }: Props) {
     };
 
     return (
-        <AuthenticatedLayout>
+        <AdminLayout breadcrumbs={breadcrumbs}>
             <Head title={t('common:users')} />
 
             <div className="py-6">
@@ -199,7 +205,8 @@ export default function Index({ users, roles }: Props) {
                                                     <TableCell className="text-right">
                                                         <DropdownMenu>
                                                             <DropdownMenuTrigger asChild>
-                                                                <Button variant="ghost" size="icon">
+                                                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                                                    <span className="sr-only">Open menu</span>
                                                                     <MoreHorizontal className="h-4 w-4" />
                                                                 </Button>
                                                             </DropdownMenuTrigger>
@@ -217,7 +224,7 @@ export default function Index({ users, roles }: Props) {
                                                                     </Link>
                                                                 </DropdownMenuItem>
                                                                 <DropdownMenuItem 
-                                                                    className="text-destructive"
+                                                                    className="text-red-600"
                                                                     onClick={() => openDeleteDialog(user)}
                                                                 >
                                                                     <Trash2 className="h-4 w-4 mr-2" />
@@ -232,25 +239,20 @@ export default function Index({ users, roles }: Props) {
                                     </TableBody>
                                 </Table>
                             </div>
-
-                            {/* Stats */}
-                            <div className="mt-6 text-sm text-gray-500">
-                                {filteredUsers.length} {t('common:of')} {users.length} {t('common:users').toLowerCase()}
-                            </div>
                         </CardContent>
                     </Card>
                 </div>
             </div>
 
-            {/* Delete Confirmation Dialog */}
+            {/* Delete Dialog */}
             <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>{t('common:confirm_delete')}</DialogTitle>
                         <DialogDescription>
-                            {t('common:confirm_delete_user', {
+                            {t('common:delete_user_confirmation', {
                                 name: userToDelete?.name,
-                                defaultValue: `Are you sure you want to delete ${userToDelete?.name}? This action cannot be undone.`
+                                defaultValue: `Are you sure you want to delete "${userToDelete?.name}"? This action cannot be undone.`
                             })}
                         </DialogDescription>
                     </DialogHeader>
@@ -267,18 +269,12 @@ export default function Index({ users, roles }: Props) {
                             onClick={handleDeleteUser}
                             disabled={isDeleting}
                         >
-                            {isDeleting ? (
-                                <>
-                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                    {t('common:actions.deleting')}
-                                </>
-                            ) : (
-                                t('common:actions.delete')
-                            )}
+                            {isDeleting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                            {t('common:actions.delete')}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-        </AuthenticatedLayout>
+        </AdminLayout>
     );
 } 

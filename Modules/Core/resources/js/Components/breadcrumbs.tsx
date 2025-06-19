@@ -14,7 +14,8 @@ export function Breadcrumbs({ breadcrumbs }: { breadcrumbs: BreadcrumbItemType[]
                     <BreadcrumbList>
                         {breadcrumbs.map((item, index) => {
                             const isLast = index === breadcrumbs.length - 1;
-                            const translatedTitle = t(`common:breadcrumbs.${item.title.toLowerCase().replace(/ /g, '_')}`, { defaultValue: item.title });
+                            const title = item.title || item.name || 'Unknown';
+                            const translatedTitle = t(`common:breadcrumbs.${title.toLowerCase().replace(/ /g, '_')}`, { defaultValue: title });
 
                             return (
                                 <Fragment key={index}>

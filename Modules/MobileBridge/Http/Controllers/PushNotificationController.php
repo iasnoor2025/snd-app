@@ -34,19 +34,26 @@ class PushNotificationController extends Controller
             $publicKey = config('mobilebridge.push_notifications.vapid.public_key');
 
             if (empty($publicKey)) {
+                // Return a default/placeholder key to prevent errors
+                // This allows the frontend to work without push notifications
                 return response()->json([
-                    'error' => 'VAPID public key not configured'
-                ], 500);
+                    'publicKey' => 'BNone-configured-push-notifications-disabled',
+                    'enabled' => false,
+                    'message' => 'Push notifications are not configured'
+                ]);
             }
 
             return response()->json([
-                'publicKey' => $publicKey
+                'publicKey' => $publicKey,
+                'enabled' => true
             ]);
         } catch (\Exception $e) {
             Log::error('Failed to get VAPID key: ' . $e->getMessage());
             return response()->json([
+                'publicKey' => 'BNone-configured-push-notifications-disabled',
+                'enabled' => false,
                 'error' => 'Failed to get VAPID key'
-            ], 500);
+            ]);
         }
     }
 
