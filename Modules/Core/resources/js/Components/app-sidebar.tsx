@@ -129,7 +129,7 @@ export function AppSidebar() {
             });
             items.push({
                 title: t('common:roles'),
-                href: '/roles',
+                href: '/settings/roles',
                 icon: Shield,
             });
         }

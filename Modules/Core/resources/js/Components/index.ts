@@ -18,14 +18,14 @@ export { default as Breadcrumbs } from './breadcrumbs';
 export { default as ApplicationLogo } from './ApplicationLogo';
 export { default as Modal } from './Modal';
 export { default as Dropdown } from './Dropdown';
-export { default as ThemeProvider } from './theme-provider';
+export { ThemeProvider } from './theme-provider';
 
 // Form Components
 export { default as TextInput } from './TextInput';
 export { default as InputLabel } from './InputLabel';
 export { default as InputError } from './InputError';
 export { default as Checkbox } from './Checkbox';
-export { default as TranslatableField } from './TranslatableField';
+export { TranslatableField } from './TranslatableField';
 export { default as ValidationErrors } from './ValidationErrors';
 
 // Button Components
@@ -34,8 +34,8 @@ export { default as SecondaryButton } from './SecondaryButton';
 export { default as DangerButton } from './DangerButton';
 
 // User Components
-export { default as UserMenuContent } from './user-menu-content';
-export { default as UserInfo } from './user-info';
+export { UserMenuContent } from './user-menu-content';
+export { UserInfo } from './user-info';
 export { default as DeleteUser } from './delete-user';
 
 // Avatar Components - AvatarShowcase removed

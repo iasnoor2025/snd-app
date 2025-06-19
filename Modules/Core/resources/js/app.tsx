@@ -170,6 +170,8 @@ const moduleMap: Record<string, string[]> = {
   'Equipment': ['EquipmentManagement'],
   'Customers': ['CustomerManagement'],
   'Users': ['Core'],
+  'Roles': ['Core'],
+  'Permissions': ['Core'],
   'Core': ['Core'],
   'Audit': ['AuditCompliance'],
   'API': ['API']

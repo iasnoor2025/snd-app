@@ -3,11 +3,26 @@ import ApplicationLogo from '@/Modules/Core/resources/js/components/ApplicationL
 import Dropdown from '@/Modules/Core/resources/js/components/Dropdown';
 import NavLink from '@/Modules/Core/resources/js/components/NavLink';
 import ResponsiveNavLink from '@/Modules/Core/resources/js/components/ResponsiveNavLink';
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { User } from '@/types';
 
-export default function AuthenticatedLayout({ user, header, children }: PropsWithChildren<{ user: User, header?: React.ReactNode }>) {
+interface PageProps {
+    auth: {
+        user: User;
+        roles: string[];
+        permissions: string[];
+    };
+}
+
+export default function AuthenticatedLayout({ header, children }: PropsWithChildren<{ header?: React.ReactNode }>) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
+    const { auth } = usePage<PageProps>().props;
+    const user = auth.user;
+
+    // If user is not authenticated, don't render the layout
+    if (!user) {
+        return null;
+    }
 
     return (
         <div className="min-h-screen bg-gray-100">
