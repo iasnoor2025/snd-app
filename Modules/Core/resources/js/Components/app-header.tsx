@@ -215,6 +215,9 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     );
 }
 
+// Default export for compatibility with index.ts
+export default AppHeader;
+
 
 
 

@@ -71,6 +71,9 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
     );
 }
 
+// Default export for compatibility with index.ts
+export default NavMain;
+
 
 
 

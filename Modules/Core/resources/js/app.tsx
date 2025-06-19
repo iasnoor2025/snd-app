@@ -45,10 +45,12 @@ if (typeof window !== 'undefined') {
   window.Ziggy = Ziggy;
 }
 
-// Dynamically import all module pages (both pages and Pages, all modules)
+// Dynamically import all module pages (both pages and Pages, all modules) + main app pages
 const modulePages: Record<string, () => Promise<any>> = {
   ...import.meta.glob('/Modules/*/resources/js/pages/**/*.tsx', { eager: false }),
   ...import.meta.glob('/Modules/*/resources/js/pages/**/*.jsx', { eager: false }),
+  ...import.meta.glob('/resources/js/pages/**/*.tsx', { eager: false }),
+  ...import.meta.glob('/resources/js/Pages/**/*.tsx', { eager: false }),
 };
 
 // Helper function to find module pages by pattern
@@ -129,6 +131,18 @@ const leaveRequestPages: Record<string, string> = {
   'LeaveRequests/Show': './Modules/LeaveManagement/resources/js/pages/LeaveRequests/Show.tsx',
 };
 
+// Core/Users pages
+const corePages: Record<string, string> = {
+  'Users/Index': '/resources/js/Pages/Users/Index.tsx',
+  'Users/Create': '/resources/js/Pages/Users/Create.tsx',
+  'Users/Edit': '/resources/js/Pages/Users/Edit.tsx',
+  'Users/Show': '/resources/js/Pages/Users/Show.tsx',
+  'welcome': '/resources/js/pages/welcome.tsx',
+  'Dashboard': '/resources/js/pages/dashboard.tsx',
+  'dashboard': '/resources/js/pages/dashboard.tsx',
+  'rtl-test': '/resources/js/pages/rtl-test.tsx',
+};
+
 // Combine all page mappings
 const allPageMappings: Record<string, string> = {
   ...employeePages,
@@ -137,6 +151,7 @@ const allPageMappings: Record<string, string> = {
   ...timesheetPages,
   ...customerPages,
   ...leaveRequestPages,
+  ...corePages,
 };
 
 // Map from page name prefixes to module names
@@ -187,13 +202,13 @@ createInertiaApp({
             }
         }
 
-        // First try to resolve from main app's lowercase pages directory
+        // First try to resolve from main app's lowercase pages directory (using absolute Vite path)
         try {
-            return await resolvePageComponent(`./pages/${name}.tsx`, import.meta.glob('./pages/**/*.tsx'));
+            return await resolvePageComponent(`/resources/js/pages/${name}.tsx`, import.meta.glob('/resources/js/pages/**/*.tsx'));
         } catch (error) {
             // If not found in lowercase pages, try uppercase Pages
             try {
-                return await resolvePageComponent(`./Pages/${name}.tsx`, import.meta.glob('./Pages/**/*.tsx'));
+                return await resolvePageComponent(`/resources/js/Pages/${name}.tsx`, import.meta.glob('/resources/js/Pages/**/*.tsx'));
             } catch (e) {
                 // Handle Laravel's Inertia::render('Module::Page') pattern (like Employee module)
                 if (name.includes('::')) {

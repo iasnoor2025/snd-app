@@ -247,6 +247,9 @@ export function AppSidebar() {
     );
 }
 
+// Default export for compatibility with index.ts
+export default AppSidebar;
+
 
 
 

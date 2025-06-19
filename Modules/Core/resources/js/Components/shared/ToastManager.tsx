@@ -117,6 +117,9 @@ export class ToastManager {
 // For backward compatibility, also export as ToastService
 export const ToastService = ToastManager;
 
+// Default export for direct imports
+export default ToastManager;
+
 
 
 

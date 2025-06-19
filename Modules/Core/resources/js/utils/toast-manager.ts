@@ -1,10 +1,8 @@
-export function showToast(message: string) {
-  // Placeholder: no-op
-}
+// Re-export ToastManager from the actual implementation
+export { ToastManager, ToastService } from '../Components/shared/ToastManager';
 
-export const ToastManager = {};
-
-export default ToastManager;
+// Export ToastManager as default for backward compatibility
+export { ToastManager as default } from '../Components/shared/ToastManager';
 
 
 

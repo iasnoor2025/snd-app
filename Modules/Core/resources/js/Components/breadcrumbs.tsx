@@ -38,6 +38,9 @@ export function Breadcrumbs({ breadcrumbs }: { breadcrumbs: BreadcrumbItemType[]
     );
 }
 
+// Default export for compatibility with index.ts
+export default Breadcrumbs;
+
 
 
 

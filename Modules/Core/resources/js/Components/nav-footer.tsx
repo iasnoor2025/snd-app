@@ -36,6 +36,9 @@ export function NavFooter({
     );
 }
 
+// Default export for compatibility with index.ts
+export default NavFooter;
+
 
 
 
