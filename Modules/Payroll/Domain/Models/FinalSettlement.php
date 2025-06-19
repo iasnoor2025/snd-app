@@ -320,18 +320,122 @@ use SoftDeletes;
 
     public function generateSettlementReport()
     {
-        // TODO: Implement PDF report generation
-        return [
-            'employee' => $this->employee->name,
-            'settlement_date' => $this->settlement_date->format('Y-m-d'),
-            'unpaid_salary' => $this->unpaid_salary,
-            'overtime_amount' => $this->overtime_amount,
-            'bonus_amount' => $this->bonus_amount,
-            'deduction_amount' => $this->deduction_amount,
-            'leave_encashment' => $this->leave_encashment,
-            'final_amount' => $this->final_amount,
-            'status' => $this->status,
+        // Generate PDF report for final settlement
+        $data = [
+            'settlement' => $this,
+            'employee' => $this->employee,
+            'company_name' => config('app.name', 'Company Name'),
+            'generated_at' => now(),
+            'settlement_breakdown' => [
+                'unpaid_salary' => $this->unpaid_salary,
+                'overtime_amount' => $this->overtime_amount,
+                'bonus_amount' => $this->bonus_amount,
+                'deduction_amount' => $this->deduction_amount,
+                'leave_encashment' => $this->leave_encashment,
+                'final_amount' => $this->final_amount,
+            ],
+            'details' => [
+                'employee_name' => $this->employee->full_name,
+                'employee_id' => $this->employee->employee_id,
+                'settlement_date' => $this->settlement_date->format('Y-m-d'),
+                'last_working_day' => $this->last_working_day->format('Y-m-d'),
+                'status' => ucfirst($this->status),
+                'department' => $this->employee->department ?? 'N/A',
+                'position' => $this->employee->position ?? 'N/A',
+            ]
         ];
+
+        try {
+            // Generate PDF using DomPDF
+            $pdf = app('dompdf.wrapper');
+            $html = view('payroll::settlements.pdf', $data)->render();
+            $pdf->loadHTML($html);
+            $pdf->setPaper('A4', 'portrait');
+            
+            // Save PDF to storage
+            $filename = "final_settlement_{$this->employee->employee_id}_{$this->id}.pdf";
+            $path = storage_path("app/settlements/{$filename}");
+            
+            if (!file_exists(dirname($path))) {
+                mkdir(dirname($path), 0755, true);
+            }
+            
+            file_put_contents($path, $pdf->output());
+            
+            return [
+                'success' => true,
+                'filename' => $filename,
+                'path' => $path,
+                'data' => $data,
+                'download_url' => route('settlements.download', ['settlement' => $this->id])
+            ];
+            
+        } catch (\Exception $e) {
+            \Log::error('Final Settlement PDF Generation Error: ' . $e->getMessage());
+            
+            return [
+                'success' => false,
+                'error' => 'Failed to generate PDF report: ' . $e->getMessage(),
+                'data' => $data
+            ];
+        }
+    }
+
+    /**
+     * Download settlement report as PDF
+     */
+    public function downloadReport()
+    {
+        $report = $this->generateSettlementReport();
+        
+        if (!$report['success']) {
+            throw new \Exception($report['error']);
+        }
+        
+        $pdf = app('dompdf.wrapper');
+        $html = view('payroll::settlements.pdf', $report['data'])->render();
+        $pdf->loadHTML($html);
+        $pdf->setPaper('A4', 'portrait');
+        
+        $filename = "final_settlement_{$this->employee->employee_id}_{$this->id}.pdf";
+        
+        return $pdf->download($filename);
+    }
+
+    /**
+     * Generate PDF settlement report
+     */
+    public function generatePdfReport()
+    {
+        $data = [
+            'settlement' => $this,
+            'employee' => $this->employee,
+            'company_name' => config('app.name', 'Company Name'),
+            'generated_at' => now(),
+            'settlement_breakdown' => [
+                'unpaid_salary' => $this->unpaid_salary,
+                'overtime_amount' => $this->overtime_amount,
+                'bonus_amount' => $this->bonus_amount,
+                'deduction_amount' => $this->deduction_amount,
+                'leave_encashment' => $this->leave_encashment,
+                'final_amount' => $this->final_amount,
+            ],
+        ];
+
+        try {
+            $pdf = app('dompdf.wrapper');
+            $html = view('payroll::settlements.pdf', $data)->render();
+            $pdf->loadHTML($html);
+            $pdf->setPaper('A4', 'portrait');
+            
+            $filename = "final_settlement_{$this->employee->employee_id}_{$this->id}.pdf";
+            
+            return $pdf->download($filename);
+            
+        } catch (\Exception $e) {
+            \Log::error('Final Settlement PDF Generation Error: ' . $e->getMessage());
+            throw new \Exception('Failed to generate PDF report: ' . $e->getMessage());
+        }
     }
 }
 

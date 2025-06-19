@@ -193,10 +193,40 @@ class FinalSettlementController extends Controller
         return response()->json($report);
     }
 
+    /**
+     * Calculate leave encashment for employee
+     */
     private function calculateLeaveEncashment($employee)
     {
-        // TODO: Implement leave encashment calculation based on company policy
-        return 0;
+        // Get employee's leave balance
+        $leaveBalance = $employee->leave_balance ?? 0;
+        
+        if ($leaveBalance <= 0) {
+            return 0;
+        }
+
+        // Get company policy for maximum encashable days (default 30 days)
+        $maxEncashableDays = config('payroll.max_encashable_leave_days', 30);
+        $encashableDays = min($leaveBalance, $maxEncashableDays);
+
+        // Calculate daily rate based on basic salary
+        $basicSalary = $employee->base_salary ?? 0;
+        $dailyRate = $basicSalary / 30; // Assuming 30 days per month
+
+        // Calculate encashment amount
+        $encashmentAmount = $encashableDays * $dailyRate;
+
+        // Apply any policy restrictions
+        $minServiceMonths = config('payroll.min_service_months_for_encashment', 12);
+        $serviceMonths = $employee->hire_date ? 
+            Carbon::parse($employee->hire_date)->diffInMonths(now()) : 0;
+
+        if ($serviceMonths < 12) {
+            // Reduce encashment for employees with less than 1 year service
+            $encashmentAmount *= 0.5; // 50% for employees with less than 1 year service
+        }
+
+        return round($encashmentAmount, 2);
     }
 }
 

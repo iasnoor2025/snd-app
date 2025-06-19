@@ -225,65 +225,167 @@ class TimesheetReportController extends Controller
     }
 
     /**
-     * Export timesheet data to Excel/CSV.
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse;
+     * Export timesheet report
      */
     public function export(Request $request)
     {
         $request->validate([
-            'month' => 'required|date_format:Y-m',
-            'employee_id' => 'nullable|exists:employees,id',
-            'format' => 'required|in:excel,csv',
+            'format' => 'required|in:excel,pdf,csv',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'employee_ids' => 'array',
+            'project_ids' => 'array',
         ]);
 
-        $monthYear = $request->input('month');
-        $employeeId = $request->input('employee_id');
-        $format = $request->input('format', 'excel');
+        try {
+            $data = $this->getTimesheetData($request);
+            $format = $request->input('format');
+            $filename = 'timesheet_report_' . now()->format('Y_m_d_H_i_s');
 
-        $month = Carbon::parse($monthYear);
-        $startDate = $month->copy()->startOfMonth();
-        $endDate = $month->copy()->endOfMonth();
+            switch ($format) {
+                case 'excel':
+                    return $this->exportToExcel($data, $filename);
+                case 'pdf':
+                    return $this->exportToPdf($data, $filename);
+                case 'csv':
+                    return $this->exportToCsv($data, $filename);
+                default:
+                    throw new \Exception('Invalid export format');
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Export failed: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
-        $query = Timesheet::with(['employee', 'project', 'rental'])
-            ->whereBetween('date', [$startDate, $endDate]);
+    /**
+     * Export to Excel format
+     */
+    private function exportToExcel($data, $filename)
+    {
+        $headers = [
+            'Employee Name',
+            'Date',
+            'Project',
+            'Clock In',
+            'Clock Out',
+            'Regular Hours',
+            'Overtime Hours',
+            'Total Hours',
+            'Status'
+        ];
 
-        if ($employeeId) {
-            $query->where('employee_id', $employeeId);
-        } elseif (!auth()->user()->hasRole(['admin', 'hr'])) {
-            // If user is not admin/hr, only show their own timesheets
-            $query->where('employee_id', auth()->user()->employee->id);
+        $rows = [];
+        foreach ($data as $timesheet) {
+            $rows[] = [
+                $timesheet->employee->full_name ?? 'N/A',
+                $timesheet->date ? Carbon::parse($timesheet->date)->format('Y-m-d') : 'N/A',
+                $timesheet->project->name ?? 'N/A',
+                $timesheet->clock_in ? Carbon::parse($timesheet->clock_in)->format('H:i') : 'N/A',
+                $timesheet->clock_out ? Carbon::parse($timesheet->clock_out)->format('H:i') : 'N/A',
+                $timesheet->regular_hours ?? 0,
+                $timesheet->overtime_hours ?? 0,
+                ($timesheet->regular_hours ?? 0) + ($timesheet->overtime_hours ?? 0),
+                ucfirst($timesheet->status ?? 'pending')
+            ];
         }
 
-        $timesheets = $query->orderBy('date')->get();
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
 
-        // Generate export filename
-        $filename = 'timesheets_' . $monthYear;
-        if ($employeeId) {
-            // Ensure ID is numeric
-            if (!is_numeric($employeeId)) {
-                abort(404, 'Invalid ID provided');
-            }
+        // Set headers
+        foreach ($headers as $index => $header) {
+            $sheet->setCellValue(chr(65 + $index) . '1', $header);
+        }
 
-            $employee = Employee::find($employeeId);
-            if ($employee) {
-                $filename .= '_' . strtolower(
-                    str_replace(' ', '_', $employee->first_name . '_' . $employee->last_name)
-                );
+        // Set data
+        foreach ($rows as $rowIndex => $row) {
+            foreach ($row as $colIndex => $value) {
+                $sheet->setCellValue(chr(65 + $colIndex) . ($rowIndex + 2), $value);
             }
         }
 
-        // TODO: Implement actual export using a library like Laravel Excel
-        // For now, just return a JSON response;
-        return response()->json([
-            'message' => 'Export functionality will be implemented in a future update.',
-            'data' => [
-                'month' => $monthYear,
-                'employee_id' => $employeeId,
-                'format' => $format,
-                'count' => $timesheets->count(),
-            ]
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        
+        return response()->streamDownload(function() use ($writer) {
+            $writer->save('php://output');
+        }, $filename . '.xlsx', [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]);
+    }
+
+    /**
+     * Export to PDF format
+     */
+    private function exportToPdf($data, $filename)
+    {
+        $pdf = app('dompdf.wrapper');
+        $html = view('timesheets.reports.pdf', compact('data'))->render();
+        $pdf->loadHTML($html);
+        
+        return $pdf->download($filename . '.pdf');
+    }
+
+    /**
+     * Export to CSV format
+     */
+    private function exportToCsv($data, $filename)
+    {
+        $headers = [
+            'Employee Name',
+            'Date', 
+            'Project',
+            'Clock In',
+            'Clock Out',
+            'Regular Hours',
+            'Overtime Hours',
+            'Total Hours',
+            'Status'
+        ];
+
+        return response()->streamDownload(function() use ($data, $headers) {
+            $output = fopen('php://output', 'w');
+            fputcsv($output, $headers);
+            
+            foreach ($data as $timesheet) {
+                fputcsv($output, [
+                    $timesheet->employee->full_name ?? 'N/A',
+                    $timesheet->date ? Carbon::parse($timesheet->date)->format('Y-m-d') : 'N/A',
+                    $timesheet->project->name ?? 'N/A',
+                    $timesheet->clock_in ? Carbon::parse($timesheet->clock_in)->format('H:i') : 'N/A',
+                    $timesheet->clock_out ? Carbon::parse($timesheet->clock_out)->format('H:i') : 'N/A',
+                    $timesheet->regular_hours ?? 0,
+                    $timesheet->overtime_hours ?? 0,
+                    ($timesheet->regular_hours ?? 0) + ($timesheet->overtime_hours ?? 0),
+                    ucfirst($timesheet->status ?? 'pending')
+                ]);
+            }
+            
+            fclose($output);
+        }, $filename . '.csv', [
+            'Content-Type' => 'text/csv',
+        ]);
+    }
+
+    /**
+     * Get timesheet data for export
+     */
+    private function getTimesheetData(Request $request)
+    {
+        $query = \Modules\TimesheetManagement\Domain\Models\Timesheet::with(['employee', 'project'])
+            ->whereBetween('date', [$request->start_date, $request->end_date]);
+
+        if ($request->has('employee_ids') && !empty($request->employee_ids)) {
+            $query->whereIn('employee_id', $request->employee_ids);
+        }
+
+        if ($request->has('project_ids') && !empty($request->project_ids)) {
+            $query->whereIn('project_id', $request->project_ids);
+        }
+
+        return $query->orderBy('date', 'desc')->get();
     }
 
     /**
@@ -307,7 +409,25 @@ class TimesheetReportController extends Controller
         $totalRegularHours = $timesheets->sum('hours_worked');
         $totalOvertimeHours = $timesheets->sum('overtime_hours');
 
-        // TODO: Implement payslip calculation logic
+        // Calculate payslip data
+        $hourlyRate = $employee->hourly_rate ?? 0;
+        $overtimeRate = $hourlyRate * 1.5; // 1.5x overtime rate
+        
+        $regularPay = $totalRegularHours * $hourlyRate;
+        $overtimePay = $totalOvertimeHours * $overtimeRate;
+        $grossPay = $regularPay + $overtimePay;
+        
+        // Calculate deductions
+        $taxRate = 0.15; // 15% tax rate
+        $socialSecurityRate = 0.095; // 9.5% social security
+        $medicalInsuranceRate = 0.02; // 2% medical insurance
+        
+        $tax = $grossPay * $taxRate;
+        $socialSecurity = $grossPay * $socialSecurityRate;
+        $medicalInsurance = $grossPay * $medicalInsuranceRate;
+        $totalDeductions = $tax + $socialSecurity + $medicalInsurance;
+        
+        $netPay = $grossPay - $totalDeductions;
 
         $data = [
             'employee' => $employee,
@@ -315,10 +435,90 @@ class TimesheetReportController extends Controller
             'timesheets' => $timesheets,
             'totalRegularHours' => $totalRegularHours,
             'totalOvertimeHours' => $totalOvertimeHours,
-            // Add more payslip data as needed
+            'hourlyRate' => $hourlyRate,
+            'overtimeRate' => $overtimeRate,
+            'regularPay' => $regularPay,
+            'overtimePay' => $overtimePay,
+            'grossPay' => $grossPay,
+            'tax' => $tax,
+            'socialSecurity' => $socialSecurity,
+            'medicalInsurance' => $medicalInsurance,
+            'totalDeductions' => $totalDeductions,
+            'netPay' => $netPay,
         ];
 
         return view('timesheetmanagement::payslips.show', $data);
+    }
+
+    /**
+     * Generate payslip for employee
+     */
+    public function generatePayslip(Request $request, $employeeId) 
+    {
+        $request->validate([
+            'month' => 'required|date_format:Y-m',
+            'format' => 'in:pdf,html'
+        ]);
+
+        try {
+            $employee = \Modules\EmployeeManagement\Domain\Models\Employee::findOrFail($employeeId);
+            $month = $request->input('month');
+            $format = $request->input('format', 'pdf');
+
+            // Get timesheet data for the month
+            $timesheets = \Modules\TimesheetManagement\Domain\Models\Timesheet::where('employee_id', $employeeId)
+                ->whereRaw('DATE_FORMAT(date, "%Y-%m") = ?', [$month])
+                ->get();
+
+            // Calculate payroll data
+            $regularHours = $timesheets->sum('regular_hours') ?? 0;
+            $overtimeHours = $timesheets->sum('overtime_hours') ?? 0;
+            $totalHours = $regularHours + $overtimeHours;
+
+            $hourlyRate = $employee->hourly_rate ?? 0;
+            $overtimeRate = $hourlyRate * 1.5; // 1.5x for overtime
+
+            $regularPay = $regularHours * $hourlyRate;
+            $overtimePay = $overtimeHours * $overtimeRate;
+            $grossPay = $regularPay + $overtimePay;
+
+            // Calculate deductions (simplified)
+            $taxRate = 0.15; // 15% tax
+            $tax = $grossPay * $taxRate;
+            $netPay = $grossPay - $tax;
+
+            $payslipData = [
+                'employee' => $employee,
+                'month' => $month,
+                'regularHours' => $regularHours,
+                'overtimeHours' => $overtimeHours,
+                'totalHours' => $totalHours,
+                'hourlyRate' => $hourlyRate,
+                'overtimeRate' => $overtimeRate,
+                'regularPay' => $regularPay,
+                'overtimePay' => $overtimePay,
+                'grossPay' => $grossPay,
+                'tax' => $tax,
+                'netPay' => $netPay,
+                'timesheets' => $timesheets
+            ];
+
+            if ($format === 'pdf') {
+                $pdf = app('dompdf.wrapper');
+                $html = view('timesheets.payslip.pdf', $payslipData)->render();
+                $pdf->loadHTML($html);
+                
+                return $pdf->download("payslip_{$employee->employee_id}_{$month}.pdf");
+            } else {
+                return view('timesheets.payslip.html', $payslipData);
+            }
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Payslip generation failed: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
 

@@ -4,8 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/Modules/Core/resourc
 import { Button } from "@/Modules/Core/resources/js/components/ui/button";
 import { Badge } from "@/Modules/Core/resources/js/components/ui/badge";
 import { Progress } from '@/Modules/Core/resources/js/components/ui/progress';
-// TODO: Implement PaymentForm or replace with a placeholder
-// import PaymentForm from "@/Modules/Core/resources/js/components/payments/PaymentForm";
+import PaymentForm from "@/Modules/Core/resources/js/components/payments/PaymentForm";
 import {
   Table,
   TableBody,
@@ -283,8 +282,7 @@ export default function PaymentTracker({
       </Card>
 
       {/* Payment Form */}
-      {/* TODO: Implement PaymentForm or replace with a placeholder */}
-      {/* <PaymentForm
+      <PaymentForm
         isOpen={isAddPaymentDialogOpen}
         onClose={() => setIsAddPaymentDialogOpen(false)}
         onSubmit={handleFormSubmit}
@@ -294,7 +292,7 @@ export default function PaymentTracker({
           total_amount: rental.total_amount,
           remaining_balance: metrics.remainingAmount
         }}
-      /> */}
+      />
     </div>
   );
 }

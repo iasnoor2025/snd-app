@@ -52,8 +52,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::apiResource('notifications', 'Modules\Notifications\Http\Controllers\Api\NotificationController');
 
     // Report routes
-    // TODO: Uncomment when ReportController exists
-    // Route::apiResource('reports', 'Modules\Reporting\Http\Controllers\API\ReportController');
+    Route::apiResource('reports', 'Modules\Reporting\Http\Controllers\API\ReportController');
 });
 
 
