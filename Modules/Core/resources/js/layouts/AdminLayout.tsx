@@ -2,7 +2,7 @@ import React from 'react';
 import { AppShell } from '../components/app-shell';
 import { AppSidebar } from '../components/app-sidebar';
 import { Breadcrumbs } from '../components/breadcrumbs';
-import { Sidebar, SidebarInset } from '../components/ui/sidebar';
+import { Sidebar, SidebarInset, SidebarTrigger } from '../components/ui/sidebar';
 
 interface BreadcrumbItem {
   title: string;
@@ -44,9 +44,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ title, breadcrumbs = [], requ
       <SidebarInset className="min-h-screen">
         <header className="admin-layout-header sticky top-0 z-10 bg-white border-b border-gray-200 px-6 py-4">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold text-gray-900 mb-1">{title}</h1>
-              <Breadcrumbs breadcrumbs={finalBreadcrumbs} />
+            <div className="flex items-center gap-4">
+              <SidebarTrigger className="-ml-1" />
+              <div>
+                <h1 className="text-2xl font-semibold text-gray-900 mb-1">{title}</h1>
+                <Breadcrumbs breadcrumbs={finalBreadcrumbs} />
+              </div>
             </div>
           </div>
         </header>
