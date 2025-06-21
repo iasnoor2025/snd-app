@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { cn } from "@/lib/utils";
-// import { RentalStatus } from '@/types/models';
+import { cn } from "@/Core";
+// import { RentalStatus } from '@/Core/types/models';
 type RentalStatus = string;
 import { Check, Clock, AlertCircle } from 'lucide-react';
 

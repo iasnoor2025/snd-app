@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2, Clock, AlertCircle, MoreHorizontal, Edit, Trash2 } from 'lucide-react';
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/Core";
+import { Progress } from "@/Core";
+import { Button } from "@/Core";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/Core";
 import { formatDistanceToNow } from 'date-fns';
 
 export interface ProjectTask {

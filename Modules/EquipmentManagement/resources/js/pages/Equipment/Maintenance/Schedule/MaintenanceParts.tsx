@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Button } from "@/Core";
+import { Input } from "@/Core";
+import { Label } from "@/Core";
+import { Badge } from "@/Core";
 import {
   Table,
   TableBody,
@@ -12,10 +12,10 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from "@/components/ui/table";
+} from "@/Core";
 import { PlusCircle, Trash2 } from 'lucide-react';
-import { Separator } from "@/components/ui/separator";
-import { Numeric } from "@/components/ui/numeric";
+import { Separator } from "@/Core";
+import { Numeric } from "@/Core";
 
 interface Part {
   id: number;

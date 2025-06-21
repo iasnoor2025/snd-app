@@ -1,21 +1,21 @@
 import React, { useState, useEffect, useMemo, lazy, Suspense } from "react";
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from "@inertiajs/react";
-import { PageProps } from '@/types';
-import { Rental, RentalItem, PermissionString } from '@/types/models';
+import { PageProps } from '@/Core/types';
+import { Rental, RentalItem, PermissionString } from '@/Core/types/models';
 import { AppLayout } from '@/Core';
 import RentalItemsTable from '../../components/rentals/RentalItemsTable';
 import RentalWorkflowStatus from '../../components/rentals/RentalWorkflowStatus';
 import { format, differenceInDays, addDays, isAfter, isBefore } from "date-fns";
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
-import { cn } from "@/lib/utils";
+import { cn } from "@/Core";
 import axios from "axios";
 
 // Shadcn UI Components
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/Core";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/Core";
+import { Badge } from "@/Core";
 import {
   Dialog,
   DialogContent,
@@ -24,30 +24,30 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@/Core";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/components/ui/tabs";
+} from "@/Core";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
-import { Progress } from "@/components/ui/progress";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Calendar } from "@/components/ui/calendar";
+} from "@/Core";
+import { Separator } from "@/Core";
+import { Progress } from "@/Core";
+import { Switch } from "@/Core";
+import { Label } from "@/Core";
+import { Input } from "@/Core";
+import { Textarea } from "@/Core";
+import { Calendar } from "@/Core";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/Core";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -55,13 +55,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/Core";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@/Core";
 import {
   Sheet,
   SheetClose,
@@ -71,12 +71,12 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
+} from "@/Core";
 import {
   Alert,
   AlertDescription,
   AlertTitle,
-} from "@/components/ui/alert";
+} from "@/Core";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -87,8 +87,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
+} from "@/Core";
+import { ScrollArea } from "@/Core";
 
 // Icons
 import {
@@ -148,7 +148,7 @@ import RentalAnalytics from '../../components/rentals/RentalAnalytics';
 // import MaintenanceRecordList from '../../components/maintenance/MaintenanceRecordList';
 // import PaymentStatusBadge from '../../components/shared/PaymentStatusBadge';
 // import MapView from '../../components/maps/MapView';
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency } from "@/Core";
 
 // Other components
 import RentalTimeline from '../../components/rentals/RentalTimeline';
@@ -156,7 +156,7 @@ import RentalExtensionForm from '../../components/rentals/RentalExtensionForm';
 // import DocumentsViewer from '../../components/documents/DocumentsViewer';
 
 // Add import for QRCode component
-import QRCode from "@/components/ui/qr-code";
+import { QRCode } from "@/Core";
 import { RentalWorkflowStepper } from '../../components/rentals/RentalWorkflowStepper';
 import { RentalWorkflowActions } from '../../components/rentals/RentalWorkflowActions';
 
@@ -1124,7 +1124,7 @@ export default function Show({
   };
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <Head title={`Rental ${rental?.rental_number || '#' + rental?.id || ''}`} />
 
       {isLoading && (
@@ -1245,7 +1245,7 @@ export default function Show({
         onClose={() => setIsSimpleExtensionModalOpen(false)}
         onSuccess={handleExtensionSuccess}
       />
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

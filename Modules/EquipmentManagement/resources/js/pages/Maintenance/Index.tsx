@@ -8,17 +8,17 @@ type MaintenanceRecord = { id: number; [key: string]: any };
 type Equipment = { id: number; name: string };
 // ... existing code ...
 import { formatCurrency, formatDate } from '../../utils/format';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Input } from "@/Core";
+import { Badge } from "@/Core";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/Core";
 import {
   Table,
   TableBody,
@@ -26,8 +26,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { useToast } from "@/components/ui/use-toast";
+} from "@/Core";
+import { useToast } from "@/Core";
 import {
   Eye as EyeIcon,
   Pencil as EditIcon,
@@ -42,8 +42,8 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
+} from "@/Core";
+import { Calendar } from "@/Core";
 import { format } from 'date-fns';
 import dayjs from 'dayjs';
 import { AppLayout } from '@/Core';
@@ -457,7 +457,7 @@ const { toast } = useToast();
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

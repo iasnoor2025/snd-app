@@ -2,9 +2,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link } from '@inertiajs/react';
 import { AppLayout } from '@/Core';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Badge } from "@/Core";
+import { Button } from "@/Core";
 import {
   Receipt,
   Download,
@@ -18,7 +18,7 @@ import {
   User
 } from "lucide-react";
 import { format } from "date-fns";
-import { formatCurrency } from "@/utils/format";
+import { formatCurrency } from "@/Core";
 
 // Placeholder types
 type PageProps = any;
@@ -195,7 +195,7 @@ export default function Show({ auth, payment }: Props) {
           </Card>
         </div>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

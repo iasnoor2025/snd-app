@@ -1,6 +1,6 @@
 import React from 'react';
 import { usePage } from '@inertiajs/react';
-import { PageProps } from '@/types';
+import { PageProps } from '@/Core/types';
 
 export default function ValidationErrors() {
     const { errors } = usePage<PageProps>().props;

@@ -3,13 +3,13 @@ import { FormEventHandler, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/Core";
+import { Input } from "@/Core";
+import { Label } from "@/Core";
 
-import HeadingSmall from "@/components/heading-small";
+import { HeadingSmall } from "@/Core";
 
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from "@/Core";
 
 export default function DeleteUser() {
     const { t } = useTranslation('profile');

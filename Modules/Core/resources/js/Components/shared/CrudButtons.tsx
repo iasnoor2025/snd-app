@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Link, router } from '@inertiajs/react';
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Core";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
+} from "@/Core";
 import {
   Dialog,
   DialogContent,
@@ -15,7 +15,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose,
-} from "@/components/ui/dialog";
+} from "@/Core";
 import {
   Eye,
   Pencil,
@@ -24,7 +24,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { usePermission } from "@/hooks/usePermission";
+import { usePermission } from "@/Core";
 import { useTranslation } from 'react-i18next';
 
 interface CrudButtonsProps {

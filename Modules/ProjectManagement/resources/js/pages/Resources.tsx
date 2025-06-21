@@ -2,8 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import axios from 'axios';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/Core";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
 import ResourceForm from '../components/project/ResourceForm';
 import ResourceList from '../components/project/ResourceList';
 import {
@@ -14,15 +14,15 @@ import {
     DialogTrigger,
     DialogDescription,
     DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/Core";
+import { Button } from "@/Core";
 import { Plus, ArrowLeft, Layers, PieChart, BarChart, DollarSign, Users, Search, Filter, SlidersHorizontal, X, CheckSquare, FileText, Package, Calendar as CalendarIcon } from 'lucide-react';
 import { AppLayout } from '@/Core';
 import { toast } from "sonner";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Input } from "@/components/ui/input";
+import { Separator } from "@/Core";
+import { Badge } from "@/Core";
+import { Progress } from "@/Core";
+import { Input } from "@/Core";
 import { format } from 'date-fns';
 import {
     DropdownMenu,
@@ -37,12 +37,12 @@ import {
     DropdownMenuSubContent,
     DropdownMenuSubTrigger,
     DropdownMenuPortal,
-} from "@/components/ui/dropdown-menu";
+} from "@/Core";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/Core";
 import {
     Form,
     FormControl,
@@ -50,14 +50,14 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "@/components/ui/form";
+} from "@/Core";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select";
+} from "@/Core";
 import TaskList, { ProjectTask } from '../components/project/TaskList';
 import TaskDialog from '../components/project/TaskDialog';
 import { DialogErrorBoundary } from '../components/DialogErrorBoundary';
@@ -67,8 +67,8 @@ import TaskForm from '../components/project/TaskForm';
 import ResourceFilters from '../components/project/ResourceFilters';
 import ResourcePagination from '../components/project/ResourcePagination';
 import ResourceSearch from '../components/project/ResourceSearch';
-import { cn } from "@/lib/utils";
-import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/Core";
+import { Calendar } from "@/Core";
 
 // Import tab components
 import { ManpowerTab } from './resources/Tabs/ManpowerTab';
@@ -583,7 +583,7 @@ const ResourcesPage = ({ project, manpower = { data: [], current_page: 1, last_p
                     page={page}
                 />
             </ErrorBoundary>
-        </AdminLayout>
+        </AppLayout>
     );
 };
 

@@ -8,20 +8,20 @@ type Rental = any;
 type RentalItem = any;
 type RentalTimesheet = any;
 import { AppLayout } from '@/Core';
-import { formatDate } from "@/utils/format";
+import { formatDate } from "@/Core";
 // Placeholder usePermission hook
 const usePermission = () => ({ hasPermission: () => true });
 
 // Shadcn UI Components
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/Core";
+import { Badge } from "@/Core";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/Core";
 import {
   Table,
   TableBody,
@@ -29,24 +29,24 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/Core";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
+} from "@/Core";
+import { Input } from "@/Core";
+import { Checkbox } from "@/Core";
 import type { CheckedState } from '@radix-ui/react-checkbox';
-import { Separator } from "@/components/ui/separator";
-import { Calendar } from "@/components/ui/calendar";
+import { Separator } from "@/Core";
+import { Calendar } from "@/Core";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/Core";
 import {
   Dialog,
   DialogContent,
@@ -54,7 +54,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/Core";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -62,7 +62,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/Core";
 
 // Icons
 import {
@@ -87,12 +87,12 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+import { cn } from "@/Core";
 import { format, parseISO } from "date-fns";
-import { Pagination } from "@/components/ui/pagination";
+import { Pagination } from "@/Core";
 // Placeholder for ColumnDef
 type ColumnDef = any;
-import { formatCurrency } from "@/utils/format";
+import { formatCurrency } from "@/Core";
 
 interface Props extends PageProps {
   timesheets: {
@@ -360,7 +360,7 @@ export default function Index({ auth, timesheets, filters = {} }: Props) {
 ];
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <Head title={t('rental_timesheets')} />
 
       <div className="container mx-auto py-6 space-y-6">
@@ -690,7 +690,7 @@ export default function Index({ auth, timesheets, filters = {} }: Props) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

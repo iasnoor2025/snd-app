@@ -5,8 +5,8 @@ import { PageProps, BreadcrumbItem } from '../../types';
 import { AppLayout } from '@/Core';
 import { Employee as BaseEmployee } from '../../types/models';
 import { route } from 'ziggy-js';
-import { getTranslation } from "@/utils/translation";
-import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { getTranslation } from "@/Core";
+import { Breadcrumb } from "@/Core";
 import {
   Card,
   CardContent,
@@ -14,10 +14,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from "@/Core";
+import { Button } from "@/Core";
+import { Badge } from "@/Core";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
 import {
   Table,
   TableBody,
@@ -25,7 +25,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/Core";
 import {
   Dialog,
   DialogContent,
@@ -34,27 +34,27 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "@/Core";
+import { Input } from "@/Core";
+import { Label } from "@/Core";
 import { ArrowLeft, Edit, Trash2, FileText, Calendar, Check, X, AlertCircle, RefreshCw, ExternalLink, Download, User, Briefcase, CreditCard, FileBox, Upload, Printer, Car, Truck, Award, IdCard, Plus, History, Receipt, XCircle, CheckCircle, Clock } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
-import { usePermission } from "@/hooks/usePermission";
+import { usePermission } from "@/Core";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+} from "@/Core";
+import { Alert, AlertDescription } from "@/Core";
 import axios from 'axios';
 import DocumentManager from '../../components/employees/EmployeeDocumentManager';
 import { useQueryClient } from '@tanstack/react-query';
-import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-// import { MediaLibrary } from "@/components/media-library/MediaLibrary"; // TODO: Fix or replace MediaLibrary import
-// import { DailyTimesheetRecords } from "@/components/timesheets/DailyTimesheetRecords"; // TODO: Fix or replace DailyTimesheetRecords import
-import { useToast } from "@/components/ui/use-toast";
+import { Separator } from "@/Core";
+import { Avatar, AvatarFallback } from "@/Core";
+// import { MediaLibrary } from "@/Core"; // TODO: Fix or replace MediaLibrary import
+// import { DailyTimesheetRecords } from "@/Core"; // TODO: Fix or replace DailyTimesheetRecords import
+import { useToast } from "@/Core";
 // PaymentHistory component placeholder
 const PaymentHistory = ({ employeeId, initialMonthlyHistory, initialTotalRepaid, initialPagination, showOnlyLast }: any) => (
   <div className="p-4 text-center text-muted-foreground">
@@ -72,7 +72,7 @@ import { toast } from 'sonner';
 import ToastService from '@/services/ToastService';
 import FinalSettlementTab from '../../components/employees/FinalSettlementTab';
 // import { route } from 'ziggy-js';
-import { Textarea } from "@/components/ui/textarea";
+import { Textarea } from "@/Core";
 import { TimesheetSummary } from '../../components/employees/timesheets/TimesheetSummary';
 import { TimesheetList } from '../../components/employees/timesheets/TimesheetList';
 import { TimesheetForm } from '../../components/employees/timesheets/TimesheetForm';
@@ -416,7 +416,7 @@ export default function Show({
             </Button>
           </div>
         </div>
-      </AdminLayout>
+      </AppLayout>
     );
   }
 
@@ -2962,7 +2962,7 @@ export default function Show({
           </DialogContent>
         </Dialog>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

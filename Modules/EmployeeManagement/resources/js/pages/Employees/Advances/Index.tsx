@@ -3,14 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { Head, router } from '@inertiajs/react';
 import { PageProps } from '@/Modules/EmployeeManagement/resources/js/types';
 import { AppLayout } from '@/Core';
-import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { Breadcrumb } from "@/Core";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/Core";
 import {
   Table,
   TableBody,
@@ -18,10 +18,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+} from "@/Core";
+import { Badge } from "@/Core";
 import { format } from 'date-fns';
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Core";
 import { Trash2, Check, X, ArrowLeft, History } from 'lucide-react';
 import {
   Dialog,
@@ -30,15 +30,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/Core";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { usePermission } from "@/hooks/usePermission";
-import { ToastService } from "@/components/shared/ToastManager";
+} from "@/Core";
+import { usePermission } from "@/Core";
+import { ToastService } from "@/Core";
 
 interface Advance {
   id: number;
@@ -279,7 +279,7 @@ export default function Index({ auth, employee, advances, total_balance }: Props
           </DialogContent>
         </Dialog>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

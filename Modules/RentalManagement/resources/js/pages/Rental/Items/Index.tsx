@@ -1,10 +1,10 @@
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head } from '@inertiajs/react';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/Core";
+import { Input } from "@/Core";
+import { Select } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
 import { Plus, Search, Filter } from 'lucide-react';
 import { useForm } from '@inertiajs/react';
 

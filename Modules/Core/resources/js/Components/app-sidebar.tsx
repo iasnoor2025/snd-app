@@ -178,7 +178,7 @@ export function AppSidebar() {
             </SidebarContent>
             <SidebarFooter>
                 <NavUser />
-                <NavFooter items={[
+                {/* <NavFooter items={[
                     {
                         title: 'Documentation',
                         href: '/docs',
@@ -189,7 +189,7 @@ export function AppSidebar() {
                         href: '/support',
                         icon: 'help-circle'
                     }
-                ]} />
+                ]} /> */}
             </SidebarFooter>
         </Sidebar>
     );

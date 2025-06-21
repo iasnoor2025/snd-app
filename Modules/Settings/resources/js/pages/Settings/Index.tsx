@@ -1,5 +1,6 @@
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
+import { AppLayout } from '@/Core';
 import { 
     User, 
     Lock, 
@@ -76,8 +77,13 @@ export default function SettingsIndex() {
         },
     ];
 
+    const breadcrumbs = [
+        { title: 'Dashboard', href: '/dashboard' },
+        { title: 'Settings', href: '/settings' },
+    ];
+
     return (
-        <div className="min-h-screen bg-gray-50">
+        <AppLayout title="Settings" breadcrumbs={breadcrumbs}>
             <Head title="Settings" />
 
             <div className="max-w-4xl mx-auto py-8 px-4">
@@ -142,6 +148,6 @@ export default function SettingsIndex() {
                     </div>
                 </div>
             </div>
-        </div>
+        </AppLayout>
     );
 } 

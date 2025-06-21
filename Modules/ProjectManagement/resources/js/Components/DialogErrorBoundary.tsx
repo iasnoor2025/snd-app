@@ -1,7 +1,7 @@
 import React, { Component, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/Core";
+import { Button } from "@/Core";
 import { AlertTriangle } from 'lucide-react';
 
 interface Props {

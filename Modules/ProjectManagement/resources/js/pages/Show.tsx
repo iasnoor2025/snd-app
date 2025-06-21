@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, router } from '@inertiajs/react';
-import AppLayout from "@/layouts/AppLayout";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AppLayout } from '@/Core';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/Core";
+import { Button } from "@/Core";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
 import { format } from 'date-fns';
 import {
     Edit,
@@ -24,10 +24,10 @@ import {
 } from 'lucide-react';
 import ResourceList from '../components/project/ResourceList';
 import ResourceForm from '../components/project/ResourceForm';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Progress } from "@/components/ui/progress";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/Core";
+import { Badge } from "@/Core";
+import { Separator } from "@/Core";
+import { Progress } from "@/Core";
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import TaskList, { ProjectTask } from '../components/project/TaskList';
@@ -1053,7 +1053,7 @@ export default function Show({ project, manpower = [], equipment = [], materials
                     </DialogContent>
                 </Dialog>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }
 

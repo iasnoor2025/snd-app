@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Head } from '@inertiajs/react';
-import AppLayout from "@/layouts/AppLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AppLayout } from '@/Core';
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Badge } from "@/Core";
+import { Button } from "@/Core";
+import { Progress } from "@/Core";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
+import { Input } from "@/Core";
+import { Label } from "@/Core";
+import { Textarea } from "@/Core";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
 import {
   LineChart,
   Line,
@@ -62,7 +62,7 @@ import {
   MapPin,
   Activity
 } from 'lucide-react';
-import { formatCurrency } from "@/utils/format";
+import { formatCurrency } from "@/Core";
 
 interface Equipment {
   id: number;
@@ -355,7 +355,7 @@ const LifecycleManagement: React.FC<Props> = ({
   const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <Head title="Equipment Lifecycle Management" />
 
       <div className="space-y-6">
@@ -1049,7 +1049,7 @@ const LifecycleManagement: React.FC<Props> = ({
           </TabsContent>
         </Tabs>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 };
 

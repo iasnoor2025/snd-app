@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { Head, router } from '@inertiajs/react';
-import AppLayout from '@/layouts/AdminLayout';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { AppLayout } from '@/Core';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/Core";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/Core";
+import { Button } from "@/Core";
+import { Input } from "@/Core";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/Core";
 import RevenueChart from './RevenueChart';
 import { useForm } from '@inertiajs/react';
 import { toast } from 'sonner';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BarChart, LineChart } from '@/components/ui/charts';
-import { DataTable } from '@/components/ui/data-table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
+import { BarChart, LineChart } from "recharts";
+import { DataTable } from "@/Core";
 
 interface Stats {
   revenue: any;
@@ -449,7 +449,7 @@ const ReportsIndex: React.FC<ReportsIndexProps> = ({ stats, recentActivity, char
           </TabsContent>
         </Tabs>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 };
 

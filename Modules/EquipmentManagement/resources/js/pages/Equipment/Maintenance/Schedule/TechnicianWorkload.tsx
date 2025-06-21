@@ -1,8 +1,8 @@
 import { format, parseISO } from 'date-fns';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
+import { Avatar, AvatarFallback, AvatarImage } from "@/Core";
+import { Card, CardContent } from "@/Core";
+import { Badge } from "@/Core";
+import { Progress } from "@/Core";
 
 interface Equipment {
   id: number;

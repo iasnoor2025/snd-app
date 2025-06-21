@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { format, parseISO } from 'date-fns';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Button } from "@/Core";
 import { useToast } from '@/hooks/useToast';
 import { toast } from 'sonner';
 import {
@@ -13,21 +13,21 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/Core";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Calendar } from "@/components/ui/calendar";
+} from "@/Core";
+import { Badge } from "@/Core";
+import { Input } from "@/Core";
+import { Calendar } from "@/Core";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/Core";
 import { Calendar as CalendarIcon, Ellipsis, Plus } from 'lucide-react';
 
 interface Timesheet {

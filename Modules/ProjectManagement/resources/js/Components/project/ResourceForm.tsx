@@ -1,28 +1,28 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useForm, router } from '@inertiajs/react';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/Core";
+import { Input } from "@/Core";
+import { Label } from "@/Core";
+import { Textarea } from "@/Core";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+} from "@/Core";
+import { Calendar } from "@/Core";
+import { Popover, PopoverContent, PopoverTrigger } from "@/Core";
 import { format } from 'date-fns';
 import { CalendarIcon, User } from 'lucide-react';
-import { cn } from "@/lib/utils";
+import { cn } from "@/Core";
 import axios from 'axios';
-import { Toggle } from "@/components/ui/toggle";
-import ErrorBoundary from "@/components/ErrorBoundary";
+import { Toggle } from "@/Core";
+import { ErrorBoundary } from "@/Core";
 import { z } from 'zod';
 import { route } from 'ziggy-js';
-import { ToastService } from "@/components/shared/ToastManager";
-import { DatePicker } from "@/components/ui/date-picker";
+import { ToastService } from "@/Core";
+import { DatePicker } from "@/Core";
 import { useTranslation } from 'react-i18next';
 
 interface Employee {

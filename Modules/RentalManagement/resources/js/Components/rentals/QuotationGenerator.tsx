@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Core";
 import { FileText, Loader2 } from "lucide-react";
-import { usePermission } from "@/hooks/usePermission";
-import ToastManager from "@/utils/toast-manager";
+import { usePermission } from "@/Core";
+import { ToastManager } from "@/Core";
 import { router } from "@inertiajs/react";
 
 interface QuotationGeneratorProps {

@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Input } from "@/Core";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/Core";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
+import { Button } from "@/Core";
 import { Plus, Pencil, Trash } from 'lucide-react';
 import { UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import ModalForm from "@/components/shared/ModalForm";
+import { ModalForm } from "@/Core";
 import PositionSelector from '../PositionSelector';
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertTitle, AlertDescription } from "@/Core";
 import { Info } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { getTranslation } from "@/utils/translation";
-// import { User, Position } from '@/types/models';
+import { getTranslation } from "@/Core";
+// import { User, Position } from '@/Core/types/models';
 
 const positionSchema = z.object({
   name: z.string().min(1, 'Position name is required'),

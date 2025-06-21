@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from 'react-i18next';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Card, CardHeader, CardTitle, CardContent } from "@/Core";
+import { Avatar, AvatarFallback } from "@/Core";
 import { Home, Mail, Phone, User } from "lucide-react";
 
 interface CustomerCardProps {

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useTranslation } from 'react-i18next';
 import axios from "axios";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/Core";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
 import ResourceList from "./ResourceList";
 import ResourceSearch from "./ResourceSearch";
 import {
@@ -11,11 +11,11 @@ import {
     DialogHeader,
     DialogTitle,
     DialogDescription,
-} from "@/components/ui/dialog";
-import { toast } from "@/components/ui/use-toast";
+} from "@/Core";
+import { toast } from "@/Core";
 import ResourceForm from "./ResourceForm";
 import { X, Filter, ChevronDown, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/Core";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -23,10 +23,10 @@ import {
     DropdownMenuCheckboxItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
+} from "@/Core";
+import { Input } from "@/Core";
+import { Label } from "@/Core";
+import { Card } from "@/Core";
 
 type ResourceType = 'manpower' | 'equipment' | 'material' | 'fuel' | 'expense';
 

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link } from '@inertiajs/react';
-import { PageProps, BreadcrumbItem } from '@/types';
+import { PageProps, BreadcrumbItem } from '@/Core/types';
 import { AppLayout } from '@/Core';
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Core";
 import {
   Card,
   CardContent,
@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
   CardFooter,
-} from "@/components/ui/card";
+} from "@/Core";
 import {
   Table,
   TableBody,
@@ -19,9 +19,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+} from "@/Core";
+import { Badge } from "@/Core";
+import { Separator } from "@/Core";
 import {
   ArrowLeft,
   Printer,
@@ -283,7 +283,7 @@ export default function PaySlip({
             </CardContent>
           </Card>
         </div>
-      </AdminLayout>
+      </AppLayout>
     );
   }
 
@@ -600,7 +600,7 @@ export default function PaySlip({
           </CardFooter>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

@@ -1,10 +1,10 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head } from '@inertiajs/react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-// import { LineChart, BarChart, PieChart, MapChart } from "@/components/ui/charts";
-import { formatCurrency, formatPercentage } from "@/utils/format";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
+// import { LineChart, BarChart, PieChart, MapChart } from "@/Core";
+import { formatCurrency, formatPercentage } from "@/Core";
 
 interface Props {
     analytics: {

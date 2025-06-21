@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useWebSocket } from '@/hooks/useWebSocket';
-import { useToast } from "@/components/ui/use-toast";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Badge } from "@/Core";
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Icon } from 'leaflet';

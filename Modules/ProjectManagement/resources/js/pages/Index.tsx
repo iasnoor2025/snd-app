@@ -1,19 +1,18 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Input } from "@/components/ui/input";
+import { AppLayout } from '@/Core';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/Core";
+import { Button } from "@/Core";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/Core";
+import { Badge } from "@/Core";
+import { Separator } from "@/Core";
+import { Input } from "@/Core";
 import { format } from 'date-fns';
 import {
     Eye, Edit, Plus, LayoutGrid, CheckCircle, Clock, AlertCircle, XCircle,
     Filter, Search
 } from 'lucide-react';
-import AppLayout from "@/layouts/AppLayout";
 // Declare window.route for TypeScript
 // @ts-ignore
 // eslint-disable-next-line
@@ -288,7 +287,7 @@ export default function Index({ projects }: Props) {
                     )}
                 </Card>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }
 

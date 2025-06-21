@@ -2,13 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, router } from '@inertiajs/react';
 import { format, parseISO } from 'date-fns';
-import { PageProps } from '@/types';
-import { Rental, customer } from '@/types/models';
+import { PageProps } from '@/Core/types';
+import { Rental, customer } from '@/Core/types/models';
 import { AppLayout } from '@/Core';
 
 // Shadcn UI components
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/Core";
+import { Badge } from "@/Core";
 import {
   Card,
   CardContent,
@@ -16,14 +16,14 @@ import {
   CardTitle,
   CardDescription,
   CardFooter,
-} from "@/components/ui/card";
+} from "@/Core";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/Core";
 import {
   Table,
   TableBody,
@@ -32,18 +32,18 @@ import {
   TableHeader,
   TableRow,
   TableFooter,
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { Calendar } from "@/components/ui/calendar";
+} from "@/Core";
+import { Input } from "@/Core";
+import { Label } from "@/Core";
+import { Separator } from "@/Core";
+import { Calendar } from "@/Core";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from "@/Core";
+import { Skeleton } from "@/Core";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
 
 // Icons
 import {
@@ -928,7 +928,7 @@ export default function Report({ auth, rentals, customers, filters }: Props) {
         }
         `}
       </style>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

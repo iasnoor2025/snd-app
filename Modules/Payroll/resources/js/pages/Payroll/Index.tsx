@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, useForm, router } from '@inertiajs/react';
-import AppLayout from "@/layouts/AppLayout";
-import { PageProps } from "@/types";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { AppLayout } from '@/Core';
+import { PageProps } from "@/Core/types";
+import { Button } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/Core";
+import { Badge } from "@/Core";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/Core";
+import { Input } from "@/Core";
+import { Label } from "@/Core";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/Core";
 import { format } from 'date-fns';
 import { route } from 'ziggy-js';
 
@@ -280,7 +280,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                     </form>
                 </DialogContent>
             </Dialog>
-        </AdminLayout>
+        </AppLayout>
     );
 }
 

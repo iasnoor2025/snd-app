@@ -1,11 +1,11 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { formatCurrency } from "@/utils/format";
-import { getTranslation } from '@/utils/translation';
+import { Button } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/Core";
+import { formatCurrency } from "@/Core";
+import { getTranslation } from '@/Core/utils/translation';
 
 // Placeholder type for RentalItem
 type RentalItem = any;

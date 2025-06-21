@@ -1,10 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
-import { PageProps } from "@/types";
-import AppLayout from "@/layouts/AppLayout";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { PageProps } from "@/Core/types";
+import { AppLayout } from '@/Core';
+import { Button } from "@/Core";
+import { Badge } from "@/Core";
 import {
     Table,
     TableBody,
@@ -12,23 +12,23 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table";
+} from "@/Core";
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "@/Core";
+import { Input } from "@/Core";
+import { Label } from "@/Core";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select";
+} from "@/Core";
 import { Plus, Search, Filter } from 'lucide-react';
 import { format } from 'date-fns';
 import { useState } from 'react';
@@ -266,7 +266,7 @@ export default function Index({ auth, salaryAdvances, filters }: Props) {
                     </CardContent>
                 </Card>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }
 

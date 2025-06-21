@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import PaymentForm from "@/components/payments/PaymentForm";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Button } from "@/Core";
+import { Badge } from "@/Core";
+import { Progress } from "@/Core";
+import { PaymentForm } from "@/Core";
 import {
   Table,
   TableBody,
@@ -12,12 +12,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/Core";
 import {
   Alert,
   AlertDescription,
   AlertTitle,
-} from "@/components/ui/alert";
+} from "@/Core";
 import {
   CreditCard,
   DollarSign,
@@ -36,7 +36,7 @@ import {
 } from "lucide-react";
 import { format, differenceInDays, isAfter, isBefore } from "date-fns";
 import { toast } from "sonner";
-import { formatCurrency } from "@/utils/format";
+import { formatCurrency } from "@/Core";
 
 interface Payment {
   id: number;

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head } from '@inertiajs/react';
 import { AppLayout } from '@/Core';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
 import { toast } from 'sonner';
 
 export default function QuotationTest({ auth }: { auth?: any }) {
@@ -64,7 +64,7 @@ export default function QuotationTest({ auth }: { auth?: any }) {
   };
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <Head title={t('ttl_quotation_test')} />
 
       <div className="container mx-auto py-6">
@@ -134,7 +134,7 @@ export default function QuotationTest({ auth }: { auth?: any }) {
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

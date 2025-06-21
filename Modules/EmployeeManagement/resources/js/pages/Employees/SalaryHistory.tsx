@@ -7,8 +7,8 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+} from "@/Core";
+import { Badge } from "@/Core";
 import { format } from 'date-fns';
 import { AppLayout } from '@/Core';
 
@@ -130,7 +130,7 @@ export default function SalaryHistory({ records = [] }: Props) {
                     </TableBody>
                 </Table>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }
 

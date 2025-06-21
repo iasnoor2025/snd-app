@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from 'react-i18next';
-import { RentalItem, Equipment, Employee } from "@/types/models";
+import { RentalItem, Equipment, Employee } from "@/Core/types/models";
 
 // Shadcn UI Components
 import {
@@ -10,8 +10,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+} from "@/Core";
+import { Badge } from "@/Core";
 
 interface ExtendedRentalItem extends Omit<RentalItem, 'operator'> {
   daily_rate?: number;

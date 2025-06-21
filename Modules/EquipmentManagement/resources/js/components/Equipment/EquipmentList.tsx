@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 import { Link } from '@inertiajs/react';
-import { formatDateTime } from '@/utils/date';
+import { formatDateTime } from '@/Core/utils/date';
 
 interface Equipment {
     id: number;

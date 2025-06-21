@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { format, parseISO } from 'date-fns';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/Core";
+import { Button } from "@/Core";
 import { useToast } from '@/hooks/useToast';
-import { Calendar } from "@/components/ui/calendar";
+import { Calendar } from "@/Core";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/Core";
 import {
   Table,
   TableBody,
@@ -18,12 +18,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { DialogDescription } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
+} from "@/Core";
+import { Badge } from "@/Core";
+import { Checkbox } from "@/Core";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/Core";
+import { DialogDescription } from "@/Core";
+import { Textarea } from "@/Core";
 import { CalendarIcon, CheckIcon, Cross2Icon } from '@radix-ui/react-icons';
 
 interface Employee {

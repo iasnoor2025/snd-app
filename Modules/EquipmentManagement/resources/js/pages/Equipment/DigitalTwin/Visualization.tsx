@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Head } from '@inertiajs/react';
-import AppLayout from "@/layouts/AppLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
+import { AppLayout } from '@/Core';
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Badge } from "@/Core";
+import { Button } from "@/Core";
+import { Progress } from "@/Core";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
+import { Input } from "@/Core";
+import { Label } from "@/Core";
+import { Slider } from "@/Core";
+import { Switch } from "@/Core";
 import {
   LineChart,
   Line,
@@ -57,7 +57,7 @@ import {
   Maximize,
   Minimize
 } from 'lucide-react';
-import { formatCurrency } from "@/utils/format";
+import { formatCurrency } from "@/Core";
 
 interface Equipment {
   id: number;
@@ -373,7 +373,7 @@ const DigitalTwinVisualization: React.FC<Props> = ({
   ];
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <Head title="Digital Twin Visualization" />
 
       <div className="space-y-6">
@@ -764,7 +764,7 @@ const DigitalTwinVisualization: React.FC<Props> = ({
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 };
 

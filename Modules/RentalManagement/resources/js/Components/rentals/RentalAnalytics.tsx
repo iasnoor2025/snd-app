@@ -1,8 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Progress } from "@/Core";
+import { Badge } from "@/Core";
 import {
   BarChart3,
   Activity,
@@ -18,7 +18,7 @@ import {
   Wrench,
   CloudSun,
 } from "lucide-react";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency } from "@/Core";
 
 interface RentalAnalyticsProps {
   rental: any;

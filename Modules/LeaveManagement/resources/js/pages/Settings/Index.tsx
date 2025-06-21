@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, useForm } from '@inertiajs/react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Core";
+import { Button } from "@/Core";
+import { Input } from "@/Core";
+import { Label } from "@/Core";
+import { Switch } from "@/Core";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
+import { Textarea } from "@/Core";
+import { Badge } from "@/Core";
+import { Separator } from "@/Core";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
+import { Alert, AlertDescription } from "@/Core";
 import { toast } from 'sonner';
 import {
     Settings,
@@ -28,7 +28,7 @@ import {
     AlertTriangle,
     Info
 } from 'lucide-react';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/Core";
 
 // Temporary inline implementation - replace with actual hook
 const usePermission = () => ({

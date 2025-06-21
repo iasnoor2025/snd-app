@@ -1,19 +1,19 @@
 import React from 'react';
 import { Head, Link, useForm, router } from '@inertiajs/react';
-import type { PageProps } from "@/types";
+import type { PageProps } from "@/Core/types";
 import { AppLayout } from '@/Core';
 import { format } from 'date-fns';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/Core";
+import { Input } from "@/Core";
+import { Textarea } from "@/Core";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/Core";
 import {
   Form,
   FormControl,
@@ -21,17 +21,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/Core";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useForm as useReactHookForm, Controller } from 'react-hook-form';
-import { Calendar } from "@/components/ui/calendar";
+import { Calendar } from "@/Core";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+} from "@/Core";
+import { cn } from "@/Core";
 import {
   CalendarIcon,
   ArrowLeft,
@@ -51,11 +51,11 @@ import {
   Building2,
   Package
 } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
+import { Separator } from "@/Core";
+import { Badge } from "@/Core";
 import { useTranslation } from 'react-i18next';
-import { useEquipmentCategories } from "@/hooks/useEquipmentCategories";
+import { useEquipmentCategories } from "@/Core";
 import { Equipment, EquipmentFormData } from '../../types';
 
 interface Props extends PageProps {
@@ -858,7 +858,7 @@ export default function Edit({ auth, equipment, categories = [], locations = [] 
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/Core";
+import { Button } from "@/Core";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/Core";
 import { Loader2, ChevronDown, CalendarPlus, FileText, Trash, Printer, Clock, CreditCard, Pencil, Share2, Zap } from "lucide-react";
 import { Link } from "@inertiajs/react";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/Core";
 import { toast } from "sonner";
 import RentalExtensionDialog from "./RentalExtensionDialog";
 

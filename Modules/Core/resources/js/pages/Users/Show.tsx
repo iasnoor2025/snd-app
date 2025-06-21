@@ -1,8 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link } from '@inertiajs/react';
-import { BreadcrumbItem } from "@/types";
-import AppLayout from "@/layouts/AppLayout";
+import { BreadcrumbItem } from "@/Core/types";
+import { AppLayout } from '@/Core';
 import {
   Card,
   CardContent,
@@ -17,7 +17,7 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from "@/components/ui";
+} from "@/Core";
 import { ArrowLeft, User, Edit, Key, Shield, Mail } from 'lucide-react';
 import { format } from 'date-fns';
 

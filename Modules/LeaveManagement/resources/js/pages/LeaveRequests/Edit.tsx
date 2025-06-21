@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Core";
 import {
   Card,
   CardContent,
@@ -9,7 +9,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/Core";
 import {
   Form,
   FormControl,
@@ -18,15 +18,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+} from "@/Core";
+import { Input } from "@/Core";
+import { Textarea } from "@/Core";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
 import { CalendarDays, ArrowLeft } from 'lucide-react';
 const ToastService = { success: (msg: string) => alert(msg), error: (msg: string) => alert(msg) };
 import { AppLayout } from '@/Core';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/ui/breadcrumb";
-import { formatDate } from "@/utils/format";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/Core";
+import { formatDate } from "@/Core";
 import { useForm as useReactHookForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -150,7 +150,7 @@ export default function LeaveRequestEdit({ leaveRequest, employees = [] }: Props
   };
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <Head title={t('edit_leave_request')} />
       <div className="container mx-auto py-6">
         <Breadcrumb
@@ -370,7 +370,7 @@ export default function LeaveRequestEdit({ leaveRequest, employees = [] }: Props
           </Form>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

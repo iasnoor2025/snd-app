@@ -1,19 +1,19 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, useForm, Link } from '@inertiajs/react';
-import AppLayout from "@/layouts/AppLayout";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { AppLayout } from '@/Core';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/Core";
+import { Input } from "@/Core";
+import { Label } from "@/Core";
+import { Button } from "@/Core";
+import { Textarea } from "@/Core";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
+import { Calendar } from "@/Core";
+import { Popover, PopoverContent, PopoverTrigger } from "@/Core";
 import { format } from 'date-fns';
 import { CalendarIcon, ArrowLeft, Plus } from 'lucide-react';
-import { cn } from "@/lib/utils";
-import { Separator } from "@/components/ui/separator";
+import { cn } from "@/Core";
+import { Separator } from "@/Core";
 
 interface Customer {
     id: number;
@@ -322,7 +322,7 @@ export default function Create({ customers, locations }: Props) {
                     </CardContent>
                 </Card>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }
 

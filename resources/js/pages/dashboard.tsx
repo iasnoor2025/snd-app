@@ -1,4 +1,4 @@
-import AppLayout from '../../../Modules/Core/resources/js/layouts/AppLayout';
+import { AppLayout } from '@/Core';
 import {
   Card,
   CardContent,

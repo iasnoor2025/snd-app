@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link } from '@inertiajs/react';
-import { PageProps, BreadcrumbItem } from '@/types';
+import { PageProps, BreadcrumbItem } from '@/Core/types';
 import { AppLayout } from '@/Core';
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Core";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/Core";
 import {
   Table,
   TableBody,
@@ -18,16 +18,16 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+} from "@/Core";
+import { Input } from "@/Core";
+import { Badge } from "@/Core";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/Core";
 import {
   ArrowLeft as ArrowLeftIcon,
   Calendar as CalendarIcon,
@@ -38,11 +38,11 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/Core";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths, parseISO, getWeek } from 'date-fns';
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Popover, PopoverContent, PopoverTrigger } from "@/Core";
+import { Calendar } from "@/Core";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Dashboard', href: '/dashboard' },
@@ -704,7 +704,7 @@ export default function MonthlyTimesheets({ auth, timesheets = [], employees = [
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

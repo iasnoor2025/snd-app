@@ -3,14 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { Head, Link } from '@inertiajs/react';
 import { PageProps } from '@/Modules/Payroll/resources/js/types';
 import { AppLayout } from '@/Core';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
 import { format } from 'date-fns';
 import { ArrowLeft, Download, Printer } from 'lucide-react';
-import { useToast } from "@/components/ui/use-toast";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useToast } from "@/Core";
+import { Badge } from "@/Core";
+import { Separator } from "@/Core";
+import { Alert, AlertDescription } from "@/Core";
 import { AlertCircle } from 'lucide-react';
 
 interface Props extends PageProps {
@@ -246,7 +246,7 @@ export default function Show({ auth, settlement }: Props) {
                     </CardContent>
                 </Card>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }
 

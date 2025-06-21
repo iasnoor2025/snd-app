@@ -5,14 +5,14 @@ import { Head, Link } from '@inertiajs/react';
 type PageProps = any;
 // Minimal placeholder AppLayout component
 const AppLayout = ({ children }: { children: React.ReactNode }) => <div className="admin-layout-placeholder">{children}</div>;
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Core";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/Core";
 import { ArrowLeft as ArrowLeftIcon } from 'lucide-react';
 
 interface Props extends PageProps {
@@ -25,7 +25,7 @@ export default function PaySlipTest(props: any) {
   const { auth } = props;
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <Head title={t('ttl_pay_slip_test')} />
 
       <div className="flex h-full flex-1 flex-col gap-4 p-4">
@@ -55,7 +55,7 @@ export default function PaySlipTest(props: any) {
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

@@ -12,21 +12,21 @@ type TimesheetFormData = any;
 type Project = any;
 type EmployeeTimesheet = any;
 import useLoadingState from '../../hooks/useLoadingState';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/Core";
+import { Input } from "@/Core";
+import { Textarea } from "@/Core";
+import { Checkbox } from "@/Core";
+import { Label } from "@/Core";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { DatePicker } from "@/components/ui/date-picker";
-import { Alert } from "@/components/ui/alert";
-import { AlertDescription } from "@/components/ui/alert";
+} from "@/Core";
+import { DatePicker } from "@/Core";
+import { Alert } from "@/Core";
+import { AlertDescription } from "@/Core";
 import { Loader2 } from 'lucide-react';
 
 interface TimesheetFormProps {

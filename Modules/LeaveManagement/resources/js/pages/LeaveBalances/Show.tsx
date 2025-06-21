@@ -1,15 +1,15 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Core";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+} from "@/Core";
+import { Badge } from "@/Core";
 import {
   Table,
   TableBody,
@@ -17,10 +17,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/Core";
 import {
   Progress,
-} from "@/components/ui/progress";
+} from "@/Core";
 import {
   ArrowLeft as ArrowLeftIcon,
   Calendar as CalendarIcon,
@@ -36,8 +36,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import AppLayout from "@/layouts/AppLayout";
+} from "@/Core";
+import { AppLayout } from '@/Core';
 import { format } from 'date-fns';
 
 interface Employee {
@@ -118,7 +118,7 @@ const LeaveBalanceShow: React.FC = () => {
   };
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <Head title={`Leave Balance - ${employee.first_name} ${employee.last_name}`} />
 
       <div className="space-y-6">
@@ -379,7 +379,7 @@ const LeaveBalanceShow: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 };
 

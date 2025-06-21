@@ -2,10 +2,10 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link } from '@inertiajs/react';
 import type { PageProps, Customer } from '../../types/index.d';
-import AppLayout from "@/layouts/AppLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { AppLayout } from '@/Core';
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Button } from "@/Core";
+import { Badge } from "@/Core";
 import { route } from 'ziggy-js';
 
 const breadcrumbs = [
@@ -70,7 +70,7 @@ const ShowCustomer: React.FC<Props> = ({ customer }) => {
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 };
 

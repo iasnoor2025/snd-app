@@ -7,10 +7,10 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+} from "@/Core";
+import { Badge } from "@/Core";
+import { Button } from "@/Core";
+import { Progress } from "@/Core";
 import { format } from 'date-fns';
 
 interface Project {

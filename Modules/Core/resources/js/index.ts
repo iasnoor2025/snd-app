@@ -65,7 +65,8 @@ export * as z from 'zod';
 export * from './components/ui';
 
 // Export layouts
-export { default as AppLayout } from './layouts/AppLayout';
+import AppLayoutComponent from './layouts/AppLayout';
+export { AppLayoutComponent as AppLayout };
 
 // Export utilities
 export { formatCurrency, t } from './utils';
@@ -100,7 +101,18 @@ export {
   NavMain,
   NavUser,
   NavFooter,
-  Breadcrumbs
+  Breadcrumbs,
+  NavLink,
+  ResponsiveNavLink,
+  HeadingSmall,
+  Heading,
+  CreateButton,
+  CrudButtons,
+  ToastManager,
+  ToastService,
+  LoadingSpinner,
+  PaymentForm,
+  MaintenanceRecordList
 } from './components';
 
 

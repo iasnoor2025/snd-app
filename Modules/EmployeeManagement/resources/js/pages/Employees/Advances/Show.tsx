@@ -1,10 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, router } from '@inertiajs/react';
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Core";
 import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/Core";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +12,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/Core";
 import { AppLayout } from '@/Core';
 import {
   Card,
@@ -21,7 +21,7 @@ import {
   CardHeader,
   CardTitle,
   CardFooter,
-} from "@/components/ui/card";
+} from "@/Core";
 
 interface User {
   id: number;
@@ -280,7 +280,7 @@ export default function Show({ employee, advance }: Props) {
           </DialogContent>
         </Dialog>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

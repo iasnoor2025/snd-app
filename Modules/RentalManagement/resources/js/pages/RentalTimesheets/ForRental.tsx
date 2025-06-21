@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from "@inertiajs/react";
-import { PageProps } from '@/types';
+import { PageProps } from '@/Core/types';
 import { AppLayout } from '@/Core';
 import { format } from "date-fns";
-import ErrorAlert from "@/components/ui/error-alert";
+import { ErrorAlert } from "@/Core";
 import { toast } from 'sonner';
-import ErrorBoundary from "@/components/ErrorBoundary";
-import { usePermission } from "@/hooks/usePermission";
+import { ErrorBoundary } from "@/Core";
+import { usePermission } from "@/Core";
 
 // Shadcn UI Components
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/Core";
+import { Badge } from "@/Core";
 import {
   Card,
   CardContent,
@@ -19,7 +19,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/Core";
 import {
   Table,
   TableBody,
@@ -27,7 +27,7 @@ import {
   TableHeader,
   TableRow,
   TableCell,
-} from "@/components/ui/table";
+} from "@/Core";
 import {
   Dialog,
   DialogContent,
@@ -36,24 +36,24 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "@/components/ui/separator";
+} from "@/Core";
+import { Checkbox } from "@/Core";
+import { Separator } from "@/Core";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
+} from "@/Core";
+import { Input } from "@/Core";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Progress } from "@/components/ui/progress";
+} from "@/Core";
+import { Progress } from "@/Core";
 
 // Icons
 import {
@@ -403,7 +403,7 @@ export default function ForRental({ auth, rental, timesheets, debug }: Props) {
 
   return (
     <ErrorBoundary>
-      <AdminLayout>
+      <AppLayout>
         <Head title={`Timesheets for Rental ${rental.rental_number}`} />
 
         <div className="container mx-auto py-6 space-y-6">
@@ -1102,7 +1102,7 @@ export default function ForRental({ auth, rental, timesheets, debug }: Props) {
             </CardContent>
           </Card>
         )}
-      </AdminLayout>
+      </AppLayout>
     </ErrorBoundary>
   );
 }

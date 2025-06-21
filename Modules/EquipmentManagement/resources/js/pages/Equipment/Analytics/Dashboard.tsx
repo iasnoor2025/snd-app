@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Head } from '@inertiajs/react';
 import { AppLayout } from '@/Core';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
+import { Badge } from "@/Core";
+import { Button } from "@/Core";
 import {
   LineChart,
   Line,
@@ -40,7 +40,7 @@ import {
   Filter,
   RefreshCw
 } from 'lucide-react';
-import { formatCurrency } from "@/utils/format";
+import { formatCurrency } from "@/Core";
 
 interface EquipmentAnalytics {
   totalEquipment: number;
@@ -99,7 +99,7 @@ const EquipmentAnalyticsDashboard: React.FC<Props> = ({ analytics }) => {
   // Handle undefined analytics prop
   if (!analytics) {
     return (
-      <AdminLayout>
+      <AppLayout>
         <Head title="Equipment Analytics Dashboard" />
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
@@ -107,7 +107,7 @@ const EquipmentAnalyticsDashboard: React.FC<Props> = ({ analytics }) => {
             <div className="text-sm text-gray-500">Please wait while we fetch the data.</div>
           </div>
         </div>
-      </AdminLayout>
+      </AppLayout>
     );
   }
 
@@ -130,7 +130,7 @@ const EquipmentAnalyticsDashboard: React.FC<Props> = ({ analytics }) => {
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <Head title="Equipment Analytics Dashboard" />
 
       <div className="space-y-6">
@@ -409,7 +409,7 @@ const EquipmentAnalyticsDashboard: React.FC<Props> = ({ analytics }) => {
           </TabsContent>
         </Tabs>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 };
 

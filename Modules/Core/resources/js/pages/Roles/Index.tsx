@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
-import { type BreadcrumbItem } from "@/types";
-import AppLayout from "@/layouts/AppLayout";
+import { type BreadcrumbItem } from "@/Core/types";
+import { AppLayout } from '@/Core';
 import {
   Card,
   CardContent,
@@ -18,13 +18,13 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from "@/components/ui";
+} from "@/Core";
 import { Search, Plus, Eye, Edit, Trash2, Shield, Users } from 'lucide-react';
-import { usePermission } from "@/hooks/usePermission";
+import { usePermission } from "@/Core";
 import { toast } from 'sonner';
-import CreateButton from "@/components/shared/CreateButton";
-import CrudButtons from "@/components/shared/CrudButtons";
-import Permission from "@/components/Permission";
+import { CreateButton } from "@/Core";
+import { CrudButtons } from "@/Core";
+import { Permission } from "@/Core";
 import { debounce } from 'lodash';
 
 const breadcrumbs: BreadcrumbItem[] = [

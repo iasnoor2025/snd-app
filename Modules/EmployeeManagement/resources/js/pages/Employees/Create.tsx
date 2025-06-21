@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
 import { AppLayout } from '@/Core';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Button } from "@/Core";
+import { Input } from "@/Core";
 import {
   Form,
   FormField,
@@ -12,24 +12,24 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/Core";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+} from "@/Core";
+import { Textarea } from "@/Core";
 import { ArrowLeft, Upload, X, Loader2 } from 'lucide-react';
 import { format, differenceInDays, isBefore } from 'date-fns';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
+import { Label } from "@/Core";
+import { cn } from "@/Core";
 import { SubmitHandler } from 'react-hook-form';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
 import PersonalInfoTab from '../../components/employees/create/tabs/PersonalInfoTab';
 import EmploymentDetailsTab from '../../components/employees/create/tabs/EmploymentDetailsTab';
 import SalaryInfoTab from '../../components/employees/create/tabs/SalaryInfoTab';
@@ -530,7 +530,7 @@ export default function Create({ users, positions, employee, isEditing = false }
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

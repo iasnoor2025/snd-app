@@ -7,11 +7,11 @@ type Rental = any;
 type RentalTimesheet = any;
 import { AppLayout } from '@/Core';
 import { format, differenceInHours, differenceInMinutes } from "date-fns";
-import ErrorAlert from "@/components/ui/error-alert";
+import { ErrorAlert } from "@/Core";
 
 // Shadcn UI Components
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/Core";
+import { Badge } from "@/Core";
 import {
   Card,
   CardContent,
@@ -19,7 +19,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/Core";
 import {
   Dialog,
   DialogContent,
@@ -27,16 +27,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
+} from "@/Core";
+import { Separator } from "@/Core";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Progress } from "@/components/ui/progress";
-import { Label } from "@/components/ui/label";
+} from "@/Core";
+import { Progress } from "@/Core";
+import { Label } from "@/Core";
 
 // Icons
 import {
@@ -294,7 +294,7 @@ export default function Show({ auth, rental, timesheet }: Props) {
 
   return (
     <ErrorBoundary>
-      <AdminLayout>
+      <AppLayout>
         <Head title={`Timesheet Details - Rental ${rental.rental_number}`} />
 
         <div className="container mx-auto py-6 space-y-6 print:py-2">
@@ -848,7 +848,7 @@ export default function Show({ auth, rental, timesheet }: Props) {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      </AdminLayout>
+      </AppLayout>
     </ErrorBoundary>
   );
 }

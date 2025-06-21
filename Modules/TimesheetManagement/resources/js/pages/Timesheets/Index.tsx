@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
-import { PageProps, BreadcrumbItem } from "@/types";
-import AppLayout from "@/layouts/AppLayout";
-import { usePermission } from "@/hooks/usePermission";
-import { Button } from "@/components/ui/button";
+import { PageProps, BreadcrumbItem } from "@/Core/types";
+import { AppLayout } from '@/Core';
+import { usePermission } from "@/Core";
+import { Button } from "@/Core";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
+} from "@/Core";
+import { Input } from "@/Core";
+import { Badge } from "@/Core";
+import { Checkbox } from "@/Core";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/Core";
 import {
   Table,
   TableBody,
@@ -29,7 +29,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/Core";
 import {
   Plus as PlusIcon,
   Eye as EyeIcon,
@@ -42,9 +42,9 @@ import {
   MoreHorizontal as MoreHorizontalIcon,
   FileText as FileTextIcon
 } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/Core";
+import { Popover, PopoverContent, PopoverTrigger } from "@/Core";
+import { Calendar } from "@/Core";
 import { format } from 'date-fns';
 import {
   DropdownMenu,
@@ -53,9 +53,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import CreateButton from "@/components/shared/CreateButton";
-import CrudButtons from "@/components/shared/CrudButtons";
+} from "@/Core";
+import { CreateButton } from "@/Core";
+import { CrudButtons } from "@/Core";
 import { route } from 'ziggy-js';
 import { toast } from 'sonner';
 
@@ -628,7 +628,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

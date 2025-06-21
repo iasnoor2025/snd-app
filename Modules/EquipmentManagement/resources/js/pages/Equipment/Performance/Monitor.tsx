@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Head } from '@inertiajs/react';
-import AppLayout from "@/layouts/AppLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AppLayout } from '@/Core';
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Badge } from "@/Core";
+import { Button } from "@/Core";
+import { Progress } from "@/Core";
+import { Alert, AlertDescription } from "@/Core";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
 import {
   LineChart,
   Line,
@@ -37,7 +37,7 @@ import {
   TrendingUp,
   TrendingDown
 } from 'lucide-react';
-import { formatCurrency } from "@/utils/format";
+import { formatCurrency } from "@/Core";
 
 interface EquipmentStatus {
   id: number;
@@ -196,7 +196,7 @@ const EquipmentPerformanceMonitor: React.FC<Props> = ({ equipment, selectedEquip
   };
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <Head title="Equipment Performance Monitor" />
 
       <div className="space-y-6">
@@ -477,7 +477,7 @@ const EquipmentPerformanceMonitor: React.FC<Props> = ({ equipment, selectedEquip
           </>
         )}
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 };
 

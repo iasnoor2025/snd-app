@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Button } from "@/Core";
+import { Input } from "@/Core";
+import { Label } from "@/Core";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Core";
+import { Textarea } from "@/Core";
+import { RadioGroup, RadioGroupItem } from "@/Core";
 import { ArrowLeft, Calculator } from 'lucide-react';
 import { AppLayout } from '@/Core';
-import { PageProps } from '@/types';
-import { getTranslation } from "@/utils/translation";
+import { PageProps } from '@/Core/types';
+import { getTranslation } from "@/Core";
 
 interface Employee {
     id: number;
@@ -530,7 +530,7 @@ export default function Edit({ increment, employees, incrementTypes }: Props) {
                     </form>
                 </div>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }
 

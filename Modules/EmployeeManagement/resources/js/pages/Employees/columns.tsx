@@ -2,8 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ColumnDef } from '@tanstack/react-table';
 import { Employee } from '@/Modules/EmployeeManagement/resources/js/types';
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/Core";
+import { Button } from "@/Core";
 import { MoreHorizontal, Pencil, Trash } from 'lucide-react';
 import {
     DropdownMenu,
@@ -12,7 +12,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/Core";
 import { Link } from '@inertiajs/react';
 
 export const columns: ColumnDef<Employee>[] = [

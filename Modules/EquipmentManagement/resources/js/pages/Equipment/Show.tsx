@@ -1,13 +1,13 @@
 import React from 'react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import axios from 'axios';
-import AppLayout from "@/layouts/AppLayout";
-import { formatCurrency } from "@/utils/format";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AppLayout } from '@/Core';
+import { formatCurrency } from "@/Core";
+import { Button } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/Core";
+import { Badge } from "@/Core";
+import { Separator } from "@/Core";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
 import {
   Table,
   TableBody,
@@ -15,7 +15,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/Core";
 import {
   ArrowLeft,
   Pencil,
@@ -42,15 +42,15 @@ import {
   Plus,
   History
 } from 'lucide-react';
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
+import { Input } from "@/Core";
+import { Label } from "@/Core";
+import { cn } from "@/Core";
 import { toast } from 'sonner';
 import RiskManagement from './Risk/Management';
 import { useTranslation } from 'react-i18next';
-import { usePermission } from "@/hooks/usePermission";
+import { usePermission } from "@/Core";
 import { Equipment } from '../../types';
-import { DialogHeader, DialogFooter } from "@/components/ui/dialog";
+import { DialogHeader, DialogFooter } from "@/Core";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@radix-ui/react-dialog';
 import { number, string } from 'zod';
 
@@ -996,7 +996,7 @@ export default function Show({ equipment, rentalItems = { data: [], total: 0 }, 
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

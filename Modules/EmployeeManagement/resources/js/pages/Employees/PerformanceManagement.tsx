@@ -4,9 +4,9 @@ import { router } from '@inertiajs/react';
 import { PerformanceReview } from '../../types/employee';
 import PerformanceReviewList from '../../components/employees/PerformanceReviewList';
 import PerformanceReviewForm from '../../components/employees/PerformanceReviewForm';
-import { Breadcrumbs } from "@/components/breadcrumbs";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
+import { Breadcrumbs } from "@/Core";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
+import { Button } from "@/Core";
 import { Plus, ArrowLeft } from 'lucide-react';
 
 export default function PerformanceManagement({ employeeId }: { employeeId?: string }) {

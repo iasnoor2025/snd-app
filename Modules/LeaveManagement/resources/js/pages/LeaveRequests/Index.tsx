@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Core";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+} from "@/Core";
+import { Input } from "@/Core";
+import { Badge } from "@/Core";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/Core";
 import {
   Table,
   TableBody,
@@ -25,8 +25,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+} from "@/Core";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/Core";
 import {
   Dialog,
   DialogClose,
@@ -36,7 +36,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@/Core";
 import { AppLayout } from '@/Core';
 import {
   Plus as PlusIcon,
@@ -404,7 +404,7 @@ export default function LeaveRequestsIndex({ auth, leaveRequests, filters = { st
             </CardContent>
           </Card>
         </div>
-      </AdminLayout>
+      </AppLayout>
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

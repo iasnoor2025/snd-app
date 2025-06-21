@@ -1,12 +1,12 @@
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, useForm } from '@inertiajs/react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Input } from "@/Core";
+import { Label } from "@/Core";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
+import { Textarea } from "@/Core";
 import { Plus, Trash2 } from 'lucide-react';
 
 interface Props {

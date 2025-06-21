@@ -1,22 +1,22 @@
 import React from 'react';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/Core";
+import { Input } from "@/Core";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select";
+} from "@/Core";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
+} from "@/Core";
+import { Calendar } from "@/Core";
 import { format } from 'date-fns';
 import { CalendarIcon, Filter, X } from 'lucide-react';
-import { cn } from "@/lib/utils";
+import { cn } from "@/Core";
 import { useTranslation } from 'react-i18next';
 
 interface ResourceFiltersProps {

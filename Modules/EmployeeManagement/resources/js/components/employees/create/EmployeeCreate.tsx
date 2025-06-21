@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
-import { PageProps } from '@/types';
+import { PageProps } from '@/Core/types';
 import { AppLayout } from '@/Core';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
 import { ArrowLeft } from 'lucide-react';
-import { useToast } from "@/components/ui/use-toast";
-import { usePermission } from "@/hooks/usePermission";
+import { useToast } from "@/Core";
+import { usePermission } from "@/Core";
 
 // Import tab components
 import PersonalInfoTab from './tabs/PersonalInfoTab';
@@ -233,7 +233,7 @@ export default function EmployeeCreate({ auth, positions }: Props) {
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

@@ -1,13 +1,13 @@
 import React from "react";
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Core";
+import { Alert, AlertDescription, AlertTitle } from "@/Core";
+import { Button } from "@/Core";
+import { Badge } from "@/Core";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
 import { X, Calendar, FileText, Copy, RotateCcw } from "lucide-react";
-import RentalItemsCard from "@/components/rentals/RentalItemsCard";
-import DocumentsCard from "@/components/rentals/DocumentsCard";
+import RentalItemsCard from "../RentalItemsCard";
+import DocumentsCard from "../DocumentsCard";
 import { format } from "date-fns";
 
 // Define interface for document

@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Badge } from '../ui/badge';
 import { ArrowLeft, Edit, FileText, ClipboardList, Clock, CreditCard, BarChart } from 'lucide-react';
-import { getTranslation } from "@/utils/translation";
+import { getTranslation } from "@/Core";
 import { FinalSettlementTab } from './FinalSettlementTab';
 import PerformanceReviewList from './PerformanceReviewList';
 

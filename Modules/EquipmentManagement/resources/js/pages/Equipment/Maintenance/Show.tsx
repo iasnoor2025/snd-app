@@ -1,9 +1,9 @@
 import React from 'react';
 import { Head, Link, router } from '@inertiajs/react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/Core";
+import { Badge } from "@/Core";
+import { useToast } from "@/Core";
 import {
   Calendar as CalendarIcon,
   Clock as ClockIcon,
@@ -26,8 +26,8 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose,
-} from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
+} from "@/Core";
+import { Separator } from "@/Core";
 import { AppLayout } from '@/Core';
 
 // Inline type definitions
@@ -342,7 +342,7 @@ export default function MaintenanceShow({ maintenance }: Props) {
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

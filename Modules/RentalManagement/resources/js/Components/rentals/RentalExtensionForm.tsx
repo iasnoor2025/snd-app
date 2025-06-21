@@ -2,25 +2,25 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { format, addDays, differenceInDays } from 'date-fns';
 import { Calendar as CalendarIcon, CalendarPlus, User, UserX, Plus, Trash, AlertCircle, Loader2 } from 'lucide-react';
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Switch } from "@/components/ui/switch";
+import { Label } from "@/Core";
+import { Input } from "@/Core";
+import { Textarea } from "@/Core";
+import { Button } from "@/Core";
+import { Calendar } from "@/Core";
+import { Switch } from "@/Core";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/Core";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+} from "@/Core";
+import { cn } from "@/Core";
 import {
   Dialog,
   DialogContent,
@@ -28,12 +28,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/Core";
 import {
   Alert,
   AlertDescription,
   AlertTitle
-} from "@/components/ui/alert";
+} from "@/Core";
 import { toast } from "sonner";
 import { z } from 'zod';
 import { router, useForm } from '@inertiajs/react';

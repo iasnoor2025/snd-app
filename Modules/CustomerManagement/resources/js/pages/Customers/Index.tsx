@@ -2,17 +2,17 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link } from '@inertiajs/react';
 import type { PageProps, Customer } from '../../types/index.d';
-import AppLayout from "@/layouts/AppLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import { AppLayout } from '@/Core';
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Button } from "@/Core";
+import { Input } from "@/Core";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/Core";
+import { Badge } from "@/Core";
 import { route } from 'ziggy-js';
 // Placeholder for permission and reusable button components
-// import Permission from "@/components/Permission";
-// import CreateButton from "@/components/shared/CreateButton";
-// import CrudButtons from "@/components/shared/CrudButtons";
+// import { Permission } from "@/Core";
+// import { CreateButton } from "@/Core";
+// import { CrudButtons } from "@/Core";
 
 interface Props extends PageProps {
   customers: Customer[];
@@ -129,7 +129,7 @@ const Index: React.FC<Props> = ({ customers }) => {
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 };
 

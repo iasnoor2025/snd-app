@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
-import type { PageProps } from '@/types';
+import type { PageProps } from '@/Core/types';
 import { AppLayout } from '@/Core';
 import dayjs from 'dayjs';
 import { toast } from 'sonner';
-import ErrorBoundary from "@/components/ErrorBoundary";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorBoundary } from "@/Core";
+import { Button } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/Core";
+import { Input } from "@/Core";
+import { Textarea } from "@/Core";
+import { ScrollArea } from "@/Core";
+import { Alert, AlertDescription } from "@/Core";
+import { Skeleton } from "@/Core";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/Core";
 import {
   Form,
   FormControl,
@@ -27,7 +27,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/Core";
 import {
   Dialog,
   DialogContent,
@@ -35,23 +35,23 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/Core";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useForm as useReactHookForm } from 'react-hook-form';
-import { Calendar } from "@/components/ui/calendar";
+import { Calendar } from "@/Core";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+} from "@/Core";
+import { cn } from "@/Core";
 import { CalendarIcon, ArrowLeft, Loader2, Plus } from 'lucide-react';
-import { Switch } from "@/components/ui/switch";
+import { Switch } from "@/Core";
 import { format } from 'date-fns';
 import { router } from '@inertiajs/react';
 import axios from 'axios';
-import { useEquipmentCategories } from "@/hooks/useEquipmentCategories";
+import { useEquipmentCategories } from "@/Core";
 import { useTranslation } from 'react-i18next';
 import { EquipmentFormData } from '../../types';
 
@@ -976,7 +976,7 @@ export default function Create({ auth, categories = [], locations = [], employee
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

@@ -12,12 +12,16 @@ export { default as NavMain } from './nav-main';
 export { default as NavUser } from './nav-user';
 export { default as NavFooter } from './nav-footer';
 export { default as Breadcrumbs } from './breadcrumbs';
+export { default as NavLink } from './NavLink';
+export { default as ResponsiveNavLink } from './ResponsiveNavLink';
 
 // UI Components
 export { default as ApplicationLogo } from './ApplicationLogo';
 export { default as Modal } from './Modal';
 export { default as Dropdown } from './Dropdown';
 export { ThemeProvider } from './theme-provider';
+export { default as HeadingSmall } from './heading-small';
+export { default as Heading } from './heading';
 
 // Form Components
 export { default as TextInput } from './TextInput';
@@ -51,5 +55,11 @@ export * from './ui';
 
 // Export all shared components
 export * from './shared';
+
+// Export all payment components
+export * from './payments';
+
+// Export all maintenance components
+export * from './maintenance';
 
 

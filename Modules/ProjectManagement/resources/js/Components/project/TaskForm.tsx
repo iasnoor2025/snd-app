@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { router } from '@inertiajs/react';
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Core";
 import {
     Form,
     FormControl,
@@ -12,18 +12,18 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "@/components/ui/form";
+} from "@/Core";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { DatePicker } from "@/components/ui/date-picker";
-import { cn } from "@/lib/utils";
+} from "@/Core";
+import { Input } from "@/Core";
+import { Textarea } from "@/Core";
+import { DatePicker } from "@/Core";
+import { cn } from "@/Core";
 import { format } from 'date-fns';
 import { ProjectTask } from './TaskList';
 

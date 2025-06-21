@@ -6,9 +6,9 @@ import { Equipment, MaintenanceRecord } from '@/Modules/EquipmentManagement/reso
 // Simple format functions
 const formatDate = (date: string) => new Date(date).toLocaleDateString();
 const formatCurrency = (amount: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Badge } from "@/Core";
 import {
   Table,
   TableBody,
@@ -16,8 +16,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { useToast } from "@/components/ui/use-toast";
+} from "@/Core";
+import { useToast } from "@/Core";
 import {
   Calendar as CalendarIcon,
   Clock as ClockIcon,
@@ -29,7 +29,7 @@ import {
   Eye as EyeIcon,
   XCircle as XCircleIcon
 } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
 
 interface Props extends PageProps {
   equipment: Equipment;
@@ -366,7 +366,7 @@ export default function MaintenanceIndex({ equipment, history, costs, performanc
           </TabsContent>
         </Tabs>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

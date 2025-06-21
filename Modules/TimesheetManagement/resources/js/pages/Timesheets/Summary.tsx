@@ -4,16 +4,15 @@ import { Head, Link } from '@inertiajs/react';
 // Placeholder types
 type PageProps = any;
 type BreadcrumbItem = any;
-// Minimal placeholder AppLayout component
-const AppLayout = ({ children }: { children: React.ReactNode }) => <div className="admin-layout-placeholder">{children}</div>;
-import { Button } from "@/components/ui/button";
+import { AppLayout } from '@/Core';
+import { Button } from "@/Core";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/Core";
 import {
   Table,
   TableBody,
@@ -21,16 +20,16 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+} from "@/Core";
+import { Input } from "@/Core";
+import { Badge } from "@/Core";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/Core";
 import {
   Calendar as CalendarIcon,
   Download as DownloadIcon,
@@ -43,10 +42,10 @@ import {
   Users as UsersIcon,
   Briefcase as BriefcaseIcon,
 } from 'lucide-react';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/Core";
 import { format } from 'date-fns';
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/Core";
+import { Calendar } from "@/Core";
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Dashboard', href: '/dashboard' },
@@ -157,7 +156,7 @@ export default function TimesheetSummary({ auth, summary, employees = [], projec
   };
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <Head title={t('ttl_monthly_timesheet_summary')} />
 
       <div className="flex h-full flex-1 flex-col gap-4 p-4">
@@ -383,7 +382,7 @@ export default function TimesheetSummary({ auth, summary, employees = [], projec
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

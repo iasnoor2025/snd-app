@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Head } from '@inertiajs/react';
 import { AppLayout } from '@/Core';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Button } from "@/Core";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
 import { Calendar } from 'lucide-react';
-import { DatePicker } from "@/components/ui/date-picker";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { DatePicker } from "@/Core";
+import { Dialog, DialogContent, DialogTrigger } from "@/Core";
 import ScheduleForm from './ScheduleForm';
 import { ScheduleCalendar } from './ScheduleCalendar';
 import { ScheduleList } from './ScheduleList';
@@ -85,7 +85,7 @@ export default function Index({
   ];
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <Head title="Maintenance Schedule" />
 
       <div className="container mx-auto py-6">
@@ -222,7 +222,7 @@ export default function Index({
           )}
         </Tabs>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

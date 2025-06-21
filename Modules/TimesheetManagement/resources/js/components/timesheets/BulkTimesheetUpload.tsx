@@ -5,16 +5,16 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import useLoadingState from '../../hooks/useLoadingState';
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/Core";
+import { Button } from "@/Core";
+import { Label } from "@/Core";
+import { Input } from "@/Core";
 import {
   Alert,
   AlertDescription,
   AlertTitle,
-} from "@/components/ui/alert";
-import { Progress } from "@/components/ui/progress";
+} from "@/Core";
+import { Progress } from "@/Core";
 import {
   AlertCircle,
   CheckCircle,

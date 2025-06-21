@@ -1,11 +1,11 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, router } from '@inertiajs/react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Core";
+import { Button } from "@/Core";
+import { Badge } from "@/Core";
+import { Separator } from "@/Core";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/Core";
 import { ArrowLeftIcon, EditIcon, TrashIcon, CalendarIcon, ClockIcon, UsersIcon, CreditCardIcon, CheckCircleIcon, XCircleIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -18,7 +18,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from "@/Core";
 
 // Temporary inline permission hook
 const usePermission = () => {

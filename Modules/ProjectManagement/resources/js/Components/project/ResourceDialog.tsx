@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { XIcon } from 'lucide-react';
 import ResourceForm from './ResourceForm';
-import ErrorBoundary from "@/components/ErrorBoundary";
+import { ErrorBoundary } from "@/Core";
 import { useTranslation } from 'react-i18next';
 
 export type ResourceType = 'manpower' | 'equipment' | 'material' | 'fuel' | 'expense';

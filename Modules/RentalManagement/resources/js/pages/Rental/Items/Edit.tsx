@@ -1,13 +1,13 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, useForm } from '@inertiajs/react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Button } from "@/Core";
+import { Input } from "@/Core";
+import { Select } from "@/Core";
+import { Textarea } from "@/Core";
+import { Label } from "@/Core";
+import { Alert, AlertDescription } from "@/Core";
 import { ArrowLeft } from 'lucide-react';
 import { RentalItem } from '@/Modules/RentalManagement/resources/js/Types/rental';
 

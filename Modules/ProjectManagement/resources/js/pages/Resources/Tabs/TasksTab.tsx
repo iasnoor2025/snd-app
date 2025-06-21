@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { router } from '@inertiajs/react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
 import { Plus } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/Core";
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { useProjectResources } from '../../../hooks/useProjectResources';

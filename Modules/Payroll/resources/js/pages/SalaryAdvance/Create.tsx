@@ -1,26 +1,26 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, useForm, router } from '@inertiajs/react';
-import { PageProps } from "@/types";
-import AppLayout from "@/layouts/AppLayout";
-import { Button } from "@/components/ui/button";
+import { PageProps } from "@/Core/types";
+import { AppLayout } from '@/Core';
+import { Button } from "@/Core";
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+} from "@/Core";
+import { Input } from "@/Core";
+import { Label } from "@/Core";
+import { Textarea } from "@/Core";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select";
+} from "@/Core";
 import { ArrowLeft, DollarSign, Calendar, FileText } from 'lucide-react';
 import { route } from 'ziggy-js';
 import { Link } from '@inertiajs/react';
@@ -259,7 +259,7 @@ export default function Create({ auth, employees }: Props) {
                     </Card>
                 </div>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }
 

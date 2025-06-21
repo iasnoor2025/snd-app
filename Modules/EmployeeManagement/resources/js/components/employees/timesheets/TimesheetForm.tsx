@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 import axios from 'axios';
 import { toast } from 'sonner';
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Core";
 import {
   Form,
   FormControl,
@@ -15,10 +15,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+} from "@/Core";
+import { Input } from "@/Core";
+import { Textarea } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
 
 // Define the form schema with validation
 const timesheetSchema = z.object({

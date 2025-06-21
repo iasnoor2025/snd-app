@@ -2,14 +2,14 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
 import { AppLayout } from '@/Core';
-import { formatDate } from "@/utils/format";
+import { formatDate } from "@/Core";
 const usePermission = () => ({ hasPermission: () => true });
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/Core";
+import { Badge } from "@/Core";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/Core";
 import { ArrowLeft, Eye } from 'lucide-react';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/ui/breadcrumb";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/Core";
 // Placeholder type
 type PageProps = any;
 
@@ -53,7 +53,7 @@ export default function OverdueLeaveReturns({ overdueRequests }: Props) {
   };
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <Head title={t('overdue_leave_returns')} />
       <div className="container mx-auto py-6">
         <Breadcrumb className="mb-6">
@@ -144,7 +144,7 @@ export default function OverdueLeaveReturns({ overdueRequests }: Props) {
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

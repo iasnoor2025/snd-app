@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Core";
 import {
   Card,
   CardContent,
@@ -9,19 +9,19 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+} from "@/Core";
+import { Badge } from "@/Core";
 import { CalendarDays, ArrowLeft, Edit, Trash2, Check, X, RotateCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { AppLayout } from '@/Core';
 // Placeholder type
 type LeaveRequest = any;
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/ui/breadcrumb";
-import { formatDate } from "@/utils/format";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/Core";
+import { formatDate } from "@/Core";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/Core";
+import { Label } from "@/Core";
+import { Input } from "@/Core";
+import { Textarea } from "@/Core";
 import { useState } from 'react';
 
 interface Props {
@@ -136,7 +136,7 @@ export default function LeaveRequestShow({ leaveRequest }: Props) {
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 to include both start and end dates
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <Head title={t('ttl_view_leave_request')} />
       <div className="container mx-auto py-6">
         <Breadcrumb className="mb-6">
@@ -408,7 +408,7 @@ export default function LeaveRequestShow({ leaveRequest }: Props) {
           </Card>
         </div>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

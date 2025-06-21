@@ -1,26 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { Head, Link, useForm, router } from '@inertiajs/react';
-import { PageProps } from '@/types';
+import { PageProps } from '@/Core/types';
 import { AppLayout } from '@/Core';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Button } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Input } from "@/Core";
+import { Textarea } from "@/Core";
+import { Label } from "@/Core";
+import { RadioGroup, RadioGroupItem } from "@/Core";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+} from "@/Core";
+import { Calendar } from "@/Core";
+import { Popover, PopoverContent, PopoverTrigger } from "@/Core";
 import { format } from 'date-fns';
 import { CalendarIcon, Plus, Minus, ArrowLeft } from 'lucide-react';
-import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/components/ui/use-toast";
+import { Separator } from "@/Core";
+import { useToast } from "@/Core";
 
 // Placeholder types
 type Equipment = any;
@@ -434,7 +434,7 @@ export default function Create({ auth, equipment, employees, inventoryItems, par
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

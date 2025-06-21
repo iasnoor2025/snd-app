@@ -1,9 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
-import { PageProps, BreadcrumbItem } from '@/types';
+import { PageProps, BreadcrumbItem } from '@/Core/types';
 import { AppLayout } from '@/Core';
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Core";
 import {
   Card,
   CardContent,
@@ -11,8 +11,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+} from "@/Core";
+import { Badge } from "@/Core";
 import {
   Clock as ClockIcon,
   ArrowLeft as ArrowLeftIcon,
@@ -24,16 +24,16 @@ import {
   Briefcase as BriefcaseIcon,
   User as UserIcon
 } from 'lucide-react';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/Core";
 import { Timesheet } from '../../../../resources/js/types/models';
-import { formatDate } from "@/utils/format";
-import { usePermission } from "@/hooks/usePermission";
+import { formatDate } from "@/Core";
+import { usePermission } from "@/Core";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@/Core";
 import { format } from 'date-fns';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -317,7 +317,7 @@ export default function TimesheetShow({ auth, timesheet }: Props) {
           </Card>
         </div>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

@@ -1,12 +1,12 @@
 import React from "react";
 import { useTranslation } from 'react-i18next';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Progress } from "@/components/ui/progress";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/Core";
+import { Badge } from "@/Core";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/Core";
+import { Progress } from "@/Core";
+import { Alert, AlertDescription, AlertTitle } from "@/Core";
 import { format, differenceInDays, isBefore, addDays } from "date-fns";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency } from "@/Core";
 import {
   Activity,
   AlertCircle,

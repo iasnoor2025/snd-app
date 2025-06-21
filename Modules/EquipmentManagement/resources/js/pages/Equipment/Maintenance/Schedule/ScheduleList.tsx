@@ -7,18 +7,18 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+} from "@/Core";
+import { Badge } from "@/Core";
+import { Button } from "@/Core";
+import { Dialog, DialogContent, DialogTrigger } from "@/Core";
 import { AlertTriangle, Calendar, MoreHorizontal, WrenchIcon, User } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+} from "@/Core";
+import { Avatar, AvatarFallback, AvatarImage } from "@/Core";
 import { MaintenanceDetailView } from './MaintenanceDetailView';
 
 interface Equipment {

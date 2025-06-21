@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AppLayout } from '../../layouts/app';
+import { AppLayout } from '@/Core';
 import { Head, Link, router } from '@inertiajs/react';
 import { BreadcrumbItem } from '../../types';
 import { Button } from '../../components/ui/button';

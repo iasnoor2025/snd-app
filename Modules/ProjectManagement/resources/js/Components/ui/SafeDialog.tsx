@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@/Core";
 import { DialogErrorBoundary } from '../DialogErrorBoundary';
 
 interface SafeDialogProps {

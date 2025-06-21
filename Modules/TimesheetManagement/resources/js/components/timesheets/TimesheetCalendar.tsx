@@ -12,14 +12,14 @@ import {
   isWeekend
 } from 'date-fns';
 import { Employee } from '../../types/employee';
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/Core";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/Core";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Card } from "@/components/ui/card";
+} from "@/Core";
+import { Card } from "@/Core";
 import {
   Calendar,
   Clock,

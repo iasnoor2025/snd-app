@@ -7,9 +7,9 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+} from "@/Core";
+import { Badge } from "@/Core";
+import { Button } from "@/Core";
 import { format } from 'date-fns';
 import { Download, Eye } from 'lucide-react';
 

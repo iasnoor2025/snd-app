@@ -1,11 +1,11 @@
 import { Head } from '@inertiajs/react';
-import { PageProps } from '@/types';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { DataTable } from '@/components/ui/data-table';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { DatePicker } from '@/components/ui/date-picker';
+import { PageProps } from '@/Core/types';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Core";
+import { DataTable } from "@/Core";
+import { Button } from "@/Core";
+import { Input } from "@/Core";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
+import { DatePicker } from "@/Core";
 import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { toast } from 'sonner';

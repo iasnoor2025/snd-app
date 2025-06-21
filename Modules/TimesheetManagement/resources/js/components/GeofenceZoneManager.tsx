@@ -6,7 +6,7 @@ import {
     CardDescription,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
+} from "@/Core";
 import {
     Table,
     TableBody,
@@ -14,10 +14,10 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+} from "@/Core";
+import { Button } from "@/Core";
+import { Input } from "@/Core";
+import { Badge } from "@/Core";
 import {
     Dialog,
     DialogContent,
@@ -26,17 +26,17 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@/Core";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
+} from "@/Core";
+import { Label } from "@/Core";
+import { Textarea } from "@/Core";
+import { Switch } from "@/Core";
 import {
     MapPin,
     Plus,

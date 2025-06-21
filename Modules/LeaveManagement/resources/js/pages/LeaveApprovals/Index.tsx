@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Core";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+} from "@/Core";
+import { Input } from "@/Core";
+import { Badge } from "@/Core";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/Core";
 import {
   Table,
   TableBody,
@@ -25,8 +25,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
+} from "@/Core";
+import { Checkbox } from "@/Core";
 import {
   Dialog,
   DialogContent,
@@ -35,8 +35,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
+} from "@/Core";
+import { Textarea } from "@/Core";
 import {
   Eye as EyeIcon,
   Check as CheckIcon,
@@ -52,8 +52,8 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import AppLayout from "@/layouts/AppLayout";
+} from "@/Core";
+import { AppLayout } from '@/Core';
 import { format } from 'date-fns';
 
 interface Employee {
@@ -192,7 +192,7 @@ const LeaveApprovalsIndex: React.FC = () => {
   ];
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <Head title={t('leave_approvals')} />
 
       <div className="space-y-6">
@@ -522,7 +522,7 @@ const LeaveApprovalsIndex: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 };
 

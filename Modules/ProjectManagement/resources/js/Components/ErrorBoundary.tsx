@@ -1,8 +1,8 @@
 import React, { Component, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/Core";
+import { Button } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 
 interface Props {

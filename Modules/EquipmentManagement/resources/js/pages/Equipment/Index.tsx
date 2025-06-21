@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Head, router } from '@inertiajs/react';
-import type { PageProps } from "@/types";
-import AppLayout from "@/layouts/AppLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import type { PageProps } from "@/Core/types";
+import { AppLayout } from '@/Core';
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Button } from "@/Core";
+import { Badge } from "@/Core";
+import { Input } from "@/Core";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/Core";
 import { Search } from 'lucide-react';
-import CreateButton from "@/components/shared/CreateButton";
-import CrudButtons from "@/components/shared/CrudButtons";
-import { formatCurrency } from "@/utils/format";
+import { CreateButton } from "@/Core";
+import { CrudButtons } from "@/Core";
+import { formatCurrency } from "@/Core";
 import { useTranslation } from 'react-i18next';
 import { Equipment, PaginatedData } from '../../types';
 
@@ -296,7 +296,7 @@ export default function Index({ equipment, categories = [], statuses = {}, filte
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

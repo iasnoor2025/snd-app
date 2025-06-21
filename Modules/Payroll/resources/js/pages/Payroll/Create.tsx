@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { Head, useForm } from '@inertiajs/react';
 import { PageProps } from '../../types';
 import { AppLayout } from '@/Core';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/Core";
+import { Input } from "@/Core";
+import { Label } from "@/Core";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
 import { format } from 'date-fns';
 
 interface Employee {
@@ -197,7 +197,7 @@ export default function Create({ auth, employees }: Props) {
                     </Card>
                 </div>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }
 

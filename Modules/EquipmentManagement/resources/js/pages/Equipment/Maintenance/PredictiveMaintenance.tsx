@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Head } from '@inertiajs/react';
-import AppLayout from "@/layouts/AppLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { AppLayout } from '@/Core';
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Badge } from "@/Core";
+import { Button } from "@/Core";
+import { Progress } from "@/Core";
+import { Alert, AlertDescription } from "@/Core";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
+import { Input } from "@/Core";
+import { Label } from "@/Core";
+import { Textarea } from "@/Core";
 import {
   LineChart,
   Line,
@@ -50,7 +50,7 @@ import {
   Shield,
   Cpu
 } from 'lucide-react';
-import { formatCurrency } from "@/utils/format";
+import { formatCurrency } from "@/Core";
 
 interface Equipment {
   id: number;
@@ -224,7 +224,7 @@ const PredictiveMaintenance: React.FC<Props> = ({
   }));
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <Head title="Predictive Maintenance" />
 
       <div className="space-y-6">
@@ -589,7 +589,7 @@ const PredictiveMaintenance: React.FC<Props> = ({
           </div>
         </div>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 };
 

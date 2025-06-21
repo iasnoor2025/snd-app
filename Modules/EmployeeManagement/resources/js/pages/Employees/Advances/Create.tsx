@@ -9,13 +9,13 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+} from "@/Core";
+import { Input } from "@/Core";
+import { Label } from "@/Core";
+import { Textarea } from "@/Core";
+import { Button } from "@/Core";
 import { ArrowLeft, Plus } from 'lucide-react';
-import { ToastService } from "@/components/shared/ToastManager";
+import { ToastService } from "@/Core";
 
 interface Employee {
   id: number;
@@ -216,7 +216,7 @@ export default function Create({ auth, employee }: Props) {
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

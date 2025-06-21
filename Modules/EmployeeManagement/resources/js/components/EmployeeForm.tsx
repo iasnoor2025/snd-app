@@ -18,7 +18,7 @@ import { DatePicker } from '../../@/Core/components/ui/date-picker';
 import { AlertCircle, Loader2, Save, Plus, Trash } from 'lucide-react';
 import DocumentManager from '../../@/Core/components/DocumentManager';
 import { Employee, Department, Position } from '../types/employee';
-import { getTranslation } from "@/utils/translation";
+import { getTranslation } from "@/Core";
 
 interface EmployeeFormProps {
   employee?: Employee;

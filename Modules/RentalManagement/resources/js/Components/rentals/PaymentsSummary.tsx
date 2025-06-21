@@ -1,12 +1,12 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from '@inertiajs/react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import PaymentStatusBadge from "@/components/shared/PaymentStatusBadge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Button } from "@/Core";
+import { Progress } from "@/Core";
+import { PaymentStatusBadge } from "@/Core";
 import { CreditCard, DollarSign, Calendar, TrendingUp, AlertCircle } from "lucide-react";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency } from "@/Core";
 import { format, differenceInDays, isAfter } from "date-fns";
 
 interface PaymentsSummaryProps {

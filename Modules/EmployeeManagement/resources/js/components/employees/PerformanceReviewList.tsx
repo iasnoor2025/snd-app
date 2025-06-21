@@ -8,9 +8,9 @@ import {
   PerformanceReviewFilter,
   PERFORMANCE_RATING_CATEGORIES
 } from '../../types/performance';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Button } from "@/Core";
+import { Input } from "@/Core";
 import {
   Table,
   TableBody,
@@ -18,23 +18,23 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from "@/components/ui/table";
+} from "@/Core";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
+} from "@/Core";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from "@/components/ui/select";
-import { DatePicker } from "@/components/ui/date-picker";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+} from "@/Core";
+import { DatePicker } from "@/Core";
+import { Badge } from "@/Core";
+import { Alert, AlertDescription, AlertTitle } from "@/Core";
 import {
   AlertCircle,
   MoreHorizontal,
@@ -54,9 +54,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogClose
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+} from "@/Core";
+import { Label } from "@/Core";
+import { Textarea } from "@/Core";
 
 interface PerformanceReviewListProps {
   employeeId?: number;

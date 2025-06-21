@@ -1,10 +1,7 @@
 import React, { PropsWithChildren, useState } from 'react';
-import ApplicationLogo from "@/components/ApplicationLogo";
-import Dropdown from "@/components/Dropdown";
-import NavLink from "@/components/NavLink";
-import ResponsiveNavLink from "@/components/ResponsiveNavLink";
+import { ApplicationLogo, Dropdown, NavLink, ResponsiveNavLink } from "@/Core";
 import { Link, usePage } from '@inertiajs/react';
-import { User } from '@/types';
+import { User } from '@/Core/types';
 
 interface PageProps {
     auth: {

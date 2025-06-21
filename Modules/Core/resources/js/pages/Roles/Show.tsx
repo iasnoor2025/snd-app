@@ -1,8 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link } from '@inertiajs/react';
-import { type BreadcrumbItem } from "@/types";
-import AppLayout from "@/layouts/AppLayout";
+import { type BreadcrumbItem } from "@/Core/types";
+import { AppLayout } from '@/Core';
 import {
   Card,
   CardContent,
@@ -11,9 +11,9 @@ import {
   CardTitle,
   Button,
   Badge
-} from "@/components/ui";
+} from "@/Core";
 import { ArrowLeft, Shield, Edit, Users, Key } from 'lucide-react';
-import Permission from "@/components/Permission";
+import { Permission } from "@/Core";
 import { format } from 'date-fns';
 
 interface Role {

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
-import { BreadcrumbItem } from "@/types";
-import AppLayout from "@/layouts/AppLayout";
+import { BreadcrumbItem } from "@/Core/types";
+import { AppLayout } from '@/Core';
 import {
   Card,
   CardContent,
@@ -27,7 +27,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger
-} from "@/components/ui";
+} from "@/Core";
 import { ArrowLeft, Shield, Plus, Search, UserPlus, X } from 'lucide-react';
 import { toast } from 'sonner';
 

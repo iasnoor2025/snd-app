@@ -3,7 +3,7 @@ import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, Sideba
 import { Link, usePage } from "@inertiajs/react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 import { useTranslation } from "react-i18next";
-import { type NavItem } from "@/types";
+import { type NavItem } from "@/Core/types";
 import { usePermission } from "../hooks/usePermission";
 
 interface NavMainProps {

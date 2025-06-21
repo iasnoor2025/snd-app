@@ -7,18 +7,18 @@ import { toast } from "sonner";
 import axios from "axios";
 
 // Types
-import { PageProps } from "@/types";
+import { PageProps } from "@/Core/types";
 
 // Layouts & Hooks
 import { AppLayout } from "@/Core";
-import { usePermission } from "@/hooks/usePermission";
+import { usePermission } from "@/Core";
 
 // UI Components
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { DataTable } from "@/components/ui/data-table";
-import { DatePicker } from "@/components/ui/date-picker";
+import { Button } from "@/Core";
+import { Badge } from "@/Core";
+import { Input } from "@/Core";
+import { DataTable } from "@/Core";
+import { DatePicker } from "@/Core";
 import {
   Card,
   CardContent,
@@ -26,7 +26,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/Core";
 import {
   Dialog,
   DialogContent,
@@ -34,14 +34,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/Core";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/Core";
 import {
   Table,
   TableBody,
@@ -49,7 +49,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/Core";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -57,22 +57,22 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/Core";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/components/ui/avatar";
+} from "@/Core";
 import {
   TooltipProvider,
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from "@/components/ui/tooltip";
+} from "@/Core";
 
 // Shared Components
-import CreateButton from "@/components/shared/CreateButton";
-import CrudButtons from "@/components/shared/CrudButtons";
+import { CreateButton } from "@/Core";
+import { CrudButtons } from "@/Core";
 
 // Icons
 import {
@@ -792,7 +792,7 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
           </DialogContent>
         </Dialog>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

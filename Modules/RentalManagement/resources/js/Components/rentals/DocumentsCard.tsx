@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { cn } from "@/Core";
 import { useForm } from "@inertiajs/react";
 
 // ShadCN UI Components
@@ -12,8 +12,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+} from "@/Core";
+import { Button } from "@/Core";
 import {
   Table,
   TableBody,
@@ -21,7 +21,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/Core";
 import {
   Dialog,
   DialogContent,
@@ -30,9 +30,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "@/Core";
+import { Input } from "@/Core";
+import { Label } from "@/Core";
 import { toast } from "sonner";
 
 // Icons

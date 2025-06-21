@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, useForm, router } from '@inertiajs/react';
-import { PageProps, BreadcrumbItem } from '@/types/index';
-import AppLayout from "@/layouts/AppLayout";
+import { PageProps, BreadcrumbItem } from '@/Core/types/index';
+import { AppLayout } from '@/Core';
 import {
   Card,
   CardContent,
@@ -20,10 +20,10 @@ import {
   TableHeader,
   TableRow,
   Badge
-} from "@/components/ui";
+} from "@/Core";
 import { ArrowLeft, User, Save, X } from 'lucide-react';
 import { toast } from 'sonner';
-import Permission from "@/components/Permission";
+import { Permission } from "@/Core";
 import { format } from 'date-fns';
 
 interface Role {

@@ -8,18 +8,18 @@ import { EmployeeTimesheet } from '../../types/timesheet';
 import TimesheetCalendar from '../../components/timesheets/TimesheetCalendar';
 import TimesheetList from '../../components/timesheets/TimesheetList';
 import BulkTimesheetUpload from '../../components/timesheets/BulkTimesheetUpload';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Button } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/Core";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/Core";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from "@/components/ui/select";
+} from "@/Core";
 import { ChevronLeft, ChevronRight, Calendar, List, Upload, Plus } from 'lucide-react';
-import { Breadcrumbs } from "@/components/breadcrumbs";
+import { Breadcrumbs } from "@/Core";
 import useLoadingState from '../../hooks/useLoadingState';
 
 const TimesheetManagement: React.FC = () => {

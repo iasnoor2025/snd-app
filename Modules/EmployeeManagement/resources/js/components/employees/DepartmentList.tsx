@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Department } from '../../types/employee';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { getTranslation } from "@/utils/translation";
+import { getTranslation } from "@/Core";
 import {
   Table,
   TableBody,

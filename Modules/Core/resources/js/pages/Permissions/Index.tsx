@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
-import { PageProps, BreadcrumbItem } from "@/types";
-import AppLayout from "@/layouts/AppLayout";
+import { PageProps, BreadcrumbItem } from "@/Core/types";
+import { AppLayout } from '@/Core';
 import {
   Card,
   CardContent,
@@ -18,11 +18,11 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from "@/components/ui";
+} from "@/Core";
 import { Search, Plus, Eye, Edit, Trash2, Key } from 'lucide-react';
-import { usePermission } from "@/hooks/usePermission";
+import { usePermission } from "@/Core";
 import { toast } from 'sonner';
-import Permission from "@/components/Permission";
+import { Permission } from "@/Core";
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Dashboard', href: '/dashboard' },

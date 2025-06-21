@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Employee, Department, Position } from '../../types/employee';
 import useLoadingState from '../../hooks/useLoadingState';
-import { getTranslation } from "@/utils/translation";
+import { getTranslation } from "@/Core";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';

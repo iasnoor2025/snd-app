@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { format, parseISO, isSameMonth } from 'date-fns';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar } from "@/components/ui/calendar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Calendar } from "@/Core";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
+} from "@/Core";
+import { Button } from "@/Core";
 import { toast } from 'sonner';
 import { Calendar as CalendarIcon } from 'lucide-react';
 // import { DailyTimesheetRecords } from '../../../../../TimesheetManageme@/Core/components/timesheets/DailyTimesheetRecords';

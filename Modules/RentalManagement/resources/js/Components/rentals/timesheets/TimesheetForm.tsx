@@ -5,9 +5,9 @@ import { format } from "date-fns";
 import { z } from "zod";
 
 // Standardize all UI imports to '@/Core/components/ui/'
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/Core";
+import { Input } from "@/Core";
+import { Label } from "@/Core";
 import {
   Select,
   SelectContent,
@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
   SelectLabel,
-} from "@/components/ui/select";
+} from "@/Core";
 import {
   Card,
   CardContent,
@@ -24,16 +24,16 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
+} from "@/Core";
+import { Textarea } from "@/Core";
+import { Separator } from "@/Core";
 import { AlertCircle, CalendarIcon, Clock, Loader2, MoreHorizontal, UserX } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
+import { Calendar } from "@/Core";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/Core";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,12 +41,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
+} from "@/Core";
+import { cn } from "@/Core";
 import { toast } from "sonner";
-import TimePicker from "@/components/ui/time-picker";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Checkbox } from "@/components/ui/checkbox";
+import { TimePicker } from "@/Core";
+import { Alert, AlertDescription, AlertTitle } from "@/Core";
+import { Checkbox } from "@/Core";
 
 interface Props {
   rentals?: any[];

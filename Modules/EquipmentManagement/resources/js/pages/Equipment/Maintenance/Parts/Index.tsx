@@ -1,8 +1,8 @@
 import { Head } from '@inertiajs/react';
 import { AppLayout } from '@/Core';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Badge } from "@/Core";
+import { Button } from "@/Core";
 import { format, parseISO } from 'date-fns';
 import { PageBreadcrumb } from '../../../../components/PageBreadcrumb';
 import { MaintenanceParts } from '../Schedule/MaintenanceParts';
@@ -95,7 +95,7 @@ export default function Index({ maintenanceRecord, availableParts }: IndexProps)
   ];
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <Head title={`Parts - Maintenance #${maintenanceRecord.id}`} />
 
       <div className="container mx-auto py-6">
@@ -221,7 +221,7 @@ export default function Index({ maintenanceRecord, availableParts }: IndexProps)
           )}
         </div>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

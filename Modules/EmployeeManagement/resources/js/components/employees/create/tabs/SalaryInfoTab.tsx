@@ -1,19 +1,19 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Input } from "@/Core";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/Core";
 import { useForm } from 'react-hook-form';
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Core";
 import { ChevronDown, ChevronUp, Eye, EyeOff, Info } from 'lucide-react';
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertTitle, AlertDescription } from "@/Core";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/Core";
 import { FieldValues } from 'react-hook-form';
 
 interface SalaryInfoData {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Head } from '@inertiajs/react';
+import { AppLayout } from '@/Core';
 import { Bell, Mail, MessageSquare, Calendar, AlertTriangle, CheckCircle } from 'lucide-react';
 
 interface NotificationSettings {
@@ -151,8 +152,14 @@ export default function Notifications() {
         },
     ];
 
+    const breadcrumbs = [
+        { title: 'Dashboard', href: '/dashboard' },
+        { title: 'Settings', href: '/settings' },
+        { title: 'Notifications', href: '/settings/notifications' },
+    ];
+
     return (
-        <div className="min-h-screen bg-gray-50">
+        <AppLayout title="Notification Settings" breadcrumbs={breadcrumbs}>
             <Head title="Notification Settings" />
 
             <div className="max-w-4xl mx-auto py-8 px-4">
@@ -213,6 +220,6 @@ export default function Notifications() {
                     </form>
                 </div>
             </div>
-        </div>
+        </AppLayout>
     );
 } 

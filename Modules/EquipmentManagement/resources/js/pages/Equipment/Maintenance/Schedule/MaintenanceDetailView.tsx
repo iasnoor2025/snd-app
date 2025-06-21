@@ -1,10 +1,10 @@
 import { format, parseISO } from 'date-fns';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/Core";
+import { Badge } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Separator } from "@/Core";
+import { Button } from "@/Core";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
 import {
   Calendar,
   ClipboardList,

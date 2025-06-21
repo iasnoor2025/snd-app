@@ -1,14 +1,14 @@
 import React from "react";
 import { useTranslation } from 'react-i18next';
-import { cn } from "@/lib/utils";
+import { cn } from "@/Core";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardContent,
   CardFooter
-} from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+} from "@/Core";
+import { Progress } from "@/Core";
 import { CheckCircle2, Calendar, Clock } from "lucide-react";
 
 interface ProjectProgressProps {

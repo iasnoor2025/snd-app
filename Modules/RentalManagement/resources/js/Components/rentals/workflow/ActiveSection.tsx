@@ -1,13 +1,13 @@
 import React from "react";
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import RentalItemsCard from "@/components/rentals/RentalItemsCard";
-import InvoicesCard from "@/components/rentals/InvoicesCard";
-import MaintenanceRecordList from "@/components/maintenance/MaintenanceRecordList";
-import DocumentsCard from "@/components/rentals/DocumentsCard";
-import RentalAnalytics from "@/components/rentals/RentalAnalytics";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Core";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
+import RentalItemsCard from "../RentalItemsCard";
+import InvoicesCard from "../InvoicesCard";
+import { MaintenanceRecordList } from "@/Core";
+import DocumentsCard from "../DocumentsCard";
+import RentalAnalytics from "../RentalAnalytics";
+import { Alert, AlertDescription, AlertTitle } from "@/Core";
 import { AlertCircle, Clock } from "lucide-react";
 import { differenceInDays } from "date-fns";
 

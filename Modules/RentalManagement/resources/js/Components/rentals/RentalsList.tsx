@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { Link } from "@inertiajs/react";
-import { Rental, customer } from "@/types/models";
+import { Rental, customer } from "@/Core/types/models";
 import { format, isAfter } from "date-fns";
-import { usePermission } from "@/hooks/usePermission";
+import { usePermission } from "@/Core";
 
 // Extend the Rental interface to include our has_operators property
 interface ExtendedRental extends Rental {
@@ -18,9 +18,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+} from "@/Core";
+import { Button } from "@/Core";
+import { Badge } from "@/Core";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,14 +28,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+} from "@/Core";
+import { Avatar, AvatarFallback } from "@/Core";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@/Core";
 
 // Icons
 import {

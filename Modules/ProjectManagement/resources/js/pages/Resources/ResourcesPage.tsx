@@ -8,8 +8,8 @@
 
 import React, { Suspense, lazy, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
 import { useResourceStore } from '../../stores/resourceStore';
 import { AppLayout } from '@/Core';
 import type {
@@ -175,7 +175,7 @@ export function ResourcesPage({
                     </CardContent>
                 </Card>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }
 

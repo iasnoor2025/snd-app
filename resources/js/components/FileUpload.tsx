@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/Core";
+import { Input } from "@/Core";
 import { toast } from 'sonner';
 import { Upload, File } from 'lucide-react';
 

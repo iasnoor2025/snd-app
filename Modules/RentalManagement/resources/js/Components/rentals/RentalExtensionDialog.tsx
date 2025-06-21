@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from 'react-i18next';
 import { format, addDays } from "date-fns";
 import { router } from "@inertiajs/react";
-import { Calendar } from "@/components/ui/calendar";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { Calendar } from "@/Core";
+import { Textarea } from "@/Core";
+import { Button } from "@/Core";
 import { Loader2 } from "lucide-react";
 import {
   Dialog,
@@ -13,17 +13,17 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/Core";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Label } from "@/components/ui/label";
+} from "@/Core";
+import { Label } from "@/Core";
 import { CalendarIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/Core";
 import axios from "axios";
-import ToastManager from "@/utils/toast-manager";
+import { ToastManager } from "@/Core";
 
 interface RentalExtensionDialogProps {
   rentalId: number;

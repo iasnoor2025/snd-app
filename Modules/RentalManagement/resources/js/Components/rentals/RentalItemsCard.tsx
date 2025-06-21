@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from 'react-i18next';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/Core";
+import { Button } from "@/Core";
 import { FileText, Plus } from "lucide-react";
 import { Link } from "@inertiajs/react";
 import RentalItemsTable from "./RentalItemsTable";

@@ -1,8 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { format, isBefore, isAfter, isSameDay, differenceInDays } from 'date-fns';
-import { Rental } from '@/types/models';
-import { Separator } from "@/components/ui/separator";
+import { Rental } from '@/Core/types/models';
+import { Separator } from "@/Core";
 import { 
   Calendar, 
   FileText, 

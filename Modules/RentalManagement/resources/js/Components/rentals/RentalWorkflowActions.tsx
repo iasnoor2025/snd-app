@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from "@/components/ui/button";
-import { RentalStatus } from '@/types/models';
+import { Button } from "@/Core";
+import { RentalStatus } from '@/Core/types/models';
 import { router } from '@inertiajs/react';
 import { toast } from 'sonner';
 

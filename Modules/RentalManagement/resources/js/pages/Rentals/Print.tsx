@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, usePage } from '@inertiajs/react';
 import { Descriptions, Table, Typography, Divider } from 'antd';
-import { PageProps } from '@/types';
-import { Rental, RentalItem, Equipment } from '@/types/models';
-import { getTranslation } from '@/utils/translation';
+import { PageProps } from '@/Core/types';
+import { Rental, RentalItem, Equipment } from '@/Core/types/models';
+import { getTranslation } from '@/Core/utils/translation';
 import dayjs from 'dayjs'; 
 
 const { Title, Text } = Typography;

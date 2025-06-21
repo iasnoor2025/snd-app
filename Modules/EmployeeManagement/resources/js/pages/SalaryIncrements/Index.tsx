@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Pagination } from "@/components/ui/pagination";
+import { Button } from "@/Core";
+import { Input } from "@/Core";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Core";
+import { Badge } from "@/Core";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/Core";
+import { Pagination } from "@/Core";
 import { Search, Plus, Eye, Edit, Check, X, Calendar } from 'lucide-react';
 import { AppLayout } from '@/Core';
-import { PageProps } from '@/types';
+import { PageProps } from '@/Core/types';
 import SalaryHistory from '../Employees/SalaryHistory';
 
 interface Employee {
@@ -410,7 +410,7 @@ export default function Index({ increments, statistics, projectedCost, filters, 
                     </Card>
                 </div>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }
 

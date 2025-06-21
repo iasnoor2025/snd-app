@@ -10,17 +10,17 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
+} from "@/Core";
+import { Button } from "@/Core";
+import { Badge } from "@/Core";
+import { Input } from "@/Core";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/Core";
 import {
   Table,
   TableBody,
@@ -28,17 +28,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/Core";
 import { Search, Plus, LoaderCircle, BriefcaseBusiness, Banknote, MapPin, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
-import { usePermission } from "@/hooks/usePermission";
+import { usePermission } from "@/Core";
 import { toast } from 'sonner';
-import CreateButton from "@/components/shared/CreateButton";
-import CrudButtons from "@/components/shared/CrudButtons";
-import Permission from "@/components/Permission";
+import { CreateButton } from "@/Core";
+import { CrudButtons } from "@/Core";
+import { Permission } from "@/Core";
 import { debounce } from 'lodash';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { getTranslation } from "@/utils/translation";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/Core";
+import { getTranslation } from "@/Core";
 
 const breadcrumbs = [
   { title: 'Dashboard', href: '/dashboard' },
@@ -405,7 +405,7 @@ export default function Index({ auth, employees, filters, departments, positions
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

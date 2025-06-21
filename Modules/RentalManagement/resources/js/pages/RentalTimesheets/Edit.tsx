@@ -9,17 +9,17 @@ type RentalItem = any;
 type RentalTimesheet = any;
 import { AppLayout } from '@/Core';
 import TimesheetForm from '../../components/rentals/timesheets/TimesheetForm';
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertTitle, AlertDescription } from "@/Core";
 
 // Shadcn UI Components
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Core";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/Core";
 
 // Icons
 import { ArrowLeft, ChevronRight, Clock, Home, Pencil } from "lucide-react";
@@ -43,7 +43,7 @@ export default function Edit({ auth, rental, timesheet, rentalItems, operators }
   };
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <Head title={`Edit Timesheet - Rental ${rental.rental_number}`} />
 
       <div className="container mx-auto py-6 space-y-6">
@@ -121,7 +121,7 @@ export default function Edit({ auth, rental, timesheet, rentalItems, operators }
           auth={formattedAuth}
         />
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

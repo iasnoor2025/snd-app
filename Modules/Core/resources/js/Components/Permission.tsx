@@ -1,5 +1,5 @@
 import React from 'react';
-import { usePermission } from "@/hooks/usePermission";
+import { usePermission } from "@/Core";
 
 interface PermissionProps {
   permission: string;

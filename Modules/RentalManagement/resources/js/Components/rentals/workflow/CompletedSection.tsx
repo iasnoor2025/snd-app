@@ -1,18 +1,18 @@
 import React from "react";
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/Core";
+import { Alert, AlertDescription, AlertTitle } from "@/Core";
+import { Button } from "@/Core";
+import { Badge } from "@/Core";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
 import { differenceInDays, format } from "date-fns";
 import { CheckCircle, FileText, Printer, Download, BarChart3, MessageSquare, Star } from "lucide-react";
 import RentalItemsCard from "../RentalItemsCard";
 import InvoicesCard from "../InvoicesCard";
 import DocumentsCard from "../DocumentsCard";
 import RentalAnalytics from "../RentalAnalytics";
-import { formatCurrency } from "@/utils/format";
-import { Progress } from "@/components/ui/progress";
+import { formatCurrency } from "@/Core";
+import { Progress } from "@/Core";
 
 // Define interface for document
 interface AttachedDocument {

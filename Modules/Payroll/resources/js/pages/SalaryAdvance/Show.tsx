@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, useForm, router } from '@inertiajs/react';
-import { PageProps } from "@/types";
-import AppLayout from "@/layouts/AppLayout";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { PageProps } from "@/Core/types";
+import { AppLayout } from '@/Core';
+import { Button } from "@/Core";
+import { Badge } from "@/Core";
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
+} from "@/Core";
 import {
     Dialog,
     DialogContent,
@@ -19,11 +19,11 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/Core";
 
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/Core";
+import { Label } from "@/Core";
+import { Separator } from "@/Core";
 import {
     ArrowLeft,
     Check,
@@ -37,7 +37,7 @@ import {
 import { Link } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { route } from 'ziggy-js';
-import { usePermission } from "@/hooks/usePermission";
+import { usePermission } from "@/Core";
 
 interface Employee {
     id: number;
@@ -359,7 +359,7 @@ export default function Show({ auth, salaryAdvance }: Props) {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-        </AdminLayout>
+        </AppLayout>
     );
 }
 

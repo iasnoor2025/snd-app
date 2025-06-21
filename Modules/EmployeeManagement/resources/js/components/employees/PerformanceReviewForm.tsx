@@ -13,23 +13,23 @@ import {
 import { Employee } from '../../types/employee';
 import { User } from '../../types/user';
 import useLoadingState from '../../hooks/useLoadingState';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/Core";
+import { Button } from "@/Core";
+import { Input } from "@/Core";
+import { Textarea } from "@/Core";
+import { Label } from "@/Core";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from "@/components/ui/select";
-import { DatePicker } from "@/components/ui/date-picker";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+} from "@/Core";
+import { DatePicker } from "@/Core";
+import { Alert, AlertDescription, AlertTitle } from "@/Core";
 import { AlertCircle, Loader2, Save, Plus, X } from 'lucide-react';
-import { Badge } from "@/components/ui/badge";
-import { Slider } from "@/components/ui/slider";
+import { Badge } from "@/Core";
+import { Slider } from "@/Core";
 
 interface PerformanceReviewFormProps {
   review?: PerformanceReview;

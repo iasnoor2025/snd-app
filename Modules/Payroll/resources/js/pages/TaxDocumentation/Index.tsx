@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
-import { PageProps } from "@/types";
-import AppLayout from "@/layouts/AppLayout";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { PageProps } from "@/Core/types";
+import { AppLayout } from '@/Core';
+import { Button } from "@/Core";
+import { Badge } from "@/Core";
 import {
     Table,
     TableBody,
@@ -12,23 +12,23 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table";
+} from "@/Core";
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "@/Core";
+import { Input } from "@/Core";
+import { Label } from "@/Core";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select";
+} from "@/Core";
 import {
     Dialog,
     DialogContent,
@@ -37,7 +37,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@/Core";
 import {
     FileText,
     Download,
@@ -166,7 +166,7 @@ export default function Index({
     };
 
     return (
-        <AdminLayout>
+        <AppLayout>
             <Head title={t('tax_documentation')} />
 
             <div className="space-y-6">
@@ -438,7 +438,7 @@ export default function Index({
                     </CardContent>
                 </Card>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }
 

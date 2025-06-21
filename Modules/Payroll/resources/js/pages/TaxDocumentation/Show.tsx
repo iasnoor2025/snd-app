@@ -1,17 +1,17 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link } from '@inertiajs/react';
-import { PageProps } from "@/types";
-import AppLayout from "@/layouts/AppLayout";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { PageProps } from "@/Core/types";
+import { AppLayout } from '@/Core';
+import { Button } from "@/Core";
+import { Badge } from "@/Core";
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
+} from "@/Core";
 import {
     Table,
     TableBody,
@@ -19,8 +19,8 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table";
-import { Separator } from "@/components/ui/separator";
+} from "@/Core";
+import { Separator } from "@/Core";
 import {
     ArrowLeft,
     Download,
@@ -156,7 +156,7 @@ export default function Show({ taxDocument }: Props) {
     ];
 
     return (
-        <AdminLayout>
+        <AppLayout>
             <Head title={`Tax Document - ${taxDocument.document_number}`} />
 
             <div className="space-y-6">
@@ -427,7 +427,7 @@ export default function Show({ taxDocument }: Props) {
                     </CardContent>
                 </Card>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }
 

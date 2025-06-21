@@ -3,7 +3,7 @@ import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar";
 import { UserMenuContent } from "./user-menu-content";
 import { UserInfo } from "./user-info";
 import { useIsMobile } from '../hooks/use-mobile';
-import { type SharedData } from '@/types';
+import { type SharedData } from '@/Core/types';
 import { usePage } from '@inertiajs/react';
 import { ChevronsUpDown } from 'lucide-react';
 

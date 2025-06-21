@@ -8,9 +8,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+} from "@/Core";
+import { Button } from "@/Core";
+import { Badge } from "@/Core";
 import { Download, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
@@ -21,8 +21,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Pagination, PaginationProps } from "@/components/ui/pagination";
+} from "@/Core";
+import { Pagination, PaginationProps } from "@/Core";
 import { RefreshCw } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 import axios from 'axios';

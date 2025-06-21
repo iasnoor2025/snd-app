@@ -15,6 +15,7 @@ const TimePicker: React.FC<TimePickerProps> = ({ value, onChange, ...props }) =>
   />
 );
 
+export { TimePicker };
 export default TimePicker;
 
 

@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Core";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
+} from "@/Core";
+import { Badge } from "@/Core";
+import { Textarea } from "@/Core";
 import {
   Dialog,
   DialogContent,
@@ -18,7 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@/Core";
 import {
   ArrowLeft as ArrowLeftIcon,
   Check as CheckIcon,
@@ -36,8 +36,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import AppLayout from "@/layouts/AppLayout";
+} from "@/Core";
+import { AppLayout } from '@/Core';
 import { format } from 'date-fns';
 
 interface Employee {
@@ -149,7 +149,7 @@ const LeaveApprovalShow: React.FC = () => {
   const isPending = leaveRequest.status === 'pending';
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <Head title={`Leave Request #${leaveRequest.id}`} />
 
       <div className="space-y-6">
@@ -514,7 +514,7 @@ const LeaveApprovalShow: React.FC = () => {
           </div>
         </div>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 };
 

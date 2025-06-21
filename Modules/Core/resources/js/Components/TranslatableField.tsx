@@ -5,30 +5,30 @@
 
 import React, { useState, useEffect } from 'react';
 import { Globe, AlertCircle, Check, X } from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/Core";
+import { Input } from "@/Core";
+import { Textarea } from "@/Core";
+import { Label } from "@/Core";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/components/ui/tabs";
+} from "@/Core";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+} from "@/Core";
+import { Badge } from "@/Core";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@/Core";
 import { cn } from '../lib/utils';
 import useTranslation from '../hooks/useTranslation';
 

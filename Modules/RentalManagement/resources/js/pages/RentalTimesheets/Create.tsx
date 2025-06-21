@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { Head, Link, usePage } from "@inertiajs/react";
-import { PageProps } from '@/types';
+import { PageProps } from '@/Core/types';
 import { AppLayout } from '@/Core';
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Core";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+} from "@/Core";
+import { Alert, AlertDescription, AlertTitle } from "@/Core";
 import TimesheetForm from '../../components/rentals/timesheets/TimesheetForm';
 
 // Icons
@@ -41,7 +41,7 @@ export default function Create({ rentals = [], rentalItems = [], operators = [],
   // Check if we have active rentals
   if (safeRentals.length === 0) {
     return (
-      <AdminLayout>
+      <AppLayout>
         <Head title={t('create_timesheet')} />
         <div className="container mx-auto py-6">
           <Alert variant="destructive">
@@ -52,7 +52,7 @@ export default function Create({ rentals = [], rentalItems = [], operators = [],
             </AlertDescription>
           </Alert>
         </div>
-      </AdminLayout>
+      </AppLayout>
     );
   }
 
@@ -63,7 +63,7 @@ export default function Create({ rentals = [], rentalItems = [], operators = [],
 
   if (!hasValidRentalItems) {
     return (
-      <AdminLayout>
+      <AppLayout>
         <Head title={t('create_timesheet')} />
         <div className="container mx-auto py-6">
           <Alert variant="destructive">
@@ -75,12 +75,12 @@ export default function Create({ rentals = [], rentalItems = [], operators = [],
             </AlertDescription>
           </Alert>
         </div>
-      </AdminLayout>
+      </AppLayout>
     );
   }
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <Head title={t('create_timesheet')} />
       <div className="container mx-auto py-6">
         <div className="mb-6">
@@ -96,7 +96,7 @@ export default function Create({ rentals = [], rentalItems = [], operators = [],
           operators={safeOperators}
         />
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

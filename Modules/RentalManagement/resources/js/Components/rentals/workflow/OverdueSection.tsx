@@ -1,16 +1,16 @@
 import React from "react";
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/Core";
+import { Alert, AlertDescription, AlertTitle } from "@/Core";
+import { Button } from "@/Core";
+import { Badge } from "@/Core";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
 import { differenceInDays, format } from "date-fns";
 import { AlertCircle, AlertTriangle, CalendarClock, CreditCard, Printer, Send } from "lucide-react";
 import RentalItemsCard from "../../rentals/RentalItemsCard";
 import InvoicesCard from "../../rentals/InvoicesCard";
-import { formatCurrency } from "@/utils/format";
-import { Progress } from "@/components/ui/progress";
+import { formatCurrency } from "@/Core";
+import { Progress } from "@/Core";
 
 // Interface for OverdueSection props
 interface OverdueSectionProps {

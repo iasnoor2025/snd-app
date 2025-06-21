@@ -1,14 +1,14 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { Button } from "@/Core";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Core";
+import { Badge } from "@/Core";
+import { Separator } from "@/Core";
 import { ArrowLeft, Check, X, Calendar, Edit, User, DollarSign, TrendingUp, FileText, Clock } from 'lucide-react';
 import { AppLayout } from '@/Core';
-import { PageProps } from '@/types';
-import { getTranslation } from "@/utils/translation";
+import { PageProps } from '@/Core/types';
+import { getTranslation } from "@/Core";
 import { route } from 'ziggy-js';
 
 interface Employee {
@@ -503,7 +503,7 @@ export default function Show({ increment }: Props) {
                     </div>
                 </div>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }
 

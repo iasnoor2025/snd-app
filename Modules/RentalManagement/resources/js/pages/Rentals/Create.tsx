@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from "@inertiajs/react";
-import { PageProps } from '@/types';
-import { Customer, Equipment } from '@/types/models';
+import { PageProps } from '@/Core/types';
+import { Customer, Equipment } from '@/Core/types/models';
 import { AppLayout } from '@/Core';
 import { format, isAfter, isBefore, startOfToday } from "date-fns";
 import { toast } from "sonner";
 
 // Shadcn UI Components
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { Button } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Separator } from "@/Core";
 
 // Icons
 import { ArrowLeft } from "lucide-react";
@@ -158,7 +158,7 @@ export default function Create({ auth, customers = [], equipment = [], nextRenta
   };
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <Head title={t('ttl_create_rental')} />
 
       <div className="container mx-auto py-8 space-y-8">
@@ -197,7 +197,7 @@ export default function Create({ auth, customers = [], equipment = [], nextRenta
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

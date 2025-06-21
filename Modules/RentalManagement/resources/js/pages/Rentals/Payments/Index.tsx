@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link } from '@inertiajs/react';
 import PaymentTracker from '../../../components/rentals/PaymentTracker';
-// import PaymentListing from "@/components/payments/PaymentListing";
-import { formatCurrency } from "@/utils/format";
+// import { PaymentListing } from "@/Core";
+import { formatCurrency } from "@/Core";
 import { AppLayout } from '@/Core';
 // Placeholder usePermission hook
 const usePermission = () => ({ hasPermission: () => true });
@@ -12,8 +12,8 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger
-} from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
+} from "@/Core";
+import { Button } from "@/Core";
 import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -210,7 +210,7 @@ const [activeTab, setActiveTab] = useState<string>('tracker');
           </Tabs>
         </div>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

@@ -1,15 +1,15 @@
 import React from "react";
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Core";
+import { Alert, AlertDescription, AlertTitle } from "@/Core";
+import { Button } from "@/Core";
+import { Badge } from "@/Core";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
 import { Truck, MapPin, Calendar, Loader2, Clock, Phone, CheckSquare, CalendarClock } from "lucide-react";
 import RentalItemsCard from "../../rentals/RentalItemsCard";
 import { format } from "date-fns";
-// import MapView from "@/components/maps/MapView";
-import { Progress } from "@/components/ui/progress";
+// import { MapView } from "@/Core";
+import { Progress } from "@/Core";
 
 // Interface for MobilizationSection props
 interface MobilizationSectionProps {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Core";
 import {
   Card,
   CardContent,
@@ -9,7 +9,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/Core";
 import {
   Form,
   FormControl,
@@ -17,19 +17,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+} from "@/Core";
+import { Input } from "@/Core";
+import { Textarea } from "@/Core";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/Core";
 import { ClipboardList, ArrowLeft, Save } from 'lucide-react';
 import { AppLayout } from '@/Core';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/ui/breadcrumb";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/Core";
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -178,19 +178,19 @@ export default function LeaveRequestCreate({ employees = [], currentUserOnly = f
   // If form is not ready yet, show a simple loading placeholder
   if (!isFormReady) {
     return (
-      <AdminLayout>
+      <AppLayout>
         <Head title={t('ttl_loading')} />
         <div className="container mx-auto py-6">
           <div className="flex items-center justify-center h-64">
             <p>Loading form...</p>
           </div>
         </div>
-      </AdminLayout>
+      </AppLayout>
     );
   }
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <Head title={t('create_leave_request')} />
       <div className="container mx-auto py-6">
         <Breadcrumb
@@ -415,7 +415,7 @@ export default function LeaveRequestCreate({ employees = [], currentUserOnly = f
           </Form>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

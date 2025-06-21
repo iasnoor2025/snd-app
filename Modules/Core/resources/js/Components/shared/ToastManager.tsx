@@ -1,4 +1,4 @@
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/Core";
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 

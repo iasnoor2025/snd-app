@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Head } from '@inertiajs/react';
 import { PageProps } from '../../types';
 import { AppLayout } from '@/Core';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
 import { format } from 'date-fns';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
 
@@ -242,7 +242,7 @@ export default function Show({ auth, payroll }: Props) {
                     )}
                 </div>
             </div>
-        </AdminLayout>
+        </AppLayout>
     );
 }
 

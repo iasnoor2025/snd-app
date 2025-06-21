@@ -14,20 +14,20 @@ interface Equipment {
   purchase_date?: string;
   door_number?: string;
 }
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/Core";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Input } from "@/Core";
+import { Label } from "@/Core";
+import { Textarea } from "@/Core";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/Core";
 import { ArrowLeft as ArrowLeftIcon } from 'lucide-react';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/Core";
 import {
   Form,
   FormField,
@@ -35,17 +35,17 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/Core";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
+} from "@/Core";
+import { Calendar } from "@/Core";
 import { format } from 'date-fns';
-import { cn } from "@/lib/utils";
+import { cn } from "@/Core";
 import { CalendarIcon } from 'lucide-react';
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/Core";
 import {
   Dialog,
   DialogTrigger,
@@ -55,8 +55,8 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose,
-} from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
+} from "@/Core";
+import { Separator } from "@/Core";
 // Define BreadcrumbItem inline
 type BreadcrumbItem = { title: string; href: string };
 
@@ -231,7 +231,7 @@ export default function MaintenanceCreate({ equipment }: Props) {
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

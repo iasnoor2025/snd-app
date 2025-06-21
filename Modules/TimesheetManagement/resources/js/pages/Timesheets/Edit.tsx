@@ -4,14 +4,14 @@ import { Head, Link, router } from '@inertiajs/react';
 // Placeholder types
 type PageProps = any;
 type BreadcrumbItem = any;
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Core";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardContent,
   CardDescription
-} from "@/components/ui/card";
+} from "@/Core";
 import {
   Form,
   FormField,
@@ -19,23 +19,23 @@ import {
   FormLabel,
   FormControl,
   FormMessage
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+} from "@/Core";
+import { Input } from "@/Core";
+import { Textarea } from "@/Core";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/Core";
 import {
   ArrowLeft as ArrowLeftIcon,
   Calendar as CalendarIcon,
   Clock as ClockIcon,
   Save as SaveIcon
 } from 'lucide-react';
-import { useToast } from "@/components/ui/use-toast";
-import { formatDate, formatCurrency } from "@/utils/format";
+import { useToast } from "@/Core";
+import { formatDate, formatCurrency } from "@/Core";
 import { useForm as useReactHookForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/Core";
+import { Calendar } from "@/Core";
 import { format } from 'date-fns';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -159,7 +159,7 @@ export default function TimesheetEdit({ auth, timesheet, employees = [], project
   };
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <Head title={t('edit_timesheet')} />
 
       <div className="flex h-full flex-1 flex-col gap-4 p-4">
@@ -385,7 +385,7 @@ export default function TimesheetEdit({ auth, timesheet, employees = [], project
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

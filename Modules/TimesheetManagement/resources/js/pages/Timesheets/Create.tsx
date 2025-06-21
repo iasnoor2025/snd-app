@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, useForm as useInertiaForm, router } from '@inertiajs/react';
-import { PageProps, BreadcrumbItem } from "@/types";
-import AppLayout from "@/layouts/AppLayout";
-import { Button } from "@/components/ui/button";
+import { PageProps, BreadcrumbItem } from "@/Core/types";
+import { AppLayout } from '@/Core';
+import { Button } from "@/Core";
 import {
   Card,
   CardContent,
@@ -11,7 +11,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/Core";
 import {
   Form,
   FormControl,
@@ -19,21 +19,21 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+} from "@/Core";
+import { Input } from "@/Core";
+import { Textarea } from "@/Core";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
 import {
   ArrowLeft as ArrowLeftIcon,
   Calendar as CalendarIcon,
   Clock as ClockIcon
 } from 'lucide-react';
-// import { useToast } from "@/components/ui/toast";  // TODO: Fix this (use sonner)
+// import { useToast } from "@/Core";  // TODO: Fix this (use sonner)
 import { useForm as useReactHookForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/Core";
+import { Calendar } from "@/Core";
 import { format } from 'date-fns';
 import { toast } from "sonner";
 import { route } from 'ziggy-js';
@@ -1083,7 +1083,7 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 }
 

@@ -1,21 +1,21 @@
 import React from "react";
 import { useTranslation } from 'react-i18next';
 import { router, useForm } from "@inertiajs/react";
-import { Rental } from "@/types/models";
+import { Rental } from "@/Core/types/models";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { usePermission } from "@/hooks/usePermission";
-import { cn } from "@/lib/utils";
+import { usePermission } from "@/Core";
+import { cn } from "@/Core";
 
 // ShadCN UI Components
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Core";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from "@/components/ui/card";
+} from "@/Core";
 import {
   Dialog,
   DialogContent,
@@ -23,14 +23,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/Core";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Badge } from "@/components/ui/badge";
+} from "@/Core";
+import { Badge } from "@/Core";
 
 // Icons
 import {

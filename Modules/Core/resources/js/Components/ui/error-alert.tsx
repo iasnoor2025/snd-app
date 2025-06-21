@@ -11,6 +11,7 @@ const ErrorAlert: React.FC<ErrorAlertProps> = ({ message, children }) => (
   </div>
 );
 
+export { ErrorAlert };
 export default ErrorAlert;
 
 

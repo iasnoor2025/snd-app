@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Separator } from "@/components/ui/separator";
+import { Separator } from "@/Core";
 
 interface SectionHeaderProps {
   title: string;
