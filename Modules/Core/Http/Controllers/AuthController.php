@@ -38,12 +38,14 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
+            'remember' => 'boolean',
         ]);
 
         try {
             $userData = $this->authService->authenticate([
                 'email' => $request->email,
                 'password' => $request->password,
+                'remember' => $request->boolean('remember'),
                 'is_active' => true, // Only allow active users to login
             ]);
 

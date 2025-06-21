@@ -76,6 +76,7 @@ export default function Login() {
                             name="remember"
                             checked={data.remember}
                             onCheckedChange={(checked) => setData('remember', checked as boolean)}
+                            aria-label="Remember me"
                         />
                         <Label htmlFor="remember" className="text-sm font-normal">
                             Remember me

@@ -16,7 +16,10 @@ class AuthService
      */
     public function authenticate(array $credentials): array
     {
-        if (!Auth::attempt($credentials)) {
+        $remember = $credentials['remember'] ?? false;
+        unset($credentials['remember']); // Remove remember from credentials before attempting auth
+
+        if (!Auth::attempt($credentials, $remember)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
