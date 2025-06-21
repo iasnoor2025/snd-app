@@ -8,17 +8,17 @@ type MaintenanceRecord = { id: number; [key: string]: any };
 type Equipment = { id: number; name: string };
 // ... existing code ...
 import { formatCurrency, formatDate } from '../../utils/format';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/Modules/Core/resources/js/components/ui/select';
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -26,8 +26,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/Modules/Core/resources/js/components/ui/table';
-import { useToast } from '@/Modules/Core/resources/js/components/ui/use-toast';
+} from "@/components/ui/table";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Eye as EyeIcon,
   Pencil as EditIcon,
@@ -42,13 +42,13 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/Modules/Core/resources/js/components/ui/popover';
-import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { format } from 'date-fns';
 import dayjs from 'dayjs';
-import { AdminLayout } from '@/Modules/Core/resources/js';
+import { AppLayout } from '@/Core';
 // ErrorBoundary import removed for build
-// import { usePermission } from '@/Modules/EquipmentManagement/Resources/js/hooks/usePermission';
+// import { usePermission } from '@/Modules/EquipmentManagement/resources/js/hooks/usePermission';
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Dashboard', href: '/dashboard' },
@@ -158,7 +158,7 @@ const { toast } = useToast();
   }
 
   return (
-    <AdminLayout title="Maintenance Records" breadcrumbs={breadcrumbs}>
+    <AppLayout title="Maintenance Records" breadcrumbs={breadcrumbs}>
       <Head title="Maintenance Records" />
 
       <div className="flex h-full flex-1 flex-col gap-4 p-4">

@@ -1,51 +1,41 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
-import { PageProps, BreadcrumbItem } from '@/types/index';
-import { AdminLayout } from '@/Modules/Core/resources/js';
+import { BreadcrumbItem } from "@/types";
+import AppLayout from "@/layouts/AppLayout";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/Modules/Core/resources/js/components/ui/card';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Label } from '@/Modules/Core/resources/js/components/ui/label';
-import {
+  Button,
+  Input,
+  Label,
+  Checkbox,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/Modules/Core/resources/js/components/ui/table';
-import {
+  Badge,
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from '@/Modules/Core/resources/js/components/ui/dialog';
-import { Checkbox } from '@/Modules/Core/resources/js/components/ui/checkbox';
-import { Search, ArrowLeft, Users, Edit, Shield, Save, X } from 'lucide-react';
+  DialogTrigger
+} from "@/components/ui";
+import { ArrowLeft, Shield, Plus, Search, UserPlus, X } from 'lucide-react';
 import { toast } from 'sonner';
-import Permission from '@/Modules/Core/resources/js/components/Permission';
-
-const breadcrumbs: BreadcrumbItem[] = [
-  { title: 'Dashboard', href: '/dashboard' },
-  { title: 'Settings', href: '/settings' },
-  { title: 'Roles', href: '/settings/roles' },
-  { title: 'User Roles', href: '/settings/user-roles' },
-];
 
 interface Role {
   id: number;
   name: string;
   display_name?: string;
+  guard_name: string;
 }
 
 interface User {
@@ -53,109 +43,83 @@ interface User {
   name: string;
   email: string;
   roles: Role[];
-  permissions: Array<{
-    id: number;
-    name: string;
-  }>;
 }
 
-interface Props extends PageProps {
+interface Props {
   users: User[];
   roles: Role[];
-  auth: any;
 }
 
-export default function UserRoles({ auth, users, roles }: Props) {
+export default function UserRoles({ users, roles }: Props) {
   const { t } = useTranslation('core');
   const [search, setSearch] = useState('');
-  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [selectedRoles, setSelectedRoles] = useState<number[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const filteredUsers = users.filter(user =>
     user.name.toLowerCase().includes(search.toLowerCase()) ||
-    user.email.toLowerCase().includes(search.toLowerCase()) ||
-    user.roles.some(role => 
-      role.name.toLowerCase().includes(search.toLowerCase()) ||
-      role.display_name?.toLowerCase().includes(search.toLowerCase())
-    )
+    user.email.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleEditUser = (user: User) => {
-    setEditingUser(user);
+  const handleUserSelect = (user: User) => {
+    setSelectedUser(user);
     setSelectedRoles(user.roles.map(role => role.id));
     setIsDialogOpen(true);
   };
 
-  const handleSaveUserRoles = () => {
-    if (!editingUser) return;
+  const handleRoleChange = (roleId: number) => {
+    setSelectedRoles(prev => {
+      if (prev.includes(roleId)) {
+        return prev.filter(id => id !== roleId);
+      } else {
+        return [...prev, roleId];
+      }
+    });
+  };
 
-    router.put(`/settings/user-roles/${editingUser.id}`, {
+  const handleSubmit = () => {
+    if (!selectedUser) return;
+
+    router.put(`/settings/users/${selectedUser.id}/roles`, {
       roles: selectedRoles,
     }, {
       onSuccess: () => {
         toast.success('User roles updated successfully');
         setIsDialogOpen(false);
-        setEditingUser(null);
-        setSelectedRoles([]);
       },
       onError: (errors) => {
+        setErrors(errors);
         toast.error('Failed to update user roles');
       },
     });
   };
 
-  const handleRoleChange = (roleId: number, checked: boolean) => {
-    if (checked) {
-      setSelectedRoles(prev => [...prev, roleId]);
-    } else {
-      setSelectedRoles(prev => prev.filter(id => id !== roleId));
-    }
-  };
-
-  const getRolesBadges = (userRoles: Role[]) => {
-    if (userRoles.length === 0) {
-      return <Badge variant="outline">No roles</Badge>;
-    }
-
-    return (
-      <div className="flex flex-wrap gap-1">
-        {userRoles.map((role) => (
-          <Badge key={role.id} variant="secondary" className="text-xs">
-            {role.display_name || role.name}
-          </Badge>
-        ))}
-      </div>
-    );
-  };
+  const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Dashboard', href: '/dashboard' },
+    { title: 'Settings', href: '/settings' },
+    { title: 'User Roles', href: '/settings/user-roles' },
+  ];
 
   return (
-    <AdminLayout 
-      title="User Roles Management" 
+    <AppLayout 
+      title="User Roles" 
       breadcrumbs={breadcrumbs} 
-      requiredPermission="roles.view"
+      requiredPermission="roles.assign"
     >
-      <Head title="User Roles Management" />
+      <Head title="User Roles" />
 
       <div className="flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/settings/roles">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Roles
-            </Link>
-          </Button>
-        </div>
-
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <div>
               <CardTitle className="text-2xl font-bold flex items-center gap-2">
-                <Users className="h-6 w-6" />
-                User Roles Management
+                <Shield className="h-6 w-6" />
+                User Roles
               </CardTitle>
               <CardDescription>
-                Manage role assignments for all users in the system
+                Manage role assignments for users
               </CardDescription>
             </div>
           </CardHeader>
@@ -172,30 +136,27 @@ export default function UserRoles({ auth, users, roles }: Props) {
               </div>
             </div>
 
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>User</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Roles</TableHead>
-                    <TableHead>Direct Permissions</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredUsers.length === 0 ? (
+            {filteredUsers.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                  <Shield className="h-8 w-8" />
+                  <p>No users found</p>
+                  {search && <p className="text-sm">Try adjusting your search</p>}
+                </div>
+              </div>
+            ) : (
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center py-8">
-                        <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                          <Users className="h-8 w-8" />
-                          <p>No users found</p>
-                          {search && <p className="text-sm">Try adjusting your search</p>}
-                        </div>
-                      </TableCell>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Current Roles</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
-                  ) : (
-                    filteredUsers.map((user) => (
+                  </TableHeader>
+                  <TableBody>
+                    {filteredUsers.map((user) => (
                       <TableRow key={user.id}>
                         <TableCell className="font-medium">
                           {user.name}
@@ -203,105 +164,76 @@ export default function UserRoles({ auth, users, roles }: Props) {
                         <TableCell>
                           {user.email}
                         </TableCell>
-                        <TableCell className="max-w-xs">
-                          {getRolesBadges(user.roles)}
-                        </TableCell>
                         <TableCell>
-                          <Badge variant="outline">
-                            {user.permissions.length} permission{user.permissions.length !== 1 ? 's' : ''}
-                          </Badge>
+                          <div className="flex flex-wrap gap-1">
+                            {user.roles.map(role => (
+                              <Badge key={role.id} variant="secondary">
+                                {role.display_name || role.name}
+                              </Badge>
+                            ))}
+                          </div>
                         </TableCell>
                         <TableCell className="text-right">
-                          <Permission permission="roles.edit">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditUser(user)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                          </Permission>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleUserSelect(user)}
+                          >
+                            <UserPlus className="h-4 w-4" />
+                          </Button>
                         </TableCell>
                       </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-
-            <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
-              <p>Showing {filteredUsers.length} of {users.length} users</p>
-            </div>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
           </CardContent>
         </Card>
 
-        {/* Edit User Roles Dialog */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-md">
+          <DialogContent>
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <Shield className="h-5 w-5" />
-                Edit User Roles
+              <DialogTitle>
+                Manage Roles for {selectedUser?.name}
               </DialogTitle>
               <DialogDescription>
-                {editingUser && `Manage roles for ${editingUser.name}`}
+                Select the roles to assign to this user
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4">
-              <div className="space-y-3">
-                <h4 className="text-sm font-medium">Available Roles</h4>
-                <div className="space-y-2 max-h-60 overflow-y-auto">
-                  {roles.map((role) => (
-                    <div key={role.id} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`role-${role.id}`}
-                        checked={selectedRoles.includes(role.id)}
-                        onCheckedChange={(checked) => 
-                          handleRoleChange(role.id, checked as boolean)
-                        }
-                      />
-                      <Label 
-                        htmlFor={`role-${role.id}`} 
-                        className="text-sm cursor-pointer flex-1"
-                      >
-                        <div>
-                          <div className="font-medium">{role.display_name || role.name}</div>
-                          <div className="text-xs text-muted-foreground">{role.name}</div>
-                        </div>
-                      </Label>
-                    </div>
-                  ))}
+              {roles.map((role) => (
+                <div key={role.id} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`role-${role.id}`}
+                    checked={selectedRoles.includes(role.id)}
+                    onCheckedChange={() => handleRoleChange(role.id)}
+                  />
+                  <Label htmlFor={`role-${role.id}`}>
+                    {role.display_name || role.name}
+                  </Label>
                 </div>
-              </div>
+              ))}
 
-              <div className="p-3 bg-muted/50 rounded-md">
-                <p className="text-sm text-muted-foreground">
-                  Selected roles: <span className="font-medium">{selectedRoles.length}</span>
-                </p>
-              </div>
-
-              <div className="flex items-center justify-end gap-2 pt-4 border-t">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setIsDialogOpen(false)}
-                >
-                  <X className="h-4 w-4 mr-2" />
-                  Cancel
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={handleSaveUserRoles}
-                >
-                  <Save className="h-4 w-4 mr-2" />
-                  Save Changes
-                </Button>
-              </div>
+              {errors.roles && (
+                <p className="text-sm text-red-500 mt-1">{errors.roles}</p>
+              )}
             </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                <X className="h-4 w-4 mr-2" />
+                Cancel
+              </Button>
+              <Button onClick={handleSubmit}>
+                <Plus className="h-4 w-4 mr-2" />
+                Update Roles
+              </Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 } 

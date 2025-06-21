@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, router } from '@inertiajs/react';
-import { PageProps } from '@/Modules/EmployeeManagement/Resources/js/types';
-import { AdminLayout } from '@/Modules/Core/resources/js';
+import { PageProps } from '@/Modules/EmployeeManagement/resources/js/types';
+import { AppLayout } from '@/Core';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/Modules/Core/resources/js/components/ui/card';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Label } from '@/Modules/Core/resources/js/components/ui/label';
-import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import { ArrowLeft, Plus } from 'lucide-react';
-import { ToastService } from '@/Modules/Core/resources/js/components/shared/ToastManager';
+import { ToastService } from "@/components/shared/ToastManager";
 
 interface Employee {
   id: number;
@@ -100,7 +100,7 @@ export default function Create({ auth, employee }: Props) {
   };
 
   return (
-    <AdminLayout title={t('ttl_create_advance_payment')} breadcrumbs={breadcrumbs} requiredPermission="employees.edit">
+    <AppLayout title={t('ttl_create_advance_payment')} breadcrumbs={breadcrumbs} requiredPermission="employees.edit">
       <Head title={t('ttl_create_advance_payment')} />
 
       <div className="flex h-full flex-1 flex-col gap-6 p-4 md:gap-8 md:p-8">

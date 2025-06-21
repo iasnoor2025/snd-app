@@ -1,28 +1,28 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useForm, router } from '@inertiajs/react';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Label } from '@/Modules/Core/resources/js/components/ui/label';
-import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '@/Modules/Core/resources/js/components/ui/select';
-import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/Modules/Core/resources/js/components/ui/popover';
+} from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from 'date-fns';
 import { CalendarIcon, User } from 'lucide-react';
-import { cn } from '@/Modules/Core/resources/js/lib/utils';
+import { cn } from "@/lib/utils";
 import axios from 'axios';
-import { Toggle } from '@/Modules/Core/resources/js/components/ui/toggle';
-import ErrorBoundary from '@/Modules/Core/resources/js/components/ErrorBoundary';
+import { Toggle } from "@/components/ui/toggle";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import { z } from 'zod';
 import { route } from 'ziggy-js';
-import { ToastService } from '@/Modules/Core/resources/js/components/shared/ToastManager';
-import { DatePicker } from '@/Modules/Core/resources/js/components/ui/date-picker';
+import { ToastService } from "@/components/shared/ToastManager";
+import { DatePicker } from "@/components/ui/date-picker";
 import { useTranslation } from 'react-i18next';
 
 interface Employee {

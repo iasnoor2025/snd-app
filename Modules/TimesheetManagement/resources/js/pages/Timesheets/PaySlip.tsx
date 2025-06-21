@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link } from '@inertiajs/react';
 import { PageProps, BreadcrumbItem } from '@/types';
-import { AdminLayout } from '@/Modules/Core/resources/js';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { AppLayout } from '@/Core';
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
   CardFooter,
-} from '@/Modules/Core/resources/js/components/ui/card';
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -19,9 +19,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/Modules/Core/resources/js/components/ui/table';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
-import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import {
   ArrowLeft,
   Printer,
@@ -263,7 +263,7 @@ export default function PaySlip({
   // Check if we have all the required data
   if (!employee || !month || !year || !start_date || !end_date) {
     return (
-      <AdminLayout title={t('ttl_employee_pay_slip')} breadcrumbs={breadcrumbs} requiredPermission="timesheets.view">
+      <AppLayout title={t('ttl_employee_pay_slip')} breadcrumbs={breadcrumbs} requiredPermission="timesheets.view">
         <Head title={t('ttl_employee_pay_slip')} />
         <div className="flex h-full flex-1 flex-col gap-4 p-4">
           <Card>
@@ -288,7 +288,7 @@ export default function PaySlip({
   }
 
   return (
-    <AdminLayout title={t('ttl_employee_pay_slip')} breadcrumbs={breadcrumbs} requiredPermission="timesheets.view">
+    <AppLayout title={t('ttl_employee_pay_slip')} breadcrumbs={breadcrumbs} requiredPermission="timesheets.view">
       <Head title={t('ttl_employee_pay_slip')} />
 
       <div className="flex h-full flex-1 flex-col gap-4 p-4">

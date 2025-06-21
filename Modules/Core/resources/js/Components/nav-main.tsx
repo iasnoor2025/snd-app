@@ -1,66 +1,62 @@
-import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from '@/Modules/Core/resources/js/components/ui/sidebar';
-import { type NavItem } from '@/types';
-import { Link, usePage } from '@inertiajs/react';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/Modules/Core/resources/js/components/ui/collapsible';
-import { ChevronRight } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { Icon } from "./icon";
+import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from "./ui/sidebar";
+import { Link, usePage } from "@inertiajs/react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
+import { useTranslation } from "react-i18next";
+import { type NavItem } from "@/types";
+import { usePermission } from "../hooks/usePermission";
 
-export function NavMain({ items = [] }: { items: NavItem[] }) {
-    const page = usePage();
+interface NavMainProps {
+    items: NavItem[];
+}
+
+export function NavMain({ items }: NavMainProps) {
     const { t } = useTranslation(['common']);
+    const { hasPermission } = usePermission();
 
     return (
-        <SidebarGroup className="px-2 py-0">
-            <SidebarGroupLabel>{t('common:platform')}</SidebarGroupLabel>
+        <SidebarGroup>
+            <SidebarGroupLabel>{t('common:navigation')}</SidebarGroupLabel>
             <SidebarMenu>
-                {items.map((item) => {
-                    const hasSubItems = item.items && item.items.length > 0;
-                    const isActive = item.href === page.url || (hasSubItems && item.items?.some(subItem => subItem.href === page.url));
+                {items.map((item, index) => {
+                    if (item.permission && !hasPermission(item.permission)) {
+                        return null;
+                    }
 
-                    if (hasSubItems) {
+                    if (item.items) {
                         return (
-                            <Collapsible key={item.title} asChild defaultOpen={isActive}>
-                                <SidebarMenuItem>
+                            <SidebarMenuItem key={index}>
+                                <Collapsible>
                                     <CollapsibleTrigger asChild>
-                                        <SidebarMenuButton
-                                            tooltip={{ children: item.title }}
-                                            isActive={isActive}
-                                        >
-                                            {item.icon && <item.icon />}
-                                            <span>{item.title}</span>
-                                            <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                        <SidebarMenuButton>
+                                            <Icon name={item.icon} />
+                                            {item.title}
                                         </SidebarMenuButton>
                                     </CollapsibleTrigger>
                                     <CollapsibleContent>
                                         <SidebarMenuSub>
-                                            {item.items?.map((subItem) => (
-                                                <SidebarMenuSubItem key={subItem.title}>
-                                                    <SidebarMenuSubButton
-                                                        asChild
-                                                        isActive={subItem.href === page.url}
-                                                    >
-                                                        <Link href={subItem.href} prefetch>
-                                                            <span>{subItem.title}</span>
+                                            {item.items.map((subItem, subIndex) => (
+                                                <SidebarMenuSubItem key={subIndex}>
+                                                    <SidebarMenuSubButton asChild>
+                                                        <Link href={subItem.href}>
+                                                            {subItem.title}
                                                         </Link>
                                                     </SidebarMenuSubButton>
                                                 </SidebarMenuSubItem>
                                             ))}
                                         </SidebarMenuSub>
                                     </CollapsibleContent>
-                                </SidebarMenuItem>
-                            </Collapsible>
+                                </Collapsible>
+                            </SidebarMenuItem>
                         );
                     }
 
                     return (
-                        <SidebarMenuItem key={item.title}>
-                            <SidebarMenuButton
-                                asChild
-                                isActive={isActive}
-                            >
-                                <Link href={item.href} prefetch>
-                                    {item.icon && <item.icon />}
-                                    <span>{item.title}</span>
+                        <SidebarMenuItem key={index}>
+                            <SidebarMenuButton asChild>
+                                <Link href={item.href}>
+                                    <Icon name={item.icon} />
+                                    {item.title}
                                 </Link>
                             </SidebarMenuButton>
                         </SidebarMenuItem>

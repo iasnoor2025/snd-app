@@ -1,16 +1,16 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link } from '@inertiajs/react';
-import { PageProps } from '@/Modules/Payroll/Resources/js/types';
-import { AdminLayout } from '@/Modules/Core/resources/js';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { PageProps } from '@/Modules/Payroll/resources/js/types';
+import { AppLayout } from '@/Core';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from 'date-fns';
 import { ArrowLeft, Download, Printer } from 'lucide-react';
-import { useToast } from '@/Modules/Core/resources/js/components/ui/use-toast';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
-import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
-import { Alert, AlertDescription } from '@/Modules/Core/resources/js/components/ui/alert';
+import { useToast } from "@/components/ui/use-toast";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from 'lucide-react';
 
 interface Props extends PageProps {
@@ -85,7 +85,7 @@ export default function Show({ auth, settlement }: Props) {
     };
 
     return (
-        <AdminLayout title={t('ttl_final_settlement_details')} requiredPermission="final-settlements.view">
+        <AppLayout title={t('ttl_final_settlement_details')} requiredPermission="final-settlements.view">
             <Head title={t('ttl_final_settlement_details')} />
 
             <div className="flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

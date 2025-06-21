@@ -19,17 +19,24 @@ export default defineConfig({
     },
     resolve: {
         alias: {
-            'ziggy-js': resolve(__dirname, 'vendor/tightenco/ziggy'),
-            '@': resolve(__dirname, './'),
-            '@/Modules/Core/resources/js': resolve(__dirname, 'Modules/Core/resources/js'),
-            '@/Modules/Reporting/resources/js': resolve(__dirname, 'Modules/Reporting/resources/js'),
-            '@/Modules/CustomerManagement/resources/js': resolve(__dirname, 'Modules/CustomerManagement/resources/js'),
-            '@/Modules/EmployeeManagement/resources/js': resolve(__dirname, 'Modules/EmployeeManagement/resources/js'),
-            '@/Modules/EquipmentManagement/resources/js': resolve(__dirname, 'Modules/EquipmentManagement/resources/js'),
-            '@/Modules/LeaveManagement/resources/js': resolve(__dirname, 'Modules/LeaveManagement/resources/js'),
-            '@/Modules/ProjectManagement/resources/js': resolve(__dirname, 'Modules/ProjectManagement/resources/js'),
-            '@/Modules/RentalManagement/resources/js': resolve(__dirname, 'Modules/RentalManagement/resources/js'),
-            '@/Modules/TimesheetManagement/resources/js': resolve(__dirname, 'Modules/TimesheetManagement/resources/js'),
+            '@': resolve(__dirname, './resources/js'),
+            '@/Core': resolve(__dirname, './Modules/Core/resources/js'),
+            '@/Core/components': resolve(__dirname, './Modules/Core/resources/js/components'),
+            '@/Core/components/ui': resolve(__dirname, './Modules/Core/resources/js/components/ui'),
+            '@/Core/layouts': resolve(__dirname, './Modules/Core/resources/js/layouts'),
+            '@/Core/layouts/AppLayout': resolve(__dirname, './Modules/Core/resources/js/layouts/AppLayout'),
+            '@/Core/layouts/AuthenticatedLayout': resolve(__dirname, './Modules/Core/resources/js/layouts/AuthenticatedLayout'),
+            '@/Core/layouts/GuestLayout': resolve(__dirname, './Modules/Core/resources/js/layouts/GuestLayout'),
+            '@/Core/layouts/auth-layout': resolve(__dirname, './Modules/Core/resources/js/layouts/auth-layout'),
+            'ziggy-js': resolve(__dirname, './vendor/tightenco/ziggy')
         },
+        extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
     },
+    optimizeDeps: {
+        include: [
+            '@/Core/components',
+            '@/Core/components/ui',
+            '@/Core/layouts'
+        ]
+    }
 });

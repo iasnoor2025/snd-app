@@ -12,16 +12,16 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/Modules/Core/resources/js/components/ui/table';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Checkbox } from '@/Modules/Core/resources/js/components/ui/checkbox';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/Modules/Core/resources/js/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -29,9 +29,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/Modules/Core/resources/js/components/ui/dialog';
-import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
-import { Label } from '@/Modules/Core/resources/js/components/ui/label';
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import {
   MoreHorizontal,
   Eye,

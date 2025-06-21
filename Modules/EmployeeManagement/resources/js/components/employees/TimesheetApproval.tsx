@@ -54,7 +54,7 @@ import {
   Eye
 } from 'lucide-react';
 import { Checkbox } from '../ui/checkbox';
-import { getTranslation } from '@/Modules/Core/resources/js/utils/translation';
+import { getTranslation } from "@/utils/translation";
 
 interface Project {
   id: number;

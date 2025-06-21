@@ -2,17 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { format, parseISO, isSameMonth } from 'date-fns';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
-import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/Modules/Core/resources/js/components/ui/popover';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 import { toast } from 'sonner';
 import { Calendar as CalendarIcon } from 'lucide-react';
-// import { DailyTimesheetRecords } from '../../../../../TimesheetManageme@/Modules/Core/resources/js/components/timesheets/DailyTimesheetRecords';
+// import { DailyTimesheetRecords } from '../../../../../TimesheetManageme@/Core/components/timesheets/DailyTimesheetRecords';
 
 interface TimesheetSummary {
   total_hours: number;

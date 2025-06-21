@@ -10,15 +10,15 @@ import axios from "axios";
 import { PageProps } from "@/types";
 
 // Layouts & Hooks
-import { AdminLayout } from "@/Modules/Core/resources/js";
-import { usePermission } from "@/Modules/Core/resources/js/hooks/usePermission";
+import { AppLayout } from "@/Core";
+import { usePermission } from "@/hooks/usePermission";
 
 // UI Components
-import { Button } from "@/Modules/Core/resources/js/components/ui/button";
-import { Badge } from "@/Modules/Core/resources/js/components/ui/badge";
-import { Input } from "@/Modules/Core/resources/js/components/ui/input";
-import { DataTable } from "@/Modules/Core/resources/js/components/ui/data-table";
-import { DatePicker } from "@/Modules/Core/resources/js/components/ui/date-picker";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { DataTable } from "@/components/ui/data-table";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   Card,
   CardContent,
@@ -26,7 +26,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/Modules/Core/resources/js/components/ui/card";
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -34,14 +34,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/Modules/Core/resources/js/components/ui/dialog";
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/Modules/Core/resources/js/components/ui/select";
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -49,7 +49,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/Modules/Core/resources/js/components/ui/table";
+} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -57,22 +57,22 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/Modules/Core/resources/js/components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/Modules/Core/resources/js/components/ui/avatar";
+} from "@/components/ui/avatar";
 import {
   TooltipProvider,
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from "@/Modules/Core/resources/js/components/ui/tooltip";
+} from "@/components/ui/tooltip";
 
 // Shared Components
-import CreateButton from "@/Modules/Core/resources/js/components/shared/CreateButton";
-import CrudButtons from "@/Modules/Core/resources/js/components/shared/CrudButtons";
+import CreateButton from "@/components/shared/CreateButton";
+import CrudButtons from "@/components/shared/CrudButtons";
 
 // Icons
 import {
@@ -508,7 +508,7 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
   ];
 
   return (
-    <AdminLayout title="Rentals" breadcrumbs={breadcrumbs} requiredPermission="rentals.view">
+    <AppLayout title="Rentals" breadcrumbs={breadcrumbs} requiredPermission="rentals.view">
       <Head title={t('ttl_rentals_management')} />
 
       <div className="flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

@@ -7,21 +7,21 @@ type Employee = any;
 type Rental = any;
 type RentalItem = any;
 type RentalTimesheet = any;
-import { AdminLayout } from '@/Modules/Core/resources/js';
-import { formatDate } from '@/Modules/Core/resources/js/utils/format';
+import { AppLayout } from '@/Core';
+import { formatDate } from "@/utils/format";
 // Placeholder usePermission hook
 const usePermission = () => ({ hasPermission: () => true });
 
 // Shadcn UI Components
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/Modules/Core/resources/js/components/ui/card';
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -29,24 +29,24 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/Modules/Core/resources/js/components/ui/table';
+} from "@/components/ui/table";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/Modules/Core/resources/js/components/ui/select';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Checkbox } from '@/Modules/Core/resources/js/components/ui/checkbox';
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import type { CheckedState } from '@radix-ui/react-checkbox';
-import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
-import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
+import { Separator } from "@/components/ui/separator";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/Modules/Core/resources/js/components/ui/popover';
+} from "@/components/ui/popover";
 import {
   Dialog,
   DialogContent,
@@ -54,7 +54,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/Modules/Core/resources/js/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -62,7 +62,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/Modules/Core/resources/js/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 
 // Icons
 import {
@@ -87,12 +87,12 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import { toast } from "sonner";
-import { cn } from '@/Modules/Core/resources/js/lib/utils';
+import { cn } from "@/lib/utils";
 import { format, parseISO } from "date-fns";
-import { Pagination } from '@/Modules/Core/resources/js/components/ui/pagination';
+import { Pagination } from "@/components/ui/pagination";
 // Placeholder for ColumnDef
 type ColumnDef = any;
-import { formatCurrency } from '@/Modules/Core/resources/js/utils/format';
+import { formatCurrency } from "@/utils/format";
 
 interface Props extends PageProps {
   timesheets: {

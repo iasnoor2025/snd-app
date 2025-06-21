@@ -1,13 +1,13 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, useForm } from '@inertiajs/react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Select } from '@/Modules/Core/resources/js/components/ui/select';
-import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
-import { Label } from '@/Modules/Core/resources/js/components/ui/label';
-import { Alert, AlertDescription } from '@/Modules/Core/resources/js/components/ui/alert';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ArrowLeft } from 'lucide-react';
 
 export const Create: FC = () => {

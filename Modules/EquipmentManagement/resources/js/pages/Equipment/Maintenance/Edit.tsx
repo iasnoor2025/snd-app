@@ -1,29 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { Head, Link, router, useForm } from '@inertiajs/react';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/Modules/Core/resources/js/components/ui/card';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Label } from '@/Modules/Core/resources/js/components/ui/label';
-import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/Modules/Core/resources/js/components/ui/select';
+} from "@/components/ui/select";
 import { ArrowLeft as ArrowLeftIcon } from 'lucide-react';
-import { useToast } from '@/Modules/Core/resources/js/components/ui/use-toast';
+import { useToast } from "@/components/ui/use-toast";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/Modules/Core/resources/js/components/ui/popover';
-import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { format } from 'date-fns';
-import { cn } from '@/Modules/Core/resources/js/lib/utils';
+import { cn } from "@/lib/utils";
 import { CalendarIcon } from 'lucide-react';
-import { AdminLayout } from '@/Modules/Core/resources/js';
+import { AppLayout } from '@/Core';
 
 // Minimal type definitions for build
 type PageProps = { [key: string]: any };
@@ -89,7 +89,7 @@ export default function MaintenanceEdit({ equipment, maintenance }: Props) {
   };
 
   return (
-    <AdminLayout title="Edit Maintenance Record" breadcrumbs={breadcrumbs}>
+    <AppLayout title="Edit Maintenance Record" breadcrumbs={breadcrumbs}>
       <Head title="Edit Maintenance Record" />
       <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

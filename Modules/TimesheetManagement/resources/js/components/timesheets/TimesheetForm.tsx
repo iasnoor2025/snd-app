@@ -12,21 +12,21 @@ type TimesheetFormData = any;
 type Project = any;
 type EmployeeTimesheet = any;
 import useLoadingState from '../../hooks/useLoadingState';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
-import { Checkbox } from '@/Modules/Core/resources/js/components/ui/checkbox';
-import { Label } from '@/Modules/Core/resources/js/components/ui/label';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/Modules/Core/resources/js/components/ui/select';
-import { DatePicker } from '@/Modules/Core/resources/js/components/ui/date-picker';
-import { Alert } from '@/Modules/Core/resources/js/components/ui/alert';
-import { AlertDescription } from '@/Modules/Core/resources/js/components/ui/alert';
+} from "@/components/ui/select";
+import { DatePicker } from "@/components/ui/date-picker";
+import { Alert } from "@/components/ui/alert";
+import { AlertDescription } from "@/components/ui/alert";
 import { Loader2 } from 'lucide-react';
 
 interface TimesheetFormProps {

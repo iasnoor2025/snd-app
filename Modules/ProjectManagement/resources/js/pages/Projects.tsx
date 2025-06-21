@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Head } from '@inertiajs/react';
-import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
+import AppLayout from "@/layouts/AppLayout";
 import { ProjectList } from '../components/ProjectList';
 import { ProjectForm } from '../components/ProjectForm';
 import {
@@ -8,8 +8,8 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-} from '@/Modules/Core/resources/js/components/ui/dialog';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { PlusIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -114,7 +114,7 @@ export default function Projects({ projects: initialProjects, managers }: Projec
     };
 
     return (
-        <AdminLayout
+        <AppLayout
             title={t('ttl_projects')}
             breadcrumbs={[
                 { title: 'Dashboard', href: '/dashboard' },

@@ -2,10 +2,10 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link } from '@inertiajs/react';
 import type { PageProps, Customer } from '../../types/index.d';
-import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import AppLayout from "@/layouts/AppLayout";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { route } from 'ziggy-js';
 
 const breadcrumbs = [
@@ -30,7 +30,7 @@ const ShowCustomer: React.FC<Props> = ({ customer }) => {
   };
 
   return (
-    <AdminLayout title={t('ttl_customer_details')} breadcrumbs={breadcrumbs}>
+    <AppLayout title={t('ttl_customer_details')} breadcrumbs={breadcrumbs}>
       <Head title={t('ttl_customer_details')} />
       <div className="flex justify-center mt-8">
         <Card className="w-full max-w-xl">

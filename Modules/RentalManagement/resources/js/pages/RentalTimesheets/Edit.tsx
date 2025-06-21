@@ -7,19 +7,19 @@ type Employee = any;
 type Rental = any;
 type RentalItem = any;
 type RentalTimesheet = any;
-import { AdminLayout } from '@/Modules/Core/resources/js';
-import TimesheetForm from '../../Components/rentals/timesheets/TimesheetForm';
-import { Alert, AlertTitle, AlertDescription } from '@/Modules/Core/resources/js/components/ui/alert';
+import { AppLayout } from '@/Core';
+import TimesheetForm from '../../components/rentals/timesheets/TimesheetForm';
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 // Shadcn UI Components
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/Modules/Core/resources/js/components/ui/card';
+} from "@/components/ui/card";
 
 // Icons
 import { ArrowLeft, ChevronRight, Clock, Home, Pencil } from "lucide-react";

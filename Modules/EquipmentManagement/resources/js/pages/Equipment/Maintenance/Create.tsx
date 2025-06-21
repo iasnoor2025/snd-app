@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 // Define PageProps inline if needed
 type PageProps = Record<string, unknown>;
-import { AdminLayout } from '@/Modules/Core/resources/js';
+import { AppLayout } from '@/Core';
 // Define Equipment inline if needed
 interface Equipment {
   id: number;
@@ -14,20 +14,20 @@ interface Equipment {
   purchase_date?: string;
   door_number?: string;
 }
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Label } from '@/Modules/Core/resources/js/components/ui/label';
-import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/Modules/Core/resources/js/components/ui/select';
+} from "@/components/ui/select";
 import { ArrowLeft as ArrowLeftIcon } from 'lucide-react';
-import { useToast } from '@/Modules/Core/resources/js/components/ui/use-toast';
+import { useToast } from "@/components/ui/use-toast";
 import {
   Form,
   FormField,
@@ -35,17 +35,17 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-} from '@/Modules/Core/resources/js/components/ui/form';
+} from "@/components/ui/form";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/Modules/Core/resources/js/components/ui/popover';
-import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { format } from 'date-fns';
-import { cn } from '@/Modules/Core/resources/js/lib/utils';
+import { cn } from "@/lib/utils";
 import { CalendarIcon } from 'lucide-react';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogTrigger,
@@ -55,8 +55,8 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose,
-} from '@/Modules/Core/resources/js/components/ui/dialog';
-import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
+} from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
 // Define BreadcrumbItem inline
 type BreadcrumbItem = { title: string; href: string };
 
@@ -106,7 +106,7 @@ export default function MaintenanceCreate({ equipment }: Props) {
   };
 
   return (
-    <AdminLayout title="Schedule Maintenance" breadcrumbs={breadcrumbs}>
+    <AppLayout title="Schedule Maintenance" breadcrumbs={breadcrumbs}>
       <Head title="Schedule Maintenance" />
 
       <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-8">

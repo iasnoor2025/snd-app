@@ -2,9 +2,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head } from '@inertiajs/react';
 import { PageProps } from '../../types';
-import { AdminLayout } from '@/Modules/Core/resources/js';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { AppLayout } from '@/Core';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from 'date-fns';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
 
@@ -59,7 +59,7 @@ export default function Show({ auth, payroll }: Props) {
     };
 
     return (
-        <AdminLayout
+        <AppLayout
             user={auth.user}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">{t('ttl_payroll_details')}</h2>}
         >

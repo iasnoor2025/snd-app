@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
 import { PageProps } from '@/types';
-import { AdminLayout } from '@/Modules/Core/resources/js';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Modules/Core/resources/js/components/ui/tabs';
+import { AppLayout } from '@/Core';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft } from 'lucide-react';
-import { useToast } from '@/Modules/Core/resources/js/components/ui/use-toast';
-import { usePermission } from '@/Modules/Core/resources/js/hooks/usePermission';
+import { useToast } from "@/components/ui/use-toast";
+import { usePermission } from "@/hooks/usePermission";
 
 // Import tab components
 import PersonalInfoTab from './tabs/PersonalInfoTab';
@@ -163,7 +163,7 @@ export default function EmployeeCreate({ auth, positions }: Props) {
   };
 
   return (
-    <AdminLayout title={t('ttl_create_employee')} requiredPermission="employees.create">
+    <AppLayout title={t('ttl_create_employee')} requiredPermission="employees.create">
       <Head title={t('ttl_create_employee')} />
 
       <div className="flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

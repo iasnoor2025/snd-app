@@ -1,41 +1,44 @@
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/Modules/Core/resources/js/components/ui/breadcrumb';
-import { type BreadcrumbItem as BreadcrumbItemType } from '@/types';
-import { Link } from '@inertiajs/react';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "./ui/breadcrumb";
+import { ChevronRight } from "lucide-react";
+import { Link } from "@inertiajs/react";
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export function Breadcrumbs({ breadcrumbs }: { breadcrumbs: BreadcrumbItemType[] }) {
+interface BreadcrumbItem {
+    title: string;
+    href?: string;
+}
+
+interface BreadcrumbsProps {
+    breadcrumbs: BreadcrumbItem[];
+}
+
+export function Breadcrumbs({ breadcrumbs }: BreadcrumbsProps) {
     const { t } = useTranslation(['common']);
 
     return (
-        <>
-            {breadcrumbs.length > 0 && (
-                <Breadcrumb>
-                    <BreadcrumbList>
-                        {breadcrumbs.map((item, index) => {
-                            const isLast = index === breadcrumbs.length - 1;
-                            const title = item.title || item.name || 'Unknown';
-                            const translatedTitle = t(`common:breadcrumbs.${title.toLowerCase().replace(/ /g, '_')}`, { defaultValue: title });
-
-                            return (
-                                <Fragment key={index}>
-                                    <BreadcrumbItem>
-                                        {isLast ? (
-                                            <BreadcrumbPage>{translatedTitle}</BreadcrumbPage>
-                                        ) : (
-                                            <BreadcrumbLink asChild>
-                                                <Link href={item.href}>{translatedTitle}</Link>
-                                            </BreadcrumbLink>
-                                        )}
-                                    </BreadcrumbItem>
-                                    {!isLast && <BreadcrumbSeparator />}
-                                </Fragment>
-                            );
-                        })}
-                    </BreadcrumbList>
-                </Breadcrumb>
-            )}
-        </>
+        <Breadcrumb>
+            <BreadcrumbList>
+                {breadcrumbs.map((breadcrumb, index) => (
+                    <Fragment key={index}>
+                        <BreadcrumbItem>
+                            {breadcrumb.href ? (
+                                <BreadcrumbLink asChild>
+                                    <Link href={breadcrumb.href}>{breadcrumb.title}</Link>
+                                </BreadcrumbLink>
+                            ) : (
+                                <BreadcrumbPage>{breadcrumb.title}</BreadcrumbPage>
+                            )}
+                        </BreadcrumbItem>
+                        {index < breadcrumbs.length - 1 && (
+                            <BreadcrumbSeparator>
+                                <ChevronRight className="h-4 w-4" />
+                            </BreadcrumbSeparator>
+                        )}
+                    </Fragment>
+                ))}
+            </BreadcrumbList>
+        </Breadcrumb>
     );
 }
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Button } from "@/components/ui/button";
 
 class ErrorBoundary extends React.Component<
   { children: React.ReactNode },

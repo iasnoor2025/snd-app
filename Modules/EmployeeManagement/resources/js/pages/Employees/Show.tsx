@@ -2,11 +2,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
 import { PageProps, BreadcrumbItem } from '../../types';
-import { AdminLayout } from '@/Modules/Core/resources/js';
+import { AppLayout } from '@/Core';
 import { Employee as BaseEmployee } from '../../types/models';
 import { route } from 'ziggy-js';
-import { getTranslation } from '@/Modules/Core/resources/js/utils/translation';
-import { Breadcrumb } from '@/Modules/Core/resources/js/components/ui/breadcrumb';
+import { getTranslation } from "@/utils/translation";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import {
   Card,
   CardContent,
@@ -14,10 +14,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/Modules/Core/resources/js/components/ui/card';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Modules/Core/resources/js/components/ui/tabs';
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,
   TableBody,
@@ -25,7 +25,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/Modules/Core/resources/js/components/ui/table';
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -34,27 +34,27 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/Modules/Core/resources/js/components/ui/dialog';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Label } from '@/Modules/Core/resources/js/components/ui/label';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { ArrowLeft, Edit, Trash2, FileText, Calendar, Check, X, AlertCircle, RefreshCw, ExternalLink, Download, User, Briefcase, CreditCard, FileBox, Upload, Printer, Car, Truck, Award, IdCard, Plus, History, Receipt, XCircle, CheckCircle, Clock } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
-import { usePermission } from '@/Modules/Core/resources/js/hooks/usePermission';
+import { usePermission } from "@/hooks/usePermission";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/Modules/Core/resources/js/components/ui/tooltip';
-import { Alert, AlertDescription } from '@/Modules/Core/resources/js/components/ui/alert';
+} from "@/components/ui/tooltip";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import axios from 'axios';
 import DocumentManager from '../../components/employees/EmployeeDocumentManager';
 import { useQueryClient } from '@tanstack/react-query';
-import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
-import { Avatar, AvatarFallback } from '@/Modules/Core/resources/js/components/ui/avatar';
-// import { MediaLibrary } from '@/Modules/Core/resources/js/components/media-library/MediaLibrary'; // TODO: Fix or replace MediaLibrary import
-// import { DailyTimesheetRecords } from '@/Modules/Core/resources/js/components/timesheets/DailyTimesheetRecords'; // TODO: Fix or replace DailyTimesheetRecords import
-import { useToast } from '@/Modules/Core/resources/js/components/ui/use-toast';
+import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+// import { MediaLibrary } from "@/components/media-library/MediaLibrary"; // TODO: Fix or replace MediaLibrary import
+// import { DailyTimesheetRecords } from "@/components/timesheets/DailyTimesheetRecords"; // TODO: Fix or replace DailyTimesheetRecords import
+import { useToast } from "@/components/ui/use-toast";
 // PaymentHistory component placeholder
 const PaymentHistory = ({ employeeId, initialMonthlyHistory, initialTotalRepaid, initialPagination, showOnlyLast }: any) => (
   <div className="p-4 text-center text-muted-foreground">
@@ -72,7 +72,7 @@ import { toast } from 'sonner';
 import ToastService from '@/services/ToastService';
 import FinalSettlementTab from '../../components/employees/FinalSettlementTab';
 // import { route } from 'ziggy-js';
-import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
+import { Textarea } from "@/components/ui/textarea";
 import { TimesheetSummary } from '../../components/employees/timesheets/TimesheetSummary';
 import { TimesheetList } from '../../components/employees/timesheets/TimesheetList';
 import { TimesheetForm } from '../../components/employees/timesheets/TimesheetForm';
@@ -402,7 +402,7 @@ export default function Show({
       { title: 'Employee Details', href: window.location.pathname },
     ];
     return (
-      <AdminLayout title={t('ttl_employee_details')} breadcrumbs={breadcrumbs} requiredPermission="employees.view">
+      <AppLayout title={t('ttl_employee_details')} breadcrumbs={breadcrumbs} requiredPermission="employees.view">
         <Head title={t('employee_not_found')} />
         <div className="flex h-full flex-1 flex-col items-center justify-center gap-6 p-4 md:gap-8 md:p-8">
           <div className="text-center">
@@ -899,7 +899,7 @@ export default function Show({
   };
 
   return (
-    <AdminLayout title={employee ? `${employee.first_name || ''} ${employee.last_name || ''}` : 'Employee Details'} breadcrumbs={breadcrumbs} requiredPermission="employees.view">
+    <AppLayout title={employee ? `${employee.first_name || ''} ${employee.last_name || ''}` : 'Employee Details'} breadcrumbs={breadcrumbs} requiredPermission="employees.view">
       <Head title={t('ttl_employee_details')} />
 
       <div className="flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

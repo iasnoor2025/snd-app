@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, router } from '@inertiajs/react';
 import { PageProps, BreadcrumbItem } from '@/types/index';
-import { AdminLayout } from '@/Modules/Core/resources/js';
+import AppLayout from "@/layouts/AppLayout";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/Modules/Core/resources/js/components/ui/card';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Label } from '@/Modules/Core/resources/js/components/ui/label';
-import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
-import { Checkbox } from '@/Modules/Core/resources/js/components/ui/checkbox';
+  Button,
+  Input,
+  Label,
+  Checkbox,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Badge
+} from "@/components/ui";
 import { ArrowLeft, Shield, Save, X } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -22,6 +28,7 @@ interface Permission {
   id: number;
   name: string;
   display_name?: string;
+  guard_name: string;
 }
 
 interface Role {
@@ -42,6 +49,10 @@ interface Props extends PageProps {
 export default function Edit({ auth, role, permissions, selectedPermissions: initialSelectedPermissions }: Props) {
   const { t } = useTranslation('core');
   const [selectedPermissions, setSelectedPermissions] = useState<number[]>(initialSelectedPermissions || []);
+  const [name, setName] = useState(role.name);
+  const [displayName, setDisplayName] = useState(role.display_name || '');
+  const [description, setDescription] = useState(role.description || '');
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -51,10 +62,10 @@ export default function Edit({ auth, role, permissions, selectedPermissions: ini
     { title: 'Edit', href: `/settings/roles/${role.id}/edit` },
   ];
 
-  const { data, setData, put, processing, errors, reset } = useForm({
-    name: role.name,
-    display_name: role.display_name || '',
-    description: role.description || '',
+  const { data, setData, put, processing, errors: formErrors, reset } = useForm({
+    name,
+    display_name: displayName,
+    description,
     permissions: selectedPermissions,
   });
 
@@ -65,7 +76,7 @@ export default function Edit({ auth, role, permissions, selectedPermissions: ini
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    put(`/settings/roles/${role.id}`, {
+    router.put(`/settings/roles/${role.id}`, {
       data: {
         ...data,
         permissions: selectedPermissions,
@@ -74,6 +85,7 @@ export default function Edit({ auth, role, permissions, selectedPermissions: ini
         toast.success('Role updated successfully');
       },
       onError: (errors) => {
+        setErrors(errors);
         toast.error('Failed to update role');
       },
     });
@@ -105,8 +117,27 @@ export default function Edit({ auth, role, permissions, selectedPermissions: ini
     return checkedCount > 0 && checkedCount < groupPermissions.length;
   };
 
+  const handleModuleSelectAll = (modulePermissions: Permission[]) => {
+    const modulePermissionIds = modulePermissions.map(p => p.id);
+    const allSelected = modulePermissionIds.every(id => selectedPermissions.includes(id));
+
+    if (allSelected) {
+      setSelectedPermissions(prev => prev.filter(id => !modulePermissionIds.includes(id)));
+    } else {
+      setSelectedPermissions(prev => {
+        const newPermissions = [...prev];
+        modulePermissionIds.forEach(id => {
+          if (!newPermissions.includes(id)) {
+            newPermissions.push(id);
+          }
+        });
+        return newPermissions;
+      });
+    }
+  };
+
   return (
-    <AdminLayout 
+    <AppLayout 
       title={`Edit Role: ${role.display_name || role.name}`} 
       breadcrumbs={breadcrumbs} 
       requiredPermission="roles.edit"
@@ -169,7 +200,7 @@ export default function Edit({ auth, role, permissions, selectedPermissions: ini
 
               <div className="space-y-2">
                 <Label htmlFor="description">Description</Label>
-                <Textarea
+                <Input
                   id="description"
                   value={data.description}
                   onChange={(e) => setData('description', e.target.value)}
@@ -264,6 +295,6 @@ export default function Edit({ auth, role, permissions, selectedPermissions: ini
           </div>
         </form>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 } 

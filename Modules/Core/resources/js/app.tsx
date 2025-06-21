@@ -50,7 +50,7 @@ const modulePages: Record<string, () => Promise<any>> = {
   ...import.meta.glob('/Modules/*/resources/js/pages/**/*.tsx', { eager: false }),
   ...import.meta.glob('/Modules/*/resources/js/pages/**/*.jsx', { eager: false }),
   ...import.meta.glob('/resources/js/pages/**/*.tsx', { eager: false }),
-  ...import.meta.glob('/resources/js/Pages/**/*.tsx', { eager: false }),
+  ...import.meta.glob('/resources/js/pages/**/*.tsx', { eager: false }),
 };
 
 // Helper function to find module pages by pattern
@@ -133,10 +133,10 @@ const leaveRequestPages: Record<string, string> = {
 
 // Core/Users pages
 const corePages: Record<string, string> = {
-  'Users/Index': '/resources/js/Pages/Users/Index.tsx',
-  'Users/Create': '/resources/js/Pages/Users/Create.tsx',
-  'Users/Edit': '/resources/js/Pages/Users/Edit.tsx',
-  'Users/Show': '/resources/js/Pages/Users/Show.tsx',
+  'Users/Index': '/resources/js/pages/Users/Index.tsx',
+  'Users/Create': '/resources/js/pages/Users/Create.tsx',
+  'Users/Edit': '/resources/js/pages/Users/Edit.tsx',
+  'Users/Show': '/resources/js/pages/Users/Show.tsx',
   'welcome': '/resources/js/pages/welcome.tsx',
   'Dashboard': '/resources/js/pages/dashboard.tsx',
   'dashboard': '/resources/js/pages/dashboard.tsx',
@@ -195,7 +195,7 @@ createInertiaApp({
 
                 try {
                     // Try uppercase Pages directory
-                    const page = await resolvePageComponent(`./Pages/${name}.tsx`, import.meta.glob('./Pages/**/*.tsx'));
+                    const page = await resolvePageComponent(`./pages/${name}.tsx`, import.meta.glob('./pages/**/*.tsx'));
                     console.log('Successfully resolved auth page from uppercase Pages directory:', name);
                     return page;
                 } catch (upperError) {
@@ -210,7 +210,7 @@ createInertiaApp({
         } catch (error) {
             // If not found in lowercase pages, try uppercase Pages
             try {
-                return await resolvePageComponent(`/resources/js/Pages/${name}.tsx`, import.meta.glob('/resources/js/Pages/**/*.tsx'));
+                return await resolvePageComponent(`/resources/js/pages/${name}.tsx`, import.meta.glob('/resources/js/pages/**/*.tsx'));
             } catch (e) {
                 // Handle Laravel's Inertia::render('Module::Page') pattern (like Employee module)
                 if (name.includes('::')) {
@@ -219,12 +219,12 @@ createInertiaApp({
                     const possiblePaths = [
                         `./Modules/${module}/resources/js/pages/${page}.tsx`,
                         `./Modules/${module}/resources/js/pages/${page}.jsx`,
-                        `./Modules/${module}/resources/js/Pages/${page}.tsx`,
-                        `./Modules/${module}/resources/js/Pages/${page}.jsx`,
+                        `./Modules/${module}/resources/js/pages/${page}.tsx`,
+                        `./Modules/${module}/resources/js/pages/${page}.jsx`,
                         `./Modules/${module}/resources/js/pages/${page}/Index.tsx`,
                         `./Modules/${module}/resources/js/pages/${page}/Index.jsx`,
-                        `./Modules/${module}/resources/js/Pages/${page}/Index.tsx`,
-                        `./Modules/${module}/resources/js/Pages/${page}/Index.jsx`,
+                        `./Modules/${module}/resources/js/pages/${page}/Index.tsx`,
+                        `./Modules/${module}/resources/js/pages/${page}/Index.jsx`,
                     ];
                     for (const path of possiblePaths) {
                         if (path in modulePages) {
@@ -266,13 +266,13 @@ createInertiaApp({
                 for (const module of potentialModules) {
                 const possiblePaths = [
                         `./Modules/${module}/resources/js/pages/${name}.tsx`,
-                        `./Modules/${module}/resources/js/Pages/${name}.tsx`,
+                        `./Modules/${module}/resources/js/pages/${name}.tsx`,
                         // For exact module page match (like Employees/Index in EmployeeManagement)
                         `./Modules/${module}/resources/js/pages/${pagePath}.tsx`,
-                        `./Modules/${module}/resources/js/Pages/${pagePath}.tsx`,
+                        `./Modules/${module}/resources/js/pages/${pagePath}.tsx`,
                         // Common pattern: Module/pages/PagePrefix/PageName
                         `./Modules/${module}/resources/js/pages/${moduleName}/${pagePath}.tsx`,
-                        `./Modules/${module}/resources/js/Pages/${moduleName}/${pagePath}.tsx`,
+                        `./Modules/${module}/resources/js/pages/${moduleName}/${pagePath}.tsx`,
 
                     ];
 

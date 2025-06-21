@@ -13,23 +13,23 @@ import {
 import { Employee } from '../../types/employee';
 import { User } from '../../types/user';
 import useLoadingState from '../../hooks/useLoadingState';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/Modules/Core/resources/js/components/ui/card';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
-import { Label } from '@/Modules/Core/resources/js/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '@/Modules/Core/resources/js/components/ui/select';
-import { DatePicker } from '@/Modules/Core/resources/js/components/ui/date-picker';
-import { Alert, AlertDescription, AlertTitle } from '@/Modules/Core/resources/js/components/ui/alert';
+} from "@/components/ui/select";
+import { DatePicker } from "@/components/ui/date-picker";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, Loader2, Save, Plus, X } from 'lucide-react';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
-import { Slider } from '@/Modules/Core/resources/js/components/ui/slider';
+import { Badge } from "@/components/ui/badge";
+import { Slider } from "@/components/ui/slider";
 
 interface PerformanceReviewFormProps {
   review?: PerformanceReview;

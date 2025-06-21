@@ -4,7 +4,6 @@
 // Layout Components
 export { default as AuthenticatedLayout } from './AuthenticatedLayout';
 export { default as GuestLayout } from './GuestLayout';
-export { default as AdminLayout } from '../layouts/AdminLayout';
 
 // Navigation Components
 export { default as AppSidebar } from './app-sidebar';
@@ -37,8 +36,6 @@ export { default as DangerButton } from './DangerButton';
 export { UserMenuContent } from './user-menu-content';
 export { UserInfo } from './user-info';
 export { default as DeleteUser } from './delete-user';
-
-// Avatar Components - AvatarShowcase removed
 
 // Utility Components
 export { default as ErrorBoundary } from './ErrorBoundary';

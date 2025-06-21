@@ -1,19 +1,19 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, useForm, Link } from '@inertiajs/react';
-import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/Modules/Core/resources/js/components/ui/card';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Label } from '@/Modules/Core/resources/js/components/ui/label';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Modules/Core/resources/js/components/ui/select';
-import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/Modules/Core/resources/js/components/ui/popover';
+import AppLayout from "@/layouts/AppLayout";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from 'date-fns';
 import { CalendarIcon, ArrowLeft, Plus } from 'lucide-react';
-import { cn } from '@/Modules/Core/resources/js/lib/utils';
-import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
+import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
 
 interface Customer {
     id: number;
@@ -83,7 +83,7 @@ export default function Create({ customers, locations }: Props) {
     ];
 
     return (
-        <AdminLayout title={t('create_project')} breadcrumbs={breadcrumbs} requiredPermission="projects.create">
+        <AppLayout title={t('create_project')} breadcrumbs={breadcrumbs} requiredPermission="projects.create">
             <div className="container mx-auto py-6 space-y-6">
                 <div className="flex flex-col space-y-2">
                     <Link href={window.route('projects.index')} className="flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors">

@@ -1,15 +1,14 @@
 import * as React from "react";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
-
 import { cn } from "../../lib/utils";
-import { Button } from "@/Modules/Core/resources/js/components/ui/button";
-import { Calendar } from "@/Modules/Core/resources/js/components/ui/calendar";
+import { Button } from "./button";
+import { Calendar } from "./calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/Modules/Core/resources/js/components/ui/popover";
+} from "./popover";
 
 interface DatePickerProps {
   date?: Date;

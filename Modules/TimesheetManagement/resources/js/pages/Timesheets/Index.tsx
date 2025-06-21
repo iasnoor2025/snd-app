@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
-import { PageProps, BreadcrumbItem } from '@/Modules/Core/resources/js/types';
-import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
-import { usePermission } from '@/Modules/Core/resources/js/hooks/usePermission';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { PageProps, BreadcrumbItem } from "@/types";
+import AppLayout from "@/layouts/AppLayout";
+import { usePermission } from "@/hooks/usePermission";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from '@/Modules/Core/resources/js/components/ui/card';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
-import { Checkbox } from '@/Modules/Core/resources/js/components/ui/checkbox';
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/Modules/Core/resources/js/components/ui/select';
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -29,7 +29,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/Modules/Core/resources/js/components/ui/table';
+} from "@/components/ui/table";
 import {
   Plus as PlusIcon,
   Eye as EyeIcon,
@@ -42,9 +42,9 @@ import {
   MoreHorizontal as MoreHorizontalIcon,
   FileText as FileTextIcon
 } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/Modules/Core/resources/js/components/ui/tooltip';
-import { Popover, PopoverContent, PopoverTrigger } from '@/Modules/Core/resources/js/components/ui/popover';
-import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { format } from 'date-fns';
 import {
   DropdownMenu,
@@ -53,9 +53,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/Modules/Core/resources/js/components/ui/dropdown-menu';
-import CreateButton from '@/Modules/Core/resources/js/components/shared/CreateButton';
-import CrudButtons from '@/Modules/Core/resources/js/components/shared/CrudButtons';
+} from "@/components/ui/dropdown-menu";
+import CreateButton from "@/components/shared/CreateButton";
+import CrudButtons from "@/components/shared/CrudButtons";
 import { route } from 'ziggy-js';
 import { toast } from 'sonner';
 
@@ -282,7 +282,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
   };
 
   return (
-    <AdminLayout title={t('ttl_timesheets')} breadcrumbs={breadcrumbs} requiredPermission="timesheets.view">
+    <AppLayout title={t('ttl_timesheets')} breadcrumbs={breadcrumbs} requiredPermission="timesheets.view">
       <Head title={t('ttl_timesheets')} />
 
       <div className="flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

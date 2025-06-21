@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { format, isBefore, isAfter, isSameDay, differenceInDays } from 'date-fns';
 import { Rental } from '@/types/models';
-import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
+import { Separator } from "@/components/ui/separator";
 import { 
   Calendar, 
   FileText, 

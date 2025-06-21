@@ -1,13 +1,13 @@
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
-import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import AppLayout from "@/layouts/AppLayout";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { BarChart, ArrowLeft, Construction } from 'lucide-react';
 
 export default function ProjectReportsIndex() {
     return (
-        <AdminLayout title="Project Reports">
+        <AppLayout title="Project Reports">
             <Head title="Project Reports" />
             
             <div className="space-y-6">

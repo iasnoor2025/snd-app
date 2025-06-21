@@ -1,19 +1,19 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link } from '@inertiajs/react';
-import { PageProps, BreadcrumbItem } from '@/types/index';
-import { AdminLayout } from '@/Modules/Core/resources/js';
+import { type BreadcrumbItem } from "@/types";
+import AppLayout from "@/layouts/AppLayout";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/Modules/Core/resources/js/components/ui/card';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+  Button,
+  Badge
+} from "@/components/ui";
 import { ArrowLeft, Shield, Edit, Users, Key } from 'lucide-react';
-import Permission from '@/Modules/Core/resources/js/components/Permission';
+import Permission from "@/components/Permission";
 import { format } from 'date-fns';
 
 interface Role {
@@ -31,7 +31,7 @@ interface Role {
   updated_at: string;
 }
 
-interface Props extends PageProps {
+interface Props {
   role: Role;
   auth: any;
 }
@@ -55,7 +55,7 @@ export default function Show({ auth, role }: Props) {
   }, {} as Record<string, typeof role.permissions>);
 
   return (
-    <AdminLayout 
+    <AppLayout 
       title={`Role: ${role.display_name || role.name}`} 
       breadcrumbs={breadcrumbs} 
       requiredPermission="roles.view"
@@ -225,6 +225,6 @@ export default function Show({ auth, role }: Props) {
           </div>
         </div>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 } 

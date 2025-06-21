@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import type { PageProps } from '@/types';
-import { AdminLayout } from '@/Modules/Core/resources/js';
+import { AppLayout } from '@/Core';
 import dayjs from 'dayjs';
 import { toast } from 'sonner';
-import ErrorBoundary from '@/Modules/Core/resources/js/components/ErrorBoundary';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/Modules/Core/resources/js/components/ui/card';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
-import { ScrollArea } from '@/Modules/Core/resources/js/components/ui/scroll-area';
-import { Alert, AlertDescription } from '@/Modules/Core/resources/js/components/ui/alert';
-import { Skeleton } from '@/Modules/Core/resources/js/components/ui/skeleton';
+import ErrorBoundary from "@/components/ErrorBoundary";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/Modules/Core/resources/js/components/ui/select';
+} from "@/components/ui/select";
 import {
   Form,
   FormControl,
@@ -27,7 +27,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/Modules/Core/resources/js/components/ui/form';
+} from "@/components/ui/form";
 import {
   Dialog,
   DialogContent,
@@ -35,23 +35,23 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/Modules/Core/resources/js/components/ui/dialog';
+} from "@/components/ui/dialog";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useForm as useReactHookForm } from 'react-hook-form';
-import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/Modules/Core/resources/js/components/ui/popover';
-import { cn } from '@/Modules/Core/resources/js/lib/utils';
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import { CalendarIcon, ArrowLeft, Loader2, Plus } from 'lucide-react';
-import { Switch } from '@/Modules/Core/resources/js/components/ui/switch';
+import { Switch } from "@/components/ui/switch";
 import { format } from 'date-fns';
 import { router } from '@inertiajs/react';
 import axios from 'axios';
-import { useEquipmentCategories } from '@/Modules/Core/resources/js/hooks/useEquipmentCategories';
+import { useEquipmentCategories } from "@/hooks/useEquipmentCategories";
 import { useTranslation } from 'react-i18next';
 import { EquipmentFormData } from '../../types';
 
@@ -884,7 +884,7 @@ export default function Create({ auth, categories = [], locations = [], employee
   }
 
   return (
-    <AdminLayout breadcrumbs={breadcrumbs}>
+    <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Create Equipment" />
 
       <div className="flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

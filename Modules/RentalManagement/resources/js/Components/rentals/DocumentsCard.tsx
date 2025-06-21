@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { format } from "date-fns";
-import { cn } from "@/Modules/Core/resources/js/lib/utils";
+import { cn } from "@/lib/utils";
 import { useForm } from "@inertiajs/react";
 
 // ShadCN UI Components
@@ -12,8 +12,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/Modules/Core/resources/js/components/ui/card";
-import { Button } from "@/Modules/Core/resources/js/components/ui/button";
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -21,7 +21,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/Modules/Core/resources/js/components/ui/table";
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -30,9 +30,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/Modules/Core/resources/js/components/ui/dialog";
-import { Input } from "@/Modules/Core/resources/js/components/ui/input";
-import { Label } from "@/Modules/Core/resources/js/components/ui/label";
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
 // Icons

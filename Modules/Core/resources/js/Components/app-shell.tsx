@@ -1,5 +1,5 @@
-import { SidebarProvider } from '@/Modules/Core/resources/js/components/ui/sidebar';
-import { SharedData } from '@/types';
+import { SidebarProvider } from './ui/sidebar';
+import { SharedData } from '../types';
 import { usePage } from '@inertiajs/react';
 // PWAWrapper component placeholder
 const PWAWrapper = ({ children }: { children: React.ReactNode }) => <>{children}</>;

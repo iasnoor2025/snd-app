@@ -2,18 +2,18 @@ import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/Modules/Core/resources/js/components/ui/card';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Modules/Core/resources/js/components/ui/table';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
-import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
 import { format } from 'date-fns';
 import {
     Eye, Edit, Plus, LayoutGrid, CheckCircle, Clock, AlertCircle, XCircle,
     Filter, Search
 } from 'lucide-react';
-import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
+import AppLayout from "@/layouts/AppLayout";
 // Declare window.route for TypeScript
 // @ts-ignore
 // eslint-disable-next-line
@@ -114,7 +114,7 @@ export default function Index({ projects }: Props) {
     ];
 
     return (
-        <AdminLayout title={t('ttl_projects')} breadcrumbs={breadcrumbs} requiredPermission="projects.view">
+        <AppLayout title={t('ttl_projects')} breadcrumbs={breadcrumbs} requiredPermission="projects.view">
 
             <div className="container mx-auto py-6 space-y-6">
                 <div className="flex justify-between items-center">

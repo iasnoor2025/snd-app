@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
-import { PageProps, BreadcrumbItem } from '@/Modules/EquipmentManagement/Resources/js/types';
-import { AdminLayout } from '@/Modules/Core/resources/js';
-import { Equipment, MaintenanceRecord } from '@/Modules/EquipmentManagement/Resources/js/types/models';
+import { PageProps, BreadcrumbItem } from '@/Modules/EquipmentManagement/resources/js/types';
+import { AppLayout } from '@/Core';
+import { Equipment, MaintenanceRecord } from '@/Modules/EquipmentManagement/resources/js/types/models';
 // Simple format functions
 const formatDate = (date: string) => new Date(date).toLocaleDateString();
 const formatCurrency = (amount: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -16,8 +16,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/Modules/Core/resources/js/components/ui/table';
-import { useToast } from '@/Modules/Core/resources/js/components/ui/use-toast';
+} from "@/components/ui/table";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Calendar as CalendarIcon,
   Clock as ClockIcon,
@@ -29,7 +29,7 @@ import {
   Eye as EyeIcon,
   XCircle as XCircleIcon
 } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Modules/Core/resources/js/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Props extends PageProps {
   equipment: Equipment;
@@ -115,7 +115,7 @@ export default function MaintenanceIndex({ equipment, history, costs, performanc
   };
 
   return (
-    <AdminLayout title={`Maintenance - ${equipment.name}`} breadcrumbs={breadcrumbs}>
+    <AppLayout title={`Maintenance - ${equipment.name}`} breadcrumbs={breadcrumbs}>
       <Head title={`Maintenance - ${equipment.name}`} />
 
       <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-8">

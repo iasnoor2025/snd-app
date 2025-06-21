@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardHeader, CardTitle } from "@/Modules/Core/resources/js/components/ui/card";
-import { Button } from "@/Modules/Core/resources/js/components/ui/button";
-import { Input } from "@/Modules/Core/resources/js/components/ui/input";
-import { Label } from "@/Modules/Core/resources/js/components/ui/label";
-import { Textarea } from "@/Modules/Core/resources/js/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/Modules/Core/resources/js/components/ui/select";
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -19,7 +19,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/Modules/Core/resources/js/components/ui/dialog";
+} from "@/components/ui/dialog";
 import { CalendarIcon, CreditCard, DollarSign } from "lucide-react";
 import { toast } from 'sonner';
 import { format } from "date-fns";

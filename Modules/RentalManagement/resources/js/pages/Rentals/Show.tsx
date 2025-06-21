@@ -3,19 +3,19 @@ import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from "@inertiajs/react";
 import { PageProps } from '@/types';
 import { Rental, RentalItem, PermissionString } from '@/types/models';
-import { AdminLayout } from '@/Modules/Core/resources/js';
+import { AppLayout } from '@/Core';
 import RentalItemsTable from '../../components/rentals/RentalItemsTable';
 import RentalWorkflowStatus from '../../components/rentals/RentalWorkflowStatus';
 import { format, differenceInDays, addDays, isAfter, isBefore } from "date-fns";
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
-import { cn } from '@/Modules/Core/resources/js/lib/utils';
+import { cn } from "@/lib/utils";
 import axios from "axios";
 
 // Shadcn UI Components
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -24,30 +24,30 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/Modules/Core/resources/js/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@/Modules/Core/resources/js/components/ui/tabs';
+} from "@/components/ui/tabs";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from '@/Modules/Core/resources/js/components/ui/avatar';
-import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
-import { Progress } from '@/Modules/Core/resources/js/components/ui/progress';
-import { Switch } from '@/Modules/Core/resources/js/components/ui/switch';
-import { Label } from '@/Modules/Core/resources/js/components/ui/label';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
-import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
+} from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import { Progress } from "@/components/ui/progress";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/Modules/Core/resources/js/components/ui/popover';
+} from "@/components/ui/popover";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -55,13 +55,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/Modules/Core/resources/js/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/Modules/Core/resources/js/components/ui/tooltip';
+} from "@/components/ui/tooltip";
 import {
   Sheet,
   SheetClose,
@@ -71,12 +71,12 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/Modules/Core/resources/js/components/ui/sheet';
+} from "@/components/ui/sheet";
 import {
   Alert,
   AlertDescription,
   AlertTitle,
-} from '@/Modules/Core/resources/js/components/ui/alert';
+} from "@/components/ui/alert";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -87,8 +87,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/Modules/Core/resources/js/components/ui/alert-dialog';
-import { ScrollArea } from '@/Modules/Core/resources/js/components/ui/scroll-area';
+} from "@/components/ui/alert-dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 // Icons
 import {
@@ -148,7 +148,7 @@ import RentalAnalytics from '../../components/rentals/RentalAnalytics';
 // import MaintenanceRecordList from '../../components/maintenance/MaintenanceRecordList';
 // import PaymentStatusBadge from '../../components/shared/PaymentStatusBadge';
 // import MapView from '../../components/maps/MapView';
-import { formatCurrency } from '@/Modules/Core/resources/js/lib/utils';
+import { formatCurrency } from "@/lib/utils";
 
 // Other components
 import RentalTimeline from '../../components/rentals/RentalTimeline';
@@ -156,7 +156,7 @@ import RentalExtensionForm from '../../components/rentals/RentalExtensionForm';
 // import DocumentsViewer from '../../components/documents/DocumentsViewer';
 
 // Add import for QRCode component
-import QRCode from '@/Modules/Core/resources/js/components/ui/qr-code';
+import QRCode from "@/components/ui/qr-code";
 import { RentalWorkflowStepper } from '../../components/rentals/RentalWorkflowStepper';
 import { RentalWorkflowActions } from '../../components/rentals/RentalWorkflowActions';
 

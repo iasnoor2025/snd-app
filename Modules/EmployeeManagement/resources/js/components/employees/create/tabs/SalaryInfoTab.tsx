@@ -1,19 +1,19 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/Modules/Core/resources/js/components/ui/form';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from 'react-hook-form';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Eye, EyeOff, Info } from 'lucide-react';
-import { Alert, AlertTitle, AlertDescription } from '@/Modules/Core/resources/js/components/ui/alert';
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/Modules/Core/resources/js/components/ui/select';
+} from "@/components/ui/select";
 import { FieldValues } from 'react-hook-form';
 
 interface SalaryInfoData {

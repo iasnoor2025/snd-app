@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Badge } from "@/components/ui/badge";
 
 interface TimesheetRecord {
   date: string;

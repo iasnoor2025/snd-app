@@ -1,13 +1,13 @@
 import React from 'react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import axios from 'axios';
-import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
-import { formatCurrency } from '@/Modules/Core/resources/js/utils/format';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/Modules/Core/resources/js/components/ui/card';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
-import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Modules/Core/resources/js/components/ui/tabs';
+import AppLayout from "@/layouts/AppLayout";
+import { formatCurrency } from "@/utils/format";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,
   TableBody,
@@ -15,7 +15,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/Modules/Core/resources/js/components/ui/table';
+} from "@/components/ui/table";
 import {
   ArrowLeft,
   Pencil,
@@ -42,15 +42,15 @@ import {
   Plus,
   History
 } from 'lucide-react';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Label } from '@/Modules/Core/resources/js/components/ui/label';
-import { cn } from '@/Modules/Core/resources/js/lib/utils';
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 import { toast } from 'sonner';
 import RiskManagement from './Risk/Management';
 import { useTranslation } from 'react-i18next';
-import { usePermission } from '@/Modules/Core/resources/js/hooks/usePermission';
+import { usePermission } from "@/hooks/usePermission";
 import { Equipment } from '../../types';
-import { DialogHeader, DialogFooter } from '@/Modules/Core/resources/js/components/ui/dialog';
+import { DialogHeader, DialogFooter } from "@/components/ui/dialog";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@radix-ui/react-dialog';
 import { number, string } from 'zod';
 
@@ -520,7 +520,7 @@ export default function Show({ equipment, rentalItems = { data: [], total: 0 }, 
   }
 
   return (
-    <AdminLayout
+    <AppLayout
       title="Equipment Details"
       breadcrumbs={breadcrumbs}
       requiredPermission="equipment.view"

@@ -10,4 +10,13 @@ export type { ComponentProps, FC, ReactNode, PropsWithChildren } from 'react';
 // Export any other type files that might exist
 // (This will be updated as more types are added) 
 
+export interface BreadcrumbItem {
+    title: string;
+    href?: string;
+}
+
+export interface SharedData {
+    sidebarOpen: boolean;
+} 
+
 

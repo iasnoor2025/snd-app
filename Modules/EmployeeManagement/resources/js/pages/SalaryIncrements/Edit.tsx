@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Label } from '@/Modules/Core/resources/js/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Modules/Core/resources/js/components/ui/select';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
-import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '@/Modules/Core/resources/js/components/ui/radio-group';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ArrowLeft, Calculator } from 'lucide-react';
-import { AdminLayout } from '@/Modules/Core/resources/js';
+import { AppLayout } from '@/Core';
 import { PageProps } from '@/types';
-import { getTranslation } from '@/Modules/Core/resources/js/utils/translation';
+import { getTranslation } from "@/utils/translation";
 
 interface Employee {
     id: number;
@@ -182,7 +182,7 @@ export default function Edit({ increment, employees, incrementTypes }: Props) {
     };
 
     return (
-        <AdminLayout
+        <AppLayout
             title={t('ttl_edit_salary_increment')}
             breadcrumbs={[
                 { label: 'Salary Increments', href: route('salary-increments.index') },

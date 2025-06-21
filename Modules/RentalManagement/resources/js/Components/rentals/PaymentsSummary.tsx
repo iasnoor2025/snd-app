@@ -1,12 +1,12 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from '@inertiajs/react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/Modules/Core/resources/js/components/ui/card";
-import { Button } from "@/Modules/Core/resources/js/components/ui/button";
-import { Progress } from '@/Modules/Core/resources/js/components/ui/progress';
-import PaymentStatusBadge from "@/Modules/Core/resources/js/components/shared/PaymentStatusBadge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import PaymentStatusBadge from "@/components/shared/PaymentStatusBadge";
 import { CreditCard, DollarSign, Calendar, TrendingUp, AlertCircle } from "lucide-react";
-import { formatCurrency } from '@/Modules/Core/resources/js/lib/utils';
+import { formatCurrency } from "@/lib/utils";
 import { format, differenceInDays, isAfter } from "date-fns";
 
 interface PaymentsSummaryProps {

@@ -7,10 +7,10 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/Modules/Core/resources/js/components/ui/table';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from 'lucide-react';
-import { Skeleton } from '@/Modules/Core/resources/js/components/ui/skeleton';
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ResourceTableProps {
     data: any[];

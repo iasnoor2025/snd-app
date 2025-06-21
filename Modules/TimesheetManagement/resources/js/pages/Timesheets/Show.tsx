@@ -2,8 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
 import { PageProps, BreadcrumbItem } from '@/types';
-import { AdminLayout } from '@/Modules/Core/resources/js';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { AppLayout } from '@/Core';
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -11,8 +11,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/Modules/Core/resources/js/components/ui/card';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Clock as ClockIcon,
   ArrowLeft as ArrowLeftIcon,
@@ -24,16 +24,16 @@ import {
   Briefcase as BriefcaseIcon,
   User as UserIcon
 } from 'lucide-react';
-import { useToast } from '@/Modules/Core/resources/js/components/ui/use-toast';
+import { useToast } from "@/components/ui/use-toast";
 import { Timesheet } from '../../../../resources/js/types/models';
-import { formatDate } from '@/Modules/Core/resources/js/utils/format';
-import { usePermission } from '@/Modules/Core/resources/js/hooks/usePermission';
+import { formatDate } from "@/utils/format";
+import { usePermission } from "@/hooks/usePermission";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/Modules/Core/resources/js/components/ui/tooltip';
+} from "@/components/ui/tooltip";
 import { format } from 'date-fns';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -131,7 +131,7 @@ export default function TimesheetShow({ auth, timesheet }: Props) {
   ).toFixed(1);
 
   return (
-    <AdminLayout title={t('ttl_view_timesheet')} breadcrumbs={breadcrumbs} requiredPermission="timesheets.view">
+    <AppLayout title={t('ttl_view_timesheet')} breadcrumbs={breadcrumbs} requiredPermission="timesheets.view">
       <Head title={t('ttl_view_timesheet')} />
 
       <div className="flex h-full flex-1 flex-col gap-4 p-4">

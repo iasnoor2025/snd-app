@@ -3,14 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from "@inertiajs/react";
 import { PageProps } from '@/types';
 import { Customer, Equipment } from '@/types/models';
-import { AdminLayout } from '@/Modules/Core/resources/js';
+import { AppLayout } from '@/Core';
 import { format, isAfter, isBefore, startOfToday } from "date-fns";
 import { toast } from "sonner";
 
 // Shadcn UI Components
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
-import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
 // Icons
 import { ArrowLeft } from "lucide-react";

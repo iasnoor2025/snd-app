@@ -3,16 +3,16 @@ import { useTranslation } from 'react-i18next';
 import { Head, Link } from '@inertiajs/react';
 // Placeholder type
 type PageProps = any;
-// Minimal placeholder AdminLayout component
-const AdminLayout = ({ children }: { children: React.ReactNode }) => <div className="admin-layout-placeholder">{children}</div>;
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+// Minimal placeholder AppLayout component
+const AppLayout = ({ children }: { children: React.ReactNode }) => <div className="admin-layout-placeholder">{children}</div>;
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/Modules/Core/resources/js/components/ui/card';
+} from "@/components/ui/card";
 import { ArrowLeft as ArrowLeftIcon } from 'lucide-react';
 
 interface Props extends PageProps {

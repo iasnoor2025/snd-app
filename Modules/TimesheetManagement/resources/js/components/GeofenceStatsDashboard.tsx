@@ -6,7 +6,7 @@ import {
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@/Modules/Core/resources/js/components/ui/card';
+} from "@/components/ui/card";
 import {
     Table,
     TableBody,
@@ -14,22 +14,22 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/Modules/Core/resources/js/components/ui/table';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '@/Modules/Core/resources/js/components/ui/select';
+} from "@/components/ui/select";
 import {
     Tabs,
     TabsContent,
     TabsList,
     TabsTrigger,
-} from '@/Modules/Core/resources/js/components/ui/tabs';
+} from "@/components/ui/tabs";
 import {
     BarChart,
     Bar,

@@ -6,7 +6,7 @@ import {
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@/Modules/Core/resources/js/components/ui/card';
+} from "@/components/ui/card";
 import {
     Table,
     TableBody,
@@ -14,10 +14,10 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/Modules/Core/resources/js/components/ui/table';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
     Dialog,
     DialogContent,
@@ -26,17 +26,17 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from '@/Modules/Core/resources/js/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '@/Modules/Core/resources/js/components/ui/select';
-import { Label } from '@/Modules/Core/resources/js/components/ui/label';
-import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
-import { Switch } from '@/Modules/Core/resources/js/components/ui/switch';
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import {
     MapPin,
     Plus,

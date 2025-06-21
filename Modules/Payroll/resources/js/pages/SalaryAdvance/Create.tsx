@@ -1,26 +1,26 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, useForm, router } from '@inertiajs/react';
-import { PageProps } from '@/Modules/Core/resources/js/types';
-import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { PageProps } from "@/types";
+import AppLayout from "@/layouts/AppLayout";
+import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@/Modules/Core/resources/js/components/ui/card';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Label } from '@/Modules/Core/resources/js/components/ui/label';
-import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '@/Modules/Core/resources/js/components/ui/select';
+} from "@/components/ui/select";
 import { ArrowLeft, DollarSign, Calendar, FileText } from 'lucide-react';
 import { route } from 'ziggy-js';
 import { Link } from '@inertiajs/react';
@@ -76,7 +76,7 @@ export default function Create({ auth, employees }: Props) {
     const maxAdvanceAmount = selectedEmployee?.basic_salary ? selectedEmployee.basic_salary * 0.5 : 0;
 
     return (
-        <AdminLayout
+        <AppLayout
             title={t('request_salary_advance')}
             breadcrumbs={breadcrumbs}
             requiredPermission="salary-advances.create"

@@ -2,16 +2,16 @@ import React, { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from "@inertiajs/react";
 import { PageProps } from '@/types';
-import { AdminLayout } from '@/Modules/Core/resources/js';
+import { AppLayout } from '@/Core';
 import { format } from "date-fns";
-import ErrorAlert from '@/Modules/Core/resources/js/components/ui/error-alert';
+import ErrorAlert from "@/components/ui/error-alert";
 import { toast } from 'sonner';
-import ErrorBoundary from '@/Modules/Core/resources/js/components/ErrorBoundary';
-import { usePermission } from '@/Modules/Core/resources/js/hooks/usePermission';
+import ErrorBoundary from "@/components/ErrorBoundary";
+import { usePermission } from "@/hooks/usePermission";
 
 // Shadcn UI Components
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -19,7 +19,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/Modules/Core/resources/js/components/ui/card';
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -27,7 +27,7 @@ import {
   TableHeader,
   TableRow,
   TableCell,
-} from '@/Modules/Core/resources/js/components/ui/table';
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -36,24 +36,24 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/Modules/Core/resources/js/components/ui/dialog';
-import { Checkbox } from '@/Modules/Core/resources/js/components/ui/checkbox';
-import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
+} from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/Modules/Core/resources/js/components/ui/select';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/Modules/Core/resources/js/components/ui/tooltip';
-import { Progress } from '@/Modules/Core/resources/js/components/ui/progress';
+} from "@/components/ui/tooltip";
+import { Progress } from "@/components/ui/progress";
 
 // Icons
 import {
@@ -483,7 +483,7 @@ export default function ForRental({ auth, rental, timesheets, debug }: Props) {
                     Timesheets for Rental #{rental.rental_number}
                   </h1>
                   <p className="text-muted-foreground text-sm mt-1">
-                    customer: {rental.customer?.company_name} • Status: {rental.status}
+                    customer: {rental.customer?.company_name} ï¿½ Status: {rental.status}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">

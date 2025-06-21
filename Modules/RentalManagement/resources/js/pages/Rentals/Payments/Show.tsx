@@ -1,10 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link } from '@inertiajs/react';
-import { AdminLayout } from '@/Modules/Core/resources/js';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { AppLayout } from '@/Core';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Receipt,
   Download,
@@ -18,7 +18,7 @@ import {
   User
 } from "lucide-react";
 import { format } from "date-fns";
-import { formatCurrency } from '@/Modules/Core/resources/js/utils/format';
+import { formatCurrency } from "@/utils/format";
 
 // Placeholder types
 type PageProps = any;
@@ -74,7 +74,7 @@ export default function Show({ auth, payment }: Props) {
   };
 
   return (
-    <AdminLayout title={t('payment_details')} breadcrumbs={breadcrumbs}>
+    <AppLayout title={t('payment_details')} breadcrumbs={breadcrumbs}>
       <Head title={`Payment #${payment.id}`} />
 
       <div className="flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

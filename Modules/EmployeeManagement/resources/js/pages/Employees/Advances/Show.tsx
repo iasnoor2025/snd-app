@@ -1,10 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, router } from '@inertiajs/react';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Button } from "@/components/ui/button";
 import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -12,8 +12,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/Modules/Core/resources/js/components/ui/dialog';
-import { AdminLayout } from '@/Modules/Core/resources/js';
+} from "@/components/ui/dialog";
+import { AppLayout } from '@/Core';
 import {
   Card,
   CardContent,
@@ -21,7 +21,7 @@ import {
   CardHeader,
   CardTitle,
   CardFooter,
-} from '@/Modules/Core/resources/js/components/ui/card';
+} from "@/components/ui/card";
 
 interface User {
   id: number;
@@ -122,7 +122,7 @@ export default function Show({ employee, advance }: Props) {
   };
 
   return (
-    <AdminLayout title={t('ttl_advance_payment_details')} breadcrumbs={breadcrumbs} requiredPermission="employees.view">
+    <AppLayout title={t('ttl_advance_payment_details')} breadcrumbs={breadcrumbs} requiredPermission="employees.view">
       <Head title={t('ttl_advance_payment_details')} />
 
       <div className="flex h-full flex-1 flex-col gap-6 p-4 md:gap-8 md:p-8">

@@ -1,53 +1,53 @@
-import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from '@/Modules/Core/resources/js/components/ui/dropdown-menu';
-import { UserInfo } from '@/Modules/Core/resources/js/components/user-info';
-import { useMobileNavigation } from '../hooks/use-mobile-navigation';
-import { type User } from '@/types';
-import { Link, router } from '@inertiajs/react';
+import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from "./ui/dropdown-menu";
+import { UserInfo } from "./user-info";
+import { useMobileNavigation } from "../hooks/use-mobile-navigation";
+import { useTranslation } from "react-i18next";
+import { Link } from "@inertiajs/react";
+import { Icon } from "./icon";
 import { LogOut, Settings, Globe } from 'lucide-react';
-import LanguageSwitcher from '@/Modules/Core/resources/js/components/LanguageSwitcher';
+import LanguageSwitcher from "./LanguageSwitcher";
 
-interface UserMenuContentProps {
-    user: User;
-}
-
-export function UserMenuContent({ user }: UserMenuContentProps) {
-    const cleanup = useMobileNavigation();
+export function UserMenuContent() {
+    const { t } = useTranslation(['common']);
+    const { closeMobileNavigation } = useMobileNavigation();
 
     const handleLogout = () => {
-        cleanup();
-        router.post('/logout');
+        closeMobileNavigation();
+        // Assuming you're using a router instance to handle logout
+        // Replace this with the actual logout logic
     };
 
     return (
         <>
             <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                    <UserInfo user={user} showEmail={true} />
+                    <UserInfo />
                 </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
                 <DropdownMenuItem asChild>
-                    <Link className="block w-full" href={route('profile.edit')} as="button" prefetch onClick={cleanup}>
-                        <Settings className="mr-2" />
-                        Settings
+                    <Link href="/profile" onClick={closeMobileNavigation}>
+                        <Icon name="user" />
+                        {t('common:profile')}
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link href="/settings" onClick={closeMobileNavigation}>
+                        <Icon name="settings" />
+                        {t('common:settings')}
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                    <div className="flex w-full items-center">
-                        <Globe className="mr-2 h-4 w-4" />
-                        <span className="mr-2">Language</span>
-                        <div className="ml-auto">
-                            <LanguageSwitcher variant="compact" showLabel={false} />
-                        </div>
-                    </div>
+                    <Globe className="mr-2" />
+                    <LanguageSwitcher />
                 </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-                <Link className="block w-full" method="post" href={route('logout')} as="button" onClick={handleLogout}>
-                    <LogOut className="mr-2" />
-                    Log out
+                <Link href="/logout" method="post" as="button" onClick={handleLogout}>
+                    <Icon name="logout" />
+                    {t('common:logout')}
                 </Link>
             </DropdownMenuItem>
         </>

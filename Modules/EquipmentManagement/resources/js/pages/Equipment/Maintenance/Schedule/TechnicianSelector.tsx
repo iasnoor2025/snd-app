@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Modules/Core/resources/js/components/ui/select';
-import { Avatar, AvatarFallback, AvatarImage } from '@/Modules/Core/resources/js/components/ui/avatar';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 
 interface User {
   id: number;

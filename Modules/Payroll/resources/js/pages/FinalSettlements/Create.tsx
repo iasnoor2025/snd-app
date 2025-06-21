@@ -2,13 +2,13 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, useForm } from '@inertiajs/react';
 import { PageProps } from '../../types';
-import { AdminLayout } from '@/Modules/Core/resources/js';
-import { Breadcrumb } from '@/Modules/Core/resources/js/components/ui/breadcrumb';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Label } from '@/Modules/Core/resources/js/components/ui/label';
-import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
+import { AppLayout } from '@/Core';
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { format } from 'date-fns';
 import { ArrowLeft } from 'lucide-react';
 import { usePermission } from '../../hooks/usePermission';
@@ -72,7 +72,7 @@ export default function Create({ auth, employee, initialData }: Props) {
     };
 
     return (
-        <AdminLayout title={t('ttl_create_final_settlement')} breadcrumbs={breadcrumbs} requiredPermission="final-settlements.create">
+        <AppLayout title={t('ttl_create_final_settlement')} breadcrumbs={breadcrumbs} requiredPermission="final-settlements.create">
             <Head title={t('ttl_create_final_settlement')} />
 
             <div className="flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardHeader, CardTitle } from "@/Modules/Core/resources/js/components/ui/card";
-import { Button } from "@/Modules/Core/resources/js/components/ui/button";
-import { Badge } from "@/Modules/Core/resources/js/components/ui/badge";
-import { Progress } from '@/Modules/Core/resources/js/components/ui/progress';
-import PaymentForm from "@/Modules/Core/resources/js/components/payments/PaymentForm";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import PaymentForm from "@/components/payments/PaymentForm";
 import {
   Table,
   TableBody,
@@ -12,12 +12,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/Modules/Core/resources/js/components/ui/table";
+} from "@/components/ui/table";
 import {
   Alert,
   AlertDescription,
   AlertTitle,
-} from "@/Modules/Core/resources/js/components/ui/alert";
+} from "@/components/ui/alert";
 import {
   CreditCard,
   DollarSign,
@@ -36,7 +36,7 @@ import {
 } from "lucide-react";
 import { format, differenceInDays, isAfter, isBefore } from "date-fns";
 import { toast } from "sonner";
-import { formatCurrency } from '@/Modules/Core/resources/js/utils/format';
+import { formatCurrency } from "@/utils/format";
 
 interface Payment {
   id: number;

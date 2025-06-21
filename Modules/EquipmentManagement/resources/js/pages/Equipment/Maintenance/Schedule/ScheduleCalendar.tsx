@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { format, parseISO, eachDayOfInterval, isSameDay, addDays, subDays, isWithinInterval } from 'date-fns';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Dialog, DialogContent } from '@/Modules/Core/resources/js/components/ui/dialog';
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { MaintenanceDetailView } from './MaintenanceDetailView';
 
 interface Equipment {

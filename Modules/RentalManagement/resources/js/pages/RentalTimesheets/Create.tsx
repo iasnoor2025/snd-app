@@ -2,16 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { Head, Link, usePage } from "@inertiajs/react";
 import { PageProps } from '@/types';
-import { AdminLayout } from '@/Modules/Core/resources/js';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { AppLayout } from '@/Core';
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from '@/Modules/Core/resources/js/components/ui/card';
-import { Alert, AlertDescription, AlertTitle } from '@/Modules/Core/resources/js/components/ui/alert';
-import TimesheetForm from '../../Components/rentals/timesheets/TimesheetForm';
+} from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import TimesheetForm from '../../components/rentals/timesheets/TimesheetForm';
 
 // Icons
 import { AlertCircle } from "lucide-react";

@@ -1,9 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ColumnDef } from '@tanstack/react-table';
-import { Employee } from '@/Modules/EmployeeManagement/Resources/js/types';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Employee } from '@/Modules/EmployeeManagement/resources/js/types';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Pencil, Trash } from 'lucide-react';
 import {
     DropdownMenu,
@@ -12,7 +12,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from '@/Modules/Core/resources/js/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import { Link } from '@inertiajs/react';
 
 export const columns: ColumnDef<Employee>[] = [

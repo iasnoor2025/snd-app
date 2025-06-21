@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { Button } from "@/components/ui/button";
 import { Plus } from 'lucide-react';
-import Permission from '@/Modules/Core/resources/js/components/Permission';
+import Permission from "@/components/Permission";
 import { useTranslation } from 'react-i18next';
 
 interface CreateButtonProps {

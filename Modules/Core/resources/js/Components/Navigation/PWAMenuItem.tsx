@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from '@inertiajs/react';
 import { Smartphone, Wifi, Bell, Download } from 'lucide-react';
 import { usePWA } from '@/hooks/usePWA';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Badge } from "@/components/ui/badge";
 import { useTranslation } from 'react-i18next';
 
 interface PWAMenuItemProps {

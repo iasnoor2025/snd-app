@@ -1,10 +1,10 @@
 import { format, parseISO } from 'date-fns';
-import { Avatar, AvatarFallback, AvatarImage } from '@/Modules/Core/resources/js/components/ui/avatar';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
-import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Modules/Core/resources/js/components/ui/tabs';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Calendar,
   ClipboardList,

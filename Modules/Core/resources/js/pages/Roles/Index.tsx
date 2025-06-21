@@ -1,32 +1,30 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
-import { PageProps, BreadcrumbItem } from '@/types/index';
-import { AdminLayout } from '@/Modules/Core/resources/js';
+import { type BreadcrumbItem } from "@/types";
+import AppLayout from "@/layouts/AppLayout";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/Modules/Core/resources/js/components/ui/card';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import {
+  Button,
+  Badge,
+  Input,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
-} from '@/Modules/Core/resources/js/components/ui/table';
+  TableRow
+} from "@/components/ui";
 import { Search, Plus, Eye, Edit, Trash2, Shield, Users } from 'lucide-react';
-import { usePermission } from '@/Modules/Core/resources/js/hooks/usePermission';
+import { usePermission } from "@/hooks/usePermission";
 import { toast } from 'sonner';
-import CreateButton from '@/Modules/Core/resources/js/components/shared/CreateButton';
-import CrudButtons from '@/Modules/Core/resources/js/components/shared/CrudButtons';
-import Permission from '@/Modules/Core/resources/js/components/Permission';
+import CreateButton from "@/components/shared/CreateButton";
+import CrudButtons from "@/components/shared/CrudButtons";
+import Permission from "@/components/Permission";
 import { debounce } from 'lodash';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -50,7 +48,7 @@ interface Role {
   updated_at: string;
 }
 
-interface Props extends PageProps {
+interface Props {
   roles: Role[];
   auth: any;
 }
@@ -91,7 +89,7 @@ export default function Index({ auth, roles }: Props) {
   };
 
   return (
-    <AdminLayout 
+    <AppLayout 
       title="Roles Management" 
       breadcrumbs={breadcrumbs} 
       requiredPermission="roles.view"
@@ -231,6 +229,6 @@ export default function Index({ auth, roles }: Props) {
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 } 

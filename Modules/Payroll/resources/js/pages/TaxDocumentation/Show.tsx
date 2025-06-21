@@ -1,17 +1,17 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link } from '@inertiajs/react';
-import { PageProps } from '@/Modules/Core/resources/js/types';
-import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { PageProps } from "@/types";
+import AppLayout from "@/layouts/AppLayout";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@/Modules/Core/resources/js/components/ui/card';
+} from "@/components/ui/card";
 import {
     Table,
     TableBody,
@@ -19,8 +19,8 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/Modules/Core/resources/js/components/ui/table';
-import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
+} from "@/components/ui/table";
+import { Separator } from "@/components/ui/separator";
 import {
     ArrowLeft,
     Download,

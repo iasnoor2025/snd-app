@@ -1,49 +1,26 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/Modules/Core/resources/js/components/ui/avatar';
-import { SmartAvatar } from '@/Modules/Core/resources/js/components/ui/smart-avatar';
-import { useInitials } from '../hooks/use-initials';
-import { type User } from '@/types';
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { SmartAvatar } from "./ui/smart-avatar";
+import { useInitials } from "../hooks/use-initials";
+import { usePage } from "@inertiajs/react";
+import { type SharedData } from "@/types";
 
-interface UserInfoProps {
-    user: User;
-    showEmail?: boolean;
-    useSmartAvatar?: boolean;
-    avatarSize?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
-}
-
-export function UserInfo({
-    user,
-    showEmail = false,
-    useSmartAvatar = false,
-    avatarSize = 'sm'
-}: UserInfoProps) {
-    const getInitials = useInitials();
+export function UserInfo() {
+    const { auth } = usePage<SharedData>().props;
+    const initials = useInitials(auth.user.name);
 
     return (
-        <>
-            {useSmartAvatar ? (
-                <SmartAvatar
-                    user={{
-                        id: user.id,
-                        name: user.name,
-                        email: user.email,
-                        avatar: user.avatar
-                    }}
-                    size={avatarSize}
-                    className="overflow-hidden rounded-full"
-                />
-            ) : (
-                <Avatar className="h-8 w-8 overflow-hidden rounded-full">
-                    <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
-                        {getInitials(user.name)}
-                    </AvatarFallback>
+        <div className="flex items-center gap-2">
+            <SmartAvatar>
+                <Avatar>
+                    <AvatarImage src={auth.user.avatar} alt={auth.user.name} />
+                    <AvatarFallback>{initials}</AvatarFallback>
                 </Avatar>
-            )}
-            <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
-                {showEmail && <span className="text-muted-foreground truncate text-xs">{user.email}</span>}
+            </SmartAvatar>
+            <div className="flex flex-col">
+                <span className="text-sm font-medium">{auth.user.name}</span>
+                <span className="text-xs text-muted-foreground">{auth.user.email}</span>
             </div>
-        </>
+        </div>
     );
 }
 

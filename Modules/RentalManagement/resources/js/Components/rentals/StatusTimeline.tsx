@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from 'react-i18next';
 import { format } from "date-fns";
-import { cn } from "@/Modules/Core/resources/js/lib/utils";
-import ErrorBoundary from '@/Modules/Core/resources/js/components/ErrorBoundary';
+import { cn } from "@/lib/utils";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 // ShadCN UI Components
 import {
@@ -11,7 +11,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/Modules/Core/resources/js/components/ui/card";
+} from "@/components/ui/card";
 
 // Icons
 import {

@@ -5,13 +5,13 @@ import { Head, Link, router } from "@inertiajs/react";
 type PageProps = any;
 type Rental = any;
 type RentalTimesheet = any;
-import { AdminLayout } from '@/Modules/Core/resources/js';
+import { AppLayout } from '@/Core';
 import { format, differenceInHours, differenceInMinutes } from "date-fns";
-import ErrorAlert from '@/Modules/Core/resources/js/components/ui/error-alert';
+import ErrorAlert from "@/components/ui/error-alert";
 
 // Shadcn UI Components
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -19,7 +19,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/Modules/Core/resources/js/components/ui/card';
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -27,16 +27,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/Modules/Core/resources/js/components/ui/dialog';
-import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
+} from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/Modules/Core/resources/js/components/ui/tooltip';
-import { Progress } from '@/Modules/Core/resources/js/components/ui/progress';
-import { Label } from '@/Modules/Core/resources/js/components/ui/label';
+} from "@/components/ui/tooltip";
+import { Progress } from "@/components/ui/progress";
+import { Label } from "@/components/ui/label";
 
 // Icons
 import {

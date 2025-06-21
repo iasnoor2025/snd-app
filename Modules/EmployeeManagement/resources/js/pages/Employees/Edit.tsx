@@ -2,18 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
 import { PageProps, User } from '@/types';
-import { AdminLayout } from '@/Modules/Core/resources/js';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/Modules/Core/resources/js/components/ui/form';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/Modules/Core/resources/js/components/ui/tabs';
+import { AppLayout } from '@/Core';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Modules/Core/resources/js/components/ui/select';
-import { getTranslation } from '@/Modules/Core/resources/js/utils/translation';
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getTranslation } from "@/utils/translation";
 import { toast } from 'sonner';
 import axios from 'axios';
 
@@ -191,7 +191,7 @@ export default function Edit({ auth, employee, users, positions }: Props) {
   ];
 
   return (
-    <AdminLayout
+    <AppLayout
       title={`Edit Employee: ${employee.name}`}
       breadcrumbs={breadcrumbs}
       requiredPermission="employees.edit"

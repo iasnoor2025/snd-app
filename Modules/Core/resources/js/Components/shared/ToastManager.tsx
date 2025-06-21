@@ -1,4 +1,4 @@
-import { toast } from '@/Modules/Core/resources/js/components/ui/use-toast';
+import { toast } from "@/components/ui/use-toast";
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link } from '@inertiajs/react';
-import PaymentTracker from '../../../Components/rentals/PaymentTracker';
-// import PaymentListing from '@/Modules/Core/resources/js/components/payments/PaymentListing';
-import { formatCurrency } from '@/Modules/Core/resources/js/utils/format';
-import { AdminLayout } from '@/Modules/Core/resources/js';
+import PaymentTracker from '../../../components/rentals/PaymentTracker';
+// import PaymentListing from "@/components/payments/PaymentListing";
+import { formatCurrency } from "@/utils/format";
+import { AppLayout } from '@/Core';
 // Placeholder usePermission hook
 const usePermission = () => ({ hasPermission: () => true });
 import {
@@ -12,8 +12,8 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger
-} from '@/Modules/Core/resources/js/components/ui/tabs';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+} from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -140,7 +140,7 @@ const [activeTab, setActiveTab] = useState<string>('tracker');
   };
 
   return (
-    <AdminLayout title={t('payment_management')} breadcrumbs={breadcrumbs}>
+    <AppLayout title={t('payment_management')} breadcrumbs={breadcrumbs}>
       <Head title={t('payment_management')} />
 
       <div className="flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

@@ -1,15 +1,15 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
-import { AdminLayout } from '@/Modules/Core/resources/js';
-import { formatDate } from '@/Modules/Core/resources/js/utils/format';
+import { AppLayout } from '@/Core';
+import { formatDate } from "@/utils/format";
 const usePermission = () => ({ hasPermission: () => true });
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/Modules/Core/resources/js/components/ui/card';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Modules/Core/resources/js/components/ui/table';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ArrowLeft, Eye } from 'lucide-react';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@/Modules/Core/resources/js/components/ui/breadcrumb';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/ui/breadcrumb";
 // Placeholder type
 type PageProps = any;
 

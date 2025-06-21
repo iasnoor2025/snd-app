@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Head, router } from '@inertiajs/react';
-import AdminLayout from '@/layouts/AdminLayout';
+import AppLayout from '@/layouts/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
@@ -188,7 +188,7 @@ const ReportsIndex: React.FC<ReportsIndexProps> = ({ stats, recentActivity, char
   ];
 
   return (
-    <AdminLayout title="Comprehensive Reports Dashboard">
+    <AppLayout title="Comprehensive Reports Dashboard">
       <Head title="Comprehensive Reports Dashboard" />
       <div className="container mx-auto py-6">
         <div className="flex justify-between items-center mb-6">

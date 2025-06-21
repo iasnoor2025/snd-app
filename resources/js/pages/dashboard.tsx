@@ -1,16 +1,44 @@
-import { PlaceholderPattern } from '@/Modules/Core/resources/js/Components/ui/placeholder-pattern';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Modules/Core/resources/js/Components/ui/card';
-import { Badge } from '@/Modules/Core/resources/js/Components/ui/badge';
-import AppLayout from '@/Modules/Core/resources/js/layouts/app-layout';
-import { type BreadcrumbItem, type NavItem } from '@/Modules/Core/resources/js/types';
+import AppLayout from '../../../Modules/Core/resources/js/layouts/AppLayout';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Badge
+} from "../../../Modules/Core/resources/js/components/ui";
+import { type BreadcrumbItem } from "../../../Modules/Core/resources/js/types";
 import { Head, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
-import { LayoutGrid, Folder, Users, Truck, FileText, DollarSign, Wrench, UserCog, Calendar,
-    MapPin, BarChart, Settings, UserPlus, ClipboardList, Clock, Shield, FileCheck, Briefcase,
-    History, ShoppingBag, User, FileDigit, Bell, Globe, Smartphone, FolderCheck, Network
+import { Folder, Users, Truck, DollarSign, UserCog, Calendar,
+    BarChart, Settings, ClipboardList, Clock, Briefcase,
+    FileDigit, Bell, Globe, Smartphone, FolderCheck, Network
 } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
+
+interface ModuleInfo {
+    icon: React.ElementType;
+    route: string;
+    description: string;
+}
+
+interface User {
+    roles: Array<{ name: string }>;
+    name: string;
+    email: string;
+    last_login_at: string | null;
+    is_active: boolean;
+}
+
+interface Auth {
+    user: User;
+}
+
+interface InertiaProps {
+    auth: Auth;
+    [key: string]: unknown;
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -19,8 +47,8 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-// Map module names to icons and routes (same as in app-sidebar.tsx)
-const moduleMap: Record<string, { icon: any; route: string; description: string }> = {
+// Map module names to icons and routes
+const moduleMap: Record<string, ModuleInfo> = {
     Core: {
         icon: Network,
         route: '/core',
@@ -103,23 +131,29 @@ const moduleMap: Record<string, { icon: any; route: string; description: string 
     }
 };
 
+interface ModuleCard {
+    name: string;
+    icon: React.ElementType;
+    route: string;
+    description: string;
+}
+
+interface ModuleStatus {
+    [key: string]: boolean;
+}
+
 export default function Dashboard() {
     const { t } = useTranslation();
-    const { auth } = usePage<any>().props;
-    const user = auth?.user;
-    const isAdmin = user?.roles?.some((role: any) => role.name === 'admin');
-    const isManager = user?.roles?.some((role: any) => role.name === 'manager');
-    const isEmployee = user?.roles?.some((role: any) => role.name === 'employee');
-    const isHR = user?.roles?.some((role: any) => role.name === 'hr');
-    const isAccountant = user?.roles?.some((role: any) => role.name === 'accountant');
-    const isTechnician = user?.roles?.some((role: any) => role.name === 'technician');
+    const { auth } = usePage<InertiaProps>().props;
+    const user = auth.user;
+    const isAdmin = user.roles.some((role) => role.name === 'admin');
+    const isManager = user.roles.some((role) => role.name === 'manager');
+    const isEmployee = user.roles.some((role) => role.name === 'employee');
+    const isHR = user.roles.some((role) => role.name === 'hr');
+    const isAccountant = user.roles.some((role) => role.name === 'accountant');
+    const isTechnician = user.roles.some((role) => role.name === 'technician');
 
-    const [moduleCards, setModuleCards] = useState<Array<{
-        name: string;
-        icon: any;
-        route: string;
-        description: string;
-    }>>([]);
+    const [moduleCards, setModuleCards] = useState<ModuleCard[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     const getRoleColor = (role: string) => {
@@ -136,7 +170,7 @@ export default function Dashboard() {
         return colors[role] || 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
     };
 
-    const canAccessModule = (moduleName: string) => {
+    const canAccessModule = (moduleName: string): boolean => {
         // Admin can access everything
         if (isAdmin) return true;
 
@@ -166,7 +200,7 @@ export default function Dashboard() {
     useEffect(() => {
         const fetchModules = async () => {
             try {
-                let cards;
+                let cards: ModuleCard[];
                 if (isAdmin) {
                     // Admin: show all modules
                     cards = Object.entries(moduleMap)
@@ -180,7 +214,7 @@ export default function Dashboard() {
                     // Role-based access: show only accessible modules
                     try {
                         const response = await fetch('/modules_statuses.json');
-                        const data = await response.json();
+                        const data = await response.json() as ModuleStatus;
                         cards = Object.entries(data)
                             .filter(([module, enabled]) => enabled && canAccessModule(module))
                             .map(([module, _]) => {
@@ -196,104 +230,63 @@ export default function Dashboard() {
                                     description: mapInfo.description
                                 };
                             });
-                    } catch {
-                        // Fallback: show modules based on role access only
-                        cards = Object.entries(moduleMap)
-                            .filter(([module]) => canAccessModule(module))
-                            .map(([module, mapInfo]) => ({
-                                name: module.replace(/([A-Z])/g, ' $1').trim(),
-                                icon: mapInfo.icon,
-                                route: mapInfo.route,
-                                description: mapInfo.description
-                            }));
+                    } catch (error) {
+                        console.error('Error fetching module statuses:', error);
+                        cards = [];
                     }
                 }
                 setModuleCards(cards);
                 setIsLoading(false);
             } catch (error) {
-                console.error('Failed to load modules:', error);
+                console.error('Error loading modules:', error);
                 setIsLoading(false);
             }
         };
+
         fetchModules();
-    }, [isAdmin, isManager, isEmployee, isHR, isAccountant, isTechnician]);
+    }, [isAdmin]);
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                {/* User Welcome Section */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h1 className="text-2xl font-bold tracking-tight mb-2">
-                                Welcome back, {user?.name || 'User'}!
-                            </h1>
-                            <p className="text-gray-600 dark:text-gray-400 mb-3">
-                                {user?.email}
-                            </p>
-                            <div className="flex flex-wrap gap-2">
-                                {user?.roles?.map((role: any) => (
-                                    <Badge
-                                        key={role.id}
-                                        className={getRoleColor(role.name)}
-                                        variant="secondary"
-                                    >
-                                        {role.name.charAt(0).toUpperCase() + role.name.slice(1)}
-                                    </Badge>
-                                ))}
-                            </div>
-                        </div>
-                        <div className="text-right">
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                                Last login: {user?.last_login_at ? new Date(user.last_login_at).toLocaleDateString() : 'Never'}
-                            </p>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                                Status: <span className={user?.is_active ? 'text-green-600' : 'text-red-600'}>
-                                    {user?.is_active ? 'Active' : 'Inactive'}
-                                </span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <h2 className="text-xl font-semibold tracking-tight mb-2">Available Modules</h2>
-
+        <AppLayout title="Dashboard" breadcrumbs={breadcrumbs}>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 p-6">
                 {isLoading ? (
-                    // Loading placeholders
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                        {[1, 2, 3, 4, 5, 6].map((item) => (
-                            <div key={item} className="h-[150px] animate-pulse rounded-xl bg-gray-100 dark:bg-gray-800"></div>
-                        ))}
-                    </div>
+                    // Loading state
+                    Array.from({ length: 6 }).map((_, index) => (
+                        <Card key={index} className="animate-pulse">
+                            <CardHeader className="h-20 bg-gray-100" />
+                            <CardContent className="h-24 bg-gray-50" />
+                        </Card>
+                    ))
                 ) : moduleCards.length > 0 ? (
                     // Module cards
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                        {moduleCards.map((module) => (
+                    moduleCards.map((module) => {
+                        const Icon = module.icon;
+                        return (
                             <Link key={module.name} href={module.route}>
-                                <Card className="border-sidebar-border/70 dark:border-sidebar-border h-full transition-all hover:shadow-md hover:border-sidebar-accent/50">
+                                <Card className="hover:bg-gray-50 transition-colors">
                                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                        <CardTitle className="text-lg font-medium">{module.name}</CardTitle>
-                                        {module.icon && <module.icon className="h-5 w-5 text-muted-foreground" />}
+                                        <CardTitle className="text-sm font-medium">
+                                            {module.name}
+                                        </CardTitle>
+                                        <Icon className="h-4 w-4 text-muted-foreground" />
                                     </CardHeader>
                                     <CardContent>
-                                        <CardDescription className="text-sm text-muted-foreground">
+                                        <CardDescription>
                                             {module.description}
                                         </CardDescription>
                                     </CardContent>
                                 </Card>
                             </Link>
-                        ))}
-                    </div>
+                        );
+                    })
                 ) : (
-                    // No modules found
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[40vh] flex-1 overflow-hidden rounded-xl border md:min-h-min flex items-center justify-center">
-                        <div className="text-center">
-                            <Folder className="mx-auto h-12 w-12 text-muted-foreground" />
-                            <h3 className="mt-2 text-lg font-medium">No modules available</h3>
-                            <p className="mt-1 text-sm text-muted-foreground">Contact your administrator to enable modules.</p>
-                        </div>
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/10 dark:stroke-neutral-100/10" />
+                    // No modules available
+                    <div className="col-span-full text-center p-8">
+                        <Folder className="mx-auto h-12 w-12 text-gray-400" />
+                        <h3 className="mt-2 text-lg font-medium">No modules available</h3>
+                        <p className="mt-1 text-sm text-gray-500">
+                            Contact your administrator to enable modules.
+                        </p>
                     </div>
                 )}
             </div>

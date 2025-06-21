@@ -4,7 +4,7 @@ import { Head, router } from '@inertiajs/react';
 // Minimal type definitions for build
 type PageProps = { [key: string]: any };
 type BreadcrumbItem = { title: string; href: string };
-import { AdminLayout, Card, CardContent, CardDescription, CardHeader, CardTitle, Button } from '@/Modules/Core/resources/js';
+import { AdminLayout, Card, CardContent, CardDescription, CardHeader, CardTitle, Button } from '@/Core';
 // PaymentHistory component placeholder
 const PaymentHistory = ({ employeeId, initialMonthlyHistory, initialTotalRepaid, initialPagination, showOnlyLast }: any) => (
   <div className="p-4 text-center text-muted-foreground">
@@ -72,7 +72,7 @@ export default function History({ employee, monthlyHistory, totalRepaid, paginat
   ];
 
   return (
-    <AdminLayout title={t('payment_history')} breadcrumbs={breadcrumbs} requiredPermission="employees.view">
+    <AppLayout title={t('payment_history')} breadcrumbs={breadcrumbs} requiredPermission="employees.view">
       <Head title={t('payment_history')} />
 
       <div className="flex h-full flex-1 flex-col gap-6 p-4 md:gap-8 md:p-8">

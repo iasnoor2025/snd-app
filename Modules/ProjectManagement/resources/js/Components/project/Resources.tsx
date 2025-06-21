@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useTranslation } from 'react-i18next';
 import axios from "axios";
-import { Button } from "@/Modules/Core/resources/js/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Modules/Core/resources/js/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ResourceList from "./ResourceList";
 import ResourceSearch from "./ResourceSearch";
 import {
@@ -11,11 +11,11 @@ import {
     DialogHeader,
     DialogTitle,
     DialogDescription,
-} from "@/Modules/Core/resources/js/components/ui/dialog";
-import { toast } from "@/Modules/Core/resources/js/components/ui/use-toast";
+} from "@/components/ui/dialog";
+import { toast } from "@/components/ui/use-toast";
 import ResourceForm from "./ResourceForm";
 import { X, Filter, ChevronDown, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
-import { Skeleton } from "@/Modules/Core/resources/js/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -23,10 +23,10 @@ import {
     DropdownMenuCheckboxItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
-} from "@/Modules/Core/resources/js/components/ui/dropdown-menu";
-import { Input } from "@/Modules/Core/resources/js/components/ui/input";
-import { Label } from "@/Modules/Core/resources/js/components/ui/label";
-import { Card } from "@/Modules/Core/resources/js/components/ui/card";
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card } from "@/components/ui/card";
 
 type ResourceType = 'manpower' | 'equipment' | 'material' | 'fuel' | 'expense';
 

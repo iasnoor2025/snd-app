@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, router } from '@inertiajs/react';
-import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/Modules/Core/resources/js/components/ui/card';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Modules/Core/resources/js/components/ui/tabs';
+import AppLayout from "@/layouts/AppLayout";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from 'date-fns';
 import {
     Edit,
@@ -24,10 +24,10 @@ import {
 } from 'lucide-react';
 import ResourceList from '../components/project/ResourceList';
 import ResourceForm from '../components/project/ResourceForm';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/Modules/Core/resources/js/components/ui/dialog';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
-import { Separator } from '@/Modules/Core/resources/js/components/ui/separator';
-import { Progress } from '@/Modules/Core/resources/js/components/ui/progress';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Progress } from "@/components/ui/progress";
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import TaskList, { ProjectTask } from '../components/project/TaskList';
@@ -464,7 +464,7 @@ export default function Show({ project, manpower = [], equipment = [], materials
     ];
 
     return (
-        <AdminLayout title={project.name} breadcrumbs={breadcrumbs} requiredPermission="projects.view">
+        <AppLayout title={project.name} breadcrumbs={breadcrumbs} requiredPermission="projects.view">
             <div className="container mx-auto py-4 px-4 sm:px-6 space-y-4">
                 {/* Header Section */}
                 <div className="bg-white dark:bg-gray-900 shadow-sm rounded-lg p-6 border border-gray-100 dark:border-gray-800">

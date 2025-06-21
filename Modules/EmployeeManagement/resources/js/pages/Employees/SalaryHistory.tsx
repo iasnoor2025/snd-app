@@ -7,10 +7,10 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/Modules/Core/resources/js/components/ui/table';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import { format } from 'date-fns';
-import { AdminLayout } from '@/Modules/Core/resources/js';
+import { AppLayout } from '@/Core';
 
 interface SalaryRecord {
     id: number;
@@ -51,7 +51,7 @@ export default function SalaryHistory({ records = [] }: Props) {
     ];
 
     return (
-        <AdminLayout title="Salary History" breadcrumbs={breadcrumbs} requiredPermission="employees.view">
+        <AppLayout title="Salary History" breadcrumbs={breadcrumbs} requiredPermission="employees.view">
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>

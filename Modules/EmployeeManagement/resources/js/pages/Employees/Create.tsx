@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
-import { AdminLayout } from '@/Modules/Core/resources/js';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+import { AppLayout } from '@/Core';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Form,
   FormField,
@@ -12,24 +12,24 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-} from '@/Modules/Core/resources/js/components/ui/form';
+} from "@/components/ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/Modules/Core/resources/js/components/ui/select';
-import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Upload, X, Loader2 } from 'lucide-react';
 import { format, differenceInDays, isBefore } from 'date-fns';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Label } from '@/Modules/Core/resources/js/components/ui/label';
-import { cn } from '@/Modules/Core/resources/js/lib/utils';
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 import { SubmitHandler } from 'react-hook-form';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Modules/Core/resources/js/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PersonalInfoTab from '../../components/employees/create/tabs/PersonalInfoTab';
 import EmploymentDetailsTab from '../../components/employees/create/tabs/EmploymentDetailsTab';
 import SalaryInfoTab from '../../components/employees/create/tabs/SalaryInfoTab';
@@ -442,7 +442,7 @@ export default function Create({ users, positions, employee, isEditing = false }
   ];
 
   return (
-    <AdminLayout
+    <AppLayout
       title={isEditing ? "Edit Employee" : "Create Employee"}
       breadcrumbs={breadcrumbs}
       requiredPermission="employees.create"

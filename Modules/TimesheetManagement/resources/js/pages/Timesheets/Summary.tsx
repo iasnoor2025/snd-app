@@ -4,16 +4,16 @@ import { Head, Link } from '@inertiajs/react';
 // Placeholder types
 type PageProps = any;
 type BreadcrumbItem = any;
-// Minimal placeholder AdminLayout component
-const AdminLayout = ({ children }: { children: React.ReactNode }) => <div className="admin-layout-placeholder">{children}</div>;
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+// Minimal placeholder AppLayout component
+const AppLayout = ({ children }: { children: React.ReactNode }) => <div className="admin-layout-placeholder">{children}</div>;
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/Modules/Core/resources/js/components/ui/card';
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -21,16 +21,16 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/Modules/Core/resources/js/components/ui/table';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+} from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/Modules/Core/resources/js/components/ui/select';
+} from "@/components/ui/select";
 import {
   Calendar as CalendarIcon,
   Download as DownloadIcon,
@@ -43,10 +43,10 @@ import {
   Users as UsersIcon,
   Briefcase as BriefcaseIcon,
 } from 'lucide-react';
-import { useToast } from '@/Modules/Core/resources/js/components/ui/use-toast';
+import { useToast } from "@/components/ui/use-toast";
 import { format } from 'date-fns';
-import { Popover, PopoverContent, PopoverTrigger } from '@/Modules/Core/resources/js/components/ui/popover';
-import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Dashboard', href: '/dashboard' },

@@ -1,30 +1,28 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
-import { PageProps, BreadcrumbItem } from '@/types/index';
-import { AdminLayout } from '@/Modules/Core/resources/js';
+import { PageProps, BreadcrumbItem } from "@/types";
+import AppLayout from "@/layouts/AppLayout";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/Modules/Core/resources/js/components/ui/card';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import {
+  Button,
+  Badge,
+  Input,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
-} from '@/Modules/Core/resources/js/components/ui/table';
+  TableRow
+} from "@/components/ui";
 import { Search, Plus, Eye, Edit, Trash2, Key } from 'lucide-react';
-import { usePermission } from '@/Modules/Core/resources/js/hooks/usePermission';
+import { usePermission } from "@/hooks/usePermission";
 import { toast } from 'sonner';
-import Permission from '@/Modules/Core/resources/js/components/Permission';
+import Permission from "@/components/Permission";
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Dashboard', href: '/dashboard' },
@@ -78,7 +76,7 @@ export default function Index({ auth, permissions }: Props) {
   };
 
   return (
-    <AdminLayout 
+    <AppLayout 
       title="Permissions Management" 
       breadcrumbs={breadcrumbs} 
       requiredPermission="permissions.view"
@@ -216,6 +214,6 @@ export default function Index({ auth, permissions }: Props) {
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 } 

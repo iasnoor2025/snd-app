@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Head } from '@inertiajs/react';
-import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Progress } from '@/Modules/Core/resources/js/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Modules/Core/resources/js/components/ui/tabs';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Label } from '@/Modules/Core/resources/js/components/ui/label';
-import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
-import { Switch } from '@/Modules/Core/resources/js/components/ui/switch';
-import { Slider } from '@/Modules/Core/resources/js/components/ui/slider';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Modules/Core/resources/js/components/ui/select';
+import AppLayout from "@/layouts/AppLayout";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   LineChart,
   Line,
@@ -76,7 +76,7 @@ import {
   Minus,
   RotateCcw
 } from 'lucide-react';
-import { formatCurrency } from '@/Modules/Core/resources/js/utils/format';
+import { formatCurrency } from "@/utils/format";
 
 interface FleetEquipment {
   id: number;

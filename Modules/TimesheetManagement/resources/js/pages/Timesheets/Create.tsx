@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, useForm as useInertiaForm, router } from '@inertiajs/react';
-import { PageProps, BreadcrumbItem } from '@/Modules/Core/resources/js/types';
-import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
+import { PageProps, BreadcrumbItem } from "@/types";
+import AppLayout from "@/layouts/AppLayout";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -11,7 +11,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/Modules/Core/resources/js/components/ui/card';
+} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -19,21 +19,21 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/Modules/Core/resources/js/components/ui/form';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Textarea } from '@/Modules/Core/resources/js/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Modules/Core/resources/js/components/ui/select';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   ArrowLeft as ArrowLeftIcon,
   Calendar as CalendarIcon,
   Clock as ClockIcon
 } from 'lucide-react';
-// import { useToast } from '@/Modules/Core/resources/js/components/ui/toast';  // TODO: Fix this (use sonner)
+// import { useToast } from "@/components/ui/toast";  // TODO: Fix this (use sonner)
 import { useForm as useReactHookForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Popover, PopoverContent, PopoverTrigger } from '@/Modules/Core/resources/js/components/ui/popover';
-import { Calendar } from '@/Modules/Core/resources/js/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { format } from 'date-fns';
 import { toast } from "sonner";
 import { route } from 'ziggy-js';
@@ -503,7 +503,7 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
   };
 
   return (
-    <AdminLayout title={t('ttl_create_timesheet')} breadcrumbs={breadcrumbs} requiredPermission="timesheets.create">
+    <AppLayout title={t('ttl_create_timesheet')} breadcrumbs={breadcrumbs} requiredPermission="timesheets.create">
       <Head title={t('ttl_create_timesheet')} />
 
       <div className="flex h-full flex-1 flex-col gap-4 p-4">

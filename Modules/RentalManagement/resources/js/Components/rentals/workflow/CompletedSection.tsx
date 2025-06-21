@@ -1,18 +1,18 @@
 import React from "react";
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/Modules/Core/resources/js/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/Modules/Core/resources/js/components/ui/alert";
-import { Button } from "@/Modules/Core/resources/js/components/ui/button";
-import { Badge } from "@/Modules/Core/resources/js/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Modules/Core/resources/js/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { differenceInDays, format } from "date-fns";
 import { CheckCircle, FileText, Printer, Download, BarChart3, MessageSquare, Star } from "lucide-react";
 import RentalItemsCard from "../RentalItemsCard";
 import InvoicesCard from "../InvoicesCard";
 import DocumentsCard from "../DocumentsCard";
 import RentalAnalytics from "../RentalAnalytics";
-import { formatCurrency } from "@/Modules/Core/resources/js/utils/format";
-import { Progress } from '@/Modules/Core/resources/js/components/ui/progress';
+import { formatCurrency } from "@/utils/format";
+import { Progress } from "@/components/ui/progress";
 
 // Define interface for document
 interface AttachedDocument {

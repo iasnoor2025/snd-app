@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Head } from '@inertiajs/react';
-import { AdminLayout } from '@/Modules/Core/resources/js';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Modules/Core/resources/js/components/ui/tabs';
+import { AppLayout } from '@/Core';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar } from 'lucide-react';
-import { DatePicker } from '@/Modules/Core/resources/js/components/ui/date-picker';
-import { Dialog, DialogContent, DialogTrigger } from '@/Modules/Core/resources/js/components/ui/dialog';
+import { DatePicker } from "@/components/ui/date-picker";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import ScheduleForm from './ScheduleForm';
 import { ScheduleCalendar } from './ScheduleCalendar';
 import { ScheduleList } from './ScheduleList';

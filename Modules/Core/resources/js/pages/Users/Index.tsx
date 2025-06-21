@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { AdminLayout } from '@/Modules/Core/resources/js';
+import { AppLayout } from '../../layouts/app';
 import { Head, Link, router } from '@inertiajs/react';
-import { BreadcrumbItem } from '@/types/index';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+import { BreadcrumbItem } from '../../types';
+import { Button } from '../../components/ui/button';
+import { Badge } from '../../components/ui/badge';
 import { 
     Table, 
     TableBody, 
@@ -11,15 +11,15 @@ import {
     TableHead, 
     TableHeader, 
     TableRow 
-} from '@/Modules/Core/resources/js/components/ui/table';
+} from '../../components/ui/table';
 import { 
     Card, 
     CardContent, 
     CardDescription, 
     CardHeader, 
     CardTitle 
-} from '@/Modules/Core/resources/js/components/ui/card';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+} from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
 import { 
     Dialog,
     DialogContent,
@@ -27,13 +27,13 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from '@/Modules/Core/resources/js/components/ui/dialog';
+} from '../../components/ui/dialog';
 import { 
     DropdownMenu, 
     DropdownMenuContent, 
     DropdownMenuItem, 
     DropdownMenuTrigger 
-} from '@/Modules/Core/resources/js/components/ui/dropdown-menu';
+} from '../../components/ui/dropdown-menu';
 import { 
     Plus, 
     Search, 
@@ -114,7 +114,7 @@ export default function Index({ users, roles }: Props) {
     };
 
     return (
-        <AdminLayout breadcrumbs={breadcrumbs}>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('common:users')} />
 
             <div className="py-6">
@@ -275,6 +275,6 @@ export default function Index({ users, roles }: Props) {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-        </AdminLayout>
+        </AppLayout>
     );
 } 

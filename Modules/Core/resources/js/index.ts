@@ -1,9 +1,6 @@
 // Core Module - Shared Resources Index
 // This file exports all shared resources for use by other modules
 
-// Export all shared components
-export * from './components';
-
 // Export all shared hooks
 export * from './hooks';
 
@@ -15,9 +12,6 @@ export * from './types';
 
 // Export all shared services
 export * from './services';
-
-// Export all shared layouts
-export * from './layouts';
 
 // Export all shared libraries
 export * from './lib';
@@ -66,5 +60,47 @@ export {
 } from '@hookform/resolvers/zod';
 
 export * as z from 'zod'; 
+
+// Export UI components
+export * from './components/ui';
+
+// Export layouts
+export { default as AppLayout } from './layouts/AppLayout';
+
+// Export utilities
+export { formatCurrency, t } from './utils';
+
+// Export types
+export type { BreadcrumbItem } from './types';
+
+// Export components
+export {
+  ApplicationLogo,
+  Modal,
+  Dropdown,
+  TextInput,
+  InputLabel,
+  InputError,
+  Checkbox,
+  TranslatableField,
+  ValidationErrors,
+  PrimaryButton,
+  SecondaryButton,
+  DangerButton,
+  UserMenuContent,
+  UserInfo,
+  DeleteUser,
+  ErrorBoundary,
+  Permission,
+  LanguageSwitcher,
+  AppearanceDropdown,
+  AppearanceTabs,
+  AppSidebar,
+  AppHeader,
+  NavMain,
+  NavUser,
+  NavFooter,
+  Breadcrumbs
+} from './components';
 
 

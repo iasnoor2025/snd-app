@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Head, router } from '@inertiajs/react';
-import type { PageProps } from '@/Modules/Core/resources/js/types';
-import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Modules/Core/resources/js/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Modules/Core/resources/js/components/ui/table';
+import type { PageProps } from "@/types";
+import AppLayout from "@/layouts/AppLayout";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search } from 'lucide-react';
-import CreateButton from '@/Modules/Core/resources/js/components/shared/CreateButton';
-import CrudButtons from '@/Modules/Core/resources/js/components/shared/CrudButtons';
-import { formatCurrency } from '@/Modules/Core/resources/js/utils/format';
+import CreateButton from "@/components/shared/CreateButton";
+import CrudButtons from "@/components/shared/CrudButtons";
+import { formatCurrency } from "@/utils/format";
 import { useTranslation } from 'react-i18next';
 import { Equipment, PaginatedData } from '../../types';
 
@@ -148,7 +148,7 @@ export default function Index({ equipment, categories = [], statuses = {}, filte
   }
 
   return (
-    <AdminLayout title={forceString(t('equipment'), 'equipment')} breadcrumbs={breadcrumbs} requiredPermission="equipment.view">
+    <AppLayout title={forceString(t('equipment'), 'equipment')} breadcrumbs={breadcrumbs} requiredPermission="equipment.view">
       <Head title={forceString(t('equipment'), 'equipment')} />
 
       <div className="flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
