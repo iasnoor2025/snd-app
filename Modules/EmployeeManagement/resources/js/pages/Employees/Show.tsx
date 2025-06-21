@@ -52,8 +52,20 @@ import DocumentManager from '../../components/employees/EmployeeDocumentManager'
 import { useQueryClient } from '@tanstack/react-query';
 import { Separator } from "@/Core";
 import { Avatar, AvatarFallback } from "@/Core";
-// import { MediaLibrary } from "@/Core"; // TODO: Fix or replace MediaLibrary import
-// import { DailyTimesheetRecords } from "@/Core"; // TODO: Fix or replace DailyTimesheetRecords import
+// MediaLibrary and DailyTimesheetRecords components - implement as needed
+const MediaLibrary = ({ employeeId }: { employeeId: number }) => (
+  <div className="p-4 border rounded-lg">
+    <h3 className="font-medium mb-2">Media Library</h3>
+    <p className="text-sm text-muted-foreground">Media library functionality coming soon...</p>
+  </div>
+);
+
+const DailyTimesheetRecords = ({ employeeId }: { employeeId: number }) => (
+  <div className="p-4 border rounded-lg">
+    <h3 className="font-medium mb-2">Daily Timesheet Records</h3>
+    <p className="text-sm text-muted-foreground">Timesheet records will be displayed here...</p>
+  </div>
+);
 import { useToast } from "@/Core";
 // PaymentHistory component placeholder
 const PaymentHistory = ({ employeeId, initialMonthlyHistory, initialTotalRepaid, initialPagination, showOnlyLast }: any) => (

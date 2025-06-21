@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Head, usePage } from '@inertiajs/react';
-import AuthenticatedLayout from '../../layouts/AuthenticatedLayout';
+import AppLayout from '../../layouts/AppLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { Badge } from '../../components/ui/badge';
@@ -9,7 +9,7 @@ import AvatarUploader from '../../components/Avatar/AvatarUploader';
 import { SmartAvatar, UserAvatar, TeamAvatar } from '../../components/ui/smart-avatar';
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
 import { Button } from '../../components/ui/button';
-import { useToast } from '../../components/ui/use-toast';
+import { toast } from 'sonner';
 import {
     User,
     Settings,
@@ -24,7 +24,6 @@ import {
 } from 'lucide-react';
 
 const AvatarPage = ({ auth }) => {
-    const { toast } = useToast();
     const [currentUser, setCurrentUser] = useState(auth.user);
 
     // Mock team data for demonstration
@@ -42,10 +41,7 @@ const AvatarPage = ({ auth }) => {
             avatar: newAvatarUrl
         }));
 
-        toast({
-            title: 'Avatar Updated',
-            description: 'Your avatar has been successfully updated.',
-        });
+        toast.success('Avatar updated successfully');
     };
 
     const getInitials = (name) => {
@@ -55,24 +51,18 @@ const AvatarPage = ({ auth }) => {
         return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
     };
 
-    return (
-        <AuthenticatedLayout
-            header={
-                <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                        Avatar Management
-                    </h2>
-                    <Badge variant="secondary" className="flex items-center gap-1">
-                        <Camera className="h-3 w-3" />
-                        Profile Settings
-                    </Badge>
-                </div>
-            }
-        >
-            <Head title="Avatar Management" />
+    const breadcrumbs = [
+        { title: 'Profile', href: route('profile.index') },
+        { title: 'Avatar', href: route('profile.avatar') }
+    ];
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+    return (
+        <AppLayout
+            title="Avatar Management"
+            breadcrumbs={breadcrumbs}
+        >
+            <div className="py-6">
+                <div className="mx-auto max-w-7xl space-y-6">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
                         <div className="p-6 text-gray-900 dark:text-gray-100">
                             <Tabs defaultValue="upload" className="w-full">
@@ -258,9 +248,9 @@ const AvatarPage = ({ auth }) => {
                                                     <SmartAvatar
                                                         user={currentUser}
                                                         size="md"
-                                                        badge={<Zap className="h-3 w-3 text-purple-500" />}
+                                                        badge={<Zap className="h-3 w-3 text-amber-500" />}
                                                     />
-                                                    <span className="text-sm">Pro</span>
+                                                    <span className="text-sm">Premium</span>
                                                 </div>
                                             </CardContent>
                                         </Card>
@@ -276,51 +266,24 @@ const AvatarPage = ({ auth }) => {
                                                 Team Members
                                             </CardTitle>
                                             <CardDescription>
-                                                Avatar examples with team member data
+                                                View and manage team member avatars
                                             </CardDescription>
                                         </CardHeader>
                                         <CardContent>
-                                            <div className="space-y-4">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 {teamMembers.map((member) => (
-                                                    <div key={member.id} className="flex items-center justify-between p-3 rounded-lg border">
-                                                        <div className="flex items-center space-x-3">
-                                                            <UserAvatar
-                                                                user={member}
-                                                                size="md"
-                                                                showName={false}
-                                                                showEmail={false}
-                                                            />
-                                                            <div>
-                                                                <p className="font-medium">{member.name}</p>
-                                                                <p className="text-sm text-muted-foreground">{member.email}</p>
-                                                            </div>
+                                                    <div key={member.id} className="flex items-center space-x-4">
+                                                        <SmartAvatar
+                                                            user={member}
+                                                            size="lg"
+                                                            status={member.id === 1 ? 'online' : undefined}
+                                                        />
+                                                        <div>
+                                                            <p className="font-medium">{member.name}</p>
+                                                            <p className="text-sm text-muted-foreground">{member.role}</p>
                                                         </div>
-                                                        <Badge variant="outline">{member.role}</Badge>
                                                     </div>
                                                 ))}
-                                            </div>
-
-                                            <Separator className="my-6" />
-
-                                            <div>
-                                                <h4 className="text-sm font-medium mb-3">Team Avatar Group</h4>
-                                                <TeamAvatar
-                                                    members={teamMembers}
-                                                    maxVisible={4}
-                                                    size="md"
-                                                    onMemberClick={(member) => {
-                                                        toast({
-                                                            title: 'Member Clicked',
-                                                            description: `You clicked on ${member.name}`,
-                                                        });
-                                                    }}
-                                                    onOverflowClick={(hiddenCount) => {
-                                                        toast({
-                                                            title: 'More Members',
-                                                            description: `${hiddenCount} more members in this team`,
-                                                        });
-                                                    }}
-                                                />
                                             </div>
                                         </CardContent>
                                     </Card>
@@ -335,48 +298,36 @@ const AvatarPage = ({ auth }) => {
                                                 Avatar Settings
                                             </CardTitle>
                                             <CardDescription>
-                                                Configure avatar preferences and fallback options
+                                                Configure your avatar preferences and defaults
                                             </CardDescription>
                                         </CardHeader>
-                                        <CardContent className="space-y-6">
+                                        <CardContent className="space-y-4">
                                             <div className="space-y-4">
-                                                <div className="flex items-center justify-between">
-                                                    <div>
-                                                        <h4 className="text-sm font-medium">Use Gravatar</h4>
-                                                        <p className="text-sm text-muted-foreground">
-                                                            Automatically use Gravatar if no custom avatar is set
-                                                        </p>
-                                                    </div>
-                                                    <Button variant="outline" size="sm">
-                                                        Enable
+                                                <h4 className="font-medium">Default Fallback</h4>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <Button variant="outline" className="justify-start">
+                                                        <Globe className="h-4 w-4 mr-2" />
+                                                        Use Gravatar
+                                                    </Button>
+                                                    <Button variant="outline" className="justify-start">
+                                                        <User className="h-4 w-4 mr-2" />
+                                                        Use Initials
                                                     </Button>
                                                 </div>
+                                            </div>
 
-                                                <Separator />
+                                            <Separator />
 
-                                                <div className="flex items-center justify-between">
-                                                    <div>
-                                                        <h4 className="text-sm font-medium">Auto-generate Colors</h4>
-                                                        <p className="text-sm text-muted-foreground">
-                                                            Generate unique colors for avatar backgrounds
-                                                        </p>
-                                                    </div>
-                                                    <Button variant="outline" size="sm">
-                                                        Configure
+                                            <div className="space-y-4">
+                                                <h4 className="font-medium">Privacy Settings</h4>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <Button variant="outline" className="justify-start">
+                                                        <Shield className="h-4 w-4 mr-2" />
+                                                        Make Avatar Public
                                                     </Button>
-                                                </div>
-
-                                                <Separator />
-
-                                                <div className="flex items-center justify-between">
-                                                    <div>
-                                                        <h4 className="text-sm font-medium">Image Optimization</h4>
-                                                        <p className="text-sm text-muted-foreground">
-                                                            Automatically optimize uploaded images
-                                                        </p>
-                                                    </div>
-                                                    <Button variant="outline" size="sm">
-                                                        Settings
+                                                    <Button variant="outline" className="justify-start">
+                                                        <Users className="h-4 w-4 mr-2" />
+                                                        Team Only
                                                     </Button>
                                                 </div>
                                             </div>
@@ -388,7 +339,7 @@ const AvatarPage = ({ auth }) => {
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </AppLayout>
     );
 };
 

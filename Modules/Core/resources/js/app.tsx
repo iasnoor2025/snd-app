@@ -137,6 +137,9 @@ const corePages: Record<string, string> = {
   'Users/Create': '/resources/js/pages/Users/Create.tsx',
   'Users/Edit': '/resources/js/pages/Users/Edit.tsx',
   'Users/Show': '/resources/js/pages/Users/Show.tsx',
+  'Profile/Index': './Modules/Core/resources/js/pages/Profile/Index.jsx',
+  'Profile/Avatar': './Modules/Core/resources/js/pages/Profile/Avatar.jsx',
+  'Profile/Settings': './Modules/Core/resources/js/pages/Profile/Settings.jsx',
   'welcome': '/resources/js/pages/welcome.tsx',
   'Dashboard': '/resources/js/pages/dashboard.tsx',
   'dashboard': '/resources/js/pages/dashboard.tsx',
@@ -172,6 +175,7 @@ const moduleMap: Record<string, string[]> = {
   'Users': ['Core'],
   'Roles': ['Core'],
   'Permissions': ['Core'],
+  'Profile': ['Core'],
   'Core': ['Core'],
   'Audit': ['AuditCompliance'],
   'API': ['API']

@@ -5,7 +5,6 @@ use Modules\Settings\Http\Controllers\SettingController;
 use Modules\Settings\Http\Controllers\CompanySettingsController;
 use Modules\Settings\Http\Controllers\NotificationSettingsController;
 use Modules\Settings\Http\Controllers\ReportSettingsController;
-use Modules\Settings\Http\Controllers\ProfileController;
 use Modules\Settings\Http\Controllers\PasswordController;
 
 /*
@@ -46,11 +45,6 @@ Route::middleware(['web', 'auth', 'verified'])->prefix('settings')->name('settin
     // Report settings
     Route::get('/reports', [ReportSettingsController::class, 'index'])->name('reports');
     Route::post('/reports', [ReportSettingsController::class, 'update'])->name('reports.update');
-
-    // User profile settings
-    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
-    Route::post('/profile', [ProfileController::class, 'update'])->name('module.settings.profile.update');
-    Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar');
 
     // Password management
     Route::get('/password', [PasswordController::class, 'index'])->name('password');

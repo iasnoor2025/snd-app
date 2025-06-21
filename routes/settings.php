@@ -1,7 +1,6 @@
 <?php
 
 use Modules\Settings\Http\Controllers\PasswordController;
-use Modules\Settings\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -15,15 +14,14 @@ use Inertia\Inertia;
 */
 
 Route::middleware('auth')->group(function () {
-    Route::redirect('settings', 'settings/profile');
+    // Redirect old settings route to new profile settings
+    Route::redirect('settings', '/profile/settings');
 
-    Route::get('settings/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-     Route::patch('settings/profile', [ProfileController::class, 'update'])->name('settings.profile.update');
-     Route::delete('settings/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Password settings
+    Route::get('settings/password', [PasswordController::class, 'edit'])->name('password.edit');
+    Route::put('settings/password', [PasswordController::class, 'update'])->name('settings.password.update');
 
-     Route::get('settings/password', [PasswordController::class, 'edit'])->name('password.edit');
-     Route::put('settings/password', [PasswordController::class, 'update'])->name('settings.password.update');
-
+    // Appearance settings
     Route::get('settings/appearance', function () {
         return Inertia::render('settings/appearance');
     })->name('appearance');

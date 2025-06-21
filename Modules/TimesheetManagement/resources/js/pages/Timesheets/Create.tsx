@@ -28,7 +28,7 @@ import {
   Calendar as CalendarIcon,
   Clock as ClockIcon
 } from 'lucide-react';
-// import { useToast } from "@/Core";  // TODO: Fix this (use sonner)
+import { toast } from 'sonner';
 import { useForm as useReactHookForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';

@@ -22,7 +22,7 @@ export default function SettingsIndex() {
                 {
                     title: 'Profile',
                     description: 'Update your personal information and contact details',
-                    href: '/settings/profile',
+                    href: '/profile/settings',
                     icon: <User className="h-5 w-5" />,
                 },
                 {

@@ -99,7 +99,32 @@ export default function EmployeeCreate({ auth, positions }: Props) {
     salary: {},
     documents: {},
     certifications: {},
-  })
+  });
+
+  // Load draft data on component mount
+  React.useEffect(() => {
+    const draftKey = `employee_draft_${auth.user.id}`;
+    const savedDraft = localStorage.getItem(draftKey);
+    
+    if (savedDraft) {
+      try {
+        const draftData = JSON.parse(savedDraft);
+        setFormData(prev => ({
+          ...prev,
+          ...draftData
+        }));
+        
+        toast.success({
+          title: "Draft Loaded",
+          description: "Your previously saved draft has been loaded",
+          duration: 3000,
+        });
+      } catch (error) {
+        console.error('Error loading draft:', error);
+        localStorage.removeItem(draftKey);
+      }
+    }
+  }, [auth.user.id, toast]);
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -113,7 +138,16 @@ export default function EmployeeCreate({ auth, positions }: Props) {
         [tab]: data
       }));
 
-      // TODO: Implement draft saving logic
+      // Save draft to localStorage for persistence
+      const draftKey = `employee_draft_${auth.user.id}`;
+      const currentDraft = JSON.parse(localStorage.getItem(draftKey) || '{}');
+      const updatedDraft = {
+        ...currentDraft,
+        [tab]: data,
+        lastUpdated: new Date().toISOString()
+      };
+      localStorage.setItem(draftKey, JSON.stringify(updatedDraft));
+
       toast.success({
         title: "Success",
         description: `Draft saved for ${tab} tab`,
@@ -133,30 +167,58 @@ export default function EmployeeCreate({ auth, positions }: Props) {
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
-      // TODO: Implement final submission logic
-      await router.post(route('employees.store'), formData, {
+      
+      // Validate that all required tabs have data
+      const requiredTabs = ['personal', 'employment', 'salary'];
+      const missingTabs = requiredTabs.filter(tab => !formData[tab] || Object.keys(formData[tab]).length === 0);
+      
+      if (missingTabs.length > 0) {
+        toast.error({
+          title: "Incomplete Form",
+          description: `Please complete the following sections: ${missingTabs.join(', ')}`,
+          duration: 5000,
+        });
+        return;
+      }
+
+      // Flatten the form data for submission
+      const submissionData = {
+        ...formData.personal,
+        ...formData.employment,
+        ...formData.salary,
+        ...formData.documents,
+        certifications: formData.certifications?.certifications || []
+      };
+
+      await router.post(route('employees.store'), submissionData, {
         onSuccess: () => {
+          // Clear the draft from localStorage
+          const draftKey = `employee_draft_${auth.user.id}`;
+          localStorage.removeItem(draftKey);
+          
           toast.success({
             title: "Success",
             description: "Employee created successfully",
             duration: 3000,
-          })
+          });
           router.visit(route('employees.index'));
         },
-        onError: () => {
+        onError: (errors) => {
+          console.error('Submission errors:', errors);
           toast.error({
-            title: "Error",
-            description: "Failed to create employee",
-            duration: 3000,
-          })
+            title: "Validation Error",
+            description: "Please check the form for errors and try again",
+            duration: 5000,
+          });
         }
-      })
+      });
     } catch (error) {
+      console.error('Submission error:', error);
       toast.error({
         title: "Error",
         description: "An error occurred while submitting the form",
         duration: 3000,
-      })
+      });
     } finally {
       setIsSubmitting(false);
     }

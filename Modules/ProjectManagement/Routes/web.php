@@ -166,7 +166,9 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
     })->middleware('permission:project.view')->name('reports');
     
     Route::post('/reports/generate', function() {
-        // TODO: Implement project report generation
+        Route::get('/projects/{project}/report', [ProjectController::class, 'generateReport'])
+    ->middleware('permission:projects.view')
+    ->name('projects.report');
         return response()->json(['message' => 'Project reports feature coming soon']);
     })->middleware('permission:project.view')->name('reports.generate');
 });

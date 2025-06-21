@@ -493,8 +493,18 @@ class PWAController extends Controller
      */
     private function getTotalInstallations()
     {
-        // Placeholder implementation
-        return 0;
+        $total = 0;
+        $now = now();
+        
+        // Sum up installations from the last 30 days
+        for ($i = 0; $i < 30; $i++) {
+            $date = $now->copy()->subDays($i);
+            $key = 'pwa_installation_' . $date->format('Y-m-d');
+            $installations = Cache::get($key, []);
+            $total += count($installations);
+        }
+        
+        return $total;
     }
 
     /**
@@ -516,8 +526,17 @@ class PWAController extends Controller
      */
     private function getInstallationsThisWeek()
     {
-        // Placeholder implementation
-        return 0;
+        $total = 0;
+        $startOfWeek = now()->startOfWeek();
+        
+        for ($i = 0; $i < 7; $i++) {
+            $date = $startOfWeek->copy()->addDays($i);
+            $key = 'pwa_installation_' . $date->format('Y-m-d');
+            $installations = Cache::get($key, []);
+            $total += count($installations);
+        }
+        
+        return $total;
     }
 
     /**
@@ -527,8 +546,18 @@ class PWAController extends Controller
      */
     private function getInstallationsThisMonth()
     {
-        // Placeholder implementation
-        return 0;
+        $total = 0;
+        $startOfMonth = now()->startOfMonth();
+        $daysInMonth = now()->daysInMonth;
+        
+        for ($i = 0; $i < $daysInMonth; $i++) {
+            $date = $startOfMonth->copy()->addDays($i);
+            $key = 'pwa_installation_' . $date->format('Y-m-d');
+            $installations = Cache::get($key, []);
+            $total += count($installations);
+        }
+        
+        return $total;
     }
 
     /**
@@ -538,8 +567,24 @@ class PWAController extends Controller
      */
     private function getTopDevices()
     {
-        // Placeholder implementation
-        return [];
+        $deviceCounts = [];
+        $now = now();
+        
+        // Aggregate data from the last 30 days
+        for ($i = 0; $i < 30; $i++) {
+            $date = $now->copy()->subDays($i);
+            $key = 'pwa_installation_' . $date->format('Y-m-d');
+            $installations = Cache::get($key, []);
+            
+            foreach ($installations as $installation) {
+                $platform = $installation['platform'] ?? 'Unknown';
+                $deviceCounts[$platform] = ($deviceCounts[$platform] ?? 0) + 1;
+            }
+        }
+        
+        // Sort by count descending and return top 5
+        arsort($deviceCounts);
+        return array_slice($deviceCounts, 0, 5, true);
     }
 
     /**
@@ -549,7 +594,47 @@ class PWAController extends Controller
      */
     private function getTopBrowsers()
     {
-        // Placeholder implementation
-        return [];
+        $browserCounts = [];
+        $now = now();
+        
+        // Aggregate data from the last 30 days
+        for ($i = 0; $i < 30; $i++) {
+            $date = $now->copy()->subDays($i);
+            $key = 'pwa_installation_' . $date->format('Y-m-d');
+            $installations = Cache::get($key, []);
+            
+            foreach ($installations as $installation) {
+                $userAgent = $installation['user_agent'] ?? '';
+                $browser = $this->detectBrowser($userAgent);
+                $browserCounts[$browser] = ($browserCounts[$browser] ?? 0) + 1;
+            }
+        }
+        
+        // Sort by count descending and return top 5
+        arsort($browserCounts);
+        return array_slice($browserCounts, 0, 5, true);
+    }
+
+    /**
+     * Detect browser from user agent
+     *
+     * @param string $userAgent
+     * @return string
+     */
+    private function detectBrowser(string $userAgent)
+    {
+        if (strpos($userAgent, 'Chrome') !== false) {
+            return 'Chrome';
+        } elseif (strpos($userAgent, 'Firefox') !== false) {
+            return 'Firefox';
+        } elseif (strpos($userAgent, 'Safari') !== false && strpos($userAgent, 'Chrome') === false) {
+            return 'Safari';
+        } elseif (strpos($userAgent, 'Edge') !== false) {
+            return 'Edge';
+        } elseif (strpos($userAgent, 'Opera') !== false) {
+            return 'Opera';
+        }
+        
+        return 'Unknown';
     }
 }

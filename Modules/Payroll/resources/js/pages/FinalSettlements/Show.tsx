@@ -61,12 +61,35 @@ export default function Show({ auth, settlement }: Props) {
         window.print();
     };
 
-    const handleDownload = () => {
-        // TODO: Implement PDF download
-        toast({
-            title: 'Coming Soon',
-            description: 'PDF download functionality will be available soon.',
-        });
+    const handleDownload = async () => {
+        try {
+            const response = await fetch(route('final-settlements.pdf', settlement.id), {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/pdf',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to generate PDF');
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `final-settlement-${settlement.id}-${settlement.employee.employee_id}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
+            toast.success('PDF downloaded successfully');
+        } catch (error) {
+            console.error('Download failed:', error);
+            toast.error('Failed to download PDF. Please try again.');
+        }
     };
 
     const getStatusBadge = (status: string) => {

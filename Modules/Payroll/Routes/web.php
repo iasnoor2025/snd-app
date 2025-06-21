@@ -118,6 +118,9 @@ Route::prefix('hr/payroll')->name('payroll.')->middleware(['auth', 'verified'])-
         Route::get('/{finalSettlement}/report', [FinalSettlementController::class, 'generateReport'])
             ->middleware('permission:final-settlements.view')
             ->name('report');
+        Route::get('/{finalSettlement}/pdf', [FinalSettlementController::class, 'generatePDF'])
+            ->middleware('permission:final-settlements.view')
+            ->name('pdf');
     });
     // Advance Payment Routes
     Route::prefix('employees/{employee}/advances')->group(function () {

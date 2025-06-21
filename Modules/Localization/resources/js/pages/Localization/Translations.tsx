@@ -152,6 +152,39 @@ export default function Translations({
         window.open(route('localization.translations.export', selectedLocale));
     };
 
+    const handleDeleteTranslation = (key: string) => {
+        if (confirm(`Are you sure you want to delete the translation key "${key}"?`)) {
+            const updatedTranslations = { ...data.translations };
+            delete updatedTranslations[key];
+            
+            setData('translations', updatedTranslations);
+            
+            // Send delete request to server
+            router.delete(route('localization.translations.delete', {
+                locale: currentLocale,
+                group: currentGroup,
+                key: key
+            }), {
+                onSuccess: () => {
+                    toast.success({
+                        title: "Success",
+                        description: "Translation deleted successfully",
+                        duration: 3000,
+                    });
+                },
+                onError: () => {
+                    // Revert changes on error
+                    setData('translations', data.translations);
+                    toast.error({
+                        title: "Error",
+                        description: "Failed to delete translation",
+                        duration: 3000,
+                    });
+                }
+            });
+        }
+    };
+
     const filteredTranslations = Object.entries(translations).filter(([key, value]) => {
         const matchesSearch = !searchTerm ||
             key.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -514,9 +547,7 @@ export default function Translations({
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        onClick={() => {
-                                                            // TODO: Implement delete functionality
-                                                        }}
+                                                        onClick={() => handleDeleteTranslation(key)}
                                                     >
                                                         <Trash2 className="h-3 w-3" />
                                                     </Button>
