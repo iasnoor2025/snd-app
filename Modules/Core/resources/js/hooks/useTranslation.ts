@@ -82,7 +82,43 @@ export function useTranslation(): TranslationHookReturn {
   // Laravel translation function (for language files)
   const __ = useCallback(
     (key: string, replacements: Record<string, string | number> = {}) => {
-      let translation = translations[key] || key;
+      // Handle nested keys with dot notation
+      let translation = translations[key];
+      
+      if (!translation && key.includes('.')) {
+        // Try to access nested object
+        const keys = key.split('.');
+        let current = translations;
+        
+        for (const k of keys) {
+          if (current && typeof current === 'object' && k in current) {
+            current = current[k];
+          } else {
+            current = undefined;
+            break;
+          }
+        }
+        
+        translation = current;
+      }
+      
+      // If still no translation found, use the key as fallback
+      if (translation === undefined || translation === null) {
+        translation = key;
+      }
+      
+      // Ensure we return a string, not an object
+      if (typeof translation === 'object') {
+        // If it's a translatable object, extract the current locale
+        if (translation && typeof translation === 'object' && !Array.isArray(translation)) {
+          translation = translation[locale] || translation.en || Object.values(translation)[0] || key;
+        } else {
+          translation = key;
+        }
+      }
+      
+      // Convert to string to ensure we never return objects
+      translation = String(translation);
 
       // Replace placeholders
       Object.entries(replacements).forEach(([placeholder, value]) => {
@@ -92,7 +128,7 @@ export function useTranslation(): TranslationHookReturn {
 
       return translation;
     },
-    [translations]
+    [translations, locale]
   );
 
   // Utility functions with current locale context

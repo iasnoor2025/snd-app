@@ -84,6 +84,7 @@ export {
   InputError,
   Checkbox,
   TranslatableField,
+  TranslatableText,
   ValidationErrors,
   PrimaryButton,
   SecondaryButton,
@@ -114,5 +115,13 @@ export {
   PaymentForm,
   MaintenanceRecordList
 } from './components';
+
+// Export translation debug utilities
+export {
+  isTranslatableObject,
+  safeRender,
+  debugTranslationObject,
+  withTranslationDebug
+} from './utils/debugTranslation';
 
 

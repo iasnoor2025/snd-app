@@ -29,6 +29,7 @@ export { default as InputLabel } from './InputLabel';
 export { default as InputError } from './InputError';
 export { default as Checkbox } from './Checkbox';
 export { TranslatableField } from './TranslatableField';
+export { TranslatableText } from './TranslatableText';
 export { default as ValidationErrors } from './ValidationErrors';
 
 // Button Components

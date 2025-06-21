@@ -29,6 +29,7 @@ class RentalItem extends Model
         'rate_type',
         'status',
         'employee_id',
+        'operator_id',
         'notes',
         'total_amount',
         'discount_percentage',
