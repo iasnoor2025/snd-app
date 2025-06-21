@@ -16,11 +16,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->unsignedBigInteger('department_id');
+            $table->foreignId('department_id')->constrained('departments')->onDelete('cascade');
             $table->boolean('active')->default(true);
             $table->timestamps();
             $table->softDeletes();
-            $table->foreign('department_id')->references('id')->on('departments');
         });
     }
 

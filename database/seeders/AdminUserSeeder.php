@@ -24,9 +24,10 @@ class AdminUserSeeder extends Seeder
             ]
         );
 
-        // Assign admin role to the user
-        if (!$admin->hasRole('admin', 'web')) {
-            $admin->assignRole('admin');
+        // Ensure admin role exists and assign it
+        $adminRole = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        if (!$admin->hasRole($adminRole)) {
+            $admin->assignRole($adminRole);
         }
 
         // Create manager user for testing
@@ -39,8 +40,10 @@ class AdminUserSeeder extends Seeder
             ]
         );
 
-        if (!$manager->hasRole('manager', 'web')) {
-            $manager->assignRole('manager');
+        // Ensure manager role exists and assign it
+        $managerRole = Role::firstOrCreate(['name' => 'manager', 'guard_name' => 'web']);
+        if (!$manager->hasRole($managerRole)) {
+            $manager->assignRole($managerRole);
         }
 
         // Create employee user for testing
@@ -53,8 +56,10 @@ class AdminUserSeeder extends Seeder
             ]
         );
 
-        if (!$employee->hasRole('employee', 'web')) {
-            $employee->assignRole('employee');
+        // Ensure employee role exists and assign it
+        $employeeRole = Role::firstOrCreate(['name' => 'employee', 'guard_name' => 'web']);
+        if (!$employee->hasRole($employeeRole)) {
+            $employee->assignRole($employeeRole);
         }
 
         // Create HR user for testing
@@ -67,8 +72,10 @@ class AdminUserSeeder extends Seeder
             ]
         );
 
-        if (!$hr->hasRole('hr', 'web')) {
-            $hr->assignRole('hr');
+        // Ensure HR role exists and assign it
+        $hrRole = Role::firstOrCreate(['name' => 'hr', 'guard_name' => 'web']);
+        if (!$hr->hasRole($hrRole)) {
+            $hr->assignRole($hrRole);
         }
 
         // Create accountant user for testing
@@ -81,8 +88,10 @@ class AdminUserSeeder extends Seeder
             ]
         );
 
-        if (!$accountant->hasRole('accountant', 'web')) {
-            $accountant->assignRole('accountant');
+        // Ensure accountant role exists and assign it
+        $accountantRole = Role::firstOrCreate(['name' => 'accountant', 'guard_name' => 'web']);
+        if (!$accountant->hasRole($accountantRole)) {
+            $accountant->assignRole($accountantRole);
         }
     }
 }

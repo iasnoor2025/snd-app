@@ -7,6 +7,9 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Schema;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,19 +18,28 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Clear the permission cache
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
+        // Truncate the roles and permissions tables to avoid duplicates
+        Schema::disableForeignKeyConstraints();
+        Role::query()->delete();
+        Permission::query()->delete();
+        Schema::enableForeignKeyConstraints();
+
         // Run the CoreTableSeeder to create and populate core module tables
         $this->call(CoreTableSeeder::class);
 
         // Run the Core module migrations manually
         $this->call(CoreModuleMigrator::class);
 
-        // Run the PermissionSeeder first
+        // Run the PermissionSeeder first to create all permissions
         $this->call(PermissionSeeder::class);
 
-        // Run the RoleSeeder to create roles
+        // Run the RoleSeeder to create roles and assign permissions
         $this->call(RoleSeeder::class);
 
-        // Run the AdminUserSeeder to create admin role and user
+        // Run the AdminUserSeeder to create admin users
         $this->call(AdminUserSeeder::class);
 
         // Seed all modules

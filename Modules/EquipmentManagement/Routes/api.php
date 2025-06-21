@@ -56,10 +56,42 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     Route::post('equipment/{equipment}/tracking', [EquipmentTrackingApiController::class, 'update']);
 
     // Maintenance management
-    Route::apiResource('maintenance', MaintenanceApiController::class);
-    Route::apiResource('maintenance-schedules', MaintenanceScheduleApiController::class);
-    Route::apiResource('maintenance-tasks', MaintenanceTaskApiController::class);
-    Route::apiResource('maintenance-records', MaintenanceRecordApiController::class);
+    Route::apiResource('maintenance', MaintenanceApiController::class, [
+        'names' => [
+            'index' => 'api.maintenance.index',
+            'store' => 'api.maintenance.store',
+            'show' => 'api.maintenance.show',
+            'update' => 'api.maintenance.update',
+            'destroy' => 'api.maintenance.destroy',
+        ]
+    ]);
+    Route::apiResource('maintenance-schedules', MaintenanceScheduleApiController::class, [
+        'names' => [
+            'index' => 'api.maintenance-schedules.index',
+            'store' => 'api.maintenance-schedules.store',
+            'show' => 'api.maintenance-schedules.show',
+            'update' => 'api.maintenance-schedules.update',
+            'destroy' => 'api.maintenance-schedules.destroy',
+        ]
+    ]);
+    Route::apiResource('maintenance-tasks', MaintenanceTaskApiController::class, [
+        'names' => [
+            'index' => 'api.maintenance-tasks.index',
+            'store' => 'api.maintenance-tasks.store',
+            'show' => 'api.maintenance-tasks.show',
+            'update' => 'api.maintenance-tasks.update',
+            'destroy' => 'api.maintenance-tasks.destroy',
+        ]
+    ]);
+    Route::apiResource('maintenance-records', MaintenanceRecordApiController::class, [
+        'names' => [
+            'index' => 'api.maintenance-records.index',
+            'store' => 'api.maintenance-records.store',
+            'show' => 'api.maintenance-records.show',
+            'update' => 'api.maintenance-records.update',
+            'destroy' => 'api.maintenance-records.destroy',
+        ]
+    ]);
     Route::post('equipment/{equipment}/maintenance', [EquipmentMaintenanceApiController::class, 'schedule']);
     Route::get('equipment/{equipment}/maintenance', [EquipmentMaintenanceApiController::class, 'history']);
     Route::put('maintenance/{maintenance}/complete', [MaintenanceApiController::class, 'markComplete']);

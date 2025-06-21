@@ -15,9 +15,9 @@ return new class extends Migration
         if (!Schema::hasTable('rentals')) {
             Schema::create('rentals', function (Blueprint $table) {
                 $table->id();
-                $table->unsignedBigInteger('customer_id')->nullable();
+                $table->foreignId('customer_id')->nullable()->constrained('customers')->nullOnDelete();
                 $table->string('rental_number')->unique();
-                $table->unsignedBigInteger('project_id')->nullable()->constrained()->nullOnDelete();
+                $table->foreignId('project_id')->nullable()->constrained('projects')->nullOnDelete();
                 $table->timestamp('start_date');
                 $table->timestamp('expected_end_date')->nullable();
                 $table->timestamp('actual_end_date')->nullable();
@@ -28,10 +28,10 @@ return new class extends Migration
                 $table->decimal('final_amount', 12, 2)->default(0);
                 $table->enum('payment_status', ['pending', 'partial', 'paid', 'overdue'])->default('pending');
                 $table->text('notes')->nullable();
-                $table->unsignedBigInteger('created_by')->nullable()->constrained('users')->nullOnDelete();
+                $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
                 $table->string('equipment_name')->nullable();
                 $table->text('description')->nullable();
-                $table->unsignedBigInteger('quotation_id')->nullable()->constrained()->nullOnDelete();
+                $table->foreignId('quotation_id')->nullable()->constrained('quotations')->nullOnDelete();
                 $table->timestamp('mobilization_date')->nullable();
                 $table->timestamp('invoice_date')->nullable();
                 $table->decimal('deposit_amount', 10, 2)->default(0);
@@ -39,9 +39,9 @@ return new class extends Migration
                 $table->date('payment_due_date')->nullable();
                 $table->boolean('has_timesheet')->default(false);
                 $table->boolean('has_operators')->default(false);
-                $table->unsignedBigInteger('completed_by')->nullable()->constrained('users')->nullOnDelete();
+                $table->foreignId('completed_by')->nullable()->constrained('users')->nullOnDelete();
                 $table->timestamp('completed_at')->nullable();
-                $table->unsignedBigInteger('approved_by')->nullable()->constrained('users')->nullOnDelete();
+                $table->foreignId('approved_by')->nullable()->constrained('users')->nullOnDelete();
                 $table->timestamp('approved_at')->nullable();
                 $table->boolean('deposit_paid')->default(false);
                 $table->date('deposit_paid_date')->nullable();

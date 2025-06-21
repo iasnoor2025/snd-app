@@ -159,5 +159,15 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
             ->middleware('permission:project.delete')
             ->name('resource.destroy');
     });
+
+    // Project Reports routes
+    Route::get('/reports', function() {
+        return Inertia::render('Projects/Reports/Index');
+    })->middleware('permission:project.view')->name('reports');
+    
+    Route::post('/reports/generate', function() {
+        // TODO: Implement project report generation
+        return response()->json(['message' => 'Project reports feature coming soon']);
+    })->middleware('permission:project.view')->name('reports.generate');
 });
 

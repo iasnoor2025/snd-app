@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, router, usePage } from '@inertiajs/react';
+import { route } from 'ziggy-js';
+import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
 import { Button } from '@/Modules/Core/resources/js/components/ui/button';
 import { Input } from '@/Modules/Core/resources/js/components/ui/input';
@@ -9,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Modules/Core/resources/js/components/ui/tabs';
 import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Modules/Core/resources/js/components/ui/table';
-import { CalendarIcon, DownloadIcon, FilterIcon, TrendingUpIcon, UsersIcon, ClockIcon, CheckCircleIcon, XCircleIcon, AlertCircleIcon } from 'lucide-react';
+import { CalendarIcon, DownloadIcon, FilterIcon, TrendingUpIcon, UsersIcon, ClockIcon, CheckCircleIcon, XCircleIcon, AlertCircleIcon, BarChart3Icon } from 'lucide-react';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/Modules/Core/resources/js/components/ui/breadcrumb';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -188,12 +190,28 @@ const statusColors = {
 export default function ReportsIndex() {
   const { t } = useTranslation('leave');
 
-    const { filters, data, employees, departments, leaveTypes } = usePage<PageProps>().props;
+    const { 
+        filters = { 
+            date_from: '', 
+            date_to: '', 
+            report_type: 'summary' 
+        }, 
+        data = null, 
+        employees = [], 
+        departments = [], 
+        leaveTypes = [] 
+    } = usePage<PageProps>().props;
     const { can } = usePermission();
 
     const [localFilters, setLocalFilters] = useState(filters);
-    const [dateFrom, setDateFrom] = useState<Date | undefined>(new Date(filters.date_from));
-    const [dateTo, setDateTo] = useState<Date | undefined>(new Date(filters.date_to));
+    const [dateFrom, setDateFrom] = useState<Date | undefined>(() => {
+        const date = new Date(filters.date_from);
+        return isNaN(date.getTime()) ? undefined : date;
+    });
+    const [dateTo, setDateTo] = useState<Date | undefined>(() => {
+        const date = new Date(filters.date_to);
+        return isNaN(date.getTime()) ? undefined : date;
+    });
     const [isExporting, setIsExporting] = useState(false);
 
     const handleFilterChange = (key: string, value: string | number | undefined) => {
@@ -204,8 +222,8 @@ export default function ReportsIndex() {
     const applyFilters = () => {
         const params = {
             ...localFilters,
-            date_from: dateFrom ? format(dateFrom, 'yyyy-MM-dd') : undefined,
-            date_to: dateTo ? format(dateTo, 'yyyy-MM-dd') : undefined,
+            date_from: dateFrom && !isNaN(dateFrom.getTime()) ? format(dateFrom, 'yyyy-MM-dd') : undefined,
+            date_to: dateTo && !isNaN(dateTo.getTime()) ? format(dateTo, 'yyyy-MM-dd') : undefined,
         };
 
         router.get(route('leaves.reports.index'), params, {
@@ -215,14 +233,16 @@ export default function ReportsIndex() {
     };
 
     const resetFilters = () => {
+        const now = new Date();
+        const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         const defaultFilters = {
-            date_from: format(new Date().setDate(1), 'yyyy-MM-dd'),
-            date_to: format(new Date(), 'yyyy-MM-dd'),
+            date_from: format(firstDayOfMonth, 'yyyy-MM-dd'),
+            date_to: format(now, 'yyyy-MM-dd'),
             report_type: 'summary',
         };
         setLocalFilters(defaultFilters);
-        setDateFrom(new Date(defaultFilters.date_from));
-        setDateTo(new Date(defaultFilters.date_to));
+        setDateFrom(firstDayOfMonth);
+        setDateTo(now);
 
         router.get(route('leaves.reports.index'), defaultFilters);
     };
@@ -237,8 +257,8 @@ export default function ReportsIndex() {
         try {
             const params = {
                 ...localFilters,
-                date_from: dateFrom ? format(dateFrom, 'yyyy-MM-dd') : undefined,
-                date_to: dateTo ? format(dateTo, 'yyyy-MM-dd') : undefined,
+                date_from: dateFrom && !isNaN(dateFrom.getTime()) ? format(dateFrom, 'yyyy-MM-dd') : undefined,
+                date_to: dateTo && !isNaN(dateTo.getTime()) ? format(dateTo, 'yyyy-MM-dd') : undefined,
                 format,
             };
 
@@ -313,7 +333,7 @@ export default function ReportsIndex() {
                         <ResponsiveContainer width="100%" height={300}>
                             <PieChart>
                                 <Pie
-                                    data={summaryData.by_leave_type}
+                                    data={summaryData.by_leave_type || []}
                                     cx="50%"
                                     cy="50%"
                                     labelLine={false}
@@ -323,7 +343,7 @@ export default function ReportsIndex() {
                                     dataKey="count"
                                     nameKey="leave_type"
                                 >
-                                    {summaryData.by_leave_type.map((entry, index) => (
+                                    {summaryData.by_leave_type?.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
                                 </Pie>
@@ -340,7 +360,7 @@ export default function ReportsIndex() {
                     </CardHeader>
                     <CardContent>
                         <ResponsiveContainer width="100%" height={300}>
-                            <BarChart data={summaryData.by_status}>
+                            <BarChart data={summaryData.by_status || []}>
                                 <CartesianGrid strokeDasharray="3 3" />
                                 <XAxis dataKey="status" />
                                 <YAxis />
@@ -359,7 +379,7 @@ export default function ReportsIndex() {
                 </CardHeader>
                 <CardContent>
                     <ResponsiveContainer width="100%" height={300}>
-                        <LineChart data={summaryData.monthly_trend}>
+                        <LineChart data={summaryData.monthly_trend || []}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="period" />
                             <YAxis />
@@ -379,7 +399,7 @@ export default function ReportsIndex() {
             <CardHeader>
                 <CardTitle>{t('ttl_detailed_leave_requests')}</CardTitle>
                 <CardDescription>
-                    Showing {detailedData.pagination.total} total requests
+                    Showing {detailedData.pagination?.total || 0} total requests
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -397,7 +417,7 @@ export default function ReportsIndex() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {detailedData.leaves.data.map((leave) => (
+                        {detailedData.leaves?.data?.map((leave) => (
                             <TableRow key={leave.id}>
                                 <TableCell>
                                     <div>
@@ -467,8 +487,8 @@ export default function ReportsIndex() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {balanceData.employees.map((employee) =>
-                            employee.balances.map((balance, index) => (
+                        {balanceData.employees?.map((employee) =>
+                            employee.balances?.map((balance, index) => (
                                 <TableRow key={`${employee.id}-${index}`}>
                                     {index === 0 && (
                                         <TableCell rowSpan={employee.balances.length}>
@@ -595,7 +615,7 @@ export default function ReportsIndex() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {departmentData.departments.map((dept) => (
+                        {departmentData.departments?.map((dept) => (
                             <TableRow key={dept.name}>
                                 <TableCell className="font-medium">{dept.name}</TableCell>
                                 <TableCell>{dept.total_requests}</TableCell>
@@ -615,6 +635,28 @@ export default function ReportsIndex() {
     );
 
     const renderReportContent = () => {
+        if (!data) {
+            return (
+                <Card>
+                    <CardContent className="flex flex-col items-center justify-center py-16">
+                        <div className="text-center space-y-4">
+                            <FilterIcon className="h-12 w-12 text-muted-foreground mx-auto" />
+                            <div>
+                                <h3 className="text-lg font-medium">No Data Available</h3>
+                                <p className="text-sm text-muted-foreground">
+                                    Please select filters and click "Apply Filters" to generate a report.
+                                </p>
+                            </div>
+                            <Button onClick={applyFilters} className="mt-4">
+                                <FilterIcon className="mr-2 h-4 w-4" />
+                                Apply Filters
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
+            );
+        }
+
         switch (filters.report_type) {
             case 'detailed':
                 return renderDetailedReport(data as DetailedData);
@@ -631,7 +673,7 @@ export default function ReportsIndex() {
     };
 
     return (
-        <>
+        <AdminLayout title="Leave Reports">
             <Head title={t('leave_reports')} />
 
             <div className="space-y-6">
@@ -658,6 +700,10 @@ export default function ReportsIndex() {
                         <h1 className="text-3xl font-bold tracking-tight">{t('leave_reports')}</h1>
                         <p className="text-muted-foreground">{t('comprehensive_leave_analytics_and_insights')}</p>
                     </div>
+                    <Button variant="outline" onClick={() => router.get('/reports')}>
+                        <BarChart3Icon className="mr-2 h-4 w-4" />
+                        Main Reports Dashboard
+                    </Button>
                     <div className="flex gap-2">
                         {can('leave-reports.export') && (
                             <>
@@ -724,8 +770,8 @@ export default function ReportsIndex() {
                                                 !dateFrom && "text-muted-foreground"
                                             )}
                                         >
-                                            <CalendarIcon className="mr-2 h-4 w-4" />
-                                            {dateFrom ? format(dateFrom, "PPP") : <span>{t('project:pick_a_date')}</span>}
+                                                                        <CalendarIcon className="mr-2 h-4 w-4" />
+                            {dateFrom && !isNaN(dateFrom.getTime()) ? format(dateFrom, "PPP") : <span>{t('project:pick_a_date')}</span>}
                                         </Button>
                                     </PopoverTrigger>
                                     <PopoverContent className="w-auto p-0">
@@ -751,8 +797,8 @@ export default function ReportsIndex() {
                                                 !dateTo && "text-muted-foreground"
                                             )}
                                         >
-                                            <CalendarIcon className="mr-2 h-4 w-4" />
-                                            {dateTo ? format(dateTo, "PPP") : <span>{t('project:pick_a_date')}</span>}
+                                                                        <CalendarIcon className="mr-2 h-4 w-4" />
+                            {dateTo && !isNaN(dateTo.getTime()) ? format(dateTo, "PPP") : <span>{t('project:pick_a_date')}</span>}
                                         </Button>
                                     </PopoverTrigger>
                                     <PopoverContent className="w-auto p-0">
@@ -770,15 +816,15 @@ export default function ReportsIndex() {
                             <div className="space-y-2">
                                 <Label htmlFor="employee_id">Employee</Label>
                                 <Select
-                                    value={localFilters.employee_id?.toString() || ''}
-                                    onValueChange={(value) => handleFilterChange('employee_id', value ? parseInt(value) : undefined)}
+                                    value={localFilters.employee_id?.toString() || 'all'}
+                                    onValueChange={(value) => handleFilterChange('employee_id', value === 'all' ? undefined : parseInt(value))}
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder={t('opt_all_employees_2')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="">{t('opt_all_employees_2')}</SelectItem>
-                                        {employees.map((employee) => (
+                                        <SelectItem value="all">{t('opt_all_employees_2')}</SelectItem>
+                                        {employees?.map((employee) => (
                                             <SelectItem key={employee.value} value={employee.value.toString()}>
                                                 {employee.label}
                                             </SelectItem>
@@ -791,15 +837,15 @@ export default function ReportsIndex() {
                             <div className="space-y-2">
                                 <Label htmlFor="department_id">Department</Label>
                                 <Select
-                                    value={localFilters.department_id?.toString() || ''}
-                                    onValueChange={(value) => handleFilterChange('department_id', value ? parseInt(value) : undefined)}
+                                    value={localFilters.department_id?.toString() || 'all'}
+                                    onValueChange={(value) => handleFilterChange('department_id', value === 'all' ? undefined : parseInt(value))}
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder={t('opt_all_departments')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="">{t('opt_all_departments')}</SelectItem>
-                                        {departments.map((department) => (
+                                        <SelectItem value="all">{t('opt_all_departments')}</SelectItem>
+                                        {departments?.map((department) => (
                                             <SelectItem key={department.value} value={department.value.toString()}>
                                                 {department.label}
                                             </SelectItem>
@@ -812,15 +858,15 @@ export default function ReportsIndex() {
                             <div className="space-y-2">
                                 <Label htmlFor="leave_type_id">{t('lbl_leave_type')}</Label>
                                 <Select
-                                    value={localFilters.leave_type_id?.toString() || ''}
-                                    onValueChange={(value) => handleFilterChange('leave_type_id', value ? parseInt(value) : undefined)}
+                                    value={localFilters.leave_type_id?.toString() || 'all'}
+                                    onValueChange={(value) => handleFilterChange('leave_type_id', value === 'all' ? undefined : parseInt(value))}
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder={t('opt_all_leave_types')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="">{t('opt_all_leave_types')}</SelectItem>
-                                        {leaveTypes.map((leaveType) => (
+                                        <SelectItem value="all">{t('opt_all_leave_types')}</SelectItem>
+                                        {leaveTypes?.map((leaveType) => (
                                             <SelectItem key={leaveType.value} value={leaveType.value.toString()}>
                                                 {leaveType.label}
                                             </SelectItem>
@@ -833,14 +879,14 @@ export default function ReportsIndex() {
                             <div className="space-y-2">
                                 <Label htmlFor="status">Status</Label>
                                 <Select
-                                    value={localFilters.status || ''}
-                                    onValueChange={(value) => handleFilterChange('status', value || undefined)}
+                                    value={localFilters.status || 'all'}
+                                    onValueChange={(value) => handleFilterChange('status', value === 'all' ? undefined : value)}
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder={t('opt_all_statuses_2')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="">{t('opt_all_statuses_2')}</SelectItem>
+                                        <SelectItem value="all">{t('opt_all_statuses_2')}</SelectItem>
                                         <SelectItem value="pending">Pending</SelectItem>
                                         <SelectItem value="approved">Approved</SelectItem>
                                         <SelectItem value="rejected">Rejected</SelectItem>
@@ -863,7 +909,7 @@ export default function ReportsIndex() {
                 {/* Report Content */}
                 {renderReportContent()}
             </div>
-        </>
+        </AdminLayout>
     );
 }
 

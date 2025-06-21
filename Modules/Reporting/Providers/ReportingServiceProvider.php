@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Support\Facades\Vite;
 
 class ReportingServiceProvider extends ServiceProvider
 {
@@ -30,6 +31,16 @@ class ReportingServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
+
+        // Register Vite assets
+        if (file_exists(module_path($this->moduleName, 'resources/js/app.js'))) {
+            Vite::useHotFile(public_path('hot'))
+                ->useBuildDirectory('build')
+                ->withEntryPoints([
+                    'Modules/Reporting/resources/js/app.js',
+                    'Modules/Reporting/resources/css/app.css'
+                ]);
+        }
 
         // Register observers
         $this->registerObservers();

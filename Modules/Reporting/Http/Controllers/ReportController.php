@@ -10,6 +10,9 @@ use Modules\RentalManagement\Domain\Models\Rental;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use App\Http\Controllers\Controller;
+use Carbon\Carbon;
+use Modules\LeaveManagement\Domain\Models\Leave;
 
 class ReportController extends Controller
 {
@@ -18,70 +21,230 @@ class ReportController extends Controller
      */
     public function index(Request $request)
     {
-        // Get counts for dashboard
-        $clientCount = Customer::count();
-        $equipmentCount = Equipment::count();
-        $rentalCount = Rental::count();
-        $invoiceCount = Invoice::count();
-        $paymentCount = Payment::count();
+        // Get rental statistics
+        $rentalStats = [
+            'total' => Rental::count(),
+            'active' => Rental::where('status', 'active')->count(),
+            'completed' => Rental::where('status', 'completed')->count(),
+            'total_amount' => DB::table('rental_items')->sum('total_amount'),
+        ];
 
-        // Sorting and pagination params
-        $rentalsPage = $request->input('rentals_page', 1);
-        $rentalsSort = $request->input('rentals_sort', 'created_at');
-        $rentalsDir = $request->input('rentals_dir', 'desc');
-        $invoicesPage = $request->input('invoices_page', 1);
-        $invoicesSort = $request->input('invoices_sort', 'created_at');
-        $invoicesDir = $request->input('invoices_dir', 'desc');
-        $paymentsPage = $request->input('payments_page', 1);
-        $paymentsSort = $request->input('payments_sort', 'created_at');
-        $paymentsDir = $request->input('payments_dir', 'desc');
-        $perPage = 5;
+        // Get leave statistics
+        $leaveStats = [
+            'total' => Leave::count(),
+            'approved' => Leave::where('status', 'approved')->count(),
+            'pending' => Leave::where('status', 'pending')->count(),
+            'rejected' => Leave::where('status', 'rejected')->count(),
+        ];
 
-        // Get recent activity (paginated and sorted)
-        $recentRentals = Rental::with('client')
-            ->orderBy($rentalsSort, $rentalsDir)
-            ->paginate($perPage, ['*'], 'rentals_page', $rentalsPage);
+        // Get equipment statistics
+        $equipmentStats = [
+            'total' => Equipment::count(),
+            'available' => Equipment::where('status', 'available')->count(),
+            'rented' => Equipment::where('status', 'rented')->count(),
+            'maintenance' => Equipment::where('status', 'maintenance')->count(),
+        ];
 
-        $recentInvoices = Invoice::with('client')
-            ->orderBy($invoicesSort, $invoicesDir)
-            ->paginate($perPage, ['*'], 'invoices_page', $invoicesPage);
+        // Get revenue statistics
+        $revenueStats = [
+            'total' => DB::table('payments')->sum('amount'),
+            'monthly' => DB::table('payments')
+                ->whereMonth('created_at', Carbon::now()->month)
+                ->whereYear('created_at', Carbon::now()->year)
+                ->sum('amount'),
+            'yearly' => DB::table('payments')
+                ->whereYear('created_at', Carbon::now()->year)
+                ->sum('amount'),
+        ];
 
-        $recentPayments = Payment::with(['client', 'invoice'])
-            ->orderBy($paymentsSort, $paymentsDir)
-            ->paginate($perPage, ['*'], 'payments_page', $paymentsPage);
+        // Get monthly revenue data for chart
+        $monthlyRevenue = DB::table('payments')
+            ->selectRaw('TO_CHAR(created_at, \'YYYY-MM\') as month, SUM(amount) as total')
+            ->groupBy('month')
+            ->orderBy('month', 'asc')
+            ->limit(12)
+            ->get();
 
-        // Get revenue data for chart
-        $monthlyRevenue = Payment::selectRaw('EXTRACT(MONTH FROM payment_date) as month, EXTRACT(YEAR FROM payment_date) as year, SUM(amount) as total')
-            ->whereNotNull('payment_date')
-            ->whereRaw('EXTRACT(YEAR FROM payment_date) = ?', [date('Y')])
-            ->groupByRaw('EXTRACT(YEAR FROM payment_date), EXTRACT(MONTH FROM payment_date)')
-            ->orderBy('year')
-            ->orderBy('month')
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'month' => date('F', mktime(0, 0, 0, $item->month, 1)),
-                    'total' => $item->total,
-                ];
+        // Get leave distribution data for chart - Fixed to use proper join
+        $leaveDistribution = DB::table('leaves')
+            ->join('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
+            ->select('leave_types.name as type', DB::raw('COUNT(*) as count'))
+            ->groupBy('leave_types.id', 'leave_types.name')
+            ->get();
+
+        // Get equipment status distribution for chart
+        $equipmentStatus = DB::table('equipment')
+            ->select('status', DB::raw('COUNT(*) as count'))
+            ->groupBy('status')
+            ->get();
+
+        // Get rentals with filters
+        $rentalsQuery = Rental::with(['customer', 'rentalItems'])
+            ->select(
+                'rentals.*',
+                DB::raw('(SELECT COUNT(*) FROM rental_items WHERE rental_items.rental_id = rentals.id) as items_count'),
+                DB::raw('(SELECT SUM(total_amount) FROM rental_items WHERE rental_items.rental_id = rentals.id) as total_amount')
+            );
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $rentalsQuery->where(function ($q) use ($search) {
+                $q->where('rental_number', 'like', "%{$search}%")
+                    ->orWhereHas('customer', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    });
             });
+        }
+
+        if ($request->has('status')) {
+            $rentalsQuery->where('status', $request->input('status'));
+        }
+
+        if ($request->has('date_from')) {
+            $rentalsQuery->whereDate('start_date', '>=', $request->input('date_from'));
+        }
+
+        if ($request->has('date_to')) {
+            $rentalsQuery->whereDate('end_date', '<=', $request->input('date_to'));
+        }
+
+        $rentals = $rentalsQuery
+            ->orderBy($request->input('sort_field', 'created_at'), $request->input('sort_direction', 'desc'))
+            ->paginate(15);
+
+        // Get leaves with filters - Updated to include leave type relationship
+        $leavesQuery = Leave::with(['employee', 'employee.department', 'leaveType'])
+            ->select('leaves.*');
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $leavesQuery->whereHas('employee', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->has('department')) {
+            $leavesQuery->whereHas('employee.department', function ($q) use ($request) {
+                $q->where('name', $request->input('department'));
+            });
+        }
+
+        if ($request->has('status')) {
+            $leavesQuery->where('status', $request->input('status'));
+        }
+
+        $leaves = $leavesQuery
+            ->orderBy($request->input('sort_field', 'created_at'), $request->input('sort_direction', 'desc'))
+            ->paginate(15);
 
         return Inertia::render('Reports/Index', [
+            'stats' => [
+                'rentals' => $rentalStats,
+                'leaves' => $leaveStats,
+                'equipment' => $equipmentStats,
+                'revenue' => $revenueStats,
+            ],
+            'rentals' => $rentals,
+            'leaves' => $leaves,
+            'charts' => [
+                'monthlyRevenue' => $monthlyRevenue,
+                'leaveDistribution' => $leaveDistribution,
+                'equipmentStatus' => $equipmentStatus,
+            ],
+            'filters' => $request->only([
+                'report_type',
+                'search',
+                'status',
+                'date_from',
+                'date_to',
+                'department',
+                'sort_field',
+                'sort_direction',
+            ]),
+        ]);
+    }
+
+    public function dashboard()
+    {
+        // Get counts from various modules
+        $clientCount = DB::table('customers')->count();
+        $equipmentCount = DB::table('equipment')->count();
+        $rentalCount = DB::table('rentals')->count();
+        $invoiceCount = DB::table('invoices')->count();
+        $paymentCount = DB::table('payments')->count();
+        $employeeCount = DB::table('employees')->count();
+        $projectCount = DB::table('projects')->count();
+        $timesheetCount = DB::table('timesheets')->count();
+        $leaveRequestCount = DB::table('leaves')->count();
+
+        // Get recent activity
+        $recentRentals = DB::table('rentals')
+            ->join('customers', 'rentals.customer_id', '=', 'customers.id')
+            ->select('rentals.*', 'customers.name as customer_name')
+            ->orderBy('rentals.created_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        $recentInvoices = DB::table('invoices')
+            ->join('customers', 'invoices.customer_id', '=', 'customers.id')
+            ->select('invoices.*', 'customers.name as customer_name')
+            ->orderBy('invoices.created_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        $recentPayments = DB::table('payments')
+            ->join('customers', 'payments.customer_id', '=', 'customers.id')
+            ->select('payments.*', 'customers.name as customer_name')
+            ->orderBy('payments.created_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        // Get monthly revenue data for chart
+        $monthlyRevenue = DB::table('payments')
+            ->select(DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'), DB::raw('SUM(amount) as total'))
+            ->groupBy('month')
+            ->orderBy('month', 'asc')
+            ->limit(12)
+            ->get();
+
+        return Inertia::render('Reporting::Reports/Dashboard', [
             'stats' => [
                 'clients' => $clientCount,
                 'equipment' => $equipmentCount,
                 'rentals' => $rentalCount,
                 'invoices' => $invoiceCount,
                 'payments' => $paymentCount,
+                'employees' => $employeeCount,
+                'projects' => $projectCount,
+                'timesheets' => $timesheetCount,
+                'leaves' => $leaveRequestCount,
             ],
             'recentActivity' => [
-                'rentals' => $recentRentals,
-                'invoices' => $recentInvoices,
-                'payments' => $recentPayments,
+                'rentals' => [
+                    'data' => $recentRentals,
+                    'current_page' => 1,
+                    'last_page' => 1,
+                ],
+                'invoices' => [
+                    'data' => $recentInvoices,
+                    'current_page' => 1,
+                    'last_page' => 1,
+                ],
+                'payments' => [
+                    'data' => $recentPayments,
+                    'current_page' => 1,
+                    'last_page' => 1,
+                ],
             ],
             'charts' => [
-                'monthlyRevenue' => $monthlyRevenue
+                'monthlyRevenue' => $monthlyRevenue->map(function ($item) {
+                    return [
+                        'month' => $item->month,
+                        'total' => (float) $item->total,
+                    ];
+                }),
             ],
-            'filters' => $request->only(['date_from', 'date_to'])
+            'filters' => request()->only(['date_from', 'date_to']),
         ]);
     }
 
@@ -96,7 +259,7 @@ class ReportController extends Controller
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
-                $q->where('company_name', 'like', "%{$search}%")
+                $q->where('name', 'like', "%{$search}%")
                     ->orWhere('contact_name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%");
             });
@@ -110,7 +273,7 @@ class ReportController extends Controller
         $clients = $query->withCount(['rentals', 'invoices'])
             ->withSum('invoices', 'total_amount')
             ->withSum('payments', 'amount')
-            ->orderBy($request->input('sort_field', 'company_name'), $request->input('sort_direction', 'asc'))
+            ->orderBy($request->input('sort_field', 'name'), $request->input('sort_direction', 'asc'))
             ->paginate(15)
             ->withQueryString();
 
@@ -135,15 +298,22 @@ class ReportController extends Controller
      */
     public function rentals(Request $request)
     {
-        $query = Rental::with('client');
+        $query = Rental::with(['customer', 'rentalItems'])
+            ->select(
+                'rentals.*',
+                DB::raw('(SELECT COUNT(*) FROM rental_items WHERE rental_items.rental_id = rentals.id) as items_count'),
+                DB::raw('(SELECT SUM(total_amount) FROM rental_items WHERE rental_items.rental_id = rentals.id) as total_amount')
+            );
 
         // Apply filters
         if ($request->has('search')) {
             $search = $request->input('search');
-            $query->where('rental_number', 'like', "%{$search}%")
-                ->orWhereHas('client', function ($q) use ($search) {
-                    $q->where('company_name', 'like', "%{$search}%");
-                });
+            $query->where(function ($q) use ($search) {
+                $q->where('rental_number', 'like', "%{$search}%")
+                    ->orWhereHas('customer', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    });
+            });
         }
 
         if ($request->has('status') && $request->input('status')) {
@@ -155,13 +325,11 @@ class ReportController extends Controller
         }
 
         if ($request->has('end_date')) {
-            $query->whereDate('expected_end_date', '<=', $request->input('end_date'));
+            $query->whereDate('end_date', '<=', $request->input('end_date'));
         }
 
-        // Get rentals with related data
-        $rentals = $query->withCount('rentalItems')
-            ->withSum('rentalItems', 'total_amount')
-            ->orderBy($request->input('sort_field', 'start_date'), $request->input('sort_direction', 'desc'))
+        // Get rentals with pagination
+        $rentals = $query->orderBy($request->input('sort_field', 'created_at'), $request->input('sort_direction', 'desc'))
             ->paginate(15)
             ->withQueryString();
 
@@ -170,22 +338,12 @@ class ReportController extends Controller
             'total_rentals' => Rental::count(),
             'active_rentals' => Rental::where('status', 'active')->count(),
             'completed_rentals' => Rental::where('status', 'completed')->count(),
-            'overdue_rentals' => Rental::where('status', 'overdue')->count(),
-            'total_revenue' => Rental::join('rental_items', 'rentals.id', '=', 'rental_items.rental_id')
-                ->sum('rental_items.total_amount'),
+            'total_amount' => DB::table('rental_items')->sum('total_amount'),
         ];
-
-        // Get status distribution for chart
-        $statusDistribution = Rental::select('status', DB::raw('count(*) as count'))
-            ->groupBy('status')
-            ->get();
 
         return Inertia::render('Reports/Rentals', [
             'rentals' => $rentals,
             'summary' => $summary,
-            'charts' => [
-                'statusDistribution' => $statusDistribution
-            ],
             'filters' => $request->only(['search', 'status', 'start_date', 'end_date', 'sort_field', 'sort_direction'])
         ]);
     }
@@ -202,7 +360,7 @@ class ReportController extends Controller
             $search = $request->input('search');
             $query->where('invoice_number', 'like', "%{$search}%")
                 ->orWhereHas('client', function ($q) use ($search) {
-                    $q->where('company_name', 'like', "%{$search}%");
+                    $q->where('name', 'like', "%{$search}%");
                 });
         }
 
@@ -260,7 +418,7 @@ class ReportController extends Controller
             $search = $request->input('search');
             $query->where('payment_number', 'like', "%{$search}%")
                 ->orWhereHas('client', function ($q) use ($search) {
-                    $q->where('company_name', 'like', "%{$search}%");
+                    $q->where('name', 'like', "%{$search}%");
                 })
                 ->orWhereHas('invoice', function ($q) use ($search) {
                     $q->where('invoice_number', 'like', "%{$search}%");
@@ -382,44 +540,100 @@ class ReportController extends Controller
         ]);
     }
 
+    public function leaves(Request $request)
+    {
+        // Get leave data with filters
+        $leavesQuery = Leave::with(['employee', 'leaveType'])
+            ->select(
+                'leaves.*',
+                DB::raw('DATEDIFF(leaves.end_date, leaves.start_date) + 1 as days')
+            );
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $leavesQuery->whereHas('employee', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('employee_id', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->has('department')) {
+            $department = $request->input('department');
+            $leavesQuery->whereHas('employee.department', function ($q) use ($department) {
+                $q->where('name', $department);
+            });
+        }
+
+        if ($request->has('leave_type')) {
+            $leavesQuery->where('leave_type_id', $request->input('leave_type'));
+        }
+
+        if ($request->has('status')) {
+            $leavesQuery->where('status', $request->input('status'));
+        }
+
+        if ($request->has('start_date')) {
+            $leavesQuery->whereDate('start_date', '>=', $request->input('start_date'));
+        }
+
+        if ($request->has('end_date')) {
+            $leavesQuery->whereDate('end_date', '<=', $request->input('end_date'));
+        }
+
+        $leaves = $leavesQuery
+            ->orderBy($request->input('sort_field', 'created_at'), $request->input('sort_direction', 'desc'))
+            ->paginate(15);
+
+        // Get summary statistics
+        $totalLeaves = Leave::count();
+        $approvedLeaves = Leave::where('status', 'approved')->count();
+        $pendingLeaves = Leave::where('status', 'pending')->count();
+        $rejectedLeaves = Leave::where('status', 'rejected')->count();
+        $totalDays = Leave::selectRaw('SUM(DATEDIFF(end_date, start_date) + 1) as total_days')->first()->total_days ?? 0;
+
+        // Get departments and leave types for filters
+        $departments = DB::table('departments')->select('id', 'name')->get();
+        $leaveTypes = DB::table('leave_types')->select('id', 'name')->get();
+
+        return Inertia::render('Reporting::Reports/Leaves', [
+            'leaves' => $leaves,
+            'summary' => [
+                'total_leaves' => $totalLeaves,
+                'approved_leaves' => $approvedLeaves,
+                'pending_leaves' => $pendingLeaves,
+                'rejected_leaves' => $rejectedLeaves,
+                'total_days' => $totalDays,
+            ],
+            'departments' => $departments,
+            'leaveTypes' => $leaveTypes,
+            'filters' => $request->only([
+                'search',
+                'status',
+                'department',
+                'leave_type',
+                'start_date',
+                'end_date',
+                'sort_field',
+                'sort_direction',
+            ]),
+        ]);
+    }
+
     public function revenue()
     {
-        // Get monthly revenue data for the past 12 months
-        $monthlyRevenue = DB::table('payments')
-            ->select(DB::raw('TO_CHAR(payment_date, \'YYYY-MM\') as month'), DB::raw('SUM(amount) as total'))
-            ->where('payment_date', '>=', now()->subMonths(12))
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get();
-
-        // Get revenue by client
-        $revenueByClient = DB::table('payments')
+        $startDate = Carbon::now()->subMonths(6);
+        
+        $topCustomers = DB::table('payments')
             ->join('customers', 'payments.customer_id', '=', 'customers.id')
-            ->select('customers.company_name', DB::raw('SUM(payments.amount) as total'))
-            ->where('payment_date', '>=', now()->subMonths(12))
-            ->groupBy('customers.company_name')
+            ->select('customers.name', DB::raw('SUM(payments.amount) as total'))
+            ->where('payment_date', '>=', $startDate)
+            ->groupBy('customers.name')
             ->orderBy('total', 'desc')
             ->limit(10)
             ->get();
 
-        // Get revenue by payment method
-        $revenueByMethod = DB::table('payments')
-            ->select('payment_method', DB::raw('SUM(amount) as total'))
-            ->where('payment_date', '>=', now()->subMonths(12))
-            ->groupBy('payment_method')
-            ->orderBy('total', 'desc')
-            ->get();
-
-        // Get total revenue
-        $totalRevenue = DB::table('payments')
-            ->where('payment_date', '>=', now()->subMonths(12))
-            ->sum('amount');
-
         return Inertia::render('Reports/Revenue', [
-            'monthlyRevenue' => $monthlyRevenue,
-            'revenueByClient' => $revenueByClient,
-            'revenueByMethod' => $revenueByMethod,
-            'totalRevenue' => $totalRevenue,
+            'topCustomers' => $topCustomers
         ]);
     }
 
@@ -452,6 +666,20 @@ class ReportController extends Controller
         return response($csv)
             ->header('Content-Type', 'text/csv')
             ->header('Content-Disposition', "attachment; filename=\"$filename\"");
+    }
+
+    public function exportCustomReport(Request $request)
+    {
+        // ... existing exportCustomReport code ...
+    }
+
+    public function export(Request $request)
+    {
+        $type = $request->input('type', 'overview');
+        $format = $request->input('format', 'csv');
+
+        // TODO: Implement export functionality based on type and format
+        return response()->json(['message' => 'Export functionality coming soon']);
     }
 }
 

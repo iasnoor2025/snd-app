@@ -1,21 +1,30 @@
 import React, { useState } from 'react';
-import { Head, router, usePage } from '@inertiajs/react';
-import { AdminLayout } from '@/Modules/Core/resources/js/layouts';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Modules/Core/resources/js/components/ui/table';
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
-import { Select } from '@/Modules/Core/resources/js/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/Modules/Core/resources/js/components/ui/dialog';
+import { Head, router } from '@inertiajs/react';
+import AdminLayout from '@/layouts/AdminLayout';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import RevenueChart from './RevenueChart';
-// import Chart from '@/Modules/Core/resources/js/components/Chart'; // TODO: Integrate chart library
+import { useForm } from '@inertiajs/react';
+import { toast } from 'sonner';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { BarChart, LineChart } from '@/components/ui/charts';
+import { DataTable } from '@/components/ui/data-table';
 
 interface Stats {
+  revenue: any;
   clients: number;
   equipment: number;
   rentals: number;
   invoices: number;
   payments: number;
+  employees: number;
+  projects: number;
+  timesheets: number;
+  leaves: number;
 }
 
 interface Paginated<T> {
@@ -26,12 +35,14 @@ interface Paginated<T> {
 }
 
 interface RecentActivity {
+  leaves: any;
   rentals: Paginated<any>;
   invoices: Paginated<any>;
   payments: Paginated<any>;
 }
 
 interface ChartData {
+  leaveDistribution: any;
   monthlyRevenue: { month: string; total: number }[];
 }
 
@@ -39,7 +50,26 @@ interface ReportsIndexProps {
   stats: Stats;
   recentActivity: RecentActivity;
   charts: ChartData;
-  filters: { date_from?: string; date_to?: string };
+  filters: {
+    report_type: string;
+    department: string;
+    status: string; date_from?: string; date_to?: string 
+};
+}
+
+interface LeaveData {
+  id: number;
+  employee: {
+    name: string;
+  };
+  department: string;
+  leaveType: {
+    name: string;
+  };
+  start_date: string;
+  end_date: string;
+  status: string;
+  days: number;
 }
 
 const reportTypes = [
@@ -55,507 +85,374 @@ const reportTypes = [
 ];
 
 const ReportsIndex: React.FC<ReportsIndexProps> = ({ stats, recentActivity, charts, filters }) => {
-  // State for filters
-  const [dateFrom, setDateFrom] = useState(filters.date_from || '');
-  const [dateTo, setDateTo] = useState(filters.date_to || '');
-  const [search, setSearch] = useState('');
-  // State for custom report modal
-  const [showReportModal, setShowReportModal] = useState(false);
-  const [customReportType, setCustomReportType] = useState('clients');
-  const [customDateFrom, setCustomDateFrom] = useState('');
-  const [customDateTo, setCustomDateTo] = useState('');
-  const [customColumns, setCustomColumns] = useState<string[]>([]);
-  const [customFormat, setCustomFormat] = useState('table');
-  // TODO: Add more filter states as needed
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [activeTab, setActiveTab] = useState('overview');
+  const { data, setData, get } = useForm({
+    report_type: filters.report_type || 'overview',
+    date_from: filters.date_from || '',
+    date_to: filters.date_to || '',
+    department: filters.department || '',
+    status: filters.status || '',
+  });
 
-  // Pagination and sorting state
-  const [rentalsPage, setRentalsPage] = useState(1);
-  const [rentalsSort, setRentalsSort] = useState<'created_at' | 'client'>('created_at');
-  const [rentalsDir, setRentalsDir] = useState<'asc' | 'desc'>('desc');
-  const [invoicesPage, setInvoicesPage] = useState(1);
-  const [invoicesSort, setInvoicesSort] = useState<'created_at' | 'client'>('created_at');
-  const [invoicesDir, setInvoicesDir] = useState<'asc' | 'desc'>('desc');
-  const [paymentsPage, setPaymentsPage] = useState(1);
-  const [paymentsSort, setPaymentsSort] = useState<'created_at' | 'client'>('created_at');
-  const [paymentsDir, setPaymentsDir] = useState<'asc' | 'desc'>('desc');
-
-  // Advanced filter state
-  const [projectStatus, setProjectStatus] = useState('');
-  const [projectClient, setProjectClient] = useState('');
-  const [projectManager, setProjectManager] = useState('');
-  const [equipmentStatus, setEquipmentStatus] = useState('');
-  const [equipmentCategory, setEquipmentCategory] = useState('');
-  const [equipmentLocation, setEquipmentLocation] = useState('');
-  const [employeeDepartment, setEmployeeDepartment] = useState('');
-  const [employeePosition, setEmployeePosition] = useState('');
-  const [employeeStatus, setEmployeeStatus] = useState('');
-  const [timesheetProject, setTimesheetProject] = useState('');
-  const [timesheetApproval, setTimesheetApproval] = useState('');
-  const [timesheetOvertime, setTimesheetOvertime] = useState(false);
-  const [leaveStatus, setLeaveStatus] = useState('');
-  const [leaveType, setLeaveType] = useState('');
-
-  // Table reload handler
-  const reloadDashboard = (params: any) => {
-    setLoading(true);
-    router.get('/reports', {
-      rentals_page: params.rentalsPage ?? rentalsPage,
-      rentals_sort: params.rentalsSort ?? rentalsSort,
-      rentals_dir: params.rentalsDir ?? rentalsDir,
-      invoices_page: params.invoicesPage ?? invoicesPage,
-      invoices_sort: params.invoicesSort ?? invoicesSort,
-      invoices_dir: params.invoicesDir ?? invoicesDir,
-      payments_page: params.paymentsPage ?? paymentsPage,
-      payments_sort: params.paymentsSort ?? paymentsSort,
-      payments_dir: params.paymentsDir ?? paymentsDir,
-    }, {
+  const handleSearch = () => {
+    get(route('reporting.index'), {
       preserveState: true,
-      onFinish: () => setLoading(false),
+      preserveScroll: true,
+      onSuccess: () => {
+        toast.success('Filters applied successfully');
+      },
+      onError: () => {
+        toast.error('Failed to apply filters');
+      },
     });
   };
 
-  // Handlers
-  const handleExport = async (type: 'csv' | 'pdf') => {
-    // POST to /reports/export-dashboard and trigger download
-    const res = await fetch('/reports/export-dashboard', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-      body: JSON.stringify({
-        dateFrom: dateFrom || null,
-        dateTo: dateTo || null,
-        search,
-        format: type,
-      }),
-    });
-    if (!res.ok) {
-      setError('Export failed');
-      return;
-    }
-    const blob = await res.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = type === 'csv' ? 'dashboard_report.csv' : 'dashboard_report.pdf';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    window.URL.revokeObjectURL(url);
-  };
+  const rentalColumns = [
+    {
+      accessorKey: 'rental_number',
+      header: 'Rental Number',
+    },
+    {
+      accessorKey: 'customer.name',
+      header: 'Customer',
+    },
+    {
+      accessorKey: 'start_date',
+      header: 'Start Date',
+    },
+    {
+      accessorKey: 'end_date',
+      header: 'End Date',
+    },
+    {
+      accessorKey: 'status',
+      header: 'Status',
+      cell: ({ row }) => (
+        <span className={`capitalize ${row.original.status === 'active' ? 'text-green-600' : 'text-gray-600'}`}>
+          {row.original.status}
+        </span>
+      ),
+    },
+    {
+      accessorKey: 'items_count',
+      header: 'Items',
+    },
+    {
+      accessorKey: 'total_amount',
+      header: 'Total Amount',
+      cell: ({ row }) => (
+        <span>
+          ${row.original.total_amount?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}
+        </span>
+      ),
+    },
+  ];
 
-  const handleCustomReportGenerate = () => {
-    // TODO: Implement custom report preview logic
-    alert('Generating custom report preview...');
-  };
-
-  const handleCustomReportExport = async (type: 'csv' | 'pdf') => {
-    let endpoint = '/reports/builder/export';
-    const data = {
-      reportType: customReportType,
-      dateFrom: customDateFrom || null,
-      dateTo: customDateTo || null,
-      columns: customColumns,
-      // Advanced filters
-      projectStatus,
-      projectClient,
-      projectManager,
-      equipmentStatus,
-      equipmentCategory,
-      equipmentLocation,
-      employeeDepartment,
-      employeePosition,
-      employeeStatus,
-      timesheetProject,
-      timesheetApproval,
-      timesheetOvertime,
-      leaveStatus,
-      leaveType,
-    };
-    // Route to specific endpoints if needed
-    if (customReportType === 'projects') endpoint = '/reports/project/export';
-    if (customReportType === 'equipment') endpoint = '/reports/equipment/export';
-    if (customReportType === 'employees') endpoint = '/reports/employee/export';
-    if (customReportType === 'timesheets') endpoint = '/hr/timesheets/reports/export';
-    if (customReportType === 'leaves') endpoint = '/leaves/reports/export';
-    const res = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-      body: JSON.stringify({
-        data,
-        format: type,
-        filename: `custom_report_${customReportType}_${Date.now()}.${type}`,
-      }),
-    });
-    if (!res.ok) {
-      setError('Export failed');
-      return;
-    }
-    const blob = await res.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `custom_report_${customReportType}.${type}`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    window.URL.revokeObjectURL(url);
-  };
+  const leaveColumns = [
+    {
+      accessorKey: 'employee.name',
+      header: 'Employee',
+    },
+    {
+      accessorKey: 'department',
+      header: 'Department',
+    },
+    {
+      accessorKey: 'leaveType.name',
+      header: 'Leave Type',
+    },
+    {
+      accessorKey: 'start_date',
+      header: 'Start Date',
+    },
+    {
+      accessorKey: 'end_date',
+      header: 'End Date',
+    },
+    {
+      accessorKey: 'days',
+      header: 'Days',
+    },
+    {
+      accessorKey: 'status',
+      header: 'Status',
+      cell: ({ row }) => (
+        <span className={`capitalize ${
+          row.original.status === 'approved' ? 'text-green-600' : 
+          row.original.status === 'rejected' ? 'text-red-600' : 'text-yellow-600'
+        }`}>
+          {row.original.status}
+        </span>
+      ),
+    },
+  ];
 
   return (
-    <AdminLayout title="Reports Dashboard">
-      <Head title="Reports" />
-      <div className="flex flex-col gap-6 p-4 md:p-8">
-        {/* Filters and Actions */}
-        <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
-          <Input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} placeholder="From" className="w-40" aria-label="Filter from date" />
-          <Input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} placeholder="To" className="w-40" aria-label="Filter to date" />
-          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." className="w-64" aria-label="Search" />
-          <Button variant="outline" onClick={() => handleExport('csv')} aria-label="Export dashboard as CSV">Export CSV</Button>
-          <Button variant="outline" onClick={() => handleExport('pdf')} aria-label="Export dashboard as PDF">Export PDF</Button>
-          <Button onClick={() => setShowReportModal(true)} className="ml-auto" aria-label="Create custom report">Create Custom Report</Button>
+    <AdminLayout title="Comprehensive Reports Dashboard">
+      <Head title="Comprehensive Reports Dashboard" />
+      <div className="container mx-auto py-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Reports Dashboard</h1>
+          <div className="flex gap-2">
+            <Button onClick={() => window.location.href = route('reporting.export', { type: activeTab })}>
+              Export Report
+            </Button>
+          </div>
         </div>
 
-        {/* Summary Widgets */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <Card>
-            <CardHeader><CardTitle>Clients</CardTitle></CardHeader>
-            <CardContent>
-              <span className="text-2xl font-bold">{stats.clients}</span>
-              <div className="text-xs text-muted-foreground">Total clients</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader><CardTitle>Equipment</CardTitle></CardHeader>
-            <CardContent>
-              <span className="text-2xl font-bold">{stats.equipment}</span>
-              <div className="text-xs text-muted-foreground">Total equipment</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader><CardTitle>Rentals</CardTitle></CardHeader>
-            <CardContent>
-              <span className="text-2xl font-bold">{stats.rentals}</span>
-              <div className="text-xs text-muted-foreground">Total rentals</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader><CardTitle>Invoices</CardTitle></CardHeader>
-            <CardContent>
-              <span className="text-2xl font-bold">{stats.invoices}</span>
-              <div className="text-xs text-muted-foreground">Total invoices</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader><CardTitle>Payments</CardTitle></CardHeader>
-            <CardContent>
-              <span className="text-2xl font-bold">{stats.payments}</span>
-              <div className="text-xs text-muted-foreground">Total payments</div>
-            </CardContent>
-          </Card>
-        </div>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="rentals">Rentals</TabsTrigger>
+            <TabsTrigger value="leaves">Leave Management</TabsTrigger>
+            <TabsTrigger value="revenue">Revenue</TabsTrigger>
+          </TabsList>
 
-        {/* Revenue Chart */}
-        <Card>
-          <CardHeader><CardTitle>Monthly Revenue</CardTitle></CardHeader>
-          <CardContent>
-            <RevenueChart data={charts.monthlyRevenue} />
-          </CardContent>
-        </Card>
-
-        {/* Recent Activity Tables */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card>
-            <CardHeader><CardTitle>Recent Rentals</CardTitle></CardHeader>
-            <CardContent>
-              {loading ? (
-                <div className="flex items-center justify-center h-24">Loading...</div>
-              ) : (
-                <>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead onClick={() => { setRentalsSort('client'); setRentalsDir(rentalsDir === 'asc' ? 'desc' : 'asc'); reloadDashboard({ rentalsSort: 'client', rentalsDir: rentalsDir === 'asc' ? 'desc' : 'asc', rentalsPage: 1 }); }} style={{ cursor: 'pointer' }}>Client</TableHead>
-                        <TableHead onClick={() => { setRentalsSort('created_at'); setRentalsDir(rentalsDir === 'asc' ? 'desc' : 'asc'); reloadDashboard({ rentalsSort: 'created_at', rentalsDir: rentalsDir === 'asc' ? 'desc' : 'asc', rentalsPage: 1 }); }} style={{ cursor: 'pointer' }}>Date</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {recentActivity.rentals.data.map((rental: any, idx: number) => (
-                        <TableRow key={idx}>
-                          <TableCell>{rental.client?.company_name || '-'}</TableCell>
-                          <TableCell>{rental.created_at && !isNaN(new Date(rental.created_at).getTime()) ? new Date(rental.created_at).toLocaleDateString() : '-'}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                  {/* Pagination Controls */}
-                  <div className="flex justify-end gap-2 mt-2">
-                    <Button variant="outline" size="sm" disabled={recentActivity.rentals.current_page === 1} onClick={() => { setRentalsPage(rentalsPage - 1); reloadDashboard({ rentalsPage: rentalsPage - 1 }); }}>Prev</Button>
-                    <span className="px-2">Page {recentActivity.rentals.current_page} of {recentActivity.rentals.last_page}</span>
-                    <Button variant="outline" size="sm" disabled={recentActivity.rentals.current_page === recentActivity.rentals.last_page} onClick={() => { setRentalsPage(rentalsPage + 1); reloadDashboard({ rentalsPage: rentalsPage + 1 }); }}>Next</Button>
+          <TabsContent value="overview" className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    ${stats.revenue.total.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader><CardTitle>Recent Invoices</CardTitle></CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Client</TableHead>
-                    <TableHead>Date</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {recentActivity.invoices.data.map((invoice, idx) => (
-                      <TableRow key={idx}>
-                        <TableCell>{invoice.client?.company_name || '-'}</TableCell>
-                        <TableCell>{invoice.created_at && !isNaN(new Date(invoice.created_at).getTime()) ? new Date(invoice.created_at).toLocaleDateString() : '-'}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader><CardTitle>Recent Payments</CardTitle></CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Client</TableHead>
-                    <TableHead>Date</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {recentActivity.payments.data.map((payment, idx) => (
-                      <TableRow key={idx}>
-                        <TableCell>{payment.client?.company_name || '-'}</TableCell>
-                        <TableCell>{payment.created_at && !isNaN(new Date(payment.created_at).getTime()) ? new Date(payment.created_at).toLocaleDateString() : '-'}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Custom Report Builder Modal */}
-        <Dialog open={showReportModal} onOpenChange={setShowReportModal}>
-          <DialogContent className="max-w-lg">
-            <DialogHeader>
-              <DialogTitle>Create Custom Report</DialogTitle>
-            </DialogHeader>
-            <div className="flex flex-col gap-4">
-              <label>
-                Report Type
-                <select value={customReportType} onChange={e => setCustomReportType(e.target.value)} className="w-full border rounded px-2 py-1 mt-1">
-                  {reportTypes.map(rt => (
-                    <option key={rt.value} value={rt.value}>{rt.label}</option>
-                  ))}
-                </select>
-              </label>
-              <div className="flex gap-2">
-                <Input type="date" value={customDateFrom} onChange={e => setCustomDateFrom(e.target.value)} placeholder="From" className="w-1/2" />
-                <Input type="date" value={customDateTo} onChange={e => setCustomDateTo(e.target.value)} placeholder="To" className="w-1/2" />
-              </div>
-              <label>
-                Columns (comma separated)
-                <Input value={customColumns.join(', ')} onChange={e => setCustomColumns(e.target.value.split(',').map(s => s.trim()))} placeholder="e.g. name, email, status" />
-              </label>
-              <label>
-                Output Format
-                <select value={customFormat} onChange={e => setCustomFormat(e.target.value)} className="w-full border rounded px-2 py-1 mt-1">
-                  <option value="table">Table</option>
-                  <option value="chart">Chart</option>
-                  <option value="csv">CSV</option>
-                  <option value="pdf">PDF</option>
-                </select>
-              </label>
-              {/* Dynamic filters based on report type */}
-              {customReportType === 'projects' && (
-                <>
-                  <label>
-                    Status
-                    <select value={projectStatus} onChange={e => setProjectStatus(e.target.value)} className="w-full border rounded px-2 py-1 mt-1">
-                      <option value="">All</option>
-                      <option value="active">Active</option>
-                      <option value="completed">Completed</option>
-                      <option value="on_hold">On Hold</option>
-                    </select>
-                  </label>
-                  <label>
-                    Client
-                    <Input value={projectClient} onChange={e => setProjectClient(e.target.value)} placeholder="Client Name or ID" />
-                  </label>
-                  <label>
-                    Project Manager
-                    <Input value={projectManager} onChange={e => setProjectManager(e.target.value)} placeholder="Manager Name or ID" />
-                  </label>
-                </>
-              )}
-              {customReportType === 'equipment' && (
-                <>
-                  <label>
-                    Status
-                    <select value={equipmentStatus} onChange={e => setEquipmentStatus(e.target.value)} className="w-full border rounded px-2 py-1 mt-1">
-                      <option value="">All</option>
-                      <option value="available">Available</option>
-                      <option value="rented">Rented</option>
-                      <option value="maintenance">Maintenance</option>
-                      <option value="retired">Retired</option>
-                    </select>
-                  </label>
-                  <label>
-                    Category
-                    <Input value={equipmentCategory} onChange={e => setEquipmentCategory(e.target.value)} placeholder="Category" />
-                  </label>
-                  <label>
-                    Location
-                    <Input value={equipmentLocation} onChange={e => setEquipmentLocation(e.target.value)} placeholder="Location" />
-                  </label>
-                </>
-              )}
-              {customReportType === 'employees' && (
-                <>
-                  <label>
-                    Department
-                    <Input value={employeeDepartment} onChange={e => setEmployeeDepartment(e.target.value)} placeholder="Department" />
-                  </label>
-                  <label>
-                    Position
-                    <Input value={employeePosition} onChange={e => setEmployeePosition(e.target.value)} placeholder="Position" />
-                  </label>
-                  <label>
-                    Status
-                    <select value={employeeStatus} onChange={e => setEmployeeStatus(e.target.value)} className="w-full border rounded px-2 py-1 mt-1">
-                      <option value="">All</option>
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
-                    </select>
-                  </label>
-                </>
-              )}
-              {customReportType === 'timesheets' && (
-                <>
-                  <label>
-                    Project
-                    <Input value={timesheetProject} onChange={e => setTimesheetProject(e.target.value)} placeholder="Project Name or ID" />
-                  </label>
-                  <label>
-                    Approval Status
-                    <select value={timesheetApproval} onChange={e => setTimesheetApproval(e.target.value)} className="w-full border rounded px-2 py-1 mt-1">
-                      <option value="">All</option>
-                      <option value="approved">Approved</option>
-                      <option value="pending">Pending</option>
-                      <option value="rejected">Rejected</option>
-                    </select>
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <input type="checkbox" checked={timesheetOvertime} onChange={e => setTimesheetOvertime(e.target.checked)} />
-                    Overtime Only
-                  </label>
-                </>
-              )}
-              {customReportType === 'leaves' && (
-                <>
-                  <label>
-                    Status
-                    <select value={leaveStatus} onChange={e => setLeaveStatus(e.target.value)} className="w-full border rounded px-2 py-1 mt-1">
-                      <option value="">All</option>
-                      <option value="approved">Approved</option>
-                      <option value="pending">Pending</option>
-                      <option value="rejected">Rejected</option>
-                    </select>
-                  </label>
-                  <label>
-                    Leave Type
-                    <Input value={leaveType} onChange={e => setLeaveType(e.target.value)} placeholder="Annual, Sick, etc." />
-                  </label>
-                </>
-              )}
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Active Rentals</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.rentals.active}</div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Pending Leaves</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.leaves.pending}</div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Available Equipment</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.equipment.available}</div>
+                </CardContent>
+              </Card>
             </div>
-            <DialogFooter className="flex gap-2 justify-end">
-              <Button variant="outline" onClick={() => handleCustomReportGenerate()}>Preview</Button>
-              <Button variant="outline" onClick={() => handleCustomReportExport('csv')}>Export CSV</Button>
-              <Button variant="outline" onClick={() => handleCustomReportExport('pdf')}>Export PDF</Button>
-              <Button onClick={() => setShowReportModal(false)} variant="secondary">Close</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
 
-        {error && <div role="alert" className="text-red-600">{error}</div>}
+            <div className="grid gap-4 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Monthly Revenue</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <LineChart
+                    data={charts.monthlyRevenue}
+                    xField="month"
+                    yField="total"
+                    height={300}
+                  />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Leave Distribution</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <BarChart
+                    data={charts.leaveDistribution}
+                    xField="type"
+                    yField="count"
+                    height={300}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="rentals" className="space-y-4">
+            <Button
+              onClick={() => window.location.href = route('reporting.modules.rentals')}
+              className="mb-4"
+            >
+              View Detailed Rental Reports
+            </Button>
+            <Card>
+              <CardHeader>
+                <CardTitle>Rental Reports</CardTitle>
+                <CardDescription>View and analyze rental data</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col md:flex-row gap-4 mb-4">
+                  <div className="flex-1">
+                    <Input
+                      placeholder="Search rentals..."
+                      value={data.search}
+                      onChange={(e) => setData('search', e.target.value)}
+                    />
+                  </div>
+                  <div className="w-full md:w-48">
+                    <Select value={data.status} onValueChange={(value) => setData('status', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Filter by status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">All Statuses</SelectItem>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
+                        <SelectItem value="overdue">Overdue</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="w-full md:w-48">
+                    <DatePicker
+                      value={data.date_from ? new Date(data.date_from) : undefined}
+                      onChange={(date) => setData('date_from', date?.toISOString().split('T')[0] || '')}
+                      placeholder="Start Date"
+                    />
+                  </div>
+                  <div className="w-full md:w-48">
+                    <DatePicker
+                      value={data.date_to ? new Date(data.date_to) : undefined}
+                      onChange={(date) => setData('date_to', date?.toISOString().split('T')[0] || '')}
+                      placeholder="End Date"
+                    />
+                  </div>
+                  <Button onClick={handleSearch}>Apply Filters</Button>
+                </div>
+
+                <DataTable
+                  columns={rentalColumns}
+                  data={recentActivity.rentals.data}
+                  pagination={{
+                    pageIndex: recentActivity.rentals.current_page - 1,
+                    pageCount: recentActivity.rentals.last_page,
+                  }}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="leaves" className="space-y-4">
+            <Button
+              onClick={() => window.location.href = route('reporting.modules.leaves')}
+              className="mb-4"
+            >
+              View Detailed Leave Reports
+            </Button>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Leave Requests</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.leaves.total}</div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Approved Leaves</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-green-600">{stats.leaves.approved}</div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Pending Leaves</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-yellow-600">{stats.leaves.pending}</div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Rejected Leaves</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-red-600">{stats.leaves.rejected}</div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Leave Requests</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <DataTable
+                  columns={leaveColumns}
+                  data={recentActivity.leaves.data}
+                  pagination={{
+                    pageIndex: recentActivity.leaves.current_page - 1,
+                    pageCount: recentActivity.leaves.last_page,
+                  }}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="revenue" className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-3">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    ${stats.revenue.total.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Monthly Revenue</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    ${stats.revenue.monthly.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Yearly Revenue</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    ${stats.revenue.yearly.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Revenue Trends</CardTitle>
+                <CardDescription>Monthly revenue analysis</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <LineChart
+                  data={charts.monthlyRevenue}
+                  xField="month"
+                  yField="total"
+                  height={400}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </AdminLayout>
   );
 };
 
-// Define the component type
-const RecentActivityTables: React.FC<{ recentActivity: any }> = ({ recentActivity }) => {
-  return (
-    <>
-      <TableBody>
-        {recentActivity.rentals.data.length > 0 ? (
-          <>
-            {recentActivity.rentals.data.map((rental: any) => (
-              <TableRow key={rental.id}>
-                <TableCell>{rental.client_name}</TableCell>
-                <TableCell>{rental.equipment_name}</TableCell>
-                <TableCell>{rental.start_date && !isNaN(new Date(rental.start_date).getTime()) ? new Date(rental.start_date).toLocaleDateString() : '-'}</TableCell>
-                <TableCell>{rental.end_date && !isNaN(new Date(rental.end_date).getTime()) ? new Date(rental.end_date).toLocaleDateString() : '-'}</TableCell>
-                <TableCell>{rental.total_price}</TableCell>
-                <TableCell>{rental.created_at && !isNaN(new Date(rental.created_at).getTime()) ? new Date(rental.created_at).toLocaleDateString() : '-'}</TableCell>
-              </TableRow>
-            ))}
-          </>
-        ) : (
-          <TableRow>
-            <TableCell colSpan={6} className="text-center">No recent rentals.</TableCell>
-          </TableRow>
-        )}
-      </TableBody>
-
-      <TableBody>
-        {recentActivity.invoices.data.length > 0 ? (
-          recentActivity.invoices.data.map((invoice: any) => (
-            <TableRow key={invoice.id}>
-              <TableCell>{invoice.client_name}</TableCell>
-              <TableCell>{invoice.invoice_number}</TableCell>
-              <TableCell>{invoice.amount}</TableCell>
-              <TableCell>{invoice.status}</TableCell>
-              <TableCell>{invoice.created_at && !isNaN(new Date(invoice.created_at).getTime()) ? new Date(invoice.created_at).toLocaleDateString() : '-'}</TableCell>
-            </TableRow>
-          ))
-        ) : (
-          <TableRow>
-            <TableCell colSpan={4} className="text-center">No recent invoices.</TableCell>
-          </TableRow>
-        )}
-      </TableBody>
-
-      <TableBody>
-        {recentActivity.payments.data.length > 0 ? (
-          recentActivity.payments.data.map((payment: any) => (
-            <TableRow key={payment.id}>
-              <TableCell>{payment.client_name}</TableCell>
-              <TableCell>{payment.amount}</TableCell>
-              <TableCell>{payment.method}</TableCell>
-              <TableCell>{payment.created_at && !isNaN(new Date(payment.created_at).getTime()) ? new Date(payment.created_at).toLocaleDateString() : '-'}</TableCell>
-            </TableRow>
-          ))
-        ) : (
-          <TableRow>
-            <TableCell colSpan={4} className="text-center">No recent payments.</TableCell>
-          </TableRow>
-        )}
-      </TableBody>
-    </>
-  );
-};
-
-// Export the component
 export default ReportsIndex;
 
 

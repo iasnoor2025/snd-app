@@ -14,15 +14,16 @@ return new class extends Migration
     {
         Schema::create('rental_items', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('rental_id')->cascadeOnDelete();
-            $table->unsignedBigInteger('equipment_id')->cascadeOnDelete();
-            $table->unsignedBigInteger('operator_id')->nullable()->constrained('employees')->nullOnDelete();
+            $table->foreignId('rental_id')->constrained('rentals')->onDelete('cascade');
+            $table->foreignId('equipment_id')->constrained('equipment')->onDelete('cascade');
+            $table->foreignId('employee_id')->nullable()->constrained('employees')->nullOnDelete();
             $table->decimal('rate', 10, 2);
             $table->enum('rate_type', ['daily', 'weekly', 'monthly'])->default('daily');
             $table->decimal('discount_percentage', 5, 2)->default(0);
             $table->decimal('total_amount', 10, 2);
             $table->text('notes')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

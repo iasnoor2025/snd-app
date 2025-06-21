@@ -5,12 +5,16 @@ namespace Modules\RentalManagement\Domain\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Modules\Core\Traits\AutoLoadsRelations;
+use Modules\EmployeeManagement\Domain\Models\Employee;
+use Modules\EquipmentManagement\Domain\Models\Equipment;
 
 class RentalItem extends Model
 {
     use HasFactory;
-use AutoLoadsRelations;
+    use AutoLoadsRelations;
 
     /**
      * The attributes that are mass assignable.
@@ -24,7 +28,7 @@ use AutoLoadsRelations;
         'rate',
         'rate_type',
         'status',
-        'operator_id',
+        'employee_id',
         'notes',
         'total_amount',
         'discount_percentage',
@@ -63,7 +67,17 @@ use AutoLoadsRelations;
      */
     public function operator(): BelongsTo
     {
-        return $this->belongsTo(Employee::class, 'operator_id');
+        return $this->belongsTo(Employee::class, 'employee_id');
+    }
+
+    /**
+     * Get the operators assigned to this rental item.
+     */
+    public function operators(): BelongsToMany
+    {
+        return $this->belongsToMany(Employee::class, 'rental_operator_assignments', 'rental_item_id', 'employee_id')
+            ->withTimestamps()
+            ->withPivot(['status', 'notes']);
     }
 
     /**

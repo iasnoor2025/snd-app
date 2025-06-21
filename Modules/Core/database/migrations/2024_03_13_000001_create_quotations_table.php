@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('quotations', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('customer_id')->cascadeOnDelete();
+            $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
             $table->date('issue_date');
             $table->date('valid_until');
             $table->enum('status', ['draft', 'sent', 'approved', 'rejected', 'expired'])->default('draft');
@@ -26,11 +26,11 @@ return new class extends Migration
             $table->decimal('total_amount', 10, 2);
             $table->text('notes')->nullable();
             $table->text('terms_and_conditions')->nullable();
-            $table->unsignedBigInteger('created_by')->cascadeOnDelete();
-            $table->unsignedBigInteger('rental_id')->nullable();
+            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->timestamp('approved_at')->nullable();
-            $table->unsignedBigInteger('approved_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('approved_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
+            $table->softDeletes();
             $table->string('quotation_number')->unique();
         });
     }

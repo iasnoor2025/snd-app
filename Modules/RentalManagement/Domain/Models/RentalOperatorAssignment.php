@@ -19,6 +19,7 @@ class RentalOperatorAssignment extends Model
     protected $fillable = [
         'employee_id',
         'rental_id',
+        'rental_item_id',
         'equipment_id',
         'status',
         'assignment_date',
@@ -40,6 +41,14 @@ class RentalOperatorAssignment extends Model
         'daily_rate' => 'decimal:2',
         'hourly_rate' => 'decimal:2',
     ];
+
+    /**
+     * Get the rental item associated with this assignment
+     */
+    public function rentalItem(): BelongsTo
+    {
+        return $this->belongsTo(RentalItem::class);
+    }
 
     /**
      * Get the employee associated with this assignment

@@ -62,7 +62,7 @@ const moduleMap: Record<string, { icon: any; route: string; permission: string; 
     EquipmentManagement: { icon: Truck, route: '/equipment', permission: 'equipment.view' },
     Settings: { icon: Settings, route: '/settings', permission: 'settings.view' },
     Notifications: { icon: Bell, route: '/notifications', permission: 'notifications.view' },
-    Reporting: { icon: BarChart, route: '/reports', permission: 'reports.view' },
+    Reporting: { icon: BarChart, route: '/reporting', permission: 'reports.view' },
     MobileBridge: { icon: Smartphone, route: '/mobile-bridge', permission: 'mobile-bridge.view' },
     Localization: { icon: Globe, route: '/localization', permission: 'localization.view' },
     CustomerManagement: { icon: Users, route: '/customers', permission: 'customers.view' },

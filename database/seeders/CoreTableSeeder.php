@@ -60,10 +60,15 @@ class CoreTableSeeder extends Seeder
 
         // Seed roles using Spatie Permission
         $roles = [
-            ['name' => 'Administrator', 'guard_name' => 'web'],
-            ['name' => 'Manager', 'guard_name' => 'web'],
-            ['name' => 'Employee', 'guard_name' => 'web'],
-            ['name' => 'Guest', 'guard_name' => 'web'],
+            ['name' => 'admin', 'guard_name' => 'web'],
+            ['name' => 'manager', 'guard_name' => 'web'],
+            ['name' => 'employee', 'guard_name' => 'web'],
+            ['name' => 'customer', 'guard_name' => 'web'],
+            ['name' => 'technician', 'guard_name' => 'web'],
+            ['name' => 'accountant', 'guard_name' => 'web'],
+            ['name' => 'hr', 'guard_name' => 'web'],
+            ['name' => 'supervisor', 'guard_name' => 'web'],
+            ['name' => 'user', 'guard_name' => 'web'],
         ];
 
         foreach ($roles as $role) {
@@ -72,18 +77,21 @@ class CoreTableSeeder extends Seeder
 
         // Create basic permissions
         $permissions = [
-            'view-dashboard',
-            'manage-users',
-            'view-reports',
-            'edit-profile',
+            'dashboard.view',
+            'users.view',
+            'users.create',
+            'users.edit',
+            'users.delete',
+            'reports.view',
+            'reports.build',
         ];
 
         foreach ($permissions as $permission) {
             Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
         }
 
-        // Assign permissions to Administrator role
-        $adminRole = Role::where('name', 'Administrator')->first();
+        // Assign permissions to admin role
+        $adminRole = Role::where('name', 'admin')->first();
         if ($adminRole) {
             $adminRole->givePermissionTo(Permission::all());
         }

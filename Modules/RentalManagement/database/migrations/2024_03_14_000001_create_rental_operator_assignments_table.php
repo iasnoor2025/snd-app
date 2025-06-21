@@ -1,5 +1,6 @@
 <?php
-namespace Modules\RentalManagement\database\migrations;
+
+namespace Modules\RentalManagement\Database\Migrations;
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -14,16 +15,15 @@ return new class extends Migration
     {
         Schema::create('rental_operator_assignments', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('employee_id')->onDelete('cascade');
-            $table->unsignedBigInteger('rental_id')->onDelete('cascade');
-            $table->unsignedBigInteger('equipment_id')->nullable()->constrained('equipment')->nullOnDelete();
-            $table->string('status')->default('active');
+            $table->foreignId('rental_id')->constrained('rentals')->onDelete('cascade');
+            $table->foreignId('rental_item_id')->constrained('rental_items')->onDelete('cascade');
+            $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
+            $table->foreignId('equipment_id')->nullable()->constrained('equipment')->nullOnDelete();
+            $table->foreignId('assigned_by_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('assignment_date')->nullable();
             $table->timestamp('end_date')->nullable();
             $table->decimal('daily_rate', 10, 2)->nullable();
             $table->decimal('hourly_rate', 10, 2)->nullable();
-            $table->text('notes')->nullable();
-            $table->unsignedBigInteger('assigned_by_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -36,4 +36,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('rental_operator_assignments');
     }
-};
+}; 

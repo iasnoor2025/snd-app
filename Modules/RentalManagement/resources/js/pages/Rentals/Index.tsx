@@ -1,17 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from "@inertiajs/react";
-import { PageProps } from '@/types'; // Uncommented and adjusted
-import { AdminLayout } from '@/Modules/Core/resources/js';
+import { useTranslation } from "react-i18next";
+import { useForm } from "@inertiajs/react";
 import { format } from "date-fns";
-import { usePermission } from '@/Modules/Core/resources/js/hooks/usePermission'; // Uncommented and adjusted path
-import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/Modules/Core/resources/js/components/ui/tooltip';
 import { toast } from "sonner";
 import axios from "axios";
 
-// Shadcn UI Components
-import { Button } from '@/Modules/Core/resources/js/components/ui/button';
-import { Badge } from '@/Modules/Core/resources/js/components/ui/badge';
+// Types
+import { PageProps } from "@/types";
+
+// Layouts & Hooks
+import { AdminLayout } from "@/Modules/Core/resources/js";
+import { usePermission } from "@/Modules/Core/resources/js/hooks/usePermission";
+
+// UI Components
+import { Button } from "@/Modules/Core/resources/js/components/ui/button";
+import { Badge } from "@/Modules/Core/resources/js/components/ui/badge";
+import { Input } from "@/Modules/Core/resources/js/components/ui/input";
+import { DataTable } from "@/Modules/Core/resources/js/components/ui/data-table";
+import { DatePicker } from "@/Modules/Core/resources/js/components/ui/date-picker";
 import {
   Card,
   CardContent,
@@ -19,7 +26,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/Modules/Core/resources/js/components/ui/card';
+} from "@/Modules/Core/resources/js/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -27,20 +34,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/Modules/Core/resources/js/components/ui/dialog';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/Modules/Core/resources/js/components/ui/avatar';
-import { Input } from '@/Modules/Core/resources/js/components/ui/input';
+} from "@/Modules/Core/resources/js/components/ui/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/Modules/Core/resources/js/components/ui/select';
+} from "@/Modules/Core/resources/js/components/ui/select";
 import {
   Table,
   TableBody,
@@ -48,7 +49,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/Modules/Core/resources/js/components/ui/table';
+} from "@/Modules/Core/resources/js/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -56,9 +57,22 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/Modules/Core/resources/js/components/ui/dropdown-menu';
-import CreateButton from '@/Modules/Core/resources/js/components/shared/CreateButton';
-import CrudButtons from '@/Modules/Core/resources/js/components/shared/CrudButtons';
+} from "@/Modules/Core/resources/js/components/ui/dropdown-menu";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/Modules/Core/resources/js/components/ui/avatar";
+import {
+  TooltipProvider,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/Modules/Core/resources/js/components/ui/tooltip";
+
+// Shared Components
+import CreateButton from "@/Modules/Core/resources/js/components/shared/CreateButton";
+import CrudButtons from "@/Modules/Core/resources/js/components/shared/CrudButtons";
 
 // Icons
 import {
@@ -76,8 +90,24 @@ import {
   RefreshCw
 } from "lucide-react";
 
+// Types
+interface Rental {
+  id: number;
+  rental_number: string;
+  customer: {
+    name: string;
+    email: string;
+  };
+  start_date: string;
+  expected_end_date: string;
+  actual_end_date?: string;
+  status: string;
+  has_operators: boolean;
+  total_amount: number;
+}
+
 interface Props extends PageProps {
-  rentals: {
+  rentals?: {
     data: Rental[];
     current_page: number;
     last_page: number;
@@ -92,9 +122,9 @@ interface Props extends PageProps {
   };
 }
 
-const breadcrumbs  = [
-  { title: 'Dashboard', href: '/dashboard' },
-  { title: 'Rentals', href: '/rentals' },
+const breadcrumbs = [
+  { title: "Dashboard", href: "/dashboard" },
+  { title: "Rentals", href: "/rentals" },
 ];
 
 export default function Index({ auth, rentals, filters = {} }: Props) {
@@ -114,10 +144,12 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [rentalToDelete, setRentalToDelete] = useState<Rental | null>(null);
-  const [searchTerm, setSearchTerm] = useState(filters.search || "");
-  const [statusFilter, setStatusFilter] = useState(filters.status || "all");
-  const [startDateFilter, setStartDateFilter] = useState(filters.start_date || "");
-  const [endDateFilter, setEndDateFilter] = useState(filters.end_date || "");
+  const { data, setData, get } = useForm({
+    search: filters.search || '',
+    status: filters.status || 'all',
+    start_date: filters.start_date || '',
+    end_date: filters.end_date || '',
+  });
 
   // Debug route helper - use first rental ID from data if available
   const sampleRentalId = rentals?.data?.length > 0 ? rentals.data[0].id : 1;
@@ -154,43 +186,49 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
     });
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    applyFilters(1); // Always go to the first page on a new search
+  const handleSearch = () => {
+    get(route('rentals.index'), {
+      preserveState: true,
+      preserveScroll: true,
+      onSuccess: () => {
+        toast.success('Filters applied successfully');
+      },
+      onError: () => {
+        toast.error('Failed to apply filters');
+      },
+    });
   };
 
-  const applyFilters = (page: number = 1) => {
-    router.get(
-      route("rentals.index"),
-      {
-        search: searchTerm || undefined,
-        status: statusFilter === "all" ? undefined : statusFilter,
-        start_date: startDateFilter || undefined,
-        end_date: endDateFilter || undefined,
-        page: page,
-      },
-      { preserveState: true, preserveScroll: true }
-    );
+  const handleReset = () => {
+    setData({
+      search: '',
+      status: 'all',
+      start_date: '',
+      end_date: '',
+    });
+    get(route('rentals.index'), {
+      preserveState: true,
+      preserveScroll: true,
+    });
   };
 
   const handleStatusChange = (value: string) => {
-    setStatusFilter(value);
-    applyFilters(1); // Apply filters and go to first page
+    setData('status', value);
+    handleSearch();
   };
 
   const handleDateChange = (field: 'start' | 'end', value: string) => {
     if (field === 'start') {
-      setStartDateFilter(value);
-      applyFilters(1); // Apply filters and go to first page
+      setData('start_date', value);
     } else {
-      setEndDateFilter(value);
-      applyFilters(1); // Apply filters and go to first page
+      setData('end_date', value);
     }
+    handleSearch();
   };
 
   const applyDateFilter = (field: 'start' | 'end', value: string | null) => {
-    let start = startDateFilter || undefined;
-    let end = endDateFilter || undefined;
+    let start = data.start_date || undefined;
+    let end = data.end_date || undefined;
 
     if (field === 'start') {
       start = value || undefined;
@@ -199,28 +237,12 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
     }
 
     // Apply the filter immediately
-    router.get(
-      route("rentals.index"),
-      {
-        search: searchTerm || undefined,
-        status: statusFilter === "all" ? undefined : statusFilter,
-        start_date: start,
-        end_date: end
-      },
-      { preserveState: true }
-    );
-  };
-
-  const resetFilters = () => {
-    setSearchTerm("");
-    setStatusFilter("all");
-    setStartDateFilter("");
-    setEndDateFilter("");
-    applyFilters(1); // Reset filters and go to the first page
-  };
-
-  const handlePageChange = (page: number) => {
-    applyFilters(page);
+    get(route('rentals.index'), {
+      search: data.search || undefined,
+      status: data.status === "all" ? undefined : data.status,
+      start_date: start,
+      end_date: end
+    }, { preserveState: true });
   };
 
   const renderPagination = () => {
@@ -231,7 +253,10 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
           key={i}
           variant={rentals.current_page === i ? "default" : "outline"}
           size="sm"
-          onClick={() => handlePageChange(i)}
+          onClick={() => {
+            setData('page', i.toString());
+            handleSearch();
+          }}
         >
           {i}
         </Button>
@@ -302,10 +327,10 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
   // Count active filters to show the user how many are applied
   const getActiveFilterCount = () => {
     let count = 0;
-    if (searchTerm) count++;
-    if (statusFilter !== "all") count++;
-    if (startDateFilter) count++;
-    if (endDateFilter) count++;
+    if (data.search) count++;
+    if (data.status !== "all") count++;
+    if (data.start_date) count++;
+    if (data.end_date) count++;
     return count;
   };
 
@@ -431,6 +456,57 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
     }
   };
 
+  const columns = [
+    {
+      header: t("Rental Number"),
+      accessorKey: "rental_number" as keyof Rental,
+    },
+    {
+      header: t("Customer"),
+      accessorKey: "customer" as keyof Rental,
+      cell: (row: Rental) => row.customer?.name || "-",
+    },
+    {
+      header: t("Dates"),
+      accessorKey: "start_date" as keyof Rental,
+      cell: (row: Rental) => (
+        <div className="flex flex-col gap-1">
+          <span>{row.start_date ? format(new Date(row.start_date), "MMM dd, yyyy") : "-"}</span>
+          <span className="text-sm text-muted-foreground">
+            {t("to")} {row.expected_end_date ? format(new Date(row.expected_end_date), "MMM dd, yyyy") : "-"}
+          </span>
+        </div>
+      ),
+    },
+    {
+      header: t("Status"),
+      accessorKey: "status" as keyof Rental,
+      cell: (row: Rental) => (
+        <Badge variant={row.status === "active" ? "success" : "default"}>
+          {row.status || "-"}
+        </Badge>
+      ),
+    },
+    {
+      header: t("Has Operators"),
+      accessorKey: "has_operators" as keyof Rental,
+      cell: (row: Rental) => (
+        <Badge variant={row.has_operators ? "success" : "default"}>
+          {row.has_operators ? t("Yes") : t("No")}
+        </Badge>
+      ),
+    },
+    {
+      header: t("Total Amount"),
+      accessorKey: "total_amount" as keyof Rental,
+      cell: (row: Rental) => (
+        <span className="font-medium">
+          ${(row.total_amount || 0).toLocaleString()}
+        </span>
+      ),
+    },
+  ];
+
   return (
     <AdminLayout title="Rentals" breadcrumbs={breadcrumbs} requiredPermission="rentals.view">
       <Head title={t('ttl_rentals_management')} />
@@ -446,7 +522,7 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
             </div>
             <div className="flex items-center space-x-2">
               <Button variant="outline" size="sm" asChild>
-                <Link href={route("reports.rentals")}>
+                <Link href={route("reporting.modules.rentals")}>
                   <FileSpreadsheet className="mr-2 h-4 w-4" />
                   Reports
                 </Link>
@@ -468,13 +544,13 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
                     <Input
                       type="text"
                       placeholder={t('ph_search_by_rental_or_customer')}
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
+                      value={data.search}
+                      onChange={(e) => setData('search', e.target.value)}
                       className="w-full pl-9"
                       name="search"
                       id="search"
                     />
-                    {searchTerm && (
+                    {data.search && (
                       <Button
                         type="button"
                         variant="ghost"
@@ -482,7 +558,7 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
                         className="absolute right-1 top-1.5 h-6 w-6"
                         onClick={(e) => {
                           e.preventDefault();
-                          setSearchTerm("");
+                          setData('search', '');
                         }}
                       >
                         <X className="h-3 w-3" />
@@ -492,7 +568,7 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
                 </div>
                 <div>
                   <Select
-                    value={statusFilter}
+                    value={data.status}
                     onValueChange={handleStatusChange}
                     name="status"
                   >
@@ -514,13 +590,13 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
                     <Input
                       type="date"
                       placeholder={t('lbl_start_date')}
-                      value={startDateFilter}
+                      value={data.start_date}
                       onChange={(e) => handleDateChange('start', e.target.value)}
                       className="w-full pl-9"
                       name="start_date"
                       id="start_date"
                     />
-                    {startDateFilter && (
+                    {data.start_date && (
                       <Button
                         type="button"
                         variant="ghost"
@@ -528,7 +604,7 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
                         className="absolute right-1 top-1.5 h-6 w-6"
                         onClick={(e) => {
                           e.preventDefault();
-                          setStartDateFilter("");
+                          setData('start_date', '');
                           applyDateFilter('start', null);
                         }}
                       >
@@ -543,13 +619,13 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
                     <Input
                       type="date"
                       placeholder={t('end_date')}
-                      value={endDateFilter}
+                      value={data.end_date}
                       onChange={(e) => handleDateChange('end', e.target.value)}
                       className="w-full pl-9"
                       name="end_date"
                       id="end_date"
                     />
-                    {endDateFilter && (
+                    {data.end_date && (
                       <Button
                         type="button"
                         variant="ghost"
@@ -557,7 +633,7 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
                         className="absolute right-1 top-1.5 h-6 w-6"
                         onClick={(e) => {
                           e.preventDefault();
-                          setEndDateFilter("");
+                          setData('end_date', '');
                           applyDateFilter('end', null);
                         }}
                       >
@@ -569,22 +645,22 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
                     <Search className="h-4 w-4 mr-2" />
                     Apply
                   </Button>
-                  <Button type="button" variant="outline" onClick={resetFilters}>
+                  <Button type="button" variant="outline" onClick={handleReset}>
                     <RefreshCw className="h-4 w-4 mr-2" />
                     Reset
                   </Button>
                 </div>
               </form>
 
-              {(searchTerm || statusFilter !== "all" || startDateFilter || endDateFilter) && (
+              {(data.search || data.status !== "all" || data.start_date || data.end_date) && (
                 <div className="flex justify-between items-center pt-2 pb-1 border-t mt-4">
                   <div className="flex flex-wrap gap-2 items-center">
                     <span className="text-sm font-medium">
                       Active Filters ({getActiveFilterCount()}):
                     </span>
-                    {searchTerm && (
+                    {data.search && (
                       <Badge variant="secondary" className="px-3 py-1 flex items-center gap-1">
-                        <span className="font-medium">Search:</span> {searchTerm}
+                        <span className="font-medium">Search:</span> {data.search}
                         <Button
                           type="button"
                           variant="ghost"
@@ -592,25 +668,21 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
                           className="h-4 w-4 ml-1"
                           onClick={(e) => {
                             e.preventDefault();
-                            setSearchTerm("");
-                            router.get(
-                              route("rentals.index"),
-                              {
-                                status: statusFilter === "all" ? undefined : statusFilter,
-                                start_date: startDateFilter || undefined,
-                                end_date: endDateFilter || undefined
-                              },
-                              { preserveState: true }
-                            );
+                            setData('search', '');
+                            get(route('rentals.index'), {
+                              status: data.status === "all" ? undefined : data.status,
+                              start_date: data.start_date || undefined,
+                              end_date: data.end_date || undefined
+                            }, { preserveState: true });
                           }}
                         >
                           <X className="h-3 w-3" />
                         </Button>
                       </Badge>
                     )}
-                    {statusFilter !== "all" && (
+                    {data.status !== "all" && (
                       <Badge variant="secondary" className="px-3 py-1 flex items-center gap-1">
-                        <span className="font-medium">Status:</span> {statusFilter}
+                        <span className="font-medium">Status:</span> {data.status}
                         <Button
                           type="button"
                           variant="ghost"
@@ -618,25 +690,21 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
                           className="h-4 w-4 ml-1"
                           onClick={(e) => {
                             e.preventDefault();
-                            setStatusFilter("all");
-                            router.get(
-                              route("rentals.index"),
-                              {
-                                search: searchTerm || undefined,
-                                start_date: startDateFilter || undefined,
-                                end_date: endDateFilter || undefined
-                              },
-                              { preserveState: true }
-                            );
+                            setData('status', 'all');
+                            get(route('rentals.index'), {
+                              search: data.search || undefined,
+                              start_date: data.start_date || undefined,
+                              end_date: data.end_date || undefined
+                            }, { preserveState: true });
                           }}
                         >
                           <X className="h-3 w-3" />
                         </Button>
                       </Badge>
                     )}
-                    {startDateFilter && (
+                    {data.start_date && (
                       <Badge variant="secondary" className="px-3 py-1 flex items-center gap-1">
-                        <span className="font-medium">From:</span> {formatFilterDate(startDateFilter)}
+                        <span className="font-medium">From:</span> {formatFilterDate(data.start_date)}
                         <Button
                           type="button"
                           variant="ghost"
@@ -644,7 +712,7 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
                           className="h-4 w-4 ml-1"
                           onClick={(e) => {
                             e.preventDefault();
-                            setStartDateFilter("");
+                            setData('start_date', '');
                             applyDateFilter('start', null);
                           }}
                         >
@@ -652,9 +720,9 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
                         </Button>
                       </Badge>
                     )}
-                    {endDateFilter && (
+                    {data.end_date && (
                       <Badge variant="secondary" className="px-3 py-1 flex items-center gap-1">
-                        <span className="font-medium">To:</span> {formatFilterDate(endDateFilter)}
+                        <span className="font-medium">To:</span> {formatFilterDate(data.end_date)}
                         <Button
                           type="button"
                           variant="ghost"
@@ -662,7 +730,7 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
                           className="h-4 w-4 ml-1"
                           onClick={(e) => {
                             e.preventDefault();
-                            setEndDateFilter("");
+                            setData('end_date', '');
                             applyDateFilter('end', null);
                           }}
                         >
@@ -673,7 +741,7 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={resetFilters}
+                      onClick={handleReset}
                       className="h-auto px-2 py-1 text-xs"
                     >
                       Clear All
@@ -684,103 +752,11 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
             </div>
 
             <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Rental #</TableHead>
-                    <TableHead>customer</TableHead>
-                    <TableHead>Dates</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>{t('th_has_operators')}</TableHead>
-                    <TableHead>{t('th_total_amount')}</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {rentals?.data?.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={7} className="text-center">
-                        No rentals found
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    rentals?.data?.map((rental) => {
-                      const status = calculateStatus(rental);
-
-                      return (
-                        <TableRow key={rental.id}>
-                          <TableCell className="font-medium">
-                            <a
-                              href={route("rentals.show", rental.id)}
-                              className="text-primary hover:underline cursor-pointer"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                navigateDirectly(rental.id);
-                              }}
-                            >
-                              {rental.rental_number || `Rental #${rental.id}`}
-                            </a>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Avatar className="h-8 w-8 bg-muted">
-                                <AvatarFallback>{getCustomerInfo(rental).initials}</AvatarFallback>
-                              </Avatar>
-                              <div className="space-y-0.5">
-                                <p className="text-sm font-medium line-clamp-1">{getCustomerInfo(rental).name}</p>
-                                <p className="text-xs text-muted-foreground line-clamp-1">{getCustomerInfo(rental).email}</p>
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex flex-col gap-1">
-                              <div className="flex items-center text-sm">
-                                <CalendarClock className="mr-1 h-3 w-3 text-muted-foreground" />
-                                <span>
-                                  {rental.start_date ? format(new Date(rental.start_date), "MMM dd, yyyy") : "-"}
-                                </span>
-                              </div>
-                              <div className="text-xs text-muted-foreground">
-                                to {rental.expected_end_date ? format(new Date(rental.expected_end_date), "MMM dd, yyyy") : "-"}
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>{getStatusBadge(status)}</TableCell>
-                          <TableCell>
-                            {rental.has_operators ? (
-                              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 whitespace-nowrap">
-                                <UserRound className="mr-1 h-3 w-3" />
-                                With Operators
-                              </Badge>
-                            ) : (
-                              <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200 whitespace-nowrap">
-                                No Operators
-                              </Badge>
-                            )}
-                          </TableCell>
-                          <TableCell className="font-medium">
-                            {formatCurrency(rental.total_amount)}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end items-center space-x-2">
-                              <CrudButtons
-                                resourceType="rentals"
-                                resourceId={rental.id}
-                                resourceName={`Rental #${rental.rental_number || rental.id}`}
-                                viewRoute={route("rentals.show", rental.id)}
-                                onView={() => {
-                                  navigateDirectly(rental.id);
-                                }}
-                                hideView={false}
-                              />
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })
-                  )}
-                </TableBody>
-              </Table>
+              <DataTable
+                columns={columns}
+                data={rentals?.data || []}
+                onRowClick={(row) => router.get(route("rentals.show", row.id))}
+              />
             </div>
 
             {rentals?.last_page > 1 && (

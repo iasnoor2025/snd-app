@@ -37,26 +37,34 @@ class RentalRepository implements RentalRepositoryInterface
      */
     public function paginateWithFilters(int $perPage = 15, array $filters = []): LengthAwarePaginator
     {
-        $query = $this->model->newQuery();
+        $query = $this->model->newQuery()
+            ->with(['customer', 'operators'])
+            ->select([
+                'rentals.*',
+                'customers.name as customer_name',
+                'customers.email as customer_email',
+            ])
+            ->leftJoin('customers', 'rentals.customer_id', '=', 'customers.id');
 
         if (isset($filters['search']) && $filters['search'] !== null) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
-                $q->where('customer_name', 'like', '%' . $search . '%')
-                  ->orWhere('status', 'like', '%' . $search . '%');
+                $q->where('rental_number', 'like', '%' . $search . '%')
+                  ->orWhere('customers.name', 'like', '%' . $search . '%')
+                  ->orWhere('customers.email', 'like', '%' . $search . '%');
             });
         }
 
         if (isset($filters['status']) && $filters['status'] !== null && $filters['status'] !== 'all') {
-            $query->where('status', $filters['status']);
+            $query->where('rentals.status', $filters['status']);
         }
 
         if (isset($filters['start_date']) && $filters['start_date'] !== null) {
-            $query->whereDate('start_date', '>=', $filters['start_date']);
+            $query->whereDate('rentals.start_date', '>=', $filters['start_date']);
         }
 
         if (isset($filters['end_date']) && $filters['end_date'] !== null) {
-            $query->whereDate('end_date', '<=', $filters['end_date']);
+            $query->whereDate('rentals.end_date', '<=', $filters['end_date']);
         }
 
         return $query->paginate($perPage, ['*'], 'page', $filters['page'] ?? 1);

@@ -24,10 +24,8 @@ return new class extends Migration
             $table->date('date_of_birth')->nullable();
             $table->date('hire_date')->nullable();
             $table->string('position')->nullable();
-            $table->unsignedBigInteger('department_id')->nullable();
-            $table->foreign('department_id')->references('id')->on('departments')->nullOnDelete();
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
+            $table->foreignId('department_id')->nullable()->constrained('departments')->nullOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('status')->default('active');
             $table->decimal('salary', 12, 2)->nullable();
             $table->string('salary_type')->nullable();
@@ -38,8 +36,7 @@ return new class extends Migration
             $table->string('country')->nullable();
             $table->text('emergency_contact')->nullable();
             $table->text('notes')->nullable();
-            $table->unsignedBigInteger('position_id')->nullable();
-            $table->foreign('position_id')->references('id')->on('positions')->nullOnDelete();
+            $table->foreignId('position_id')->nullable()->constrained('positions')->nullOnDelete();
             $table->string('designation')->nullable();
             $table->decimal('basic_salary', 10, 2)->default(0);
             $table->decimal('food_allowance', 10, 2)->default(0);

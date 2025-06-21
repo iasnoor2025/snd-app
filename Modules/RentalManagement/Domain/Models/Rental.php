@@ -99,6 +99,22 @@ use LogsActivity, AutoLoadsRelations;
     ];
 
     /**
+     * The attributes that should be appended.
+     *
+     * @var array<string, string>
+     */
+    protected $appends = [
+        'duration_days',
+        'total_paid',
+        'remaining_balance',
+        'payment_progress',
+        'is_payment_overdue',
+        'days_overdue',
+        'th_has_operators',
+        'th_total_amount'
+    ];
+
+    /**
      * Get the customer that owns the rental.
      */
     public function customer(): BelongsTo
@@ -829,6 +845,26 @@ use LogsActivity, AutoLoadsRelations;
     public function location(): BelongsTo
     {
         return $this->belongsTo(\Modules\Core\Domain\Models\Location::class, 'location_id');
+    }
+
+    /**
+     * Get the th_has_operators attribute.
+     */
+    public function getThHasOperatorsAttribute(): bool
+    {
+        return $this->rentalItems()
+            ->whereHas('operators', function ($query) {
+                $query->where('rental_operator_assignments.status', 'active');
+            })
+            ->exists();
+    }
+
+    /**
+     * Get the th_total_amount attribute.
+     */
+    public function getThTotalAmountAttribute(): float
+    {
+        return $this->total_amount ?? 0.00;
     }
 }
 
