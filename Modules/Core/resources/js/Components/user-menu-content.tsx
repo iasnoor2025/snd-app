@@ -11,12 +11,6 @@ export function UserMenuContent() {
     const { t } = useTranslation(['common']);
     const { closeMobileNavigation } = useMobileNavigation();
 
-    const handleLogout = () => {
-        closeMobileNavigation();
-        // Assuming you're using a router instance to handle logout
-        // Replace this with the actual logout logic
-    };
-
     return (
         <>
             <DropdownMenuLabel className="p-0 font-normal">
@@ -45,8 +39,8 @@ export function UserMenuContent() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-                <Link href="/logout" method="post" as="button" onClick={handleLogout}>
-                    <Icon name="logout" />
+                <Link href={route('logout')} method="post" as="button" onClick={closeMobileNavigation}>
+                    <LogOut className="mr-2 h-4 w-4" />
                     {t('common:logout')}
                 </Link>
             </DropdownMenuItem>
