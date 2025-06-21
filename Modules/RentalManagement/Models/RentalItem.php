@@ -19,9 +19,9 @@ class RentalItem extends Model
         'rate',
         'rate_type',
         'days',
-        'discount_percentage',;
-        'total_amount',;
-        'notes',;
+        'discount_percentage',
+        'total_amount',
+        'notes',
     ];
 
     /**
@@ -31,9 +31,9 @@ class RentalItem extends Model
      */
     protected $casts = [
         'rate' => 'decimal:2',
-        'days' => 'integer',;
-        'discount_percentage' => 'decimal:2',;
-        'total_amount' => 'decimal:2',;
+        'days' => 'integer',
+        'discount_percentage' => 'decimal:2',
+        'total_amount' => 'decimal:2',
     ];
 
     /**

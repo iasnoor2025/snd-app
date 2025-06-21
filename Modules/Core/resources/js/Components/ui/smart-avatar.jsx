@@ -35,13 +35,42 @@ export const SmartAvatar = ({
     ...props
 }) => {
     const sizeClass = sizeClasses[size] || sizeClasses.md;
+    const avatarUrl = user?.avatar_url || user?.avatar;
+    const [imgError, setImgError] = React.useState(false);
+
+    // Reset error state when avatarUrl changes
+    React.useEffect(() => {
+        setImgError(false);
+    }, [avatarUrl]);
 
     return (
         <div className="relative inline-block">
             <Avatar className={cn(sizeClass, className)} {...props}>
-                <AvatarImage src={user?.avatar} alt={user?.name} />
-                <AvatarFallback>
-                    {fallback || getInitials(user?.name)}
+                {!imgError && avatarUrl && (
+                    <AvatarImage 
+                        src={avatarUrl} 
+                        alt={user?.name}
+                        onError={(e) => {
+                            e.currentTarget.onerror = null; // Prevent infinite loop
+                            setImgError(true);
+                        }}
+                    />
+                )}
+                {(imgError || !avatarUrl) && user?.laravolt_avatar && (
+                    <AvatarImage 
+                        src={user.laravolt_avatar} 
+                        alt={user?.name}
+                        onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = user?.gravatar_url;
+                        }}
+                    />
+                )}
+                <AvatarFallback 
+                    className="bg-primary/10 text-primary"
+                    style={{ backgroundColor: user?.avatar_color }}
+                >
+                    {fallback || user?.initials || getInitials(user?.name)}
                 </AvatarFallback>
             </Avatar>
 
@@ -70,7 +99,7 @@ export const UserAvatar = ({ user, ...props }) => {
     return (
         <SmartAvatar
             user={user}
-            fallback={getInitials(user?.name)}
+            fallback={user?.initials || getInitials(user?.name)}
             {...props}
         />
     );
@@ -79,7 +108,12 @@ export const UserAvatar = ({ user, ...props }) => {
 export const TeamAvatar = ({ team, ...props }) => {
     return (
         <SmartAvatar
-            user={{ name: team?.name, avatar: team?.avatar }}
+            user={{ 
+                name: team?.name, 
+                avatar_url: team?.avatar,
+                initials: getInitials(team?.name),
+                avatar_color: '#' + Math.floor(Math.random()*16777215).toString(16)
+            }}
             fallback={getInitials(team?.name)}
             {...props}
         />

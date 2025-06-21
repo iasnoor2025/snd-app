@@ -1,10 +1,8 @@
 import React, { PropsWithChildren, useState } from 'react';
-import { ApplicationLogo } from "@/Core";
-import { Dropdown } from "@/Core";
-import { NavLink } from "@/Core";
-import { ResponsiveNavLink } from "@/Core";
+import { ApplicationLogo, Dropdown, NavLink, ResponsiveNavLink } from "@/Core";
 import { Link, usePage } from '@inertiajs/react';
-import { User } from '@/Core/types';
+import type { User } from '../types/index.d';
+import { SmartAvatar } from '../components/ui/smart-avatar';
 
 interface PageProps {
     auth: {
@@ -12,6 +10,7 @@ interface PageProps {
         roles: string[];
         permissions: string[];
     };
+    [key: string]: any; // Add index signature for Inertia PageProps
 }
 
 export default function AuthenticatedLayout({ header, children }: PropsWithChildren<{ header?: React.ReactNode }>) {
@@ -47,7 +46,8 @@ export default function AuthenticatedLayout({ header, children }: PropsWithChild
                             <div className="ml-3 relative">
                                 <Dropdown>
                                     <Dropdown.Trigger>
-                                        <span className="inline-flex rounded-md">
+                                        <span className="inline-flex items-center gap-2 rounded-md">
+                                            <SmartAvatar user={user} size="sm" />
                                             <button
                                                 type="button"
                                                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
@@ -114,9 +114,12 @@ export default function AuthenticatedLayout({ header, children }: PropsWithChild
                     </div>
 
                     <div className="pt-4 pb-1 border-t border-gray-200">
-                        <div className="px-4">
-                            <div className="font-medium text-base text-gray-800">{user.name}</div>
-                            <div className="font-medium text-sm text-gray-500">{user.email}</div>
+                        <div className="px-4 flex items-center gap-3">
+                            <SmartAvatar user={user} size="sm" />
+                            <div>
+                                <div className="font-medium text-base text-gray-800">{user.name}</div>
+                                <div className="font-medium text-sm text-gray-500">{user.email}</div>
+                            </div>
                         </div>
 
                         <div className="mt-3 space-y-1">

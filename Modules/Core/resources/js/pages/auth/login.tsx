@@ -1,94 +1,103 @@
-import { useEffect, FormEventHandler } from 'react';
-import Checkbox from '../../components/Checkbox';
+import { Head, useForm } from '@inertiajs/react';
+import { LoaderCircle } from 'lucide-react';
+import { FormEventHandler } from 'react';
 
-
-import { Label } from '../../components/ui/label';
+import TextLink from '../../components/text-link';
 import { Button } from '../../components/ui/button';
+import { Checkbox } from '../../components/ui/checkbox';
 import { Input } from '../../components/ui/input';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Label } from '../../components/ui/label';
+import AuthLayout from '../../layouts/auth-layout';
+
+type LoginForm = {
+    email: string;
+    password: string;
+    remember: boolean;
+};
 
 export default function Login() {
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors } = useForm<Required<LoginForm>>({
         email: '',
         password: '',
         remember: false,
     });
 
-    useEffect(() => {
-        return () => {
-            reset('password');
-        };
-    }, []);
-
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-
         post(route('login'));
     };
 
     return (
-        <div className='min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8'>
+        <AuthLayout title="Welcome back" description="Enter your credentials to access your account">
             <Head title="Log in" />
 
-            <form onSubmit={submit}>
-                <div>
-                    <Label htmlFor="email" value="Email" />
+            <form onSubmit={submit} className="space-y-6">
+                <div className="grid gap-4">
+                    <div className="grid gap-2">
+                        <Label htmlFor="email">Email address</Label>
+                        <Input
+                            id="email"
+                            type="email"
+                            name="email"
+                            value={data.email}
+                            autoComplete="username"
+                            autoFocus
+                            onChange={(e) => setData('email', e.target.value)}
+                            placeholder="email@example.com"
+                            aria-invalid={errors.email ? 'true' : undefined}
+                        />
+                        {errors.email && (
+                            <p className="text-destructive text-sm">{errors.email}</p>
+                        )}
+                    </div>
 
-                    <Input
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        isFocused={true}
-                        onChange={(e) => setData('email', e.target.value)}
-                    />
-
-                    
+                    <div className="grid gap-2">
+                        <Label htmlFor="password">Password</Label>
+                        <Input
+                            id="password"
+                            type="password"
+                            name="password"
+                            value={data.password}
+                            autoComplete="current-password"
+                            onChange={(e) => setData('password', e.target.value)}
+                            placeholder="••••••••"
+                            aria-invalid={errors.password ? 'true' : undefined}
+                        />
+                        {errors.password && (
+                            <p className="text-destructive text-sm">{errors.password}</p>
+                        )}
+                    </div>
                 </div>
 
-                <div className="mt-4">
-                    <Label htmlFor="password" value="Password" />
-
-                    <Input
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="current-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
-                    
-                </div>
-
-                <div className="block mt-4">
-                    <label className="flex items-center">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
                         <Checkbox
+                            id="remember"
                             name="remember"
                             checked={data.remember}
-                            onChange={(e) => setData('remember', e.target.checked)}
+                            onCheckedChange={(checked) => setData('remember', checked as boolean)}
                         />
-                        <span className="ml-2 text-sm text-gray-600">Remember me</span>
-                    </label>
+                        <Label htmlFor="remember" className="text-sm font-normal">
+                            Remember me
+                        </Label>
+                    </div>
+
+                    <TextLink href={route('password.request')} className="text-sm">
+                        Forgot password?
+                    </TextLink>
                 </div>
 
-                <div className="flex items-center justify-end mt-4">
-                    <Link
-                        href={route('password.request')}
-                        className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                        Forgot your password?
-                    </Link>
+                <Button type="submit" className="w-full" disabled={processing}>
+                    {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                    Log in
+                </Button>
 
-                    <Button className="ml-4" disabled={processing}>
-                        Log in
-                    </Button>
+                <div className="text-muted-foreground text-center text-sm">
+                    Don't have an account?{' '}
+                    <TextLink href={route('register')}>Create an account</TextLink>
                 </div>
             </form>
-        </div>
+        </AuthLayout>
     );
 }
 
