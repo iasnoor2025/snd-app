@@ -1,0 +1,31 @@
+{
+    "title": "title",
+    "list": {
+        "title": "Equipment",
+        "add": "Add Equipment",
+        "edit": "Edit Equipment",
+        "delete": "Delete Equipment"
+    },
+    "fields": {
+        "name": "Equipment Name",
+        "code": "Equipment Code",
+        "category": "Category",
+        "status": "Status",
+        "condition": "Condition",
+        "purchase_date": "Purchase Date",
+        "purchase_price": "Purchase Price",
+        "location": "Location"
+    },
+    "status": {
+        "available": "Available",
+        "in_use": "In Use",
+        "maintenance": "Under Maintenance",
+        "retired": "Retired"
+    },
+    "messages": {
+        "create_success": "Equipment created successfully",
+        "update_success": "Equipment updated successfully",
+        "delete_success": "Equipment deleted successfully",
+        "delete_confirm": "Are you sure you want to delete this equipment?"
+    }
+}

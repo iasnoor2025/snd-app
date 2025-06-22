@@ -37,12 +37,12 @@ interface Props {
 }
 
 export default function Show({ auth, role }: Props) {
-  const { t } = useTranslation('core');
+  const { t } = useTranslation(['roles', 'common']);
 
   const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Settings', href: '/settings' },
-    { title: 'Roles', href: '/settings/roles' },
+    { title: t('common:dashboard'), href: '/dashboard' },
+    { title: t('common:settings'), href: '/settings' },
+    { title: t('common:roles'), href: '/settings/roles' },
     { title: role.display_name || role.name, href: `/settings/roles/${role.id}` },
   ];
 
@@ -56,18 +56,18 @@ export default function Show({ auth, role }: Props) {
 
   return (
     <AppLayout 
-      title={`Role: ${role.display_name || role.name}`} 
+      title={`${t('view_role')}: ${role.display_name || role.name}`} 
       breadcrumbs={breadcrumbs} 
       requiredPermission="roles.view"
     >
-      <Head title={`Role: ${role.display_name || role.name}`} />
+      <Head title={`${t('view_role')}: ${role.display_name || role.name}`} />
 
       <div className="flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         <div className="flex items-center justify-between">
           <Button variant="ghost" size="sm" asChild>
             <Link href="/settings/roles">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Roles
+              {t('common:back_to')} {t('common:roles')}
             </Link>
           </Button>
           
@@ -75,7 +75,7 @@ export default function Show({ auth, role }: Props) {
             <Button asChild>
               <Link href={`/settings/roles/${role.id}/edit`}>
                 <Edit className="h-4 w-4 mr-2" />
-                Edit Role
+                {t('edit_role')}
               </Link>
             </Button>
           </Permission>
@@ -88,12 +88,12 @@ export default function Show({ auth, role }: Props) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Shield className="h-5 w-5" />
-                  Role Information
+                  {t('role_information')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Role Name</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground">{t('role_name')}</h3>
                   <div className="mt-1">
                     <Badge variant="outline" className="text-sm">
                       {role.name}
@@ -103,25 +103,25 @@ export default function Show({ auth, role }: Props) {
 
                 {role.display_name && (
                   <div>
-                    <h3 className="text-sm font-medium text-muted-foreground">Display Name</h3>
+                    <h3 className="text-sm font-medium text-muted-foreground">{t('display_name')}</h3>
                     <p className="mt-1 text-sm">{role.display_name}</p>
                   </div>
                 )}
 
                 {role.description && (
                   <div>
-                    <h3 className="text-sm font-medium text-muted-foreground">Description</h3>
+                    <h3 className="text-sm font-medium text-muted-foreground">{t('description')}</h3>
                     <p className="mt-1 text-sm">{role.description}</p>
                   </div>
                 )}
 
                 <div className="grid grid-cols-2 gap-4 pt-4 border-t">
                   <div>
-                    <h3 className="text-sm font-medium text-muted-foreground">Created</h3>
+                    <h3 className="text-sm font-medium text-muted-foreground">{t('common:created')}</h3>
                     <p className="mt-1 text-sm">{format(new Date(role.created_at), 'PPp')}</p>
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium text-muted-foreground">Last Updated</h3>
+                    <h3 className="text-sm font-medium text-muted-foreground">{t('common:last_updated')}</h3>
                     <p className="mt-1 text-sm">{format(new Date(role.updated_at), 'PPp')}</p>
                   </div>
                 </div>
@@ -133,17 +133,17 @@ export default function Show({ auth, role }: Props) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Key className="h-5 w-5" />
-                  Permissions ({role.permissions.length})
+                  {t('common:permissions')} ({role.permissions.length})
                 </CardTitle>
                 <CardDescription>
-                  Permissions granted to this role, organized by module
+                  {t('permissions_granted')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 {Object.keys(groupedPermissions).length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground">
                     <Key className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                    <p>No permissions assigned to this role</p>
+                    <p>{t('no_permissions_assigned')}</p>
                   </div>
                 ) : (
                   <div className="space-y-6">
@@ -175,25 +175,25 @@ export default function Show({ auth, role }: Props) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Users className="h-5 w-5" />
-                  Usage Statistics
+                  {t('usage_statistics')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="text-center">
                   <div className="text-3xl font-bold">{role.users_count || 0}</div>
-                  <p className="text-sm text-muted-foreground">Users with this role</p>
+                  <p className="text-sm text-muted-foreground">{t('users_with_role')}</p>
                 </div>
                 
                 <div className="text-center">
                   <div className="text-3xl font-bold">{role.permissions.length}</div>
-                  <p className="text-sm text-muted-foreground">Permissions assigned</p>
+                  <p className="text-sm text-muted-foreground">{t('permissions_assigned')}</p>
                 </div>
 
                 <Permission permission="roles.view">
                   <Button variant="outline" className="w-full" asChild>
                     <Link href="/settings/user-roles">
                       <Users className="h-4 w-4 mr-2" />
-                      Manage User Roles
+                      {t('manage_user_roles')}
                     </Link>
                   </Button>
                 </Permission>
@@ -202,14 +202,14 @@ export default function Show({ auth, role }: Props) {
 
             <Card>
               <CardHeader>
-                <CardTitle>Actions</CardTitle>
+                <CardTitle>{t('common:actions')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <Permission permission="roles.edit">
                   <Button variant="outline" className="w-full" asChild>
                     <Link href={`/settings/roles/${role.id}/edit`}>
                       <Edit className="h-4 w-4 mr-2" />
-                      Edit Role
+                      {t('edit_role')}
                     </Link>
                   </Button>
                 </Permission>
@@ -217,7 +217,7 @@ export default function Show({ auth, role }: Props) {
                 <Button variant="outline" className="w-full" asChild>
                   <Link href="/settings/roles">
                     <ArrowLeft className="h-4 w-4 mr-2" />
-                    Back to List
+                    {t('back_to_list')}
                   </Link>
                 </Button>
               </CardContent>

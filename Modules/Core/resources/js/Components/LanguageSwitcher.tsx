@@ -24,6 +24,9 @@ interface LanguageSwitcherProps {
 const languages: Language[] = [
   { code: 'en', name: 'English', flag: '🇺🇸', dir: 'ltr' },
   { code: 'ar', name: 'العربية', flag: '🇸🇦', dir: 'rtl' },
+  { code: 'hi', name: 'हिन्दी', flag: '🇮🇳', dir: 'ltr' },
+  { code: 'bn', name: 'বাংলা', flag: '🇧🇩', dir: 'ltr' },
+  { code: 'ur', name: 'اردو', flag: '🇵🇰', dir: 'rtl' },
 ];
 
 const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ variant = 'default', showLabel = true }) => {
@@ -31,17 +34,39 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ variant = 'default'
 
   const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
 
+  const storeLanguagePreference = (languageCode: string) => {
+    // Store in localStorage
+    localStorage.setItem('i18nextLng', languageCode);
+    
+    // Store in sessionStorage
+    sessionStorage.setItem('i18nextLng', languageCode);
+    
+    // Store in cookie (expires in 1 year)
+    document.cookie = `i18next=${languageCode}; path=/; max-age=${365 * 24 * 60 * 60}`;
+  };
+
   const changeLanguage = (languageCode: string) => {
     const selectedLanguage = languages.find(lang => lang.code === languageCode);
     if (selectedLanguage) {
+      // Change language in i18next
       i18n.changeLanguage(languageCode);
 
       // Update document direction for RTL support
       document.documentElement.dir = selectedLanguage.dir;
       document.documentElement.lang = languageCode;
 
+      // Add or remove RTL class
+      if (selectedLanguage.dir === 'rtl') {
+        document.documentElement.classList.add('rtl');
+      } else {
+        document.documentElement.classList.remove('rtl');
+      }
+
       // Store language preference
-      localStorage.setItem('i18nextLng', languageCode);
+      storeLanguagePreference(languageCode);
+      
+      // Force reload the page to ensure all components update properly
+      window.location.reload();
     }
   };
 

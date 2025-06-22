@@ -1,0 +1,31 @@
+{
+    "title": "title",
+    "list": {
+        "title": "Payrolls",
+        "add": "Add Payroll",
+        "edit": "Edit Payroll",
+        "delete": "Delete Payroll"
+    },
+    "fields": {
+        "employee": "Employee",
+        "period": "Pay Period",
+        "basic_salary": "Basic Salary",
+        "overtime": "Overtime",
+        "deductions": "Deductions",
+        "net_salary": "Net Salary",
+        "payment_date": "Payment Date",
+        "payment_method": "Payment Method"
+    },
+    "status": {
+        "pending": "Pending",
+        "processed": "Processed",
+        "paid": "Paid",
+        "cancelled": "Cancelled"
+    },
+    "messages": {
+        "create_success": "Payroll created successfully",
+        "update_success": "Payroll updated successfully",
+        "delete_success": "Payroll deleted successfully",
+        "delete_confirm": "Are you sure you want to delete this payroll?"
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "all_cities": "all_cities",
+    "all_statuses": "all_statuses",
+    "lbl_contact_person": "lbl_contact_person",
+    "lbl_contact_person_1": "lbl_contact_person_1",
+    "lbl_payment_terms": "lbl_payment_terms",
+    "lbl_payment_terms_1": "lbl_payment_terms_1",
+    "lbl_tax_id": "lbl_tax_id",
+    "lbl_tax_id_1": "lbl_tax_id_1",
+    "lbl_user_id": "lbl_user_id",
+    "lbl_user_id_1": "lbl_user_id_1",
+    "ph_search_customers": "ph_search_customers",
+    "th_contact_person": "th_contact_person",
+    "th_contact_person_1": "th_contact_person_1",
+    "ttl_create_customer": "ttl_create_customer",
+    "ttl_create_customer_1": "ttl_create_customer_1",
+    "ttl_customer_details": "ttl_customer_details",
+    "ttl_customer_details_1": "ttl_customer_details_1",
+    "ttl_customers": "ttl_customers",
+    "ttl_edit_customer": "ttl_edit_customer",
+    "ttl_edit_customer_1": "ttl_edit_customer_1"
+}

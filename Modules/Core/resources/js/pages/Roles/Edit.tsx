@@ -12,6 +12,7 @@ import {
   Button,
   Input,
   Label,
+  Textarea,
   Checkbox,
   Table,
   TableBody,
@@ -19,7 +20,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  Badge
+  Badge,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
 } from "@/Core";
 import { ArrowLeft, Shield, Save, X } from 'lucide-react';
 import { toast } from 'sonner';
@@ -47,7 +52,8 @@ interface Props extends PageProps {
 }
 
 export default function Edit({ auth, role, permissions, selectedPermissions: initialSelectedPermissions }: Props) {
-  const { t } = useTranslation('core');
+  const { t } = useTranslation(['roles', 'common']);
+  const [selectedTab, setSelectedTab] = useState('general');
   const [selectedPermissions, setSelectedPermissions] = useState<number[]>(initialSelectedPermissions || []);
   const [name, setName] = useState(role.name);
   const [displayName, setDisplayName] = useState(role.display_name || '');
@@ -55,11 +61,11 @@ export default function Edit({ auth, role, permissions, selectedPermissions: ini
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Settings', href: '/settings' },
-    { title: 'Roles', href: '/settings/roles' },
+    { title: t('common:dashboard'), href: '/dashboard' },
+    { title: t('common:settings'), href: '/settings' },
+    { title: t('common:roles'), href: '/settings/roles' },
     { title: role.display_name || role.name, href: `/settings/roles/${role.id}` },
-    { title: 'Edit', href: `/settings/roles/${role.id}/edit` },
+    { title: t('edit_role'), href: `/settings/roles/${role.id}/edit` },
   ];
 
   const { data, setData, put, processing, errors: formErrors, reset } = useForm({
@@ -82,11 +88,11 @@ export default function Edit({ auth, role, permissions, selectedPermissions: ini
         permissions: selectedPermissions,
       },
       onSuccess: () => {
-        toast.success('Role updated successfully');
+        toast.success(t('common:updated_successfully', { item: t('common:role') }));
       },
       onError: (errors) => {
         setErrors(errors);
-        toast.error('Failed to update role');
+        toast.error(t('common:failed_to_update', { item: t('common:role') }));
       },
     });
   };
@@ -136,162 +142,169 @@ export default function Edit({ auth, role, permissions, selectedPermissions: ini
     }
   };
 
+  // Group permissions by module
+  const groupedPermissions = permissions.reduce((acc, permission) => {
+    const [module] = permission.name.split('.');
+    if (!acc[module]) acc[module] = [];
+    acc[module].push(permission);
+    return acc;
+  }, {} as Record<string, typeof permissions>);
+
   return (
     <AppLayout 
-      title={`Edit Role: ${role.display_name || role.name}`} 
+      title={t('edit_role')} 
       breadcrumbs={breadcrumbs} 
       requiredPermission="roles.edit"
     >
-      <Head title={`Edit Role: ${role.display_name || role.name}`} />
+      <Head title={t('edit_role')} />
 
       <div className="flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between">
           <Button variant="ghost" size="sm" asChild>
             <Link href={`/settings/roles/${role.id}`}>
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Role
+              {t('common:back_to')} {t('view_role')}
             </Link>
           </Button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="h-5 w-5" />
-                Edit Role: {role.display_name || role.name}
-              </CardTitle>
-              <CardDescription>
-                Update role information and permissions
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Basic Information */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Role Name *</Label>
-                  <Input
-                    id="name"
-                    type="text"
-                    value={data.name}
-                    onChange={(e) => setData('name', e.target.value)}
-                    placeholder="e.g., admin, manager, user"
-                    className={errors.name ? 'border-destructive' : ''}
-                  />
-                  {errors.name && (
-                    <p className="text-sm text-destructive">{errors.name}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="display_name">Display Name</Label>
-                  <Input
-                    id="display_name"
-                    type="text"
-                    value={data.display_name}
-                    onChange={(e) => setData('display_name', e.target.value)}
-                    placeholder="e.g., Administrator, Project Manager"
-                  />
-                  {errors.display_name && (
-                    <p className="text-sm text-destructive">{errors.display_name}</p>
-                  )}
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Input
-                  id="description"
-                  value={data.description}
-                  onChange={(e) => setData('description', e.target.value)}
-                  placeholder="Describe the role and its responsibilities..."
-                  rows={3}
-                />
-                {errors.description && (
-                  <p className="text-sm text-destructive">{errors.description}</p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Permissions */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Permissions</CardTitle>
-              <CardDescription>
-                Update the permissions this role should have. Permissions are grouped by module.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {errors.permissions && (
-                <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-md">
-                  <p className="text-sm text-destructive">{errors.permissions}</p>
-                </div>
-              )}
-
-              <div className="space-y-6">
-                {Object.entries(permissions).map(([group, groupPermissions]) => (
-                  <div key={group} className="space-y-3">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`group-${group}`}
-                        checked={isGroupChecked(groupPermissions)}
-                        onCheckedChange={(checked) => 
-                          handleGroupPermissionChange(groupPermissions, checked as boolean)
-                        }
-                        className={isGroupIndeterminate(groupPermissions) ? 'data-[state=checked]:bg-primary/50' : ''}
-                      />
-                      <Label 
-                        htmlFor={`group-${group}`} 
-                        className="text-sm font-medium capitalize cursor-pointer"
-                      >
-                        {group.replace('_', ' ')} ({groupPermissions.length})
-                      </Label>
-                    </div>
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Shield className="h-5 w-5" />
+                    {t('edit_role')}
+                  </CardTitle>
+                  <CardDescription>
+                    {t('edit_role_description')}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Tabs value={selectedTab} onValueChange={setSelectedTab}>
+                    <TabsList className="mb-4">
+                      <TabsTrigger value="general">{t('common:general')}</TabsTrigger>
+                      <TabsTrigger value="permissions">{t('common:permissions')}</TabsTrigger>
+                    </TabsList>
                     
-                    <div className="ml-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                      {groupPermissions.map((permission) => (
-                        <div key={permission.id} className="flex items-center space-x-2">
-                          <Checkbox
-                            id={`permission-${permission.id}`}
-                            checked={selectedPermissions.includes(permission.id)}
-                            onCheckedChange={(checked) => 
-                              handlePermissionChange(permission.id, checked as boolean)
-                            }
-                          />
-                          <Label 
-                            htmlFor={`permission-${permission.id}`} 
-                            className="text-sm cursor-pointer"
-                          >
-                            {permission.display_name || permission.name}
-                          </Label>
+                    <TabsContent value="general" className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="name">{t('role_name')} *</Label>
+                        <Input 
+                          id="name" 
+                          value={data.name}
+                          onChange={e => setData('name', e.target.value)}
+                          placeholder={t('role_name_placeholder')}
+                        />
+                        {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="display_name">{t('display_name')}</Label>
+                        <Input 
+                          id="display_name" 
+                          value={data.display_name}
+                          onChange={e => setData('display_name', e.target.value)}
+                          placeholder={t('display_name_placeholder')}
+                        />
+                        {errors.display_name && <p className="text-sm text-red-500">{errors.display_name}</p>}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="description">{t('description')}</Label>
+                        <Textarea 
+                          id="description" 
+                          value={data.description}
+                          onChange={e => setData('description', e.target.value)}
+                          placeholder={t('description_placeholder')}
+                          rows={3}
+                        />
+                        {errors.description && <p className="text-sm text-red-500">{errors.description}</p>}
+                      </div>
+                    </TabsContent>
+                    
+                    <TabsContent value="permissions" className="space-y-6">
+                      {Object.entries(groupedPermissions).map(([module, permissions]) => (
+                        <div key={module} className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <h4 className="text-sm font-medium capitalize">
+                              {module.replace('_', ' ')} ({permissions.length})
+                            </h4>
+                            <Button 
+                              type="button" 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleModuleSelectAll(permissions)}
+                            >
+                              {permissions.every(p => selectedPermissions.includes(p.id)) 
+                                ? t('common:deselect_all') 
+                                : t('common:select_all')}
+                            </Button>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            {permissions.map((permission) => (
+                              <div key={permission.id} className="flex items-center space-x-2">
+                                <Checkbox 
+                                  id={`permission-${permission.id}`}
+                                  checked={selectedPermissions.includes(permission.id)}
+                                  onCheckedChange={(checked) => 
+                                    handlePermissionChange(permission.id, checked as boolean)
+                                  }
+                                />
+                                <Label htmlFor={`permission-${permission.id}`} className="text-sm">
+                                  {permission.display_name || permission.name}
+                                </Label>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
+                      {errors.permissions && <p className="text-sm text-red-500">{errors.permissions}</p>}
+                    </TabsContent>
+                  </Tabs>
+                </CardContent>
+              </Card>
+            </div>
 
-              <div className="mt-6 p-4 bg-muted/50 rounded-md">
-                <p className="text-sm text-muted-foreground">
-                  Selected permissions: <span className="font-medium">{selectedPermissions.length}</span>
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Actions */}
-          <div className="flex items-center justify-end gap-4">
-            <Button variant="outline" type="button" asChild>
-              <Link href={`/settings/roles/${role.id}`}>
-                <X className="h-4 w-4 mr-2" />
-                Cancel
-              </Link>
-            </Button>
-            <Button type="submit" disabled={processing}>
-              <Save className="h-4 w-4 mr-2" />
-              {processing ? 'Updating...' : 'Update Role'}
-            </Button>
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('common:actions')}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Button 
+                    type="submit" 
+                    className="w-full" 
+                    disabled={processing}
+                  >
+                    {processing ? (
+                      <>
+                        <Shield className="h-4 w-4 mr-2 animate-spin" />
+                        {t('common:saving')}...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="h-4 w-4 mr-2" />
+                        {t('common:save')} {t('common:changes')}
+                      </>
+                    )}
+                  </Button>
+                  
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    className="w-full" 
+                    asChild
+                  >
+                    <Link href={`/settings/roles/${role.id}`}>
+                      <ArrowLeft className="h-4 w-4 mr-2" />
+                      {t('common:cancel')}
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </form>
       </div>

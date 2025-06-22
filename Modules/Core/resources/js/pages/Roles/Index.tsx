@@ -54,7 +54,7 @@ interface Props {
 }
 
 export default function Index({ auth, roles }: Props) {
-  const { t } = useTranslation('core');
+  const { t } = useTranslation(['roles', 'common']);
   const [search, setSearch] = useState('');
   const { hasPermission } = usePermission();
 
@@ -65,13 +65,13 @@ export default function Index({ auth, roles }: Props) {
   );
 
   const handleDelete = (roleId: number, roleName: string) => {
-    if (confirm(`Are you sure you want to delete the role "${roleName}"?`)) {
+    if (confirm(`${t('common:are_you_sure_delete', { item: 'role' })}: "${roleName}"?`)) {
       router.delete(`/settings/roles/${roleId}`, {
         onSuccess: () => {
-          toast.success('Role deleted successfully');
+          toast.success(t('common:deleted_successfully', { item: 'role' }));
         },
         onError: (errors) => {
-          toast.error(errors.message || 'Failed to delete role');
+          toast.error(errors.message || t('common:failed_to_delete', { item: 'role' }));
         },
       });
     }
@@ -79,22 +79,22 @@ export default function Index({ auth, roles }: Props) {
 
   const getPermissionsBadge = (permissions: Role['permissions']) => {
     const count = permissions.length;
-    if (count === 0) return <Badge variant="outline">No permissions</Badge>;
+    if (count === 0) return <Badge variant="outline">{t('common:no_items', { items: t('common:permissions').toLowerCase() })}</Badge>;
     
     return (
       <Badge variant="secondary">
-        {count} permission{count !== 1 ? 's' : ''}
+        {count} {count === 1 ? t('permission_singular') : t('permission_count')}
       </Badge>
     );
   };
 
   return (
     <AppLayout 
-      title="Roles Management" 
+      title={t('title')} 
       breadcrumbs={breadcrumbs} 
       requiredPermission="roles.view"
     >
-      <Head title="Roles Management" />
+      <Head title={t('title')} />
 
       <div className="flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         <Card>
@@ -102,10 +102,10 @@ export default function Index({ auth, roles }: Props) {
             <div>
               <CardTitle className="text-2xl font-bold flex items-center gap-2">
                 <Shield className="h-6 w-6" />
-                Roles Management
+                {t('title')}
               </CardTitle>
               <CardDescription>
-                Manage user roles and permissions for the system
+                {t('subtitle')}
               </CardDescription>
             </div>
             <div className="flex items-center space-x-2">
@@ -113,7 +113,7 @@ export default function Index({ auth, roles }: Props) {
                 <Button asChild>
                   <Link href="/settings/roles/create">
                     <Plus className="h-4 w-4 mr-2" />
-                    Add Role
+                    {t('add_role')}
                   </Link>
                 </Button>
               </Permission>
@@ -124,7 +124,7 @@ export default function Index({ auth, roles }: Props) {
               <div className="relative w-full md:w-96">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search roles..."
+                  placeholder={t('search_roles')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="pl-8"
@@ -136,12 +136,12 @@ export default function Index({ auth, roles }: Props) {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Role Name</TableHead>
-                    <TableHead>Display Name</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Permissions</TableHead>
-                    <TableHead>Users</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead>{t('role_name')}</TableHead>
+                    <TableHead>{t('display_name')}</TableHead>
+                    <TableHead>{t('description')}</TableHead>
+                    <TableHead>{t('permissions')}</TableHead>
+                    <TableHead>{t('users')}</TableHead>
+                    <TableHead className="text-right">{t('actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -150,8 +150,8 @@ export default function Index({ auth, roles }: Props) {
                       <TableCell colSpan={6} className="text-center py-8">
                         <div className="flex flex-col items-center gap-2 text-muted-foreground">
                           <Shield className="h-8 w-8" />
-                          <p>No roles found</p>
-                          {search && <p className="text-sm">Try adjusting your search</p>}
+                          <p>{t('common:no_items_found', { items: t('common:roles').toLowerCase() })}</p>
+                          {search && <p className="text-sm">{t('common:try_adjusting_search')}</p>}
                         </div>
                       </TableCell>
                     </TableRow>
@@ -164,11 +164,11 @@ export default function Index({ auth, roles }: Props) {
                           </div>
                         </TableCell>
                         <TableCell>
-                          {role.display_name || '-'}
+                          {role.display_name || t('no_display_name')}
                         </TableCell>
                         <TableCell className="max-w-xs">
                           <div className="truncate" title={role.description}>
-                            {role.description || '-'}
+                            {role.description || t('no_description')}
                           </div>
                         </TableCell>
                         <TableCell>
@@ -216,12 +216,12 @@ export default function Index({ auth, roles }: Props) {
             </div>
 
             <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
-              <p>Showing {filteredRoles.length} of {roles.length} roles</p>
+              <p>{t('showing')} {filteredRoles.length} {t('of')} {roles.length} {t('roles')}</p>
               <Permission permission="roles.view">
                 <Button variant="outline" size="sm" asChild>
                   <Link href="/settings/user-roles">
                     <Users className="h-4 w-4 mr-2" />
-                    Manage User Roles
+                    {t('manage_user_roles')}
                   </Link>
                 </Button>
               </Permission>

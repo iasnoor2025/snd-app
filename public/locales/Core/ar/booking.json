@@ -1,0 +1,19 @@
+{
+    "title": "title",
+    "create": "create",
+    "edit": "edit",
+    "delete": "delete",
+    "customer": "customer",
+    "resource": "resource",
+    "start_date": "start_date",
+    "end_date": "end_date",
+    "status": "status",
+    "notes": "notes",
+    "actions": {
+        "view": "View",
+        "edit": "Edit",
+        "delete": "Delete",
+        "confirm": "Confirm",
+        "cancel": "Cancel"
+    }
+}

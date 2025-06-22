@@ -51,7 +51,7 @@ interface Props {
 }
 
 export default function UserRoles({ users, roles }: Props) {
-  const { t } = useTranslation('core');
+  const { t } = useTranslation(['roles', 'common']);
   const [search, setSearch] = useState('');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [selectedRoles, setSelectedRoles] = useState<number[]>([]);
@@ -86,29 +86,29 @@ export default function UserRoles({ users, roles }: Props) {
       roles: selectedRoles,
     }, {
       onSuccess: () => {
-        toast.success('User roles updated successfully');
+        toast.success(t('common:updated_successfully', { item: t('common:roles') }));
         setIsDialogOpen(false);
       },
       onError: (errors) => {
         setErrors(errors);
-        toast.error('Failed to update user roles');
+        toast.error(t('common:failed_to_update', { item: t('common:roles') }));
       },
     });
   };
 
   const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Settings', href: '/settings' },
-    { title: 'User Roles', href: '/settings/user-roles' },
+    { title: t('common:dashboard'), href: '/dashboard' },
+    { title: t('common:settings'), href: '/settings' },
+    { title: t('manage_user_roles'), href: '/settings/user-roles' },
   ];
 
   return (
     <AppLayout 
-      title="User Roles" 
+      title={t('manage_user_roles')} 
       breadcrumbs={breadcrumbs} 
       requiredPermission="roles.assign"
     >
-      <Head title="User Roles" />
+      <Head title={t('manage_user_roles')} />
 
       <div className="flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         <Card>
@@ -116,10 +116,10 @@ export default function UserRoles({ users, roles }: Props) {
             <div>
               <CardTitle className="text-2xl font-bold flex items-center gap-2">
                 <Shield className="h-6 w-6" />
-                User Roles
+                {t('manage_user_roles')}
               </CardTitle>
               <CardDescription>
-                Manage role assignments for users
+                {t('subtitle')}
               </CardDescription>
             </div>
           </CardHeader>
@@ -128,7 +128,7 @@ export default function UserRoles({ users, roles }: Props) {
               <div className="relative w-full md:w-96">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search users..."
+                  placeholder={t('common:search_users')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="pl-8"
@@ -140,8 +140,8 @@ export default function UserRoles({ users, roles }: Props) {
               <div className="text-center py-8">
                 <div className="flex flex-col items-center gap-2 text-muted-foreground">
                   <Shield className="h-8 w-8" />
-                  <p>No users found</p>
-                  {search && <p className="text-sm">Try adjusting your search</p>}
+                  <p>{t('common:no_items_found', { items: t('common:users').toLowerCase() })}</p>
+                  {search && <p className="text-sm">{t('common:try_adjusting_search')}</p>}
                 </div>
               </div>
             ) : (
@@ -149,10 +149,10 @@ export default function UserRoles({ users, roles }: Props) {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Current Roles</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead>{t('common:name')}</TableHead>
+                      <TableHead>{t('common:email')}</TableHead>
+                      <TableHead>{t('current_roles')}</TableHead>
+                      <TableHead className="text-right">{t('common:actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -195,10 +195,10 @@ export default function UserRoles({ users, roles }: Props) {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
-                Manage Roles for {selectedUser?.name}
+                {t('manage_roles_for')} {selectedUser?.name}
               </DialogTitle>
               <DialogDescription>
-                Select the roles to assign to this user
+                {t('select_roles_to_assign')}
               </DialogDescription>
             </DialogHeader>
 
@@ -208,7 +208,7 @@ export default function UserRoles({ users, roles }: Props) {
                   <Checkbox
                     id={`role-${role.id}`}
                     checked={selectedRoles.includes(role.id)}
-                    onCheckedChange={() => handleRoleChange(role.id)}
+                    onChange={() => handleRoleChange(role.id)}
                   />
                   <Label htmlFor={`role-${role.id}`}>
                     {role.display_name || role.name}
@@ -224,11 +224,11 @@ export default function UserRoles({ users, roles }: Props) {
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
                 <X className="h-4 w-4 mr-2" />
-                Cancel
+                {t('common:cancel')}
               </Button>
               <Button onClick={handleSubmit}>
                 <Plus className="h-4 w-4 mr-2" />
-                Update Roles
+                {t('update_roles')}
               </Button>
             </DialogFooter>
           </DialogContent>
