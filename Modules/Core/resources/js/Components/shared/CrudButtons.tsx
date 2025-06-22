@@ -26,6 +26,8 @@ import {
 import { toast } from 'sonner';
 import { usePermission } from "@/Core";
 import { useTranslation } from 'react-i18next';
+// @ts-ignore
+import { route } from 'ziggy-js';
 
 interface CrudButtonsProps {
   resourceType: string;
@@ -88,7 +90,15 @@ const CrudButtons: React.FC<CrudButtonsProps> = ({
   const handleDelete = () => {
     setIsDeleting(true);
 
-    router.delete(`/${resourceType}/${resourceId}`, {
+    // Try to use named route first, fallback to manual URL construction
+    let deleteUrl: string;
+    try {
+      deleteUrl = route(`${resourceType}.destroy`, resourceId);
+    } catch (error: any) {
+      deleteUrl = `/${resourceType}/${resourceId}`;
+    }
+
+    router.delete(deleteUrl, {
       onSuccess: () => {
         toast.success(t('messages.delete_success', { resource: resourceName }));
         if (onDelete) onDelete();
@@ -107,7 +117,13 @@ const CrudButtons: React.FC<CrudButtonsProps> = ({
     <div className={`flex items-center space-x-2 ${className}`}>
       {showView && hasViewPermission && (
         <Button variant="outline" size="icon" asChild title={forceString(t('actions.view'), 'View')}>
-          <Link href={`/${resourceType}/${resourceId}`}>
+          <Link href={(() => {
+            try {
+              return route(`${resourceType}.show`, resourceId);
+            } catch (error: any) {
+              return `/${resourceType}/${resourceId}`;
+            }
+          })()}>
             <Eye className="h-4 w-4" />
           </Link>
         </Button>
@@ -115,7 +131,13 @@ const CrudButtons: React.FC<CrudButtonsProps> = ({
 
       {showEdit && hasEditPermission && (
         <Button variant="outline" size="icon" asChild title={forceString(t('actions.edit'), 'Edit')}>
-          <Link href={`/${resourceType}/${resourceId}/edit`}>
+          <Link href={(() => {
+            try {
+              return route(`${resourceType}.edit`, resourceId);
+            } catch (error: any) {
+              return `/${resourceType}/${resourceId}/edit`;
+            }
+          })()}>
             <Pencil className="h-4 w-4" />
           </Link>
         </Button>
