@@ -1,0 +1,32 @@
+{
+  "title": "Analytics",
+  "list": {
+    "title": "Analytics Dashboard",
+    "description": "View and analyze system metrics"
+  },
+  "fields": {
+    "metric": "Metric",
+    "value": "Value",
+    "period": "Period",
+    "comparison": "Comparison",
+    "trend": "Trend",
+    "target": "Target"
+  },
+  "metrics": {
+    "revenue": "Revenue",
+    "rentals": "Total Rentals",
+    "equipment": "Equipment Utilization",
+    "customers": "Active Customers",
+    "projects": "Active Projects"
+  },
+  "periods": {
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "yearly": "Yearly"
+  },
+  "messages": {
+    "data_updated": "Analytics data updated successfully",
+    "export_success": "Analytics report exported successfully"
+  }
+}

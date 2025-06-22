@@ -25,6 +25,17 @@ Route::prefix('leaves')->name('leaves.')->middleware(['auth', 'verified'])->grou
     Route::get('/', [LeaveController::class, 'index'])
         ->middleware('permission:leave-requests.view')
         ->name('index');
+    
+    // Direct CRUD routes for CrudButtons compatibility
+    Route::get('create', [LeaveRequestController::class, 'create'])
+        ->middleware('permission:leave-requests.create')
+        ->name('create');
+    Route::get('{request}', [LeaveRequestController::class, 'show'])
+        ->middleware('permission:leave-requests.view')
+        ->name('show');
+    Route::get('{request}/edit', [LeaveRequestController::class, 'edit'])
+        ->middleware('permission:leave-requests.edit')
+        ->name('edit');
 
     // Leave Requests (CRUD)
     Route::get('requests', [LeaveRequestController::class, 'index'])

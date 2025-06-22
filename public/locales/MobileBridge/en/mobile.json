@@ -1,0 +1,26 @@
+{
+  "title": "Mobile Bridge",
+  "list": {
+    "title": "Mobile Apps",
+    "description": "Manage mobile app settings and configurations"
+  },
+  "fields": {
+    "app_name": "App Name",
+    "version": "Version",
+    "platform": "Platform",
+    "status": "Status",
+    "last_sync": "Last Sync",
+    "device_id": "Device ID"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "syncing": "Syncing",
+    "error": "Error"
+  },
+  "messages": {
+    "sync_success": "Mobile app synced successfully",
+    "sync_error": "Failed to sync mobile app",
+    "update_success": "Mobile app settings updated successfully"
+  }
+}

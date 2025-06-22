@@ -1,0 +1,32 @@
+{
+  "title": "التحليلات",
+  "list": {
+    "title": "لوحة التحليلات",
+    "description": "عرض وتحليل مقاييس النظام"
+  },
+  "fields": {
+    "metric": "المقياس",
+    "value": "القيمة",
+    "period": "الفترة",
+    "comparison": "المقارنة",
+    "trend": "الاتجاه",
+    "target": "الهدف"
+  },
+  "metrics": {
+    "revenue": "الإيرادات",
+    "rentals": "إجمالي التأجير",
+    "equipment": "استخدام المعدات",
+    "customers": "العملاء النشطون",
+    "projects": "المشاريع النشطة"
+  },
+  "periods": {
+    "daily": "يومي",
+    "weekly": "أسبوعي",
+    "monthly": "شهري",
+    "yearly": "سنوي"
+  },
+  "messages": {
+    "data_updated": "تم تحديث بيانات التحليلات بنجاح",
+    "export_success": "تم تصدير تقرير التحليلات بنجاح"
+  }
+} 

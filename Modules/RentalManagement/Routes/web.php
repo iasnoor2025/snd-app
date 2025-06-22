@@ -24,6 +24,10 @@ use Modules\RentalManagement\Http\Controllers\RentalHistoryController;
 |
 */
 
+// Rental routes (main CRUD - outside named group for proper naming)
+Route::resource('rentals', RentalController::class)
+    ->middleware(['web', 'auth', 'permission:rentals.view']);
+
 Route::name('rentals.')->middleware(['web', 'auth'])->group(function () {
     // Customer routes
     Route::resource('customers', CustomerController::class)->middleware([
@@ -35,11 +39,6 @@ Route::name('rentals.')->middleware(['web', 'auth'])->group(function () {
     Route::get('api/customers', [CustomerController::class, 'getCustomers'])
         ->middleware('permission:customers.view')
         ->name('api.customers');
-
-    // Rental routes
-    Route::resource('rentals', RentalController::class)->middleware([
-        'permission:rentals.view',
-    ]);
 
     // Extension routes
     // Route::resource('extensions', RentalExtensionController::class);

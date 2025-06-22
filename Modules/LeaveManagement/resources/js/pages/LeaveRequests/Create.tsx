@@ -35,6 +35,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 const ToastService = { success: (msg: string) => alert(msg), error: (msg: string) => alert(msg) };
 import { PageProps } from '@/Modules/LeaveManagement/resources/js/types';
+import { usePermission } from '@/hooks/usePermission';
 
 // Temporary inline implementation of usePermission hook
 function usePermission() {
@@ -90,6 +91,7 @@ const LEAVE_TYPES = [
 ];
 
 export default function LeaveRequestCreate({ employees = [], currentUserOnly = false }: Props) {
+  const { t } = useTranslation(['leave', 'common']);
   const { hasPermission } = usePermission();
   const [submitting, setSubmitting] = useState(false);
   const [isFormReady, setIsFormReady] = useState(false);

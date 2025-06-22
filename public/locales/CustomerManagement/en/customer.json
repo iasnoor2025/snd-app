@@ -1,0 +1,34 @@
+{
+  "title": "Customer Management",
+  "list": {
+    "title": "Customers",
+    "description": "Manage customer information"
+  },
+  "fields": {
+    "name": "Customer Name",
+    "company": "Company",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "status": "Status",
+    "type": "Customer Type",
+    "credit_limit": "Credit Limit",
+    "balance": "Balance"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "blocked": "Blocked",
+    "pending": "Pending Verification"
+  },
+  "types": {
+    "individual": "Individual",
+    "business": "Business",
+    "government": "Government"
+  },
+  "messages": {
+    "create_success": "Customer created successfully",
+    "update_success": "Customer updated successfully",
+    "delete_success": "Customer deleted successfully"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "users": {
+    "title": "Users",
+    "create": "Create User",
+    "edit": "Edit User",
+    "delete": "Delete User",
+    "name": "Name",
+    "email": "Email",
+    "roles": "Roles",
+    "permissions": "Permissions",
+    "created_at": "Created At",
+    "updated_at": "Updated At",
+    "verified": "Verified",
+    "unverified": "Unverified",
+    "actions": {
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "messages": {
+      "create_success": "User created successfully",
+      "update_success": "User updated successfully",
+      "delete_success": "User deleted successfully",
+      "create_error": "Failed to create user",
+      "update_error": "Failed to update user",
+      "delete_error": "Failed to delete user"
+    }
+  },
+  "roles": {
+    "title": "Roles",
+    "create": "Create Role",
+    "edit": "Edit Role",
+    "delete": "Delete Role",
+    "name": "Name",
+    "permissions": "Permissions"
+  }
+} 

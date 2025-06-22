@@ -30,6 +30,12 @@ Route::prefix('hr/payroll')->name('payroll.')->middleware(['auth', 'verified'])-
     Route::get('/{payroll}', [PayrollController::class, 'show'])
         ->middleware('permission:payroll.view')
         ->name('show');
+    Route::get('/{payroll}/edit', [PayrollController::class, 'edit'])
+        ->middleware('permission:payroll.edit')
+        ->name('edit');
+    Route::put('/{payroll}', [PayrollController::class, 'update'])
+        ->middleware('permission:payroll.edit')
+        ->name('update');
     Route::post('/{payroll}/approve', [PayrollController::class, 'approve'])
         ->middleware('permission:payroll.edit')
         ->name('approve');

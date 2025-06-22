@@ -23,6 +23,8 @@ const moduleMap = {
   booking: 'Core',
   customer: 'CustomerManagement',
   customers: 'CustomerManagement',
+  leave: 'LeaveManagement',
+  leaves: 'LeaveManagement',
   navigation: 'Core',
   fields: 'Core',
   actions: 'Core',

@@ -108,6 +108,55 @@ class PayrollController extends Controller
     }
 
     /**
+     * Show the form for editing the specified payroll
+     */
+    public function edit(Payroll $payroll)
+    {
+        $this->authorize('update', $payroll);
+
+        $payroll->load(['employee', 'items']);
+
+        return Inertia::render('Payroll/Edit', [
+            'payroll' => $payroll,
+        ]);
+    }
+
+    /**
+     * Update the specified payroll
+     */
+    public function update(Request $request, Payroll $payroll)
+    {
+        $this->authorize('update', $payroll);
+
+        $request->validate([
+            'items' => 'sometimes|array',
+            'items.*.type' => 'required_with:items|in:earning,deduction',
+            'items.*.description' => 'required_with:items|string',
+            'items.*.amount' => 'required_with:items|numeric|min:0',
+        ]);
+
+        if ($request->has('items')) {
+            // Update payroll items
+            $payroll->items()->delete();
+            
+            foreach ($request->items as $item) {
+                $payroll->items()->create([
+                    'type' => $item['type'],
+                    'description' => $item['description'],
+                    'amount' => $item['amount'],
+                ]);
+            }
+
+            // Recalculate totals
+            $payroll->calculateTotals();
+            $payroll->save();
+        }
+
+        return redirect()->route('payroll.show', $payroll)
+            ->with('success', 'Payroll updated successfully.');
+    }
+
+    /**
      * Approve the specified payroll
      */
     public function approve(Payroll $payroll)
