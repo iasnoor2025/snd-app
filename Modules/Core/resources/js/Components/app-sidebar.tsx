@@ -17,11 +17,11 @@ const moduleMap: Record<string, { icon: string; route: string; permission: strin
     Core: { icon: 'network', route: '/core', permission: 'core.view' },
     EmployeeManagement: {
         icon: 'user-cog',
-        route: '/employees',
+        route: '/hr/employees',
         permission: 'employees.view',
         subItems: [
-            { title: 'Employees', route: '/employees', permission: 'employees.view' },
-            { title: 'Salary Increments', route: '/salary-increments', permission: 'salary-increments.view' }
+            { title: 'Employees', route: '/hr/employees', permission: 'employees.view' },
+            { title: 'Salary Increments', route: '/hr/salary-increments', permission: 'salary-increments.view' }
         ]
     },
     LeaveManagement: { icon: 'clipboard-list', route: '/leave-requests', permission: 'leave-requests.view' },
@@ -94,7 +94,7 @@ export function AppSidebar() {
         if (isAdmin) {
             items.push({
                 title: t('users'),
-                href: '/settings/users',
+                href: '/users',
                 icon: 'users',
             });
             items.push({
