@@ -1,0 +1,20 @@
+{
+  "title": "Mobile App",
+  "menu": {
+    "home": "Home",
+    "profile": "Profile",
+    "settings": "Settings",
+    "notifications": "Notifications"
+  },
+  "actions": {
+    "sync": "Sync Data",
+    "refresh": "Refresh",
+    "logout": "Logout"
+  },
+  "messages": {
+    "offline": "You are offline",
+    "syncing": "Syncing data...",
+    "syncComplete": "Data sync complete",
+    "syncError": "Error syncing data"
+  }
+} 

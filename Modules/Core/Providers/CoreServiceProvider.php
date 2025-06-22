@@ -98,16 +98,8 @@ class CoreServiceProvider extends ServiceProvider
      */
     protected function registerRoutes()
     {
-        $webRoutePath = module_path('Core', 'Routes/web.php');
-        $apiRoutePath = module_path('Core', 'Routes/api.php');
-
-        if (file_exists($webRoutePath)) {
-            Route::middleware('web')->group($webRoutePath);
-        }
-
-        if (file_exists($apiRoutePath)) {
-            Route::middleware('api')->group($apiRoutePath);
-        }
+        // Routes are handled by RouteServiceProvider to avoid conflicts
+        // Core routes are registered with proper prefixes in RouteServiceProvider
     }
 
     /**

@@ -86,19 +86,19 @@ export function AppSidebar() {
         const items: NavItem[] = [];
         // Add Dashboard as first item
         items.push({
-            title: t('common:dashboard'),
+            title: t('dashboard'),
             href: '/dashboard',
             icon: 'layout-grid',
         });
         // Add Users and Roles for admins
         if (isAdmin) {
             items.push({
-                title: t('common:users'),
-                href: '/users',
+                title: t('users'),
+                href: '/settings/users',
                 icon: 'users',
             });
             items.push({
-                title: t('common:roles'),
+                title: t('navigation.roles'),
                 href: '/settings/roles',
                 icon: 'shield',
             });
@@ -109,7 +109,7 @@ export function AppSidebar() {
         if (isAdmin) {
             Object.entries(moduleMap).forEach(([module, mapInfo]) => {
                 const navItem: NavItem = {
-                    title: t(`common:modules.${module}`),
+                    title: t(`modules.${module}`),
                     href: mapInfo.route.startsWith('/') ? mapInfo.route : route(mapInfo.route),
                     icon: mapInfo.icon,
                 };
@@ -117,7 +117,7 @@ export function AppSidebar() {
                 // Add sub-items if they exist
                 if (mapInfo.subItems) {
                     navItem.items = mapInfo.subItems.map(subItem => ({
-                        title: t(`common:${module.toLowerCase()}.${subItem.title.toLowerCase().replace(' ', '_')}`),
+                        title: t(`${module.toLowerCase()}.${subItem.title.toLowerCase().replace(' ', '_')}`),
                         href: subItem.route,
                     }));
                 }
@@ -128,7 +128,7 @@ export function AppSidebar() {
             Object.entries(moduleMap).forEach(([module, mapInfo]) => {
                 if (permissions.includes(mapInfo.permission)) {
                     const navItem: NavItem = {
-                        title: moduleDisplayNames[module] || module,
+                        title: t(`modules.${module}`),
                         href: mapInfo.route.startsWith('/') ? mapInfo.route : route(mapInfo.route),
                         icon: mapInfo.icon,
                     };
@@ -140,7 +140,7 @@ export function AppSidebar() {
                         );
                         if (allowedSubItems.length > 0) {
                             navItem.items = allowedSubItems.map(subItem => ({
-                                title: subItem.title,
+                                title: t(`${module.toLowerCase()}.${subItem.title.toLowerCase().replace(' ', '_')}`),
                                 href: subItem.route,
                             }));
                         }

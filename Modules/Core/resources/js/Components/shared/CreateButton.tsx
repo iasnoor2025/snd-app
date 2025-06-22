@@ -25,7 +25,7 @@ const CreateButton: React.FC<CreateButtonProps> = ({
   href,
 }) => {
   const { t } = useTranslation(['common']);
-  const defaultText = text || t('common:actions.add', { resource: resourceType.charAt(0).toUpperCase() + resourceType.slice(1).replace(/s$/, '') });
+      const defaultText = text || t('actions.add', { resource: resourceType.charAt(0).toUpperCase() + resourceType.slice(1).replace(/s$/, '') });
   const defaultHref = `/${resourceType}/create`;
 
   const button = (

@@ -49,8 +49,10 @@ if (typeof window !== 'undefined') {
 const modulePages: Record<string, () => Promise<any>> = {
   ...import.meta.glob('/Modules/*/resources/js/pages/**/*.tsx', { eager: false }),
   ...import.meta.glob('/Modules/*/resources/js/pages/**/*.jsx', { eager: false }),
+  ...import.meta.glob('/Modules/*/resources/js/Pages/**/*.tsx', { eager: false }),
+  ...import.meta.glob('/Modules/*/resources/js/Pages/**/*.jsx', { eager: false }),
   ...import.meta.glob('/resources/js/pages/**/*.tsx', { eager: false }),
-  ...import.meta.glob('/resources/js/pages/**/*.tsx', { eager: false }),
+  ...import.meta.glob('/resources/js/pages/**/*.jsx', { eager: false }),
 };
 
 // Helper function to find module pages by pattern
@@ -133,10 +135,16 @@ const leaveRequestPages: Record<string, string> = {
 
 // Core/Users pages
 const corePages: Record<string, string> = {
-  'Users/Index': '/resources/js/pages/Users/Index.tsx',
-  'Users/Create': '/resources/js/pages/Users/Create.tsx',
-  'Users/Edit': '/resources/js/pages/Users/Edit.tsx',
-  'Users/Show': '/resources/js/pages/Users/Show.tsx',
+  'Users/Index': './Modules/Core/resources/js/Pages/Users/Index.tsx',
+  'Users/Create': './Modules/Core/resources/js/Pages/Users/Create.tsx',
+  'Users/Edit': './Modules/Core/resources/js/Pages/Users/Edit.tsx',
+  'Users/Show': './Modules/Core/resources/js/Pages/Users/Show.tsx',
+  'Roles/Index': './Modules/Core/resources/js/Pages/Roles/Index.tsx',
+  'Roles/Create': './Modules/Core/resources/js/Pages/Roles/Create.tsx',
+  'Roles/Edit': './Modules/Core/resources/js/Pages/Roles/Edit.tsx',
+  'Roles/Show': './Modules/Core/resources/js/Pages/Roles/Show.tsx',
+  'Roles/UserRoles': './Modules/Core/resources/js/Pages/Roles/UserRoles.tsx',
+  'Permissions/Index': './Modules/Core/resources/js/Pages/Permissions/Index.tsx',
   'Profile/Index': './Modules/Core/resources/js/pages/Profile/Index.jsx',
   'Profile/Avatar': './Modules/Core/resources/js/pages/Profile/Avatar.jsx',
   'Profile/Settings': './Modules/Core/resources/js/pages/Profile/Settings.jsx',

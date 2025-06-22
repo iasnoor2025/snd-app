@@ -24,6 +24,57 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 });
 
+// Translation files route - serve directly from modules
+Route::get('/locales/{module}/{locale}/{namespace}.json', function ($module, $locale, $namespace) {
+    $filePath = base_path("Modules/{$module}/resources/lang/{$locale}/{$namespace}.json");
+    
+    if (!file_exists($filePath)) {
+        abort(404, 'Translation file not found');
+    }
+    
+    return response()->file($filePath, [
+        'Content-Type' => 'application/json',
+        'Cache-Control' => 'public, max-age=3600'
+    ]);
+})->name('locales');
+
+// Debug route to test page resolution
+Route::get('/debug-pages', function () {
+    $modulePages = [
+        'Users/Index' => './Modules/Core/resources/js/Pages/Users/Index.tsx',
+        'Users/Create' => './Modules/Core/resources/js/Pages/Users/Create.tsx',
+        'Users/Edit' => './Modules/Core/resources/js/Pages/Users/Edit.tsx',
+        'Users/Show' => './Modules/Core/resources/js/Pages/Users/Show.tsx',
+        'Roles/Index' => './Modules/Core/resources/js/Pages/Roles/Index.tsx',
+        'Roles/Create' => './Modules/Core/resources/js/Pages/Roles/Create.tsx',
+        'Roles/Edit' => './Modules/Core/resources/js/Pages/Roles/Edit.tsx',
+        'Roles/Show' => './Modules/Core/resources/js/Pages/Roles/Show.tsx',
+        'Roles/UserRoles' => './Modules/Core/resources/js/Pages/Roles/UserRoles.tsx',
+    ];
+    
+    $existingPages = [];
+    foreach ($modulePages as $name => $path) {
+        $fullPath = base_path($path);
+        $existingPages[$name] = [
+            'path' => $path,
+            'exists' => file_exists($fullPath),
+            'full_path' => $fullPath
+        ];
+    }
+    
+    return response()->json([
+        'pages' => $existingPages,
+        'user' => auth()->user()->name,
+        'permissions' => auth()->user()->getAllPermissions()->pluck('name'),
+        'roles' => auth()->user()->roles->pluck('name')
+    ]);
+})->middleware('auth');
+
+// Translation test route
+Route::get('/translation-test', function () {
+    return Inertia::render('TranslationTest');
+})->name('translation.test');
+
 // Use lowercase role names for Spatie permission middleware (case-sensitive)
 Route::middleware(['auth', 'role:admin'])->group(function () {
     // User and role management routes are handled by Core module
@@ -48,6 +99,7 @@ Route::get('/whoami', function () {
 });
 
 Route::redirect('/roles', '/settings/roles');
+Route::redirect('/reports', '/reporting');
 
 // Redirect auth/login to login route with 301 status code
 Route::get('auth/login', function () {

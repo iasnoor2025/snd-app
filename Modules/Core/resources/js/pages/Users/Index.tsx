@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AppLayout } from '@/Core';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { BreadcrumbItem } from '../../types';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
@@ -68,18 +68,21 @@ interface Role {
 interface Props {
     users: User[];
     roles: Role[];
+    can: {
+        create_users: boolean;
+    };
 }
 
-export default function Index({ users, roles }: Props) {
-    const { t } = useTranslation(['common']);
+export default function Index({ users, roles, can }: Props) {
+    const { t } = useTranslation('common');
     const [searchTerm, setSearchTerm] = useState('');
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [userToDelete, setUserToDelete] = useState<User | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: t('common:dashboard'), href: route('dashboard') },
-        { title: t('common:users'), href: '' },
+        { title: t('navigation.dashboard'), href: route('dashboard') },
+        { title: t('navigation.users'), href: '' },
     ];
 
     // Filter users based on search term
@@ -95,12 +98,12 @@ export default function Index({ users, roles }: Props) {
         setIsDeleting(true);
         router.delete(route('users.destroy', userToDelete.id), {
             onSuccess: () => {
-                toast.success(t('common:messages.delete_success', { resource: 'User' }));
+                toast.success(t('messages.delete_success', { resource: t('users') }));
                 setDeleteDialogOpen(false);
                 setUserToDelete(null);
             },
             onError: (errors) => {
-                toast.error(errors.message || t('common:messages.delete_error'));
+                toast.error(errors.message || t('messages.delete_error', { resource: t('users') }));
             },
             onFinish: () => {
                 setIsDeleting(false);
@@ -115,7 +118,7 @@ export default function Index({ users, roles }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={t('common:users')} />
+            <Head title={t('navigation.users')} />
 
             <div className="py-6">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -125,18 +128,20 @@ export default function Index({ users, roles }: Props) {
                                 <div>
                                     <CardTitle className="flex items-center gap-2">
                                         <UsersIcon className="h-5 w-5" />
-                                        {t('common:users')}
+                                        {t('navigation.users')}
                                     </CardTitle>
                                     <CardDescription>
-                                        {t('common:manage_users_description', 'Manage system users and their roles')}
+                                        {t('messages.manage_users_description')}
                                     </CardDescription>
                                 </div>
-                                <Link href={route('users.create')}>
-                                    <Button>
-                                        <Plus className="h-4 w-4 mr-2" />
-                                        {t('common:actions.add', { resource: 'User' })}
-                                    </Button>
-                                </Link>
+                                {can.create_users && (
+                                    <Link href={route('users.create')}>
+                                        <Button>
+                                            <Plus className="h-4 w-4 mr-2" />
+                                            {t('actions.add', { resource: t('users') })}
+                                        </Button>
+                                    </Link>
+                                )}
                             </div>
                         </CardHeader>
                         <CardContent>
@@ -145,7 +150,7 @@ export default function Index({ users, roles }: Props) {
                                 <div className="relative">
                                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                                     <Input
-                                        placeholder={t('common:search_users', 'Search users...')}
+                                        placeholder={t('search.search_users')}
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                         className="pl-10"
@@ -158,19 +163,19 @@ export default function Index({ users, roles }: Props) {
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead>{t('common:name')}</TableHead>
-                                            <TableHead>{t('common:email')}</TableHead>
-                                            <TableHead>{t('common:roles')}</TableHead>
-                                            <TableHead>{t('common:status')}</TableHead>
-                                            <TableHead>{t('common:created_at')}</TableHead>
-                                            <TableHead className="text-right">{t('common:actions')}</TableHead>
+                                            <TableHead>{t('fields.name')}</TableHead>
+                                            <TableHead>{t('fields.email')}</TableHead>
+                                            <TableHead>{t('fields.roles')}</TableHead>
+                                            <TableHead>{t('fields.status')}</TableHead>
+                                            <TableHead>{t('fields.created_at')}</TableHead>
+                                            <TableHead className="text-right">{t('fields.actions')}</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
                                         {filteredUsers.length === 0 ? (
                                             <TableRow>
                                                 <TableCell colSpan={6} className="text-center py-8 text-gray-500">
-                                                    {searchTerm ? t('common:no_results') : t('common:no_users')}
+                                                    {searchTerm ? t('messages.no_results') : t('messages.no_users')}
                                                 </TableCell>
                                             </TableRow>
                                         ) : (
@@ -193,10 +198,7 @@ export default function Index({ users, roles }: Props) {
                                                         <Badge 
                                                             variant={user.email_verified_at ? "default" : "destructive"}
                                                         >
-                                                            {user.email_verified_at ? 
-                                                                t('common:verified') : 
-                                                                t('common:unverified')
-                                                            }
+                                                            {user.email_verified_at ? t('status.verified') : t('status.unverified')}
                                                         </Badge>
                                                     </TableCell>
                                                     <TableCell>
@@ -206,29 +208,35 @@ export default function Index({ users, roles }: Props) {
                                                         <DropdownMenu>
                                                             <DropdownMenuTrigger asChild>
                                                                 <Button variant="ghost" className="h-8 w-8 p-0">
-                                                                    <span className="sr-only">Open menu</span>
+                                                                    <span className="sr-only">{t('actions.view')}</span>
                                                                     <MoreHorizontal className="h-4 w-4" />
                                                                 </Button>
                                                             </DropdownMenuTrigger>
                                                             <DropdownMenuContent align="end">
-                                                                <DropdownMenuItem asChild>
-                                                                    <Link href={route('users.show', user.id)}>
-                                                                        <Eye className="h-4 w-4 mr-2" />
-                                                                        {t('common:actions.view')}
+                                                                <DropdownMenuItem>
+                                                                    <Link
+                                                                        href={route('users.show', user.id)}
+                                                                        className="flex items-center"
+                                                                    >
+                                                                        <Eye className="mr-2 h-4 w-4" />
+                                                                        {t('actions.view')}
                                                                     </Link>
                                                                 </DropdownMenuItem>
-                                                                <DropdownMenuItem asChild>
-                                                                    <Link href={route('users.edit', user.id)}>
-                                                                        <Edit className="h-4 w-4 mr-2" />
-                                                                        {t('common:actions.edit')}
+                                                                <DropdownMenuItem>
+                                                                    <Link
+                                                                        href={route('users.edit', user.id)}
+                                                                        className="flex items-center"
+                                                                    >
+                                                                        <Edit className="mr-2 h-4 w-4" />
+                                                                        {t('actions.edit')}
                                                                     </Link>
                                                                 </DropdownMenuItem>
-                                                                <DropdownMenuItem 
-                                                                    className="text-red-600"
+                                                                <DropdownMenuItem
                                                                     onClick={() => openDeleteDialog(user)}
+                                                                    className="text-red-600"
                                                                 >
-                                                                    <Trash2 className="h-4 w-4 mr-2" />
-                                                                    {t('common:actions.delete')}
+                                                                    <Trash2 className="mr-2 h-4 w-4" />
+                                                                    {t('actions.delete')}
                                                                 </DropdownMenuItem>
                                                             </DropdownMenuContent>
                                                         </DropdownMenu>
@@ -244,33 +252,30 @@ export default function Index({ users, roles }: Props) {
                 </div>
             </div>
 
-            {/* Delete Dialog */}
+            {/* Delete Confirmation Dialog */}
             <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>{t('common:confirm_delete')}</DialogTitle>
+                        <DialogTitle>{t('messages.confirm_delete')}</DialogTitle>
                         <DialogDescription>
-                            {t('common:delete_user_confirmation', {
-                                name: userToDelete?.name,
-                                defaultValue: `Are you sure you want to delete "${userToDelete?.name}"? This action cannot be undone.`
-                            })}
+                            {userToDelete && t('messages.delete_user_confirmation', { name: userToDelete.name })}
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
-                        <Button 
-                            variant="outline" 
+                        <Button
+                            variant="outline"
                             onClick={() => setDeleteDialogOpen(false)}
                             disabled={isDeleting}
                         >
-                            {t('common:actions.cancel')}
+                            {t('actions.cancel')}
                         </Button>
-                        <Button 
-                            variant="destructive" 
+                        <Button
+                            variant="destructive"
                             onClick={handleDeleteUser}
                             disabled={isDeleting}
                         >
-                            {isDeleting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                            {t('common:actions.delete')}
+                            {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            {t('actions.delete')}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

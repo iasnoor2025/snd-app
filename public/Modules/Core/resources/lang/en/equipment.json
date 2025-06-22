@@ -1,0 +1,19 @@
+{
+  "title": "Equipment",
+  "create": "Create Equipment",
+  "edit": "Edit Equipment",
+  "delete": "Delete Equipment",
+  "name": "Name",
+  "type": "Type",
+  "model": "Model",
+  "serial_number": "Serial Number",
+  "status": "Status",
+  "location": "Location",
+  "purchase_date": "Purchase Date",
+  "warranty_expiry": "Warranty Expiry",
+  "actions": {
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete"
+  }
+} 

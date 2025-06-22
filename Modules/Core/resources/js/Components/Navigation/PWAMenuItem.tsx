@@ -27,7 +27,7 @@ const PWAMenuItem: React.FC<PWAMenuItemProps> = ({ className = '', showBadges = 
         if (!isOnline) {
             badges.push(
                 <Badge key="offline" variant="destructive" className="text-xs">
-                    {t('common:pwa.offline')}
+                    {t('pwa.offline')}
                 </Badge>
             );
         }
@@ -37,7 +37,7 @@ const PWAMenuItem: React.FC<PWAMenuItemProps> = ({ className = '', showBadges = 
             badges.push(
                 <Badge key="installable" variant="secondary" className="text-xs">
                     <Download className="h-3 w-3 mr-1" />
-                    {t('common:pwa.install')}
+                    {t('pwa.install')}
                 </Badge>
             );
         }
@@ -47,7 +47,7 @@ const PWAMenuItem: React.FC<PWAMenuItemProps> = ({ className = '', showBadges = 
             badges.push(
                 <Badge key="notifications" variant="outline" className="text-xs">
                     <Bell className="h-3 w-3 mr-1" />
-                    {t('common:pwa.enable')}
+                    {t('pwa.enable')}
                 </Badge>
             );
         }
@@ -56,7 +56,7 @@ const PWAMenuItem: React.FC<PWAMenuItemProps> = ({ className = '', showBadges = 
         if (serviceWorkerStatus === 'waiting') {
             badges.push(
                 <Badge key="update" variant="default" className="text-xs bg-blue-600">
-                    {t('common:pwa.update')}
+                    {t('pwa.update')}
                 </Badge>
             );
         }
@@ -73,7 +73,7 @@ const PWAMenuItem: React.FC<PWAMenuItemProps> = ({ className = '', showBadges = 
         >
             <div className="flex items-center gap-2">
                 <Smartphone className="h-4 w-4" />
-                <span>{t('common:pwa.management')}</span>
+                <span>{t('pwa.management')}</span>
             </div>
 
             {statusBadges.length > 0 && (
@@ -93,7 +93,7 @@ const PWAMenuItem: React.FC<PWAMenuItemProps> = ({ className = '', showBadges = 
                     isOnline ? 'bg-green-500' : 'bg-red-500'
                 }`} />
                 {isStandalone && (
-                    <Smartphone className="h-3 w-3 text-blue-600" title={t('common:pwa.running_as_app')} />
+                    <Smartphone className="h-3 w-3 text-blue-600" title={t('pwa.running_as_app')} />
                 )}
             </div>
         </Link>

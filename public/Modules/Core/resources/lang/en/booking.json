@@ -1,0 +1,19 @@
+{
+  "title": "Bookings",
+  "create": "Create Booking",
+  "edit": "Edit Booking",
+  "delete": "Delete Booking",
+  "customer": "Customer",
+  "resource": "Resource",
+  "start_date": "Start Date",
+  "end_date": "End Date",
+  "status": "Status",
+  "notes": "Notes",
+  "actions": {
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
+  }
+} 

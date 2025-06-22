@@ -53,7 +53,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
 
     const mainNavItems: NavItem[] = [
         {
-            title: t('common:dashboard'),
+            title: t('navigation.dashboard'),
             href: '/dashboard',
             icon: LayoutGrid,
         },
@@ -61,12 +61,12 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
 
     const rightNavItems: NavItem[] = [
         {
-            title: t('common:repository'),
+            title: t('Repository'),
             href: 'https://github.com/laravel/react-starter-kit',
             icon: Folder,
         },
         {
-            title: t('common:documentation'),
+            title: t('Documentation'),
             href: 'https://laravel.com/docs/starter-kits#react',
             icon: BookOpen,
         },

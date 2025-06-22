@@ -289,15 +289,15 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <div>
-              <CardTitle className="text-2xl font-bold">Timesheets</CardTitle>
+              <CardTitle className="text-2xl font-bold">{t('ttl_timesheets')}</CardTitle>
               <CardDescription>
-                Manage employee timesheets and track working hours
+                {t('manage_timesheets')}
               </CardDescription>
             </div>
             <div className="flex items-center space-x-2">
               <CreateButton
                 resourceType="timesheets"
-                text="Add Timesheet"
+                text={t('btn_create_timesheet')}
                 href="/hr/timesheets/create"
               />
 
@@ -309,12 +309,12 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                   {bulkProcessing ? (
                     <>
                       <ArrowPathIcon className="mr-2 h-4 w-4 animate-spin" />
-                      Processing...
+                      {t('btn_processing')}
                     </>
                   ) : (
                     <>
                       <CheckIcon className="mr-2 h-4 w-4" />
-                      Approve Selected
+                      {t('btn_approve_selected')}
                     </>
                   )}
                 </Button>
@@ -341,10 +341,10 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">{t('opt_all_statuses_1')}</SelectItem>
-                        <SelectItem value="draft">Draft</SelectItem>
-                        <SelectItem value="submitted">Submitted</SelectItem>
-                        <SelectItem value="approved">Approved</SelectItem>
-                        <SelectItem value="rejected">Rejected</SelectItem>
+                        <SelectItem value="draft">{t('status_draft')}</SelectItem>
+                        <SelectItem value="submitted">{t('status_submitted')}</SelectItem>
+                        <SelectItem value="approved">{t('status_approved')}</SelectItem>
+                        <SelectItem value="rejected">{t('status_rejected')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -353,7 +353,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                       <PopoverTrigger asChild>
                         <Button variant="outline" className="w-full md:w-auto">
                           <CalendarIcon className="mr-2 h-4 w-4" />
-                          {startDate ? format(startDate, 'PP') : 'From'}
+                          {startDate ? format(startDate, 'PP') : t('from_date')}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
@@ -369,7 +369,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                       <PopoverTrigger asChild>
                         <Button variant="outline" className="w-full md:w-auto">
                           <CalendarIcon className="mr-2 h-4 w-4" />
-                          {endDate ? format(endDate, 'PP') : 'To'}
+                          {endDate ? format(endDate, 'PP') : t('to_date')}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
@@ -383,8 +383,8 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                     </Popover>
                   </div>
                   <div className="flex gap-2">
-                    <Button onClick={handleSearch}>Search</Button>
-                    <Button variant="outline" onClick={resetFilters}>Reset</Button>
+                    <Button onClick={handleSearch}>{t('btn_search')}</Button>
+                    <Button variant="outline" onClick={resetFilters}>{t('btn_reset')}</Button>
                   </div>
                 </div>
 
@@ -411,13 +411,13 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                         />
                       </TableHead>
                     )}
-                    <TableHead>Employee</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Hours</TableHead>
-                    <TableHead>Overtime</TableHead>
-                    <TableHead>Project</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead>{t('lbl_employee_column')}</TableHead>
+                    <TableHead>{t('lbl_date_column')}</TableHead>
+                    <TableHead>{t('lbl_hours_column')}</TableHead>
+                    <TableHead>{t('lbl_overtime_column')}</TableHead>
+                    <TableHead>{t('lbl_project_column')}</TableHead>
+                    <TableHead>{t('lbl_status_column')}</TableHead>
+                    <TableHead className="text-right">{t('lbl_actions_column')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -427,12 +427,12 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                         <div className="flex flex-col items-center justify-center space-y-2">
                           <div className="text-lg font-medium">{t('no_timesheets_found')}</div>
                           <div className="text-sm text-muted-foreground">
-                            Try adjusting your filters or create a new timesheet.
+                            {t('no_timesheets_message')}
                           </div>
                           {canCreateTimesheet && (
                             <CreateButton
                               resourceType="timesheets"
-                              text="Add Timesheet"
+                              text={t('btn_create_timesheet')}
                               href="/hr/timesheets/create"
                               buttonVariant="default"
                               className="mt-2"
@@ -564,7 +564,11 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
             {timesheets.last_page > 1 && (
               <div className="flex items-center justify-between mt-4">
                 <div className="text-sm text-muted-foreground">
-                  Showing {(timesheets.current_page - 1) * timesheets.per_page + 1} to {Math.min(timesheets.current_page * timesheets.per_page, timesheets.total)} of {timesheets.total} records
+                  {t('showing_records', {
+                    from: (timesheets.current_page - 1) * timesheets.per_page + 1,
+                    to: Math.min(timesheets.current_page * timesheets.per_page, timesheets.total),
+                    total: timesheets.total
+                  })}
                 </div>
                 <div className="flex items-center space-x-2">
                   <Button
@@ -590,12 +594,12 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                       }
                     }}
                     disabled={timesheets.current_page <= 1}
-                  >
-                    Previous
-                  </Button>
-                  <span className="text-sm">
-                    Page {timesheets.current_page} of {timesheets.last_page}
-                  </span>
+                                      >
+                      {t('btn_previous')}
+                    </Button>
+                                      <span className="text-sm">
+                      {t('page_info', { current: timesheets.current_page, total: timesheets.last_page })}
+                    </span>
                   <Button
                     variant="outline"
                     size="sm"
@@ -619,9 +623,9 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                       }
                     }}
                     disabled={timesheets.current_page >= timesheets.last_page}
-                  >
-                    Next
-                  </Button>
+                                      >
+                      {t('btn_next')}
+                    </Button>
                 </div>
               </div>
             )}

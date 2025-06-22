@@ -22,6 +22,9 @@ class UserController extends Controller
         return Inertia::render('Users/Index', [
             'users' => $users,
             'roles' => $roles,
+            'can' => [
+                'create_users' => auth()->user()->can('users.create'),
+            ],
         ]);
     }
 

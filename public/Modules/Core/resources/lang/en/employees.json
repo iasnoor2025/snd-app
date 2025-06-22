@@ -1,0 +1,18 @@
+{
+  "title": "Employees",
+  "create": "Create Employee",
+  "edit": "Edit Employee",
+  "delete": "Delete Employee",
+  "name": "Name",
+  "email": "Email",
+  "phone": "Phone",
+  "department": "Department",
+  "position": "Position",
+  "status": "Status",
+  "hire_date": "Hire Date",
+  "actions": {
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete"
+  }
+} 

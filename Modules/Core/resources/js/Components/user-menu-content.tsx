@@ -23,13 +23,13 @@ export function UserMenuContent() {
                 <DropdownMenuItem asChild>
                     <Link href="/profile" onClick={closeMobileNavigation}>
                         <Icon name="user" />
-                        {t('common:profile')}
+                        {t('navigation.profile')}
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                     <Link href="/settings" onClick={closeMobileNavigation}>
                         <Icon name="settings" />
-                        {t('common:settings')}
+                        {t('navigation.settings')}
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
@@ -41,7 +41,7 @@ export function UserMenuContent() {
             <DropdownMenuItem asChild>
                 <Link href={route('logout')} method="post" as="button" onClick={closeMobileNavigation}>
                     <LogOut className="mr-2 h-4 w-4" />
-                    {t('common:logout')}
+                    {t('navigation.logout')}
                 </Link>
             </DropdownMenuItem>
         </>

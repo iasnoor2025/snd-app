@@ -6,6 +6,7 @@ use Modules\Core\Domain\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class AdminUserSeeder extends Seeder
 {
@@ -14,21 +15,44 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
+        // Create admin role if it doesn't exist
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+
+        // Create permissions if they don't exist
+        $permissions = [
+            'users.view',
+            'users.create',
+            'users.edit',
+            'users.delete',
+            'roles.view',
+            'roles.create',
+            'roles.edit',
+            'roles.delete',
+            'permissions.view',
+            'permissions.create',
+            'permissions.edit',
+            'permissions.delete',
+        ];
+
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate(['name' => $permission]);
+        }
+
+        // Give all permissions to admin role
+        $adminRole->givePermissionTo(Permission::all());
+
         // Create admin user if it doesn't exist
         $admin = User::firstOrCreate(
             ['email' => 'admin@ias.com'],
             [
-                'name' => 'System Administrator',
+                'name' => 'Admin',
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
             ]
         );
 
-        // Ensure admin role exists and assign it
-        $adminRole = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
-        if (!$admin->hasRole($adminRole)) {
-            $admin->assignRole($adminRole);
-        }
+        // Assign admin role to admin user
+        $admin->assignRole($adminRole);
 
         // Create manager user for testing
         $manager = User::firstOrCreate(

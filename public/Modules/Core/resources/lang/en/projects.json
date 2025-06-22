@@ -1,0 +1,19 @@
+{
+  "title": "Projects",
+  "create": "Create Project",
+  "edit": "Edit Project",
+  "delete": "Delete Project",
+  "name": "Name",
+  "description": "Description",
+  "start_date": "Start Date",
+  "end_date": "End Date",
+  "status": "Status",
+  "client": "Client",
+  "manager": "Project Manager",
+  "team": "Project Team",
+  "actions": {
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete"
+  }
+} 

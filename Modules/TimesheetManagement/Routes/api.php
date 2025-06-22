@@ -19,7 +19,13 @@ use Modules\TimesheetManagement\Http\Controllers\GeofenceController;
 
 Route::middleware('auth:sanctum')->group(function () {
     // Timesheet Management Routes
-    Route::apiResource('timesheets', TimesheetController::class);
+    Route::apiResource('timesheets', TimesheetController::class)->names([
+        'index' => 'hr.api.timesheets.index',
+        'store' => 'hr.api.timesheets.store',
+        'show' => 'hr.api.timesheets.show',
+        'update' => 'hr.api.timesheets.update',
+        'destroy' => 'hr.api.timesheets.destroy'
+    ]);
     Route::post('timesheets/bulk-upload', [TimesheetController::class, 'bulkUpload']);
     Route::get('timesheets/{timesheet}/approval-history', [TimesheetController::class, 'approvalHistory']);
     Route::post('timesheets/{timesheet}/approve', [TimesheetController::class, 'approve']);
@@ -33,7 +39,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('timesheets/export/excel', [TimesheetController::class, 'exportExcel']);
 
     // Time Entry Routes
-    Route::apiResource('time-entries', TimeEntryController::class);
+    Route::apiResource('time-entries', TimeEntryController::class)->names([
+        'index' => 'hr.api.time-entries.index',
+        'store' => 'hr.api.time-entries.store',
+        'show' => 'hr.api.time-entries.show',
+        'update' => 'hr.api.time-entries.update',
+        'destroy' => 'hr.api.time-entries.destroy'
+    ]);
     Route::post('time-entries/clock-in', [TimeEntryController::class, 'clockIn']);
     Route::post('time-entries/clock-out', [TimeEntryController::class, 'clockOut']);
     Route::get('time-entries/active', [TimeEntryController::class, 'getActiveEntry']);

@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Modules\EmployeeManagement\Http\Controllers\EmployeeManagementController;
 use Modules\EmployeeManagement\Http\Controllers\EmployeeController;
+use Modules\EmployeeManagement\Http\Controllers\DepartmentController;
+use Modules\EmployeeManagement\Http\Controllers\PositionController;
 use Modules\EmployeeManagement\Http\Controllers\ResignationController;
 use Modules\EmployeeManagement\Http\Controllers\SalaryIncrementController;
 use Inertia\Inertia;
@@ -38,6 +40,52 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/employees/{employee}', [EmployeeController::class, 'destroy'])
         ->middleware('permission:employees.delete')
         ->name('employees.destroy');
+
+    // Department routes
+    Route::get('/departments', [DepartmentController::class, 'index'])
+        ->middleware('permission:departments.view')
+        ->name('departments.index');
+    Route::get('/departments/create', [DepartmentController::class, 'create'])
+        ->middleware('permission:departments.create')
+        ->name('departments.create');
+    Route::post('/departments', [DepartmentController::class, 'store'])
+        ->middleware('permission:departments.create')
+        ->name('departments.store');
+    Route::get('/departments/{department}', [DepartmentController::class, 'show'])
+        ->middleware('permission:departments.view')
+        ->name('departments.show');
+    Route::get('/departments/{department}/edit', [DepartmentController::class, 'edit'])
+        ->middleware('permission:departments.edit')
+        ->name('departments.edit');
+    Route::put('/departments/{department}', [DepartmentController::class, 'update'])
+        ->middleware('permission:departments.edit')
+        ->name('departments.update');
+    Route::delete('/departments/{department}', [DepartmentController::class, 'destroy'])
+        ->middleware('permission:departments.delete')
+        ->name('departments.destroy');
+
+    // Position routes
+    Route::get('/positions', [PositionController::class, 'index'])
+        ->middleware('permission:positions.view')
+        ->name('positions.index');
+    Route::get('/positions/create', [PositionController::class, 'create'])
+        ->middleware('permission:positions.create')
+        ->name('positions.create');
+    Route::post('/positions', [PositionController::class, 'store'])
+        ->middleware('permission:positions.create')
+        ->name('positions.store');
+    Route::get('/positions/{position}', [PositionController::class, 'show'])
+        ->middleware('permission:positions.view')
+        ->name('positions.show');
+    Route::get('/positions/{position}/edit', [PositionController::class, 'edit'])
+        ->middleware('permission:positions.edit')
+        ->name('positions.edit');
+    Route::put('/positions/{position}', [PositionController::class, 'update'])
+        ->middleware('permission:positions.edit')
+        ->name('positions.update');
+    Route::delete('/positions/{position}', [PositionController::class, 'destroy'])
+        ->middleware('permission:positions.delete')
+        ->name('positions.destroy');
 
     // Employee document management
     Route::get('/employees/{employee}/documents', function ($employee) {

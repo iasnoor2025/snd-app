@@ -86,7 +86,7 @@ export default function Edit({ user, roles }: Props) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    router.put(`/settings/users/${user.id}`, {
+    router.put(route('users.update', user.id), {
       name: data.name,
       email: data.email,
       roles: selectedRoles,

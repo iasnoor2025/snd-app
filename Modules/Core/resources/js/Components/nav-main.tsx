@@ -11,12 +11,12 @@ interface NavMainProps {
 }
 
 export function NavMain({ items }: NavMainProps) {
-    const { t } = useTranslation(['common']);
+    const { t } = useTranslation('common');
     const { hasPermission } = usePermission();
 
     return (
         <SidebarGroup>
-            <SidebarGroupLabel>{t('common:navigation')}</SidebarGroupLabel>
+            <SidebarGroupLabel>{t('navigation.navigation')}</SidebarGroupLabel>
             <SidebarMenu>
                 {items.map((item, index) => {
                     if (item.permission && !hasPermission(item.permission)) {
@@ -29,21 +29,28 @@ export function NavMain({ items }: NavMainProps) {
                                 <Collapsible>
                                     <CollapsibleTrigger asChild>
                                         <SidebarMenuButton>
-                                            <Icon name={item.icon} />
+                                            {item.icon && <Icon name={item.icon} className="h-4 w-4 mr-2" />}
                                             {item.title}
                                         </SidebarMenuButton>
                                     </CollapsibleTrigger>
                                     <CollapsibleContent>
                                         <SidebarMenuSub>
-                                            {item.items.map((subItem, subIndex) => (
-                                                <SidebarMenuSubItem key={subIndex}>
-                                                    <SidebarMenuSubButton asChild>
-                                                        <Link href={subItem.href}>
-                                                            {subItem.title}
-                                                        </Link>
-                                                    </SidebarMenuSubButton>
-                                                </SidebarMenuSubItem>
-                                            ))}
+                                            {item.items?.map((child, childIndex) => {
+                                                if (child.permission && !hasPermission(child.permission)) {
+                                                    return null;
+                                                }
+
+                                                return (
+                                                    <SidebarMenuSubItem key={childIndex}>
+                                                        <SidebarMenuSubButton asChild>
+                                                            <Link href={child.href}>
+                                                                {child.icon && <Icon name={child.icon} className="h-4 w-4 mr-2" />}
+                                                                {child.title}
+                                                            </Link>
+                                                        </SidebarMenuSubButton>
+                                                    </SidebarMenuSubItem>
+                                                );
+                                            })}
                                         </SidebarMenuSub>
                                     </CollapsibleContent>
                                 </Collapsible>
@@ -55,7 +62,7 @@ export function NavMain({ items }: NavMainProps) {
                         <SidebarMenuItem key={index}>
                             <SidebarMenuButton asChild>
                                 <Link href={item.href}>
-                                    <Icon name={item.icon} />
+                                    {item.icon && <Icon name={item.icon} className="h-4 w-4 mr-2" />}
                                     {item.title}
                                 </Link>
                             </SidebarMenuButton>

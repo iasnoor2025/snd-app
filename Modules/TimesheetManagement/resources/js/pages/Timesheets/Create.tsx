@@ -35,7 +35,6 @@ import * as z from 'zod';
 import { Popover, PopoverContent, PopoverTrigger } from "@/Core";
 import { Calendar } from "@/Core";
 import { format } from 'date-fns';
-import { toast } from "sonner";
 import { route } from 'ziggy-js';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -512,7 +511,7 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
             <div className="space-y-1">
               <CardTitle className="text-2xl font-bold">{t('ttl_create_timesheet')}</CardTitle>
               <CardDescription>
-                Record your work hours and tasks for a specific day
+                {t('record_work_hours')}
               </CardDescription>
             </div>
             <Button variant="outline" asChild>
@@ -686,7 +685,7 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
                               setDailyOvertimeHours(newDailyOvertimeHours);
                             }}
                           >
-                            Apply to All Days
+                            {t('btn_apply_to_all')}
                           </Button>
                         </div>
                       </div>
@@ -710,7 +709,7 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
                             setDailyOvertimeHours(newDailyOvertimeHours);
                           }}
                         >
-                          Apply to Weekdays
+                          {t('btn_apply_to_weekdays')}
                         </Button>
                         <Button
                           type="button"
@@ -730,7 +729,7 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
                             setDailyOvertimeHours(newDailyOvertimeHours);
                           }}
                         >
-                          Apply to Weekends
+                          {t('btn_apply_to_weekends')}
                         </Button>
                         <Button
                           type="button"
@@ -749,7 +748,7 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
                             setDailyOvertimeHours(newDailyOvertimeHours);
                           }}
                         >
-                          Clear Weekdays
+                          {t('btn_clear_weekdays')}
                         </Button>
                         <Button
                           type="button"
@@ -768,7 +767,7 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
                             setDailyOvertimeHours(newDailyOvertimeHours);
                           }}
                         >
-                          Clear Weekends
+                          {t('btn_clear_weekends')}
                         </Button>
                       </div>
 
@@ -857,7 +856,7 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
                                 disabled={isBulkMode}
                               >
                                 <CalendarIcon className="mr-2 h-4 w-4" />
-                                {selectedDate ? format(selectedDate, 'PPP') : <span>{t('project:pick_a_date')}</span>}
+                                {selectedDate ? format(selectedDate, 'PPP') : <span>{t('pick_a_date')}</span>}
                               </Button>
                             </FormControl>
                           </PopoverTrigger>
@@ -1076,7 +1075,7 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
                   </Button>
                   <Button type="submit" disabled={processing}>
                     <ClockIcon className="mr-2 h-4 w-4" />
-                    {isBulkMode ? 'Submit Bulk Timesheets' : 'Submit Timesheet'}
+                    {isBulkMode ? t('btn_submit_bulk_timesheets') : t('btn_submit_timesheet')}
                   </Button>
                 </div>
             </Form>

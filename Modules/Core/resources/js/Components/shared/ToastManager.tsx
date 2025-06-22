@@ -24,7 +24,7 @@ export class ToastManager {
   static success(message: string, options: any = {}) {
     const t = this.getT();
     toast({
-      title: options.title || t('common:toasts.success', 'Success'),
+              title: options.title || t('toasts.success', 'Success'),
       description: message,
       variant: 'success',
       duration: options.duration || 3000,
@@ -40,7 +40,7 @@ export class ToastManager {
   static error(message: string, options: any = {}) {
     const t = this.getT();
     toast({
-      title: options.title || t('common:toasts.error', 'Error'),
+              title: options.title || t('toasts.error', 'Error'),
       description: message,
       variant: 'destructive',
       duration: options.duration || 5000,
@@ -56,7 +56,7 @@ export class ToastManager {
   static info(message: string, options: any = {}) {
     const t = this.getT();
     toast({
-      title: options.title || t('common:toasts.information', 'Information'),
+              title: options.title || t('toasts.information', 'Information'),
       description: message,
       variant: 'info',
       duration: options.duration || 3000,
@@ -72,7 +72,7 @@ export class ToastManager {
   static warning(message: string, options: any = {}) {
     const t = this.getT();
     toast({
-      title: options.title || t('common:toasts.warning', 'Warning'),
+              title: options.title || t('toasts.warning', 'Warning'),
       description: message,
       variant: 'warning',
       duration: options.duration || 4000,
@@ -89,7 +89,7 @@ export class ToastManager {
   static loading(message: string, options: any = {}) {
     const t = this.getT();
     return toast({
-      title: options.title || t('common:toasts.loading', 'Loading'),
+              title: options.title || t('toasts.loading', 'Loading'),
       description: message,
       variant: 'default',
       duration: options.duration || 0, // Infinite duration by default

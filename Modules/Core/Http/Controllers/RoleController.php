@@ -17,7 +17,9 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $this->authorize('roles.view');
+        if (!auth()->user()->can('roles.view')) {
+            abort(403, 'Unauthorized');
+        }
 
         $roles = Role::with('permissions')->get();
 
@@ -31,7 +33,9 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $this->authorize('roles.create');
+        if (!auth()->user()->can('roles.create')) {
+            abort(403, 'Unauthorized');
+        }
 
         $permissions = Permission::all()->groupBy(function ($permission) {
             return explode('.', $permission->name)[0];
@@ -47,7 +51,9 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('roles.create');
+        if (!auth()->user()->can('roles.create')) {
+            abort(403, 'Unauthorized');
+        }
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:roles,name'],
@@ -75,7 +81,9 @@ class RoleController extends Controller
      */
     public function show(Role $role)
     {
-        $this->authorize('roles.view');
+        if (!auth()->user()->can('roles.view')) {
+            abort(403, 'Unauthorized');
+        }
 
         $role->load('permissions');
 
@@ -89,7 +97,9 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        $this->authorize('roles.edit');
+        if (!auth()->user()->can('roles.edit')) {
+            abort(403, 'Unauthorized');
+        }
 
         $role->load('permissions');
 
@@ -109,7 +119,9 @@ class RoleController extends Controller
      */
     public function update(Request $request, Role $role)
     {
-        $this->authorize('roles.edit');
+        if (!auth()->user()->can('roles.edit')) {
+            abort(403, 'Unauthorized');
+        }
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', Rule::unique('roles', 'name')->ignore($role->id)],
@@ -137,7 +149,9 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-        $this->authorize('roles.delete');
+        if (!auth()->user()->can('roles.delete')) {
+            abort(403, 'Unauthorized');
+        }
 
         // Check if role is being used by any users
         $usersWithRole = User::role($role->name)->count();
@@ -158,7 +172,9 @@ class RoleController extends Controller
      */
     public function userRoles()
     {
-        $this->authorize('roles.view');
+        if (!auth()->user()->can('roles.view')) {
+            abort(403, 'Unauthorized');
+        }
 
         $users = User::with('roles', 'permissions')->get();
         $roles = Role::all();
@@ -174,7 +190,9 @@ class RoleController extends Controller
      */
     public function updateUserRoles(Request $request, User $user)
     {
-        $this->authorize('roles.edit');
+        if (!auth()->user()->can('roles.edit')) {
+            abort(403, 'Unauthorized');
+        }
 
         $validated = $request->validate([
             'roles' => ['required', 'array'],

@@ -1,0 +1,30 @@
+{
+  "title": "إدارة المشاريع",
+  "list": {
+    "title": "المشاريع",
+    "description": "إدارة جميع المشاريع"
+  },
+  "fields": {
+    "name": "اسم المشروع",
+    "description": "الوصف",
+    "start_date": "تاريخ البدء",
+    "end_date": "تاريخ الانتهاء",
+    "status": "الحالة",
+    "manager": "مدير المشروع",
+    "client": "العميل",
+    "budget": "الميزانية",
+    "progress": "التقدم"
+  },
+  "status": {
+    "not_started": "لم يبدأ",
+    "in_progress": "قيد التنفيذ",
+    "completed": "مكتمل",
+    "on_hold": "معلق",
+    "cancelled": "ملغي"
+  },
+  "messages": {
+    "create_success": "تم إنشاء المشروع بنجاح",
+    "update_success": "تم تحديث المشروع بنجاح",
+    "delete_success": "تم حذف المشروع بنجاح"
+  }
+} 

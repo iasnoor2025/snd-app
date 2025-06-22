@@ -90,11 +90,11 @@ const CrudButtons: React.FC<CrudButtonsProps> = ({
 
     router.delete(`/${resourceType}/${resourceId}`, {
       onSuccess: () => {
-        toast.success(t('common:messages.delete_success', { resource: resourceName }));
+        toast.success(t('messages.delete_success', { resource: resourceName }));
         if (onDelete) onDelete();
       },
       onError: (errors) => {
-        toast.error(errors.message || t('common:messages.delete_error'));
+        toast.error(errors.message || t('messages.delete_error'));
       },
       onFinish: () => {
         setIsDeleting(false);
@@ -106,7 +106,7 @@ const CrudButtons: React.FC<CrudButtonsProps> = ({
   return (
     <div className={`flex items-center space-x-2 ${className}`}>
       {showView && hasViewPermission && (
-        <Button variant="outline" size="icon" asChild title={forceString(t('common:actions.view'), 'View')}>
+        <Button variant="outline" size="icon" asChild title={forceString(t('actions.view'), 'View')}>
           <Link href={`/${resourceType}/${resourceId}`}>
             <Eye className="h-4 w-4" />
           </Link>
@@ -114,7 +114,7 @@ const CrudButtons: React.FC<CrudButtonsProps> = ({
       )}
 
       {showEdit && hasEditPermission && (
-        <Button variant="outline" size="icon" asChild title={forceString(t('common:actions.edit'), 'Edit')}>
+        <Button variant="outline" size="icon" asChild title={forceString(t('actions.edit'), 'Edit')}>
           <Link href={`/${resourceType}/${resourceId}/edit`}>
             <Pencil className="h-4 w-4" />
           </Link>
@@ -163,7 +163,7 @@ const CrudButtons: React.FC<CrudButtonsProps> = ({
                 onClick={() => setIsDeleteDialogOpen(true)}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                {forceString(t('common:actions.delete'), 'Delete')}
+                {forceString(t('actions.delete'), 'Delete')}
               </DropdownMenuItem>
             )}
           </DropdownMenuContent>
@@ -173,14 +173,14 @@ const CrudButtons: React.FC<CrudButtonsProps> = ({
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{forceString(t('common:dialogs.confirm_delete.title'), 'Confirm Delete')}</DialogTitle>
+            <DialogTitle>{forceString(t('dialogs.confirm_delete.title'), 'Confirm Delete')}</DialogTitle>
             <DialogDescription>
-              {forceString(t('common:dialogs.confirm_delete.description', { resource: resourceName }), 'Are you sure?')}
+              {forceString(t('dialogs.confirm_delete.description', { resource: resourceName }), 'Are you sure?')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline" disabled={isDeleting}>{forceString(t('common:actions.cancel'), 'Cancel')}</Button>
+              <Button variant="outline" disabled={isDeleting}>{forceString(t('actions.cancel'), 'Cancel')}</Button>
             </DialogClose>
             <Button
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
@@ -193,10 +193,10 @@ const CrudButtons: React.FC<CrudButtonsProps> = ({
               {isDeleting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {forceString(t('common:actions.deleting'), 'Deleting')}
+                  {forceString(t('actions.deleting'), 'Deleting')}
                 </>
               ) : (
-                forceString(t('common:actions.delete'), 'Delete')
+                forceString(t('actions.delete'), 'Delete')
               )}
             </Button>
           </DialogFooter>

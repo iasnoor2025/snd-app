@@ -1,0 +1,19 @@
+{
+  "title": "Payrolls",
+  "create": "Create Payroll",
+  "edit": "Edit Payroll",
+  "delete": "Delete Payroll",
+  "employee": "Employee",
+  "period": "Period",
+  "basic_salary": "Basic Salary",
+  "allowances": "Allowances",
+  "deductions": "Deductions",
+  "net_salary": "Net Salary",
+  "payment_date": "Payment Date",
+  "status": "Status",
+  "actions": {
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete"
+  }
+} 

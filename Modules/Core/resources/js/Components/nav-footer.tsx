@@ -26,7 +26,7 @@ export function NavFooter({
                             >
                                 <a href={item.href} target="_blank" rel="noopener noreferrer">
                                     {item.icon && <Icon name={item.icon.toLowerCase()} className="h-5 w-5" />}
-                                    <span>{t(`common:footer.${item.title.toLowerCase().replace(' ', '_')}`, {defaultValue: item.title})}</span>
+                                    <span>{t(`footer.${item.title.toLowerCase().replace(' ', '_')}`, {defaultValue: item.title})}</span>
                                 </a>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
@@ -35,7 +35,7 @@ export function NavFooter({
                         <SidebarMenuButton asChild>
                             <Link href="/settings">
                                 <Icon name="settings" />
-                                {t('common:settings')}
+                                {t('navigation.settings')}
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>

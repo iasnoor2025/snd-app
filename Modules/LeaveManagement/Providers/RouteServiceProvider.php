@@ -54,7 +54,7 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapWebRoutes()
     {
         Route::middleware('web')
-            ->prefix('hr/leaves')
+            ->prefix('hr')
             ->namespace($this->moduleNamespace)
             ->group(module_path('LeaveManagement', '/Routes/web.php'));
     }
