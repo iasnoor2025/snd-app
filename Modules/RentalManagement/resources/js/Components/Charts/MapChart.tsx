@@ -28,7 +28,7 @@ interface MapChartProps {
 
 export const MapChart: FC<MapChartProps> = ({ data, height = 400, showPaths = false }) => {
     // Calculate center point of the map
-    const center = data.length > 0;
+    const center = data.length > 0
         ? {
             lat: data.reduce((sum, point) => sum + point.latitude, 0) / data.length,
             lng: data.reduce((sum, point) => sum + point.longitude, 0) / data.length,

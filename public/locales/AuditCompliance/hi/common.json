@@ -1,0 +1,14 @@
+{
+    "module_name": "AuditCompliance",
+    "module_description": "AuditCompliance Module",
+    "navigation_title": "AuditCompliance",
+    "create_button": "Create",
+    "edit_button": "Edit",
+    "delete_button": "Delete",
+    "save_button": "Save",
+    "cancel_button": "Cancel",
+    "back_button": "Back",
+    "success_message": "Operation completed successfully",
+    "error_message": "An error occurred",
+    "loading_message": "Loading..."
+}

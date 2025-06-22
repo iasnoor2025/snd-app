@@ -4,6 +4,7 @@ namespace Modules\Localization\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Support\Facades\File;
 
 class LocalizationServiceProvider extends ServiceProvider
 {
@@ -25,12 +26,13 @@ class LocalizationServiceProvider extends ServiceProvider
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();
-        $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
+        $this->loadMigrationsFrom($this->getModulePath('Database/Migrations'));
         $this->registerMiddleware();
         $this->registerCommands();
+        $this->registerModuleTranslations();
 
-        $this->loadRoutesFrom(module_path($this->moduleName, 'Routes/web.php'));
-        $this->loadRoutesFrom(module_path($this->moduleName, 'Routes/public.php'));
+        $this->loadRoutesFrom($this->getModulePath('Routes/web.php'));
+        $this->loadRoutesFrom($this->getModulePath('Routes/public.php'));
 
         // Register observers
         $this->registerObservers();
@@ -54,9 +56,24 @@ class LocalizationServiceProvider extends ServiceProvider
 
         $this->app->singleton(\Modules\Localization\Services\SpatieTranslatableService::class);
 
-        if (file_exists(module_path($this->moduleName, 'Providers/EventServiceProvider.php'))) {
+        if (file_exists($this->getModulePath('Providers/EventServiceProvider.php'))) {
             $this->app->register(EventServiceProvider::class);
         }
+    }
+
+    /**
+     * Get the module path.
+     *
+     * @param string $path
+     * @return string
+     */
+    protected function getModulePath($path = '')
+    {
+        if (function_exists('safe_module_path')) {
+            return safe_module_path($this->moduleName, $path);
+        }
+        
+        return module_path($this->moduleName, $path);
     }
 
     /**
@@ -67,10 +84,10 @@ class LocalizationServiceProvider extends ServiceProvider
     protected function registerConfig()
     {
         $this->publishes([
-            module_path($this->moduleName, 'config/config.php') => config_path($this->moduleNameLower . '.php')
+            $this->getModulePath('config/config.php') => config_path($this->moduleNameLower . '.php')
         ], 'config');
         $this->mergeConfigFrom(
-            module_path($this->moduleName, 'config/config.php'), $this->moduleNameLower
+            $this->getModulePath('config/config.php'), $this->moduleNameLower
         );
     }
 
@@ -104,7 +121,7 @@ class LocalizationServiceProvider extends ServiceProvider
     {
         $viewPath = resource_path('views/modules/' . $this->moduleNameLower);
 
-        $sourcePath = module_path($this->moduleName, 'resources/views');
+        $sourcePath = $this->getModulePath('resources/views');
 
         $this->publishes([
             $sourcePath => $viewPath
@@ -128,9 +145,62 @@ class LocalizationServiceProvider extends ServiceProvider
             $this->loadTranslationsFrom($langPath, $this->moduleNameLower);
             $this->loadJsonTranslationsFrom($langPath);
         } else {
-            $this->loadTranslationsFrom(module_path($this->moduleName, 'resources/lang'), $this->moduleNameLower);
-            $this->loadJsonTranslationsFrom(module_path($this->moduleName, 'resources/lang'));
+            $this->loadTranslationsFrom($this->getModulePath('resources/lang'), $this->moduleNameLower);
+            $this->loadJsonTranslationsFrom($this->getModulePath('resources/lang'));
         }
+    }
+
+    /**
+     * Register module translations.
+     * This method registers translations for all modules in the system.
+     * 
+     * @return void
+     */
+    protected function registerModuleTranslations()
+    {
+        // Get all modules
+        $modules = array_map('basename', File::directories(base_path('Modules')));
+
+        foreach ($modules as $module) {
+            $langPath = $this->getModulePathForName($module, 'resources/lang');
+            
+            if (is_dir($langPath)) {
+                // Register PHP translations
+                $this->loadTranslationsFrom($langPath, $module);
+                
+                // Register JSON translations
+                $this->loadJsonTranslationsFrom($langPath);
+            }
+            
+            // Also check for public locales
+            $publicLocalesPath = public_path("locales/$module");
+            
+            if (is_dir($publicLocalesPath)) {
+                // Register each language directory as a namespace
+                $languages = array_map('basename', File::directories($publicLocalesPath));
+                
+                foreach ($languages as $lang) {
+                    $this->loadJsonTranslationsFrom("$publicLocalesPath/$lang");
+                }
+            }
+        }
+    }
+
+    /**
+     * Get the module path for a specific module name.
+     *
+     * @param string $name
+     * @param string $path
+     * @return string
+     */
+    protected function getModulePathForName($name, $path = '')
+    {
+        if (function_exists('safe_module_path')) {
+            return safe_module_path($name, $path);
+        }
+        
+        // Fallback to direct path construction
+        return base_path('Modules/' . $name . ($path ? '/' . $path : ''));
     }
 
     /**
@@ -138,7 +208,12 @@ class LocalizationServiceProvider extends ServiceProvider
      *
      * @return array;
      */
-        /**
+    public function provides()
+    {
+        return [];
+    }
+
+    /**
      * Register observers.
      *
      * @return void;
@@ -146,7 +221,7 @@ class LocalizationServiceProvider extends ServiceProvider
     protected function registerObservers()
     {
         // Register observers here based on files in Observers directory
-        $observersPath = module_path($this->moduleName, 'Observers');
+        $observersPath = $this->getModulePath('Observers');
 
         if (is_dir($observersPath)) {
             $files = glob("$observersPath/*.php");
@@ -160,11 +235,6 @@ class LocalizationServiceProvider extends ServiceProvider
                 }
             }
         }
-    }
-
-public function provides()
-    {
-        return [];
     }
 }
 

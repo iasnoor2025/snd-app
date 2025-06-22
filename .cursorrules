@@ -75,6 +75,12 @@
 - i18next for translations
 - Automated key extraction with i18next-scanner
 - RTL support for Arabic and Hebrew
+- ALWAYS use module-based translations
+- NEVER use Laravel's default translation system directly
+- Backend translations must use the module prefix: `__('ModuleName::file.key')` or `trans('ModuleName::file.key')`
+- Frontend translations must use namespaced keys: `t('namespace:key')` with proper namespaces
+- All translation files must be stored in the module's `public/locales/{ModuleName}/{lang}` directory
+- Do not add translations to the main app's `resources/lang` directory
 
 ### Module Integration
 - Module service providers for registration

@@ -1,0 +1,14 @@
+{
+    "module_name": "CustomerManagement",
+    "module_description": "CustomerManagement Module",
+    "navigation_title": "CustomerManagement",
+    "create_button": "Create",
+    "edit_button": "Edit",
+    "delete_button": "Delete",
+    "save_button": "Save",
+    "cancel_button": "Cancel",
+    "back_button": "Back",
+    "success_message": "Operation completed successfully",
+    "error_message": "An error occurred",
+    "loading_message": "Loading..."
+}

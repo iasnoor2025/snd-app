@@ -37,7 +37,6 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapWebRoutes(): void
     {
         Route::middleware('web')
-            ->prefix('hr')
             ->group(module_path('EmployeeManagement', '/Routes/web.php'));
     }
 

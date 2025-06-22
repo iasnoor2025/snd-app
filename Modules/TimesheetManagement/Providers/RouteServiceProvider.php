@@ -19,7 +19,7 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    protected string $home = '/hr/timesheets';
+    protected string $home = '/timesheets';
 
     /**
      * Called before routes are registered.
@@ -54,7 +54,6 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapWebRoutes()
     {
         Route::middleware('web')
-            ->prefix('hr/timesheets')
             ->namespace($this->moduleNamespace)
             ->group(module_path('TimesheetManagement', '/Routes/web.php'));
     }
@@ -68,7 +67,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapApiRoutes()
     {
-        Route::prefix('api/hr/timesheets')
+        Route::prefix('api')
             ->middleware('api')
             ->namespace($this->moduleNamespace)
             ->group(module_path('TimesheetManagement', '/Routes/api.php'));

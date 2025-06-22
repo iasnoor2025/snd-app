@@ -6,7 +6,7 @@ import { type NavItem } from '../types';
 import { Link, usePage } from '@inertiajs/react';
 import AppLogo from './app-logo';
 import { usePermission } from '../hooks/usePermission';
-import type { PageProps } from '../types';
+import type { PageProps } from '../types/index.d';
 import { useEffect, useState } from 'react';
 import { cn } from '../lib/utils';
 import { useTranslation } from 'react-i18next';
@@ -17,11 +17,11 @@ const moduleMap: Record<string, { icon: string; route: string; permission: strin
     Core: { icon: 'network', route: '/core', permission: 'core.view' },
     EmployeeManagement: {
         icon: 'user-cog',
-        route: '/hr/employees',
+        route: '/employees',
         permission: 'employees.view',
         subItems: [
-            { title: 'Employees', route: '/hr/employees', permission: 'employees.view' },
-            { title: 'Salary Increments', route: '/hr/salary-increments', permission: 'salary-increments.view' }
+            { title: 'Employees', route: '/employees', permission: 'employees.view' },
+            { title: 'Salary Increments', route: '/salary-increments', permission: 'salary-increments.view' }
         ]
     },
     LeaveManagement: { icon: 'clipboard-list', route: '/leave-requests', permission: 'leave-requests.view' },
@@ -66,7 +66,10 @@ export function AppSidebar() {
     const auth = pageProps?.auth || { user: null };
     const [moduleItems, setModuleItems] = useState<NavItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const { t } = useTranslation(['common']);
+    const { t, i18n } = useTranslation(['common']);
+    
+    // Determine if the current language is RTL
+    const isRTL = i18n.dir() === 'rtl';
 
     // Check if user is admin directly from auth data
     const isAdmin = auth?.user && 'roles' in auth.user && auth.user.roles
@@ -86,20 +89,20 @@ export function AppSidebar() {
         const items: NavItem[] = [];
         // Add Dashboard as first item
         items.push({
-            title: t('dashboard'),
+            title: t('common:dashboard'),
             href: '/dashboard',
             icon: 'layout-grid',
         });
         // Add Users and Roles for admins
         if (isAdmin) {
             items.push({
-                title: t('users'),
+                title: t('common:users'),
                 href: '/users',
                 icon: 'users',
             });
             items.push({
-                title: t('navigation.roles'),
-                href: '/settings/roles',
+                title: t('common:navigation.roles'),
+                href: '/roles',
                 icon: 'shield',
             });
         }
@@ -109,7 +112,7 @@ export function AppSidebar() {
         if (isAdmin) {
             Object.entries(moduleMap).forEach(([module, mapInfo]) => {
                 const navItem: NavItem = {
-                    title: t(`modules.${module}`),
+                    title: t(`common:modules.${module}`),
                     href: mapInfo.route.startsWith('/') ? mapInfo.route : route(mapInfo.route),
                     icon: mapInfo.icon,
                 };
@@ -117,7 +120,7 @@ export function AppSidebar() {
                 // Add sub-items if they exist
                 if (mapInfo.subItems) {
                     navItem.items = mapInfo.subItems.map(subItem => ({
-                        title: t(`${module.toLowerCase()}.${subItem.title.toLowerCase().replace(' ', '_')}`),
+                        title: t(`common:${module.toLowerCase()}.${subItem.title.toLowerCase().replace(' ', '_')}`),
                         href: subItem.route,
                     }));
                 }
@@ -128,7 +131,7 @@ export function AppSidebar() {
             Object.entries(moduleMap).forEach(([module, mapInfo]) => {
                 if (permissions.includes(mapInfo.permission)) {
                     const navItem: NavItem = {
-                        title: t(`modules.${module}`),
+                        title: t(`common:modules.${module}`),
                         href: mapInfo.route.startsWith('/') ? mapInfo.route : route(mapInfo.route),
                         icon: mapInfo.icon,
                     };
@@ -140,7 +143,7 @@ export function AppSidebar() {
                         );
                         if (allowedSubItems.length > 0) {
                             navItem.items = allowedSubItems.map(subItem => ({
-                                title: t(`${module.toLowerCase()}.${subItem.title.toLowerCase().replace(' ', '_')}`),
+                                title: t(`common:${module.toLowerCase()}.${subItem.title.toLowerCase().replace(' ', '_')}`),
                                 href: subItem.route,
                             }));
                         }
@@ -152,7 +155,7 @@ export function AppSidebar() {
         }
         setModuleItems(items);
         setIsLoading(false);
-    }, [isAdmin, auth?.permissions]);
+    }, [isAdmin, auth?.permissions, t]);
 
     // Add Customer Portal link for customers
     useEffect(() => {
@@ -160,16 +163,16 @@ export function AppSidebar() {
             setModuleItems(prev => [
                 ...prev,
                 {
-                    title: 'Customer Portal',
+                    title: t('common:customer_portal'),
                     href: route('customer.dashboard'),
                     icon: 'user',
                 }
             ]);
         }
-    }, [isCustomer, isLoading]);
+    }, [isCustomer, isLoading, t]);
 
     return (
-        <Sidebar>
+        <Sidebar side={isRTL ? "right" : "left"}>
             <SidebarHeader>
                 <AppLogo />
             </SidebarHeader>

@@ -19,7 +19,7 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    protected string $home = '/hr/leaves';
+    protected string $home = '/leaves';
 
     /**
      * Called before routes are registered.
@@ -54,7 +54,6 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapWebRoutes()
     {
         Route::middleware('web')
-            ->prefix('hr')
             ->namespace($this->moduleNamespace)
             ->group(module_path('LeaveManagement', '/Routes/web.php'));
     }
@@ -68,7 +67,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapApiRoutes()
     {
-        Route::prefix('api/hr/leaves')
+        Route::prefix('api')
             ->middleware('api')
             ->namespace($this->moduleNamespace)
             ->group(module_path('LeaveManagement', '/Routes/api.php'));

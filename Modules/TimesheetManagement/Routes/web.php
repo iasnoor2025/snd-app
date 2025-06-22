@@ -23,7 +23,7 @@ use Modules\TimesheetManagement\Http\Controllers\TimesheetProjectController;
 use Modules\TimesheetManagement\Http\Controllers\TimesheetSettingController;
 use Inertia\Inertia;
 
-Route::name('timesheets.')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('timesheets')->name('timesheets.')->middleware(['auth', 'verified'])->group(function () {
     // Dashboard
     Route::get('/', [TimesheetController::class, 'index'])
         ->middleware('permission:timesheets.view')

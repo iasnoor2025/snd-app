@@ -1,8 +1,9 @@
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "./ui/breadcrumb";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ChevronLeft } from "lucide-react";
 import { Link } from "@inertiajs/react";
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
+import { cn } from "../lib/utils";
 
 interface BreadcrumbItem {
     title: string;
@@ -14,13 +15,23 @@ interface BreadcrumbsProps {
 }
 
 export function Breadcrumbs({ breadcrumbs }: BreadcrumbsProps) {
-    const { t } = useTranslation(['common']);
+    const { t, i18n } = useTranslation(['common']);
+    const isRTL = i18n.dir() === 'rtl';
 
     return (
         <Breadcrumb>
-            <BreadcrumbList>
+            <BreadcrumbList className={cn(isRTL && "flex-row-reverse")}>
                 {breadcrumbs.map((breadcrumb, index) => (
                     <Fragment key={index}>
+                        {index > 0 && (
+                            <BreadcrumbSeparator>
+                                {isRTL ? (
+                                    <ChevronLeft className="h-4 w-4" />
+                                ) : (
+                                    <ChevronRight className="h-4 w-4" />
+                                )}
+                            </BreadcrumbSeparator>
+                        )}
                         <BreadcrumbItem>
                             {breadcrumb.href ? (
                                 <BreadcrumbLink asChild>
@@ -30,11 +41,6 @@ export function Breadcrumbs({ breadcrumbs }: BreadcrumbsProps) {
                                 <BreadcrumbPage>{breadcrumb.title}</BreadcrumbPage>
                             )}
                         </BreadcrumbItem>
-                        {index < breadcrumbs.length - 1 && (
-                            <BreadcrumbSeparator>
-                                <ChevronRight className="h-4 w-4" />
-                            </BreadcrumbSeparator>
-                        )}
                     </Fragment>
                 ))}
             </BreadcrumbList>
