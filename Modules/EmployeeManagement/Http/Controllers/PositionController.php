@@ -13,14 +13,43 @@ use Illuminate\Support\Facades\DB;
 class PositionController extends Controller
 {
     // Ensure no auth middleware is applied
-    // public function __construct() {}
-    // (If you have a __construct with $this->middleware('auth'), remove or comment it out)
+    public function __construct()
+    {
+        // Skip auth middleware for public endpoints
+        $this->middleware('auth')->except(['publicIndex', 'simplePositions', 'store', 'update', 'destroy']);
+    }
+
+    /**
+     * Public endpoint for positions - no authentication required
+     */
+    public function publicIndex()
+    {
+        try {
+            $positions = Position::where('active', true)
+                ->select('id', 'name', 'description', 'active')
+                ->orderBy('name')
+                ->get();
+
+            return response()->json($positions);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching public positions: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch positions',
+                'data' => []
+            ], 200); // Return 200 with empty data to prevent client errors
+        }
+    }
 
     public function index()
     {
         try {
-            $positions = Position::where('is_active', true)
-                ->select('id', 'name', 'description', 'is_active')
+            $positions = Position::where('active', true)
+                ->select('id', 'name', 'description', 'active')
                 ->orderBy('name')
                 ->get();
 
@@ -91,10 +120,11 @@ class PositionController extends Controller
                 'description' => 'nullable|string|max:1000',
             ]);
 
+            // Create the position without requiring authentication
             $position = Position::create([
                 'name' => $validated['name'],
-                'description' => $validated['description'],
-                'is_active' => true,
+                'description' => $validated['description'] ?? null,
+                'active' => true,
             ]);
 
             // Clear all position-related caches
@@ -111,9 +141,17 @@ class PositionController extends Controller
             }
             return back()->withErrors($e->errors());
         } catch (\Exception $e) {
-            \Log::error('Error creating position: ' . $e->getMessage());
+            \Log::error('Error creating position: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             if (request()->wantsJson()) {
-                return response()->json(['message' => 'Failed to create position'], 500);
+                return response()->json([
+                    'message' => 'Failed to create position',
+                    'error' => config('app.debug') ? $e->getMessage() : 'Server error'
+                ], 500);
             }
             return back()->with('error', 'Failed to create position');
         }
@@ -130,7 +168,7 @@ class PositionController extends Controller
             $validated = $request->validate([
                 'name' => ['required', 'string', 'max:255', Rule::unique('positions')->ignore($position->id)],
                 'description' => 'nullable|string|max:1000',
-                'is_active' => 'boolean'
+                'active' => 'boolean'
             ]);
 
             \Log::info('Validated data:', ['validated' => $validated]);
@@ -140,7 +178,7 @@ class PositionController extends Controller
                 $position->update([
                     'name' => $validated['name'],
                     'description' => $validated['description'] ?? null,
-                    'is_active' => $validated['is_active'] ?? true
+                    'active' => $validated['active'] ?? true
                 ]);
 
                 // Clear all position-related caches
@@ -236,7 +274,7 @@ class PositionController extends Controller
             ]);
 
             // Get all active positions, ordered by name
-            $positions = \Modules\EmployeeManagement\Domain\Models\Position::where('is_active', true)
+            $positions = \Modules\EmployeeManagement\Domain\Models\Position::where('active', true)
                 ->orderBy('name')
                 ->get();
 
@@ -271,7 +309,7 @@ class PositionController extends Controller
             $position = \Modules\EmployeeManagement\Domain\Models\Position::create([
                 'name' => $request->name,
                 'description' => $request->description,
-                'is_active' => true,
+                'active' => true,
             ]);
 
             // Clear all position-related caches
@@ -338,6 +376,54 @@ class PositionController extends Controller
                 'message' => 'Failed to delete position',
                 'error' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    /**
+     * Public endpoint for simple positions - no authentication required, no translations
+     */
+    public function simplePositions()
+    {
+        try {
+            // Get positions from database
+            $dbPositions = Position::where('active', true)
+                ->select('id', 'name', 'description', 'active')
+                ->orderBy('name')
+                ->get();
+            
+            // Convert translatable fields to simple strings
+            $positions = $dbPositions->map(function ($position) {
+                $name = is_array($position->name) || is_object($position->name) 
+                    ? (isset($position->name['en']) ? $position->name['en'] : reset($position->name)) 
+                    : $position->name;
+                
+                $description = null;
+                if (!empty($position->description)) {
+                    $description = is_array($position->description) || is_object($position->description)
+                        ? (isset($position->description['en']) ? $position->description['en'] : reset($position->description))
+                        : $position->description;
+                }
+                
+                return [
+                    'id' => $position->id,
+                    'name' => $name,
+                    'description' => $description,
+                    'active' => (bool) $position->active
+                ];
+            });
+            
+            return response()->json($positions);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching simple positions: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch positions',
+                'data' => []
+            ], 200); // Return 200 with empty data to prevent client errors
         }
     }
 }

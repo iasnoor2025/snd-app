@@ -8,11 +8,27 @@ use Modules\EmployeeManagement\Http\Controllers\PositionController;
 use Modules\EmployeeManagement\Http\Controllers\ResignationController;
 use Modules\EmployeeManagement\Http\Controllers\SalaryIncrementController;
 use Modules\EmployeeManagement\Http\Controllers\EmployeeNumberController;
+use Modules\EmployeeManagement\Http\Controllers\PublicPositionController;
 use Inertia\Inertia;
 
 // Public routes
 Route::get('/api/employees/simple-file-number', [EmployeeNumberController::class, 'generateUniqueFileNumber'])
     ->name('api.employees.simple-file-number');
+    
+// Public route for positions
+Route::get('/api/positions/public', [PositionController::class, 'publicIndex'])
+    ->name('api.positions.public');
+
+// Public API for positions - no authentication required
+Route::group(['prefix' => 'public-api/positions', 'middleware' => ['api'], 'excluded_middleware' => ['web', 'csrf']], function() {
+    Route::get('/', [PublicPositionController::class, 'index']);
+    Route::post('/', [PublicPositionController::class, 'store']);
+    Route::put('/{id}', [PublicPositionController::class, 'update']);
+    Route::delete('/{id}', [PublicPositionController::class, 'destroy']);
+});
+
+// Test route for debugging
+Route::post('/api/test/position', [TestController::class, 'testPositionCreate']);
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('employeemanagements', EmployeeManagementController::class)

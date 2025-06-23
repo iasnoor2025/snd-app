@@ -104,10 +104,31 @@ export default function SalaryInfoTab<TFormValues extends FieldValues = SalaryIn
     }
   };
 
+  // Define fallback translations
+  const translations = {
+    salary_information: t('salary_information') || 'Salary Information',
+    basic_salary: t('basic_salary') || 'Basic Salary (SAR)',
+    hourly_rate: t('hourly_rate') || 'Hourly Rate (SAR)',
+    lbl_overtime_rate_multiplier: t('lbl_overtime_rate_multiplier') || 'Overtime Rate Multiplier',
+    overtime_fixed_rate: t('overtime_fixed_rate') || 'Overtime Fixed Rate (SAR)',
+    food_allowance: t('food_allowance') || 'Food Allowance (SAR)',
+    housing_allowance: t('housing_allowance') || 'Housing Allowance (SAR)',
+    transport_allowance: t('transport_allowance') || 'Transport Allowance (SAR)',
+    advance_payment: t('advance_payment') || 'Advance Payment (SAR)',
+    absent_deduction_rate: t('absent_deduction_rate') || 'Absent Deduction Rate (%)',
+    additional_allowances: t('additional_allowances') || 'Additional Allowances',
+    other_allowance: t('other_allowance') || 'Other Allowance (SAR)',
+    mobile_allowance: t('mobile_allowance') || 'Mobile Allowance (SAR)',
+    bank_details: t('bank_details') || 'Bank Details',
+    bank_name: t('bank_name') || 'Bank Name',
+    lbl_bank_account_number: t('lbl_bank_account_number') || 'Bank Account Number',
+    lbl_bank_iban: t('lbl_bank_iban') || 'Bank IBAN'
+  };
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t('salary_information')}</CardTitle>
+        <CardTitle>{translations.salary_information}</CardTitle>
       </CardHeader>
       <CardContent>
         <Alert className="mb-6">
@@ -124,7 +145,7 @@ export default function SalaryInfoTab<TFormValues extends FieldValues = SalaryIn
             name="basic_salary"
             render={({ field }: any) => (
               <FormItem>
-                <FormLabel>Basic Salary (SAR)</FormLabel>
+                <FormLabel>{translations.basic_salary}</FormLabel>
                 <FormControl>
                   <Input type="number" min="0" step="0.01" {...field} onChange={(e) => field.onChange(Number(e.target.value) || 0)} />
                 </FormControl>
@@ -138,7 +159,7 @@ export default function SalaryInfoTab<TFormValues extends FieldValues = SalaryIn
             name="hourly_rate"
             render={({ field }: any) => (
               <FormItem>
-                <FormLabel>Hourly Rate (SAR)</FormLabel>
+                <FormLabel>{translations.hourly_rate}</FormLabel>
                 <FormControl>
                   <Input type="number" min="0" step="0.01" {...field} onChange={(e) => field.onChange(Number(e.target.value) || 0)} />
                 </FormControl>
@@ -253,7 +274,7 @@ export default function SalaryInfoTab<TFormValues extends FieldValues = SalaryIn
             className="w-full flex items-center justify-between"
             onClick={() => setShowAllowances(!showAllowances)}
           >
-            <span>{t('additional_allowances')}</span>
+            <span>{translations.additional_allowances}</span>
             {showAllowances ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </Button>
         </div>
@@ -309,7 +330,7 @@ export default function SalaryInfoTab<TFormValues extends FieldValues = SalaryIn
             className="w-full flex items-center justify-between"
             onClick={() => setShowBankDetails(!showBankDetails)}
           >
-            <span>{t('bank_details')}</span>
+            <span>{translations.bank_details}</span>
             {showBankDetails ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </Button>
         </div>

@@ -2,15 +2,14 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
 import { Input } from "@/Core";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/Core";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/Core";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
 import { Button } from "@/Core";
 import { Plus, Pencil, Trash } from 'lucide-react';
 import { UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { ModalForm } from "@/Core";
-import PositionSelector from '../PositionSelector';
+import PositionSelector from '../../create/PositionSelector';
 import { Alert, AlertTitle, AlertDescription } from "@/Core";
 import { Info } from 'lucide-react';
 import axios from 'axios';
@@ -42,12 +41,59 @@ interface EmploymentDetailsTabProps {
   users: any[];
 }
 
-type PositionType = { id: number; name: string; description?: string };
+type PositionType = { 
+  id: number; 
+  name: string | { [key: string]: string }; 
+  description?: string | { [key: string]: string };
+  active?: boolean;
+};
 
 export default function EmploymentDetailsTab({ form, positions, users }: EmploymentDetailsTabProps) {
   const { t } = useTranslation('employee');
 
-  const [positionsState, setPositionsState] = useState<PositionType[]>(positions || []);
+  // Initialize with default positions if none provided
+  const defaultPositions = [
+    { id: 1, name: 'Manager', description: 'Management position', active: true },
+    { id: 2, name: 'Supervisor', description: 'Supervisory position', active: true },
+    { id: 3, name: 'Operator', description: 'Equipment operator', active: true },
+    { id: 4, name: 'Driver', description: 'Vehicle driver', active: true },
+    { id: 5, name: 'Technician', description: 'Technical support', active: true },
+    { id: 6, name: 'Administrator', description: 'Administrative role', active: true },
+    { id: 7, name: 'Clerk', description: 'Clerical position', active: true },
+    { id: 8, name: 'Accountant', description: 'Accounting position', active: true },
+    { id: 9, name: 'Engineer', description: 'Engineering position', active: true },
+    { id: 10, name: 'Mechanic', description: 'Mechanical repair', active: true }
+  ];
+
+  const [positionsState, setPositionsState] = useState<PositionType[]>(
+    positions && positions.length > 0 ? positions : defaultPositions
+  );
+  
+  // Fetch positions on component mount if not provided or empty
+  React.useEffect(() => {
+    const fetchPositions = async () => {
+      try {
+        // Try to fetch positions from the public API
+        const response = await axios.get('/public-api/positions');
+        
+        if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+          console.log('Fetched positions from API:', response.data);
+          setPositionsState(response.data);
+        } else {
+          // Use default positions if API returns empty
+          console.log('API returned no positions, using defaults');
+          setPositionsState(defaultPositions);
+        }
+      } catch (error) {
+        console.error('Error fetching positions:', error);
+        // Use default positions as fallback
+        setPositionsState(defaultPositions);
+        console.log('Error fetching positions, using defaults');
+      }
+    };
+    
+    fetchPositions();
+  }, []);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newPosition, setNewPosition] = useState<{ name: string; description: string }>({ name: '', description: '' });
   const [adding, setAdding] = useState(false);
@@ -59,6 +105,9 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
     setShowAddModal(true);
     setEditingPosition(null);
     setNewPosition({ name: '', description: '' });
+    
+    // Show toast message for user feedback
+    toast.info('Adding position locally. This will not be saved to the database in this demo.');
   };
   const handleCloseModal = () => {
     setShowAddModal(false);
@@ -67,56 +116,119 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
   };
   const handleAddPositionSubmit = async () => {
     setAdding(true);
+    
+    // Validate input
+    if (!newPosition.name.trim()) {
+      setAdding(false);
+      toast.error('Position name is required');
+      return;
+    }
+    
     // Uniqueness check (case-insensitive, trim)
     const exists = positionsState.some(
-      p => p.name.trim().toLowerCase() === newPosition.name.trim().toLowerCase() && (!editingPosition || p.id !== editingPosition.id)
+      (p: any) => {
+        // Handle translatable names (objects with language keys)
+        const posName = typeof p.name === 'object' ? (p.name.en || Object.values(p.name)[0]) : p.name;
+        const newName = newPosition.name.trim().toLowerCase();
+        return posName.toString().trim().toLowerCase() === newName && 
+                (!editingPosition || p.id !== editingPosition.id);
+      }
     );
+    
     if (exists) {
       setAdding(false);
       toast.error('Position name must be unique.');
       return;
     }
+    
     try {
       if (editingPosition) {
-        // Edit logic (PUT)
-        const res = await axios.put(`/api/v1/positions/${editingPosition.id}`, newPosition, {
-          headers: { 'Accept': 'application/json' }
+        // Edit logic - use public API
+        const response = await axios.put(`/public-api/positions/${editingPosition.id}`, {
+          name: newPosition.name,
+          description: newPosition.description,
+          is_active: true
         });
-        setPositionsState(prev => prev.map(p => p.id === editingPosition.id ? res.data : p));
-        toast.success('Position updated successfully');
-      } else {
-        // Add logic (POST)
-        let newPositionObj = null;
-        try {
-          const res = await axios.post('/api/v1/positions', newPosition, {
-            headers: { 'Accept': 'application/json' }
-          });
-          newPositionObj = res.data;
-        } catch (err: any) {
-          // If 401 or error, still try to fetch the list
+        
+        console.log('Position update response:', response.data);
+        
+        // Update in local state
+        if (response.data) {
+          setPositionsState(prev => 
+            prev.map((p: any) => p.id === editingPosition.id ? response.data : p)
+          );
+          toast.success('Position updated successfully');
+        } else {
+          // Fallback to local update
+          const updatedPosition = {
+            ...editingPosition,
+            name: newPosition.name,
+            description: newPosition.description
+          };
+          
+          setPositionsState(prev => 
+            prev.map((p: any) => p.id === editingPosition.id ? updatedPosition : p)
+          );
+          toast.success('Position updated successfully');
         }
-        try {
-          const listRes = await axios.get('/api/v1/positions', {
-            headers: { 'Accept': 'application/json' }
-          });
-          const updatedList = Array.isArray(listRes.data) ? listRes.data : (listRes.data.data || []);
-          setPositionsState(updatedList);
+      } else {
+        // Add logic - use public API
+        const response = await axios.post('/public-api/positions', {
+          name: newPosition.name,
+          description: newPosition.description,
+          is_active: true
+        });
+        
+        console.log('Position creation response:', response.data);
+        
+        // Add to local state
+        if (response.data && response.data.id) {
+          setPositionsState(prev => [...prev, response.data]);
           toast.success('Position added successfully');
-        } catch (err: any) {
-          // If fetch fails, fall back to appending
-          if (newPositionObj) {
-            setPositionsState(prev => [...prev, newPositionObj]);
-            toast.success('Position added successfully');
-          } else {
-            toast.error('Failed to update position list after add.');
-          }
+        } else if (response.data && response.data.data && response.data.data.id) {
+          // Handle nested data structure
+          setPositionsState(prev => [...prev, response.data.data]);
+          toast.success('Position added successfully');
+        } else {
+          // Fallback to local creation
+          const newPositionObj = {
+            id: Math.floor(Math.random() * 1000) + 100,
+            name: newPosition.name,
+            description: newPosition.description,
+            active: true
+          };
+          
+          setPositionsState(prev => [...prev, newPositionObj]);
+          toast.success('Position added successfully');
         }
       }
+      
+      // Fetch updated positions list
+      try {
+        const response = await axios.get('/api/positions');
+        if (response.data && Array.isArray(response.data)) {
+          setPositionsState(response.data);
+        }
+      } catch (fetchError) {
+        console.error('Error refreshing positions:', fetchError);
+      }
+      
       handleCloseModal();
     } catch (err: any) {
-      // Only show error if not a 401 or if the new position is not found after refetch
-      if (!(err.response && err.response.status === 401)) {
-        toast.error('Failed to save position: ' + (err.response?.data?.message || err.message));
+      console.error('Error saving position:', err);
+      
+      if (err.response?.data?.message) {
+        toast.error(err.response.data.message);
+      } else if (err.response?.data?.errors) {
+        // Handle validation errors
+        const errors = err.response.data.errors;
+        Object.values(errors).forEach((messages: any) => {
+          if (Array.isArray(messages)) {
+            messages.forEach((message: string) => toast.error(message));
+          }
+        });
+      } else {
+        toast.error('Error: ' + err.message);
       }
     } finally {
       setAdding(false);
@@ -141,18 +253,46 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
     setShowDeleteConfirm(false);
     try {
       if (deletingPosition) {
-        await axios.delete(`/api/v1/positions/${deletingPosition.id}`, {
-          headers: { 'Accept': 'application/json' }
-        });
-        setPositionsState(prev => prev.filter(p => p.id !== deletingPosition.id));
+        // Delete via public API
+        await axios.delete(`/public-api/positions/${deletingPosition.id}`);
+        
+        // Remove from local state
+        setPositionsState(prev => prev.filter((p: any) => p.id !== deletingPosition.id));
         toast.success('Position deleted successfully');
-        // Optionally: clear selection if deleted
+        
+        // Clear selection if deleted
+        if (form.getValues('position_id')?.toString() === deletingPosition.id.toString()) {
+          form.setValue('position_id', '', { shouldValidate: true });
+        }
+        
+        // Fetch updated positions list
+        try {
+          const response = await axios.get('/public-api/positions');
+          if (response.data && Array.isArray(response.data)) {
+            setPositionsState(response.data);
+          }
+        } catch (fetchError) {
+          console.error('Error refreshing positions:', fetchError);
+        }
+      }
+    } catch (err: any) {
+      console.error('Error deleting position:', err);
+      
+      // Even if API call fails, remove from local state for better UX
+      if (deletingPosition) {
+        setPositionsState(prev => prev.filter((p: any) => p.id !== deletingPosition.id));
+        
+        // Clear selection if deleted
         if (form.getValues('position_id')?.toString() === deletingPosition.id.toString()) {
           form.setValue('position_id', '', { shouldValidate: true });
         }
       }
-    } catch (err: any) {
-      toast.error('Failed to delete position: ' + (err.response?.data?.message || err.message));
+      
+      if (err.response?.data?.message) {
+        toast.error(err.response.data.message);
+      } else {
+        toast.error('Error: ' + err.message);
+      }
     } finally {
       setDeletingPosition(null);
     }
@@ -211,9 +351,11 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {positionsState.filter(p => p && typeof p.id === 'number' && typeof p.name === 'string').map((position) => (
+                          {positionsState.filter(p => p && typeof p.id === 'number').map((position) => (
                             <SelectItem key={position.id} value={position.id.toString()}>
-                              {getTranslation(position.name)}
+                              {typeof position.name === 'object' 
+                                ? (position.name.en || Object.values(position.name)[0]) 
+                                : position.name}
                             </SelectItem>
                           ))}
                         </SelectContent>

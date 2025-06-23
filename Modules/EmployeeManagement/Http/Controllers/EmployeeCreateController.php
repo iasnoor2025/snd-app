@@ -154,7 +154,7 @@ class EmployeeCreateController extends Controller
                 'bank_account_number' => $request->bank_account_number ?? '',
                 'bank_iban' => $request->bank_iban ?? '',
                 'contract_hours_per_day' => $request->contract_hours_per_day ?? 8,
-                'contract_days_per_month' => $request->contract_days_per_month ?? 22,
+                'contract_days_per_month' => $request->contract_days_per_month ?? 30,
                 'hire_date' => $request->hire_date ? date('Y-m-d', strtotime($request->hire_date)) : date('Y-m-d'),
                 'status' => $request->status,
                 'emergency_contact_name' => $request->emergency_contact_name ?? '',

@@ -14,7 +14,6 @@ class Position extends Model
         'name',
         'description',
         'active',
-        'department_id',
     ];
 
     protected $casts = [
