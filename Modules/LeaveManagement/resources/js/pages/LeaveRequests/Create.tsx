@@ -34,13 +34,10 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 const ToastService = { success: (msg: string) => alert(msg), error: (msg: string) => alert(msg) };
-import { PageProps } from '@/Modules/LeaveManagement/resources/js/types';
-import { usePermission } from '@/hooks/usePermission';
+import { PageProps } from '@/Core/types/index.d';
 
-// Temporary inline implementation of usePermission hook
+// Define a simple usePermission hook for this component
 function usePermission() {
-  const { t } = useTranslation('leave');
-
   const { props } = usePage<PageProps>();
   const auth = props?.auth || { user: null, permissions: [], hasPermission: [], hasRole: [] };
 
@@ -88,6 +85,12 @@ const LEAVE_TYPES = [
   { value: 'umrah', label: 'Umrah Leave' },
   { value: 'unpaid', label: 'Unpaid Leave' },
   { value: 'other', label: 'Other' },
+];
+
+const breadcrumbs = [
+  { title: 'Dashboard', href: '/dashboard' },
+  { title: 'Leave Requests', href: '/leaves' },
+  { title: 'Create', href: '#' }
 ];
 
 export default function LeaveRequestCreate({ employees = [], currentUserOnly = false }: Props) {
@@ -157,7 +160,7 @@ export default function LeaveRequestCreate({ employees = [], currentUserOnly = f
       onSuccess: () => {
         ToastService.success("Leave request created successfully");
         form.reset();
-        router.visit(route('leaves.requests.index'));
+        router.visit('/leaves');
       },
       onError: (errors) => {
         ToastService.error("Failed to create leave request");
@@ -192,34 +195,19 @@ export default function LeaveRequestCreate({ employees = [], currentUserOnly = f
   }
 
   return (
-    <AppLayout>
+    <AppLayout
+      title={t('create_leave_request')}
+      breadcrumbs={breadcrumbs}
+      requiredPermission="leave-requests.create"
+    >
       <Head title={t('create_leave_request')} />
       <div className="container mx-auto py-6">
-        <Breadcrumb
-          segments={[
-            { title: "Dashboard", href: route('dashboard') },
-            { title: "Leave Requests", href: route('leaves.requests.index') },
-            { title: "Create", href: route('leaves.requests.create') }
-          ]}
-          className="mb-6"
-        >
-          <BreadcrumbItem>
-            <BreadcrumbLink href={route('dashboard')}>Dashboard</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbItem>
-            <BreadcrumbLink href={route('leaves.requests.index')}>{t('ttl_leave_requests')}</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbItem>
-            <BreadcrumbLink href={route('leaves.requests.create')}>Create</BreadcrumbLink>
-          </BreadcrumbItem>
-        </Breadcrumb>
-
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center">
             <ClipboardList className="h-8 w-8 mr-2 text-primary" />
             <h1 className="text-2xl font-bold">{t('create_leave_request')}</h1>
           </div>
-          <Link href={route('leaves.requests.index')}>
+          <Link href="/leaves">
             <Button variant="outline">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Leave Requests

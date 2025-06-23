@@ -15,7 +15,7 @@ interface Auth {
 /**
  * Custom hook for checking user permissions and roles
  */
-export function usePermission(p0: string) {
+export function usePermission(p0?: string) {
   const props = usePage().props as unknown;
   const auth = (props && typeof props === 'object' && 'auth' in props) ? (props as any).auth as Auth : undefined;
 
