@@ -1,6 +1,16 @@
 import React from 'react';
 
-const RentalForm: React.FC = () => {
+interface RentalFormProps {
+  customers: { id: number; name: string }[];
+  equipment: { id: number; name: string }[];
+  employees: { id: number; name: string }[];
+  initialData: { rentalNumber: string };
+  isEditMode: boolean;
+  onSubmit: (values: any) => Promise<void>;
+  isSubmitting: boolean;
+}
+
+const RentalForm: React.FC<RentalFormProps> = ({ customers, equipment, employees, initialData, isEditMode, onSubmit, isSubmitting }) => {
   return (
     <form className="p-4 bg-white rounded shadow">
       <h2 className="text-xl font-bold mb-4">Rental Form</h2>

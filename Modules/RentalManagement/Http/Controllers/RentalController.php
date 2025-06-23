@@ -37,7 +37,52 @@ class RentalController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Rental/Create');
+        // Get active customers
+        $customers = \Modules\CustomerManagement\Domain\Models\Customer::where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name', 'contact_person', 'email', 'phone']);
+
+        // Get available equipment
+        $equipment = \Modules\EquipmentManagement\Domain\Models\Equipment::where('is_active', true)
+            ->where('status', '=', 'available')
+            ->with(['category:id,name'])
+            ->orderBy('name')
+            ->get([
+                'id', 'name', 'description', 'model_number', 'manufacturer', 
+                'serial_number', 'door_number', 'daily_rate', 'weekly_rate', 
+                'monthly_rate', 'category_id'
+            ]);
+
+        // Get operators (employees who can operate equipment)
+        $employees = \Modules\EmployeeManagement\Domain\Models\Employee::where('is_operator', true)
+            ->where('status', 'active')
+            ->orderBy('first_name')
+            ->get(['id', 'first_name', 'last_name', 'employee_id'])
+            ->map(function ($employee) {
+                return [
+                    'id' => $employee->id,
+                    'name' => $employee->full_name,
+                    'employee_id' => $employee->employee_id
+                ];
+            });
+
+        // Generate next rental number (format: RNT-YYYYMMDD-XXX)
+        $lastRental = \Modules\RentalManagement\Domain\Models\Rental::orderBy('id', 'desc')
+            ->first();
+        
+        $nextNumber = 1;
+        if ($lastRental && preg_match('/RNT-\d{8}-(\d+)/', $lastRental->rental_number, $matches)) {
+            $nextNumber = intval($matches[1]) + 1;
+        }
+        
+        $nextRentalNumber = sprintf("RNT-%s-%03d", date('Ymd'), $nextNumber);
+
+        return Inertia::render('Rentals/Create', [
+            'customers' => $customers,
+            'equipment' => $equipment,
+            'nextRentalNumber' => $nextRentalNumber,
+            'employees' => $employees
+        ]);
     }
 
     /**

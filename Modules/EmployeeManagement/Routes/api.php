@@ -11,7 +11,6 @@ use Modules\EmployeeManagement\Http\Controllers\ResignationController;
 use Modules\EmployeeManagement\Http\Controllers\SalaryIncrementController;
 use Illuminate\Http\Request;
 use Modules\EmployeeManagement\Http\Controllers\EmployeeNumberController;
-use Modules\EmployeeManagement\Http\Controllers\TestController;
 
 // Public route for last-file-number (no auth middleware)
 Route::prefix('v1')->group(function () {
@@ -69,7 +68,6 @@ Route::prefix('v1/positions')->group(function() {
 
 // Other public API endpoints
 Route::get('/employee-numbers/next', [EmployeeNumberController::class, 'getNextEmployeeNumber']);
-Route::post('/test/position', [TestController::class, 'testCreatePosition']);
 
 // Authenticated API endpoints
 Route::middleware('auth:sanctum')->group(function () {

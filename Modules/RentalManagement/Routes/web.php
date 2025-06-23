@@ -24,21 +24,34 @@ use Modules\RentalManagement\Http\Controllers\RentalHistoryController;
 |
 */
 
-// Rental routes (main CRUD - outside named group for proper naming)
-Route::resource('rentals', RentalController::class)
-    ->middleware(['web', 'auth', 'permission:rentals.view']);
+Route::middleware(['web', 'auth'])->group(function () {
+    // Rental routes (main CRUD)
+    Route::get('rentals', [RentalController::class, 'index'])->name('rentals.index')->middleware('permission:rentals.view');
+    Route::get('rentals/create', [RentalController::class, 'create'])->name('rentals.create')->middleware('permission:rentals.view');
+    Route::post('rentals', [RentalController::class, 'store'])->name('rentals.store')->middleware('permission:rentals.view');
+    Route::get('rentals/{rental}', [RentalController::class, 'show'])->name('rentals.show')->middleware('permission:rentals.view');
+    Route::get('rentals/{rental}/edit', [RentalController::class, 'edit'])->name('rentals.edit')->middleware('permission:rentals.view');
+    Route::put('rentals/{rental}', [RentalController::class, 'update'])->name('rentals.update')->middleware('permission:rentals.view');
+    Route::delete('rentals/{rental}', [RentalController::class, 'destroy'])->name('rentals.destroy')->middleware('permission:rentals.view');
 
-Route::name('rentals.')->middleware(['web', 'auth'])->group(function () {
     // Customer routes
-    Route::resource('customers', CustomerController::class)->middleware([
-        'permission:customers.view',
-    ]);
+    Route::resource('customers', CustomerController::class)
+        ->names([
+            'index' => 'rentals.customers.index',
+            'create' => 'rentals.customers.create',
+            'store' => 'rentals.customers.store',
+            'show' => 'rentals.customers.show',
+            'edit' => 'rentals.customers.edit',
+            'update' => 'rentals.customers.update',
+            'destroy' => 'rentals.customers.destroy',
+        ])
+        ->middleware(['permission:customers.view']);
     Route::get('customers-report', [CustomerController::class, 'report'])
         ->middleware('permission:customers.view')
-        ->name('customers.report');
+        ->name('rentals.customers.report');
     Route::get('api/customers', [CustomerController::class, 'getCustomers'])
         ->middleware('permission:customers.view')
-        ->name('api.customers');
+        ->name('rentals.api.customers');
 
     // Extension routes
     // Route::resource('extensions', RentalExtensionController::class);

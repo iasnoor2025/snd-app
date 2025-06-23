@@ -36,9 +36,9 @@ use Modules\RentalManagement\Domain\Models\Invoice;
 class Rental extends Model implements HasMedia
 {
     use HasFactory;
-use SoftDeletes;
-use HasMediaAttachments;
-use LogsActivity, AutoLoadsRelations;
+    use SoftDeletes;
+    use HasMediaAttachments;
+    use LogsActivity, AutoLoadsRelations;
 
     /**
      * The attributes that are mass assignable.
@@ -72,6 +72,8 @@ use LogsActivity, AutoLoadsRelations;
         'approved_by',
         'approved_at',
         'location_id',
+        'billing_cycle',
+        'has_operators',
     ];
 
     /**
@@ -96,6 +98,7 @@ use LogsActivity, AutoLoadsRelations;
         'completed_at' => 'datetime',
         'approved_at' => 'datetime',
         'status' => 'string',
+        'has_operators' => 'boolean',
     ];
 
     /**

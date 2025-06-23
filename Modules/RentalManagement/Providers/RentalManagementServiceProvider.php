@@ -7,33 +7,48 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Database\Eloquent\Factory;
 use Modules\RentalManagement\Providers\RouteServiceProvider;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Arr;
+use Modules\Core\Services\CacheManagerService;
+use Modules\Core\Services\ThemeManagerService;
+use Modules\Localization\Services\TranslationService;
+use Modules\Notifications\Services\NotificationService;
+use Illuminate\Support\Facades\Vite;
 
 class RentalManagementServiceProvider extends ServiceProvider
 {
     /**
      * @var string $moduleName
      */
-    protected $moduleName = 'RentalManagement';
+    protected string $moduleName = 'RentalManagement';
 
     /**
      * @var string $moduleNameLower
      */
-    protected $moduleNameLower = 'rentalmanagement';
+    protected string $moduleNameLower = 'rentalmanagement';
 
     /**
      * Boot the application events.
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();
-        $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
+        $this->loadMigrationsFrom(module_path($this->moduleName, 'database/migrations'));
 
         // Register observers
         $this->registerObservers();
+
+        // Register Vite assets
+        Vite::useHotFile(public_path('hot'))
+            ->useBuildDirectory('build-rental')
+            ->withEntryPoints([
+                'Modules/RentalManagement/resources/js/app.tsx',
+            ]);
     }
 
     /**
@@ -109,16 +124,13 @@ class RentalManagementServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register model observers.
-     *
-     * @return void
+     * Register observers for models
      */
     protected function registerObservers()
     {
-        // Temporarily commenting out observers until these models are properly created or migrated
-        // \Modules\RentalManagement\Domain\Models\Leave::observe(\Modules\RentalManagement\Observers\LeaveObserver::class);
-        // \Modules\RentalManagement\Domain\Models\LeaveRequest::observe(\Modules\RentalManagement\Observers\LeaveRequestObserver::class);
-        // \Modules\RentalManagement\Domain\Models\LeaveType::observe(\Modules\RentalManagement\Observers\LeaveTypeObserver::class);
+        // Register observers for Rental models
+        \Modules\RentalManagement\Domain\Models\Rental::observe(\Modules\RentalManagement\Observers\RentalObserver::class);
+        \Modules\RentalManagement\Domain\Models\RentalItem::observe(\Modules\RentalManagement\Observers\RentalItemObserver::class);
     }
 }
 

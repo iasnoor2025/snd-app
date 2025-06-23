@@ -1,0 +1,16 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["../../resources/js/*"],
+            "@/Core/*": ["../Core/resources/js/*"]
+        }
+    },
+    "include": [
+        "resources/js/**/*.ts",
+        "resources/js/**/*.tsx",
+        "../Core/resources/js/**/*.ts",
+        "../Core/resources/js/**/*.tsx"
+    ]
+} 

@@ -27,9 +27,6 @@ Route::group(['prefix' => 'public-api/positions', 'middleware' => ['api'], 'excl
     Route::delete('/{id}', [PublicPositionController::class, 'destroy']);
 });
 
-// Test route for debugging
-Route::post('/api/test/position', [TestController::class, 'testPositionCreate']);
-
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('employeemanagements', EmployeeManagementController::class)
         ->middleware([

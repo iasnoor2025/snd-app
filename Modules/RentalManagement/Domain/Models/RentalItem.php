@@ -10,11 +10,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Modules\Core\Traits\AutoLoadsRelations;
 use Modules\EmployeeManagement\Domain\Models\Employee;
 use Modules\EquipmentManagement\Domain\Models\Equipment;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RentalItem extends Model
 {
     use HasFactory;
     use AutoLoadsRelations;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -24,16 +26,14 @@ class RentalItem extends Model
     protected $fillable = [
         'rental_id',
         'equipment_id',
-        'needs_equipment_sync',
-        'rate',
-        'rate_type',
-        'status',
-        'employee_id',
         'operator_id',
-        'notes',
-        'total_amount',
-        'discount_percentage',
+        'quantity',
+        'unit_price',
+        'rental_rate_period',
         'days',
+        'discount_percentage',
+        'total_amount',
+        'notes',
     ];
 
     /**
@@ -42,9 +42,11 @@ class RentalItem extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'rate' => 'decimal:2',
-        'total_amount' => 'decimal:2',
+        'quantity' => 'integer',
+        'unit_price' => 'decimal:2',
         'days' => 'integer',
+        'discount_percentage' => 'decimal:2',
+        'total_amount' => 'decimal:2',
     ];
 
     /**
@@ -68,7 +70,7 @@ class RentalItem extends Model
      */
     public function operator(): BelongsTo
     {
-        return $this->belongsTo(Employee::class, 'employee_id');
+        return $this->belongsTo(Employee::class, 'operator_id');
     }
 
     /**
@@ -87,11 +89,11 @@ class RentalItem extends Model
     public function getRateAttribute()
     {
         if (!$this->equipment) {
-            return $this->attributes['rate'] ?? 0;
+            return $this->attributes['unit_price'] ?? 0;
         }
 
-        $rateField = $this->rate_type . '_rate';
-        return $this->equipment->$rateField ?? $this->attributes['rate'] ?? 0;
+        $rateField = $this->rental_rate_period . '_rate';
+        return $this->equipment->$rateField ?? $this->attributes['unit_price'] ?? 0;
     }
 
     /**
@@ -105,7 +107,7 @@ class RentalItem extends Model
         }
 
         $days = $this->days ?? 1; // Default to 1 day if not set
-        return $this->rate * $days;
+        return $this->unit_price * $days;
     }
 
     /**
@@ -114,7 +116,7 @@ class RentalItem extends Model
     public function getSubtotalAttribute(): float
     {
         $days = $this->days ?? 1; // Default to 1 day if not set
-        return $this->rate * $days;
+        return $this->unit_price * $days;
     }
 
     /**
@@ -136,7 +138,7 @@ class RentalItem extends Model
             // Ensure total_amount is calculated and set before saving
             if (empty($rentalItem->total_amount)) {
                 $days = $rentalItem->days ?? 1; // Default to 1 day if not set
-                $rentalItem->total_amount = $rentalItem->rate * $days;
+                $rentalItem->total_amount = $rentalItem->unit_price * $days;
             }
         });
     }

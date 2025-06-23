@@ -1,8 +1,10 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
+import react from '@vitejs/plugin-react';
 import { readdirSync, statSync } from 'fs';
 import { join,relative,dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { resolve } from 'path';
 
 export default defineConfig({
     build: {
@@ -15,12 +17,23 @@ export default defineConfig({
             publicDirectory: '../../public',
             buildDirectory: 'build-rental',
             input: [
-                __dirname + '/resources/assets/sass/app.scss',
-                __dirname + '/resources/assets/js/app.js'
+                __dirname + '/resources/js/app.tsx',
+                __dirname + '/resources/js/pages/**/*.tsx',
             ],
             refresh: true,
         }),
+        react(),
     ],
+    resolve: {
+        alias: {
+            '@': resolve(__dirname, '../../resources/js'),
+            '@/Core': resolve(__dirname, '../Core/resources/js'),
+            '@/Core/components': resolve(__dirname, '../Core/resources/js/components'),
+            '@/Core/components/ui': resolve(__dirname, '../Core/resources/js/components/ui'),
+            '@/Core/layouts': resolve(__dirname, '../Core/resources/js/layouts'),
+            '@/Core/layouts/AppLayout': resolve(__dirname, '../Core/resources/js/layouts/AppLayout'),
+        },
+    },
 });
 // Scen all resources for assets file. Return array
 //function getFilePaths(dir) {
