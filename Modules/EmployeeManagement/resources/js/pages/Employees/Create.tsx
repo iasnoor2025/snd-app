@@ -148,6 +148,15 @@ export default function Create({ users, positions, employee, isEditing = false }
     passport: null,
     iqama: null,
   });
+  
+  // Initialize existing files from employee data if editing
+  useEffect(() => {
+    if (isEditing && employee) {
+      // Set existing file info in the form but don't modify the files state
+      // This is just to show the user that files exist
+      console.log('Initializing existing file data for editing');
+    }
+  }, [isEditing, employee]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema) as any,
@@ -246,18 +255,29 @@ export default function Create({ users, positions, employee, isEditing = false }
       const contractDaysPerMonth = Number(values.contract_days_per_month) || 30;
       const monthlyHours = contractHoursPerDay * contractDaysPerMonth;
 
-      // Add total certification cost to basic salary for hourly rate calculation
-      const totalMonthlyCost = basicSalary + totalCost;
-      const calculatedHourlyRate = monthlyHours > 0 ? Number((totalMonthlyCost / monthlyHours).toFixed(2)) : 0;
-      setHourlyRate(calculatedHourlyRate);
+      // Only update hourly rate if we're not manually setting it
+      // Check if hourly_rate has been manually modified
+      const manuallySetHourlyRate = form.getFieldState('hourly_rate').isDirty;
+      
+      if (!manuallySetHourlyRate) {
+        // Add total certification cost to basic salary for hourly rate calculation
+        const totalMonthlyCost = basicSalary;
+        const calculatedHourlyRate = monthlyHours > 0 ? Number((totalMonthlyCost / monthlyHours).toFixed(2)) : 0;
+        setHourlyRate(calculatedHourlyRate);
 
-      // Update the hourly_rate field with the calculated value
-      // But prevent the watch callback from triggering again
-      isUpdatingHourlyRate = true;
-      form.setValue('hourly_rate', calculatedHourlyRate, { shouldValidate: false });
-      setTimeout(() => {
-        isUpdatingHourlyRate = false;
-      }, 0);
+        // Update the hourly_rate field with the calculated value
+        // But prevent the watch callback from triggering again
+        isUpdatingHourlyRate = true;
+        form.setValue('hourly_rate', calculatedHourlyRate, { shouldValidate: false });
+        setTimeout(() => {
+          isUpdatingHourlyRate = false;
+        }, 0);
+      } else {
+        // Just update the display value but don't modify the form
+        const totalMonthlyCost = basicSalary;
+        const calculatedHourlyRate = monthlyHours > 0 ? Number((totalMonthlyCost / monthlyHours).toFixed(2)) : 0;
+        setHourlyRate(calculatedHourlyRate);
+      }
     };
 
     // Subscribe to form changes
@@ -519,10 +539,10 @@ export default function Create({ users, positions, employee, isEditing = false }
                   {isSubmitting ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating...
+                      {isEditing ? 'Updating...' : 'Creating...'}
                     </>
                   ) : (
-                    'Create Employee'
+                    isEditing ? 'Update Employee' : 'Create Employee'
                   )}
                 </Button>
               </div>

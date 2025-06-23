@@ -18,9 +18,34 @@ import { toast } from 'sonner';
 import axios from 'axios';
 
 // Placeholder components
-const FileUpload = () => <div>FileUpload Placeholder</div>;
+const FileUpload = ({ field, name, onFileSelect }: { field: any, name: string, onFileSelect: (file: File) => void }) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      onFileSelect(e.target.files[0]);
+    }
+  };
+  
+  return (
+    <div className="flex items-center space-x-2">
+      <Input 
+        type="file" 
+        onChange={handleFileChange} 
+        className="max-w-xs"
+        accept="image/*,.pdf" 
+      />
+      {field.value && typeof field.value === 'string' && field.value.length > 0 && (
+        <span className="text-sm text-muted-foreground">File uploaded</span>
+      )}
+    </div>
+  );
+};
 const ExpiryDateInput = () => <div>ExpiryDateInput Placeholder</div>;
-const SectionHeader = ({ children }: { children: React.ReactNode }) => <div>{children}</div>;
+const SectionHeader = ({ children, title }: { children?: React.ReactNode, title?: string }) => (
+  <div className="mb-4">
+    {title && <h3 className="text-lg font-medium mb-2">{title}</h3>}
+    {children}
+  </div>
+);
 
 // Placeholder constants for employee statuses and types
 const EMPLOYEE_STATUSES = ['active', 'inactive', 'terminated'];
@@ -76,6 +101,14 @@ export default function Edit({ auth, employee, users, positions }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const [documents, setDocuments] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState('personal');
+  const [files, setFiles] = useState<Record<string, File | null>>({
+    passport: null,
+    iqama: null,
+    driving_license: null,
+    operator_license: null,
+    tuv_certification: null,
+    spsp_license: null,
+  });
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -133,6 +166,9 @@ export default function Edit({ auth, employee, users, positions }: Props) {
     console.log('Form data being submitted:', data);
 
     try {
+      // Create FormData for file uploads
+      const formData = new FormData();
+      
       // Format the data to ensure proper types
       const formattedData = {
         ...data,
@@ -152,10 +188,36 @@ export default function Edit({ auth, employee, users, positions }: Props) {
         mobile_allowance: data.mobile_allowance || 0,
       };
 
-      console.log('Formatted data being sent:', formattedData);
+      // Add all form data to the FormData object
+      for (const [key, value] of Object.entries(formattedData)) {
+        if (value !== null && value !== undefined) {
+          if (typeof value === 'object') {
+            formData.append(key, JSON.stringify(value));
+          } else {
+            formData.append(key, value.toString());
+          }
+        }
+      }
+      
+      // Add all files to the FormData object
+      for (const [key, file] of Object.entries(files)) {
+        if (file) {
+          formData.append(`files[${key}]`, file);
+        }
+      }
 
-      await router.put(`/employees/${employee.id}`, formattedData);
+      console.log('Formatted data being sent with files');
+
+      // Use axios instead of router for FormData submission
+      const response = await axios.post(`/employees/${employee.id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'X-HTTP-Method-Override': 'PUT', // Laravel recognizes this as a PUT request
+        },
+      });
+      
       toast.success('Employee updated successfully');
+      router.visit('/employees');
     } catch (error: any) {
       console.error('Error updating employee:', error);
 
@@ -354,7 +416,22 @@ export default function Edit({ auth, employee, users, positions }: Props) {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent className="max-h-[200px]">
-                                {COUNTRIES.map((country) => (
+                                {[
+                                  { value: 'Saudi Arabia', label: 'Saudi Arabia' },
+                                  { value: 'Kuwait', label: 'Kuwait' },
+                                  { value: 'Bahrain', label: 'Bahrain' },
+                                  { value: 'Qatar', label: 'Qatar' },
+                                  { value: 'Oman', label: 'Oman' },
+                                  { value: 'Yemen', label: 'Yemen' },
+                                  { value: 'Egypt', label: 'Egypt' },
+                                  { value: 'India', label: 'India' },
+                                  { value: 'Pakistan', label: 'Pakistan' },
+                                  { value: 'Bangladesh', label: 'Bangladesh' },
+                                  { value: 'Philippines', label: 'Philippines' },
+                                  { value: 'Sri Lanka', label: 'Sri Lanka' },
+                                  { value: 'Nepal', label: 'Nepal' },
+                                  { value: 'Sudan', label: 'Sudan' }
+                                ].map((country) => (
                                   <SelectItem key={`country-${country.value}`} value={country.value}>
                                     {country.label}
                                   </SelectItem>

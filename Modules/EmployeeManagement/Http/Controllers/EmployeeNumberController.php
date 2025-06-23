@@ -58,23 +58,36 @@ class EmployeeNumberController extends Controller
     {
         try {
             // Simple approach without transaction to avoid potential issues
-            $lastEmployee = Employee::orderBy('employee_file_number', 'desc')->first();
+            $lastEmployee = Employee::orderBy('id', 'desc')->first();
 
             // Log what we found
             Log::info('Found last employee', [
                 'employee_id' => $lastEmployee ? $lastEmployee->id : 'none',
-                'file_number' => $lastEmployee ? $lastEmployee->employee_file_number : 'none'
+                'file_number' => $lastEmployee ? $lastEmployee->file_number : 'none'
             ]);
 
             $lastNumber = 0;
-            if ($lastEmployee && $lastEmployee->employee_file_number) {
-                if (preg_match('/^EMP-(\d{4})$/', $lastEmployee->employee_file_number, $matches)) {
+            if ($lastEmployee && $lastEmployee->file_number) {
+                if (preg_match('/^EMP-(\d{4})$/', $lastEmployee->file_number, $matches)) {
                     $lastNumber = (int) $matches[1];
                     Log::info('Extracted last number', ['number' => $lastNumber]);
                 } else {
-                    Log::warning('Employee file number does not match expected format', [
-                        'file_number' => $lastEmployee->employee_file_number
-                    ]);
+                    // Try to extract any number from the file number
+                    if (preg_match('/(\d+)/', $lastEmployee->file_number, $matches)) {
+                        $lastNumber = (int) $matches[1];
+                        Log::info('Extracted number from non-standard format', ['number' => $lastNumber]);
+                    } else {
+                        // If no number found, use the employee ID as a base
+                        $lastNumber = $lastEmployee->id;
+                        Log::info('Using employee ID as base', ['number' => $lastNumber]);
+                    }
+                }
+            } else {
+                // Check if we have any employees at all
+                $employeeCount = Employee::count();
+                if ($employeeCount > 0) {
+                    $lastNumber = $employeeCount;
+                    Log::info('Using employee count as base', ['number' => $lastNumber]);
                 }
             }
 
@@ -85,7 +98,7 @@ class EmployeeNumberController extends Controller
             $attempt = 1;
             $maxAttempts = 10; // Prevent infinite loop
 
-            while (Employee::where('employee_file_number', $newFileNumber)->exists() && $attempt <= $maxAttempts) {
+            while (Employee::where('file_number', $newFileNumber)->exists() && $attempt <= $maxAttempts) {
                 Log::info('File number already exists, incrementing', [
                     'attempt' => $attempt,
                     'current_number' => $nextNumber,

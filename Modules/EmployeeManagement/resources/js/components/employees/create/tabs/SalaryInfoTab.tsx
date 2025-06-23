@@ -50,10 +50,10 @@ export default function SalaryInfoTab<TFormValues extends FieldValues = SalaryIn
   const [showBankDetails, setShowBankDetails] = useState(false);
   const isUpdating = useRef(false);
 
-  // Calculate current month days
-  const getCurrentMonthDays = () => {
   const { t } = useTranslation('employee');
 
+  // Calculate current month days
+  const getCurrentMonthDays = () => {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
   };

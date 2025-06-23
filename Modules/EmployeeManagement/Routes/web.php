@@ -7,7 +7,12 @@ use Modules\EmployeeManagement\Http\Controllers\DepartmentController;
 use Modules\EmployeeManagement\Http\Controllers\PositionController;
 use Modules\EmployeeManagement\Http\Controllers\ResignationController;
 use Modules\EmployeeManagement\Http\Controllers\SalaryIncrementController;
+use Modules\EmployeeManagement\Http\Controllers\EmployeeNumberController;
 use Inertia\Inertia;
+
+// Public routes
+Route::get('/api/employees/simple-file-number', [EmployeeNumberController::class, 'generateUniqueFileNumber'])
+    ->name('api.employees.simple-file-number');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('employeemanagements', EmployeeManagementController::class)

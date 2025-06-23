@@ -278,10 +278,18 @@ export default function Index({ auth, employees, filters, departments, positions
                           </div>
                           <div className="text-sm">
                             <BriefcaseBusiness className="inline-block w-3 h-3 mr-1" />
-                            {typeof employee.position === 'string' ? employee.position : getTranslation(employee.position?.name) || 'N/A'}
+                            {typeof employee.position === 'string' 
+                              ? employee.position 
+                              : employee.position 
+                                ? getTranslation(employee.position?.name) 
+                                : 'N/A'}
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            Dept: {typeof employee.department === 'string' ? employee.department : getTranslation(employee.department?.name) || 'N/A'}
+                            Dept: {typeof employee.department === 'string' 
+                              ? employee.department 
+                              : employee.department 
+                                ? getTranslation(employee.department?.name) 
+                                : 'N/A'}
                           </div>
                         </div>
                       </TableCell>

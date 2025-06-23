@@ -42,35 +42,39 @@ export default function PersonalInfoTab({ form }: PersonalInfoTabProps) {
   useEffect(() => {
     const fetchLastFileNumber = async () => {
       try {
-        const response = await axios.get('/api/v1/employees/last-file-number');
-        console.log('API response:', response.data);
-
-        if (response.data && typeof response.data.lastFileNumber === 'number') {
-          setLastFileNumber(response.data.lastFileNumber);
-          // If no employee number set yet, generate one based on last number
-          if (!form.getValues('file_number')) {
-            const nextNumber = response.data.lastFileNumber + 1;
-            const formattedNumber = nextNumber.toString().padStart(4, '0');
-            const newFileNumber = `EMP-${formattedNumber}`;
-            console.log('Setting file_number to:', newFileNumber);
-            form.setValue('file_number', newFileNumber, { shouldValidate: true })
+        // Check if file_number is already set (for editing)
+        if (form.getValues('file_number')) {
+          return; // Skip fetching if we already have a file number
+        }
+        
+        // Generate a default sequential file number
+        const nextNumber = lastFileNumber + 1;
+        const formattedNumber = nextNumber.toString().padStart(4, '0');
+        const defaultFileNumber = `EMP-${formattedNumber}`;
+        form.setValue('file_number', defaultFileNumber, { shouldValidate: true });
+        setLastFileNumber(nextNumber);
+        
+        // Try to get a proper file number from API
+        try {
+          const response = await axios.get('/api/employees/simple-file-number');
+          console.log('API response:', response.data);
+          
+          if (response.data && response.data.file_number) {
+            form.setValue('file_number', response.data.file_number, { shouldValidate: true });
+            if (response.data.lastFileNumber) {
+              setLastFileNumber(response.data.lastFileNumber);
+            }
           }
-        } else {
-          console.error('Invalid response format:', response.data);
-          toast.error(t('employees:employee_number_retrieval_error'));
-          setLastFileNumber(0);
-          // Set default value when response is invalid
-          if (!form.getValues('file_number')) {
-            form.setValue('file_number', 'EMP-0001', { shouldValidate: true })
-          }
+        } catch (apiError) {
+          // Silent fail - we already have a default file number
+          console.log('Could not fetch file number from API, using default');
         }
       } catch (error) {
-        console.error('Error fetching last file number:', error);
-        toast.error(t('employees:employee_number_fetch_error'));
+        console.error('Error in file number setup:', error);
         // Set default value on error
         setLastFileNumber(0);
         if (!form.getValues('file_number')) {
-          form.setValue('file_number', 'EMP-0001', { shouldValidate: true })
+          form.setValue('file_number', 'EMP-0001', { shouldValidate: true });
         }
       }
     };
@@ -85,24 +89,37 @@ export default function PersonalInfoTab({ form }: PersonalInfoTabProps) {
       // Clear any existing error on the field
       form.clearErrors('file_number');
 
-      // Try the simple endpoint instead
-      const response = await axios.get('/api/employees/simple-file-number');
-      console.log('Generate simple file number response:', response.data);
+      try {
+        // Try the simple endpoint
+        const response = await axios.get('/api/employees/simple-file-number');
+        console.log('Generate simple file number response:', response.data);
 
-      if (response.data.success && response.data.file_number) {
-        // Set the file number
-        form.setValue('file_number', response.data.file_number, { shouldValidate: true })
+        if (response.data && response.data.file_number) {
+          // Set the file number
+          form.setValue('file_number', response.data.file_number, { shouldValidate: true });
 
-        // Update last file number for consistency
-        if (typeof response.data.lastFileNumber === 'number') {
-          setLastFileNumber(response.data.lastFileNumber);
+          // Update last file number for consistency
+          if (response.data.lastFileNumber) {
+            setLastFileNumber(response.data.lastFileNumber);
+          }
+
+          // Show success message
+          toast.success(`Unique file number ${response.data.file_number} generated`);
+          return;
         }
-
-        // Show success message
-        toast.success(`Unique file number ${response.data.file_number} generated`);
-      } else {
-        throw new Error(response.data.message || 'Invalid response from file number generation API');
+      } catch (apiError) {
+        console.log('API call failed, generating random file number');
       }
+
+      // Fallback to sequential generation if API fails
+      let nextNumber = lastFileNumber + 1;
+      if (nextNumber < 1) nextNumber = 1;
+      const formattedNumber = nextNumber.toString().padStart(4, '0');
+      const fileNumber = `EMP-${formattedNumber}`;
+      form.setValue('file_number', fileNumber, { shouldValidate: true });
+      setLastFileNumber(nextNumber);
+      toast.success(`Generated file number: ${fileNumber}`);
+      
     } catch (error) {
       console.error('Error generating file number:', error);
       let errorMessage = "Failed to generate unique file number. Please try again.";

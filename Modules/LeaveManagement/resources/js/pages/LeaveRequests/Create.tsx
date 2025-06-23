@@ -234,7 +234,7 @@ export default function LeaveRequestCreate({ employees = [], currentUserOnly = f
                     <FormField
                       control={form.control}
                       name="employee_id"
-                      render={({ field }) => (
+                      render={({ field }: { field: any }) => (
                         <FormItem>
                           <FormLabel>Employee</FormLabel>
                           <Select
@@ -262,7 +262,7 @@ export default function LeaveRequestCreate({ employees = [], currentUserOnly = f
                     <FormField
                       control={form.control}
                       name="leave_type"
-                      render={({ field }) => (
+                      render={({ field }: { field: any }) => (
                         <FormItem>
                           <FormLabel>{t('lbl_leave_type')}</FormLabel>
                           <Select
@@ -299,7 +299,7 @@ export default function LeaveRequestCreate({ employees = [], currentUserOnly = f
                     <FormField
                       control={form.control}
                       name="start_date"
-                      render={({ field }) => (
+                      render={({ field }: { field: any }) => (
                         <FormItem>
                           <FormLabel>{t('lbl_start_date')}</FormLabel>
                           <FormControl>
@@ -317,7 +317,7 @@ export default function LeaveRequestCreate({ employees = [], currentUserOnly = f
                     <FormField
                       control={form.control}
                       name="end_date"
-                      render={({ field }) => (
+                      render={({ field }: { field: any }) => (
                         <FormItem>
                           <FormLabel>{t('end_date')}</FormLabel>
                           <FormControl>
@@ -353,7 +353,7 @@ export default function LeaveRequestCreate({ employees = [], currentUserOnly = f
                   <FormField
                     control={form.control}
                     name="reason"
-                    render={({ field }) => (
+                    render={({ field }: { field: any }) => (
                       <FormItem>
                         <FormLabel>Reason</FormLabel>
                         <FormControl>
@@ -372,7 +372,7 @@ export default function LeaveRequestCreate({ employees = [], currentUserOnly = f
                   <FormField
                     control={form.control}
                     name="notes"
-                    render={({ field }) => (
+                    render={({ field }: { field: any }) => (
                       <FormItem>
                         <FormLabel>{t('additional_notes')}</FormLabel>
                         <FormControl>
