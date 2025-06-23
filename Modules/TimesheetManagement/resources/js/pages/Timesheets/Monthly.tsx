@@ -356,7 +356,7 @@ export default function MonthlyTimesheets({ auth, timesheets = [], employees = [
 
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" size="sm" className="w-full sm:w-auto" asChild>
-              <Link href={route('timesheets.index')}>
+              <Link href={route('hr.api.timesheets.index')}>
                 <ArrowLeftIcon className="mr-2 h-4 w-4" />
                 Back
               </Link>

@@ -177,7 +177,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
 
     if (confirm(`Are you sure you want to approve ${selectedTimesheets.length} selected timesheets?`)) {
       setBulkProcessing(true);
-      router.post(route('timesheets.bulk-approve'), {
+      router.post(route('hr.api.timesheets.bulk-approve'), {
         timesheet_ids: selectedTimesheets
       }, {
         onSuccess: () => {
@@ -194,7 +194,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
   };
 
   const handleSearch = () => {
-    router.get(route('timesheets.index'), {
+    router.get(route('hr.api.timesheets.index'), {
       search: searchTerm,
       status: selectedStatus === 'all' ? undefined : selectedStatus,
       date_from: startDate ? format(startDate, 'yyyy-MM-dd') : undefined,
@@ -219,7 +219,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
     setStartDate(undefined);
     setEndDate(undefined);
     setPerPage(15);
-    router.get(route('timesheets.index'), {}, {
+    router.get(route('hr.api.timesheets.index'), {}, {
       preserveState: true,
       replace: true,
     });
@@ -242,7 +242,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
 
   const handleDelete = (id: number) => {
     if (confirm('Are you sure you want to delete this timesheet?')) {
-      router.delete(route('timesheets.destroy', id), {
+      router.delete(route('hr.api.timesheets.destroy', id), {
         onSuccess: () => {
           toast("Timesheet deleted successfully");
         },
@@ -255,7 +255,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
 
   const handleApprove = (id: number) => {
     setProcessing(id);
-    router.put(route('timesheets.approve', id), {}, {
+    router.put(route('hr.api.timesheets.approve', id), {}, {
       onSuccess: () => {
         toast("Timesheet approved successfully");
         setProcessing(null);
@@ -269,7 +269,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
 
   const handleReject = (id: number) => {
     setProcessing(id);
-    router.put(route('timesheets.reject', id), {}, {
+    router.put(route('hr.api.timesheets.reject', id), {}, {
       onSuccess: () => {
         toast("Timesheet rejected successfully");
         setProcessing(null);
@@ -401,7 +401,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                     {canApproveTimesheet && (
                       <TableHead className="w-[60px]">
                         <Checkbox
-                          onCheckedChange={(checked) => toggleSelectAll(checked === true)}
+                          onChange={(e) => toggleSelectAll(e.target.checked)}
                           checked={
                             timesheetsData.filter(t => t.status === 'submitted').length > 0 &&
                             timesheetsData.filter(t => t.status === 'submitted').every(
@@ -448,7 +448,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                           <TableCell>
                             <Checkbox
                               checked={selectedTimesheets.includes(timesheet.id)}
-                              onCheckedChange={(checked) => toggleTimesheetSelection(timesheet.id, checked)}
+                              onChange={(e) => toggleTimesheetSelection(timesheet.id, e.target.checked)}
                               disabled={timesheet.status !== 'submitted'}
                             />
                           </TableCell>
@@ -485,7 +485,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                                         onClick={() => {
                                           if (confirm('Are you sure you want to approve this timesheet?')) {
                                             setProcessing(timesheet.id);
-                                            router.put(route('timesheets.approve', timesheet.id), {}, {
+                                            router.put(route('hr.api.timesheets.approve', timesheet.id), {}, {
                                               preserveState: true,
                                               onSuccess: () => {
                                                 setProcessing(null);
@@ -522,7 +522,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                                         onClick={() => {
                                           if (confirm('Are you sure you want to reject this timesheet?')) {
                                             setProcessing(timesheet.id);
-                                            router.put(route('timesheets.reject', timesheet.id), {}, {
+                                            router.put(route('hr.api.timesheets.reject', timesheet.id), {}, {
                                               preserveState: true,
                                               onSuccess: () => {
                                                 setProcessing(null);
@@ -577,7 +577,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                     onClick={() => {
                       if (timesheets.current_page > 1) {
                         router.get(
-                          route('timesheets.index'),
+                          route('hr.api.timesheets.index'),
                           {
                             page: timesheets.current_page - 1,
                             search: searchTerm,
@@ -606,7 +606,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                     onClick={() => {
                       if (timesheets.current_page < timesheets.last_page) {
                         router.get(
-                          route('timesheets.index'),
+                          route('hr.api.timesheets.index'),
                           {
                             page: timesheets.current_page + 1,
                             search: searchTerm,

@@ -732,7 +732,7 @@ export default function Show({
 
   // Add these functions to handle view all navigation
   const handleViewAllTimesheets = () => {
-    router.get(route('timesheets.index'), {
+    router.get(route('hr.api.timesheets.index'), {
       employee_id: employee.id
     });
   };

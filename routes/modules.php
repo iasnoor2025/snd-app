@@ -2,6 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Modules\EmployeeManagement\Domain\Models\Employee;
+use Modules\ProjectManagement\Domain\Models\Project;
+use Modules\RentalManagement\Domain\Models\Rental;
+use Modules\RentalManagement\Domain\Models\RentalItem;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,26 +23,61 @@ Route::middleware(['auth', 'verified'])->prefix('leave-requests')->group(functio
     Route::get('/', function () {
         return Inertia::render('LeaveRequests/Index');
     });
+    
+    Route::get('/create', function () {
+        return Inertia::render('LeaveRequests/Create');
+    });
 });
 
 // Direct routes for timesheets
 Route::middleware(['auth', 'verified'])->prefix('timesheets')->group(function () {
     Route::get('/', function () {
+        $query = \Modules\TimesheetManagement\Domain\Models\Timesheet::with(['employee:id,first_name,last_name', 'project']);
+
+        // If user is not admin/hr, only show their own timesheets
+        if (!auth()->user()->hasRole(['admin', 'hr'])) {
+            $query->where('employee_id', auth()->user()->employee->id);
+        }
+
+        $timesheets = $query->latest()->paginate(10);
+
         return Inertia::render('Timesheets/Index', [
-            'timesheets' => [
-                'data' => [],
-                'current_page' => 1,
-                'per_page' => 15,
-                'last_page' => 1,
-                'total' => 0
-            ],
-            'filters' => [
-                'status' => 'all',
-                'search' => '',
-                'date_from' => '',
-                'date_to' => '',
-                'per_page' => 15
-            ]
+            'timesheets' => $timesheets,
+            'filters' => []
+        ]);
+    })->name('timesheets.index');
+});
+
+// Direct routes for HR timesheets
+Route::middleware(['auth', 'verified'])->prefix('hr/timesheets')->group(function () {
+    Route::get('/', function () {
+        return redirect()->route('hr.api.timesheets.index');
+    });
+    
+    Route::get('/create', function () {
+        // Fetch required data for the Create component
+        $employees = Employee::select(['id', 'first_name', 'last_name'])->get();
+        $projects = Project::select(['id', 'name'])->get();
+        
+        // Get rentals with their equipment through rental items
+        $rentals = Rental::select(['id', 'rental_number'])
+            ->with(['rentalItems.equipment:id,name'])
+            ->get()
+            ->map(function ($rental) {
+                return [
+                    'id' => $rental->id,
+                    'rental_number' => $rental->rental_number,
+                    'equipment' => $rental->rentalItems->first() ? [
+                        'name' => $rental->rentalItems->first()->equipment->name ?? 'Unknown'
+                    ] : ['name' => 'No equipment']
+                ];
+            });
+        
+        return Inertia::render('Timesheets/Create', [
+            'employees' => $employees,
+            'projects' => $projects,
+            'rentals' => $rentals,
+            'include_rentals' => true
         ]);
     });
 });
@@ -75,6 +114,10 @@ Route::middleware(['auth', 'verified'])->prefix('audit')->group(function () {
 Route::middleware(['auth', 'verified'])->prefix('leaves')->group(function () {
     Route::get('/', function () {
         return Inertia::render('LeaveRequests/Index');
+    });
+    
+    Route::get('/create', function () {
+        return Inertia::render('LeaveRequests/Create');
     });
 });
 

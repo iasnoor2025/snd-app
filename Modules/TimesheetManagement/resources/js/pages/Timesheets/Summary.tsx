@@ -168,7 +168,7 @@ export default function TimesheetSummary({ auth, summary, employees = [], projec
 
           <div className="flex space-x-2">
             <Button variant="outline" asChild>
-              <Link href={route('timesheets.index')}>
+              <Link href={route('hr.api.timesheets.index')}>
                 <ArrowLeftIcon className="mr-2 h-4 w-4" />
                 {t('back_to_timesheets')}
               </Link>

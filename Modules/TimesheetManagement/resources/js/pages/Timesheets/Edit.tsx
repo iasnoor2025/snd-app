@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
-// Placeholder types
-type PageProps = any;
-type BreadcrumbItem = any;
+import { PageProps, BreadcrumbItem } from "@/Core/types";
+import { AppLayout } from '@/Core';
 import { Button } from "@/Core";
 import {
   Card,
@@ -37,6 +36,7 @@ import * as z from 'zod';
 import { Popover, PopoverContent, PopoverTrigger } from "@/Core";
 import { Calendar } from "@/Core";
 import { format } from 'date-fns';
+import { route } from 'ziggy-js';
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Dashboard', href: '/dashboard' },
@@ -87,9 +87,6 @@ const formSchema = z.object({
   tasks_completed: z.string().optional(),
   status: z.string().optional(),
 });
-
-// Minimal placeholder AppLayout component
-const AppLayout = ({ children }: { children: React.ReactNode }) => <div className="admin-layout-placeholder">{children}</div>;
 
 export default function TimesheetEdit({ auth, timesheet, employees = [], projects = [] }: Props) {
   const { t } = useTranslation('timesheet');
@@ -159,7 +156,10 @@ export default function TimesheetEdit({ auth, timesheet, employees = [], project
   };
 
   return (
-    <AppLayout>
+    <AppLayout
+      title={t('edit_timesheet')}
+      breadcrumbs={breadcrumbs}
+    >
       <Head title={t('edit_timesheet')} />
 
       <div className="flex h-full flex-1 flex-col gap-4 p-4">

@@ -287,7 +287,7 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
           onSuccess: () => {
             toast.success('Timesheets created successfully!');
             form.reset();
-            router.visit(route('timesheets.index'));
+            router.visit(route('hr.api.timesheets.index'));
           },
           onError: (errors) => {
             console.error('Bulk submission errors:', errors);
@@ -344,7 +344,7 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
           onSuccess: () => {
             toast.success('Timesheet created successfully!');
             form.reset();
-            router.visit(route('timesheets.index'));
+            router.visit(route('hr.api.timesheets.index'));
           },
           onError: (errors) => {
             console.error('Single submission errors:', errors);
@@ -515,7 +515,7 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
               </CardDescription>
             </div>
             <Button variant="outline" asChild>
-              <Link href={route('timesheets.index')}>
+              <Link href="/timesheets">
                 <ArrowLeftIcon className="mr-2 h-4 w-4" />
                 {t('back_to_timesheets')}
               </Link>
@@ -1071,7 +1071,7 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
 
                 <div className="flex justify-end space-x-2">
                   <Button variant="outline" asChild>
-                    <Link href={route('timesheets.index')}>Cancel</Link>
+                    <Link href={route('hr.api.timesheets.index')}>Cancel</Link>
                   </Button>
                   <Button type="submit" disabled={processing}>
                     <ClockIcon className="mr-2 h-4 w-4" />
