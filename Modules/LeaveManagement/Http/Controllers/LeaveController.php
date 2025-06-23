@@ -84,7 +84,7 @@ class LeaveController extends Controller
     {
         $leaveTypes = $this->leaveTypeRepository->getAllActive();
 
-        return Inertia::render('LeaveManagement::Create', [
+        return Inertia::render('LeaveRequests/Create', [
             'leaveTypes' => $leaveTypes,
         ]);
     }
@@ -111,7 +111,7 @@ class LeaveController extends Controller
     {
         $leave = $this->leaveRepository->findOrFail($id);
 
-        return Inertia::render('LeaveManagement::Show', [
+        return Inertia::render('LeaveRequests/Show', [
             'leave' => $leave->load(['leaveType', 'employee', 'approver', 'rejector'])
         ]);
     }
@@ -126,7 +126,7 @@ class LeaveController extends Controller
         $leave = $this->leaveRepository->findOrFail($id);
         $leaveTypes = $this->leaveTypeRepository->getAllActive();
 
-        return Inertia::render('LeaveManagement::Edit', [
+        return Inertia::render('LeaveRequests/Edit', [
             'leave' => $leave,
             'leaveTypes' => $leaveTypes,
         ]);

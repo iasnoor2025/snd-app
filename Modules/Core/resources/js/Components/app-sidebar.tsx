@@ -24,7 +24,7 @@ const moduleMap: Record<string, { icon: string; route: string; permission: strin
             { title: 'Salary Increments', route: '/salary-increments', permission: 'salary-increments.view' }
         ]
     },
-    LeaveManagement: { icon: 'clipboard-list', route: '/leave-requests', permission: 'leave-requests.view' },
+    LeaveManagement: { icon: 'clipboard-list', route: '/leaves', permission: 'leave-requests.view' },
     TimesheetManagement: { icon: 'clock', route: '/timesheets', permission: 'timesheets.view' },
     Payroll: { icon: 'dollar-sign', route: '/payrolls', permission: 'payroll.view' },
     ProjectManagement: { icon: 'briefcase', route: '/projects', permission: 'projects.view' },

@@ -90,17 +90,17 @@ import { TimesheetList } from '../../components/employees/timesheets/TimesheetLi
 import { TimesheetForm } from '../../components/employees/timesheets/TimesheetForm';
 import { AssignmentHistory } from '../../components/assignments/AssignmentHistory';
 
-const breadcrumbs: BreadcrumbItem[] = [
+const getBreadcrumbs = (t: any): BreadcrumbItem[] => [
   {
-    title: 'Dashboard',
+    title: t('common:dashboard'),
     href: '/dashboard',
   },
   {
-    title: 'Employees',
+    title: t('common:employees'),
     href: '/employees',
   },
   {
-    title: 'Employee Details',
+    title: t('employee_details'),
     href: '/employees/show',
   },
 ];
@@ -378,7 +378,8 @@ export default function Show({
   totalRepaid: initialTotalRepaid = 0,
   pagination: initialPagination = {}
 }: Props) {
-  const { t } = useTranslation('employees');
+  const { t } = useTranslation(['employees', 'common']);
+  const breadcrumbs = getBreadcrumbs(t);
 
   // Add console log for debugging
   console.log('Employee data:', employee);
@@ -433,7 +434,7 @@ export default function Show({
   }
 
   // Only define breadcrumbs here, after we know employee exists
-  const breadcrumbs = [
+  const breadcrumbs = [ 
     { title: 'Dashboard', href: '/dashboard' },
     { title: 'Employees', href: '/employees' },
     { title: employee.first_name + ' ' + (employee.last_name || ''), href: window.location.pathname },
@@ -447,7 +448,7 @@ export default function Show({
     }
 
     // Validate file type
-    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png']; 
     if (!allowedTypes.includes(file.type)) {
       toast.error('Please upload a PDF, JPG, JPEG, or PNG file');
       return;

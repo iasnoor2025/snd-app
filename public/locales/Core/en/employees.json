@@ -1,5 +1,4 @@
 {
-  // Success messages
   "employee_created_success": "Employee created successfully",
   "employee_updated_success": "Employee updated successfully",
   "position_created_success": "Position created successfully",
@@ -10,7 +9,6 @@
   "settlement_document_generated_success": "Settlement document generated successfully",
   "repayment_recorded_success": "Repayment recorded successfully",
 
-  // Error messages
   "error_creating_employee": "An error occurred while creating the employee",
   "error_updating_employee": "Failed to update employee",
   "error_updating_employee_network": "Failed to update employee: Network error",
@@ -29,7 +27,6 @@
   "error_no_active_advances": "No active advances available for repayment",
   "error_no_permission_advances": "You do not have permission to view advances",
 
-  // Validation messages
   "select_employee_and_date": "Please select an employee and specify the last working date",
   "calculate_settlement_first": "Please calculate the settlement first",
   "employee_number_retrieval_error": "Could not retrieve last employee number. Using default value.",

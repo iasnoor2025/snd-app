@@ -96,7 +96,7 @@ const formatDate = (dateString: string) => new Date(dateString).toLocaleDateStri
 
 const breadcrumbs = [
   { title: 'Dashboard', href: '/dashboard' },
-  { title: 'Leave Requests', href: '/leave-requests' },
+  { title: 'Leave Requests', href: '/leaves' },
 ];
 
 export default function LeaveRequestsIndex({ auth, leaveRequests, filters = { status: 'all', search: '' } }: { auth: any, leaveRequests: any, filters?: { status?: string, search?: string } }) {

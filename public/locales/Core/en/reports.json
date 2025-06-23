@@ -1,0 +1,26 @@
+{
+  "title": "Reports",
+  "description": "Generate and view business reports",
+  "types": {
+    "employee": "Employee Reports",
+    "financial": "Financial Reports",
+    "project": "Project Reports",
+    "timesheet": "Timesheet Reports",
+    "leave": "Leave Reports",
+    "equipment": "Equipment Reports",
+    "rental": "Rental Reports"
+  },
+  "actions": {
+    "generate": "Generate Report",
+    "export": "Export Report",
+    "schedule": "Schedule Report",
+    "share": "Share Report"
+  },
+  "filters": {
+    "date_range": "Date Range",
+    "employee": "Employee",
+    "department": "Department",
+    "project": "Project",
+    "status": "Status"
+  }
+} 

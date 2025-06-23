@@ -61,7 +61,7 @@ const moduleMap: Record<string, ModuleInfo> = {
     },
     LeaveManagement: {
         icon: ClipboardList,
-        route: '/leave-requests',
+        route: '/leaves',
         description: 'Track and approve leave requests'
     },
     TimesheetManagement: {

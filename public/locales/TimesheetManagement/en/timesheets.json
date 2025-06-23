@@ -1,0 +1,28 @@
+{
+  "title": "Timesheets",
+  "description": "Manage employee timesheets",
+  "actions": {
+    "create": "Create Timesheet",
+    "edit": "Edit Timesheet",
+    "delete": "Delete Timesheet",
+    "view": "View Timesheet"
+  },
+  "fields": {
+    "employee": "Employee",
+    "date": "Date",
+    "hours": "Hours",
+    "description": "Description",
+    "project": "Project",
+    "status": "Status"
+  },
+  "status": {
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected"
+  },
+  "messages": {
+    "created": "Timesheet created successfully",
+    "updated": "Timesheet updated successfully",
+    "deleted": "Timesheet deleted successfully"
+  }
+} 

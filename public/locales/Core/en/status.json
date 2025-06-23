@@ -1,0 +1,17 @@
+{
+  "active": "Active",
+  "inactive": "Inactive",
+  "pending": "Pending",
+  "approved": "Approved",
+  "rejected": "Rejected",
+  "completed": "Completed",
+  "in_progress": "In Progress",
+  "cancelled": "Cancelled",
+  "on_hold": "On Hold",
+  "draft": "Draft",
+  "published": "Published",
+  "archived": "Archived",
+  "deleted": "Deleted",
+  "enabled": "Enabled",
+  "disabled": "Disabled"
+} 
