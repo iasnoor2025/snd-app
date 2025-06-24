@@ -18,13 +18,13 @@ export class EquipmentToastService extends ToastService {
     return this.restored(`Equipment ${equipmentName}`);
   }
 
-  // Assignment operations
-  static equipmentAssigned(equipmentName: string, assignedTo: string): string | number {
-    return this.success(`${equipmentName} assigned to ${assignedTo}`);
+  // Status operations
+  static statusUpdated(equipmentName: string, status: string): string | number {
+    return this.success(`${equipmentName} status updated to ${status}`);
   }
 
-  static equipmentUnassigned(equipmentName: string): string | number {
-    return this.success(`${equipmentName} unassigned`);
+  static statusUpdateFailed(equipmentName: string, error?: string): string | number {
+    return this.operationFailed(`update status for ${equipmentName}`, error);
   }
 
   // Maintenance operations
@@ -32,37 +32,31 @@ export class EquipmentToastService extends ToastService {
     return this.info(`Maintenance scheduled for ${equipmentName} on ${date}`);
   }
 
+  static maintenanceStarted(equipmentName: string): string | number {
+    return this.info(`Maintenance started for ${equipmentName}`);
+  }
+
   static maintenanceCompleted(equipmentName: string): string | number {
     return this.success(`Maintenance completed for ${equipmentName}`);
   }
 
-  static maintenanceOverdue(equipmentName: string): string | number {
-    return this.warning(`Maintenance overdue for ${equipmentName}`);
+  static maintenanceFailed(equipmentName: string, error?: string): string | number {
+    return this.operationFailed(`complete maintenance for ${equipmentName}`, error);
   }
 
   // Inspection operations
+  static inspectionStarted(equipmentName: string): string | number {
+    return this.info(`Inspection started for ${equipmentName}`);
+  }
+
   static inspectionCompleted(equipmentName: string, status: 'passed' | 'failed'): string | number {
     return status === 'passed'
       ? this.success(`${equipmentName} passed inspection`)
       : this.warning(`${equipmentName} failed inspection`);
   }
 
-  static inspectionOverdue(equipmentName: string): string | number {
-    return this.warning(`Inspection overdue for ${equipmentName}`);
-  }
-
-  // Status operations
-  static statusChanged(equipmentName: string, status: string): string | number {
-    return this.info(`${equipmentName} status changed to ${status}`);
-  }
-
-  // Calibration operations
-  static calibrationRequired(equipmentName: string): string | number {
-    return this.warning(`${equipmentName} requires calibration`);
-  }
-
-  static calibrationCompleted(equipmentName: string): string | number {
-    return this.success(`${equipmentName} calibration completed`);
+  static inspectionFailed(equipmentName: string, error?: string): string | number {
+    return this.operationFailed(`complete inspection for ${equipmentName}`, error);
   }
 
   // Document operations
@@ -70,12 +64,26 @@ export class EquipmentToastService extends ToastService {
     return this.success(`${documentType} uploaded for ${equipmentName}`);
   }
 
-  static documentExpiring(equipmentName: string, documentType: string, daysLeft: number): string | number {
-    return this.warning(`${documentType} for ${equipmentName} expires in ${daysLeft} days`);
+  static documentUploadFailed(documentType: string, error?: string): string | number {
+    return this.operationFailed(`upload ${documentType}`, error);
   }
 
-  static documentExpired(equipmentName: string, documentType: string): string | number {
-    return this.error(`${documentType} for ${equipmentName} has expired`);
+  // Rate operations
+  static rateUpdated(equipmentName: string, rateType: string): string | number {
+    return this.success(`${rateType} rate updated for ${equipmentName}`);
+  }
+
+  static rateUpdateFailed(equipmentName: string, rateType: string, error?: string): string | number {
+    return this.operationFailed(`update ${rateType} rate for ${equipmentName}`, error);
+  }
+
+  // Category operations
+  static categoryUpdated(equipmentName: string, category: string): string | number {
+    return this.success(`${equipmentName} moved to category ${category}`);
+  }
+
+  static categoryUpdateFailed(equipmentName: string, error?: string): string | number {
+    return this.operationFailed(`update category for ${equipmentName}`, error);
   }
 
   // Validation errors
@@ -94,5 +102,32 @@ export class EquipmentToastService extends ToastService {
 
   static equipmentProcessFailed(action: string, error?: string): string | number {
     return this.operationFailed(`${action} equipment`, error);
+  }
+
+  // Bulk operations
+  static bulkOperationStarted(operation: string, count: number): string | number {
+    return this.loading(`Processing ${operation} for ${count} items...`);
+  }
+
+  static bulkOperationCompleted(operation: string, count: number): string | number {
+    return this.success(`Successfully ${operation} ${count} items`);
+  }
+
+  static bulkOperationFailed(operation: string, error?: string): string | number {
+    return this.error(`Bulk ${operation} failed${error ? `: ${error}` : ''}`);
+  }
+
+  // Availability operations
+  static equipmentAvailable(equipmentName: string): string | number {
+    return this.success(`${equipmentName} is now available`);
+  }
+
+  static equipmentUnavailable(equipmentName: string, reason: string): string | number {
+    return this.warning(`${equipmentName} is unavailable: ${reason}`);
+  }
+
+  // Permission errors
+  static permissionDenied(action: string): string | number {
+    return this.error(`You don't have permission to ${action}`);
   }
 }

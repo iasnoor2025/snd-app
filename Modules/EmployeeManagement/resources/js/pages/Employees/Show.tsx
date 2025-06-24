@@ -505,6 +505,8 @@ export default function Show({
     const deduction = Number(monthlyDeduction);
     const estimatedMonths = Math.ceil(amount / deduction);
 
+    const loadingToastId = EmployeeToastService.processingEmployee('advance request');
+
     router.post(route('advances.store', { employee: employee.id }), {
       amount: amount,
       monthly_deduction: deduction,
@@ -513,17 +515,19 @@ export default function Show({
       estimated_months: estimatedMonths
     }, {
       onSuccess: () => {
+        EmployeeToastService.dismiss(loadingToastId);
+        EmployeeToastService.advanceRequested(employee.first_name + ' ' + employee.last_name, amount);
         setAdvanceAmount('');
         setMonthlyDeduction('');
         setAdvanceReason('');
         setIsAdvanceRequestDialogOpen(false);
-        EmployeeToastService.employeeProcessed('advance request creation');
         // Force reload to get updated balances
         router.reload();
       },
       onError: (errors) => {
+        EmployeeToastService.dismiss(loadingToastId);
         console.error('Advance request error:', errors);
-        EmployeeToastService.employeeProcessFailed('create advance request');
+        EmployeeToastService.employeeProcessFailed('create advance request', errors?.message);
       }
     });
   };
@@ -533,16 +537,25 @@ export default function Show({
   };
 
   const handleDelete = () => {
+    if (!hasPermission('employees.delete')) {
+      EmployeeToastService.permissionDenied('delete employee');
+      return;
+    }
+
     if (confirm('Are you sure you want to delete this employee?')) {
       setIsDeleting(true);
+      const loadingToastId = EmployeeToastService.processingEmployee('delete');
+
       router.delete(route('employees.destroy', { employee: employee.id }), {
         onSuccess: () => {
+          EmployeeToastService.dismiss(loadingToastId);
           EmployeeToastService.employeeDeleted(`${employee.first_name} ${employee.last_name}`);
           window.location.href = route('employees.index');
           setIsDeleting(false);
         },
-        onError: () => {
-          EmployeeToastService.employeeProcessFailed('delete');
+        onError: (errors) => {
+          EmployeeToastService.dismiss(loadingToastId);
+          EmployeeToastService.employeeProcessFailed('delete', errors?.message);
           setIsDeleting(false);
         }
       });
@@ -565,34 +578,43 @@ export default function Show({
   };
 
   const handleRepayment = async (amount: number, activeAdvances: any[]) => {
-    try {
-      const response = await axios.post(`/api/employees/${employee.id}/advances/repayment`, {
-        amount,
-        advances: activeAdvances
-      });
-
-      if (response.data.success) {
-        EmployeeToastService.advanceRepaid(employee.first_name + ' ' + employee.last_name, amount);
-        router.reload();
-      }
-    } catch (error: any) {
-      EmployeeToastService.employeeProcessFailed('record repayment', error.response?.data?.message || error.message);
-    }
-  };
-
-  const handleApproveAdvance = (advanceId: number, type: 'advance' | 'advance_payment', status: Advance['status']) => {
-    if (status !== 'pending') {
-      EmployeeToastService.warning(`This ${type} has already been processed`);
+    if (!amount || isNaN(amount) || amount <= 0) {
+      EmployeeToastService.employeeValidationError('repayment amount');
       return;
     }
 
-    router.post(`/employees/${employee.id}/advances/${advanceId}/approve`, {}, {
+    const loadingToastId = EmployeeToastService.processingEmployee('record repayment');
+
+    router.post(route('advances.repayment', { employee: employee.id }), {
+      amount: amount,
+      advances: activeAdvances.map(advance => advance.id)
+    }, {
       onSuccess: () => {
-        EmployeeToastService.advanceApproved(employee.first_name + ' ' + employee.last_name, amount);
+        EmployeeToastService.dismiss(loadingToastId);
+        EmployeeToastService.advanceRepaid(employee.first_name + ' ' + employee.last_name, amount);
+        setRepaymentAmount('');
+        setIsRepaymentDialogOpen(false);
         router.reload();
       },
-      onError: () => {
-        EmployeeToastService.employeeProcessFailed('approve advance');
+      onError: (errors) => {
+        EmployeeToastService.dismiss(loadingToastId);
+        EmployeeToastService.employeeProcessFailed('record repayment', errors?.message);
+      }
+    });
+  };
+
+  const handleApproveAdvance = (advanceId: number, type: 'advance' | 'advance_payment', status: Advance['status']) => {
+    const loadingToastId = EmployeeToastService.processingEmployee('approve advance');
+
+    router.post(route('advances.approve', { advance: advanceId }), {}, {
+      onSuccess: () => {
+        EmployeeToastService.dismiss(loadingToastId);
+        EmployeeToastService.advanceApproved(employee.first_name + ' ' + employee.last_name, Number(advanceAmount));
+        router.reload();
+      },
+      onError: (errors) => {
+        EmployeeToastService.dismiss(loadingToastId);
+        EmployeeToastService.employeeProcessFailed('approve advance', errors?.message);
       }
     });
   };
@@ -603,15 +625,21 @@ export default function Show({
       return;
     }
 
-    router.post(`/employees/${employee.id}/advances/${advanceId}/reject`, {
+    const loadingToastId = EmployeeToastService.processingEmployee('reject advance');
+
+    router.post(route('advances.reject', { advance: advanceId }), {
       rejection_reason: rejectionReason
     }, {
       onSuccess: () => {
+        EmployeeToastService.dismiss(loadingToastId);
         EmployeeToastService.advanceRejected(employee.first_name + ' ' + employee.last_name);
+        setRejectionReason('');
+        setIsRejectDialogOpen(false);
         router.reload();
       },
-      onError: () => {
-        EmployeeToastService.employeeProcessFailed('reject advance');
+      onError: (errors) => {
+        EmployeeToastService.dismiss(loadingToastId);
+        EmployeeToastService.employeeProcessFailed('reject advance', errors?.message);
       }
     });
   };
@@ -835,25 +863,33 @@ export default function Show({
   };
 
   const handleApproveSettlement = (id: number) => {
-    router.post(`/employees/${employee.id}/final-settlements/${id}/approve`, {}, {
+    const loadingToastId = EmployeeToastService.processingEmployee('approve settlement');
+
+    router.post(route('settlements.approve', { settlement: id }), {}, {
       onSuccess: () => {
+        EmployeeToastService.dismiss(loadingToastId);
         EmployeeToastService.settlementApproved(employee.first_name + ' ' + employee.last_name);
         router.reload();
       },
-      onError: () => {
-        EmployeeToastService.employeeProcessFailed('approve settlement');
+      onError: (errors) => {
+        EmployeeToastService.dismiss(loadingToastId);
+        EmployeeToastService.employeeProcessFailed('approve settlement', errors?.message);
       }
     });
   };
 
   const handleRejectSettlement = (id: number) => {
-    router.post(`/employees/${employee.id}/final-settlements/${id}/reject`, {}, {
+    const loadingToastId = EmployeeToastService.processingEmployee('reject settlement');
+
+    router.post(route('settlements.reject', { settlement: id }), {}, {
       onSuccess: () => {
+        EmployeeToastService.dismiss(loadingToastId);
         EmployeeToastService.settlementRejected(employee.first_name + ' ' + employee.last_name);
         router.reload();
       },
-      onError: () => {
-        EmployeeToastService.employeeProcessFailed('reject settlement');
+      onError: (errors) => {
+        EmployeeToastService.dismiss(loadingToastId);
+        EmployeeToastService.employeeProcessFailed('reject settlement', errors?.message);
       }
     });
   };

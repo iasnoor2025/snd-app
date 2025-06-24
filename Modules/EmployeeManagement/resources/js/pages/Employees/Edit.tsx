@@ -14,7 +14,7 @@ import * as z from 'zod';
 import { Input } from "@/Core";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
 import { getTranslation } from "@/Core";
-import { toast } from 'sonner';
+import { EmployeeToastService } from '@/EmployeeManagement/services/EmployeeToastService';
 import axios from 'axios';
 
 // Placeholder components
@@ -156,14 +156,13 @@ export default function Edit({ auth, employee, users, positions }: Props) {
       setDocuments(response.data);
     } catch (error) {
       console.error('Error fetching documents:', error);
-      toast.error('Failed to fetch documents');
+      EmployeeToastService.employeeProcessFailed('fetch documents');
     }
   };
 
   const onSubmit = async (data: any) => {
     setIsLoading(true);
-
-    console.log('Form data being submitted:', data);
+    const loadingToastId = EmployeeToastService.processingEmployee('update');
 
     try {
       // Create FormData for file uploads
@@ -198,47 +197,90 @@ export default function Edit({ auth, employee, users, positions }: Props) {
           }
         }
       }
-      
-      // Add all files to the FormData object
+
+      // Add files to FormData if they exist
       for (const [key, file] of Object.entries(files)) {
         if (file) {
-          formData.append(`files[${key}]`, file);
+          formData.append(key, file);
         }
       }
 
-      console.log('Formatted data being sent with files');
-
-      // Use axios instead of router for FormData submission
-      const response = await axios.post(`/employees/${employee.id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'X-HTTP-Method-Override': 'PUT', // Laravel recognizes this as a PUT request
+      // Send the update request
+      await router.post(route('employees.update', { employee: employee.id }), formData, {
+        forceFormData: true,
+        onSuccess: () => {
+          EmployeeToastService.dismiss(loadingToastId);
+          EmployeeToastService.employeeUpdated(`${data.first_name} ${data.last_name}`);
+          router.visit(route('employees.show', { employee: employee.id }));
         },
-      });
-      
-      toast.success('Employee updated successfully');
-      router.visit('/employees');
-    } catch (error: any) {
-      console.error('Error updating employee:', error);
-
-      // More detailed error handling
-      if (error.response) {
-        console.error('Response data:', error.response.data);
-        console.error('Response status:', error.response.status);
-
-        if (error.response.data?.errors) {
-          const errorMessages = Object.values(error.response.data.errors).flat();
-          toast.error(`Validation errors: ${errorMessages.join(', ')}`);
-        } else if (error.response.data?.message) {
-          toast.error(error.response.data.message);
-        } else {
-          toast.error('Failed to update employee');
+        onError: (errors) => {
+          EmployeeToastService.dismiss(loadingToastId);
+          console.error('Update errors:', errors);
+          
+          // Handle validation errors
+          if (errors) {
+            Object.keys(errors).forEach(field => {
+              EmployeeToastService.employeeValidationError(field);
+            });
+          } else {
+            EmployeeToastService.employeeProcessFailed('update');
+          }
+        },
+        onFinish: () => {
+          setIsLoading(false);
         }
-      } else {
-        toast.error('Failed to update employee: Network error');
-      }
-    } finally {
+      });
+    } catch (error: any) {
+      EmployeeToastService.dismiss(loadingToastId);
+      console.error('Submission error:', error);
+      EmployeeToastService.employeeProcessFailed('update', error.message);
       setIsLoading(false);
+    }
+  };
+
+  const handleFileUpload = async (file: File, documentType: string) => {
+    if (!file) {
+      EmployeeToastService.employeeValidationError('file selection');
+      return;
+    }
+
+    // Validate file type
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+    if (!allowedTypes.includes(file.type)) {
+      EmployeeToastService.employeeValidationError(`file type (allowed: ${allowedTypes.map(type => type.split('/')[1].toUpperCase()).join(', ')})`);
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    const maxSize = 10 * 1024 * 1024;
+    if (file.size > maxSize) {
+      EmployeeToastService.employeeValidationError('file size (must be less than 10MB)');
+      return;
+    }
+
+    const loadingToastId = EmployeeToastService.processingEmployee(`${documentType} upload`);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('document_type', documentType);
+
+      await router.post(route('employees.documents.upload', { employee: employee.id }), formData, {
+        forceFormData: true,
+        onSuccess: () => {
+          EmployeeToastService.dismiss(loadingToastId);
+          EmployeeToastService.documentUploaded(employee.first_name + ' ' + employee.last_name, documentType);
+          fetchDocuments();
+        },
+        onError: (errors) => {
+          EmployeeToastService.dismiss(loadingToastId);
+          const errorMessage = errors?.file?.[0] || errors?.message || 'Failed to upload document';
+          EmployeeToastService.documentUploadFailed(documentType, errorMessage);
+        }
+      });
+    } catch (error: any) {
+      EmployeeToastService.dismiss(loadingToastId);
+      EmployeeToastService.employeeProcessFailed('upload document', error.message);
     }
   };
 
@@ -593,7 +635,7 @@ export default function Edit({ auth, employee, users, positions }: Props) {
                               <FileUpload
                                 field={field}
                                 name="passport"
-                                onFileSelect={(file) => field.onChange(file)}
+                                onFileSelect={(file) => handleFileUpload(file, 'passport')}
                               />
                             </FormControl>
                             <FormMessage />
@@ -611,7 +653,7 @@ export default function Edit({ auth, employee, users, positions }: Props) {
                               <FileUpload
                                 field={field}
                                 name="iqama"
-                                onFileSelect={(file) => field.onChange(file)}
+                                onFileSelect={(file) => handleFileUpload(file, 'iqama')}
                               />
                             </FormControl>
                             <FormMessage />
@@ -629,7 +671,7 @@ export default function Edit({ auth, employee, users, positions }: Props) {
                               <FileUpload
                                 field={field}
                                 name="driving_license"
-                                onFileSelect={(file) => field.onChange(file)}
+                                onFileSelect={(file) => handleFileUpload(file, 'driving_license')}
                               />
                             </FormControl>
                             <FormMessage />
@@ -647,7 +689,7 @@ export default function Edit({ auth, employee, users, positions }: Props) {
                               <FileUpload
                                 field={field}
                                 name="operator_license"
-                                onFileSelect={(file) => field.onChange(file)}
+                                onFileSelect={(file) => handleFileUpload(file, 'operator_license')}
                               />
                             </FormControl>
                             <FormMessage />
@@ -665,7 +707,7 @@ export default function Edit({ auth, employee, users, positions }: Props) {
                               <FileUpload
                                 field={field}
                                 name="tuv_certification"
-                                onFileSelect={(file) => field.onChange(file)}
+                                onFileSelect={(file) => handleFileUpload(file, 'tuv_certification')}
                               />
                             </FormControl>
                             <FormMessage />
@@ -683,7 +725,7 @@ export default function Edit({ auth, employee, users, positions }: Props) {
                               <FileUpload
                                 field={field}
                                 name="spsp_license"
-                                onFileSelect={(file) => field.onChange(file)}
+                                onFileSelect={(file) => handleFileUpload(file, 'spsp_license')}
                               />
                             </FormControl>
                             <FormMessage />

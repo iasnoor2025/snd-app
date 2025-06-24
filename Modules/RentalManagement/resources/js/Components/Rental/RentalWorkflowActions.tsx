@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from "@/Core";
 import { RentalStatus } from '@/Core/types/models';
 import { useForm, router } from '@inertiajs/react';
-import { toast } from 'sonner';
+import { RentalToastService } from '../../services/RentalToastService';
 import { Modal } from '../Modal';
 import { RentalForm } from './RentalForm';
 import { RentalDetails } from './RentalDetails';
@@ -30,57 +30,93 @@ export const RentalWorkflowActions: FC<RentalWorkflowActionsProps> = ({
     customers = [],
     equipment = [],
 }) => {
+    const { t } = useTranslation('rental');
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const { post, processing } = useForm();
-
-    // Add debugging to help diagnose issues
-    console.log('RentalWorkflowActions props:', {
-        rentalId: rental?.id,
-        status: rental?.status || 'pending',
-    })
-
-    const handleAction = async (action: string) => {
+    const handleCreateSubmit = async (values: any) => {
         try {
-            // Special case for quotation generation which needs to use the direct endpoint
-            if (action === 'generate-quotation') {
-                // Show loading toast
-                const loadingToast = toast.loading('Generating quotation...');
-
-                // Use direct navigation for more reliable redirect to quotation page
-                window.location.href = `/rentals/${rental.id}/direct-generate-quotation`;
-
-                // No need for further handling as page will navigate away
-                return;
-            } else {
-                // Handle other actions normally
-                const loadingToast = toast.loading(`Processing ${action}...`);
-
-                await post(`/rentals/${rental.id}/${action}`, {
-                    preserveScroll: false, // Allow navigation after status changes
-                    onSuccess: () => {
-                        toast.dismiss(loadingToast);
-                        toast.success('Action completed successfully');
-                        // Reload the page to show updated status
-                        setTimeout(() => window.location.reload(), 500);
-                    },
-                    onError: (error) => {
-                        toast.dismiss(loadingToast);
-                        toast.error(error.message || 'Failed to complete action');
-                    },
-                })
-            }
+            setIsSubmitting(true);
+            RentalToastService.processingRental('create');
+            
+            await router.post(route('rentals.store'), values);
+            
+            setShowCreateModal(false);
+            RentalToastService.rentalCreated(values.rental_number);
         } catch (error) {
-            console.error('Action error:', error);
-            toast.error('An unexpected error occurred');
+            RentalToastService.rentalProcessFailed('create', error?.message);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleEditSubmit = async (values: any) => {
+        try {
+            setIsSubmitting(true);
+            RentalToastService.processingRental('update');
+            
+            await router.put(route('rentals.update', rental.id), values);
+            
+            setShowEditModal(false);
+            RentalToastService.rentalUpdated(values.rental_number);
+        } catch (error) {
+            RentalToastService.rentalProcessFailed('update', error?.message);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        try {
+            RentalToastService.processingRental('delete');
+            
+            await router.delete(route('rentals.destroy', rental.id));
+            
+            RentalToastService.rentalDeleted(rental.rental_number);
+        } catch (error) {
+            RentalToastService.rentalProcessFailed('delete', error?.message);
+        }
+    };
+
+    const handleStatusChange = async (status: RentalStatus) => {
+        try {
+            RentalToastService.processingRental('status update');
+            
+            await router.put(route('rentals.update-status', rental.id), { status });
+            
+            RentalToastService.statusUpdated(rental.rental_number, status);
+        } catch (error) {
+            RentalToastService.statusUpdateFailed(rental.rental_number, error?.message);
+        }
+    };
+
+    const handleReturn = async () => {
+        try {
+            RentalToastService.processingRental('return');
+            
+            await router.put(route('rentals.return', rental.id));
+            
+            RentalToastService.rentalReturned(rental.rental_number);
+        } catch (error) {
+            RentalToastService.returnFailed(rental.rental_number, error?.message);
+        }
+    };
+
+    const handleExtend = async (newEndDate: string) => {
+        try {
+            RentalToastService.processingRental('extension');
+            
+            await router.put(route('rentals.extend', rental.id), { end_date: newEndDate });
+            
+            RentalToastService.rentalExtended(rental.rental_number, newEndDate);
+        } catch (error) {
+            RentalToastService.extensionFailed(rental.rental_number, error?.message);
         }
     };
 
     const getAvailableActions = () => {
-  const { t } = useTranslation('rental');
-
         // Make sure we have a valid status (not empty string)
         const status = rental.status || 'pending'; // Default to 'pending' if status is empty
 
@@ -184,28 +220,40 @@ export const RentalWorkflowActions: FC<RentalWorkflowActionsProps> = ({
         return null;
     }
 
-    const handleStatusChange = (newStatus: string) => {
-        if (!selectedRental) return;
+    const handleAction = async (action: string) => {
+        try {
+            // Special case for quotation generation which needs to use the direct endpoint
+            if (action === 'generate-quotation') {
+                // Show loading toast
+                const loadingToast = toast.loading('Generating quotation...');
 
-        post(route('rentals.update-status', selectedRental.id), {
-            status: newStatus,
-            onSuccess: () => {
-                // Refresh the rental data
-                onRentalSelect({ ...selectedRental, status: newStatus })
-            },
-        })
-    };
+                // Use direct navigation for more reliable redirect to quotation page
+                window.location.href = `/rentals/${rental.id}/direct-generate-quotation`;
 
-    const handleCreateSubmit = (data: any) => {
-        setShowCreateModal(false);
-        // Refresh the rentals list
-        window.location.reload();
-    };
+                // No need for further handling as page will navigate away
+                return;
+            } else {
+                // Handle other actions normally
+                const loadingToast = toast.loading(`Processing ${action}...`);
 
-    const handleEditSubmit = (data: any) => {
-        setShowEditModal(false);
-        // Update the selected rental with new data
-        onRentalSelect({ ...selectedRental, ...data })
+                await router.post(`/rentals/${rental.id}/${action}`, {
+                    preserveScroll: false, // Allow navigation after status changes
+                    onSuccess: () => {
+                        toast.dismiss(loadingToast);
+                        toast.success('Action completed successfully');
+                        // Reload the page to show updated status
+                        setTimeout(() => window.location.reload(), 500);
+                    },
+                    onError: (error) => {
+                        toast.dismiss(loadingToast);
+                        toast.error(error.message || 'Failed to complete action');
+                    },
+                });
+            }
+        } catch (error) {
+            console.error('Action error:', error);
+            toast.error('An unexpected error occurred');
+        }
     };
 
     return (
@@ -216,7 +264,7 @@ export const RentalWorkflowActions: FC<RentalWorkflowActionsProps> = ({
                         key={action}
                         variant={variant}
                         onClick={() => handleAction(action)}
-                        disabled={processing}
+                        disabled={isSubmitting}
                     >
                         {label}
                     </Button>
@@ -250,7 +298,7 @@ export const RentalWorkflowActions: FC<RentalWorkflowActionsProps> = ({
                         {selectedRental.status === 'pending' && (
                             <button
                                 onClick={() => handleStatusChange('active')}
-                                disabled={processing}
+                                disabled={isSubmitting}
                                 className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                             >
                                 Activate
@@ -260,7 +308,7 @@ export const RentalWorkflowActions: FC<RentalWorkflowActionsProps> = ({
                         {selectedRental.status === 'active' && (
                             <button
                                 onClick={() => handleStatusChange('completed')}
-                                disabled={processing}
+                                disabled={isSubmitting}
                                 className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                             >
                                 Complete
@@ -270,7 +318,7 @@ export const RentalWorkflowActions: FC<RentalWorkflowActionsProps> = ({
                         {(selectedRental.status === 'pending' || selectedRental.status === 'active') && (
                             <button
                                 onClick={() => handleStatusChange('cancelled')}
-                                disabled={processing}
+                                disabled={isSubmitting}
                                 className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                             >
                                 Cancel

@@ -1,9 +1,12 @@
 import { FC, useState } from 'react';
 import { useForm } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
+import { EquipmentToastService } from '../../services/EquipmentToastService';
 import { EquipmentList } from './EquipmentList';
 import { EquipmentForm } from './EquipmentForm';
 import { EquipmentDetails } from './EquipmentDetails';
 import { Modal } from '../Modal';
+import { Button } from '@/Core';
 
 interface Equipment {
     id: number;
@@ -27,6 +30,7 @@ interface Props {
 }
 
 export const EquipmentManagement: FC<Props> = ({ equipment }) => {
+    const { t } = useTranslation('equipment');
     const [selectedEquipment, setSelectedEquipment] = useState<Equipment | null>(null);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -44,15 +48,25 @@ export const EquipmentManagement: FC<Props> = ({ equipment }) => {
         purchase_date: '',
         last_maintenance_date: '',
         notes: '',
-    })
+    });
 
-    const handleCreate = () => {
-        form.post('/equipment', {
-            onSuccess: () => {
-                setIsCreateModalOpen(false);
-                form.reset();
-            },
-        })
+    const handleCreate = async () => {
+        try {
+            EquipmentToastService.processingEquipment('create');
+
+            await form.post('/equipment', {
+                onSuccess: () => {
+                    setIsCreateModalOpen(false);
+                    form.reset();
+                    EquipmentToastService.equipmentCreated(form.data.name);
+                },
+                onError: (error) => {
+                    EquipmentToastService.equipmentProcessFailed('create', error?.message);
+                }
+            });
+        } catch (error) {
+            EquipmentToastService.equipmentProcessFailed('create', error?.message);
+        }
     };
 
     const handleEdit = (equipment: Equipment) => {
@@ -69,20 +83,65 @@ export const EquipmentManagement: FC<Props> = ({ equipment }) => {
             purchase_date: equipment.purchase_date,
             last_maintenance_date: equipment.last_maintenance_date,
             notes: equipment.notes,
-        })
+        });
         setIsEditModalOpen(true);
     };
 
-    const handleUpdate = () => {
+    const handleUpdate = async () => {
         if (!selectedEquipment) return;
 
-        form.put(`/equipment/${selectedEquipment.id}`, {
-            onSuccess: () => {
-                setIsEditModalOpen(false);
-                setSelectedEquipment(null);
-                form.reset();
-            },
-        })
+        try {
+            EquipmentToastService.processingEquipment('update');
+
+            await form.put(`/equipment/${selectedEquipment.id}`, {
+                onSuccess: () => {
+                    setIsEditModalOpen(false);
+                    setSelectedEquipment(null);
+                    form.reset();
+                    EquipmentToastService.equipmentUpdated(form.data.name);
+                },
+                onError: (error) => {
+                    EquipmentToastService.equipmentProcessFailed('update', error?.message);
+                }
+            });
+        } catch (error) {
+            EquipmentToastService.equipmentProcessFailed('update', error?.message);
+        }
+    };
+
+    const handleDelete = async (equipment: Equipment) => {
+        try {
+            EquipmentToastService.processingEquipment('delete');
+
+            await form.delete(`/equipment/${equipment.id}`, {
+                onSuccess: () => {
+                    EquipmentToastService.equipmentDeleted(equipment.name);
+                },
+                onError: (error) => {
+                    EquipmentToastService.equipmentProcessFailed('delete', error?.message);
+                }
+            });
+        } catch (error) {
+            EquipmentToastService.equipmentProcessFailed('delete', error?.message);
+        }
+    };
+
+    const handleStatusChange = async (equipment: Equipment, newStatus: Equipment['status']) => {
+        try {
+            EquipmentToastService.processingEquipment('status update');
+
+            await form.put(`/equipment/${equipment.id}/status`, {
+                status: newStatus,
+                onSuccess: () => {
+                    EquipmentToastService.statusUpdated(equipment.name, newStatus);
+                },
+                onError: (error) => {
+                    EquipmentToastService.statusUpdateFailed(equipment.name, error?.message);
+                }
+            });
+        } catch (error) {
+            EquipmentToastService.statusUpdateFailed(equipment.name, error?.message);
+        }
     };
 
     const handleViewDetails = (equipment: Equipment) => {
@@ -93,28 +152,32 @@ export const EquipmentManagement: FC<Props> = ({ equipment }) => {
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-gray-900">Equipment Management</h2>
-                <button
+                <h2 className="text-2xl font-bold text-gray-900">{t('equipment_management')}</h2>
+                <Button
                     onClick={() => setIsCreateModalOpen(true)}
-                    className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    Add Equipment
-                </button>
+                    className="inline-flex items-center"
+                >
+                    {t('add_equipment')}
+                </Button>
             </div>
 
             <EquipmentList
                 equipment={equipment}
                 onViewDetails={handleViewDetails}
                 onEdit={handleEdit}
+                onDelete={handleDelete}
+                onStatusChange={handleStatusChange}
             />
 
             <Modal
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
-                title="Add New Equipment"
+                title={t('add_new_equipment')}
+            >
                 <EquipmentForm
                     form={form}
                     onSubmit={handleCreate}
-                    submitLabel="Create Equipment"
+                    submitLabel={t('create_equipment')}
                 />
             </Modal>
 
@@ -124,11 +187,12 @@ export const EquipmentManagement: FC<Props> = ({ equipment }) => {
                     setIsEditModalOpen(false);
                     setSelectedEquipment(null);
                 }}
-                title="Edit Equipment"
+                title={t('edit_equipment')}
+            >
                 <EquipmentForm
                     form={form}
                     onSubmit={handleUpdate}
-                    submitLabel="Update Equipment"
+                    submitLabel={t('update_equipment')}
                 />
             </Modal>
 
@@ -138,7 +202,8 @@ export const EquipmentManagement: FC<Props> = ({ equipment }) => {
                     setIsDetailsModalOpen(false);
                     setSelectedEquipment(null);
                 }}
-                title="Equipment Details"
+                title={t('equipment_details')}
+            >
                 {selectedEquipment && (
                     <EquipmentDetails
                         equipment={selectedEquipment}
