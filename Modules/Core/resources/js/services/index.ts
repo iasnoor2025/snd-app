@@ -2,6 +2,7 @@
 // Export all shared service classes and functions for reuse across modules
 
 // Available Services
+export { ToastService, type ToastOptions, toast } from './ToastService';
 export * from './pushNotificationService';
 export * from './avatar-service';
 

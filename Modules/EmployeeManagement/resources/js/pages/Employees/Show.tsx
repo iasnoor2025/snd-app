@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
-import { PageProps, BreadcrumbItem } from '../../types';
+import type { PageProps } from '@inertiajs/core';
+import type { BreadcrumbItem } from '@/Core';
 import { AppLayout } from '@/Core';
-import { Employee as BaseEmployee } from '../../types/models';
-import { route } from 'ziggy-js';
+import { Employee as BaseEmployee } from '@/EmployeeManagement/types/models';
+import { route } from '@/Core/utils/route';
 import { getTranslation } from "@/Core";
 import { Breadcrumb } from "@/Core";
 import {
@@ -48,10 +49,15 @@ import {
 } from "@/Core";
 import { Alert, AlertDescription } from "@/Core";
 import axios from 'axios';
-import DocumentManager from '../../components/employees/EmployeeDocumentManager';
+import DocumentManager from '@/EmployeeManagement/components/employees/EmployeeDocumentManager';
 import { useQueryClient } from '@tanstack/react-query';
 import { Separator } from "@/Core";
 import { Avatar, AvatarFallback } from "@/Core";
+import { EmployeeToastService } from '@/EmployeeManagement/services/EmployeeToastService';
+import FinalSettlementTab from '@/EmployeeManagement/components/employees/FinalSettlementTab';
+import { Textarea } from "@/Core";
+import { TimesheetSummary } from '@/EmployeeManagement/components/employees/timesheets/TimesheetSummary';
+
 // MediaLibrary and DailyTimesheetRecords components - implement as needed
 const MediaLibrary = ({ employeeId }: { employeeId: number }) => (
   <div className="p-4 border rounded-lg">
@@ -66,29 +72,17 @@ const DailyTimesheetRecords = ({ employeeId }: { employeeId: number }) => (
     <p className="text-sm text-muted-foreground">Timesheet records will be displayed here...</p>
   </div>
 );
-import { useToast } from "@/Core";
+
 // PaymentHistory component placeholder
 const PaymentHistory = ({ employeeId, initialMonthlyHistory, initialTotalRepaid, initialPagination, showOnlyLast }: any) => (
   <div className="p-4 text-center text-muted-foreground">
     Payment History component not yet implemented
   </div>
 );
-// import { AssignmentHistory } from '../../components/assignments/AssignmentHistory';
-// AssignmentHistory component placeholder
-// const AssignmentHistory = ({ employeeId }: any) => (
-//   <div className="p-4 text-center text-muted-foreground">
-//     Assignment History component not yet implemented
-//   </div>
-// );
-import { toast } from 'sonner';
-import ToastService from '@/services/ToastService';
-import FinalSettlementTab from '../../components/employees/FinalSettlementTab';
-// import { route } from 'ziggy-js';
-import { Textarea } from "@/Core";
-import { TimesheetSummary } from '../../components/employees/timesheets/TimesheetSummary';
-import { TimesheetList } from '../../components/employees/timesheets/TimesheetList';
-import { TimesheetForm } from '../../components/employees/timesheets/TimesheetForm';
-import { AssignmentHistory } from '../../components/assignments/AssignmentHistory';
+
+import { TimesheetList } from '@/EmployeeManagement/components/employees/timesheets/TimesheetList';
+import { TimesheetForm } from '@/EmployeeManagement/components/employees/timesheets/TimesheetForm';
+import { AssignmentHistory } from '@/EmployeeManagement/components/assignments/AssignmentHistory';
 
 const getBreadcrumbs = (t: any): BreadcrumbItem[] => [
   {
@@ -341,10 +335,10 @@ const DocumentTab = ({ employeeId }: { employeeId: number }) => {
                   if (confirm('Are you sure you want to delete this document?')) {
                     axios.delete(`/api/employee/${employeeId}/documents/${doc.id}`)
                       .then(() => {
-                        toast.success('Document deleted successfully');
+                        EmployeeToastService.documentDeleted(documentType);
                       })
                       .catch((error) => {
-                        toast.error('Failed to delete document');
+                        EmployeeToastService.documentUploadFailed(documentType, 'Failed to delete document');
                       });
                   }
                 }}
@@ -378,7 +372,7 @@ export default function Show({
   totalRepaid: initialTotalRepaid = 0,
   pagination: initialPagination = {}
 }: Props) {
-  const { t } = useTranslation(['employees', 'common']);
+  const { t } = useTranslation(['EmployeeManagement', 'common']);
   const breadcrumbs = getBreadcrumbs(t);
 
   // Add console log for debugging
@@ -409,13 +403,13 @@ export default function Show({
 
   // Early return if no valid employee data
   if (!employee || !employee.id) {
-    const breadcrumbs = [
+    const errorBreadcrumbs = [
       { title: 'Dashboard', href: '/dashboard' },
       { title: 'Employees', href: '/employees' },
       { title: 'Employee Details', href: window.location.pathname },
     ];
     return (
-      <AppLayout title={t('ttl_employee_details')} breadcrumbs={breadcrumbs} requiredPermission="employees.view">
+      <AppLayout title={t('ttl_employee_details')} breadcrumbs={errorBreadcrumbs} requiredPermission="employees.view">
         <Head title={t('employee_not_found')} />
         <div className="flex h-full flex-1 flex-col items-center justify-center gap-6 p-4 md:gap-8 md:p-8">
           <div className="text-center">
@@ -443,21 +437,21 @@ export default function Show({
   // File upload handler
   const handleFileUpload = async (file: File, documentType: string) => {
     if (!file) {
-      toast.error('Please select a file to upload');
+      EmployeeToastService.employeeValidationError('file selection');
       return;
     }
 
     // Validate file type
     const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png']; 
     if (!allowedTypes.includes(file.type)) {
-      toast.error('Please upload a PDF, JPG, JPEG, or PNG file');
+      EmployeeToastService.employeeValidationError(`file type (allowed: ${allowedTypes.map(type => type.split('/')[1].toUpperCase()).join(', ')})`);
       return;
     }
 
     // Validate file size (max 10MB)
     const maxSize = 10 * 1024 * 1024;
     if (file.size > maxSize) {
-      toast.error('File size must be less than 10MB');
+      EmployeeToastService.employeeValidationError('file size (must be less than 10MB)');
       return;
     }
 
@@ -465,39 +459,44 @@ export default function Show({
     formData.append('file', file);
     formData.append('document_type', documentType);
 
-    const uploadPromise = router.post(route('employees.documents.upload', { employee: employee.id }), formData, {
-      forceFormData: true,
-      onSuccess: () => {
-        toast.success(`${documentType.replace('_', ' ')} uploaded successfully`);
-        // Refresh the page to show the updated document
-        router.reload();
-      },
-      onError: (errors) => {
-        console.error('Upload error:', errors);
-        const errorMessage = errors?.file?.[0] || errors?.message || 'Failed to upload document';
-        toast.error(errorMessage);
-      }
-    });
+    // Show loading toast before starting the upload
+    const loadingToastId = EmployeeToastService.processingEmployee(`${documentType.replace('_', ' ')} upload`);
 
-    // Show loading toast
-    toast.promise(uploadPromise, {
-      loading: `Uploading ${documentType.replace('_', ' ')}...`,
-    });
+    try {
+      await router.post(route('employees.documents.upload', { employee: employee.id }), formData, {
+        forceFormData: true,
+        onSuccess: () => {
+          EmployeeToastService.dismiss(loadingToastId);
+          EmployeeToastService.documentUploaded(employee.first_name + ' ' + employee.last_name, documentType.replace('_', ' '));
+          // Refresh the page to show the updated document
+          router.reload();
+        },
+        onError: (errors) => {
+          EmployeeToastService.dismiss(loadingToastId);
+          const errorMessage = errors?.file?.[0] || errors?.message || 'Failed to upload document';
+          EmployeeToastService.documentUploadFailed(documentType.replace('_', ' '), errorMessage);
+          throw new Error(errorMessage);
+        }
+      });
+    } catch (error: any) {
+      EmployeeToastService.dismiss(loadingToastId);
+      EmployeeToastService.employeeProcessFailed('upload document', error.message);
+    }
   };
 
   const handleAdvanceRequest = () => {
     if (!advanceAmount || isNaN(Number(advanceAmount)) || Number(advanceAmount) <= 0) {
-      toast.error('Please enter a valid advance amount');
+      EmployeeToastService.employeeValidationError('advance amount');
       return;
     }
 
     if (!monthlyDeduction || isNaN(Number(monthlyDeduction)) || Number(monthlyDeduction) <= 0) {
-      toast.error('Please enter a valid monthly deduction amount');
+      EmployeeToastService.employeeValidationError('monthly deduction amount');
       return;
     }
 
     if (!advanceReason.trim()) {
-      toast.error('Please provide a reason for the advance request');
+      EmployeeToastService.employeeValidationError('advance reason');
       return;
     }
 
@@ -518,13 +517,13 @@ export default function Show({
         setMonthlyDeduction('');
         setAdvanceReason('');
         setIsAdvanceRequestDialogOpen(false);
-        toast.success('Advance request created successfully');
+        EmployeeToastService.employeeProcessed('advance request creation');
         // Force reload to get updated balances
         router.reload();
       },
       onError: (errors) => {
         console.error('Advance request error:', errors);
-        toast.error('Failed to create advance request. Please try again.');
+        EmployeeToastService.employeeProcessFailed('create advance request');
       }
     });
   };
@@ -538,12 +537,12 @@ export default function Show({
       setIsDeleting(true);
       router.delete(route('employees.destroy', { employee: employee.id }), {
         onSuccess: () => {
-          toast.success('Employee deleted successfully');
+          EmployeeToastService.employeeDeleted(`${employee.first_name} ${employee.last_name}`);
           window.location.href = route('employees.index');
           setIsDeleting(false);
         },
         onError: () => {
-          toast.error('Failed to delete employee. Please try again.');
+          EmployeeToastService.employeeProcessFailed('delete');
           setIsDeleting(false);
         }
       });
@@ -566,110 +565,60 @@ export default function Show({
   };
 
   const handleRepayment = async (amount: number, activeAdvances: any[]) => {
-    if (!amount || !activeAdvances || !activeAdvances.length || !selectedAdvance) {
-      toast.error('Invalid repayment data');
-      return;
-    }
-
     try {
-      console.log('Sending repayment request:', {
+      const response = await axios.post(`/api/employees/${employee.id}/advances/repayment`, {
         amount,
-        activeAdvances,
-        selectedAdvance
+        advances: activeAdvances
       });
-
-      const response = await axios.post(
-        route('advance-payments.repay', {
-          advance: selectedAdvance,
-        }),
-        {
-          amount: amount,
-          advances: activeAdvances.map(advance => ({
-            id: advance.id,
-            remainingBalance: advance.remaining_balance !== undefined ?
-              Number(advance.remaining_balance) :
-              Number(advance.amount) - Number(advance.repaid_amount || 0)
-          }))
-        }
-      );
-
-      console.log('Repayment response:', response.data);
 
       if (response.data.success) {
-        toast.success('Repayment recorded successfully');
-        setIsRepaymentDialogOpen(false);
-        // Force reload to get updated balances
-        router.visit(route('employees.show', { employee: employee.id }));
-      } else {
-        throw new Error(response.data.message || 'Failed to record repayment');
+        EmployeeToastService.advanceRepaid(employee.first_name + ' ' + employee.last_name, amount);
+        router.reload();
       }
     } catch (error: any) {
-      console.error('Repayment error details:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-        config: error.config
-      });
-
-      toast.error(error.response?.data?.message || error.message || 'Failed to record repayment');
+      EmployeeToastService.employeeProcessFailed('record repayment', error.response?.data?.message || error.message);
     }
   };
 
   const handleApproveAdvance = (advanceId: number, type: 'advance' | 'advance_payment', status: Advance['status']) => {
-    // For advance payments, we need to check if it's not already approved or rejected
-    if (type === 'advance_payment' && (status === 'paid')) {
-      toast.warning('This advance payment has already been processed');
+    if (status !== 'pending') {
+      EmployeeToastService.warning(`This ${type} has already been processed`);
       return;
     }
 
-    // For regular advances, we only check for pending status
-    if (type === 'advance' && status !== 'pending') {
-      toast.warning('This advance has already been processed');
-      return;
-    }
-
-    router.post(route('advances.approve', {
-      employee: employee.id,
-      advance: advanceId
-    }), {}, {
+    router.post(`/employees/${employee.id}/advances/${advanceId}/approve`, {}, {
       onSuccess: () => {
-        toast.success('Advance approved successfully');
+        EmployeeToastService.advanceApproved(employee.first_name + ' ' + employee.last_name, amount);
         router.reload();
       },
-      onError: (errors) => {
-        console.error('Approval error:', errors);
-        toast.error('Failed to approve advance. Please try again.');
+      onError: () => {
+        EmployeeToastService.employeeProcessFailed('approve advance');
       }
     });
   };
 
   const handleRejectAdvance = (advanceId: number, rejectionReason: string) => {
     if (!rejectionReason.trim()) {
-      toast.error('Please provide a reason for rejection');
+      EmployeeToastService.employeeValidationError('rejection reason');
       return;
     }
 
-    router.post(route('advances.reject', {
-      employee: employee.id,
-      advance: advanceId
-    }), {
-      rejection_reason: rejectionReason.trim()
+    router.post(`/employees/${employee.id}/advances/${advanceId}/reject`, {
+      rejection_reason: rejectionReason
     }, {
       onSuccess: () => {
-        toast.success('Advance rejected successfully');
-        setRejectionReason('');
-        setIsRejectDialogOpen(false);
+        EmployeeToastService.advanceRejected(employee.first_name + ' ' + employee.last_name);
         router.reload();
       },
       onError: () => {
-        toast.error('Failed to reject advance. Please try again.');
+        EmployeeToastService.employeeProcessFailed('reject advance');
       }
     });
   };
 
   const handleDeleteAdvance = (advanceId: number) => {
     if (!advanceId) {
-      toast.error('Invalid advance ID');
+      EmployeeToastService.employeeValidationError('advance selection');
       return;
     }
 
@@ -689,14 +638,14 @@ export default function Show({
     // Use Inertia's router.delete with the correct route
     router.delete(url, {
       onSuccess: () => {
-        toast.success('Advance deleted successfully');
+        EmployeeToastService.employeeProcessed('advance deletion');
         setIsDeleteDialogOpen(false);
         // Force reload the page to ensure all data is updated
         router.visit(route('employees.show', { employee: employee.id }));
       },
       onError: (errors) => {
         console.error('Delete error:', errors);
-        toast.error('Failed to delete advance. Please try again.');
+        EmployeeToastService.employeeProcessFailed('delete advance');
         setIsDeleteDialogOpen(false);
       }
     });
@@ -705,7 +654,7 @@ export default function Show({
   // Function to handle tab changes with document loading control
   const handleTabChange = (value: string) => {
     if (value === 'advances' && !hasPermission('advances.view')) {
-      toast.error('You do not have permission to view advances');
+      EmployeeToastService.permissionDenied('view advances');
       return;
     }
     setActiveTab(value);
@@ -886,29 +835,27 @@ export default function Show({
   };
 
   const handleApproveSettlement = (id: number) => {
-    if (confirm('Are you sure you want to approve this settlement?')) {
-      router.post(route('final-settlements.approve', { settlement: id }), {}, {
-        onSuccess: () => {
-          toast.success('Settlement approved successfully');
-        },
-        onError: () => {
-          toast.error('Failed to approve settlement. Please try again.');
-        }
-      });
-    }
+    router.post(`/employees/${employee.id}/final-settlements/${id}/approve`, {}, {
+      onSuccess: () => {
+        EmployeeToastService.settlementApproved(employee.first_name + ' ' + employee.last_name);
+        router.reload();
+      },
+      onError: () => {
+        EmployeeToastService.employeeProcessFailed('approve settlement');
+      }
+    });
   };
 
   const handleRejectSettlement = (id: number) => {
-    if (confirm('Are you sure you want to reject this settlement?')) {
-      router.post(route('final-settlements.reject', { settlement: id }), {}, {
-        onSuccess: () => {
-          toast.success('Settlement rejected successfully');
-        },
-        onError: () => {
-          toast.error('Failed to reject settlement. Please try again.');
-        }
-      });
-    }
+    router.post(`/employees/${employee.id}/final-settlements/${id}/reject`, {}, {
+      onSuccess: () => {
+        EmployeeToastService.settlementRejected(employee.first_name + ' ' + employee.last_name);
+        router.reload();
+      },
+      onError: () => {
+        EmployeeToastService.employeeProcessFailed('reject settlement');
+      }
+    });
   };
 
   return (

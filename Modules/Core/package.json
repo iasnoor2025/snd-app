@@ -26,6 +26,14 @@
         "./layouts/*": {
             "types": "./resources/js/layouts/*.tsx",
             "import": "./resources/js/layouts/*.tsx"
+        },
+        "./services": {
+            "types": "./resources/js/services/index.ts",
+            "import": "./resources/js/services/index.ts"
+        },
+        "./services/*": {
+            "types": "./resources/js/services/*.ts",
+            "import": "./resources/js/services/*.ts"
         }
     },
     "dependencies": {
@@ -36,6 +44,7 @@
         "clsx": "^2.1.0",
         "lucide-react": "^0.323.0",
         "tailwind-merge": "^2.2.1",
-        "tailwindcss-animate": "^1.0.7"
+        "tailwindcss-animate": "^1.0.7",
+        "sonner": "^1.4.0"
     }
 } 

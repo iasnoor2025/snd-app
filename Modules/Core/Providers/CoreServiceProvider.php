@@ -23,6 +23,9 @@ class CoreServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
+        $this->app->register(EventServiceProvider::class);
+        $this->app->register(AuthServiceProvider::class);
+        $this->app->register(ToastServiceProvider::class);
 
         // Only register interfaces and implementations if they exist
         if (class_exists('Modules\Core\Repositories\BaseRepositoryInterface') &&

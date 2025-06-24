@@ -22,6 +22,7 @@ import {
   CardTitle,
   CardFooter,
 } from "@/Core";
+import { EmployeeToastService } from '../../services/EmployeeToastService';
 
 interface User {
   id: number;
@@ -91,11 +92,11 @@ export default function Show({ employee, advance }: Props) {
   const handleDelete = () => {
     router.delete(`/employees/${employee.id}/advances/${advance.id}`, {
       onSuccess: () => {
-        ToastService.success('Advance payment deleted successfully');
+        EmployeeToastService.employeeProcessed('advance payment deletion');
         router.visit(`/employees/${employee.id}/advances`);
       },
       onError: (errors) => {
-        ToastService.error(errors?.message || 'Failed to delete advance payment');
+        EmployeeToastService.employeeProcessFailed('delete advance payment', errors?.message);
       }
     });
   };
@@ -283,11 +284,6 @@ export default function Show({ employee, advance }: Props) {
     </AppLayout>
   );
 }
-
-const ToastService = {
-  success: (msg: string) => alert(msg),
-  error: (msg: string) => alert(msg),
-};
 
 
 

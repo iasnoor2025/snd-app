@@ -100,5 +100,12 @@ return [
         'namespace' => 'core',
         'path' => 'resources/lang/modules/core',
     ],
+
+    'providers' => [
+        'Modules\Core\Providers\CoreServiceProvider',
+        'Modules\Core\Providers\RouteServiceProvider',
+        'Modules\Core\Providers\EventServiceProvider',
+        'Modules\Core\Providers\ToastServiceProvider',
+    ],
 ];
 

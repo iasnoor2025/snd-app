@@ -1,3 +1,19 @@
+// Core Module - Root Index
+// Export all shared functionality for reuse across modules
+
+// Services
+export { ToastService } from './services/ToastService';
+export type { ToastOptions } from './services/ToastService';
+export { toast } from './services/ToastService';
+
+// Export other services and components as needed
+export * from './services/pushNotificationService';
+export * from './services/avatar-service';
+
+// Components
+export * from './components/ui/toast';
+export * from './components/Common/Toast';
+
 // Core Module - Shared Resources Index
 // This file exports all shared resources for use by other modules
 
@@ -65,8 +81,7 @@ export * as z from 'zod';
 export * from './components/ui';
 
 // Export layouts
-import AppLayoutComponent from './layouts/AppLayout';
-export { AppLayoutComponent as AppLayout };
+export { default as AppLayout } from './layouts/AppLayout';
 
 // Export utilities
 export { formatCurrency, t } from './utils';
@@ -110,7 +125,6 @@ export {
   CreateButton,
   CrudButtons,
   ToastManager,
-  ToastService,
   LoadingSpinner,
   PaymentForm,
   MaintenanceRecordList
