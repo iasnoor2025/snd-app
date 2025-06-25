@@ -3,7 +3,8 @@
 namespace Modules\EmployeeManagement\Http\Controllers;
 
 use Modules\EmployeeManagement\Domain\Models\Employee;
-use Modules\Core\Services\DocumentService;
+use Modules\EmployeeManagement\Services\EmployeeDocumentService;
+use Modules\EmployeeManagement\Services\EmployeeDocumentTypeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -11,21 +12,24 @@ use Illuminate\Support\Facades\Gate;
 
 class EmployeeDocumentController extends Controller
 {
-    protected $documentService;
+    protected EmployeeDocumentService $documentService;
+    protected EmployeeDocumentTypeService $documentTypeService;
 
-    public function __construct(DocumentService $documentService)
-    {
+    public function __construct(
+        EmployeeDocumentService $documentService,
+        EmployeeDocumentTypeService $documentTypeService
+    ) {
         $this->documentService = $documentService;
+        $this->documentTypeService = $documentTypeService;
         $this->middleware('auth');
     }
 
     /**
-     * Upload a document for an employee
+     * Upload an Iqama document
      */
-    public function upload(Request $request, Employee $employee)
+    public function uploadIqama(Request $request, Employee $employee)
     {
         try {
-            // Check permissions
             if (Gate::denies('update', $employee)) {
                 return response()->json([
                     'success' => false,
@@ -33,43 +37,129 @@ class EmployeeDocumentController extends Controller
                 ], 403);
             }
 
-            $request->validate([
-                'file' => 'required|file|max:10240', // 10MB limit
-                'name' => 'required|string|max:255',
-                'type' => 'required|string|in:employee_documents,employee_custom_certificates'
-            ]);
+            $rules = $this->documentTypeService->getValidationRules('iqama');
+            $request->validate($rules['metadata']);
+            $request->validate(['file' => $rules['file']]);
 
-            // Upload the document
-            $media = $employee->addMedia($request->file('file'))
-                ->usingName($request->input('name'))
-                ->usingFileName(time() . '_' . $request->input('name') . '.' . $request->file('file')->getClientOriginalExtension())
-                ->toMediaCollection($request->input('type'));
+            $media = $this->documentService->uploadIqama(
+                $employee->id,
+                $request->only([
+                    'document_number',
+                    'issue_date',
+                    'expiry_date',
+                    'issuing_authority'
+                ]),
+                $request->file('file')
+            );
 
-            return response()->json([
-                'success' => true,
-                'document' => [
-                    'id' => $media->id,
-                    'name' => $media->name,
-                    'file_name' => $media->file_name,
-                    'mime_type' => $media->mime_type,
-                    'size' => $media->size,
-                    'url' => $media->getUrl(),
-                    'preview_url' => $media->hasGeneratedConversion('thumb') ? $media->getUrl('thumb') : null,
-                    'created_at' => $media->created_at
-                ]
-            ]);
+            return $this->documentResponse($media);
         } catch (\Exception $e) {
-            Log::error('Error uploading employee document', [
-                'employee_id' => $employee->id,
-                'error' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine()
-            ]);
+            return $this->handleError($e, 'iqama', $employee->id);
+        }
+    }
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to upload document: ' . $e->getMessage()
-            ], 500);
+    /**
+     * Upload a Passport document
+     */
+    public function uploadPassport(Request $request, Employee $employee)
+    {
+        try {
+            if (Gate::denies('update', $employee)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You are not authorized to upload documents for this employee'
+                ], 403);
+            }
+
+            $rules = $this->documentTypeService->getValidationRules('passport');
+            $request->validate($rules['metadata']);
+            $request->validate(['file' => $rules['file']]);
+
+            $media = $this->documentService->uploadPassport(
+                $employee->id,
+                $request->only([
+                    'document_number',
+                    'issue_date',
+                    'expiry_date',
+                    'issuing_authority',
+                    'nationality'
+                ]),
+                $request->file('file')
+            );
+
+            return $this->documentResponse($media);
+        } catch (\Exception $e) {
+            return $this->handleError($e, 'passport', $employee->id);
+        }
+    }
+
+    /**
+     * Upload a Contract document
+     */
+    public function uploadContract(Request $request, Employee $employee)
+    {
+        try {
+            if (Gate::denies('update', $employee)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You are not authorized to upload documents for this employee'
+                ], 403);
+            }
+
+            $rules = $this->documentTypeService->getValidationRules('contract');
+            $request->validate($rules['metadata']);
+            $request->validate(['file' => $rules['file']]);
+
+            $media = $this->documentService->uploadContract(
+                $employee->id,
+                $request->only([
+                    'contract_type',
+                    'start_date',
+                    'end_date',
+                    'position',
+                    'department'
+                ]),
+                $request->file('file')
+            );
+
+            return $this->documentResponse($media);
+        } catch (\Exception $e) {
+            return $this->handleError($e, 'contract', $employee->id);
+        }
+    }
+
+    /**
+     * Upload a Medical document
+     */
+    public function uploadMedical(Request $request, Employee $employee)
+    {
+        try {
+            if (Gate::denies('update', $employee)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You are not authorized to upload documents for this employee'
+                ], 403);
+            }
+
+            $rules = $this->documentTypeService->getValidationRules('medical');
+            $request->validate($rules['metadata']);
+            $request->validate(['file' => $rules['file']]);
+
+            $media = $this->documentService->uploadMedical(
+                $employee->id,
+                $request->only([
+                    'document_type',
+                    'issue_date',
+                    'expiry_date',
+                    'provider',
+                    'policy_number'
+                ]),
+                $request->file('file')
+            );
+
+            return $this->documentResponse($media);
+        } catch (\Exception $e) {
+            return $this->handleError($e, 'medical', $employee->id);
         }
     }
 
@@ -79,7 +169,6 @@ class EmployeeDocumentController extends Controller
     public function index(Employee $employee)
     {
         try {
-            // Check permissions
             if (Gate::denies('view', $employee)) {
                 return response()->json([
                     'success' => false,
@@ -87,37 +176,16 @@ class EmployeeDocumentController extends Controller
                 ], 403);
             }
 
-            $documents = $employee->getMedia('employee_documents');
-            $certificates = $employee->getMedia('employee_custom_certificates');
-
-            $allMedia = $documents->concat($certificates)->map(function ($mediaItem) {
-                return [
-                    'id' => $mediaItem->id,
-                    'name' => $mediaItem->name,
-                    'file_name' => $mediaItem->file_name,
-                    'mime_type' => $mediaItem->mime_type,
-                    'size' => $mediaItem->size,
-                    'url' => $mediaItem->getUrl(),
-                    'preview_url' => $mediaItem->hasGeneratedConversion('thumb') ? $mediaItem->getUrl('thumb') : null,
-                    'collection_name' => $mediaItem->collection_name,
-                    'created_at' => $mediaItem->created_at
-                ];
-            });
+            $documents = $this->documentService->getEmployeeDocuments($employee->id);
 
             return response()->json([
                 'success' => true,
-                'documents' => $allMedia
+                'documents' => $documents->map(function ($media) {
+                    return $this->formatMediaResponse($media);
+                })
             ]);
         } catch (\Exception $e) {
-            Log::error('Error getting employee documents', [
-                'employee_id' => $employee->id,
-                'error' => $e->getMessage()
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve documents: ' . $e->getMessage()
-            ], 500);
+            return $this->handleError($e, 'index', $employee->id);
         }
     }
 
@@ -127,7 +195,6 @@ class EmployeeDocumentController extends Controller
     public function destroy(Employee $employee, $document)
     {
         try {
-            // Check permissions
             if (Gate::denies('update', $employee)) {
                 return response()->json([
                     'success' => false,
@@ -135,34 +202,14 @@ class EmployeeDocumentController extends Controller
                 ], 403);
             }
 
-            $media = $employee->getMedia('employee_documents')
-                ->concat($employee->getMedia('employee_custom_certificates'))
-                ->find($document);
-
-            if (!$media) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Document not found'
-                ], 404);
-            }
-
-            $media->delete();
+            $deleted = $this->documentService->deleteDocument($document);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Document deleted successfully'
             ]);
         } catch (\Exception $e) {
-            Log::error('Error deleting employee document', [
-                'employee_id' => $employee->id,
-                'document_id' => $document,
-                'error' => $e->getMessage()
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to delete document: ' . $e->getMessage()
-            ], 500);
+            return $this->handleError($e, 'delete', $employee->id, $document);
         }
     }
 
@@ -172,7 +219,6 @@ class EmployeeDocumentController extends Controller
     public function download(Employee $employee, $document)
     {
         try {
-            // Check permissions
             if (Gate::denies('view', $employee)) {
                 return response()->json([
                     'success' => false,
@@ -180,35 +226,71 @@ class EmployeeDocumentController extends Controller
                 ], 403);
             }
 
-            $mediaId = (int) $document;
-            $media = $employee->getMedia('employee_documents')
-                ->concat($employee->getMedia('employee_custom_certificates'))
-                ->first(function ($item) use ($mediaId) {
-                    return (int) $item->id === $mediaId;
-                });
+            $media = Media::findOrFail($document);
 
-            if (!$media || !method_exists($media, 'getPath')) {
-                \Log::error('Media not found or invalid in EmployeeDocumentController@download', [
-                    'employee_id' => $employee->id,
-                    'document_id' => $document,
-                    'media' => $media
-                ]);
-                return response()->json(['error' => 'Media not found'], 404);
+            if ($media->model_id !== $employee->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Document does not belong to this employee'
+                ], 403);
             }
 
             return response()->file($media->getPath());
         } catch (\Exception $e) {
-            Log::error('Error downloading employee document', [
-                'employee_id' => $employee->id,
-                'document_id' => $document,
-                'error' => $e->getMessage()
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to download document: ' . $e->getMessage()
-            ], 500);
+            return $this->handleError($e, 'download', $employee->id, $document);
         }
+    }
+
+    /**
+     * Format the media response
+     */
+    protected function formatMediaResponse(Media $media): array
+    {
+        return [
+            'id' => $media->id,
+            'name' => $media->name,
+            'file_name' => $media->file_name,
+            'mime_type' => $media->mime_type,
+            'size' => $media->size,
+            'url' => $media->getUrl(),
+            'preview_url' => $media->hasGeneratedConversion('thumb') ? $media->getUrl('thumb') : null,
+            'custom_properties' => $media->custom_properties,
+            'created_at' => $media->created_at
+        ];
+    }
+
+    /**
+     * Handle document response
+     */
+    protected function documentResponse(Media $media)
+    {
+        return response()->json([
+            'success' => true,
+            'document' => $this->formatMediaResponse($media)
+        ]);
+    }
+
+    /**
+     * Handle error response
+     */
+    protected function handleError(\Exception $e, string $operation, int $employeeId, ?int $documentId = null): \Illuminate\Http\JsonResponse
+    {
+        $context = [
+            'employee_id' => $employeeId,
+            'operation' => $operation,
+            'error' => $e->getMessage()
+        ];
+
+        if ($documentId) {
+            $context['document_id'] = $documentId;
+        }
+
+        Log::error('Error in employee document operation', $context);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to ' . $operation . ' document: ' . $e->getMessage()
+        ], 500);
     }
 }
 

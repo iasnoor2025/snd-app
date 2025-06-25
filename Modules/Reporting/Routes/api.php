@@ -6,6 +6,7 @@ use Modules\Reporting\Http\Controllers\Api\ReportApiController;
 use Modules\Reporting\Http\Controllers\Api\ProjectReportApiController;
 use Modules\Reporting\Http\Controllers\Api\AnalyticsApiController;
 use Modules\Reporting\Http\Controllers\Api\ReportBuilderApiController;
+use Modules\Reporting\Http\Controllers\ReportExportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,5 +53,16 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     Route::post('reports/export', [ReportApiController::class, 'export']);
     Route::get('reports/export/{id}/status', [ReportApiController::class, 'exportStatus']);
     Route::get('reports/export/{id}/download', [ReportApiController::class, 'downloadExport']);
+
+    Route::prefix('reports')->group(function () {
+        Route::post('/generate', [ReportExportController::class, 'generate'])
+            ->name('reports.generate');
+            
+        Route::post('/batch', [ReportExportController::class, 'generateBatch'])
+            ->name('reports.batch');
+            
+        Route::post('/schedule', [ReportExportController::class, 'schedule'])
+            ->name('reports.schedule');
+    });
 });
 

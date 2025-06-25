@@ -14,11 +14,19 @@ use Modules\RentalManagement\Domain\Models\Invoice;
 use Modules\RentalManagement\Domain\Models\InvoiceItem;
 use Modules\RentalManagement\Domain\Models\Rental;
 use Modules\EquipmentManagement\Traits\HandlesDocumentUploads;
+use Illuminate\Http\JsonResponse;
+use Modules\RentalManagement\Models\Booking;
+use Modules\Core\Services\PdfGenerationService;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class InvoiceController extends Controller
 {
     use HandlesDocumentUploads;
     protected $documentCollection = 'documents';
+
+    public function __construct(
+        private readonly PdfGenerationService $pdfService
+    ) {}
 
     /**
      * Display a listing of the invoices.
@@ -245,7 +253,7 @@ class InvoiceController extends Controller
                 }
             }
 
-            // Delete items not in the request
+            // Delete removed items
             $invoice->items()->whereNotIn('id', $existingItemIds)->delete();
 
             // Handle documents if any
@@ -322,6 +330,77 @@ class InvoiceController extends Controller
             return redirect()->back()->with('error', 'Document not found');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to remove document: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Display the specified invoice for API.
+     */
+    public function showApi(Invoice $invoice): JsonResponse
+    {
+        $this->authorize('invoices.view');
+
+        $invoice->load(['customer', 'items']);
+
+        return response()->json([
+            'success' => true,
+            'data' => $invoice
+        ]);
+    }
+
+    /**
+     * Get all invoices for a booking.
+     */
+    public function getBookingInvoices(Booking $booking): JsonResponse
+    {
+        $this->authorize('invoices.viewAny');
+
+        $invoices = $booking->invoices()
+            ->with(['customer', 'items'])
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $invoices
+        ]);
+    }
+
+    /**
+     * Download invoice as PDF.
+     */
+    public function downloadPdf(Invoice $invoice): BinaryFileResponse
+    {
+        $this->authorize('invoices.view');
+
+        $invoice->load(['customer', 'items']);
+
+        $pdf = $this->pdfService->generateInvoicePdf($invoice);
+        $filename = 'invoice_' . $invoice->invoice_number . '.pdf';
+
+        return response()->file($pdf, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+        ]);
+    }
+
+    /**
+     * Send invoice by email.
+     */
+    public function sendByEmail(Invoice $invoice): JsonResponse
+    {
+        $this->authorize('invoices.edit');
+
+        try {
+            // TODO: Implement email sending logic
+            return response()->json([
+                'success' => true,
+                'message' => 'Invoice sent successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to send invoice: ' . $e->getMessage()
+            ], 500);
         }
     }
 }

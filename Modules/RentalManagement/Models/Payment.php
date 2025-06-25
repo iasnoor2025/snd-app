@@ -4,25 +4,28 @@ namespace Modules\RentalManagement\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Payment extends Model
 {
     use SoftDeletes;
-use /**
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int;
-use string>
+     * string>
      */
-    protected $fillable = [;
-        'rental_id';
-use 'amount',
+    protected $fillable = [
+        'booking_id',
+        'amount',
         'payment_method',
-        'status',
         'transaction_id',
-        'paid_at',;
-        'notes',;
+        'status',
+        'payment_date',
+        'metadata',
     ];
 
     /**
@@ -30,17 +33,34 @@ use 'amount',
      *
      * @var array<string, string>
      */
-    protected $casts = [;
-        'amount' => 'decimal:2',;
-        'paid_at' => 'datetime',;
+    protected $casts = [
+        'amount' => 'float',
+        'payment_date' => 'datetime',
+        'metadata' => 'array',
     ];
 
     /**
-     * Get the rental that owns the payment.
+     * Get the booking associated with the payment
      */
-    public function rental(): BelongsTo
+    public function booking(): BelongsTo
     {
-        return $this->belongsTo(Rental::class);
+        return $this->belongsTo(Booking::class);
+    }
+
+    /**
+     * Get the invoice associated with the payment
+     */
+    public function invoice(): HasOne
+    {
+        return $this->hasOne(Invoice::class);
+    }
+
+    /**
+     * Get the refunds associated with the payment
+     */
+    public function refunds(): HasMany
+    {
+        return $this->hasMany(Refund::class);
     }
 
     /**

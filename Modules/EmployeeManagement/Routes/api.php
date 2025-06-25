@@ -37,8 +37,15 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     Route::apiResource('positions', PositionController::class)->only(['index', 'show']);
 
     // Document management
-    Route::apiResource('employee-documents', EmployeeDocumentController::class);
-    Route::post('employee-documents/{document}/download', [EmployeeDocumentController::class, 'download']);
+    Route::prefix('employees/{employee}/documents')->group(function () {
+        Route::get('/', [EmployeeDocumentController::class, 'index']);
+        Route::post('/iqama', [EmployeeDocumentController::class, 'uploadIqama']);
+        Route::post('/passport', [EmployeeDocumentController::class, 'uploadPassport']);
+        Route::post('/contract', [EmployeeDocumentController::class, 'uploadContract']);
+        Route::post('/medical', [EmployeeDocumentController::class, 'uploadMedical']);
+        Route::delete('/{document}', [EmployeeDocumentController::class, 'destroy']);
+        Route::get('/{document}/download', [EmployeeDocumentController::class, 'download']);
+    });
 
     // Employee advances
     Route::apiResource('employee-advances', EmployeeAdvanceController::class);

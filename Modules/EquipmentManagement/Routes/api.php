@@ -13,6 +13,9 @@ use Modules\EquipmentManagement\Http\Controllers\MaintenanceRecordController as 
 use Modules\EquipmentManagement\Http\Controllers\TechnicianController as TechnicianApiController;
 use Modules\EquipmentManagement\Http\Controllers\DepreciationController as DepreciationApiController;
 use Modules\Core\Http\Controllers\MediaLibraryController;
+use Modules\EquipmentManagement\Http\Controllers\EquipmentMediaController;
+use Modules\EquipmentManagement\Http\Controllers\EquipmentPerformanceController;
+use Modules\EquipmentManagement\Http\Controllers\EquipmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -106,5 +109,49 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     Route::post('media-library/{model}/{modelId}', [MediaLibraryController::class, 'upload']);
     Route::delete('media-library/{media}', [MediaLibraryController::class, 'destroy']);
     Route::get('media-library/{media}/preview', [MediaLibraryController::class, 'preview']);
+
+    // Equipment media routes
+    Route::prefix('equipment/{equipment}/media')->group(function () {
+        Route::get('/', [EquipmentMediaController::class, 'index']);
+        Route::post('/images', [EquipmentMediaController::class, 'uploadImage']);
+        Route::post('/manuals', [EquipmentMediaController::class, 'uploadManual']);
+        Route::post('/specifications', [EquipmentMediaController::class, 'uploadSpecification']);
+        Route::post('/certifications', [EquipmentMediaController::class, 'uploadCertification']);
+        Route::patch('/{media}', [EquipmentMediaController::class, 'updateMetadata']);
+        Route::delete('/{media}', [EquipmentMediaController::class, 'destroy']);
+        Route::get('/{media}/download', [EquipmentMediaController::class, 'download']);
+    });
+
+    // Equipment analytics routes
+    Route::get('equipment/{equipment}/performance', [EquipmentPerformanceController::class, 'show']);
+
+    // Equipment routes
+    Route::prefix('equipment')->group(function () {
+        Route::get('/', [EquipmentController::class, 'index']);
+        Route::post('/', [EquipmentController::class, 'store']);
+        Route::get('/{equipment}', [EquipmentController::class, 'show']);
+        Route::put('/{equipment}', [EquipmentController::class, 'update']);
+        Route::delete('/{equipment}', [EquipmentController::class, 'destroy']);
+
+        // Equipment media routes
+        Route::prefix('{equipment}/media')->group(function () {
+            Route::post('/', [EquipmentMediaController::class, 'store']);
+            Route::post('/batch', [EquipmentMediaController::class, 'storeBatch']);
+            Route::get('/type/{type}', [EquipmentMediaController::class, 'getByType']);
+            Route::post('/reorder', [EquipmentMediaController::class, 'reorder']);
+            Route::put('/{media}', [EquipmentMediaController::class, 'update']);
+            Route::delete('/{media}', [EquipmentMediaController::class, 'destroy']);
+        });
+
+        // Equipment maintenance routes
+        Route::prefix('{equipment}/maintenance')->group(function () {
+            Route::post('/schedule', [MaintenanceApiController::class, 'createSchedule']);
+            Route::put('/schedule/{schedule}', [MaintenanceApiController::class, 'updateSchedule']);
+            Route::post('/record', [MaintenanceApiController::class, 'recordMaintenance']);
+            Route::get('/upcoming', [MaintenanceApiController::class, 'getUpcomingMaintenance']);
+            Route::get('/history', [MaintenanceApiController::class, 'getMaintenanceHistory']);
+            Route::get('/costs', [MaintenanceApiController::class, 'getMaintenanceCostsSummary']);
+        });
+    });
 });
 

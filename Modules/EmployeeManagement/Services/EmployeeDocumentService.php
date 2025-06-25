@@ -18,36 +18,40 @@ class EmployeeDocumentService extends BaseService
 {
     private EmployeeDocumentRepositoryInterface $documentRepository;
     private EmployeeRepositoryInterface $employeeRepository;
+    private EmployeeDocumentTypeService $documentTypeService;
 
     public function __construct(
         EmployeeDocumentRepositoryInterface $documentRepository,
-        EmployeeRepositoryInterface $employeeRepository
+        EmployeeRepositoryInterface $employeeRepository,
+        EmployeeDocumentTypeService $documentTypeService
     ) {
         $this->documentRepository = $documentRepository;
         $this->employeeRepository = $employeeRepository;
+        $this->documentTypeService = $documentTypeService;
     }
 
-    public function uploadDocument(int $employeeId, array $data, UploadedFile $file): Media
+    public function uploadDocument(int $employeeId, string $documentType, array $metadata, UploadedFile $file): Media
     {
         try {
             DB::beginTransaction();
 
             $employee = $this->employeeRepository->find($employeeId);
 
-            // Add custom properties to be stored with the media
-            $customProperties = [
-                'document_type' => $data['document_type'],
-                'document_number' => $data['document_number'] ?? null,
-                'issue_date' => $data['issue_date'] ?? null,
-                'expiry_date' => $data['expiry_date'] ?? null,
-                'issuing_authority' => $data['issuing_authority'] ?? null,
-                'description' => $data['description'] ?? null,
-                'status' => 'pending',
-                'notes' => $data['notes'] ?? null,
-                'is_verified' => false,
+            // Process and validate the document based on its type
+            $processedMetadata = match($documentType) {
+                'iqama' => $this->documentTypeService->processIqama($file, $metadata),
+                'passport' => $this->documentTypeService->processPassport($file, $metadata),
+                'contract' => $this->documentTypeService->processContract($file, $metadata),
+                'medical' => $this->documentTypeService->processMedical($file, $metadata),
+                default => throw new \InvalidArgumentException('Invalid document type')
+            };
+
+            // Add additional metadata
+            $customProperties = array_merge($processedMetadata, [
                 'uploaded_by' => auth()->id(),
                 'uploaded_at' => now()->toDateTimeString(),
-            ];
+                'is_verified' => false,
+            ]);
 
             // Add the document to the employee's media collection
             $media = $employee->addMedia($file)
@@ -174,6 +178,46 @@ class EmployeeDocumentService extends BaseService
             ->where('collection_name', 'documents')
             ->where('custom_properties->status', 'pending')
             ->get();
+    }
+
+    /**
+     * Get validation rules for a document type
+     */
+    public function getValidationRules(string $documentType): array
+    {
+        return $this->documentTypeService->getValidationRules($documentType);
+    }
+
+    /**
+     * Upload Iqama document
+     */
+    public function uploadIqama(int $employeeId, array $metadata, UploadedFile $file): Media
+    {
+        return $this->uploadDocument($employeeId, 'iqama', $metadata, $file);
+    }
+
+    /**
+     * Upload Passport document
+     */
+    public function uploadPassport(int $employeeId, array $metadata, UploadedFile $file): Media
+    {
+        return $this->uploadDocument($employeeId, 'passport', $metadata, $file);
+    }
+
+    /**
+     * Upload Contract document
+     */
+    public function uploadContract(int $employeeId, array $metadata, UploadedFile $file): Media
+    {
+        return $this->uploadDocument($employeeId, 'contract', $metadata, $file);
+    }
+
+    /**
+     * Upload Medical document
+     */
+    public function uploadMedical(int $employeeId, array $metadata, UploadedFile $file): Media
+    {
+        return $this->uploadDocument($employeeId, 'medical', $metadata, $file);
     }
 }
 

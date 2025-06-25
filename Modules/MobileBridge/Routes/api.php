@@ -11,6 +11,7 @@ use Modules\MobileBridge\Http\Controllers\Api\MobileSupportApiController;
 use Modules\MobileBridge\Http\Controllers\Api\MobileNotificationApiController;
 use Modules\MobileBridge\Http\Controllers\PushNotificationController;
 use Modules\MobileBridge\Http\Controllers\PWAController;
+use Modules\MobileBridge\Http\Controllers\Api\LayoutConfigController;
 
 /*
 |--------------------------------------------------------------------------
@@ -157,5 +158,14 @@ Route::middleware(['auth:sanctum'])->prefix('v1/mobile')->group(function () {
     Route::post('notifications/test', [MobileNotificationApiController::class, 'sendTestNotification']);
     Route::get('notifications/stats', [MobileNotificationApiController::class, 'getNotificationStats']);
     Route::post('notifications/create', [MobileNotificationApiController::class, 'createNotification']);
+});
+
+Route::prefix('mobile-bridge')->group(function () {
+    // Layout configuration routes
+    Route::get('/layout-config', [LayoutConfigController::class, 'getConfig']);
+    Route::get('/optimize-image', [LayoutConfigController::class, 'optimizeImage']);
+    Route::get('/generate-srcset', [LayoutConfigController::class, 'generateSrcset']);
+    Route::get('/gesture-config', [LayoutConfigController::class, 'getGestureConfig']);
+    Route::get('/navigation-type', [LayoutConfigController::class, 'getNavigationType']);
 });
 

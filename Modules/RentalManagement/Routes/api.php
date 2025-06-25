@@ -12,6 +12,7 @@ use Modules\RentalManagement\Http\Controllers\CustomerController;
 use Modules\RentalManagement\Http\Controllers\SupplierController;
 use Modules\RentalManagement\Http\Controllers\RentalTimesheetController;
 use Modules\RentalManagement\Http\Controllers\RentalAnalyticsController;
+use Modules\RentalManagement\Http\Controllers\BookingController;
 
 // API routes uncommented
 
@@ -70,7 +71,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
         ->middleware('permission:invoices.view');
     Route::post('invoices', [InvoiceController::class, 'store'])
         ->middleware('permission:invoices.create');
-    Route::get('invoices/{invoice}', [InvoiceController::class, 'show'])
+    Route::get('invoices/{invoice}', [InvoiceController::class, 'showApi'])
         ->middleware('permission:invoices.view');
     Route::put('invoices/{invoice}', [InvoiceController::class, 'update'])
         ->middleware('permission:invoices.edit');
@@ -132,5 +133,18 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
         ->middleware('permission:rentals.view');
     Route::get('analytics/equipment-utilization', [RentalAnalyticsController::class, 'equipmentUtilization'])
         ->middleware('permission:rentals.view');
+
+    // Booking routes
+    Route::prefix('bookings')->group(function () {
+        Route::post('/', [BookingController::class, 'store']);
+        Route::put('/{booking}', [BookingController::class, 'update']);
+        Route::post('/{booking}/cancel', [BookingController::class, 'cancel']);
+    });
+
+    // Equipment availability routes
+    Route::prefix('equipment')->group(function () {
+        Route::get('/{equipment}/available-slots', [BookingController::class, 'getAvailableSlots']);
+        Route::get('/{equipment}/calendar', [BookingController::class, 'getCalendarEvents']);
+    });
 });
 
