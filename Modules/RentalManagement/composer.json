@@ -17,10 +17,10 @@
     },
     "autoload": {
         "psr-4": {
-            "Modules\\RentalManagement\\": "app/",
+            "Modules\\RentalManagement\\": "",
             "Modules\\RentalManagement\\Domain\\": "Domain/",
-            "Modules\\RentalManagement\\Database\\Factories\\": "database/factories/",
-            "Modules\\RentalManagement\\Database\\Seeders\\": "database/seeders/"
+            "Modules\\RentalManagement\\Database\\Factories\\": "Database/factories/",
+            "Modules\\RentalManagement\\Database\\Seeders\\": "Database/Seeders/"
         }
     },
     "autoload-dev": {

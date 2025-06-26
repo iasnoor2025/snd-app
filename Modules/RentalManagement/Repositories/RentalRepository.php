@@ -38,7 +38,7 @@ class RentalRepository implements RentalRepositoryInterface
     public function paginateWithFilters(int $perPage = 15, array $filters = []): LengthAwarePaginator
     {
         $query = $this->model->newQuery()
-            ->with(['customer', 'operators'])
+            ->with(['customer', 'rentalItems.equipment'])
             ->select([
                 'rentals.*',
                 'customers.name as customer_name',
@@ -64,10 +64,10 @@ class RentalRepository implements RentalRepositoryInterface
         }
 
         if (isset($filters['end_date']) && $filters['end_date'] !== null) {
-            $query->whereDate('rentals.end_date', '<=', $filters['end_date']);
+            $query->whereDate('rentals.expected_end_date', '<=', $filters['end_date']);
         }
 
-        return $query->paginate($perPage, ['*'], 'page', $filters['page'] ?? 1);
+        return $query->orderBy('rentals.id', 'desc')->paginate($perPage, ['*'], 'page', $filters['page'] ?? 1);
     }
 
     /**

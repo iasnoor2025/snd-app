@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Schema;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Modules\RentalManagement\Database\Seeders\RentalSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -71,5 +72,9 @@ class DatabaseSeeder extends Seeder
             // Assign a role to the test user
             $testUser->assignRole('user');
         }
+
+        $this->call([
+            RentalDataSeeder::class,
+        ]);
     }
 }

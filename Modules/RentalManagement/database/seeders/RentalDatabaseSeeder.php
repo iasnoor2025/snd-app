@@ -1,5 +1,5 @@
 <?php
-namespace Modules\RentalManagement\database\seeders;
+namespace Modules\RentalManagement\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 

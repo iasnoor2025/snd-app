@@ -13,7 +13,7 @@ interface EmployeeDocumentRepositoryInterface extends BaseRepositoryInterface
     public function findPendingVerification(): array;
     public function findById(int $id): ?EmployeeDocument;
     public function create(array $data): EmployeeDocument;
-    public function update(int $id, array $data): EmployeeDocument;
-    public function delete(int $id): bool;
+    public function update($id, array $data): EmployeeDocument;
+    public function delete($id): bool;
 }
 

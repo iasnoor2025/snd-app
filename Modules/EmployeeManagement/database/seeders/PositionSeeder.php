@@ -17,11 +17,11 @@ class PositionSeeder extends Seeder
             throw new \Exception('Department "General" not found.');
         }
         $positions = [
-            ['name' => 'Manager', 'description' => 'Manages the team', 'active' => true, 'department_id' => $department->id],
-            ['name' => 'Engineer', 'description' => 'Handles engineering tasks', 'active' => true, 'department_id' => $department->id],
-            ['name' => 'Technician', 'description' => 'Technical support', 'active' => true, 'department_id' => $department->id],
-            ['name' => 'HR', 'description' => 'Human Resources', 'active' => true, 'department_id' => $department->id],
-            ['name' => 'Accountant', 'description' => 'Handles accounts', 'active' => true, 'department_id' => $department->id],
+            ['name' => ['en' => 'Manager'], 'description' => ['en' => 'Manages the team'], 'is_active' => true, 'department_id' => $department->id],
+            ['name' => ['en' => 'Engineer'], 'description' => ['en' => 'Handles engineering tasks'], 'is_active' => true, 'department_id' => $department->id],
+            ['name' => ['en' => 'Technician'], 'description' => ['en' => 'Technical support'], 'is_active' => true, 'department_id' => $department->id],
+            ['name' => ['en' => 'HR'], 'description' => ['en' => 'Human Resources'], 'is_active' => true, 'department_id' => $department->id],
+            ['name' => ['en' => 'Accountant'], 'description' => ['en' => 'Handles accounts'], 'is_active' => true, 'department_id' => $department->id],
         ];
 
         foreach ($positions as $position) {

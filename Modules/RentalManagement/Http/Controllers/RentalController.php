@@ -26,6 +26,8 @@ class RentalController extends Controller
         $perPage = $filters['per_page'] ?? 10;
         $rentals = $this->rentalService->getPaginatedRentals($perPage, $filters);
 
+
+
         return Inertia::render('Rentals/Index', [
             'filters' => $filters,
             'rentals' => $rentals

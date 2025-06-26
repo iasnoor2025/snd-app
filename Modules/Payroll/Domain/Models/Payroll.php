@@ -2,7 +2,7 @@
 
 namespace Modules\Payroll\Domain\Models;
 
-use Modules\Employee\Domain\Models\Employee;
+use Modules\EmployeeManagement\Domain\Models\Employee;
 use Modules\Core\Domain\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -20,7 +20,8 @@ class Payroll extends Model
 
     protected $fillable = [
         'employee_id',
-        'payroll_month',
+        'month',
+        'year',
         'base_salary',
         'overtime_amount',
         'bonus_amount',
@@ -42,7 +43,8 @@ class Payroll extends Model
     ];
 
     protected $casts = [
-        'payroll_month' => 'date',
+        'month' => 'integer',
+        'year' => 'integer',
         'approved_at' => 'datetime',
         'paid_at' => 'datetime',
         'payment_processed_at' => 'datetime',

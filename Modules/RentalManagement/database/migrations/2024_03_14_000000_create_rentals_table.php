@@ -22,6 +22,8 @@ return new class extends Migration
                 $table->timestamp('expected_end_date')->nullable();
                 $table->timestamp('actual_end_date')->nullable();
                 $table->string('status')->default('pending');
+                $table->decimal('subtotal', 12, 2)->default(0);
+                $table->decimal('tax_amount', 12, 2)->default(0);
                 $table->decimal('total_amount', 12, 2)->default(0);
                 $table->decimal('discount', 12, 2)->default(0);
                 $table->decimal('tax', 12, 2)->default(0);

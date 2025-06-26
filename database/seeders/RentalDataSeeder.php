@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\RentalManagement\Database\Seeders;
+namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Modules\RentalManagement\Domain\Models\Rental;
@@ -9,7 +9,7 @@ use Modules\EquipmentManagement\Domain\Models\Equipment;
 use Modules\CustomerManagement\Domain\Models\Customer;
 use Carbon\Carbon;
 
-class RentalSeeder extends Seeder
+class RentalDataSeeder extends Seeder
 {
     public function run()
     {
@@ -162,4 +162,4 @@ class RentalSeeder extends Seeder
             }
         }
     }
-}
+} 

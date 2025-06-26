@@ -15,30 +15,33 @@ use Modules\Core\Services\ThemeManagerService;
 use Modules\Localization\Services\TranslationService;
 use Modules\Notifications\Services\NotificationService;
 use Illuminate\Support\Facades\Vite;
+use Modules\RentalManagement\Database\Seeders\RentalDatabaseSeeder;
+use Modules\RentalManagement\Console\Commands\SeedRentalDataCommand;
 
 class RentalManagementServiceProvider extends ServiceProvider
 {
     /**
      * @var string $moduleName
      */
-    protected string $moduleName = 'RentalManagement';
+    protected $moduleName = 'RentalManagement';
 
     /**
      * @var string $moduleNameLower
      */
-    protected string $moduleNameLower = 'rentalmanagement';
+    protected $moduleNameLower = 'rentalmanagement';
 
     /**
      * Boot the application events.
      *
      * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();
-        $this->loadMigrationsFrom(module_path($this->moduleName, 'database/migrations'));
+        $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
+        $this->app->make('db')->setDefaultConnection('pgsql');
 
         // Register observers
         $this->registerObservers();
@@ -49,6 +52,12 @@ class RentalManagementServiceProvider extends ServiceProvider
             ->withEntryPoints([
                 'Modules/RentalManagement/resources/js/app.tsx',
             ]);
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                SeedRentalDataCommand::class,
+            ]);
+        }
     }
 
     /**

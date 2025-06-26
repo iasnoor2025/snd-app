@@ -29,9 +29,10 @@ class RentalObserver
      */
     private function calculateTotals(Rental $rental): void
     {
-        $subtotal = $rental->items->sum('total_amount');
-        $taxAmount = ($subtotal * $rental->tax_percentage) / 100;
-        $discountAmount = ($subtotal * $rental->discount_percentage) / 100;
+        // If there are no items, use the total_amount from the rental record
+        $subtotal = $rental->items ? $rental->items->sum('total_amount') : ($rental->total_amount ?? 0);
+        $taxAmount = ($subtotal * ($rental->tax_percentage ?? 0)) / 100;
+        $discountAmount = ($subtotal * ($rental->discount_percentage ?? 0)) / 100;
         $totalAmount = $subtotal + $taxAmount - $discountAmount;
 
         $rental->update([

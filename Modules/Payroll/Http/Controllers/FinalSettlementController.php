@@ -74,13 +74,14 @@ class FinalSettlementController extends Controller
             // Get unpaid salary
             $lastPaidPayroll = Payroll::where('employee_id', $employee->id)
                 ->where('status', 'paid')
-                ->latest('payroll_month')
+                ->orderBy('year', 'desc')
+                ->orderBy('month', 'desc')
                 ->first();
 
             $unpaidSalary = 0;
             if ($lastPaidPayroll) {
-                $unpaidMonths = Carbon::parse($lastPaidPayroll->payroll_month)
-                    ->diffInMonths(Carbon::parse($request->settlement_date));
+                $lastPaidDate = Carbon::create($lastPaidPayroll->year, $lastPaidPayroll->month, 1);
+                $unpaidMonths = $lastPaidDate->diffInMonths(Carbon::parse($request->settlement_date));
 
                 if ($unpaidMonths > 0) {
                     $unpaidSalary = $employee->base_salary * $unpaidMonths;

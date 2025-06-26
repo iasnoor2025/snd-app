@@ -7,6 +7,8 @@ import { Input } from '@/Core';
 import { Label } from '@/Core';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Core';
 import { DatePicker } from '@/Core';
+import { Badge } from '@/Core';
+import { X } from 'lucide-react';
 
 interface RentalFormProps {
   customers: { id: number; name: string }[];
@@ -27,7 +29,7 @@ export const RentalForm: React.FC<RentalFormProps> = ({
   onSubmit,
   onCancel,
 }) => {
-  const { t } = useTranslation('rental');
+  const { t } = useTranslation('RentalManagement');
   const { data, setData, errors, processing } = useForm({
     rental_number: initialData.rental_number || '',
     customer_id: initialData.customer_id || '',
@@ -66,6 +68,26 @@ export const RentalForm: React.FC<RentalFormProps> = ({
     await onSubmit(data);
   };
 
+  const addEquipment = (equipmentId: string) => {
+    if (!data.equipment_ids.includes(equipmentId)) {
+      setData('equipment_ids', [...data.equipment_ids, equipmentId]);
+    }
+  };
+
+  const removeEquipment = (equipmentId: string) => {
+    setData('equipment_ids', data.equipment_ids.filter(id => id !== equipmentId));
+  };
+
+  const addOperator = (operatorId: string) => {
+    if (!data.operator_ids.includes(operatorId)) {
+      setData('operator_ids', [...data.operator_ids, operatorId]);
+    }
+  };
+
+  const removeOperator = (operatorId: string) => {
+    setData('operator_ids', data.operator_ids.filter(id => id !== operatorId));
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
@@ -83,7 +105,7 @@ export const RentalForm: React.FC<RentalFormProps> = ({
       <div>
         <Label htmlFor="customer_id">{t('customer')}</Label>
         <Select
-          value={data.customer_id}
+          value={data.customer_id || undefined}
           onValueChange={(value) => setData('customer_id', value)}
         >
           <SelectTrigger>
@@ -104,22 +126,42 @@ export const RentalForm: React.FC<RentalFormProps> = ({
 
       <div>
         <Label htmlFor="equipment_ids">{t('equipment')}</Label>
-        <Select
-          value={data.equipment_ids}
-          onValueChange={(value) => setData('equipment_ids', Array.isArray(value) ? value : [value])}
-          multiple
-        >
-          <SelectTrigger>
-            <SelectValue placeholder={t('select_equipment')} />
-          </SelectTrigger>
-          <SelectContent>
-            {equipment.map((item) => (
-              <SelectItem key={item.id} value={item.id.toString()}>
-                {item.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="space-y-2">
+          <Select
+            value={undefined}
+            onValueChange={addEquipment}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={t('select_equipment')} />
+            </SelectTrigger>
+            <SelectContent>
+              {equipment
+                .filter(item => !data.equipment_ids.includes(item.id.toString()))
+                .map((item) => (
+                  <SelectItem key={item.id} value={item.id.toString()}>
+                    {item.name}
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
+          <div className="flex flex-wrap gap-2 mt-2">
+            {data.equipment_ids.map((id) => {
+              const item = equipment.find(e => e.id.toString() === id);
+              return item ? (
+                <Badge key={id} variant="secondary" className="flex items-center gap-1">
+                  {item.name}
+                  <button
+                    type="button"
+                    onClick={() => removeEquipment(id)}
+                    className="ml-1 hover:text-destructive"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              ) : null;
+            })}
+          </div>
+        </div>
         {errors.equipment_ids && (
           <p className="text-sm text-red-600">{errors.equipment_ids}</p>
         )}
@@ -127,22 +169,42 @@ export const RentalForm: React.FC<RentalFormProps> = ({
 
       <div>
         <Label htmlFor="operator_ids">{t('operators')}</Label>
-        <Select
-          value={data.operator_ids}
-          onValueChange={(value) => setData('operator_ids', Array.isArray(value) ? value : [value])}
-          multiple
-        >
-          <SelectTrigger>
-            <SelectValue placeholder={t('select_operators')} />
-          </SelectTrigger>
-          <SelectContent>
-            {employees.map((employee) => (
-              <SelectItem key={employee.id} value={employee.id.toString()}>
-                {employee.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="space-y-2">
+          <Select
+            value={undefined}
+            onValueChange={addOperator}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={t('select_operators')} />
+            </SelectTrigger>
+            <SelectContent>
+              {employees
+                .filter(emp => !data.operator_ids.includes(emp.id.toString()))
+                .map((employee) => (
+                  <SelectItem key={employee.id} value={employee.id.toString()}>
+                    {employee.name}
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
+          <div className="flex flex-wrap gap-2 mt-2">
+            {data.operator_ids.map((id) => {
+              const emp = employees.find(e => e.id.toString() === id);
+              return emp ? (
+                <Badge key={id} variant="secondary" className="flex items-center gap-1">
+                  {emp.name}
+                  <button
+                    type="button"
+                    onClick={() => removeOperator(id)}
+                    className="ml-1 hover:text-destructive"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              ) : null;
+            })}
+          </div>
+        </div>
         {errors.operator_ids && (
           <p className="text-sm text-red-600">{errors.operator_ids}</p>
         )}

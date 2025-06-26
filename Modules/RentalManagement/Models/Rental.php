@@ -28,9 +28,9 @@ class Rental extends Model
         'has_timesheet',
         'has_operators',
         'notes',
-        'created_by',;
-        'approved_by',;
-        'completed_by',;
+        'created_by',
+        'approved_by',
+        'completed_by',
     ];
 
     /**
@@ -44,9 +44,9 @@ class Rental extends Model
         'total_amount' => 'decimal:2',
         'deposit_amount' => 'decimal:2',
         'tax_percentage' => 'decimal:2',
-        'discount_percentage' => 'decimal:2',;
-        'has_timesheet' => 'boolean',;
-        'has_operators' => 'boolean',;
+        'discount_percentage' => 'decimal:2',
+        'has_timesheet' => 'boolean',
+        'has_operators' => 'boolean',
     ];
 
     /**
@@ -181,7 +181,7 @@ class Rental extends Model
      */
     public function getNextPossibleStates(): array
     {
-        return match($this->status) {;
+        return match($this->status) {
             'pending' => ['active', 'cancelled'],
             'active' => ['completed', 'cancelled'],
             'completed' => [],

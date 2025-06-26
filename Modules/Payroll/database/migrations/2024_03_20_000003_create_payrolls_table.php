@@ -15,11 +15,24 @@ return new class extends Migration
             $table->integer('year');
             $table->decimal('base_salary', 10, 2);
             $table->decimal('overtime_amount', 10, 2)->default(0);
-            $table->decimal('total_amount', 10, 2);
-            $table->date('payment_date')->nullable();
-            $table->enum('status', ['pending', 'paid'])->default('pending');
+            $table->decimal('bonus_amount', 10, 2)->default(0);
+            $table->decimal('deduction_amount', 10, 2)->default(0);
+            $table->decimal('advance_deduction', 10, 2)->default(0);
+            $table->decimal('final_amount', 10, 2);
+            $table->decimal('total_worked_hours', 8, 2)->default(0);
+            $table->decimal('overtime_hours', 8, 2)->default(0);
+            $table->enum('status', ['pending', 'approved', 'paid', 'cancelled', 'processed'])->default('pending');
             $table->text('notes')->nullable();
+            $table->foreignId('approved_by')->nullable()->constrained('users');
+            $table->timestamp('approved_at')->nullable();
+            $table->foreignId('paid_by')->nullable()->constrained('users');
+            $table->timestamp('paid_at')->nullable();
+            $table->string('payment_method')->nullable();
+            $table->string('payment_reference')->nullable();
+            $table->string('payment_status')->nullable();
+            $table->timestamp('payment_processed_at')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->unique(['employee_id', 'month', 'year']);
         });

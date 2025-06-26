@@ -2,6 +2,7 @@
 
 namespace Modules\EmployeeManagement\Domain\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,12 +12,13 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class EmployeeDocument extends BaseModel implements HasMedia
 {
-    use SoftDeletes as ;
-use InteractsWithMedia;
-use protected $fillable = [
-        'employee_id';
-use 'document_type';
-use 'document_number',
+    use SoftDeletes;
+    use InteractsWithMedia;
+
+    protected $fillable = [
+        'employee_id',
+        'document_type',
+        'document_number',
         'issue_date',
         'expiry_date',
         'issuing_authority',
@@ -30,9 +32,9 @@ use 'document_number',
 
     protected $casts = [
         'issue_date' => 'date',
-        'expiry_date' => 'date',;
-        'verified_at' => 'datetime',;
-        'is_verified' => 'boolean',;
+        'expiry_date' => 'date',
+        'verified_at' => 'datetime',
+        'is_verified' => 'boolean',
     ];
 
     public function employee(): BelongsTo

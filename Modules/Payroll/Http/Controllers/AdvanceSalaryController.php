@@ -21,7 +21,8 @@ class AdvanceSalaryController extends Controller
         $validator = Validator::make($request->all(), [
             'amount' => 'required|numeric|min:0',
             'remarks' => 'nullable|string',
-            'payroll_month' => 'nullable|string'
+            'month' => 'required|integer|between:1,12',
+            'year' => 'required|integer|min:2000'
         ]);
 
         if ($validator->fails()) {
@@ -30,7 +31,7 @@ class AdvanceSalaryController extends Controller
 
         // Check if amount is within limit (50% of base salary)
         if ($request->amount > ($employee->base_salary * 0.5)) {
-            return response()->json([;
+            return response()->json([
                 'message' => 'Advance amount cannot exceed 50% of base salary'
             ], 422);
         }
@@ -40,7 +41,8 @@ class AdvanceSalaryController extends Controller
             'request_date' => now(),
             'amount' => $request->amount,
             'remarks' => $request->remarks,
-            'payroll_month' => $request->payroll_month,
+            'month' => $request->month,
+            'year' => $request->year,
             'status' => 'pending'
         ]);
 
@@ -58,7 +60,7 @@ class AdvanceSalaryController extends Controller
             })
             ->when($request->date_range, function ($query, $dateRange) {
                 $dates = explode(' to ', $dateRange);
-                return $query->whereBetween('request_date', [;
+                return $query->whereBetween('request_date', [
                     Carbon::parse($dates[0])->startOfDay(),
                     Carbon::parse($dates[1])->endOfDay()
                 ]);
@@ -66,7 +68,7 @@ class AdvanceSalaryController extends Controller
 
         $advances = $query->latest()->paginate(10);
 
-        return Inertia::render('AdvanceSalary/Index', [;
+        return Inertia::render('AdvanceSalary/Index', [
             'advances' => $advances,
             'filters' => $request->only(['status', 'employee_id', 'date_range']),
             'employees' => Employee::select('id', 'first_name', 'last_name')->get(),
@@ -75,7 +77,7 @@ class AdvanceSalaryController extends Controller
 
     public function create()
     {
-        return Inertia::render('AdvanceSalary/Create', [;
+        return Inertia::render('AdvanceSalary/Create', [
             'employees' => Employee::select('id', 'name', 'base_salary')->get(),
         ]);
     }
@@ -84,7 +86,7 @@ class AdvanceSalaryController extends Controller
     {
         $advanceSalary->load(['employee', 'approver']);
 
-        return Inertia::render('AdvanceSalary/Show', [;
+        return Inertia::render('AdvanceSalary/Show', [
             'advance' => $advanceSalary,
         ]);
     }
@@ -92,7 +94,7 @@ class AdvanceSalaryController extends Controller
     public function approve(AdvanceSalary $advanceSalary)
     {
         if (!$advanceSalary->isPending()) {
-            return back()->withErrors([;
+            return back()->withErrors([
                 'message' => 'Only pending advance salary requests can be approved.',
             ]);
         }
@@ -105,7 +107,7 @@ class AdvanceSalaryController extends Controller
     public function reject(AdvanceSalary $advanceSalary)
     {
         if (!$advanceSalary->isPending()) {
-            return back()->withErrors([;
+            return back()->withErrors([
                 'message' => 'Only pending advance salary requests can be rejected.',
             ]);
         }
@@ -118,7 +120,7 @@ class AdvanceSalaryController extends Controller
     public function markAsDeducted(AdvanceSalary $advanceSalary)
     {
         if (!$advanceSalary->isApproved()) {
-            return back()->withErrors([;
+            return back()->withErrors([
                 'message' => 'Only approved advance salary requests can be marked as deducted.',
             ]);
         }
@@ -151,7 +153,7 @@ class AdvanceSalaryController extends Controller
             'advance_salary_eligible' => $request->eligible
         ]);
 
-        return response()->json([;
+        return response()->json([
             'message' => 'Advance salary eligibility updated successfully',
             'employee' => $employee
         ]);
@@ -166,8 +168,7 @@ class AdvanceSalaryController extends Controller
             'approved' => 'required|boolean'
         ]);
 
-        DB::transaction(function () use ($request;
-use $employee) {
+        DB::transaction(function () use ($request, $employee) {
             $employee->update([
                 'advance_salary_approved_this_month' => $request->approved
             ]);
@@ -191,7 +192,7 @@ use $employee) {
             }
         });
 
-        return response()->json([;
+        return response()->json([
             'message' => 'Advance salary approval updated successfully',
             'employee' => $employee
         ]);

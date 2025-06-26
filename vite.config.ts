@@ -14,8 +14,6 @@ export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => ({
                 'resources/css/app.css',
                 'resources/js/app.tsx',
                 'Modules/Core/resources/js/app.tsx',
-                'Modules/*/resources/js/pages/**/*.tsx',
-                'Modules/*/resources/js/Pages/**/*.tsx',
             ],
             ssr: 'resources/js/ssr.tsx',
             refresh: true,
@@ -62,10 +60,6 @@ export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => ({
             warnOnError: true,
         },
         rollupOptions: {
-            input: {
-                app: path.resolve(__dirname, 'resources/js/app.tsx'),
-                core: path.resolve(__dirname, 'Modules/Core/resources/js/app.tsx'),
-            },
             output: {
                 manualChunks: (id: string) => {
                     // Vendor chunks

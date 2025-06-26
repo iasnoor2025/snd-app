@@ -299,8 +299,8 @@ createInertiaApp({
                 const modulePatternMap: Record<string, [string, string]> = {
                     'Employees/Index': ['EmployeeManagement', 'Index.tsx'],
                     'Projects/Index': ['ProjectManagement', 'Index.tsx'],
-                    'Rentals/Index': ['RentalManagement/Rentals', 'Index.tsx'],
-                    'Timesheets/Index': ['TimesheetManagement/Timesheets', 'Index.tsx'],
+                    'Rentals/Index': ['RentalManagement', 'Rentals/Index.tsx'],
+                    'Timesheets/Index': ['TimesheetManagement', 'Timesheets/Index.tsx'],
                     'Equipment/Index': ['EquipmentManagement', 'Index.tsx'],
                     'Settings/Index': ['Settings', 'Index.tsx'],
                     'Payrolls/Index': ['Payroll', 'Index.tsx'],

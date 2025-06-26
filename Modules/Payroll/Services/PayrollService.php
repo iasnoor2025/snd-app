@@ -2,7 +2,7 @@
 
 namespace Modules\Payroll\Services;
 
-use Modules\Employee\Domain\Models\Employee;
+use Modules\EmployeeManagement\Domain\Models\Employee;
 use Modules\Payroll\Domain\Models\Payroll;
 use Modules\Payroll\Domain\Models\PayrollItem;
 use Modules\Payroll\Domain\Models\PayrollRun;
@@ -21,6 +21,7 @@ class PayrollService
      * @param Carbon|string|null $month The month to generate payroll for (defaults to previous month)
      * @param Employee|null $employee Specific employee to generate payroll for (if null, generates for all active employees)
      * @return Payroll|array Returns a single Payroll object if employee is specified, otherwise returns array of Payroll objects;
+     * @throws \Exception
      */
     public function generatePayroll($month = null, ?Employee $employee = null)
     {
@@ -33,13 +34,31 @@ class PayrollService
 
         foreach ($employees as $employee) {
             try {
+                // Validate employee data
+                if (!$employee->base_salary) {
+                    throw new \Exception("Employee {$employee->full_name} has no base salary configured");
+                }
+
                 // Check if payroll already exists for this month
                 $existingPayroll = Payroll::where('employee_id', $employee->id)
-                    ->where('payroll_month', $month->format('Y-m'))
+                    ->where('month', $month->month)
+                    ->where('year', $month->year)
                     ->first();
 
                 if ($existingPayroll) {
                     $errors[] = "Payroll already exists for {$employee->full_name} for {$month->format('F Y')}";
+                    continue;
+                }
+
+                // Check if employee has any approved timesheets for the month
+                $timesheets = $employee->timesheets()
+                    ->whereYear('date', $month->year)
+                    ->whereMonth('date', $month->month)
+                    ->where('status', 'approved')
+                    ->count();
+
+                if ($timesheets === 0) {
+                    $errors[] = "No approved timesheets found for {$employee->full_name} for {$month->format('F Y')}";
                     continue;
                 }
 
@@ -51,14 +70,17 @@ class PayrollService
                 $errors[] = "Error processing {$employee->full_name}: {$e->getMessage()}";
                 Log::error("Error generating payroll for employee {$employee->full_name}", [
                     'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString()
+                    'trace' => $e->getTraceAsString(),
+                    'employee_id' => $employee->id,
+                    'month' => $month->format('Y-m')
                 ]);
             }
         }
 
         if (count($errors) > 0) {
             Log::error("Encountered errors while generating payrolls", [
-                'errors' => $errors
+                'errors' => $errors,
+                'month' => $month->format('Y-m')
             ]);
             throw new \Exception("Encountered " . count($errors) . " errors:\n- " . implode("\n- ", $errors));
         }
@@ -77,13 +99,16 @@ class PayrollService
             $daysWorked = $workData['days_worked'];
             $regularHours = $workData['regular_hours'];
 
-            // Calculate daily rate and base salary for worked days
-            $dailyRate = $employee->current_base_salary / $employee->contract_days_per_month;
+            // Calculate base salary for worked days
+            $workingDaysInMonth = Carbon::parse($month)->daysInMonth;
+            $dailyRate = $employee->base_salary / $workingDaysInMonth;
             $baseSalary = $dailyRate * $daysWorked;
 
-            // Calculate allowances (prorated based on days worked)
-            $allowanceRatio = $daysWorked / $employee->contract_days_per_month;
-            $allowances = ($employee->food_allowance + $employee->housing_allowance + $employee->transport_allowance) * $allowanceRatio;
+            // Calculate allowances (if any)
+            $allowances = 0;
+            if (method_exists($employee, 'getAllowances')) {
+                $allowances = $employee->getAllowances();
+            }
 
             // Calculate overtime
             $overtimeHours = $this->calculateOvertimeHours($employee, $month);
@@ -113,7 +138,8 @@ class PayrollService
             // Create payroll record
             $payroll = Payroll::create([
                 'employee_id' => $employee->id,
-                'payroll_month' => $month->format('Y-m'),
+                'month' => $month->month,
+                'year' => $month->year,
                 'base_salary' => $baseSalary,
                 'overtime_hours' => $overtimeHours,
                 'overtime_amount' => $overtimeAmount,
@@ -131,39 +157,68 @@ class PayrollService
                     'description' => "Base salary for {$daysWorked} days",
                     'amount' => $baseSalary,
                     'is_taxable' => true
-                ],
-                [
-                    'type' => 'allowances',
-                    'description' => "Prorated allowances ({$allowanceRatio})",
-                    'amount' => $allowances,
-                    'is_taxable' => false
-                ],
-                [
-                    'type' => 'overtime',
-                    'description' => "Overtime: {$overtimeHours} hours",
-                    'amount' => $overtimeAmount,
-                    'is_taxable' => true,
-                    'metadata' => ['hours' => $overtimeHours]
-                ],
-                [
-                    'type' => 'bonus',
-                    'description' => "Performance bonus: {$performanceData['rating']}",
-                    'amount' => $performanceData['bonus'],
-                    'is_taxable' => true
-                ],
-                [
-                    'type' => 'tax',
-                    'description' => "Income tax",
-                    'amount' => -$taxAndInsurance['tax'],
-                    'is_taxable' => false
-                ],
-                [
-                    'type' => 'insurance',
-                    'description' => "Insurance deduction",
-                    'amount' => -$taxAndInsurance['insurance'],
-                    'is_taxable' => false
                 ]
             ]);
+
+            // Add allowances item if there are any
+            if ($allowances > 0) {
+                $this->createPayrollItems($payroll, [
+                    [
+                        'type' => 'allowances',
+                        'description' => "Monthly allowances",
+                        'amount' => $allowances,
+                        'is_taxable' => false
+                    ]
+                ]);
+            }
+
+            // Add overtime if any
+            if ($overtimeAmount > 0) {
+                $this->createPayrollItems($payroll, [
+                    [
+                        'type' => 'overtime',
+                        'description' => "Overtime: {$overtimeHours} hours",
+                        'amount' => $overtimeAmount,
+                        'is_taxable' => true,
+                        'metadata' => ['hours' => $overtimeHours]
+                    ]
+                ]);
+            }
+
+            // Add bonus if any
+            if ($performanceData['bonus'] > 0) {
+                $this->createPayrollItems($payroll, [
+                    [
+                        'type' => 'bonus',
+                        'description' => "Performance bonus: {$performanceData['rating']}",
+                        'amount' => $performanceData['bonus'],
+                        'is_taxable' => true
+                    ]
+                ]);
+            }
+
+            // Add deductions
+            if ($taxAndInsurance['tax'] > 0) {
+                $this->createPayrollItems($payroll, [
+                    [
+                        'type' => 'tax',
+                        'description' => "Income tax",
+                        'amount' => -$taxAndInsurance['tax'],
+                        'is_taxable' => false
+                    ]
+                ]);
+            }
+
+            if ($taxAndInsurance['insurance'] > 0) {
+                $this->createPayrollItems($payroll, [
+                    [
+                        'type' => 'insurance',
+                        'description' => "Insurance deduction",
+                        'amount' => -$taxAndInsurance['insurance'],
+                        'is_taxable' => false
+                    ]
+                ]);
+            }
 
             return $payroll;
         } catch (\Exception $e) {
@@ -192,8 +247,9 @@ class PayrollService
      */
     protected function calculateOvertimeAmount(Employee $employee, float $overtimeHours): float
     {
-        $hourlyRate = $employee->current_base_salary / ($employee->contract_days_per_month * 8);
-        return $overtimeHours * ($hourlyRate * 1.5); // 1.5x for overtime;
+        $workingDaysInMonth = Carbon::now()->daysInMonth;
+        $hourlyRate = $employee->base_salary / ($workingDaysInMonth * 8); // 8 hours per day
+        return $overtimeHours * ($hourlyRate * 1.5); // 1.5x for overtime
     }
 
     /**
@@ -207,9 +263,19 @@ class PayrollService
             ->where('status', 'approved')
             ->get();
 
+        $totalHours = 0;
+        $daysWorked = 0;
+
+        foreach ($timesheets as $timesheet) {
+            $totalHours += $timesheet->total_hours;
+            if ($timesheet->total_hours > 0) {
+                $daysWorked++;
+            }
+        }
+
         return [
-            'days_worked' => $timesheets->count(),
-            'regular_hours' => $timesheets->sum('regular_hours')
+            'days_worked' => $daysWorked,
+            'regular_hours' => $totalHours
         ];
     }
 
@@ -231,27 +297,24 @@ class PayrollService
     protected function calculateLeaveDeductions(Employee $employee, Carbon $month): array
     {
         $leaveData = [
-            'paid_leaves' => 0,
             'unpaid_leaves' => 0,
             'deductions' => 0
         ];
 
-        // Get leave records for the month
-        $leaves = $employee->leaves()
+        // Get unpaid leaves for the month
+        $unpaidLeaves = $employee->leaves()
             ->whereYear('start_date', $month->year)
             ->whereMonth('start_date', $month->month)
             ->where('status', 'approved')
+            ->where('type', 'unpaid')
             ->get();
 
-        foreach ($leaves as $leave) {
-            if ($leave->is_paid) {
-                $leaveData['paid_leaves'] += $leave->duration;
-            } else {
-                $leaveData['unpaid_leaves'] += $leave->duration;
-                // Calculate deduction for unpaid leaves
-                $dailyRate = $employee->current_base_salary / $employee->contract_days_per_month;
-                $leaveData['deductions'] += $dailyRate * $leave->duration;
-            }
+        $workingDaysInMonth = Carbon::parse($month)->daysInMonth;
+        $dailyRate = $employee->base_salary / $workingDaysInMonth;
+
+        foreach ($unpaidLeaves as $leave) {
+            $leaveData['unpaid_leaves'] += $leave->duration;
+            $leaveData['deductions'] += $dailyRate * $leave->duration;
         }
 
         return $leaveData;

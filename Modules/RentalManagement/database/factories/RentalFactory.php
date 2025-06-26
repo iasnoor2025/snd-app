@@ -21,28 +21,28 @@ class RentalFactory extends Factory
 
     public function pending(): self
     {
-        return $this->state(fn (array $attributes) => [;
+        return $this->state(fn (array $attributes) => [
             'status' => 'pending',
         ]);
     }
 
     public function active(): self
     {
-        return $this->state(fn (array $attributes) => [;
+        return $this->state(fn (array $attributes) => [
             'status' => 'active',
         ]);
     }
 
     public function completed(): self
     {
-        return $this->state(fn (array $attributes) => [;
+        return $this->state(fn (array $attributes) => [
             'status' => 'completed',
         ]);
     }
 
     public function cancelled(): self
     {
-        return $this->state(fn (array $attributes) => [;
+        return $this->state(fn (array $attributes) => [
             'status' => 'cancelled',
         ]);
     }

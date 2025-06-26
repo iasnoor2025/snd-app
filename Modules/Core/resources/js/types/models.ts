@@ -147,5 +147,26 @@ export interface NavItem {
     permission?: string;
 }
 
+export interface User {
+    id: number;
+    name: string;
+    email: string;
+    avatar?: string;
+    roles?: string[];
+    permissions?: string[];
+}
+
+export interface PageProps {
+    auth: {
+        user: User;
+    };
+    flash?: {
+        success?: string;
+        error?: string;
+        warning?: string;
+        info?: string;
+    };
+}
+
 
 

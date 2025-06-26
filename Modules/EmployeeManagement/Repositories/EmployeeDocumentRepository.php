@@ -68,14 +68,14 @@ class EmployeeDocumentRepository extends BaseRepository implements EmployeeDocum
         return $this->model->create($data);
     }
 
-    public function update(int $id, array $data): EmployeeDocument
+    public function update($id, array $data): EmployeeDocument
     {
         $document = $this->model->findOrFail($id);
         $document->update($data);
         return $document;
     }
 
-    public function delete(int $id): bool
+    public function delete($id): bool
     {
         return $this->model->destroy($id) > 0;
     }

@@ -31,22 +31,32 @@ class PayrollController extends Controller
     {
         $this->authorize('viewAny', Payroll::class);
 
-        $query = Payroll::with(['employee', 'approver', 'payer'])
-            ->when($request->month, function ($query, $month) {
-                return $query->whereMonth('payroll_month', Carbon::parse($month)->month)
-                    ->whereYear('payroll_month', Carbon::parse($month)->year);
-            })
-            ->when($request->status, function ($query, $status) {
-                return $query->where('status', $status);
-            })
-            ->when($request->employee_id, function ($query, $employeeId) {
-                return $query->where('employee_id', $employeeId);
+        $query = Payroll::with(['employee', 'approver', 'payer']);
+        
+        if ($request->month) {
+            $date = Carbon::parse($request->month);
+            $query->where(function($q) use ($date) {
+                $q->where('month', $date->month)
+                  ->where('year', $date->year);
             });
+        }
+        
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+        
+        if ($request->employee_id) {
+            $query->where('employee_id', $request->employee_id);
+        }
 
         $payrolls = $query->latest()->paginate(10);
-        $employees = Employee::where('status', 'active')->get(['id', 'first_name', 'middle_name', 'last_name'])->append('name')->filter(function ($employee) {
-            return !empty($employee->id) && !empty($employee->name);
-        })->values();
+        $employees = Employee::where('status', 'active')
+            ->get(['id', 'first_name', 'middle_name', 'last_name'])
+            ->append('name')
+            ->filter(function ($employee) {
+                return !empty($employee->id) && !empty($employee->name);
+            })
+            ->values();
 
         return Inertia::render('Payroll/Index', [
             'payrolls' => $payrolls,

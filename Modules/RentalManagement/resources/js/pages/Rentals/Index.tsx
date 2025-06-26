@@ -152,7 +152,7 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
   });
 
   // Debug route helper - use first rental ID from data if available
-  const sampleRentalId = rentals?.data?.length > 0 ? rentals.data[0].id : 1;
+  const sampleRentalId = rentals?.data?.length > 0 ? rentals.data[0].id : 1; 
 
   const handleDelete = (rentalOrId: Rental | number) => {
     // If a number was passed, find the rental in the data
