@@ -4,8 +4,7 @@ import axios from 'axios';
 import { format, parseISO } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
 import { Button } from "@/Core";
-import { useToast } from '@/hooks/useToast';
-import { toast } from 'sonner';
+import { ToastService } from '@/Core';
 import {
   Table,
   TableBody,
@@ -88,7 +87,7 @@ export const TimesheetList: React.FC<TimesheetListProps> = ({
         setTimesheets([]);
       } else {
         console.error('Error fetching timesheets:', error);
-        toast('Failed to load timesheets');
+        ToastService.error('Failed to load timesheets');
       }
     } finally {
       setIsLoading(false);
@@ -106,14 +105,11 @@ export const TimesheetList: React.FC<TimesheetListProps> = ({
 
     try {
       await axios.delete(`/employees/${employeeId}/timesheets/${timesheetId}`);
-      toast({
-        title: 'Success',
-        description: 'Timesheet deleted successfully',
-      })
+      ToastService.success('Timesheet deleted successfully');
       fetchTimesheets();
     } catch (error) {
       console.error('Error deleting timesheet:', error);
-      toast('Failed to delete timesheet');
+      ToastService.error('Failed to delete timesheet');
     }
   };
 

@@ -2,29 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { format, parseISO } from 'date-fns';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/Core";
-import { Button } from "@/Core";
-import { useToast } from '@/hooks/useToast';
-import { Calendar } from "@/Core";
 import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  Button,
+  Calendar,
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/Core";
-import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
+  Badge,
+  Checkbox,
+  useToast,
 } from "@/Core";
-import { Badge } from "@/Core";
-import { Checkbox } from "@/Core";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/Core";
-import { DialogDescription } from "@/Core";
-import { Textarea } from "@/Core";
-import { CalendarIcon, CheckIcon, Cross2Icon } from '@radix-ui/react-icons';
+import { RejectTimesheetDialog } from './RejectTimesheetDialog';
+import { Check, X } from 'lucide-react';
 
 interface Employee {
   id: number;
@@ -57,6 +57,7 @@ interface Timesheet {
 
 export const TimesheetApproval: React.FC = () => {
   const { toast } = useToast();
+  const { t } = useTranslation('employee');
   const [timesheets, setTimesheets] = useState<Timesheet[]>([]);
   const [selectedTimesheets, setSelectedTimesheets] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -92,8 +93,6 @@ export const TimesheetApproval: React.FC = () => {
   }, []);
 
   const handleSelectAllChange = (checked: boolean) => {
-  const { t } = useTranslation('employee');
-
     if (checked) {
       setSelectedTimesheets(timesheets.map(timesheet => timesheet.id));
     } else {
@@ -219,6 +218,7 @@ export const TimesheetApproval: React.FC = () => {
   };
 
   return (
+    <>
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
@@ -230,7 +230,7 @@ export const TimesheetApproval: React.FC = () => {
             </div>
             {selectedTimesheets.length > 0 && (
               <Button onClick={handleApproveSelected} disabled={isLoading}>
-                <CheckIcon className="mr-2 h-4 w-4" />
+                <Check className="mr-2 h-4 w-4" />
                 Approve Selected ({selectedTimesheets.length})
               </Button>
             )}
@@ -253,7 +253,7 @@ export const TimesheetApproval: React.FC = () => {
                     <TableHead className="w-10">
                       <Checkbox
                         checked={selectedTimesheets.length === timesheets.length && timesheets.length > 0}
-                        onCheckedChange={handleSelectAllChange}
+                        onChange={(e) => handleSelectAllChange(e.target.checked)}
                       />
                     </TableHead>
                     <TableHead>Employee</TableHead>
@@ -272,7 +272,7 @@ export const TimesheetApproval: React.FC = () => {
                       <TableCell>
                         <Checkbox
                           checked={selectedTimesheets.includes(timesheet.id)}
-                          onCheckedChange={(checked) => handleRowCheckboxChange(timesheet.id, !!checked)}
+                          onChange={(e) => handleRowCheckboxChange(timesheet.id, e.target.checked)}
                         />
                       </TableCell>
                       <TableCell className="font-medium">{timesheet.employee.name}</TableCell>
@@ -303,7 +303,8 @@ export const TimesheetApproval: React.FC = () => {
                             className="h-8 w-8 p-0"
                             onClick={() => handleApproveTimesheet(timesheet.id)}
                             disabled={isLoading}
-                            <CheckIcon className="h-4 w-4 text-green-500" />
+                          >
+                            <Check className="h-4 w-4 text-green-500" />
                           </Button>
                           <Button
                             variant="outline"
@@ -311,7 +312,8 @@ export const TimesheetApproval: React.FC = () => {
                             className="h-8 w-8 p-0"
                             onClick={() => openRejectDialog(timesheet.id)}
                             disabled={isLoading}
-                            <Cross2Icon className="h-4 w-4 text-red-500" />
+                          >
+                            <X className="h-4 w-4 text-red-500" />
                           </Button>
                         </div>
                       </TableCell>
@@ -324,33 +326,14 @@ export const TimesheetApproval: React.FC = () => {
         </CardContent>
       </Card>
 
-      <Dialog open={showRejectDialog} onOpenChange={setShowRejectDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t('ttl_reject_timesheet')}</DialogTitle>
-            <DialogDescription>
-              Please provide a reason for rejecting this timesheet.
-            </DialogDescription>
-          </DialogHeader>
-          <Textarea
-            placeholder={t('ph_reason_for_rejection')}
-            value={rejectReason}
-            onChange={(e) => setRejectReason(e.target.value)}
-            rows={4}
-          />
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowRejectDialog(false)}>
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleRejectTimesheet}
-              disabled={!rejectReason.trim()}
-              Reject Timesheet
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <RejectTimesheetDialog
+        open={showRejectDialog}
+        onOpenChange={setShowRejectDialog}
+        onReject={handleRejectTimesheet}
+        rejectReason={rejectReason}
+        onRejectReasonChange={setRejectReason}
+        isLoading={isLoading}
+      />
     </>
   );
 };

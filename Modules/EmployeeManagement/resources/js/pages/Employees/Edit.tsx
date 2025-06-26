@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
 import { PageProps, User } from '@/Core/types';
-import { AppLayout } from '@/Core';
+import { AppLayout, ToastService } from '@/Core';
 import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
 import { Button } from "@/Core";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/Core";
@@ -14,7 +14,7 @@ import * as z from 'zod';
 import { Input } from "@/Core";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
 import { getTranslation } from "@/Core";
-import { EmployeeToastService } from '@/EmployeeManagement/services/EmployeeToastService';
+
 import axios from 'axios';
 
 // Placeholder components
@@ -156,13 +156,13 @@ export default function Edit({ auth, employee, users, positions }: Props) {
       setDocuments(response.data);
     } catch (error) {
       console.error('Error fetching documents:', error);
-      EmployeeToastService.employeeProcessFailed('fetch documents');
+      ToastService.error('Failed to fetch documents');
     }
   };
 
   const onSubmit = async (data: any) => {
     setIsLoading(true);
-    const loadingToastId = EmployeeToastService.processingEmployee('update');
+    const loadingToastId = ToastService.loading('Updating employee...');
 
     try {
       // Create FormData for file uploads
@@ -209,56 +209,55 @@ export default function Edit({ auth, employee, users, positions }: Props) {
       await router.post(route('employees.update', { employee: employee.id }), formData, {
         forceFormData: true,
         onSuccess: () => {
-          EmployeeToastService.dismiss(loadingToastId);
-          EmployeeToastService.employeeUpdated(`${data.first_name} ${data.last_name}`);
+          ToastService.success('Employee updated successfully');
           router.visit(route('employees.show', { employee: employee.id }));
         },
         onError: (errors) => {
-          EmployeeToastService.dismiss(loadingToastId);
           console.error('Update errors:', errors);
           
           // Handle validation errors
           if (errors) {
             Object.keys(errors).forEach(field => {
-              EmployeeToastService.employeeValidationError(field);
+              ToastService.error(`Validation error: ${field}`);
             });
           } else {
-            EmployeeToastService.employeeProcessFailed('update');
+            ToastService.error('Failed to update employee');
           }
         },
         onFinish: () => {
           setIsLoading(false);
+          ToastService.dismiss(loadingToastId);
         }
       });
     } catch (error: any) {
-      EmployeeToastService.dismiss(loadingToastId);
-      console.error('Submission error:', error);
-      EmployeeToastService.employeeProcessFailed('update', error.message);
+      console.error('Error updating employee:', error);
+      ToastService.error('Failed to update employee');
       setIsLoading(false);
+      ToastService.dismiss(loadingToastId);
     }
   };
 
   const handleFileUpload = async (file: File, documentType: string) => {
     if (!file) {
-      EmployeeToastService.employeeValidationError('file selection');
+      ToastService.error('No file selected');
       return;
     }
 
     // Validate file type
     const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
     if (!allowedTypes.includes(file.type)) {
-      EmployeeToastService.employeeValidationError(`file type (allowed: ${allowedTypes.map(type => type.split('/')[1].toUpperCase()).join(', ')})`);
+      ToastService.error(`Invalid file type. Allowed types: ${allowedTypes.map(type => type.split('/')[1].toUpperCase()).join(', ')}`);
       return;
     }
 
     // Validate file size (max 10MB)
     const maxSize = 10 * 1024 * 1024;
     if (file.size > maxSize) {
-      EmployeeToastService.employeeValidationError('file size (must be less than 10MB)');
+      ToastService.error('File size exceeds 10MB');
       return;
     }
 
-    const loadingToastId = EmployeeToastService.processingEmployee(`${documentType} upload`);
+    const loadingToastId = ToastService.loading(`Uploading ${documentType}...`);
 
     try {
       const formData = new FormData();

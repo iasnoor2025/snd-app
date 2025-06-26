@@ -5,7 +5,7 @@ import { RentalStatus } from '@/Core/types/models';
 import { useForm, router } from '@inertiajs/react';
 import { RentalToastService } from '../../services/RentalToastService';
 import { Modal } from '../Modal';
-import { RentalForm } from './RentalForm';
+import { RentalForm } from '../rentals/RentalForm';
 import { RentalDetails } from './RentalDetails';
 
 interface RentalWorkflowActionsProps {

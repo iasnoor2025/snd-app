@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Button,
+    Input,
+    Label,
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+    DatePicker
+} from '@/Core';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { DatePicker } from '@/components/ui/date-picker';
 
 interface SettlementData {
     last_working_date: Date | null;

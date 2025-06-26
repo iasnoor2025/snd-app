@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
 import { ArrowLeft } from "lucide-react";
 
 // Our components
-import RentalForm, { RentalFormValues } from '../../components/rentals/RentalForm';
+import { RentalForm } from '../../components/rentals/RentalForm';
 
 interface Props extends PageProps {
   customers: any[];

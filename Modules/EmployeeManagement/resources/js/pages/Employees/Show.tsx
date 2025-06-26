@@ -3,9 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
 import type { PageProps } from '@inertiajs/core';
 import type { BreadcrumbItem } from '@/Core';
-import { AppLayout } from '@/Core';
-import { Employee as BaseEmployee } from '@/EmployeeManagement/types/models';
-import { route } from '@/Core/utils/route';
+import { AppLayout, ToastService } from '@/Core';
+import type { Employee as BaseEmployee } from '../../types/models/index';
 import { getTranslation } from "@/Core";
 import { Breadcrumb } from "@/Core";
 import {
@@ -38,7 +37,7 @@ import {
 } from "@/Core";
 import { Input } from "@/Core";
 import { Label } from "@/Core";
-import { ArrowLeft, Edit, Trash2, FileText, Calendar, Check, X, AlertCircle, RefreshCw, ExternalLink, Download, User, Briefcase, CreditCard, FileBox, Upload, Printer, Car, Truck, Award, IdCard, Plus, History, Receipt, XCircle, CheckCircle, Clock } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, FileText, Calendar, Check, X, AlertCircle, RefreshCw, ExternalLink, Download, User, Briefcase, CreditCard, FileBox, Upload, Printer, Car, Truck, Award, IdCard, Plus, History, Receipt, XCircle, CheckCircle, Clock, Save, Loader2 } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
 import { usePermission } from "@/Core";
 import {
@@ -49,14 +48,18 @@ import {
 } from "@/Core";
 import { Alert, AlertDescription } from "@/Core";
 import axios from 'axios';
-import DocumentManager from '@/EmployeeManagement/components/employees/EmployeeDocumentManager';
+import DocumentManager from '../../components/employees/EmployeeDocumentManager';
 import { useQueryClient } from '@tanstack/react-query';
 import { Separator } from "@/Core";
 import { Avatar, AvatarFallback } from "@/Core";
-import { EmployeeToastService } from '@/EmployeeManagement/services/EmployeeToastService';
-import FinalSettlementTab from '@/EmployeeManagement/components/employees/FinalSettlementTab';
+import FinalSettlementTab from '../../components/employees/FinalSettlementTab';
 import { Textarea } from "@/Core";
-import { TimesheetSummary } from '@/EmployeeManagement/components/employees/timesheets/TimesheetSummary';
+import { TimesheetSummary, TimesheetList, TimesheetForm } from '../../components/employees/timesheets';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
+import { AssignmentHistory } from '../../components/assignments/AssignmentHistory';
 
 // MediaLibrary and DailyTimesheetRecords components - implement as needed
 const MediaLibrary = ({ employeeId }: { employeeId: number }) => (
@@ -79,10 +82,6 @@ const PaymentHistory = ({ employeeId, initialMonthlyHistory, initialTotalRepaid,
     Payment History component not yet implemented
   </div>
 );
-
-import { TimesheetList } from '@/EmployeeManagement/components/employees/timesheets/TimesheetList';
-import { TimesheetForm } from '@/EmployeeManagement/components/employees/timesheets/TimesheetForm';
-import { AssignmentHistory } from '@/EmployeeManagement/components/assignments/AssignmentHistory';
 
 const getBreadcrumbs = (t: any): BreadcrumbItem[] => [
   {
@@ -403,20 +402,15 @@ export default function Show({
 
   // Early return if no valid employee data
   if (!employee || !employee.id) {
-    const errorBreadcrumbs = [
-      { title: 'Dashboard', href: '/dashboard' },
-      { title: 'Employees', href: '/employees' },
-      { title: 'Employee Details', href: window.location.pathname },
-    ];
     return (
-      <AppLayout title={t('ttl_employee_details')} breadcrumbs={errorBreadcrumbs} requiredPermission="employees.view">
-        <Head title={t('employee_not_found')} />
-        <div className="flex h-full flex-1 flex-col items-center justify-center gap-6 p-4 md:gap-8 md:p-8">
-          <div className="text-center">
-            <h2 className="text-lg font-semibold">{t('employee_not_found')}</h2>
-            <p className="text-sm text-gray-500 mt-2">The requested employee could not be found.</p>
-            <Button className="mt-4" asChild>
-              <Link href={route('employees.index')}>
+      <AppLayout
+        title={t('employee_not_found')}
+        breadcrumbs={getBreadcrumbs(t)}
+      >
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-between mb-6">
+            <Button variant="outline" asChild>
+              <Link href={route('employees.index')} className="flex items-center">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 {t('btn_back_to_employees')}
               </Link>
@@ -427,138 +421,115 @@ export default function Show({
     );
   }
 
-  // Only define breadcrumbs here, after we know employee exists
-  const breadcrumbs = [ 
-    { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Employees', href: '/employees' },
-    { title: employee.first_name + ' ' + (employee.last_name || ''), href: window.location.pathname },
-  ];
+  // Use the getBreadcrumbs function instead of redefining breadcrumbs
+  const currentBreadcrumbs = getBreadcrumbs(t);
 
-  // File upload handler
+  const handleDocumentDelete = async (documentId: number, documentType: string) => {
+    try {
+      await axios.delete(`/api/employees/${employee.id}/documents/${documentId}`);
+      ToastService.success(`${documentType} deleted successfully`);
+      fetchDocuments();
+    } catch (error) {
+      console.error('Error deleting document:', error);
+      ToastService.error(`Failed to delete ${documentType}`);
+    }
+  };
+
   const handleFileUpload = async (file: File, documentType: string) => {
     if (!file) {
-      EmployeeToastService.employeeValidationError('file selection');
+      ToastService.error('No file selected');
       return;
     }
 
-    // Validate file type
-    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png']; 
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
     if (!allowedTypes.includes(file.type)) {
-      EmployeeToastService.employeeValidationError(`file type (allowed: ${allowedTypes.map(type => type.split('/')[1].toUpperCase()).join(', ')})`);
+      ToastService.error(`Invalid file type. Allowed types: ${allowedTypes.map(type => type.split('/')[1].toUpperCase()).join(', ')}`);
       return;
     }
 
-    // Validate file size (max 10MB)
     const maxSize = 10 * 1024 * 1024;
     if (file.size > maxSize) {
-      EmployeeToastService.employeeValidationError('file size (must be less than 10MB)');
+      ToastService.error('File size exceeds 10MB');
       return;
     }
 
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('document_type', documentType);
-
-    // Show loading toast before starting the upload
-    const loadingToastId = EmployeeToastService.processingEmployee(`${documentType.replace('_', ' ')} upload`);
+    const loadingToastId = ToastService.loading(`Uploading ${documentType.replace('_', ' ')}...`);
 
     try {
-      await router.post(route('employees.documents.upload', { employee: employee.id }), formData, {
-        forceFormData: true,
-        onSuccess: () => {
-          EmployeeToastService.dismiss(loadingToastId);
-          EmployeeToastService.documentUploaded(employee.first_name + ' ' + employee.last_name, documentType.replace('_', ' '));
-          // Refresh the page to show the updated document
-          router.reload();
+      const formData = new FormData();
+      formData.append('document', file);
+      formData.append('type', documentType);
+
+      await axios.post(`/api/employees/${employee.id}/documents`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
         },
-        onError: (errors) => {
-          EmployeeToastService.dismiss(loadingToastId);
-          const errorMessage = errors?.file?.[0] || errors?.message || 'Failed to upload document';
-          EmployeeToastService.documentUploadFailed(documentType.replace('_', ' '), errorMessage);
-          throw new Error(errorMessage);
-        }
       });
+
+      ToastService.dismiss(loadingToastId);
+      ToastService.success(`${documentType.replace('_', ' ')} uploaded successfully`);
+      fetchDocuments();
     } catch (error: any) {
-      EmployeeToastService.dismiss(loadingToastId);
-      EmployeeToastService.employeeProcessFailed('upload document', error.message);
+      ToastService.dismiss(loadingToastId);
+      const errorMessage = error.response?.data?.message || error.message;
+      ToastService.error(`Failed to upload ${documentType.replace('_', ' ')}: ${errorMessage}`);
     }
   };
 
-  const handleAdvanceRequest = () => {
-    if (!advanceAmount || isNaN(Number(advanceAmount)) || Number(advanceAmount) <= 0) {
-      EmployeeToastService.employeeValidationError('advance amount');
+  const handleAdvanceRequest = async (data: any) => {
+    const { amount, monthly_deduction, reason } = data;
+
+    if (!amount || amount <= 0) {
+      ToastService.error('Invalid advance amount');
       return;
     }
 
-    if (!monthlyDeduction || isNaN(Number(monthlyDeduction)) || Number(monthlyDeduction) <= 0) {
-      EmployeeToastService.employeeValidationError('monthly deduction amount');
+    if (!monthly_deduction || monthly_deduction <= 0) {
+      ToastService.error('Invalid monthly deduction amount');
       return;
     }
 
-    if (!advanceReason.trim()) {
-      EmployeeToastService.employeeValidationError('advance reason');
+    if (!reason) {
+      ToastService.error('Advance reason is required');
       return;
     }
 
-    // Calculate estimated repayment months
-    const amount = Number(advanceAmount);
-    const deduction = Number(monthlyDeduction);
-    const estimatedMonths = Math.ceil(amount / deduction);
+    const loadingToastId = ToastService.loading('Processing advance request...');
 
-    const loadingToastId = EmployeeToastService.processingEmployee('advance request');
-
-    router.post(route('advances.store', { employee: employee.id }), {
-      amount: amount,
-      monthly_deduction: deduction,
-      reason: advanceReason,
-      payment_date: format(new Date(), 'yyyy-MM-dd'),
-      estimated_months: estimatedMonths
-    }, {
-      onSuccess: () => {
-        EmployeeToastService.dismiss(loadingToastId);
-        EmployeeToastService.advanceRequested(employee.first_name + ' ' + employee.last_name, amount);
-        setAdvanceAmount('');
-        setMonthlyDeduction('');
-        setAdvanceReason('');
-        setIsAdvanceRequestDialogOpen(false);
-        // Force reload to get updated balances
-        router.reload();
-      },
-      onError: (errors) => {
-        EmployeeToastService.dismiss(loadingToastId);
-        console.error('Advance request error:', errors);
-        EmployeeToastService.employeeProcessFailed('create advance request', errors?.message);
-      }
-    });
-  };
-
-  const generatePaySlip = () => {
-    router.get(route('employees.payslip', { employee: employee.id, month: selectedMonth }), {});
-  };
-
-  const handleDelete = () => {
-    if (!hasPermission('employees.delete')) {
-      EmployeeToastService.permissionDenied('delete employee');
-      return;
-    }
-
-    if (confirm('Are you sure you want to delete this employee?')) {
-      setIsDeleting(true);
-      const loadingToastId = EmployeeToastService.processingEmployee('delete');
-
-      router.delete(route('employees.destroy', { employee: employee.id }), {
-        onSuccess: () => {
-          EmployeeToastService.dismiss(loadingToastId);
-          EmployeeToastService.employeeDeleted(`${employee.first_name} ${employee.last_name}`);
-          window.location.href = route('employees.index');
-          setIsDeleting(false);
-        },
-        onError: (errors) => {
-          EmployeeToastService.dismiss(loadingToastId);
-          EmployeeToastService.employeeProcessFailed('delete', errors?.message);
-          setIsDeleting(false);
-        }
+    try {
+      await axios.post(`/api/employees/${employee.id}/advances`, {
+        amount,
+        monthly_deduction,
+        reason,
       });
+
+      ToastService.dismiss(loadingToastId);
+      ToastService.success(`Advance request of SAR ${amount} created successfully`);
+      router.visit(`/employees/${employee.id}/advances`);
+    } catch (error: any) {
+      ToastService.dismiss(loadingToastId);
+      const errorMessage = error.response?.data?.message || error.message;
+      ToastService.error(`Failed to create advance request: ${errorMessage}`);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!hasPermission('employees.delete')) {
+      ToastService.error('You do not have permission to delete employees');
+      return;
+    }
+
+    const loadingToastId = ToastService.loading('Deleting employee...');
+
+    try {
+      await axios.delete(`/api/employees/${employee.id}`);
+      ToastService.dismiss(loadingToastId);
+      ToastService.success(`${employee.first_name} ${employee.last_name} deleted successfully`);
+      router.visit('/employees');
+    } catch (error: any) {
+      ToastService.dismiss(loadingToastId);
+      const errorMessage = error.response?.data?.message || error.message;
+      ToastService.error(`Failed to delete employee: ${errorMessage}`);
     }
   };
 
@@ -577,106 +548,83 @@ export default function Show({
     }
   };
 
-  const handleRepayment = async (amount: number, activeAdvances: any[]) => {
-    if (!amount || isNaN(amount) || amount <= 0) {
-      EmployeeToastService.employeeValidationError('repayment amount');
+  const handleRepayment = async (data: any) => {
+    const { amount } = data;
+
+    if (!amount || amount <= 0) {
+      ToastService.error('Invalid repayment amount');
       return;
     }
 
-    const loadingToastId = EmployeeToastService.processingEmployee('record repayment');
+    const loadingToastId = ToastService.loading('Recording repayment...');
 
-    router.post(route('advances.repayment', { employee: employee.id }), {
-      amount: amount,
-      advances: activeAdvances.map(advance => advance.id)
-    }, {
-      onSuccess: () => {
-        EmployeeToastService.dismiss(loadingToastId);
-        EmployeeToastService.advanceRepaid(employee.first_name + ' ' + employee.last_name, amount);
-        setRepaymentAmount('');
-        setIsRepaymentDialogOpen(false);
-        router.reload();
-      },
-      onError: (errors) => {
-        EmployeeToastService.dismiss(loadingToastId);
-        EmployeeToastService.employeeProcessFailed('record repayment', errors?.message);
-      }
-    });
+    try {
+      await axios.post(`/api/employees/${employee.id}/advances/${data.advance_id}/repayments`, {
+        amount,
+      });
+
+      ToastService.dismiss(loadingToastId);
+      ToastService.success(`Repayment of SAR ${amount} recorded successfully`);
+      router.visit(`/employees/${employee.id}/advances`);
+    } catch (error: any) {
+      ToastService.dismiss(loadingToastId);
+      const errorMessage = error.response?.data?.message || error.message;
+      ToastService.error(`Failed to record repayment: ${errorMessage}`);
+    }
   };
 
-  const handleApproveAdvance = (advanceId: number, type: 'advance' | 'advance_payment', status: Advance['status']) => {
-    const loadingToastId = EmployeeToastService.processingEmployee('approve advance');
+  const handleAdvanceApproval = async (advanceId: number, advanceAmount: number) => {
+    const loadingToastId = ToastService.loading('Approving advance...');
 
-    router.post(route('advances.approve', { advance: advanceId }), {}, {
-      onSuccess: () => {
-        EmployeeToastService.dismiss(loadingToastId);
-        EmployeeToastService.advanceApproved(employee.first_name + ' ' + employee.last_name, Number(advanceAmount));
-        router.reload();
-      },
-      onError: (errors) => {
-        EmployeeToastService.dismiss(loadingToastId);
-        EmployeeToastService.employeeProcessFailed('approve advance', errors?.message);
-      }
-    });
+    try {
+      await axios.post(`/api/employees/${employee.id}/advances/${advanceId}/approve`);
+      ToastService.dismiss(loadingToastId);
+      ToastService.success(`Advance of SAR ${advanceAmount} approved successfully`);
+      router.visit(`/employees/${employee.id}/advances`);
+    } catch (error: any) {
+      ToastService.dismiss(loadingToastId);
+      const errorMessage = error.response?.data?.message || error.message;
+      ToastService.error(`Failed to approve advance: ${errorMessage}`);
+    }
   };
 
-  const handleRejectAdvance = (advanceId: number, rejectionReason: string) => {
-    if (!rejectionReason.trim()) {
-      EmployeeToastService.employeeValidationError('rejection reason');
+  const handleAdvanceRejection = async (advanceId: number, reason: string) => {
+    if (!reason) {
+      ToastService.error('Rejection reason is required');
       return;
     }
 
-    const loadingToastId = EmployeeToastService.processingEmployee('reject advance');
+    const loadingToastId = ToastService.loading('Rejecting advance...');
 
-    router.post(route('advances.reject', { advance: advanceId }), {
-      rejection_reason: rejectionReason
-    }, {
-      onSuccess: () => {
-        EmployeeToastService.dismiss(loadingToastId);
-        EmployeeToastService.advanceRejected(employee.first_name + ' ' + employee.last_name);
-        setRejectionReason('');
-        setIsRejectDialogOpen(false);
-        router.reload();
-      },
-      onError: (errors) => {
-        EmployeeToastService.dismiss(loadingToastId);
-        EmployeeToastService.employeeProcessFailed('reject advance', errors?.message);
-      }
-    });
+    try {
+      await axios.post(`/api/employees/${employee.id}/advances/${advanceId}/reject`, {
+        reason,
+      });
+
+      ToastService.dismiss(loadingToastId);
+      ToastService.success('Advance rejected successfully');
+      router.visit(`/employees/${employee.id}/advances`);
+    } catch (error: any) {
+      ToastService.dismiss(loadingToastId);
+      const errorMessage = error.response?.data?.message || error.message;
+      ToastService.error(`Failed to reject advance: ${errorMessage}`);
+    }
   };
 
-  const handleDeleteAdvance = (advanceId: number) => {
+  const handleAdvanceDelete = async (advanceId: number) => {
     if (!advanceId) {
-      EmployeeToastService.employeeValidationError('advance selection');
+      ToastService.error('No advance selected');
       return;
     }
 
-    console.log('Deleting advance:', { employeeId: employee.id, advanceId });
-
-    // Log the route parameters
-    const routeParams = {
-      employee: employee.id,
-      advance: advanceId
-    };
-    console.log('Route parameters:', routeParams);
-
-    // Log the generated URL
-    const url = route('advances.destroy', routeParams);
-    console.log('Generated URL:', url);
-
-    // Use Inertia's router.delete with the correct route
-    router.delete(url, {
-      onSuccess: () => {
-        EmployeeToastService.employeeProcessed('advance deletion');
-        setIsDeleteDialogOpen(false);
-        // Force reload the page to ensure all data is updated
-        router.visit(route('employees.show', { employee: employee.id }));
-      },
-      onError: (errors) => {
-        console.error('Delete error:', errors);
-        EmployeeToastService.employeeProcessFailed('delete advance');
-        setIsDeleteDialogOpen(false);
-      }
-    });
+    try {
+      await axios.delete(`/api/employees/${employee.id}/advances/${advanceId}`);
+      ToastService.success('Advance deleted successfully');
+      router.visit(`/employees/${employee.id}/advances`);
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || error.message;
+      ToastService.error(`Failed to delete advance: ${errorMessage}`);
+    }
   };
 
   // Function to handle tab changes with document loading control
@@ -862,40 +810,38 @@ export default function Show({
     }
   };
 
-  const handleApproveSettlement = (id: number) => {
-    const loadingToastId = EmployeeToastService.processingEmployee('approve settlement');
+  const handleSettlementApproval = async () => {
+    const loadingToastId = ToastService.loading('Approving settlement...');
 
-    router.post(route('settlements.approve', { settlement: id }), {}, {
-      onSuccess: () => {
-        EmployeeToastService.dismiss(loadingToastId);
-        EmployeeToastService.settlementApproved(employee.first_name + ' ' + employee.last_name);
-        router.reload();
-      },
-      onError: (errors) => {
-        EmployeeToastService.dismiss(loadingToastId);
-        EmployeeToastService.employeeProcessFailed('approve settlement', errors?.message);
-      }
-    });
+    try {
+      await axios.post(`/api/employees/${employee.id}/settlement/approve`);
+      ToastService.dismiss(loadingToastId);
+      ToastService.success('Settlement approved successfully');
+      router.visit(`/employees/${employee.id}/settlement`);
+    } catch (error: any) {
+      ToastService.dismiss(loadingToastId);
+      const errorMessage = error.response?.data?.message || error.message;
+      ToastService.error(`Failed to approve settlement: ${errorMessage}`);
+    }
   };
 
-  const handleRejectSettlement = (id: number) => {
-    const loadingToastId = EmployeeToastService.processingEmployee('reject settlement');
+  const handleSettlementRejection = async () => {
+    const loadingToastId = ToastService.loading('Rejecting settlement...');
 
-    router.post(route('settlements.reject', { settlement: id }), {}, {
-      onSuccess: () => {
-        EmployeeToastService.dismiss(loadingToastId);
-        EmployeeToastService.settlementRejected(employee.first_name + ' ' + employee.last_name);
-        router.reload();
-      },
-      onError: (errors) => {
-        EmployeeToastService.dismiss(loadingToastId);
-        EmployeeToastService.employeeProcessFailed('reject settlement', errors?.message);
-      }
-    });
+    try {
+      await axios.post(`/api/employees/${employee.id}/settlement/reject`);
+      ToastService.dismiss(loadingToastId);
+      ToastService.success('Settlement rejected successfully');
+      router.visit(`/employees/${employee.id}/settlement`);
+    } catch (error: any) {
+      ToastService.dismiss(loadingToastId);
+      const errorMessage = error.response?.data?.message || error.message;
+      ToastService.error(`Failed to reject settlement: ${errorMessage}`);
+    }
   };
 
   return (
-    <AppLayout title={employee ? `${employee.first_name || ''} ${employee.last_name || ''}` : 'Employee Details'} breadcrumbs={breadcrumbs} requiredPermission="employees.view">
+    <AppLayout title={employee ? `${employee.first_name || ''} ${employee.last_name || ''}` : 'Employee Details'} breadcrumbs={currentBreadcrumbs} requiredPermission="employees.view">
       <Head title={t('ttl_employee_details')} />
 
       <div className="flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

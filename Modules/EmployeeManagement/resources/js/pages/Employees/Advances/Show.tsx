@@ -1,28 +1,26 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, router } from '@inertiajs/react';
-import { Button } from "@/Core";
-import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
-import { format } from 'date-fns';
-import { Badge } from "@/Core";
 import {
+  Button,
+  Badge,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/Core";
-import { AppLayout } from '@/Core';
-import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
   CardFooter,
-} from "@/Core";
-import { EmployeeToastService } from '../../services/EmployeeToastService';
+  AppLayout,
+  ToastService
+} from '@/Core';
+import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
+import { format } from 'date-fns';
 
 interface User {
   id: number;
@@ -92,11 +90,11 @@ export default function Show({ employee, advance }: Props) {
   const handleDelete = () => {
     router.delete(`/employees/${employee.id}/advances/${advance.id}`, {
       onSuccess: () => {
-        EmployeeToastService.employeeProcessed('advance payment deletion');
+        ToastService.success('Advance payment deleted successfully');
         router.visit(`/employees/${employee.id}/advances`);
       },
       onError: (errors) => {
-        EmployeeToastService.employeeProcessFailed('delete advance payment', errors?.message);
+        ToastService.error(`Failed to delete advance payment: ${errors?.message}`);
       }
     });
   };

@@ -1,34 +1,37 @@
 import React, { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from "@inertiajs/react";
-import { PageProps, User } from '@/Core/types';
-import { Customer, Equipment } from '@/Core/types/models';
-import { AppLayout } from '@/Core/layouts';
+import { PageProps, User, Customer, Equipment } from '@/Core/types';
+import { AppLayout } from '@/Core';
 import { format, isAfter, isBefore, startOfToday } from "date-fns";
 import { toast } from "sonner";
 import { cn } from '@/lib/utils';
 import { ChevronLeftIcon } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
 import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '@/Core/components/ui/select';
-import {
     ToggleGroup,
     ToggleGroupItem,
-} from '@/Core/components/ui/toggle-group';
-import { Button } from "@/Core/components/ui/button";
+    Button,
+    Badge,
+    Input,
+    Label,
+    Textarea,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+    Calendar,
+    Separator,
+} from '@/Core';
 import { useForm } from '@inertiajs/react';
-import { Badge } from "@/Core/components/ui/badge";
-import { Input } from '@/Core/components/ui/input';
-import { Label } from '@/Core/components/ui/label';
-import { Textarea } from '@/Core/components/ui/textarea';
-import { Popover, PopoverContent, PopoverTrigger } from '@/Core/components/ui/popover';
-import { Calendar } from '@/Core/components/ui/calendar';
-import { Separator } from '@/Core/components/ui/separator';
 
 // Icons
 import { CalendarIcon } from "lucide-react";

@@ -110,28 +110,37 @@
         "baseUrl": ".",
         "paths": {
             "@/*": ["resources/js/*"],
+            "@/Core": ["Modules/Core/resources/js"],
             "@/Core/*": ["Modules/Core/resources/js/*"],
+            "@/Core/components": ["Modules/Core/resources/js/components"],
             "@/Core/components/*": ["Modules/Core/resources/js/components/*"],
+            "@/Core/components/ui": ["Modules/Core/resources/js/components/ui"],
             "@/Core/components/ui/*": ["Modules/Core/resources/js/components/ui/*"],
+            "@/Core/layouts": ["Modules/Core/resources/js/layouts"],
             "@/Core/layouts/*": ["Modules/Core/resources/js/layouts/*"],
-            "@/Core/layouts/AppLayout": ["Modules/Core/resources/js/layouts/AppLayout"],
-            "@/Core/layouts/AuthenticatedLayout": ["Modules/Core/resources/js/layouts/AuthenticatedLayout"],
-            "@/Core/layouts/GuestLayout": ["Modules/Core/resources/js/layouts/GuestLayout"],
-            "@/Core/layouts/auth-layout": ["Modules/Core/resources/js/layouts/auth-layout"],
-            "@/Core/services/*": ["Modules/Core/resources/js/services/*"],
             "@/Core/services": ["Modules/Core/resources/js/services"],
+            "@/Core/services/*": ["Modules/Core/resources/js/services/*"],
+            "@/Core/types": ["Modules/Core/resources/js/types"],
             "@/Core/types/*": ["Modules/Core/resources/js/types/*"],
+            "@/Core/utils": ["Modules/Core/resources/js/utils"],
+            "@/Core/utils/*": ["Modules/Core/resources/js/utils/*"],
+            "@/EmployeeManagement": ["Modules/EmployeeManagement/resources/js"],
             "@/EmployeeManagement/*": ["Modules/EmployeeManagement/resources/js/*"],
-            "@/EquipmentManagement/*": ["Modules/EquipmentManagement/resources/js/*"],
-            "@/RentalManagement/*": ["Modules/RentalManagement/resources/js/*"],
-            "@/TimesheetManagement/*": ["Modules/TimesheetManagement/resources/js/*"],
-            "@/Settings/*": ["Modules/Settings/resources/js/*"]
+            "@/EmployeeManagement/components": ["Modules/EmployeeManagement/resources/js/components"],
+            "@/EmployeeManagement/components/*": ["Modules/EmployeeManagement/resources/js/components/*"],
+            "@/EmployeeManagement/pages": ["Modules/EmployeeManagement/resources/js/pages"],
+            "@/EmployeeManagement/pages/*": ["Modules/EmployeeManagement/resources/js/pages/*"],
+            "@/EmployeeManagement/services": ["Modules/EmployeeManagement/resources/js/services"],
+            "@/EmployeeManagement/services/*": ["Modules/EmployeeManagement/resources/js/services/*"],
+            "@/EmployeeManagement/types": ["Modules/EmployeeManagement/resources/js/types"],
+            "@/EmployeeManagement/types/*": ["Modules/EmployeeManagement/resources/js/types/*"]
         },
         "jsx": "react-jsx",
         "types": ["vite/client"],
         "typeRoots": [
             "./node_modules/@types",
-            "./src/types"
+            "./src/types",
+            "./types"
         ]
     },
     "include": [
@@ -140,6 +149,7 @@
         "Modules/**/*.ts",
         "Modules/**/*.tsx",
         "src/types/**/*.d.ts",
+        "types/**/*.d.ts",
         "vite.config.ts"
     ],
     "exclude": ["node_modules"]
