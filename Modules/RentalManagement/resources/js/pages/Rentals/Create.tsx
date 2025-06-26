@@ -240,7 +240,7 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
     console.log("Ziggy routes in Create.tsx:", Ziggy.routes);
 
     return (
-        <AppLayout title={t('ttl_create_rental') || 'Create Rental'}>
+        <AppLayout title={String(t('ttl_create_rental')) || 'Create Rental'}>
             <div className="flex min-h-screen w-full flex-col bg-muted/40">
                 <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
                     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
@@ -251,20 +251,20 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                             <div className="flex items-center gap-4">
                                 <Button variant="outline" size="icon" className="h-7 w-7">
                                     <ChevronLeftIcon className="h-4 w-4" />
-                                    <span className="sr-only">{t('back') || 'Back'}</span>
+                                    <span className="sr-only">{String(t('back')) || 'Back'}</span>
                                 </Button>
                                 <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
-                                    {t('new_rental') || 'New Rental'}
+                                    {String(t('new_rental')) || 'New Rental'}
                                 </h1>
                                 <Badge variant="outline" className="ml-auto sm:ml-0">
-                                    {t('draft') || 'Draft'}
+                                    {String(t('draft')) || 'Draft'}
                                 </Badge>
                                 <div className="hidden items-center gap-2 md:ml-auto md:flex">
                                     <Button variant="outline" size="sm" type="button">
-                                        {t('discard') || 'Discard'}
+                                        {String(t('discard')) || 'Discard'}
                                     </Button>
                                     <Button size="sm" type="submit" disabled={isSubmitting}>
-                                        {isSubmitting ? 'Saving...' : (t('save_rental') || 'Save Rental')}
+                                        {isSubmitting ? 'Saving...' : (String(t('save_rental')) || 'Save Rental')}
                                     </Button>
                                 </div>
                             </div>
@@ -272,52 +272,52 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                 <div className="grid auto-rows-max items-start gap-4 lg:col-span-5 lg:gap-8">
                                     <Card x-chunk="dashboard-07-chunk-0">
                                         <CardHeader>
-                                            <CardTitle>{t('rental_details') || 'Rental Details'}</CardTitle>
+                                            <CardTitle>{String(t('rental_details')) || 'Rental Details'}</CardTitle>
                                             <CardDescription>
-                                                {t('rental_details_desc') || 'Fill in the details for the new rental agreement'}
+                                                {String(t('rental_details_desc')) || 'Fill in the details for the new rental agreement'}
                                             </CardDescription>
                                         </CardHeader>
                                         <CardContent>
                                             <div className="grid gap-6">
                                                 <div className="grid gap-3">
-                                                    <Label htmlFor="title">{t('rental_title') || 'Rental Title'}</Label>
+                                                    <Label htmlFor="title">{String(t('rental_title')) || 'Rental Title'}</Label>
                                                     <Input
                                                         id="title"
                                                         type="text"
                                                         className="w-full"
-                                                        defaultValue={t('default_rental_title') || 'Weekly Equipment Rental - Backhoe'}
+                                                        defaultValue={String(t('default_rental_title')) || 'Weekly Equipment Rental - Backhoe'}
                                                     />
                                                 </div>
                                                 <div className="grid gap-3">
-                                                    <Label htmlFor="customer">{t('customer') || 'Customer'}</Label>
+                                                    <Label htmlFor="customer">{String(t('customer')) || 'Customer'}</Label>
                                                     <Select
                                                         value={data.customer_id}
                                                         onValueChange={(value) => setData('customer_id', value)}
                                                     >
                                                         <SelectTrigger id="customer">
-                                                            <SelectValue placeholder={t('select_customer') || 'Select a customer'} />
+                                                            <SelectValue placeholder={String(t('select_customer')) || 'Select a customer'} />
                                                         </SelectTrigger>
                                                         <SelectContent>
                                                             {customers.map((customer) => (
                                                                 <SelectItem key={customer.id} value={customer.id.toString()}>
-                                                                    {customer.name}
+                                                                    {String(customer.name)}
                                                                 </SelectItem>
                                                             ))}
                                                         </SelectContent>
                                                     </Select>
                                                 </div>
                                                 <div className="grid gap-3">
-                                                    <Label htmlFor="description">{t('description') || 'Description'}</Label>
+                                                    <Label htmlFor="description">{String(t('description')) || 'Description'}</Label>
                                                     <Textarea
                                                         id="description"
                                                         value={data.notes}
                                                         onChange={(e) => setData('notes', e.target.value)}
-                                                        placeholder="Rental of heavy machinery for construction project."
+                                                        placeholder={String(t('rental_description_placeholder')) || "Rental of heavy machinery for construction project."}
                                                     />
                                                 </div>
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div className="grid gap-3">
-                                                        <Label htmlFor="start-date">{t('start_date') || 'Start Date'}</Label>
+                                                        <Label htmlFor="start-date">{String(t('start_date')) || 'Start Date'}</Label>
                                                         <Popover>
                                                             <PopoverTrigger asChild>
                                                                 <Button
@@ -328,7 +328,7 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                                                     )}
                                                                 >
                                                                     <CalendarIcon className="mr-2 h-4 w-4" />
-                                                                    {data.start_date ? format(new Date(data.start_date), "PPP") : <span>Pick a date</span>}
+                                                                    {data.start_date ? format(new Date(data.start_date), "PPP") : <span>{String(t('pick_a_date')) || 'Pick a date'}</span>}
                                                                 </Button>
                                                             </PopoverTrigger>
                                                             <PopoverContent className="w-auto p-0">
@@ -342,7 +342,7 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                                         </Popover>
                                                     </div>
                                                     <div className="grid gap-3">
-                                                        <Label htmlFor="end-date">{t('end_date') || 'End Date'}</Label>
+                                                        <Label htmlFor="end-date">{String(t('end_date')) || 'End Date'}</Label>
                                                         <Popover>
                                                             <PopoverTrigger asChild>
                                                                 <Button
@@ -353,7 +353,7 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                                                     )}
                                                                 >
                                                                     <CalendarIcon className="mr-2 h-4 w-4" />
-                                                                    {data.expected_end_date ? format(new Date(data.expected_end_date), "PPP") : <span>Pick a date</span>}
+                                                                    {data.expected_end_date ? format(new Date(data.expected_end_date), "PPP") : <span>{String(t('pick_a_date')) || 'Pick a date'}</span>}
                                                                 </Button>
                                                             </PopoverTrigger>
                                                             <PopoverContent className="w-auto p-0">
@@ -368,20 +368,20 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                                     </div>
                                                 </div>
                                                 <div className="grid gap-3">
-                                                    <Label htmlFor="rental-period">{String(t('rental_period') || 'Rental Period')}</Label>
+                                                    <Label htmlFor="rental-period">{String(t('rental_period')) || 'Rental Period'}</Label>
                                                     <ToggleGroup 
                                                         type="single" 
                                                         value={data.billing_cycle} 
                                                         onValueChange={(value) => value && setData('billing_cycle', value)} 
                                                         variant="outline"
                                                     >
-                                                        <ToggleGroupItem value="daily">{String(t('daily') || 'Daily')}</ToggleGroupItem>
-                                                        <ToggleGroupItem value="weekly">{String(t('weekly') || 'Weekly')}</ToggleGroupItem>
-                                                        <ToggleGroupItem value="monthly">{String(t('monthly') || 'Monthly')}</ToggleGroupItem>
+                                                        <ToggleGroupItem value="daily">{String(t('daily')) || 'Daily'}</ToggleGroupItem>
+                                                        <ToggleGroupItem value="weekly">{String(t('weekly')) || 'Weekly'}</ToggleGroupItem>
+                                                        <ToggleGroupItem value="monthly">{String(t('monthly')) || 'Monthly'}</ToggleGroupItem>
                                                     </ToggleGroup>
                                                 </div>
                                                 <div className="grid gap-3">
-                                                    <Label htmlFor="rental-rate">{t('rental_rate') || 'Rental Rate'} ({defaultCurrency})</Label>
+                                                    <Label htmlFor="rental-rate">{String(t('rental_rate')) || 'Rental Rate'} ({defaultCurrency})</Label>
                                                     <Input 
                                                         id="rental-rate" 
                                                         type="number" 
@@ -391,7 +391,7 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                                     />
                                                 </div>
                                                 <div className="grid gap-3">
-                                                    <Label htmlFor="deposit">{t('deposit') || 'Deposit'} ({defaultCurrency})</Label>
+                                                    <Label htmlFor="deposit">{String(t('deposit')) || 'Deposit'} ({defaultCurrency})</Label>
                                                     <Input 
                                                         id="deposit" 
                                                         type="number" 
@@ -405,45 +405,45 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                     </Card>
                                     <Card x-chunk="dashboard-07-chunk-1">
                                         <CardHeader>
-                                            <CardTitle>{String(t('assigned_equipment') || 'Assigned Equipment')}</CardTitle>
+                                            <CardTitle>{String(t('assigned_equipment')) || 'Assigned Equipment'}</CardTitle>
                                             <CardDescription>
-                                                {String(t('assigned_equipment_desc') || 'Select the equipment to be included in this rental')}
+                                                {String(t('assigned_equipment_desc')) || 'Select the equipment to be included in this rental'}
                                             </CardDescription>
                                         </CardHeader>
                                         <CardContent>
                                             <div className="grid gap-6">
                                                 <div className="grid gap-3">
-                                                    <Label htmlFor="equipment">{t('equipment') || 'Equipment'}</Label>
+                                                    <Label htmlFor="equipment">{String(t('equipment')) || 'Equipment'}</Label>
                                                     <Select
                                                         value={data.selected_equipment_id}
                                                         onValueChange={(value) => setData('selected_equipment_id', value)}
                                                     >
                                                         <SelectTrigger id="equipment">
-                                                            <SelectValue placeholder={t('select_equipment') || 'Select equipment'} />
+                                                            <SelectValue placeholder={String(t('select_equipment')) || 'Select equipment'} />
                                                         </SelectTrigger>
                                                         <SelectContent>
                                                             {equipment.map((item) => (
                                                                 <SelectItem key={item.id} value={item.id.toString()}>
-                                                                    {item.name}
+                                                                    {String(item.name)}
                                                                 </SelectItem>
                                                             ))}
                                                         </SelectContent>
                                                     </Select>
                                                 </div>
                                                 <div className="grid gap-3">
-                                                    <Label htmlFor="operator">{t('assigned_operator') || 'Assigned Operator'} (Optional)</Label>
+                                                    <Label htmlFor="operator">{String(t('assigned_operator')) || 'Assigned Operator'} (Optional)</Label>
                                                     <Select
-                                                        value={data.selected_operator_id}
-                                                        onValueChange={(value) => setData('selected_operator_id', value)}
+                                                        value={data.selected_operator_id || "none"}
+                                                        onValueChange={(value) => setData('selected_operator_id', value === "none" ? "" : value)}
                                                     >
                                                         <SelectTrigger id="operator">
-                                                            <SelectValue placeholder={t('select_operator') || 'Select an operator'} />
+                                                            <SelectValue placeholder={String(t('select_operator')) || 'Select an operator'} />
                                                         </SelectTrigger>
                                                         <SelectContent>
-                                                            <SelectItem value="">No Operator</SelectItem>
+                                                            <SelectItem value="none">{String(t('opt_no_operator')) || 'No Operator'}</SelectItem>
                                                             {employees.map((operator) => (
                                                                 <SelectItem key={operator.id} value={operator.id.toString()}>
-                                                                    {operator.name}
+                                                                    {String(operator.name)}
                                                                 </SelectItem>
                                                             ))}
                                                         </SelectContent>
@@ -456,21 +456,21 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                 <div className="grid auto-rows-max items-start gap-4 lg:col-span-3 lg:gap-8">
                                     <Card x-chunk="dashboard-07-chunk-3">
                                         <CardHeader>
-                                            <CardTitle>{t('rental_summary') || 'Rental Summary'}</CardTitle>
+                                            <CardTitle>{String(t('rental_summary')) || 'Rental Summary'}</CardTitle>
                                         </CardHeader>
                                         <CardContent>
                                             <div className="grid gap-2">
                                                 <div className="flex items-center justify-between">
-                                                    <div>{t('subtotal') || 'Subtotal'}</div>
+                                                    <div>{String(t('subtotal')) || 'Subtotal'}</div>
                                                     <div>{defaultCurrency} {data.subtotal.toFixed(2)}</div>
                                                 </div>
                                                 <div className="flex items-center justify-between">
-                                                    <div>{t('tax') || 'Tax'} ({data.tax_percentage}%)</div>
+                                                    <div>{String(t('tax')) || 'Tax'} ({data.tax_percentage}%)</div>
                                                     <div>{defaultCurrency} {data.tax_amount.toFixed(2)}</div>
                                                 </div>
                                                 <Separator className="my-2" />
                                                 <div className="flex items-center justify-between font-semibold">
-                                                    <div>{t('total') || 'Total'}</div>
+                                                    <div>{String(t('total')) || 'Total'}</div>
                                                     <div>{defaultCurrency} {data.total_amount.toFixed(2)}</div>
                                                 </div>
                                             </div>
@@ -480,21 +480,21 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                         <CardHeader className="flex flex-row items-start bg-muted/50">
                                             <div className="grid gap-0">
                                                 <CardTitle className="group flex items-center gap-2 text-lg">
-                                                    {t('payment_schedule') || 'Payment Schedule'}
+                                                    {String(t('payment_schedule')) || 'Payment Schedule'}
                                                 </CardTitle>
-                                                <CardDescription>{t('payment_schedule_desc') || 'Configure payment installments'}</CardDescription>
+                                                <CardDescription>{String(t('payment_schedule_desc')) || 'Configure payment installments'}</CardDescription>
                                             </div>
                                         </CardHeader>
                                         <CardContent className="p-6 text-sm">
                                             <div className="grid gap-3">
-                                                <div className="font-semibold">{t('installments') || 'Installments'}</div>
+                                                <div className="font-semibold">{String(t('installments')) || 'Installments'}</div>
                                                 <ul className="grid gap-3">
                                                     <li className="flex items-center justify-between">
-                                                        <span className="text-muted-foreground">{t('first_payment') || 'First Payment'} (50%)</span>
+                                                        <span className="text-muted-foreground">{String(t('first_payment')) || 'First Payment'} (50%)</span>
                                                         <span>{defaultCurrency} {(data.total_amount / 2).toFixed(2)}</span>
                                                     </li>
                                                     <li className="flex items-center justify-between">
-                                                        <span className="text-muted-foreground">{t('second_payment') || 'Second Payment'} (50%)</span>
+                                                        <span className="text-muted-foreground">{String(t('second_payment')) || 'Second Payment'} (50%)</span>
                                                         <span>{defaultCurrency} {(data.total_amount / 2).toFixed(2)}</span>
                                                     </li>
                                                 </ul>
