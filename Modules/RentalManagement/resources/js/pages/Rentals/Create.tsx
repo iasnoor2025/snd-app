@@ -315,6 +315,16 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                                         placeholder={String(t('rental_description_placeholder')) || "Rental of heavy machinery for construction project."}
                                                     />
                                                 </div>
+                                                <div className="grid gap-3">
+                                                    <Label htmlFor="rental-number">{String(t('rental_number')) || 'Rental Number'}</Label>
+                                                    <Input
+                                                        id="rental-number"
+                                                        type="text"
+                                                        value={data.rental_number}
+                                                        readOnly
+                                                        className="bg-muted"
+                                                    />
+                                                </div>
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div className="grid gap-3">
                                                         <Label htmlFor="start-date">{String(t('start_date')) || 'Start Date'}</Label>
@@ -342,7 +352,7 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                                         </Popover>
                                                     </div>
                                                     <div className="grid gap-3">
-                                                        <Label htmlFor="end-date">{String(t('end_date')) || 'End Date'}</Label>
+                                                        <Label htmlFor="end-date">{String(t('expected_end_date')) || 'Expected End Date'}</Label>
                                                         <Popover>
                                                             <PopoverTrigger asChild>
                                                                 <Button

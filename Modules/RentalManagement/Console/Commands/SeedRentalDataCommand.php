@@ -105,7 +105,7 @@ class SeedRentalDataCommand extends Command
             
             // Create first rental using direct DB operations
             $rental1Id = DB::table('rentals')->insertGetId([
-                'rental_number' => 'RNT-' . $timestamp . '-001',
+                'rental_number' => 'RENT-' . date('Y') . '-00001',
                 'customer_id' => $customerId,
                 'status' => 'active',
                 'start_date' => $now->subDays(10),
@@ -144,7 +144,7 @@ class SeedRentalDataCommand extends Command
             
             // Create second rental
             $rental2Id = DB::table('rentals')->insertGetId([
-                'rental_number' => 'RNT-' . $timestamp . '-002',
+                'rental_number' => 'RENT-' . date('Y') . '-00002',
                 'customer_id' => $customerId,
                 'status' => 'completed',
                 'start_date' => $now->subMonths(2),
@@ -188,7 +188,7 @@ class SeedRentalDataCommand extends Command
             
             // Create third rental
             $rental3Id = DB::table('rentals')->insertGetId([
-                'rental_number' => 'RNT-' . $timestamp . '-003',
+                'rental_number' => 'RENT-' . date('Y') . '-00003',
                 'customer_id' => $customerId,
                 'status' => 'pending',
                 'start_date' => $now->addDays(5),

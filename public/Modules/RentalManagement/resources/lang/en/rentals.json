@@ -11,7 +11,7 @@
     "customer": "Customer",
     "equipment": "Equipment",
     "start_date": "Start Date",
-    "end_date": "End Date",
+    "expected_end_date": "Expected End Date",
     "status": "Status",
     "rental_rate": "Rental Rate",
     "deposit": "Deposit"

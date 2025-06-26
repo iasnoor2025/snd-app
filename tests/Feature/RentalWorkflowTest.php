@@ -104,7 +104,7 @@ class RentalWorkflowTest extends TestCase
                 'customer_id' => $this->customer->id,
                 'equipment_id' => $this->equipment->id,
                 'start_date' => now()->addDay(),
-                'end_date' => now()->addDays(7),
+                'expected_end_date' => now()->addDays(7),
                 'purpose' => 'Construction project',
                 'delivery_location' => '123 Site Street'
             ]);
@@ -218,7 +218,7 @@ class RentalWorkflowTest extends TestCase
                 'customer_id' => $this->customer->id,
                 'equipment_id' => $this->equipment->id,
                 'start_date' => now()->addDays(2),
-                'end_date' => now()->addDays(9)
+                'expected_end_date' => now()->addDays(9)
             ]);
 
         $rentalId = $response->json('data.id');
@@ -271,7 +271,7 @@ class RentalWorkflowTest extends TestCase
                 'customer_id' => $this->customer->id,
                 'equipment_id' => $this->equipment->id,
                 'start_date' => now(),
-                'end_date' => now()->addDays(7)
+                'expected_end_date' => now()->addDays(7)
             ]);
 
         $rentalId = $response->json('data.id');
@@ -282,7 +282,7 @@ class RentalWorkflowTest extends TestCase
         // Request extension
         $response = $this->withHeaders(['Authorization' => 'Bearer ' . $managerToken])
             ->postJson("/api/rentals/{$rentalId}/extend", [
-                'new_end_date' => now()->addDays(14),
+                'new_expected_end_date' => now()->addDays(14),
                 'reason' => 'Project timeline extended'
             ]);
 
@@ -291,7 +291,7 @@ class RentalWorkflowTest extends TestCase
         // Verify extension
         $this->assertDatabaseHas('rentals', [
             'id' => $rentalId,
-            'end_date' => now()->addDays(14)->format('Y-m-d')
+            'expected_end_date' => now()->addDays(14)->format('Y-m-d')
         ]);
 
         Notification::assertSentTo(
@@ -313,7 +313,7 @@ class RentalWorkflowTest extends TestCase
                 'customer_id' => $this->customer->id,
                 'equipment_id' => $this->equipment->id,
                 'start_date' => now(),
-                'end_date' => now()->addDays(14)
+                'expected_end_date' => now()->addDays(14)
             ]);
 
         $rentalId = $response->json('data.id');
@@ -365,7 +365,7 @@ class RentalWorkflowTest extends TestCase
                 'customer_id' => $this->customer->id,
                 'equipment_id' => $this->equipment->id,
                 'start_date' => now(),
-                'end_date' => now()->addDays(7)
+                'expected_end_date' => now()->addDays(7)
             ]);
 
         $rentalId = $response->json('data.id');

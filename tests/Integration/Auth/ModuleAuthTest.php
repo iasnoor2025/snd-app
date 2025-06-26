@@ -212,7 +212,7 @@ class ModuleAuthTest extends TestCase
                 'customer_id' => 1,
                 'equipment_id' => 1,
                 'start_date' => now(),
-                'end_date' => now()->addDays(7)
+                'expected_end_date' => now()->addDays(7)
             ])
             ->assertStatus(201);
 

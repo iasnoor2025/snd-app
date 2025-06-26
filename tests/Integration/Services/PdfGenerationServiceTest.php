@@ -57,7 +57,7 @@ class PdfGenerationServiceTest extends TestCase
         $data = [
             'project_name' => $this->project->name,
             'start_date' => '2024-01-01',
-            'end_date' => '2024-12-31',
+            'expected_end_date' => '2024-12-31',
             'status' => 'In Progress',
             'metrics' => [
                 'completion' => '60%',

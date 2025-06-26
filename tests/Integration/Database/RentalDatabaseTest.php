@@ -34,7 +34,7 @@ class RentalDatabaseTest extends TestCase
             'employee_id' => $employee->id,
             'status' => 'pending',
             'start_date' => Carbon::now(),
-            'end_date' => Carbon::now()->addDays(7),
+            'expected_end_date' => Carbon::now()->addDays(7),
             'total_amount' => 1000.00
         ]);
 
@@ -196,7 +196,7 @@ class RentalDatabaseTest extends TestCase
             'employee_id' => Employee::factory()->create()->id,
             'status' => 'pending',
             'start_date' => $startDate,
-            'end_date' => $endDate,
+            'expected_end_date' => $endDate,
             'total_amount' => 1000.00
         ]);
     }

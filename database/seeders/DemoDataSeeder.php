@@ -296,9 +296,9 @@ class DemoDataSeeder extends Seeder
         if ($customers->count() > 0 && $equipment->count() > 0) {
             // Active rental
             Rental::firstOrCreate(
-                ['rental_number' => 'RNT-2024-001'],
+                ['rental_number' => 'RENT-2024-00001'],
                 [
-                    'rental_number' => 'RNT-2024-001',
+                    'rental_number' => 'RENT-2024-00001',
                     'customer_id' => $customers->first()->id,
                     'start_date' => Carbon::now()->subDays(5),
                     'expected_end_date' => Carbon::now()->addDays(10),
@@ -311,9 +311,9 @@ class DemoDataSeeder extends Seeder
 
             // Completed rental
             Rental::firstOrCreate(
-                ['rental_number' => 'RNT-2024-002'],
+                ['rental_number' => 'RENT-2024-00002'],
                 [
-                    'rental_number' => 'RNT-2024-002',
+                    'rental_number' => 'RENT-2024-00002',
                     'customer_id' => $customers->skip(1)->first()->id,
                     'start_date' => Carbon::now()->subDays(20),
                     'expected_end_date' => Carbon::now()->subDays(5),
@@ -327,9 +327,9 @@ class DemoDataSeeder extends Seeder
 
             // Pending rental
             Rental::firstOrCreate(
-                ['rental_number' => 'RNT-2024-003'],
+                ['rental_number' => 'RENT-2024-00003'],
                 [
-                    'rental_number' => 'RNT-2024-003',
+                    'rental_number' => 'RENT-2024-00003',
                     'customer_id' => $customers->skip(2)->first()->id,
                     'start_date' => Carbon::now()->addDays(3),
                     'expected_end_date' => Carbon::now()->addDays(17),

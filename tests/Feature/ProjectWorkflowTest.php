@@ -113,7 +113,7 @@ class ProjectWorkflowTest extends TestCase
                 'description' => 'New construction project',
                 'customer_id' => $this->customer->id,
                 'start_date' => now()->addDays(7),
-                'end_date' => now()->addMonths(6),
+                'expected_end_date' => now()->addMonths(6),
                 'budget' => 1000000,
                 'status' => 'planning'
             ]);
@@ -164,7 +164,7 @@ class ProjectWorkflowTest extends TestCase
                     [
                         'name' => 'Planning',
                         'start_date' => now()->addDays(7),
-                        'end_date' => now()->addDays(30),
+                        'expected_end_date' => now()->addDays(30),
                         'tasks' => [
                             [
                                 'name' => 'Requirements gathering',

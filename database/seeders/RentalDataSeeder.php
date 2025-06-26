@@ -61,7 +61,7 @@ class RentalDataSeeder extends Seeder
 
         $rentals = [
             [
-                'rental_number' => 'RNT-' . $now->format('Ymd') . '-001',
+                'rental_number' => 'RENT-' . $now->format('Y') . '-00001',
                 'customer_id' => $customerIds[0],
                 'status' => 'active',
                 'start_date' => $now->subDays(10),
@@ -89,7 +89,7 @@ class RentalDataSeeder extends Seeder
                 ],
             ],
             [
-                'rental_number' => 'RNT-' . $now->format('Ymd') . '-002',
+                'rental_number' => 'RENT-' . $now->format('Y') . '-00002',
                 'customer_id' => $customerIds[0],
                 'status' => 'completed',
                 'start_date' => $now->subMonths(2),
@@ -122,7 +122,7 @@ class RentalDataSeeder extends Seeder
                 ],
             ],
             [
-                'rental_number' => 'RNT-' . $now->format('Ymd') . '-003',
+                'rental_number' => 'RENT-' . $now->format('Y') . '-00003',
                 'customer_id' => $customerIds[0],
                 'status' => 'pending',
                 'start_date' => $now->addDays(5),

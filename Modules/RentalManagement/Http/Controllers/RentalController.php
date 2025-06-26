@@ -68,16 +68,8 @@ class RentalController extends Controller
                 ];
             });
 
-        // Generate next rental number (format: RNT-YYYYMMDD-XXX)
-        $lastRental = \Modules\RentalManagement\Domain\Models\Rental::orderBy('id', 'desc')
-            ->first();
-        
-        $nextNumber = 1;
-        if ($lastRental && preg_match('/RNT-\d{8}-(\d+)/', $lastRental->rental_number, $matches)) {
-            $nextNumber = intval($matches[1]) + 1;
-        }
-        
-        $nextRentalNumber = sprintf("RNT-%s-%03d", date('Ymd'), $nextNumber);
+        // Generate next rental number using the model's method
+        $nextRentalNumber = \Modules\RentalManagement\Domain\Models\Rental::generateRentalNumber();
 
         return Inertia::render('Rentals/Create', [
             'customers' => $customers,
@@ -93,9 +85,10 @@ class RentalController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'customer_name' => 'required|string|max:255',
+            'customer_id' => 'required|exists:customers,id',
+            'rental_number' => 'required|string|unique:rentals,rental_number',
             'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date',
+            'expected_end_date' => 'required|date|after:start_date',
             'status' => 'required|in:pending,active,completed,cancelled',
             'total_amount' => 'required|numeric|min:0',
         ]);
