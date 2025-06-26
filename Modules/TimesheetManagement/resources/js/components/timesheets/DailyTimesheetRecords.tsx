@@ -25,9 +25,9 @@ export const DailyTimesheetRecords: React.FC<DailyTimesheetRecordsProps> = ({
   showSummary = true,
   className = ''
 }) => {
-  const calculateMonthlySummary = (records: TimesheetRecord[]) => {
   const { t } = useTranslation('timesheet');
 
+  const calculateMonthlySummary = (records: TimesheetRecord[]) => {
     const summary = {
       totalRegularHours: 0,
       totalOvertimeHours: 0,

@@ -12,7 +12,7 @@ import {
 import { Button } from "@/Core";
 import { toast } from 'sonner';
 import { Calendar as CalendarIcon } from 'lucide-react';
-// import { DailyTimesheetRecords } from '../../../../../TimesheetManageme@/Core/components/timesheets/DailyTimesheetRecords';
+import { DailyTimesheetRecords } from '../../../../../../../Modules/TimesheetManagement/resources/js/components/timesheets/DailyTimesheetRecords';
 
 interface TimesheetSummary {
   total_hours: number;
@@ -241,7 +241,7 @@ export const TimesheetSummary: React.FC<TimesheetSummaryProps> = ({
               <CardTitle>{t('ttl_monthly_timesheet_records')}</CardTitle>
             </CardHeader>
             <CardContent>
-              {/* {DailyTimesheetRecords ? (
+              {DailyTimesheetRecords ? (
                 <DailyTimesheetRecords
                   timesheets={dailyRecords}
                   selectedMonth={format(selectedMonth, 'yyyy-MM')}
@@ -249,8 +249,7 @@ export const TimesheetSummary: React.FC<TimesheetSummaryProps> = ({
                 />
               ) : (
                 <div className="text-muted-foreground italic">DailyTimesheetRecords component not found.</div>
-              )} */}
-              <div className="text-muted-foreground italic">DailyTimesheetRecords component temporarily disabled for build.</div>
+              )}
             </CardContent>
           </Card>
         </>
