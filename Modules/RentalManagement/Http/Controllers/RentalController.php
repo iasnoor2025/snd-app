@@ -24,14 +24,31 @@ class RentalController extends Controller
     {
         $filters = $request->only(['search', 'status', 'start_date', 'end_date', 'page', 'per_page']);
         $perPage = $filters['per_page'] ?? 10;
-        $rentals = $this->rentalService->getPaginatedRentals($perPage, $filters);
 
+        \Log::debug('RentalController@index - Request filters:', $filters);
 
+        try {
+            $rentals = $this->rentalService->getPaginatedRentals($perPage, $filters);
 
-        return Inertia::render('Rentals/Index', [
-            'filters' => $filters,
-            'rentals' => $rentals
-        ]);
+            \Log::debug('RentalController@index - Rentals data:', [
+                'filters' => $filters,
+                'count' => $rentals->count(),
+                'total' => $rentals->total(),
+                'data' => $rentals->items()
+            ]);
+
+            return Inertia::render('Rentals/Index', [
+                'filters' => $filters,
+                'rentals' => $rentals
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('RentalController@index - Error:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()->with('error', 'Failed to load rentals. Please try again.');
+        }
     }
 
     /**

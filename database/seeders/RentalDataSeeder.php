@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Modules\RentalManagement\Domain\Models\Rental;
 use Modules\RentalManagement\Domain\Models\RentalItem;
 use Modules\EquipmentManagement\Domain\Models\Equipment;
@@ -13,16 +14,15 @@ class RentalDataSeeder extends Seeder
 {
     public function run()
     {
-        // Get some equipment IDs
-        $equipmentIds = Equipment::pluck('id')->take(3)->toArray();
+        \Log::info('Starting rental test data seeding...');
 
-        if (empty($equipmentIds)) {
-            // Create some equipment if none exists
-            $equipment = Equipment::create([
-                'name' => ['en' => 'Test Equipment'],
-                'description' => ['en' => 'Test equipment for rental'],
-                'manufacturer' => 'Test Manufacturer',
+        try {
+            // Create test equipment directly in the database to avoid model casting
+            $equipmentId = DB::table('equipment')->insertGetId([
                 'model_number' => 'TEST-001',
+                'name' => '{"en":"Test Equipment"}',
+                'description' => '{"en":"Test equipment for rental"}',
+                'manufacturer' => 'Test Manufacturer',
                 'serial_number' => 'SN001',
                 'status' => 'available',
                 'daily_rate' => 500,
@@ -30,16 +30,12 @@ class RentalDataSeeder extends Seeder
                 'monthly_rate' => 10000,
                 'unit' => 'unit',
                 'is_active' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
-            $equipmentIds = [$equipment->id];
-        }
 
-        // Get customer IDs
-        $customerIds = Customer::pluck('id')->take(3)->toArray();
-
-        if (empty($customerIds)) {
-            // Create a test customer if none exists
-            $customer = Customer::create([
+            // Create test customer directly in the database
+            $customerId = DB::table('customers')->insertGetId([
                 'name' => 'Test Customer',
                 'contact_person' => 'John Doe',
                 'email' => 'test@example.com',
@@ -53,113 +49,97 @@ class RentalDataSeeder extends Seeder
                 'credit_limit' => 10000,
                 'payment_terms' => 'Net 30',
                 'is_active' => true,
-            ]);
-            $customerIds = [$customer->id];
-        }
-
-        $now = Carbon::now();
-
-        $rentals = [
-            [
-                'rental_number' => 'RENT-' . $now->format('Y') . '-00001',
-                'customer_id' => $customerIds[0],
                 'status' => 'active',
-                'start_date' => $now->subDays(10),
-                'expected_end_date' => $now->copy()->addDays(20),
-                'notes' => 'Ongoing rental',
-                'subtotal' => 15000,
-                'tax_amount' => 2250,
-                'total_amount' => 17250,
-                'payment_status' => 'pending',
-                'payment_terms_days' => 30,
-                'has_timesheet' => true,
-                'has_operators' => false,
-                'deposit_amount' => 1000,
-                'items' => [
-                    [
-                        'equipment_id' => $equipmentIds[0],
-                        'quantity' => 1,
-                        'unit_price' => 500,
-                        'rental_rate_period' => 'daily',
-                        'days' => 30,
-                        'discount_percentage' => 0,
-                        'total_amount' => 15000,
-                        'notes' => 'Daily rental',
-                    ],
-                ],
-            ],
-            [
-                'rental_number' => 'RENT-' . $now->format('Y') . '-00002',
-                'customer_id' => $customerIds[0],
-                'status' => 'completed',
-                'start_date' => $now->subMonths(2),
-                'expected_end_date' => $now->copy()->subMonth(),
-                'actual_end_date' => $now->copy()->subMonth(),
-                'notes' => 'Completed rental',
-                'subtotal' => 3000,
-                'tax_amount' => 450,
-                'total_amount' => 3450,
-                'payment_status' => 'paid',
-                'payment_terms_days' => 30,
-                'has_timesheet' => false,
-                'has_operators' => false,
-                'deposit_amount' => 500,
-                'deposit_paid' => true,
-                'deposit_paid_date' => $now->copy()->subMonths(2),
-                'deposit_refunded' => true,
-                'deposit_refund_date' => $now->copy()->subMonth(),
-                'items' => [
-                    [
-                        'equipment_id' => $equipmentIds[0],
-                        'quantity' => 1,
-                        'unit_price' => 3000,
-                        'rental_rate_period' => 'weekly',
-                        'days' => 7,
-                        'discount_percentage' => 0,
-                        'total_amount' => 3000,
-                        'notes' => 'Weekly rental',
-                    ],
-                ],
-            ],
-            [
-                'rental_number' => 'RENT-' . $now->format('Y') . '-00003',
-                'customer_id' => $customerIds[0],
-                'status' => 'pending',
-                'start_date' => $now->addDays(5),
-                'expected_end_date' => $now->copy()->addDays(25),
-                'notes' => 'Upcoming rental',
-                'subtotal' => 10000,
-                'tax_amount' => 1500,
-                'total_amount' => 11500,
-                'payment_status' => 'pending',
-                'payment_terms_days' => 30,
-                'has_timesheet' => true,
-                'has_operators' => true,
-                'deposit_amount' => 2000,
-                'items' => [
-                    [
-                        'equipment_id' => $equipmentIds[0],
-                        'quantity' => 1,
-                        'unit_price' => 10000,
-                        'rental_rate_period' => 'monthly',
-                        'days' => 30,
-                        'discount_percentage' => 0,
-                        'total_amount' => 10000,
-                        'notes' => 'Monthly rental',
-                    ],
-                ],
-            ],
-        ];
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
-        foreach ($rentals as $data) {
-            $items = $data['items'];
-            unset($data['items']);
+            $now = now();
 
-            $rental = Rental::create($data);
+            // Create rentals directly using DB facade to avoid model events and casting
+            $this->createSingleRental($equipmentId, $customerId, 1, 'daily', 500, 30, $now);
+            $this->createSingleRental($equipmentId, $customerId, 2, 'weekly', 3000, 7, $now);
+            $this->createSingleRental($equipmentId, $customerId, 3, 'monthly', 10000, 30, $now);
 
-            foreach ($items as $item) {
-                $rental->rentalItems()->create($item);
-            }
+            \Log::info('Rental test data seeding completed successfully.');
+        } catch (\Exception $e) {
+            \Log::error('Error seeding rental test data: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
+    }
+
+    private function createSingleRental($equipmentId, $customerId, $number, $rateType, $rate, $days, $now)
+    {
+        try {
+            return DB::transaction(function () use ($equipmentId, $customerId, $number, $rateType, $rate, $days, $now) {
+                // Calculate dates
+                $startDate = $number === 1 ? $now->copy()->subDays(10) : 
+                            ($number === 2 ? $now->copy()->subMonths(2) : $now->copy()->addDays(5));
+                
+                $expectedEndDate = $number === 1 ? $now->copy()->addDays(20) : 
+                                 ($number === 2 ? $now->copy()->subMonth() : $now->copy()->addDays(25));
+                
+                $actualEndDate = $number === 2 ? $now->copy()->subMonth() : null;
+
+                // Calculate amounts
+                $subtotal = $rate * $days;
+                $taxAmount = $subtotal * 0.15;
+                $totalAmount = $subtotal + $taxAmount;
+
+                // Set notes based on rental status
+                $notes = $number === 1 ? 'Ongoing rental' : 
+                        ($number === 2 ? 'Completed rental' : 'Upcoming rental');
+
+                // Insert rental directly
+                $rental = DB::table('rentals')->insertGetId([
+                    'rental_number' => 'RENT-' . $now->format('Y') . '-' . str_pad($number, 5, '0', STR_PAD_LEFT),
+                    'customer_id' => $customerId,
+                    'status' => $number === 1 ? 'active' : ($number === 2 ? 'completed' : 'pending'),
+                    'start_date' => $startDate,
+                    'expected_end_date' => $expectedEndDate,
+                    'actual_end_date' => $actualEndDate,
+                    'notes' => $notes,
+                    'subtotal' => $subtotal,
+                    'tax_amount' => $taxAmount,
+                    'total_amount' => $totalAmount,
+                    'payment_status' => $number === 2 ? 'paid' : 'pending',
+                    'payment_terms_days' => 30,
+                    'has_timesheet' => $number !== 2,
+                    'has_operators' => $number === 3,
+                    'deposit_amount' => $number * 1000,
+                    'deposit_paid' => $number === 2,
+                    'deposit_paid_date' => $number === 2 ? $now->copy()->subMonths(2) : null,
+                    'deposit_refunded' => $number === 2,
+                    'deposit_refund_date' => $number === 2 ? $now->copy()->subMonth() : null,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]);
+
+                // Insert rental items with the correct rental_id
+                DB::table('rental_items')->insert([
+                    'rental_id' => $rental,
+                    'equipment_id' => $equipmentId,
+                    'rate' => $rate,
+                    'rate_type' => $rateType,
+                    'days' => $days,
+                    'unit_price' => $rate,
+                    'quantity' => 1,
+                    'discount_percentage' => 0,
+                    'total_amount' => $subtotal,
+                    'notes' => $notes,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]);
+
+                return $rental;
+            });
+        } catch (\Exception $e) {
+            \Log::error('Error creating single rental: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
         }
     }
 } 

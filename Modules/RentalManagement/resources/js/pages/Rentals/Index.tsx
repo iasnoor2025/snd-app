@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Head, Link, router } from "@inertiajs/react";
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import { useTranslation } from "react-i18next";
-import { useForm } from "@inertiajs/react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import axios from "axios";
 
 // Types
 import { PageProps } from "@/Core/types";
+import { Errors } from "@inertiajs/core";
 
 // Layouts & Hooks
 import { AppLayout } from "@/Core";
@@ -91,19 +91,27 @@ import {
 } from "lucide-react";
 
 // Types
+interface RentalItem {
+  id: number;
+  equipment_id: number;
+  equipment_name: string;
+  rate: number;
+  rate_type: string;
+  days: number;
+}
+
 interface Rental {
   id: number;
   rental_number: string;
-  customer: {
-    name: string;
-    email: string;
-  };
+  customer_name: string;
+  customer_email: string;
   start_date: string;
   expected_end_date: string;
   actual_end_date?: string;
   status: string;
   has_operators: boolean;
   total_amount: number;
+  rental_items?: RentalItem[];
 }
 
 interface Props extends PageProps {
@@ -130,17 +138,27 @@ const breadcrumbs = [
 export default function Index({ auth, rentals, filters = {} }: Props) {
   const { t } = useTranslation('rental');
 
+  // Debug logging
+  useEffect(() => {
+    console.log('Rentals data:', rentals);
+    console.log('Filters:', filters);
+    if (rentals?.data?.length) {
+      console.log('First rental:', rentals.data[0]);
+      if (rentals.data[0]?.rental_items) {
+        console.log('First rental items:', rentals.data[0].rental_items);
+      } else {
+        console.log('No rental items found for first rental');
+      }
+    } else {
+      console.log('No rentals data available');
+      console.log('Rentals object structure:', JSON.stringify(rentals, null, 2));
+    }
+  }, [rentals, filters]);
+
   const { hasPermission } = usePermission();
   const canCreateRentals = hasPermission('rentals.create');
   const canEditRentals = hasPermission('rentals.edit');
   const canDeleteRentals = hasPermission('rentals.delete');
-
-  // Debug rental data structure
-  useEffect(() => {
-    if (rentals?.data?.length > 0) {
-      console.log('First rental data structure:', rentals.data[0]);
-    }
-  }, [rentals]);
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [rentalToDelete, setRentalToDelete] = useState<Rental | null>(null);
@@ -152,7 +170,7 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
   });
 
   // Debug route helper - use first rental ID from data if available
-  const sampleRentalId = rentals?.data?.length > 0 ? rentals.data[0].id : 1; 
+  const sampleRentalId = rentals?.data?.[0]?.id ?? 1;
 
   const handleDelete = (rentalOrId: Rental | number) => {
     // If a number was passed, find the rental in the data
@@ -180,7 +198,7 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
         setIsDeleteDialogOpen(false);
         setRentalToDelete(null);
       },
-      onError: () => {
+      onError: (errors: Errors) => {
         toast.error("Failed to delete rental");
       },
     });
@@ -188,14 +206,14 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
 
   const handleSearch = () => {
     get(route('rentals.index'), {
+      data: {
+        search: data.search,
+        status: data.status,
+        start_date: data.start_date,
+        end_date: data.end_date,
+      },
       preserveState: true,
       preserveScroll: true,
-      onSuccess: () => {
-        toast.success('Filters applied successfully');
-      },
-      onError: () => {
-        toast.error('Failed to apply filters');
-      },
     });
   };
 
@@ -320,6 +338,7 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
     try {
       return format(new Date(dateString), "dd MMM yyyy");
     } catch (error) {
+      console.error('Error formatting date:', error);
       return dateString;
     }
   };
@@ -328,7 +347,7 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
   const getActiveFilterCount = () => {
     let count = 0;
     if (data.search) count++;
-    if (data.status !== "all") count++;
+    if (data.status !== 'all') count++;
     if (data.start_date) count++;
     if (data.end_date) count++;
     return count;
@@ -403,15 +422,15 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
 
     if (!customer) {
       return {
-        name: 'Unknown Customer',
-        email: 'No email',
-        initials: '??'
+        name: rental.customer_name || 'Unknown Customer',
+        email: rental.customer_email || 'No email',
+        initials: getClientInitials(rental.customer_name) || '??'
       };
     }
 
     // Handle different property name variations for customer name
-    const name = customer.company_name || customer.name || customer.contact_person || 'Unknown';
-    const email = customer.email || 'No email';
+    const name = customer.company_name || customer.name || customer.contact_person || rental.customer_name || 'Unknown';
+    const email = customer.email || rental.customer_email || 'No email';
 
     return {
       name,
@@ -463,8 +482,21 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
     },
     {
       header: t("Customer"),
-      accessorKey: "customer" as keyof Rental,
-      cell: (row: Rental) => row.customer?.name || "-",
+      accessorKey: "customer_name" as keyof Rental,
+      cell: (row: Rental) => {
+        const customerInfo = getCustomerInfo(row);
+        return (
+          <div className="flex items-center gap-2">
+            <Avatar className="h-8 w-8">
+              <AvatarFallback>{customerInfo.initials}</AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col">
+              <span className="text-sm font-medium">{customerInfo.name}</span>
+              <span className="text-xs text-muted-foreground">{customerInfo.email}</span>
+            </div>
+          </div>
+        );
+      },
     },
     {
       header: t("Dates"),
@@ -481,28 +513,44 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
     {
       header: t("Status"),
       accessorKey: "status" as keyof Rental,
-      cell: (row: Rental) => (
-        <Badge variant={row.status === "active" ? "success" : "default"}>
-          {row.status || "-"}
-        </Badge>
-      ),
-    },
-    {
-      header: t("Has Operators"),
-      accessorKey: "has_operators" as keyof Rental,
-      cell: (row: Rental) => (
-        <Badge variant={row.has_operators ? "success" : "default"}>
-          {row.has_operators ? t("Yes") : t("No")}
-        </Badge>
-      ),
+      cell: (row: Rental) => getStatusBadge(row.status),
     },
     {
       header: t("Total Amount"),
       accessorKey: "total_amount" as keyof Rental,
+      cell: (row: Rental) => formatCurrency(row.total_amount),
+    },
+    {
+      header: t("Actions"),
+      accessorKey: "id" as keyof Rental,
       cell: (row: Rental) => (
-        <span className="font-medium">
-          ${(row.total_amount || 0).toLocaleString()}
-        </span>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={(e) => handleViewClick(e, row.id)}
+          >
+            <Eye className="h-4 w-4" />
+          </Button>
+          {canEditRentals && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => router.get(route("rentals.edit", row.id))}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+          )}
+          {canDeleteRentals && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => handleDelete(row)}
+            >
+              <Trash className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
       ),
     },
   ];

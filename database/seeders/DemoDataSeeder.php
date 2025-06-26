@@ -13,6 +13,7 @@ use Modules\Core\Domain\Models\Location;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class DemoDataSeeder extends Seeder
 {
@@ -124,18 +125,40 @@ class DemoDataSeeder extends Seeder
     private function createLocations()
     {
         $locations = [
-            ['name' => 'Main Warehouse', 'address' => '123 Industrial Blvd, City Center'],
-            ['name' => 'North Branch', 'address' => '456 North Ave, North District'],
-            ['name' => 'South Depot', 'address' => '789 South St, South Zone'],
-            ['name' => 'Mobile Unit 1', 'address' => 'Various Locations']
+            [
+                'name' => 'Main Warehouse',
+                'city' => 'City Center',
+                'state' => 'State',
+                'country' => 'Country'
+            ],
+            [
+                'name' => 'North Branch',
+                'city' => 'North District',
+                'state' => 'State',
+                'country' => 'Country'
+            ],
+            [
+                'name' => 'South Depot',
+                'city' => 'South Zone',
+                'state' => 'State',
+                'country' => 'Country'
+            ],
+            [
+                'name' => 'Mobile Unit 1',
+                'city' => 'Various',
+                'state' => 'Various',
+                'country' => 'Country'
+            ]
         ];
 
-        foreach ($locations as $location) {
-            Location::firstOrCreate(
-                ['name' => $location['name']],
-                $location
-            );
-        }
+        DB::transaction(function () use ($locations) {
+            foreach ($locations as $location) {
+                Location::firstOrCreate(
+                    ['name' => $location['name']],
+                    $location
+                );
+            }
+        });
     }
 
     private function createCustomers()
@@ -290,55 +313,80 @@ class DemoDataSeeder extends Seeder
 
     private function createRentals()
     {
-        $customers = Customer::all();
-        $equipment = Equipment::all();
+        \Log::info('Starting rental data seeding...');
+        
+        try {
+            DB::transaction(function () {
+                $customers = Customer::take(10)->get();
+                $equipment = Equipment::take(10)->get();
+                $locations = Location::all();
+                $statuses = ['pending', 'active', 'completed', 'cancelled'];
+                $now = Carbon::now();
 
-        if ($customers->count() > 0 && $equipment->count() > 0) {
-            // Active rental
-            Rental::firstOrCreate(
-                ['rental_number' => 'RENT-2024-00001'],
-                [
-                    'rental_number' => 'RENT-2024-00001',
-                    'customer_id' => $customers->first()->id,
-                    'start_date' => Carbon::now()->subDays(5),
-                    'expected_end_date' => Carbon::now()->addDays(10),
-                    'status' => 'active',
-                    'total_amount' => 2250.00,
-                    'notes' => 'Construction project at downtown site',
-                    'created_by' => User::first()->id
-                ]
-            );
+                foreach ($customers as $customer) {
+                    foreach (range(1, 3) as $i) {
+                        $status = $statuses[array_rand($statuses)];
+                        $startDate = $now->copy()->subDays(rand(1, 30));
+                        $endDate = $startDate->copy()->addDays(rand(5, 60));
 
-            // Completed rental
-            Rental::firstOrCreate(
-                ['rental_number' => 'RENT-2024-00002'],
-                [
-                    'rental_number' => 'RENT-2024-00002',
-                    'customer_id' => $customers->skip(1)->first()->id,
-                    'start_date' => Carbon::now()->subDays(20),
-                    'expected_end_date' => Carbon::now()->subDays(5),
-                    'actual_end_date' => Carbon::now()->subDays(5),
-                    'status' => 'completed',
-                    'total_amount' => 1750.00,
-                    'notes' => 'Residential renovation project',
-                    'created_by' => User::first()->id
-                ]
-            );
+                        $rental = Rental::create([
+                            'rental_number' => Rental::generateRentalNumber(),
+                            'customer_id' => $customer->id,
+                            'status' => $status,
+                            'start_date' => $startDate,
+                            'expected_end_date' => $endDate,
+                            'actual_end_date' => $status === 'completed' ? $endDate : null,
+                            'notes' => 'Demo rental data',
+                            'subtotal' => rand(1000, 10000),
+                            'tax_percentage' => 15,
+                            'payment_status' => $status === 'completed' ? 'paid' : 'pending',
+                            'payment_terms_days' => 30,
+                            'has_timesheet' => rand(0, 1) === 1,
+                            'has_operators' => rand(0, 1) === 1,
+                            'deposit_amount' => rand(500, 2000),
+                            'location_id' => $locations->random()->id,
+                            'created_by' => 1,
+                            'approved_by' => $status !== 'pending' ? 1 : null,
+                            'approved_at' => $status !== 'pending' ? $startDate : null,
+                            'completed_by' => $status === 'completed' ? 1 : null,
+                            'completed_at' => $status === 'completed' ? $endDate : null,
+                        ]);
 
-            // Pending rental
-            Rental::firstOrCreate(
-                ['rental_number' => 'RENT-2024-00003'],
-                [
-                    'rental_number' => 'RENT-2024-00003',
-                    'customer_id' => $customers->skip(2)->first()->id,
-                    'start_date' => Carbon::now()->addDays(3),
-                    'expected_end_date' => Carbon::now()->addDays(17),
-                    'status' => 'pending',
-                    'total_amount' => 4200.00,
-                    'notes' => 'Large commercial project - multiple equipment needed',
-                    'created_by' => User::first()->id
-                ]
-            );
+                        // Calculate tax and total after creation
+                        $rental->tax_amount = $rental->subtotal * ($rental->tax_percentage / 100);
+                        $rental->total_amount = $rental->subtotal + $rental->tax_amount;
+                        $rental->save();
+
+                        // Add 1-3 rental items
+                        foreach (range(1, rand(1, 3)) as $j) {
+                            $selectedEquipment = $equipment->random();
+                            $days = $startDate->diffInDays($endDate);
+                            $rate = $selectedEquipment->daily_rate;
+                            $totalAmount = $rate * $days;
+
+                            $rental->rentalItems()->create([
+                                'equipment_id' => $selectedEquipment->id,
+                                'rate' => $rate,
+                                'rate_type' => 'daily',
+                                'days' => $days,
+                                'discount_percentage' => 0,
+                                'total_amount' => $totalAmount,
+                                'notes' => 'Demo rental item',
+                            ]);
+                        }
+
+                        // Free up memory
+                        unset($rental);
+                    }
+                }
+            });
+
+            \Log::info('Rental data seeding completed successfully.');
+        } catch (\Exception $e) {
+            \Log::error('Error seeding rental data: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
         }
     }
 }

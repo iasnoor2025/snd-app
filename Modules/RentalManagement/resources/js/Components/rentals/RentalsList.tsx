@@ -8,6 +8,16 @@ import { usePermission } from "@/Core";
 // Extend the Rental interface to include our has_operators property
 interface ExtendedRental extends Rental {
   has_operators?: boolean;
+  customer_name: string;
+  customer_email: string;
+  rental_items: Array<{
+    id: number;
+    equipment_id: number;
+    equipment_name: string;
+    rate: number;
+    rate_type: string;
+    days: number;
+  }>;
 }
 
 // Shadcn UI Components
@@ -166,11 +176,11 @@ export default function RentalsList({ rentals, onDelete }: Props) {
                     <TableCell className="py-4">
                       <div className="flex items-center gap-2">
                         <Avatar className="h-8 w-8 bg-muted">
-                          <AvatarFallback>{getClientInitials(rental.customer?.company_name)}</AvatarFallback>
+                          <AvatarFallback>{getClientInitials(rental.customer_name)}</AvatarFallback>
                         </Avatar>
                         <div className="space-y-0.5">
-                          <p className="text-sm font-medium line-clamp-1">{rental.customer?.company_name}</p>
-                          <p className="text-xs text-muted-foreground line-clamp-1">{rental.customer?.email}</p>
+                          <p className="text-sm font-medium line-clamp-1">{rental.customer_name}</p>
+                          <p className="text-xs text-muted-foreground line-clamp-1">{rental.customer_email}</p>
                         </div>
                       </div>
                     </TableCell>

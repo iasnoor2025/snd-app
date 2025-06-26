@@ -37,7 +37,32 @@ class RentalService
      */
     public function getPaginatedRentals(int $perPage = 15, array $filters = []): LengthAwarePaginator
     {
-        return $this->repository->paginateWithFilters($perPage, $filters);
+        \Log::debug('RentalService@getPaginatedRentals - Input:', [
+            'perPage' => $perPage,
+            'filters' => $filters
+        ]);
+
+        try {
+            $result = $this->repository->paginateWithFilters($perPage, $filters);
+
+            \Log::debug('RentalService@getPaginatedRentals - Result:', [
+                'count' => $result->count(),
+                'total' => $result->total(),
+                'currentPage' => $result->currentPage(),
+                'lastPage' => $result->lastPage(),
+                'hasMorePages' => $result->hasMorePages(),
+                'firstItem' => $result->firstItem(),
+                'lastItem' => $result->lastItem()
+            ]);
+
+            return $result;
+        } catch (\Exception $e) {
+            \Log::error('RentalService@getPaginatedRentals - Error:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
     }
 
     /**
