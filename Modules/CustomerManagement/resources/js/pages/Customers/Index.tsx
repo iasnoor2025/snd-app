@@ -15,7 +15,16 @@ import { route } from 'ziggy-js';
 // import { CrudButtons } from "@/Core";
 
 interface Props extends PageProps {
-  customers: Customer[];
+  customers: {
+    data: Customer[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    next_page_url: string | null;
+    prev_page_url: string | null;
+    [key: string]: any;
+  };
 }
 
 const Index: React.FC<Props> = ({ customers }) => {
@@ -31,18 +40,14 @@ const Index: React.FC<Props> = ({ customers }) => {
   const [city, setCity] = useState('all');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const safeCustomers = Array.isArray(customers) ? customers : [];
+  const [perPage, setPerPage] = useState<number>(Number(new URLSearchParams(window.location.search).get('per_page')) || 10);
+  const safeCustomers = Array.isArray(customers.data) ? customers.data : [];
 
   // Unique cities for filter dropdown
   const cities = Array.from(new Set(safeCustomers.map(c => c.city).filter(Boolean)));
 
-  // Filtered customers
-  const filteredCustomers = safeCustomers.filter(c => {
-    const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus = status === 'all' || c.status === status;
-    const matchesCity = city === 'all' || c.city === city;
-    return matchesSearch && matchesStatus && matchesCity;
-  });
+  // Filtered customers (filtering now handled on backend, so just use safeCustomers)
+  const filteredCustomers = safeCustomers;
 
   const getStatusBadge = (status: string) => {
 
@@ -87,6 +92,25 @@ const Index: React.FC<Props> = ({ customers }) => {
                 ))}
               </select>
             </div>
+            <div className="mb-4 flex items-center gap-2">
+              <label htmlFor="perPage" className="font-medium">{t('Rows per page')}:</label>
+              <select
+                id="perPage"
+                className="border rounded px-2 py-1"
+                value={perPage}
+                onChange={e => {
+                  const value = Number(e.target.value);
+                  setPerPage(value);
+                  const params = new URLSearchParams(window.location.search);
+                  params.set('per_page', value.toString());
+                  window.location.href = `${window.location.pathname}?${params.toString()}`;
+                }}
+              >
+                {[10, 25, 50, 100].map(opt => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+              </select>
+            </div>
             {error && <div className="text-red-500 mb-2">{error}</div>}
             {loading ? (
               <div className="text-center py-8">{t('msg_loading')}</div>
@@ -126,6 +150,28 @@ const Index: React.FC<Props> = ({ customers }) => {
                 </TableBody>
               </Table>
             )}
+            {/* Pagination Controls */}
+            <div className="flex justify-between items-center mt-4">
+              <Button
+                asChild
+                size="sm"
+                variant="outline"
+                disabled={!customers.prev_page_url}
+              >
+                <Link href={customers.prev_page_url || '#'}>{t('Previous')}</Link>
+              </Button>
+              <span>
+                {t('Page')} {customers.current_page} {t('of')} {customers.last_page}
+              </span>
+              <Button
+                asChild
+                size="sm"
+                variant="outline"
+                disabled={!customers.next_page_url}
+              >
+                <Link href={customers.next_page_url || '#'}>{t('Next')}</Link>
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>

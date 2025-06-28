@@ -46,8 +46,23 @@ class CustomerController extends Controller
             $query->where('is_active', $status);
         }
 
-        $customers = $query->paginate(10)
+        $perPage = $request->input('per_page', 10);
+        $customers = $query->paginate($perPage)
             ->withQueryString();
+
+        // Transform customers for frontend
+        $customersTransformed = $customers->getCollection()->map(function ($customer) {
+            return [
+                'id' => $customer->id,
+                'name' => $customer->company_name ?? $customer->name,
+                'contact_person' => $customer->contact_person,
+                'email' => $customer->email,
+                'phone' => $customer->phone,
+                'city' => $customer->city,
+                'status' => $customer->is_active ? 'active' : 'inactive',
+            ];
+        });
+        $customers->setCollection($customersTransformed);
 
         return Inertia::render('Customers/Index', [
             'customers' => $customers,
