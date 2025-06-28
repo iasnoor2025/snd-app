@@ -155,5 +155,12 @@
   "lbl_operator_license": "Operator License",
   "all_documents_expired": "All documents are expired",
   "document": "Document",
-  "valid": "Valid"
+  "valid": "Valid",
+  "iqama": "Iqama",
+  "passport": "Passport",
+  "driving_license": "Driving License",
+  "tuv_certification": "TUV Certification",
+  "spsp_license": "SPSP License",
+  "not_set": "Not set",
+  "download": "Download"
 } 

@@ -98,5 +98,12 @@
     "lbl_operator_license": "رخصة المشغل",
     "all_documents_expired": "جميع المستندات منتهية الصلاحية",
     "document": "المستند",
-    "valid": "صالح"
+    "valid": "صالح",
+    "iqama": "الإقامة",
+    "passport": "جواز السفر",
+    "driving_license": "رخصة القيادة",
+    "tuv_certification": "شهادة TUV",
+    "spsp_license": "رخصة SPSP",
+    "not_set": "غير محدد",
+    "download": "تحميل"
 }

@@ -1669,31 +1669,31 @@ export default function Show({
             {/* Enhanced Document Details Section */}
             <Card>
               <CardHeader>
-                <CardTitle>Legal & Identification Documents</CardTitle>
+                <CardTitle>{t('legal_identification_documents')}</CardTitle>
                 <CardDescription>{t('view_and_manage_key_employee_documents')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {/* Iqama */}
                   <div className="space-y-2">
-                    <h3 className="text-lg font-medium">Iqama</h3>
+                    <h3 className="text-lg font-medium">{t('iqama')}</h3>
                     <div className="flex justify-between border-b pb-2">
-                      <span className="text-sm font-medium">Number</span>
-                      <span className="text-sm">{employee.iqama_number || 'Not set'}</span>
+                      <span className="text-sm font-medium">{t('number')}</span>
+                      <span className="text-sm">{employee.iqama_number || t('not_set')}</span>
                     </div>
                     <div className="flex justify-between border-b pb-2">
-                      <span className="text-sm font-medium">Expiry</span>
-                      <span className="text-sm">{employee.iqama_expiry ? format(new Date(employee.iqama_expiry), 'PPP') : 'Not set'}</span>
+                      <span className="text-sm font-medium">{t('expiry')}</span>
+                      <span className="text-sm">{employee.iqama_expiry ? format(new Date(employee.iqama_expiry), 'PPP') : t('not_set')}</span>
                     </div>
                     <div className="flex justify-between border-b pb-2">
-                      <span className="text-sm font-medium">Cost</span>
-                      <span className="text-sm">{employee.iqama_cost ? `SAR ${Number(employee.iqama_cost).toFixed(2)}` : 'Not set'}</span>
+                      <span className="text-sm font-medium">{t('cost')}</span>
+                      <span className="text-sm">{employee.iqama_cost ? `SAR ${Number(employee.iqama_cost).toFixed(2)}` : t('not_set')}</span>
                     </div>
                     {/* File upload/download */}
                     <div className="flex items-center gap-2 mt-2">
                       {employee.iqama_file && (
                         <Button asChild variant="outline" size="sm">
-                          <a href={employee.iqama_file} target="_blank" rel="noopener noreferrer">Download</a>
+                          <a href={employee.iqama_file} target="_blank" rel="noopener noreferrer">{t('download')}</a>
                         </Button>
                       )}
                       {hasPermission('employees.edit') && (
@@ -1716,7 +1716,7 @@ export default function Show({
                             size="sm"
                             onClick={() => document.getElementById('iqama-upload')?.click()}
                           >
-                            Upload
+                            {t('upload')}
                           </Button>
                         </>
                       )}
@@ -1724,19 +1724,19 @@ export default function Show({
                   </div>
                   {/* Passport */}
                   <div className="space-y-2">
-                    <h3 className="text-lg font-medium">Passport</h3>
+                    <h3 className="text-lg font-medium">{t('passport')}</h3>
                     <div className="flex justify-between border-b pb-2">
-                      <span className="text-sm font-medium">Number</span>
-                      <span className="text-sm">{employee.passport_number || 'Not set'}</span>
+                      <span className="text-sm font-medium">{t('number')}</span>
+                      <span className="text-sm">{employee.passport_number || t('not_set')}</span>
                     </div>
                     <div className="flex justify-between border-b pb-2">
-                      <span className="text-sm font-medium">Expiry</span>
-                      <span className="text-sm">{employee.passport_expiry ? format(new Date(employee.passport_expiry), 'PPP') : 'Not set'}</span>
+                      <span className="text-sm font-medium">{t('expiry')}</span>
+                      <span className="text-sm">{employee.passport_expiry ? format(new Date(employee.passport_expiry), 'PPP') : t('not_set')}</span>
                     </div>
                     <div className="flex items-center gap-2 mt-2">
                       {employee.passport_file && (
                         <Button asChild variant="outline" size="sm">
-                          <a href={employee.passport_file} target="_blank" rel="noopener noreferrer">Download</a>
+                          <a href={employee.passport_file} target="_blank" rel="noopener noreferrer">{t('download')}</a>
                         </Button>
                       )}
                       {hasPermission('employees.edit') && (
@@ -1759,32 +1759,31 @@ export default function Show({
                             size="sm"
                             onClick={() => document.getElementById('passport-upload')?.click()}
                           >
-                            Upload
+                            {t('upload')}
                           </Button>
                         </>
                       )}
                     </div>
                   </div>
-                  {/* Add similar blocks for Driving License, Operator License, TUV Certification, SPSP License */}
                   {/* Driving License */}
                   <div className="space-y-2">
                     <h3 className="text-lg font-medium">{t('driving_license')}</h3>
                     <div className="flex justify-between border-b pb-2">
-                      <span className="text-sm font-medium">Number</span>
-                      <span className="text-sm">{employee.driving_license_number || 'Not set'}</span>
+                      <span className="text-sm font-medium">{t('number')}</span>
+                      <span className="text-sm">{employee.driving_license_number || t('not_set')}</span>
                     </div>
                     <div className="flex justify-between border-b pb-2">
-                      <span className="text-sm font-medium">Expiry</span>
-                      <span className="text-sm">{employee.driving_license_expiry ? format(new Date(employee.driving_license_expiry), 'PPP') : 'Not set'}</span>
+                      <span className="text-sm font-medium">{t('expiry')}</span>
+                      <span className="text-sm">{employee.driving_license_expiry ? format(new Date(employee.driving_license_expiry), 'PPP') : t('not_set')}</span>
                     </div>
                     <div className="flex justify-between border-b pb-2">
-                      <span className="text-sm font-medium">Cost</span>
-                      <span className="text-sm">{employee.driving_license_cost ? `SAR ${Number(employee.driving_license_cost).toFixed(2)}` : 'Not set'}</span>
+                      <span className="text-sm font-medium">{t('cost')}</span>
+                      <span className="text-sm">{employee.driving_license_cost ? `SAR ${Number(employee.driving_license_cost).toFixed(2)}` : t('not_set')}</span>
                     </div>
                     <div className="flex items-center gap-2 mt-2">
                       {employee.driving_license_file && (
                         <Button asChild variant="outline" size="sm">
-                          <a href={employee.driving_license_file} target="_blank" rel="noopener noreferrer">Download</a>
+                          <a href={employee.driving_license_file} target="_blank" rel="noopener noreferrer">{t('download')}</a>
                         </Button>
                       )}
                       {hasPermission('employees.edit') && (
@@ -1807,7 +1806,7 @@ export default function Show({
                             size="sm"
                             onClick={() => document.getElementById('driving-license-upload')?.click()}
                           >
-                            Upload
+                            {t('upload')}
                           </Button>
                         </>
                       )}
@@ -1817,21 +1816,21 @@ export default function Show({
                   <div className="space-y-2">
                     <h3 className="text-lg font-medium">{t('lbl_operator_license')}</h3>
                     <div className="flex justify-between border-b pb-2">
-                      <span className="text-sm font-medium">Number</span>
-                      <span className="text-sm">{employee.operator_license_number || 'Not set'}</span>
+                      <span className="text-sm font-medium">{t('number')}</span>
+                      <span className="text-sm">{employee.operator_license_number || t('not_set')}</span>
                     </div>
                     <div className="flex justify-between border-b pb-2">
-                      <span className="text-sm font-medium">Expiry</span>
-                      <span className="text-sm">{employee.operator_license_expiry ? format(new Date(employee.operator_license_expiry), 'PPP') : 'Not set'}</span>
+                      <span className="text-sm font-medium">{t('expiry')}</span>
+                      <span className="text-sm">{employee.operator_license_expiry ? format(new Date(employee.operator_license_expiry), 'PPP') : t('not_set')}</span>
                     </div>
                     <div className="flex justify-between border-b pb-2">
-                      <span className="text-sm font-medium">Cost</span>
-                      <span className="text-sm">{employee.operator_license_cost ? `SAR ${Number(employee.operator_license_cost).toFixed(2)}` : 'Not set'}</span>
+                      <span className="text-sm font-medium">{t('cost')}</span>
+                      <span className="text-sm">{employee.operator_license_cost ? `SAR ${Number(employee.operator_license_cost).toFixed(2)}` : t('not_set')}</span>
                     </div>
                     <div className="flex items-center gap-2 mt-2">
                       {employee.operator_license_file && (
                         <Button asChild variant="outline" size="sm">
-                          <a href={employee.operator_license_file} target="_blank" rel="noopener noreferrer">Download</a>
+                          <a href={employee.operator_license_file} target="_blank" rel="noopener noreferrer">{t('download')}</a>
                         </Button>
                       )}
                       {hasPermission('employees.edit') && (
@@ -1854,7 +1853,7 @@ export default function Show({
                             size="sm"
                             onClick={() => document.getElementById('operator-license-upload')?.click()}
                           >
-                            Upload
+                            {t('upload')}
                           </Button>
                         </>
                       )}
@@ -1862,23 +1861,23 @@ export default function Show({
                   </div>
                   {/* TUV Certification */}
                   <div className="space-y-2">
-                    <h3 className="text-lg font-medium">TUV Certification</h3>
+                    <h3 className="text-lg font-medium">{t('tuv_certification')}</h3>
                     <div className="flex justify-between border-b pb-2">
-                      <span className="text-sm font-medium">Number</span>
-                      <span className="text-sm">{employee.tuv_certification_number || 'Not set'}</span>
+                      <span className="text-sm font-medium">{t('number')}</span>
+                      <span className="text-sm">{employee.tuv_certification_number || t('not_set')}</span>
                     </div>
                     <div className="flex justify-between border-b pb-2">
-                      <span className="text-sm font-medium">Expiry</span>
-                      <span className="text-sm">{employee.tuv_certification_expiry ? format(new Date(employee.tuv_certification_expiry), 'PPP') : 'Not set'}</span>
+                      <span className="text-sm font-medium">{t('expiry')}</span>
+                      <span className="text-sm">{employee.tuv_certification_expiry ? format(new Date(employee.tuv_certification_expiry), 'PPP') : t('not_set')}</span>
                     </div>
                     <div className="flex justify-between border-b pb-2">
-                      <span className="text-sm font-medium">Cost</span>
-                      <span className="text-sm">{employee.tuv_certification_cost ? `SAR ${Number(employee.tuv_certification_cost).toFixed(2)}` : 'Not set'}</span>
+                      <span className="text-sm font-medium">{t('cost')}</span>
+                      <span className="text-sm">{employee.tuv_certification_cost ? `SAR ${Number(employee.tuv_certification_cost).toFixed(2)}` : t('not_set')}</span>
                     </div>
                     <div className="flex items-center gap-2 mt-2">
                       {employee.tuv_certification_file && (
                         <Button asChild variant="outline" size="sm">
-                          <a href={employee.tuv_certification_file} target="_blank" rel="noopener noreferrer">Download</a>
+                          <a href={employee.tuv_certification_file} target="_blank" rel="noopener noreferrer">{t('download')}</a>
                         </Button>
                       )}
                       {hasPermission('employees.edit') && (
@@ -1887,7 +1886,7 @@ export default function Show({
                             type="file"
                             accept=".pdf,.jpg,.jpeg,.png"
                             className="hidden"
-                            id="tuv-cert-upload"
+                            id="tuv-certification-upload"
                             onChange={(e) => {
                               const file = e.target.files?.[0];
                               if (file) {
@@ -1899,9 +1898,9 @@ export default function Show({
                             type="button"
                             variant="outline"
                             size="sm"
-                            onClick={() => document.getElementById('tuv-cert-upload')?.click()}
+                            onClick={() => document.getElementById('tuv-certification-upload')?.click()}
                           >
-                            Upload
+                            {t('upload')}
                           </Button>
                         </>
                       )}
@@ -1909,23 +1908,23 @@ export default function Show({
                   </div>
                   {/* SPSP License */}
                   <div className="space-y-2">
-                    <h3 className="text-lg font-medium">SPSP License</h3>
+                    <h3 className="text-lg font-medium">{t('spsp_license')}</h3>
                     <div className="flex justify-between border-b pb-2">
-                      <span className="text-sm font-medium">Number</span>
-                      <span className="text-sm">{employee.spsp_license_number || 'Not set'}</span>
+                      <span className="text-sm font-medium">{t('number')}</span>
+                      <span className="text-sm">{employee.spsp_license_number || t('not_set')}</span>
                     </div>
                     <div className="flex justify-between border-b pb-2">
-                      <span className="text-sm font-medium">Expiry</span>
-                      <span className="text-sm">{employee.spsp_license_expiry ? format(new Date(employee.spsp_license_expiry), 'PPP') : 'Not set'}</span>
+                      <span className="text-sm font-medium">{t('expiry')}</span>
+                      <span className="text-sm">{employee.spsp_license_expiry ? format(new Date(employee.spsp_license_expiry), 'PPP') : t('not_set')}</span>
                     </div>
                     <div className="flex justify-between border-b pb-2">
-                      <span className="text-sm font-medium">Cost</span>
-                      <span className="text-sm">{employee.spsp_license_cost ? `SAR ${Number(employee.spsp_license_cost).toFixed(2)}` : 'Not set'}</span>
+                      <span className="text-sm font-medium">{t('cost')}</span>
+                      <span className="text-sm">{employee.spsp_license_cost ? `SAR ${Number(employee.spsp_license_cost).toFixed(2)}` : t('not_set')}</span>
                     </div>
                     <div className="flex items-center gap-2 mt-2">
                       {employee.spsp_license_file && (
                         <Button asChild variant="outline" size="sm">
-                          <a href={employee.spsp_license_file} target="_blank" rel="noopener noreferrer">Download</a>
+                          <a href={employee.spsp_license_file} target="_blank" rel="noopener noreferrer">{t('download')}</a>
                         </Button>
                       )}
                       {hasPermission('employees.edit') && (
@@ -1948,7 +1947,7 @@ export default function Show({
                             size="sm"
                             onClick={() => document.getElementById('spsp-license-upload')?.click()}
                           >
-                            Upload
+                            {t('upload')}
                           </Button>
                         </>
                       )}
