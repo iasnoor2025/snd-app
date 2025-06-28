@@ -1,24 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import type { PageProps } from '@/Core/types';
-import { AppLayout } from '@/Core';
+import AppLayout from '@/Core/layouts/AppLayout';
 import dayjs from 'dayjs';
 import { toast } from 'sonner';
-import { ErrorBoundary } from "@/Core";
-import { Button } from "@/Core";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/Core";
-import { Input } from "@/Core";
-import { Textarea } from "@/Core";
-import { ScrollArea } from "@/Core";
-import { Alert, AlertDescription } from "@/Core";
-import { Skeleton } from "@/Core";
+import ErrorBoundary from '@/Core/components/ErrorBoundary';
+import { Button } from '@/Core/components/ui/button';
+import { Card } from '@/Core/components/ui/card';
+import { CardContent } from '@/Core/components/ui/card';
+import { CardHeader } from '@/Core/components/ui/card';
+import { CardTitle } from '@/Core/components/ui/card';
+import { CardDescription } from '@/Core/components/ui/card';
+import { Input } from '@/Core/components/ui/input';
+import { Textarea } from '@/Core/components/ui/textarea';
+import { ScrollArea } from '@/Core/components/ui/scroll-area';
+import { Alert, AlertDescription } from '@/Core/components/ui/alert';
+import { Skeleton } from '@/Core/components/ui/skeleton';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/Core";
+} from "@/Core/components/ui/select";
 import {
   Form,
   FormControl,
@@ -27,7 +31,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/Core";
+} from "@/Core/components/ui/form";
 import {
   Dialog,
   DialogContent,
@@ -35,19 +39,19 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/Core";
+} from "@/Core/components/ui/dialog";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useForm as useReactHookForm } from 'react-hook-form';
-import { Calendar } from "@/Core";
+import { Calendar } from '@/Core/components/ui/calendar';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/Core";
-import { cn } from "@/Core";
+} from "@/Core/components/ui/popover";
+import { cn } from "@/Core/lib/utils";
 import { CalendarIcon, ArrowLeft, Loader2, Plus } from 'lucide-react';
-import { Switch } from "@/Core";
+import { Switch } from '@/Core/components/ui/switch';
 import { format } from 'date-fns';
 import { router } from '@inertiajs/react';
 import axios from 'axios';

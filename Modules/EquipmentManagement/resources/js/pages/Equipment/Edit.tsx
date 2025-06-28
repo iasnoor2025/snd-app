@@ -1,19 +1,23 @@
 import React from 'react';
 import { Head, Link, useForm, router } from '@inertiajs/react';
 import type { PageProps } from "@/Core/types";
-import { AppLayout } from '@/Core';
+import AppLayout from '@/Core/layouts/AppLayout';
 import { format } from 'date-fns';
-import { Button } from "@/Core";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/Core";
-import { Input } from "@/Core";
-import { Textarea } from "@/Core";
+import { Button } from '@/Core/components/ui/button';
+import { Card } from '@/Core/components/ui/card';
+import { CardContent } from '@/Core/components/ui/card';
+import { CardHeader } from '@/Core/components/ui/card';
+import { CardTitle } from '@/Core/components/ui/card';
+import { CardDescription } from '@/Core/components/ui/card';
+import { Input } from '@/Core/components/ui/input';
+import { Textarea } from '@/Core/components/ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/Core";
+} from "@/Core/components/ui/select";
 import {
   Form,
   FormControl,
@@ -21,17 +25,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/Core";
+} from "@/Core/components/ui/form";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useForm as useReactHookForm, Controller } from 'react-hook-form';
-import { Calendar } from "@/Core";
+import { Calendar } from '@/Core/components/ui/calendar';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/Core";
-import { cn } from "@/Core";
+} from "@/Core/components/ui/popover";
+import { cn } from "@/Core/lib/utils";
 import {
   CalendarIcon,
   ArrowLeft,
@@ -51,9 +55,9 @@ import {
   Building2,
   Package
 } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
-import { Separator } from "@/Core";
-import { Badge } from "@/Core";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core/components/ui/tabs";
+import { Separator } from "@/Core/components/ui/separator";
+import { Badge } from "@/Core/components/ui/badge";
 import { useTranslation } from 'react-i18next';
 import { useEquipmentCategories } from "@/Core";
 import { Equipment, EquipmentFormData } from '../../types';

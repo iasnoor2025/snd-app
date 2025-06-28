@@ -8,10 +8,7 @@ const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createServer((page) =>
     createInertiaApp({
-        page,
-        render: ReactDOMServer.renderToString,
-        title: (title) => `${title} - ${appName}`,
-        resolve: async (name) => {
+        resolve: async (name: string) => {
             console.log('SSR resolving page:', name);
 
             // Special case for auth pages
@@ -19,25 +16,20 @@ createServer((page) =>
                 try {
                     const page = await resolvePageComponent(`./pages/${name}.tsx`, import.meta.glob('./pages/**/*.tsx'));
                     console.log('SSR found auth page:', name);
-                    return page;
+                    return page as any;
                 } catch (error) {
                     console.error(`SSR could not find auth page: ${name}`, error);
                 }
             }
 
-            return resolvePageComponent(`./pages/${name}.tsx`, import.meta.glob('./pages/**/*.tsx'));
+            return (await resolvePageComponent(`./pages/${name}.tsx`, import.meta.glob('./pages/**/*.tsx'))) as any;
         },
         setup: ({ App, props }) => {
-            /* eslint-disable */
-            // @ts-expect-error
-            global.route<RouteName> = (name, params, absolute) =>
+            (global as any).route = (name: string, params: any, absolute: boolean) =>
                 route(name, params as any, absolute, {
-                    // @ts-expect-error
-                    ...page.props.ziggy,
-                    // @ts-expect-error
-                    location: new URL(page.props.ziggy.location),
+                    ...(page.props.ziggy as any),
+                    location: new URL((page.props as any).ziggy.location),
                 });
-            /* eslint-enable */
 
             return <App {...props} />;
         },

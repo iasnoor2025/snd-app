@@ -1,19 +1,30 @@
 import React, { useState } from 'react';
 import { Head, router } from '@inertiajs/react';
 import type { PageProps } from "@/Core/types";
-import { AppLayout } from '@/Core';
-import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
-import { Button } from "@/Core";
-import { Badge } from "@/Core";
-import { Input } from "@/Core";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/Core";
+import AppLayout from '@/Core/layouts/AppLayout';
+import { Card } from '@/Core/components/ui/card';
+import { CardContent } from '@/Core/components/ui/card';
+import { CardHeader } from '@/Core/components/ui/card';
+import { CardTitle } from '@/Core/components/ui/card';
+import { Button } from '@/Core/components/ui/button';
+import { Badge } from '@/Core/components/ui/badge';
+import { Input } from '@/Core/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Core/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/components/ui/table';
 import { Search } from 'lucide-react';
-import { CreateButton } from "@/Core";
-import { CrudButtons } from "@/Core";
-import { formatCurrency } from "@/Core";
+// import { CreateButton } from '@/Core/components/ui/create-button';
+// import { CrudButtons } from '@/Core/components/ui/crud-buttons';
+import { formatCurrency } from "../../Core/resources/js/utils/format";
 import { useTranslation } from 'react-i18next';
 import { Equipment, PaginatedData } from '../../types';
+import { Checkbox } from '@/Core/components/ui/checkbox';
+import { Pagination } from '@/Core/components/ui/pagination';
+import { EmptyState } from '@/Core/components/ui/empty-state';
+import { FilterDropdown } from '@/Core/components/ui/filter-dropdown';
+import { Loader } from '@/Core/components/ui/loader';
+import { ConfirmDialog } from '@/Core/components/ui/confirm-dialog';
+import CrudButtons from '@/Core/components/shared/CrudButtons';
+import CreateButton from '@/Core/components/shared/CreateButton';
 
 interface Props extends PageProps {
   equipment: PaginatedData<Equipment>;
@@ -155,6 +166,7 @@ export default function Index({ equipment, categories = [], statuses = {}, filte
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-2xl font-bold">{forceString(t('equipment'), 'equipment')}</CardTitle>
+            <CreateButton resourceType="equipment" permission="equipment.create" text={forceString(t('add_equipment'), 'Add Equipment')} />
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSearch} className="mb-6">
@@ -213,10 +225,10 @@ export default function Index({ equipment, categories = [], statuses = {}, filte
                       {forceString(t('clear_filters'), 'clear_filters')}
                     </Button>
                   </div>
-                  <CreateButton
+                  {/* <CreateButton
                     resourceType="equipment"
                     text={forceString(t('add_equipment'), 'add_equipment')}
-                  />
+                  /> */}
                 </div>
               </div>
             </form>

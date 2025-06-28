@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 // Define PageProps inline if needed
 type PageProps = Record<string, unknown>;
-import { AppLayout } from '@/Core';
+import { AppLayout } from '@/Core/index';
 // Define Equipment inline if needed
 interface Equipment {
   id: number;
@@ -14,20 +14,20 @@ interface Equipment {
   purchase_date?: string;
   door_number?: string;
 }
-import { Button } from "@/Core";
-import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
-import { Input } from "@/Core";
-import { Label } from "@/Core";
-import { Textarea } from "@/Core";
+import { Button } from "@/Core/index";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Core/index";
+import { Input } from "@/Core/index";
+import { Label } from "@/Core/index";
+import { Textarea } from "@/Core/index";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/Core";
+} from "@/Core/index";
 import { ArrowLeft as ArrowLeftIcon } from 'lucide-react';
-import { useToast } from "@/Core";
+import { useToast } from "@/Core/index";
 import {
   Form,
   FormField,
@@ -35,17 +35,17 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-} from "@/Core";
+} from "@/Core/index";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/Core";
-import { Calendar } from "@/Core";
+} from "@/Core/index";
+import { Calendar } from "@/Core/index";
 import { format } from 'date-fns';
-import { cn } from "@/Core";
+import { cn } from "@/Core/index";
 import { CalendarIcon } from 'lucide-react';
-import { Badge } from "@/Core";
+import { Badge } from "@/Core/index";
 import {
   Dialog,
   DialogTrigger,
@@ -55,8 +55,8 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose,
-} from "@/Core";
-import { Separator } from "@/Core";
+} from "@/Core/index";
+import { Separator } from "@/Core/index";
 // Define BreadcrumbItem inline
 type BreadcrumbItem = { title: string; href: string };
 

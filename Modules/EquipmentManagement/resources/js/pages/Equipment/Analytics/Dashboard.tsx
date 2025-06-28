@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Head } from '@inertiajs/react';
-import { AppLayout } from '@/Core';
-import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
-import { Badge } from "@/Core";
-import { Button } from "@/Core";
+import AppLayout from '@/Core/layouts/AppLayout';
+import { Card } from '@/Core/components/ui/card';
+import { CardContent } from '@/Core/components/ui/card';
+import { CardHeader } from '@/Core/components/ui/card';
+import { CardTitle } from '@/Core/components/ui/card';
+import { Tabs } from '@/Core/components/ui/tabs';
+import { TabsContent } from '@/Core/components/ui/tabs';
+import { TabsList } from '@/Core/components/ui/tabs';
+import { TabsTrigger } from '@/Core/components/ui/tabs';
+import { Badge } from '@/Core/components/ui/badge';
+import { Button } from '@/Core/components/ui/button';
+import { formatCurrency } from '@/Core/utils/format';
 import {
   LineChart,
   Line,
@@ -40,7 +47,6 @@ import {
   Filter,
   RefreshCw
 } from 'lucide-react';
-import { formatCurrency } from "@/Core";
 
 interface EquipmentAnalytics {
   totalEquipment: number;

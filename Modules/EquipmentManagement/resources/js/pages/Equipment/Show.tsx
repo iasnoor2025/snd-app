@@ -2,8 +2,8 @@ import React from 'react';
 import { Head } from '@inertiajs/react';
 import { router } from '@inertiajs/core';
 import axios from 'axios';
-import { AppLayout } from '@/Core';
-import { formatCurrency } from "@/Core/utils";
+import AppLayout from '@/Core/layouts/AppLayout';
+import { formatCurrency } from '@/Core/utils/format';
 import {
   Button,
   Card,
@@ -32,8 +32,8 @@ import {
   DialogDescription,
   DialogFooter,
   CardFooter
-} from "@/Core/components/ui";
-import TextLink from "@/Core/components/text-link";
+} from '@/Core/components/ui';
+import TextLink from '@/Core/components/text-link';
 import {
   ArrowLeft,
   Pencil,
@@ -60,7 +60,7 @@ import {
   Plus,
   History
 } from 'lucide-react';
-import { cn } from "@/Core/lib/utils";
+import { cn } from '@/Core/lib/utils';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { usePermission } from '@/Core/hooks/usePermission';
