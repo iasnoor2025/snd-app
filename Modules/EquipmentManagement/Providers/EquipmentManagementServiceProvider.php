@@ -38,9 +38,10 @@ class EquipmentManagementServiceProvider extends ServiceProvider
      *
      * @return void;
      */
-    public function register()
+    public function register(): void
     {
         $this->app->register(RouteServiceProvider::class);
+        $this->app->register(EquipmentAuthServiceProvider::class);
 
         if (file_exists(module_path($this->moduleName, 'Providers/EventServiceProvider.php'))) {
             $this->app->register(EventServiceProvider::class);

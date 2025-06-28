@@ -42,7 +42,8 @@
             "Modules\\": "Modules/"
         },
         "files": [
-            "app/helpers.php"
+            "app/helpers.php",
+            "app/Helpers/PdfHelper.php"
         ]
     },
     "autoload-dev": {

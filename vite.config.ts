@@ -14,6 +14,7 @@ export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => ({
                 'resources/css/app.css',
                 'resources/js/app.tsx',
                 'Modules/Core/resources/js/app.tsx',
+                'Modules/EquipmentManagement/resources/js/app.tsx'
             ],
             ssr: 'resources/js/ssr.tsx',
             refresh: true,
@@ -139,6 +140,15 @@ export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => ({
                         }
                         return 'rental';
                     }
+                    if (id.includes('Modules/EquipmentManagement')) {
+                        if (id.includes('/components/')) {
+                            return 'equipment-components';
+                        }
+                        if (id.includes('/services/')) {
+                            return 'equipment-services';
+                        }
+                        return 'equipment';
+                    }
                 },
                 assetFileNames: (assetInfo: PreRenderedAsset) => {
                     const extType = assetInfo.name?.split('.').at(1) || '';
@@ -201,6 +211,11 @@ export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => ({
             '@/RentalManagement/pages': path.resolve(__dirname, './Modules/RentalManagement/resources/js/pages'),
             '@/RentalManagement/services': path.resolve(__dirname, './Modules/RentalManagement/resources/js/services'),
             '@/RentalManagement/types': path.resolve(__dirname, './Modules/RentalManagement/resources/js/types'),
+            '@/EquipmentManagement': path.resolve(__dirname, './Modules/EquipmentManagement/resources/js'),
+            '@/EquipmentManagement/components': path.resolve(__dirname, './Modules/EquipmentManagement/resources/js/components'),
+            '@/EquipmentManagement/pages': path.resolve(__dirname, './Modules/EquipmentManagement/resources/js/pages'),
+            '@/EquipmentManagement/services': path.resolve(__dirname, './Modules/EquipmentManagement/resources/js/services'),
+            '@/EquipmentManagement/types': path.resolve(__dirname, './Modules/EquipmentManagement/resources/js/types'),
             'ziggy-js': path.resolve(__dirname, './vendor/tightenco/ziggy'),
         },
         extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
@@ -224,6 +239,10 @@ export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => ({
             '@/RentalManagement/pages',
             '@/RentalManagement/services',
             '@/RentalManagement/types',
+            '@/EquipmentManagement/components',
+            '@/EquipmentManagement/pages',
+            '@/EquipmentManagement/services',
+            '@/EquipmentManagement/types',
             'react',
             'react-dom',
             '@inertiajs/react',
