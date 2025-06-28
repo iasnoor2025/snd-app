@@ -2,7 +2,6 @@
 
 namespace Modules\EquipmentManagement\Services;
 
-use Modules\Core\Services\BaseService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +13,7 @@ use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 use Modules\EquipmentManagement\Models\EquipmentMedia;
 
-class EquipmentMediaService extends BaseService
+class EquipmentMediaService
 {
     private EquipmentMediaTypeService $mediaTypeService;
 

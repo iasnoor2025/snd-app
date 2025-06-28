@@ -63,5 +63,19 @@ return [
             'theme_color' => '#4A90E2',
         ],
     ],
+
+    'responsive' => [
+        'breakpoints' => [
+            'mobile' => 480,
+            'tablet' => 768,
+            'desktop' => 1024,
+        ],
+        'default_layout' => 'mobile',
+        'layouts' => [
+            'mobile' => 'layouts.mobile',
+            'tablet' => 'layouts.tablet',
+            'desktop' => 'layouts.desktop',
+        ],
+    ],
 ];
 

@@ -6,15 +6,15 @@
       0 => 'Inertia\\ServiceProvider',
     ),
   ),
-  'intervention/image-laravel' => 
+  'jenssegers/agent' => 
   array (
     'aliases' => 
     array (
-      'Image' => 'Intervention\\Image\\Laravel\\Facades\\Image',
+      'Agent' => 'Jenssegers\\Agent\\Facades\\Agent',
     ),
     'providers' => 
     array (
-      0 => 'Intervention\\Image\\Laravel\\ServiceProvider',
+      0 => 'Jenssegers\\Agent\\AgentServiceProvider',
     ),
   ),
   'laravel/pail' => 

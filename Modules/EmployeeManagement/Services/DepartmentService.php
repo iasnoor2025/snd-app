@@ -2,14 +2,13 @@
 
 namespace Modules\EmployeeManagement\Services;
 
-use Modules\Core\Services\BaseService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Modules\EmployeeManagement\Domain\Models\Department;
 use Modules\EmployeeManagement\Domain\Models\Employee;
 
-class DepartmentService extends BaseService
+class DepartmentService
 {
     /**
      * Create a new service instance.
@@ -17,7 +16,6 @@ class DepartmentService extends BaseService
     public function __construct()
     {
         // No repository needed for this service as we're using the model directly
-        parent::__construct(null);
     }
 
     /**

@@ -17,7 +17,7 @@ class ResponsiveLayoutService
     {
         $this->agent = $agent;
         $this->imageService = $imageService;
-        $this->config = config('mobileBridge.responsive');
+        $this->config = config('mobilebridge.responsive');
     }
 
     /**

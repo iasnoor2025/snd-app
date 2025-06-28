@@ -5,9 +5,8 @@ namespace Modules\EmployeeManagement\Services;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use Modules\Core\Services\BaseService;
 
-class EmployeeDocumentTypeService extends BaseService
+class EmployeeDocumentTypeService
 {
     /**
      * Document type validation rules

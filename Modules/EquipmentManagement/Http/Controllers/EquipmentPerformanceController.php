@@ -3,16 +3,16 @@
 namespace Modules\EquipmentManagement\Http\Controllers;
 
 use Modules\EquipmentManagement\Domain\Models\Equipment;
-use App\Services\EquipmentPerformanceService;
+use Modules\EquipmentManagement\Services\PerformanceTrackingService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Carbon\Carbon;
 
 class EquipmentPerformanceController extends Controller
 {
-    protected EquipmentPerformanceService $performanceService;
+    protected PerformanceTrackingService $performanceService;
 
-    public function __construct(EquipmentPerformanceService $performanceService)
+    public function __construct(PerformanceTrackingService $performanceService)
     {
         $this->performanceService = $performanceService;
     }

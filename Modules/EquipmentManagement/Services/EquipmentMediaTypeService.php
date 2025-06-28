@@ -8,7 +8,7 @@ use Illuminate\Validation\ValidationException;
 use Modules\Core\Services\BaseService;
 use Intervention\Image\Facades\Image;
 
-class EquipmentMediaTypeService extends BaseService
+class EquipmentMediaTypeService
 {
     /**
      * Media type validation rules

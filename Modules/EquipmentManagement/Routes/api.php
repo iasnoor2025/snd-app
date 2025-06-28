@@ -30,7 +30,7 @@ use Modules\EquipmentManagement\Http\Controllers\EquipmentController;
 
 // API routes uncommented
 
-Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
     // Equipment management
     Route::apiResource('equipment', EquipmentApiController::class, [
         'names' => [

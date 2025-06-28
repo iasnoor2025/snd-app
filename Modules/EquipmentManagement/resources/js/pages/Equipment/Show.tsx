@@ -213,7 +213,9 @@ export default function Show({ equipment, rentalItems = { data: [], total: 0 }, 
   React.useEffect(() => {
     const fetchMediaItems = async () => {
       try {
-        const response = await axios.get(`/api/v1/equipment/${equipment.id}/media`);
+        // Ensure CSRF cookie is set
+        await axios.get('/sanctum/csrf-cookie', { withCredentials: true });
+        const response = await axios.get(`/api/v1/equipment/${equipment.id}/media`, { withCredentials: true });
         const mediaData = response.data.media || {};
         const allMedia = [
           ...(mediaData.images || []),
@@ -357,6 +359,23 @@ export default function Show({ equipment, rentalItems = { data: [], total: 0 }, 
     };
   }, [rentalItems]);
 
+  // Process project history to prevent undefined errors and ensure all fields are strings
+  const processProjectHistory = React.useMemo(() => {
+    return {
+      data: (projectHistory?.data || []).map(item => {
+        // Create a safe copy with all required properties
+        const safeItem = { ...item };
+        safeItem.project_name = safeItem.project_name ?? 'Unknown';
+        safeItem.assigned_date = safeItem.assigned_date ?? '';
+        safeItem.return_date = safeItem.return_date ?? '';
+        safeItem.status = safeItem.status ?? '';
+        safeItem.usage_hours = safeItem.usage_hours ?? 0;
+        return safeItem;
+      }),
+      total: projectHistory?.total || 0
+    };
+  }, [projectHistory]);
+
   const handleDelete = () => {
     router.delete(window.route('equipment.destroy', { equipment: equipment.id }), {
       onSuccess: () => {
@@ -470,19 +489,21 @@ export default function Show({ equipment, rentalItems = { data: [], total: 0 }, 
   // Safe wrapper around renderValue to ensure we never render an object directly
   function safeRenderValue(val: any): React.ReactNode {
     if (val === null || val === undefined) return '—';
-    
+
     // Handle status statistics object
-    if (typeof val === 'object' && 
-        ('available' in val || 'in_use' in val || 
-         'maintenance' in val || 'retired' in val)) {
+    if (
+      typeof val === 'object' &&
+      (val.hasOwnProperty('available') || val.hasOwnProperty('in_use') ||
+        val.hasOwnProperty('maintenance') || val.hasOwnProperty('retired'))
+    ) {
       const stats = [];
       if (val.available) stats.push(`Available: ${val.available}`);
       if (val.in_use) stats.push(`In Use: ${val.in_use}`);
       if (val.maintenance) stats.push(`Maintenance: ${val.maintenance}`);
       if (val.retired) stats.push(`Retired: ${val.retired}`);
-      return stats.join(', ') || '—';
+      return stats.join(', ') || '—'; // Always return a string
     }
-    
+
     return renderValue(val);
   }
 
@@ -691,7 +712,7 @@ export default function Show({ equipment, rentalItems = { data: [], total: 0 }, 
               <ArrowLeft className="h-4 w-4 mr-1" />
               {t('back_to_list')}
             </Button>
-            <h1 className="text-2xl font-semibold">{equipment.name}</h1>
+            <h1 className="text-2xl font-semibold">{safeRenderValue(equipment.name)}</h1>
           </div>
           <div className="flex items-center gap-2">
             {hasPermission('equipment.edit') && (
@@ -729,43 +750,43 @@ export default function Show({ equipment, rentalItems = { data: [], total: 0 }, 
               <TabsContent value="basic" className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('equipment_name')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('equipment_name'))}</Label>
                     <p className="text-sm">{safeRenderValue(equipment.name)}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('model_number')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('model_number'))}</Label>
                     <p className="text-sm">{safeRenderValue(equipment.model_number)}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('manufacturer')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('manufacturer'))}</Label>
                     <p className="text-sm">{safeRenderValue(equipment.manufacturer)}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('serial_number')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('serial_number'))}</Label>
                     <p className="text-sm">{safeRenderValue(equipment.serial_number)}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('door_number')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('door_number'))}</Label>
                     <p className="text-sm">{safeRenderValue(equipment.door_number)}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('status')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('status'))}</Label>
                     <div>{getStatusBadge(equipment.status)}</div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('category')}</Label>
-                    <p className="text-sm">{renderString(equipment.category)}</p>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('category'))}</Label>
+                    <p className="text-sm">{safeRenderValue(equipment.category)}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('unit')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('unit'))}</Label>
                     <p className="text-sm">{safeRenderValue(equipment.unit)}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('location')}</Label>
-                    <p className="text-sm">{renderString(equipment.location)}</p>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('location'))}</Label>
+                    <p className="text-sm">{safeRenderValue(equipment.location)}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('active_status')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('active_status'))}</Label>
                     <Badge variant={equipment.is_active ? 'default' : 'secondary'}>
                       {equipment.is_active ? renderString(t('active')) : renderString(t('inactive'))}
                     </Badge>
@@ -773,13 +794,13 @@ export default function Show({ equipment, rentalItems = { data: [], total: 0 }, 
                 </div>
                 {equipment.description && (
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('description')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('description'))}</Label>
                     <p className="text-sm">{safeRenderValue(equipment.description)}</p>
                   </div>
                 )}
                 {equipment.notes && (
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('notes')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('notes'))}</Label>
                     <p className="text-sm">{safeRenderValue(equipment.notes)}</p>
                   </div>
                 )}
@@ -788,43 +809,43 @@ export default function Show({ equipment, rentalItems = { data: [], total: 0 }, 
               <TabsContent value="financial" className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('daily_rate')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('daily_rate'))}</Label>
                     <p className="text-sm font-semibold">{formatCurrency(equipment.daily_rate || 0)}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('weekly_rate')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('weekly_rate'))}</Label>
                     <p className="text-sm font-semibold">{formatCurrency(equipment.weekly_rate || 0)}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('monthly_rate')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('monthly_rate'))}</Label>
                     <p className="text-sm font-semibold">{formatCurrency(equipment.monthly_rate || 0)}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('default_unit_cost')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('default_unit_cost'))}</Label>
                     <p className="text-sm">{formatCurrency(equipment.default_unit_cost || 0)}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('purchase_price')}</Label>
-                <p className="text-sm">{formatCurrency(equipment.purchase_price || 0)}</p>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('purchase_price'))}</Label>
+                    <p className="text-sm">{formatCurrency(equipment.purchase_price || 0)}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('purchase_date')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('purchase_date'))}</Label>
                     <p className="text-sm">{safeRenderValue(equipment.purchase_date)}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('warranty_expiry_date')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('warranty_expiry_date'))}</Label>
                     <p className="text-sm">{safeRenderValue(equipment.warranty_expiry_date)}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('lifetime_maintenance_cost')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('lifetime_maintenance_cost'))}</Label>
                     <p className="text-sm">{formatCurrency(equipment.lifetime_maintenance_cost || 0)}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('avg_cost_per_hour')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('avg_cost_per_hour'))}</Label>
                     <p className="text-sm">{formatCurrency(equipment.avg_operating_cost_per_hour || 0)}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('avg_cost_per_mile')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('avg_cost_per_mile'))}</Label>
                     <p className="text-sm">{formatCurrency(equipment.avg_operating_cost_per_mile || 0)}</p>
                   </div>
                 </div>
@@ -833,19 +854,19 @@ export default function Show({ equipment, rentalItems = { data: [], total: 0 }, 
               <TabsContent value="maintenance" className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('last_maintenance')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('last_maintenance'))}</Label>
                     <p className="text-sm">{safeRenderValue(equipment.last_maintenance_date)}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('next_maintenance')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('next_maintenance'))}</Label>
                     <p className="text-sm">{safeRenderValue(equipment.next_maintenance_date)}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('next_performance_review')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('next_performance_review'))}</Label>
                     <p className="text-sm">{safeRenderValue(equipment.next_performance_review)}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('efficiency_rating')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('efficiency_rating'))}</Label>
                     <p className="text-sm">{safeRenderValue(equipment.efficiency_rating) ? `${safeRenderValue(equipment.efficiency_rating)}%` : '—'}</p>
                   </div>
                 </div>
@@ -854,39 +875,39 @@ export default function Show({ equipment, rentalItems = { data: [], total: 0 }, 
               <TabsContent value="metrics" className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('current_operating_hours')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('current_operating_hours'))}</Label>
                     <p className="text-sm">{safeRenderValue(equipment.current_operating_hours)} {t('hrs')}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('current_mileage')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('current_mileage'))}</Label>
                     <p className="text-sm">{safeRenderValue(equipment.current_mileage)} {t('miles')}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('current_cycle_count')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('current_cycle_count'))}</Label>
                     <p className="text-sm">{safeRenderValue(equipment.current_cycle_count)}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('initial_operating_hours')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('initial_operating_hours'))}</Label>
                     <p className="text-sm">{safeRenderValue(equipment.initial_operating_hours)} {t('hrs')}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('initial_mileage')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('initial_mileage'))}</Label>
                     <p className="text-sm">{safeRenderValue(equipment.initial_mileage)} {t('miles')}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('initial_cycle_count')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('initial_cycle_count'))}</Label>
                     <p className="text-sm">{safeRenderValue(equipment.initial_cycle_count)}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('avg_daily_usage_hours')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('avg_daily_usage_hours'))}</Label>
                     <p className="text-sm">{safeRenderValue(equipment.avg_daily_usage_hours)} {t('hrs_per_day')}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('avg_daily_usage_miles')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('avg_daily_usage_miles'))}</Label>
                     <p className="text-sm">{safeRenderValue(equipment.avg_daily_usage_miles)} {t('miles_per_day')}</p>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-muted-foreground">{t('last_metric_update')}</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{safeRenderValue(t('last_metric_update'))}</Label>
                     <p className="text-sm">{safeRenderValue(equipment.last_metric_update)}</p>
                   </div>
                 </div>
@@ -910,7 +931,7 @@ export default function Show({ equipment, rentalItems = { data: [], total: 0 }, 
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      {rentalItems.data.length > 0 || projectHistory.data.length > 0 ? (
+                      {rentalItems.data.length > 0 || processProjectHistory.data.length > 0 ? (
                         <div className="space-y-4">
                           {/* Rental Items */}
                           {rentalItems.data.length > 0 && (
@@ -938,11 +959,11 @@ export default function Show({ equipment, rentalItems = { data: [], total: 0 }, 
                           )}
 
                           {/* Project History */}
-                          {projectHistory.data.length > 0 && (
+                          {processProjectHistory.data.length > 0 && (
                             <div>
                               <h4 className="font-medium mb-3 text-sm text-muted-foreground">{t('project_assignments')}</h4>
                               <div className="space-y-2">
-                                {projectHistory.data.map((project) => (
+                                {processProjectHistory.data.map((project) => (
                                   <div key={project.id} className="flex items-center justify-between p-3 border rounded-lg">
                                     <div className="flex items-center gap-3">
                                       <Settings className="h-4 w-4 text-green-500" />
@@ -963,7 +984,7 @@ export default function Show({ equipment, rentalItems = { data: [], total: 0 }, 
                           )}
 
                           {/* No Projects/Rentals found */}
-                          {rentalItems.data.length === 0 && projectHistory.data.length === 0 && (
+                          {rentalItems.data.length === 0 && processProjectHistory.data.length === 0 && (
                             <div className="text-center py-8 text-muted-foreground">
                               <History className="h-12 w-12 mx-auto mb-4 opacity-50" />
                               <p>{t('no_projects_rentals_found_for_this_equipment')}</p>
@@ -994,15 +1015,15 @@ export default function Show({ equipment, rentalItems = { data: [], total: 0 }, 
                       <div className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div className="text-center p-4 border rounded-lg">
-                            <div className="text-2xl font-bold text-blue-600">{rentalItems.total}</div>
+                            <div className="text-2xl font-bold text-blue-600">{safeRenderValue(rentalItems.total)}</div>
                             <div className="text-sm text-muted-foreground">{t('total_rentals')}</div>
                           </div>
                           <div className="text-center p-4 border rounded-lg">
-                            <div className="text-2xl font-bold text-green-600">{projectHistory.total}</div>
+                            <div className="text-2xl font-bold text-green-600">{safeRenderValue(processProjectHistory.total)}</div>
                             <div className="text-sm text-muted-foreground">{t('total_projects')}</div>
                           </div>
                           <div className="text-center p-4 border rounded-lg">
-                            <div className="text-2xl font-bold text-purple-600">{equipment.current_operating_hours || 0}</div>
+                            <div className="text-2xl font-bold text-purple-600">{safeRenderValue(equipment.current_operating_hours || 0)}</div>
                             <div className="text-sm text-muted-foreground">{t('operating_hours')}</div>
                           </div>
                         </div>

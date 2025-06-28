@@ -100,5 +100,13 @@ return [
         'namespace' => 'core',
         'path' => 'resources/lang/modules/core',
     ],
+
+    'images' => [
+        'optimize' => true,
+        'quality' => 80,
+        'max_width' => 1920,
+        'max_height' => 1080,
+        'formats' => ['jpg', 'jpeg', 'png', 'webp'],
+    ],
 ];
 
