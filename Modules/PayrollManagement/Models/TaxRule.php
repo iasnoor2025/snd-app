@@ -5,10 +5,12 @@ namespace Modules\PayrollManagement\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\Core\Traits\Trackable;
 
 class TaxRule extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasFactory, Trackable;
 
     protected $fillable = [
         'name',
@@ -55,5 +57,10 @@ class TaxRule extends Model
                 $query->where('effective_until', '>=', $date)
                     ->orWhereNull('effective_until');
             });
+    }
+
+    protected static function newFactory()
+    {
+        return \Modules\PayrollManagement\database\factories\TaxRuleFactory::new();
     }
 }

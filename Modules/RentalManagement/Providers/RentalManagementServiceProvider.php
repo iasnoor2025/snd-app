@@ -44,7 +44,8 @@ class RentalManagementServiceProvider extends ServiceProvider
         $this->app->make('db')->setDefaultConnection('pgsql');
 
         // Register observers
-        $this->registerObservers();
+        // \Modules\RentalManagement\Domain\Models\Rental::observe(\Modules\RentalManagement\Observers\RentalObserver::class);
+        // \Modules\RentalManagement\Domain\Models\RentalItem::observe(\Modules\RentalManagement\Observers\RentalItemObserver::class);
 
         // Register Vite assets
         Vite::useHotFile(public_path('hot'))
@@ -138,8 +139,8 @@ class RentalManagementServiceProvider extends ServiceProvider
     protected function registerObservers()
     {
         // Register observers for Rental models
-        \Modules\RentalManagement\Domain\Models\Rental::observe(\Modules\RentalManagement\Observers\RentalObserver::class);
-        \Modules\RentalManagement\Domain\Models\RentalItem::observe(\Modules\RentalManagement\Observers\RentalItemObserver::class);
+        // \Modules\RentalManagement\Domain\Models\Rental::observe(\Modules\RentalManagement\Observers\RentalObserver::class);
+        // \Modules\RentalManagement\Domain\Models\RentalItem::observe(\Modules\RentalManagement\Observers\RentalItemObserver::class);
     }
 }
 

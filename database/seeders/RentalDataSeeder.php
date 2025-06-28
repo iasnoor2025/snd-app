@@ -16,6 +16,8 @@ class RentalDataSeeder extends Seeder
     {
         \Log::info('Starting rental test data seeding...');
 
+        $unique = uniqid();
+
         try {
             // Create test equipment directly in the database to avoid model casting
             $equipmentId = DB::table('equipment')->insertGetId([
@@ -35,31 +37,36 @@ class RentalDataSeeder extends Seeder
             ]);
 
             // Create test customer directly in the database
-            $customerId = DB::table('customers')->insertGetId([
-                'name' => 'Test Customer',
-                'contact_person' => 'John Doe',
-                'email' => 'test@example.com',
-                'phone' => '1234567890',
-                'address' => 'Test Address',
-                'city' => 'Test City',
-                'state' => 'Test State',
-                'postal_code' => '12345',
-                'country' => 'Test Country',
-                'tax_number' => 'TAX001',
-                'credit_limit' => 10000,
-                'payment_terms' => 'Net 30',
-                'is_active' => true,
-                'status' => 'active',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            $customer = DB::table('customers')->where('email', 'test@example.com')->first();
+            if (!$customer) {
+                $customerId = DB::table('customers')->insertGetId([
+                    'name' => 'Test Customer',
+                    'contact_person' => 'John Doe',
+                    'email' => 'test@example.com',
+                    'phone' => '1234567890',
+                    'address' => 'Test Address',
+                    'city' => 'Test City',
+                    'state' => 'Test State',
+                    'postal_code' => '12345',
+                    'country' => 'Test Country',
+                    'tax_number' => 'TAX001',
+                    'credit_limit' => 10000,
+                    'payment_terms' => 'Net 30',
+                    'is_active' => true,
+                    'status' => 'active',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            } else {
+                $customerId = $customer->id;
+            }
 
             $now = now();
 
             // Create rentals directly using DB facade to avoid model events and casting
-            $this->createSingleRental($equipmentId, $customerId, 1, 'daily', 500, 30, $now);
-            $this->createSingleRental($equipmentId, $customerId, 2, 'weekly', 3000, 7, $now);
-            $this->createSingleRental($equipmentId, $customerId, 3, 'monthly', 10000, 30, $now);
+            $this->createSingleRental($equipmentId, $customerId, 1, 'daily', 500, 30, $now, $unique);
+            $this->createSingleRental($equipmentId, $customerId, 2, 'weekly', 3000, 7, $now, $unique);
+            $this->createSingleRental($equipmentId, $customerId, 3, 'monthly', 10000, 30, $now, $unique);
 
             \Log::info('Rental test data seeding completed successfully.');
         } catch (\Exception $e) {
@@ -70,10 +77,10 @@ class RentalDataSeeder extends Seeder
         }
     }
 
-    private function createSingleRental($equipmentId, $customerId, $number, $rateType, $rate, $days, $now)
+    private function createSingleRental($equipmentId, $customerId, $number, $rateType, $rate, $days, $now, $unique)
     {
         try {
-            return DB::transaction(function () use ($equipmentId, $customerId, $number, $rateType, $rate, $days, $now) {
+            return DB::transaction(function () use ($equipmentId, $customerId, $number, $rateType, $rate, $days, $now, $unique) {
                 // Calculate dates
                 $startDate = $number === 1 ? $now->copy()->subDays(10) : 
                             ($number === 2 ? $now->copy()->subMonths(2) : $now->copy()->addDays(5));
@@ -94,7 +101,7 @@ class RentalDataSeeder extends Seeder
 
                 // Insert rental directly
                 $rental = DB::table('rentals')->insertGetId([
-                    'rental_number' => 'RENT-' . $now->format('Y') . '-' . str_pad($number, 5, '0', STR_PAD_LEFT),
+                    'rental_number' => 'RENT-' . $now->format('Y') . '-' . str_pad($number, 5, '0', STR_PAD_LEFT) . '-' . $unique,
                     'customer_id' => $customerId,
                     'status' => $number === 1 ? 'active' : ($number === 2 ? 'completed' : 'pending'),
                     'start_date' => $startDate,

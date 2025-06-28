@@ -53,12 +53,14 @@ class RentalSeeder extends Seeder
         );
 
         $now = Carbon::now();
+        $unique = uniqid();
 
         // Create rentals in a transaction
-        DB::transaction(function () use ($customer, $equipment, $now) {
+        DB::transaction(function () use ($customer, $equipment, $now, $unique) {
             // Active rental
-            $rental1 = Rental::create([
-                'rental_number' => 'RNT-' . $now->format('Ymd') . '-001',
+            $rental1 = Rental::firstOrCreate([
+                'rental_number' => 'RNT-' . $now->format('Ymd') . '-001-' . $unique,
+            ], [
                 'customer_id' => $customer->id,
                 'status' => 'active',
                 'start_date' => $now->copy()->subDays(10),
@@ -79,7 +81,9 @@ class RentalSeeder extends Seeder
                 'equipment_id' => $equipment->id,
                 'quantity' => 1,
                 'unit_price' => 500,
+                'rate' => 500,
                 'rental_rate_period' => 'daily',
+                'rate_type' => 'daily',
                 'days' => 30,
                 'discount_percentage' => 0,
                 'total_amount' => 15000,
@@ -87,8 +91,9 @@ class RentalSeeder extends Seeder
             ]);
 
             // Completed rental
-            $rental2 = Rental::create([
-                'rental_number' => 'RNT-' . $now->format('Ymd') . '-002',
+            $rental2 = Rental::firstOrCreate([
+                'rental_number' => 'RNT-' . $now->format('Ymd') . '-002-' . $unique,
+            ], [
                 'customer_id' => $customer->id,
                 'status' => 'completed',
                 'start_date' => $now->copy()->subMonths(2),
@@ -110,7 +115,9 @@ class RentalSeeder extends Seeder
                 'equipment_id' => $equipment->id,
                 'quantity' => 1,
                 'unit_price' => 3000,
+                'rate' => 3000,
                 'rental_rate_period' => 'weekly',
+                'rate_type' => 'weekly',
                 'days' => 7,
                 'discount_percentage' => 0,
                 'total_amount' => 3000,
@@ -118,8 +125,9 @@ class RentalSeeder extends Seeder
             ]);
 
             // Pending rental
-            $rental3 = Rental::create([
-                'rental_number' => 'RNT-' . $now->format('Ymd') . '-003',
+            $rental3 = Rental::firstOrCreate([
+                'rental_number' => 'RNT-' . $now->format('Ymd') . '-003-' . $unique,
+            ], [
                 'customer_id' => $customer->id,
                 'status' => 'pending',
                 'start_date' => $now->copy()->addDays(5),
@@ -140,7 +148,9 @@ class RentalSeeder extends Seeder
                 'equipment_id' => $equipment->id,
                 'quantity' => 1,
                 'unit_price' => 10000,
+                'rate' => 10000,
                 'rental_rate_period' => 'monthly',
+                'rate_type' => 'monthly',
                 'days' => 30,
                 'discount_percentage' => 0,
                 'total_amount' => 10000,

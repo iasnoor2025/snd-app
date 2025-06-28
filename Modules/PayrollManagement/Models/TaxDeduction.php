@@ -5,10 +5,12 @@ namespace Modules\PayrollManagement\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\Core\Traits\Trackable;
 
 class TaxDeduction extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasFactory, Trackable;
 
     protected $fillable = [
         'payroll_id',
@@ -91,5 +93,10 @@ class TaxDeduction extends Model
             'approved_by' => $userId,
             'approved_at' => now(),
         ]);
+    }
+
+    protected static function newFactory()
+    {
+        return \Modules\PayrollManagement\database\factories\TaxDeductionFactory::new();
     }
 }

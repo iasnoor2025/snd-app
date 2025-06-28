@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Core\Traits\Trackable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class DeductionCondition extends Model
 {
-    use SoftDeletes, Trackable;
+    use SoftDeletes, Trackable, HasFactory;
 
     protected $table = 'payroll_deduction_conditions';
 
@@ -117,5 +118,10 @@ class DeductionCondition extends Model
         }
 
         return 'No deduction specified';
+    }
+
+    protected static function newFactory()
+    {
+        return \Modules\PayrollManagement\database\factories\DeductionConditionFactory::new();
     }
 } 

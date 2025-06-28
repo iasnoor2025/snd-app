@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Core\Traits\HasStatus;
 use Modules\Core\Traits\Trackable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class DeductionTemplate extends Model
 {
-    use SoftDeletes, HasStatus, Trackable;
+    use SoftDeletes, HasStatus, Trackable, HasFactory;
 
     protected $table = 'payroll_deduction_templates';
 
@@ -123,5 +124,10 @@ class DeductionTemplate extends Model
             $this->deductionRules()
                 ->updateExistingPivot($ruleId, ['order' => $order]);
         }
+    }
+
+    protected static function newFactory()
+    {
+        return \Modules\PayrollManagement\database\factories\DeductionTemplateFactory::new();
     }
 } 

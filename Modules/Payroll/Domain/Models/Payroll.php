@@ -9,9 +9,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Modules\Payroll\app\Events\PayrollCreated;
-use Modules\Payroll\app\Events\PayrollUpdated;
-use Modules\Payroll\app\Events\PayrollProcessed;
+use Modules\Payroll\Events\PayrollCreated;
+use Modules\Payroll\Events\PayrollUpdated;
+use Modules\Payroll\Events\PayrollProcessed;
 
 class Payroll extends Model
 {
@@ -154,6 +154,11 @@ class Payroll extends Model
     public function isPaid(): bool
     {
         return $this->status === 'paid';
+    }
+
+    protected static function newFactory()
+    {
+        return \Modules\Payroll\Database\factories\PayrollFactory::new();
     }
 }
 

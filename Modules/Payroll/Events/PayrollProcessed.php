@@ -8,7 +8,7 @@ use Illuminate\Queue\SerializesModels;
 class PayrollProcessed
 {
     use SerializesModels;
-use public $payroll;
+    public $payroll;
 
     /**
      * Create a new event instance.

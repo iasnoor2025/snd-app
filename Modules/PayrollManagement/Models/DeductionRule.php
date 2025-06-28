@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Core\Traits\HasStatus;
 use Modules\Core\Traits\Trackable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class DeductionRule extends Model
 {
-    use SoftDeletes, HasStatus, Trackable;
+    use SoftDeletes, HasStatus, Trackable, HasFactory;
 
     protected $table = 'payroll_deduction_rules';
 
@@ -155,5 +156,10 @@ class DeductionRule extends Model
             'metadata' => 'nullable|array',
             'base_amount_type' => 'required|string|in:gross,basic,net',
         ];
+    }
+
+    protected static function newFactory()
+    {
+        return \Modules\PayrollManagement\database\factories\DeductionRuleFactory::new();
     }
 } 

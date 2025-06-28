@@ -58,19 +58,24 @@ class DatabaseSeeder extends Seeder
         $this->call(\Modules\Reporting\Database\Seeders\ReportingDatabaseSeeder::class);
         $this->call(\Modules\MobileBridge\Database\Seeders\MobileBridgeDatabaseSeeder::class);
         $this->call(\Modules\Localization\Database\Seeders\LocalizationDatabaseSeeder::class);
+        $this->call(\Modules\PayrollManagement\database\seeders\PayrollManagementDatabaseSeeder::class);
+        $this->call(\Modules\Analytics\Database\Seeders\AnalyticsDatabaseSeeder::class);
 
         // Create a test user if needed
         if (app()->environment('local', 'development')) {
-            $testUser = User::factory()->create([
-                'name' => 'Test User',
-                'email' => 'test@example.com',
-                'password' => Hash::make('password'),
-                'email_verified_at' => now(),
-                'remember_token' => Str::random(10),
-            ]);
-
+            $testUser = User::firstOrCreate(
+                ['email' => 'test@example.com'],
+                [
+                    'name' => 'Test User',
+                    'password' => Hash::make('password'),
+                    'email_verified_at' => now(),
+                    'remember_token' => Str::random(10),
+                ]
+            );
             // Assign a role to the test user
-            $testUser->assignRole('user');
+            if (!$testUser->hasRole('user')) {
+                $testUser->assignRole('user');
+            }
         }
 
         $this->call([

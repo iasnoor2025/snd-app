@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Core\Traits\HasStatus;
 use Modules\Core\Traits\Trackable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PayrollDeduction extends Model
 {
-    use SoftDeletes, HasStatus, Trackable;
+    use SoftDeletes, HasStatus, Trackable, HasFactory;
 
     protected $table = 'payroll_deductions';
 
@@ -150,5 +151,10 @@ class PayrollDeduction extends Model
             'approved_at' => now(),
             'notes' => $notes,
         ]);
+    }
+
+    protected static function newFactory()
+    {
+        return \Modules\PayrollManagement\database\factories\PayrollDeductionFactory::new();
     }
 } 

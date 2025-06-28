@@ -30,6 +30,8 @@ class RentalItem extends Model
         'quantity',
         'unit_price',
         'rental_rate_period',
+        'rate',
+        'rate_type',
         'days',
         'discount_percentage',
         'total_amount',

@@ -5,10 +5,12 @@ namespace Modules\PayrollManagement\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\Core\Traits\Trackable;
 
 class TaxBracket extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasFactory, Trackable;
 
     protected $fillable = [
         'tax_rule_id',
@@ -64,5 +66,10 @@ class TaxBracket extends Model
             : $income - $this->income_from;
 
         return $taxableAmount * ($this->rate / 100);
+    }
+
+    protected static function newFactory()
+    {
+        return \Modules\PayrollManagement\database\factories\TaxBracketFactory::new();
     }
 } 
