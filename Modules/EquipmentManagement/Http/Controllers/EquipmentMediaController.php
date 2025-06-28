@@ -26,7 +26,7 @@ class EquipmentMediaController extends Controller
     ) {
         $this->mediaService = $mediaService;
         $this->mediaTypeService = $mediaTypeService;
-        $this->middleware('auth');
+        $this->middleware('auth:sanctum');
     }
 
     /**
