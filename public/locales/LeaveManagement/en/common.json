@@ -10,5 +10,43 @@
     "back_button": "Back",
     "success_message": "Operation completed successfully",
     "error_message": "An error occurred",
-    "loading_message": "Loading..."
+    "loading_message": "Loading...",
+    "form_title": "Leave Request Form",
+    "create_title": "Create Leave Request",
+    "edit_title": "Edit Leave Request",
+    "view_title": "View Leave Request",
+    "delete_title": "Delete Leave Request",
+    "form_labels": {
+        "employee": "Employee",
+        "type": "Type",
+        "status": "Status"
+    },
+    "form_placeholders": {
+        "employee": "Select employee",
+        "type": "Select leave type"
+    },
+    "validation": {
+        "required": "This field is required"
+    },
+    "actions": {
+        "create": "Create",
+        "edit": "Edit",
+        "delete": "Delete",
+        "save": "Save",
+        "cancel": "Cancel",
+        "back": "Back",
+        "confirm": "Confirm",
+        "show": "Show",
+        "search": "Search",
+        "filter": "Filter",
+        "export": "Export",
+        "import": "Import",
+        "print": "Print",
+        "download": "Download",
+        "upload": "Upload",
+        "close": "Close",
+        "submit": "Submit",
+        "view": "View",
+        "add": "Add Leave Request"
+    }
 }

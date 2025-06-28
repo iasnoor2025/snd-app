@@ -10,5 +10,62 @@
     "back_button": "Back",
     "success_message": "Operation completed successfully",
     "error_message": "An error occurred",
-    "loading_message": "Loading..."
+    "loading_message": "Loading...",
+    "list_title": "Employees",
+    "lbl_name": "Name",
+    "lbl_email": "Email",
+    "lbl_phone": "Phone",
+    "lbl_status": "Status",
+    "lbl_actions": "Actions",
+    "btn_show": "Show",
+    "btn_edit": "Edit",
+    "btn_delete": "Delete",
+    "search_placeholder": "Search employees...",
+    "status_active": "Active",
+    "status_inactive": "Inactive",
+    "Previous": "Previous",
+    "Next": "Next",
+    "Page": "Page",
+    "Rows per page": "Rows per page",
+    "form_title": "Employee Form",
+    "create_title": "Create Employee",
+    "edit_title": "Edit Employee",
+    "view_title": "View Employee",
+    "delete_title": "Delete Employee",
+    "form_labels": {
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "status": "Status"
+    },
+    "form_placeholders": {
+        "name": "Enter name",
+        "email": "Enter email",
+        "phone": "Enter phone number"
+    },
+    "validation": {
+        "required": "This field is required",
+        "email": "Enter a valid email address"
+    },
+    "actions": {
+        "create": "Create",
+        "edit": "Edit",
+        "delete": "Delete",
+        "save": "Save",
+        "cancel": "Cancel",
+        "back": "Back",
+        "confirm": "Confirm",
+        "show": "Show",
+        "search": "Search",
+        "filter": "Filter",
+        "export": "Export",
+        "import": "Import",
+        "print": "Print",
+        "download": "Download",
+        "upload": "Upload",
+        "close": "Close",
+        "submit": "Submit",
+        "view": "View",
+        "add": "Add Employee"
+    }
 }

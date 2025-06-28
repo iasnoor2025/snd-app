@@ -10,5 +10,62 @@
     "back_button": "Back",
     "success_message": "Operation completed successfully",
     "error_message": "An error occurred",
-    "loading_message": "Loading..."
+    "loading_message": "Loading...",
+    "list_title": "Timesheets",
+    "lbl_employee": "Employee",
+    "lbl_date": "Date",
+    "lbl_hours": "Hours",
+    "lbl_status": "Status",
+    "lbl_actions": "Actions",
+    "btn_show": "Show",
+    "btn_edit": "Edit",
+    "btn_delete": "Delete",
+    "search_placeholder": "Search timesheets...",
+    "status_approved": "Approved",
+    "status_pending": "Pending",
+    "status_rejected": "Rejected",
+    "Previous": "Previous",
+    "Next": "Next",
+    "Page": "Page",
+    "Rows per page": "Rows per page",
+    "form_title": "Timesheet Form",
+    "create_title": "Create Timesheet",
+    "edit_title": "Edit Timesheet",
+    "view_title": "View Timesheet",
+    "delete_title": "Delete Timesheet",
+    "form_labels": {
+        "employee": "Employee",
+        "date": "Date",
+        "hours": "Hours",
+        "status": "Status"
+    },
+    "form_placeholders": {
+        "employee": "Select employee",
+        "date": "Select date",
+        "hours": "Enter hours"
+    },
+    "validation": {
+        "required": "This field is required"
+    },
+    "actions": {
+        "create": "Create",
+        "edit": "Edit",
+        "delete": "Delete",
+        "save": "Save",
+        "cancel": "Cancel",
+        "back": "Back",
+        "confirm": "Confirm",
+        "show": "Show",
+        "search": "Search",
+        "filter": "Filter",
+        "export": "Export",
+        "import": "Import",
+        "print": "Print",
+        "download": "Download",
+        "upload": "Upload",
+        "close": "Close",
+        "submit": "Submit",
+        "view": "View",
+        "add": "Add Timesheet"
+    }
 }

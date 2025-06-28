@@ -10,5 +10,58 @@
     "back_button": "Back",
     "success_message": "Operation completed successfully",
     "error_message": "An error occurred",
-    "loading_message": "Loading..."
+    "loading_message": "Loading...",
+    "list_title": "Equipment",
+    "lbl_name": "Name",
+    "lbl_type": "Type",
+    "lbl_status": "Status",
+    "lbl_actions": "Actions",
+    "btn_show": "Show",
+    "btn_edit": "Edit",
+    "btn_delete": "Delete",
+    "search_placeholder": "Search equipment...",
+    "status_active": "Active",
+    "status_inactive": "Inactive",
+    "Previous": "Previous",
+    "Next": "Next",
+    "Page": "Page",
+    "Rows per page": "Rows per page",
+    "form_title": "Equipment Form",
+    "create_title": "Create Equipment",
+    "edit_title": "Edit Equipment",
+    "view_title": "View Equipment",
+    "delete_title": "Delete Equipment",
+    "form_labels": {
+        "name": "Name",
+        "type": "Type",
+        "status": "Status"
+    },
+    "form_placeholders": {
+        "name": "Enter name",
+        "type": "Enter type"
+    },
+    "validation": {
+        "required": "This field is required"
+    },
+    "actions": {
+        "create": "Create",
+        "edit": "Edit",
+        "delete": "Delete",
+        "save": "Save",
+        "cancel": "Cancel",
+        "back": "Back",
+        "confirm": "Confirm",
+        "show": "Show",
+        "search": "Search",
+        "filter": "Filter",
+        "export": "Export",
+        "import": "Import",
+        "print": "Print",
+        "download": "Download",
+        "upload": "Upload",
+        "close": "Close",
+        "submit": "Submit",
+        "view": "View",
+        "add": "Add Equipment"
+    }
 }

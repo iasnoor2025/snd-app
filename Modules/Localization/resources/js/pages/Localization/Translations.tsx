@@ -30,6 +30,7 @@ import {
     Eye,
     EyeOff
 } from 'lucide-react';
+import { useTranslation } from '@/Core/hooks/useTranslation';
 
 interface Translation {
     [key: string]: string;
@@ -52,6 +53,7 @@ export default function Translations({
     currentGroup,
     search: initialSearch
 }: TranslationsProps) {
+    const { t } = useTranslation();
     const [searchTerm, setSearchTerm] = useState(initialSearch || '');
     const [selectedGroup, setSelectedGroup] = useState(currentGroup);
     const [selectedLocale, setSelectedLocale] = useState(currentLocale);
@@ -200,7 +202,7 @@ export default function Translations({
 
     return (
         <>
-            <Head title="Translation Management" />
+            <Head title={t('localization:translation_management')} />
 
             <div className="container mx-auto py-6 space-y-6">
                 {/* Header */}
@@ -209,38 +211,38 @@ export default function Translations({
                         <Link href={route('localization.index')}>
                             <Button variant="outline" size="sm">
                                 <ArrowLeft className="h-4 w-4 mr-2" />
-                                Back
+                                {t('localization:back')}
                             </Button>
                         </Link>
                         <div>
-                            <h1 className="text-3xl font-bold tracking-tight">Translation Management</h1>
+                            <h1 className="text-3xl font-bold tracking-tight">{t('localization:translation_management')}</h1>
                             <p className="text-muted-foreground">
-                                Manage translations for {availableLocales[selectedLocale]} - {selectedGroup} group
+                                {t('localization:manage_translations_for') + ` ${availableLocales[selectedLocale]} - ${selectedGroup} group`}
                             </p>
                         </div>
                     </div>
                     <div className="flex items-center space-x-2">
                         <Button onClick={handleExport} variant="outline">
                             <Download className="h-4 w-4 mr-2" />
-                            Export
+                            {t('localization:export')}
                         </Button>
                         <Dialog open={isImportDialogOpen} onOpenChange={setIsImportDialogOpen}>
                             <DialogTrigger asChild>
                                 <Button variant="outline">
                                     <Upload className="h-4 w-4 mr-2" />
-                                    Import
+                                    {t('localization:import')}
                                 </Button>
                             </DialogTrigger>
                             <DialogContent>
                                 <DialogHeader>
-                                    <DialogTitle>Import Translations</DialogTitle>
+                                    <DialogTitle>{t('localization:import_translations')}</DialogTitle>
                                     <DialogDescription>
-                                        Upload a JSON or PHP file containing translations for {availableLocales[selectedLocale]}
+                                        {t('localization:upload_translation_file') + ` ${availableLocales[selectedLocale]}`}
                                     </DialogDescription>
                                 </DialogHeader>
                                 <div className="space-y-4">
                                     <div>
-                                        <Label htmlFor="import-file">Translation File</Label>
+                                        <Label htmlFor="import-file">{t('localization:translation_file')}</Label>
                                         <Input
                                             id="import-file"
                                             type="file"
@@ -248,16 +250,16 @@ export default function Translations({
                                             onChange={(e) => setData('file', e.target.files?.[0] || null)}
                                         />
                                         {errors.file && (
-                                            <p className="text-sm text-red-600 mt-1">{errors.file}</p>
+                                            <p className="text-sm text-red-600 mt-1">{t('localization:error_file')}</p>
                                         )}
                                     </div>
                                 </div>
                                 <DialogFooter>
                                     <Button variant="outline" onClick={() => setIsImportDialogOpen(false)}>
-                                        Cancel
+                                        {t('localization:cancel')}
                                     </Button>
                                     <Button onClick={handleImport} disabled={!data.file || processing}>
-                                        {processing ? 'Importing...' : 'Import'}
+                                        {processing ? t('localization:importing') : t('localization:import')}
                                     </Button>
                                 </DialogFooter>
                             </DialogContent>
@@ -271,7 +273,7 @@ export default function Translations({
                         <CardContent className="p-4">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-medium text-muted-foreground">Total Keys</p>
+                                    <p className="text-sm font-medium text-muted-foreground">{t('localization:total_keys')}</p>
                                     <p className="text-2xl font-bold">{Object.keys(translations).length}</p>
                                 </div>
                                 <FileText className="h-8 w-8 text-muted-foreground" />
@@ -282,7 +284,7 @@ export default function Translations({
                         <CardContent className="p-4">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-medium text-muted-foreground">Translated</p>
+                                    <p className="text-sm font-medium text-muted-foreground">{t('localization:translated')}</p>
                                     <p className="text-2xl font-bold text-green-600">
                                         {Object.keys(translations).length - missingTranslationsCount}
                                     </p>
@@ -295,7 +297,7 @@ export default function Translations({
                         <CardContent className="p-4">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-medium text-muted-foreground">Missing</p>
+                                    <p className="text-sm font-medium text-muted-foreground">{t('localization:missing')}</p>
                                     <p className="text-2xl font-bold text-red-600">{missingTranslationsCount}</p>
                                 </div>
                                 <AlertCircle className="h-8 w-8 text-red-600" />
@@ -306,7 +308,7 @@ export default function Translations({
                         <CardContent className="p-4">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-medium text-muted-foreground">Completion</p>
+                                    <p className="text-sm font-medium text-muted-foreground">{t('localization:completion')}</p>
                                     <p className="text-2xl font-bold">{completionPercentage}%</p>
                                 </div>
                                 <Globe className="h-8 w-8 text-muted-foreground" />
@@ -323,7 +325,7 @@ export default function Translations({
                                 <div className="relative">
                                     <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                                     <Input
-                                        placeholder="Search translations..."
+                                        placeholder={t('localization:search_translations')}
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                         onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -357,20 +359,20 @@ export default function Translations({
                             </Select>
                             <Button onClick={handleSearch} variant="outline">
                                 <Search className="h-4 w-4 mr-2" />
-                                Search
+                                {t('localization:search')}
                             </Button>
                             <Button
                                 onClick={() => setShowMissingOnly(!showMissingOnly)}
                                 variant={showMissingOnly ? 'default' : 'outline'}
                             >
                                 <Filter className="h-4 w-4 mr-2" />
-                                Missing Only
+                                {t('localization:missing_only')}
                             </Button>
                             <Dialog open={isAddKeyDialogOpen} onOpenChange={setIsAddKeyDialogOpen}>
                                 <DialogTrigger asChild>
                                     <Button>
                                         <Plus className="h-4 w-4 mr-2" />
-                                        Add Key
+                                        {t('localization:add_key')}
                                     </Button>
                                 </DialogTrigger>
                                 <DialogContent>
@@ -382,7 +384,7 @@ export default function Translations({
                                     </DialogHeader>
                                     <div className="space-y-4">
                                         <div>
-                                            <Label htmlFor="new-key">Translation Key</Label>
+                                            <Label htmlFor="new-key">{t('localization:translation_key')}</Label>
                                             <Input
                                                 id="new-key"
                                                 value={newKeyData.key}
@@ -394,7 +396,7 @@ export default function Translations({
                                             )}
                                         </div>
                                         <div>
-                                            <Label htmlFor="new-value">Translation Value</Label>
+                                            <Label htmlFor="new-value">{t('localization:translation_value')}</Label>
                                             <Textarea
                                                 id="new-value"
                                                 value={newKeyData.value}
@@ -409,10 +411,10 @@ export default function Translations({
                                     </div>
                                     <DialogFooter>
                                         <Button variant="outline" onClick={() => setIsAddKeyDialogOpen(false)}>
-                                            Cancel
+                                            {t('localization:cancel')}
                                         </Button>
                                         <Button onClick={handleAddKey} disabled={addingKey}>
-                                            {addingKey ? 'Adding...' : 'Add Key'}
+                                            {addingKey ? t('localization:adding') : t('localization:add_key')}
                                         </Button>
                                     </DialogFooter>
                                 </DialogContent>
@@ -425,27 +427,27 @@ export default function Translations({
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center justify-between">
-                            <span>Translations ({filteredTranslations.length})</span>
+                            <span>{t('localization:translations')} ({filteredTranslations.length})</span>
                             <Button onClick={handleUpdateTranslations} disabled={processing}>
                                 <Save className="h-4 w-4 mr-2" />
-                                {processing ? 'Saving...' : 'Save All'}
+                                {processing ? t('localization:saving') : t('localization:save_all')}
                             </Button>
                         </CardTitle>
                         <CardDescription>
-                            Click on any translation value to edit it inline
+                            {t('localization:click_to_edit_inline')}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         {filteredTranslations.length === 0 ? (
                             <div className="text-center py-8">
                                 <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                                <h3 className="text-lg font-medium mb-2">No translations found</h3>
+                                <h3 className="text-lg font-medium mb-2">{t('localization:no_translations_found')}</h3>
                                 <p className="text-muted-foreground mb-4">
-                                    {searchTerm ? 'Try adjusting your search criteria' : 'No translations available for this group'}
+                                    {searchTerm ? t('localization:try_adjusting_search') : t('localization:no_translations_available')}
                                 </p>
                                 <Button onClick={() => setIsAddKeyDialogOpen(true)}>
                                     <Plus className="h-4 w-4 mr-2" />
-                                    Add First Translation
+                                    {t('localization:add_first_translation')}
                                 </Button>
                             </div>
                         ) : (
@@ -516,7 +518,7 @@ export default function Translations({
                                                     >
                                                         {value || (
                                                             <span className="text-muted-foreground italic">
-                                                                Click to add translation...
+                                                                {t('localization:click_to_add_translation')}
                                                             </span>
                                                         )}
                                                     </div>
@@ -526,12 +528,12 @@ export default function Translations({
                                                 {value && value.trim() ? (
                                                     <Badge variant="default" className="bg-green-100 text-green-800">
                                                         <CheckCircle className="h-3 w-3 mr-1" />
-                                                        Done
+                                                        {t('localization:done')}
                                                     </Badge>
                                                 ) : (
                                                     <Badge variant="destructive">
                                                         <AlertCircle className="h-3 w-3 mr-1" />
-                                                        Missing
+                                                        {t('localization:missing')}
                                                     </Badge>
                                                 )}
                                             </TableCell>
@@ -565,9 +567,7 @@ export default function Translations({
                 <Alert>
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription>
-                        <strong>Tips:</strong> Use dot notation for nested keys (e.g., "auth.login.title").
-                        Click on any translation value to edit it inline.
-                        Use the search function to quickly find specific translations.
+                        <strong>{t('localization:tips')}</strong> {t('localization:tips_content')}
                     </AlertDescription>
                 </Alert>
             </div>
