@@ -1,11 +1,11 @@
 <?php
 
-namespace Modules\PayrollManagement\database\seeders;
+namespace Modules\PayrollManagement\database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Modules\PayrollManagement\Models\PayrollDeduction;
 use Modules\PayrollManagement\Models\DeductionRule;
-use Modules\Payroll\Domain\Models\Payroll;
+use Modules\PayrollManagement\Domain\Models\Payroll;
 
 class PayrollDeductionSeeder extends Seeder
 {
@@ -23,4 +23,4 @@ class PayrollDeductionSeeder extends Seeder
                 'rule_id' => $rule->id,
             ]);
     }
-} 
+}

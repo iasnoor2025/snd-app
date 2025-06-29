@@ -1,0 +1,7 @@
+{
+  "name": "PayrollManagement",
+  "alias": "PayrollManagement",
+  "providers": [
+    "Modules\\PayrollManagement\\Providers\\PayrollManagementServiceProvider"
+  ]
+}

@@ -2,8 +2,8 @@
 namespace Modules\EmployeeManagement\Domain\Models\Models;
 
 use Modules\EmployeeManagement\Domain\Models\Employee;
-use Modules\Payroll\Domain\Models\Payroll;
-use Modules\Payroll\Domain\Models\FinalSettlement;
+use Modules\PayrollManagement\Domain\Models\Payroll;
+use Modules\PayrollManagement\Domain\Models\FinalSettlement;
 use Modules\EmployeeManagement\Domain\Models\EmployeeResignation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

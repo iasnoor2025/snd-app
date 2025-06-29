@@ -23,7 +23,7 @@ class PayrollDocumentRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->repository = app(PayrollDocumentRepository::class);
         $this->employee = Employee::factory()->create();
         $this->payrollRun = PayrollRun::factory()->create([
@@ -90,7 +90,7 @@ class PayrollDocumentRepositoryTest extends TestCase
     public function it_can_handle_bulk_generation()
     {
         $employees = Employee::factory()->count(5)->create();
-        
+
         $documents = $this->repository->generateBulkPayslips([
             'payroll_run_id' => $this->payrollRun->id,
             'employee_ids' => $employees->pluck('id')->toArray(),
@@ -247,7 +247,7 @@ class PayrollDocumentRepositoryTest extends TestCase
         ]);
 
         $logs = $this->repository->getAccessLogs($document->id);
-        
+
         $this->assertCount(1, $logs);
         $this->assertEquals('view', $logs[0]->action);
     }
@@ -309,4 +309,4 @@ class PayrollDocumentRepositoryTest extends TestCase
         $this->assertEquals(3, $stats->generated_count);
         $this->assertEquals(2, $stats->distributed_count);
     }
-} 
+}

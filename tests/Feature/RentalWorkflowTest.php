@@ -29,7 +29,7 @@ class RentalWorkflowTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Create roles and permissions
         $this->setupRolesAndPermissions();
 
@@ -405,4 +405,4 @@ class RentalWorkflowTest extends TestCase
         Event::assertDispatched('damage.reported');
         Event::assertDispatched('damage.assessed');
     }
-} 
+}

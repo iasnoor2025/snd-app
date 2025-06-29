@@ -23,7 +23,7 @@ class PayrollComponentRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->repository = app(PayrollComponentRepository::class);
         $this->employee = Employee::factory()->create();
         $this->payrollRun = PayrollRun::factory()->create();
@@ -121,7 +121,7 @@ class PayrollComponentRepositoryTest extends TestCase
         ]);
 
         $groupComponents = $this->repository->getGroupComponents($group->id);
-        
+
         $this->assertCount(3, $groupComponents);
         $this->assertEquals('Benefits Package', $groupComponents[0]->group->name);
     }
@@ -232,7 +232,7 @@ class PayrollComponentRepositoryTest extends TestCase
         }
 
         $history = $this->repository->getHistory($component->id);
-        
+
         $this->assertCount(3, $history);
         $this->assertTrue($history[0]->effective_date > $history[1]->effective_date);
     }
@@ -307,8 +307,8 @@ class PayrollComponentRepositoryTest extends TestCase
         ]);
 
         $audit = $this->repository->getAuditTrail($component->id);
-        
+
         $this->assertCount(1, $audit);
         $this->assertEquals('update', $audit[0]->action);
     }
-} 
+}

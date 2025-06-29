@@ -6,6 +6,7 @@
     "Reporting": true,
     "RentalManagement": true,
     "Payroll": true,
+    "PayrollManagement": true,
     "Notifications": true,
     "MobileBridge": true,
     "Localization": true,

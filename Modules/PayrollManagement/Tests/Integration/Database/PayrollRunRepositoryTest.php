@@ -22,7 +22,7 @@ class PayrollRunRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->repository = app(PayrollRunRepository::class);
         $this->employee = Employee::factory()->create();
     }
@@ -55,7 +55,7 @@ class PayrollRunRepositoryTest extends TestCase
     public function it_can_handle_payroll_components()
     {
         $payrollRun = PayrollRun::factory()->create();
-        
+
         $component = PayrollComponent::factory()->create([
             'name' => 'Basic Salary',
             'type' => 'earning',
@@ -76,10 +76,10 @@ class PayrollRunRepositoryTest extends TestCase
     public function it_can_calculate_payroll()
     {
         $payrollRun = PayrollRun::factory()->create();
-        
+
         // Add employees to payroll run
         $employees = Employee::factory()->count(3)->create();
-        
+
         foreach ($employees as $employee) {
             $this->repository->addEmployee($payrollRun->id, $employee->id, [
                 'basic_salary' => 5000,
@@ -215,7 +215,7 @@ class PayrollRunRepositoryTest extends TestCase
     public function it_can_handle_payroll_reports()
     {
         $payrollRun = PayrollRun::factory()->create();
-        
+
         // Add some test data
         Employee::factory()->count(5)->create()->each(function ($employee) use ($payrollRun) {
             $this->repository->addEmployee($payrollRun->id, $employee->id, [
@@ -248,7 +248,7 @@ class PayrollRunRepositoryTest extends TestCase
         ]);
 
         $audit = $this->repository->getAuditTrail($payrollRun->id);
-        
+
         $this->assertCount(1, $audit);
         $this->assertEquals('calculation_modified', $audit[0]->action);
     }
@@ -257,7 +257,7 @@ class PayrollRunRepositoryTest extends TestCase
     public function it_can_handle_payroll_statistics()
     {
         $payrollRun = PayrollRun::factory()->create();
-        
+
         // Add test data
         Employee::factory()->count(10)->create()->each(function ($employee) use ($payrollRun) {
             $this->repository->addEmployee($payrollRun->id, $employee->id, [
@@ -305,4 +305,4 @@ class PayrollRunRepositoryTest extends TestCase
         $this->assertEquals(3, $result->processed_count);
         $this->assertEquals(3, PayrollRun::where('status', 'processed')->count());
     }
-} 
+}

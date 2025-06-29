@@ -25,7 +25,7 @@ class ModuleAuthTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Create base user
         $this->user = User::factory()->create([
             'email' => 'test@example.com',
@@ -399,4 +399,4 @@ class ModuleAuthTest extends TestCase
             ->getJson('/api/projects/audit-logs')
             ->assertStatus(403);
     }
-} 
+}

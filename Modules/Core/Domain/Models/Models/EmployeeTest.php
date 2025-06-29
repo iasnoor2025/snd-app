@@ -4,7 +4,7 @@ namespace Modules\Core\Domain\Models\Models;
 use Modules\EmployeeManagement\Domain\Models\Employee;
 use Modules\Core\Domain\Models\User;
 use Modules\EmployeeManagement\Domain\Models\EmployeeAssignment;
-use Modules\Payroll\Domain\Models\EmployeeSalary;
+use Modules\PayrollManagement\Domain\Models\EmployeeSalary;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Illuminate\Database\Eloquent\Collection;

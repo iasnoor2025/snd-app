@@ -13,7 +13,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         $user = auth()->user();
         $user->load('roles.permissions');
-        
+
         return Inertia::render('Dashboard', [
             'auth' => [
                 'user' => $user,
@@ -27,11 +27,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // Translation files route - serve directly from modules
 Route::get('/locales/{module}/{locale}/{namespace}.json', function ($module, $locale, $namespace) {
     $filePath = base_path("Modules/{$module}/resources/lang/{$locale}/{$namespace}.json");
-    
+
     if (!file_exists($filePath)) {
         abort(404, 'Translation file not found');
     }
-    
+
     return response()->file($filePath, [
         'Content-Type' => 'application/json',
         'Cache-Control' => 'public, max-age=3600'
@@ -51,7 +51,7 @@ Route::get('/debug-pages', function () {
         'Roles/Show' => './Modules/Core/resources/js/Pages/Roles/Show.tsx',
         'Roles/UserRoles' => './Modules/Core/resources/js/Pages/Roles/UserRoles.tsx',
     ];
-    
+
     $existingPages = [];
     foreach ($modulePages as $name => $path) {
         $fullPath = base_path($path);
@@ -61,7 +61,7 @@ Route::get('/debug-pages', function () {
             'full_path' => $fullPath
         ];
     }
-    
+
     return response()->json([
         'pages' => $existingPages,
         'user' => auth()->user()->name,
@@ -114,7 +114,8 @@ require __DIR__.'/avatar.php';
 require __DIR__.'/employee-avatar.php';
 require __DIR__.'/customer-avatar.php';
 require __DIR__.'/profile.php';
-require base_path('Modules/Payroll/Routes/web.php');
+// require base_path('Modules/PayrollManagement/Routes/web.php');
+
 
 // RTL Test Route
 Route::get('/rtl-test', function () {

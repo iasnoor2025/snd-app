@@ -48,7 +48,7 @@ Route::group(['prefix' => 'v1'], function () {
     ]);
 
     // Payroll routes
-    Route::apiResource('payrolls', 'Modules\Payroll\Http\Controllers\Api\PayrollController', [
+    Route::apiResource('payrolls', 'Modules\PayrollManagement\Http\Controllers\Api\PayrollController', [
         'names' => [
             'index' => 'api.payrolls.index',
             'store' => 'api.payrolls.store',
@@ -57,7 +57,7 @@ Route::group(['prefix' => 'v1'], function () {
             'destroy' => 'api.payrolls.destroy',
         ]
     ]);
-    Route::apiResource('advances', 'Modules\Payroll\Http\Controllers\Api\AdvanceController', [
+    Route::apiResource('advances', 'Modules\PayrollManagement\Http\Controllers\Api\AdvanceController', [
         'names' => [
             'index' => 'api.advances.index',
             'store' => 'api.advances.store',
@@ -66,7 +66,7 @@ Route::group(['prefix' => 'v1'], function () {
             'destroy' => 'api.advances.destroy',
         ]
     ]);
-    Route::apiResource('settlements', 'Modules\Payroll\Http\Controllers\Api\SettlementController', [
+    Route::apiResource('settlements', 'Modules\PayrollManagement\Http\Controllers\Api\SettlementController', [
         'names' => [
             'index' => 'api.settlements.index',
             'store' => 'api.settlements.store',

@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\PayrollManagement\database\seeders;
+namespace Modules\PayrollManagement\database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Modules\PayrollManagement\Models\TaxDeduction;
-use Modules\Payroll\Domain\Models\Payroll;
+use Modules\PayrollManagement\Domain\Models\Payroll;
 
 class TaxDeductionSeeder extends Seeder
 {
@@ -13,4 +13,4 @@ class TaxDeductionSeeder extends Seeder
         $payroll = Payroll::first() ?? Payroll::factory()->create();
         TaxDeduction::factory()->count(3)->create(['payroll_id' => $payroll->id]);
     }
-} 
+}

@@ -41,7 +41,10 @@ class RentalManagementServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
-        $this->app->make('db')->setDefaultConnection('pgsql');
+        // Only set pgsql as default if not running tests
+        if (!app()->environment('testing')) {
+            $this->app->make('db')->setDefaultConnection('pgsql');
+        }
 
         // Register observers
         // \Modules\RentalManagement\Domain\Models\Rental::observe(\Modules\RentalManagement\Observers\RentalObserver::class);

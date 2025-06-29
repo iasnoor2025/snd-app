@@ -6,7 +6,7 @@ use Modules\EmployeeManagement\Domain\Models\Employee;
 use Modules\EmployeeManagement\Domain\Models\EmployeeAssignment;
 use Modules\TimesheetManagement\Domain\Models\Timesheet;
 use Modules\LeaveManagement\Domain\Models\LeaveRequest;
-use Modules\Payroll\Domain\Models\AdvancePayment;
+use Modules\PayrollManagement\Domain\Models\AdvancePayment;
 use Modules\EmployeeManagement\Domain\Models\FinalSettlement;
 use Illuminate\Support\Facades\Log;
 
@@ -61,7 +61,7 @@ class ShowEmployeeAction
             $totalRepaid = 0;
             $pagination = [];
 
-            if (class_exists('Modules\Payroll\Domain\Models\AdvancePayment')) {
+            if (class_exists('Modules\PayrollManagement\Domain\Models\AdvancePayment')) {
                 $advances = [
                     'data' => AdvancePayment::where('employee_id', $employee->id)
                         ->orderBy('created_at', 'desc')
