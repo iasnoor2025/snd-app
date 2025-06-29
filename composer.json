@@ -20,6 +20,7 @@
         "laravolt/avatar": "*",
         "minishlink/web-push": "*",
         "nwidart/laravel-modules": "*",
+        "pragmarx/google2fa": "^8.0",
         "spatie/laravel-activitylog": "*",
         "spatie/laravel-medialibrary": "*",
         "spatie/laravel-permission": "*",

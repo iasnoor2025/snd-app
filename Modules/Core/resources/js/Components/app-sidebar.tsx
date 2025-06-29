@@ -3,7 +3,7 @@ import { NavMain } from './nav-main';
 import { NavUser } from './nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from './ui/sidebar';
 import { type NavItem } from '../types';
-import { Link, usePage } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 import AppLogo from './app-logo';
 import { usePermission } from '../hooks/usePermission';
 import type { PageProps } from '../types/index.d';
@@ -26,7 +26,7 @@ const moduleMap: Record<string, { icon: string; route: string; permission: strin
     },
     LeaveManagement: { icon: 'clipboard-list', route: '/leaves', permission: 'leave-requests.view' },
     TimesheetManagement: { icon: 'clock', route: '/timesheets', permission: 'timesheets.view' },
-    Payroll: { icon: 'dollar-sign', route: '/payrolls', permission: 'payroll.view' },
+    PayrollManagenent: { icon: 'dollar-sign', route: '/payroll-managenent', permission: 'payroll-managenent.view' },
     ProjectManagement: { icon: 'briefcase', route: '/projects', permission: 'projects.view' },
     RentalManagement: { icon: 'calendar', route: '/rentals', permission: 'rentals.view' },
     EquipmentManagement: { icon: 'truck', route: '/equipment', permission: 'equipment.view' },
@@ -46,7 +46,6 @@ const moduleDisplayNames: Record<string, string> = {
     EmployeeManagement: 'Employee Management',
     LeaveManagement: 'Leave Management',
     TimesheetManagement: 'Timesheet Management',
-    Payroll: 'Payroll',
     ProjectManagement: 'Project Management',
     RentalManagement: 'Rental Management',
     EquipmentManagement: 'Equipment Management',
@@ -58,16 +57,16 @@ const moduleDisplayNames: Record<string, string> = {
     CustomerManagement: 'Customer Management',
     AuditCompliance: 'Audit & Compliance',
     API: 'API',
+    PayrollManagenent: 'Payroll Managenent',
 };
 
 export function AppSidebar() {
     const { hasPermission, hasRole } = usePermission();
-    const pageProps = usePage<PageProps>().props;
-    const auth = pageProps?.auth || { user: null };
+    const auth = { user: null };
     const [moduleItems, setModuleItems] = useState<NavItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const { t, i18n } = useTranslation(['common']);
-    
+
     // Determine if the current language is RTL
     const isRTL = i18n.dir() === 'rtl';
 

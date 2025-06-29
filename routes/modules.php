@@ -23,7 +23,7 @@ Route::middleware(['auth', 'verified'])->prefix('leave-requests')->group(functio
     Route::get('/', function () {
         return Inertia::render('LeaveRequests/Index');
     });
-    
+
     Route::get('/create', function () {
         return Inertia::render('LeaveRequests/Create');
     });
@@ -53,12 +53,12 @@ Route::middleware(['auth', 'verified'])->prefix('hr/timesheets')->group(function
     Route::get('/', function () {
         return redirect()->route('hr.api.timesheets.index');
     });
-    
+
     Route::get('/create', function () {
         // Fetch required data for the Create component
         $employees = Employee::select(['id', 'first_name', 'last_name'])->get();
         $projects = Project::select(['id', 'name'])->get();
-        
+
         // Get rentals with their equipment through rental items
         $rentals = Rental::select(['id', 'rental_number'])
             ->with(['rentalItems.equipment:id,name'])
@@ -72,7 +72,7 @@ Route::middleware(['auth', 'verified'])->prefix('hr/timesheets')->group(function
                     ] : ['name' => 'No equipment']
                 ];
             });
-        
+
         return Inertia::render('Timesheets/Create', [
             'employees' => $employees,
             'projects' => $projects,
@@ -92,7 +92,7 @@ Route::middleware(['auth', 'verified'])->prefix('rentals')->group(function () {
 // Direct routes for payrolls
 Route::middleware(['auth', 'verified'])->prefix('payrolls')->group(function () {
     Route::get('/', function () {
-        return redirect()->route('payroll.index');
+        return redirect('/hr/payroll');
     });
 });
 
@@ -115,7 +115,7 @@ Route::middleware(['auth', 'verified'])->prefix('leaves')->group(function () {
     Route::get('/', function () {
         return Inertia::render('LeaveRequests/Index');
     });
-    
+
     Route::get('/create', function () {
         return Inertia::render('LeaveRequests/Create');
     });
