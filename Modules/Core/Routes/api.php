@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use Modules\Core\Http\Controllers\Api\BaseApiController;
 use Modules\Core\Http\Controllers\UserController;
 use Modules\Core\Http\Controllers\RoleController;
+use Modules\Core\Http\Controllers\MfaController;
+use Modules\Core\Http\Controllers\ApiKeyController;
+use Modules\Core\Http\Controllers\DeviceSessionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,5 +54,30 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     // System utilities
     Route::get('system/info', [BaseApiController::class, 'systemInfo']);
     Route::get('system/stats', [BaseApiController::class, 'systemStats']);
+});
+
+// MFA Routes
+Route::middleware(['auth:sanctum'])->prefix('mfa')->group(function () {
+    Route::get('status', [MfaController::class, 'status']);
+    Route::post('setup', [MfaController::class, 'setup']);
+    Route::post('enable', [MfaController::class, 'enable']);
+    Route::post('disable', [MfaController::class, 'disable']);
+    Route::post('verify', [MfaController::class, 'verify']);
+    Route::post('recovery-email', [MfaController::class, 'setRecoveryEmail']);
+});
+
+// API Key Routes
+Route::middleware(['auth:sanctum'])->prefix('api-keys')->group(function () {
+    Route::get('/', [ApiKeyController::class, 'index']);
+    Route::post('/', [ApiKeyController::class, 'store']);
+    Route::delete('/{id}', [ApiKeyController::class, 'destroy']);
+});
+
+// Device Session Routes
+Route::middleware(['auth:sanctum'])->prefix('sessions')->group(function () {
+    Route::get('/', [DeviceSessionController::class, 'index']);
+    Route::get('/current', [DeviceSessionController::class, 'current']);
+    Route::post('/revoke', [DeviceSessionController::class, 'revoke']);
+    Route::post('/revoke-all', [DeviceSessionController::class, 'revokeAll']);
 });
 

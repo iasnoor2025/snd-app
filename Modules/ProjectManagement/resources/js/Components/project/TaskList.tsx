@@ -11,6 +11,7 @@ import {
     DropdownMenuTrigger,
 } from "@/Core";
 import { formatDistanceToNow } from 'date-fns';
+import { useState } from 'react';
 
 export interface ProjectTask {
     id: number;
@@ -32,9 +33,12 @@ interface TaskListProps {
     onDelete: (task: ProjectTask) => void;
     onStatusChange: (task: ProjectTask, event: any) => void;
     onCompletionChange: (task: ProjectTask, percentage: number) => void;
+    dependencies?: { [taskId: number]: ProjectTask[] };
+    onAddDependency?: (taskId: number, dependsOnId: number) => void;
+    onRemoveDependency?: (taskId: number, dependsOnId: number) => void;
 }
 
-export default function TaskList({ tasks, onEdit, onDelete, onStatusChange, onCompletionChange }: TaskListProps) {
+export default function TaskList({ tasks, onEdit, onDelete, onStatusChange, onCompletionChange, dependencies = {}, onAddDependency, onRemoveDependency }: TaskListProps) {
   const { t } = useTranslation('project');
 
     // Debug check for the task array passed to the component
@@ -42,6 +46,8 @@ export default function TaskList({ tasks, onEdit, onDelete, onStatusChange, onCo
 
     // Ensure tasks is always an array, even if null is passed
     const taskArray = tasks || [];
+
+    const [selectedDependency, setSelectedDependency] = useState<{ [taskId: number]: number }>({});
 
     const getStatusBadge = (status: string) => {
         switch (status) {
@@ -120,6 +126,47 @@ export default function TaskList({ tasks, onEdit, onDelete, onStatusChange, onCo
                                     <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-200">
                                         {task.assigned_to.name}
                                     </Badge>
+                                )}
+                            </div>
+
+                            <div className="mt-2">
+                                <span className="text-xs text-gray-500">Depends on: </span>
+                                {dependencies[task.id] && dependencies[task.id].length > 0 ? (
+                                    dependencies[task.id].map(dep => (
+                                        <span key={dep.id} className="inline-block bg-slate-200 text-xs rounded px-2 py-0.5 mr-1">
+                                            {dep.title}
+                                            {onRemoveDependency && (
+                                                <button type="button" className="ml-1 text-red-500" onClick={() => onRemoveDependency(task.id, dep.id)}>&times;</button>
+                                            )}
+                                        </span>
+                                    ))
+                                ) : (
+                                    <span className="text-xs text-gray-400">None</span>
+                                )}
+                                {onAddDependency && (
+                                    <div className="mt-1 flex items-center gap-2">
+                                        <select
+                                            className="border rounded px-2 py-1 text-xs"
+                                            value={selectedDependency[task.id] || ''}
+                                            onChange={e => setSelectedDependency({ ...selectedDependency, [task.id]: Number(e.target.value) })}
+                                        >
+                                            <option value="">Add dependency...</option>
+                                            {taskArray.filter(t => t.id !== task.id && !(dependencies[task.id] || []).some(dep => dep.id === t.id)).map(t => (
+                                                <option key={t.id} value={t.id}>{t.title}</option>
+                                            ))}
+                                        </select>
+                                        <button
+                                            type="button"
+                                            className="text-xs bg-blue-500 text-white rounded px-2 py-1"
+                                            disabled={!selectedDependency[task.id]}
+                                            onClick={() => {
+                                                if (selectedDependency[task.id]) {
+                                                    onAddDependency(task.id, selectedDependency[task.id]);
+                                                    setSelectedDependency({ ...selectedDependency, [task.id]: 0 });
+                                                }
+                                            }}
+                                        >Add</button>
+                                    </div>
                                 )}
                             </div>
                         </div>

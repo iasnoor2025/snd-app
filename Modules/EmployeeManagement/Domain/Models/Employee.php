@@ -820,6 +820,13 @@ class Employee extends Model implements HasMedia
     {
         return (float) ($this->basic_salary + $this->total_allowances);
     }
+
+    public function skills()
+    {
+        return $this->belongsToMany(Skill::class, 'employee_skill')
+            ->withPivot('proficiency', 'certified_at')
+            ->withTimestamps();
+    }
 }
 
 

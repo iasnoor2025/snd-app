@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 import { RentalToastService } from '../../services/RentalToastService';
@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { DatePicker } from '@/Core';
 import { Badge } from '@/Core';
 import { X } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface RentalFormProps {
   customers: { id: number; name: string }[];
@@ -39,6 +40,51 @@ export const RentalForm: React.FC<RentalFormProps> = ({
     expected_end_date: initialData.expected_end_date || '',
     notes: initialData.notes || '',
   });
+
+  const [equipmentPrices, setEquipmentPrices] = useState<{ [id: string]: number | null }>({});
+  const [isPriceLoading, setIsPriceLoading] = useState(false);
+
+  // Helper to fetch dynamic price for equipment
+  const fetchDynamicPrice = async (equipmentId: string, days: number) => {
+    setIsPriceLoading(true);
+    try {
+      const response = await fetch(`/api/equipment/${equipmentId}/calculate-price`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          rental_date: data.start_date || new Date().toISOString().slice(0, 10),
+          duration: days,
+          quantity: 1,
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to fetch dynamic price');
+      const result = await response.json();
+      return result.data?.final_price || null;
+    } catch (err) {
+      toast.error('Failed to calculate dynamic price');
+      return null;
+    } finally {
+      setIsPriceLoading(false);
+    }
+  };
+
+  // Update price when equipment, start_date, or expected_end_date changes
+  useEffect(() => {
+    const updatePrices = async () => {
+      if (!data.start_date || !data.expected_end_date || !data.equipment_ids.length) return;
+      const startDateObj = new Date(data.start_date);
+      const endDateObj = new Date(data.expected_end_date);
+      const days = Math.ceil((endDateObj.getTime() - startDateObj.getTime()) / (1000 * 60 * 60 * 24));
+      if (days <= 0) return;
+      const newPrices: { [id: string]: number | null } = {};
+      for (const id of data.equipment_ids) {
+        newPrices[id] = await fetchDynamicPrice(id, days);
+      }
+      setEquipmentPrices(newPrices);
+    };
+    updatePrices();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data.equipment_ids, data.start_date, data.expected_end_date]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -150,6 +196,11 @@ export const RentalForm: React.FC<RentalFormProps> = ({
               return item ? (
                 <Badge key={id} variant="secondary" className="flex items-center gap-1">
                   {item.name}
+                  {isPriceLoading ? (
+                    <span className="ml-2 text-xs text-gray-400">Loading price...</span>
+                  ) : equipmentPrices[id] !== undefined ? (
+                    <span className="ml-2 text-xs text-primary-600">{equipmentPrices[id] !== null ? `Price: ${equipmentPrices[id]}` : 'No price'}</span>
+                  ) : null}
                   <button
                     type="button"
                     onClick={() => removeEquipment(id)}

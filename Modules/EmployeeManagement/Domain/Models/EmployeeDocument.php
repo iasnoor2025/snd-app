@@ -17,24 +17,17 @@ class EmployeeDocument extends BaseModel implements HasMedia
 
     protected $fillable = [
         'employee_id',
-        'document_type',
-        'document_number',
-        'issue_date',
-        'expiry_date',
-        'issuing_authority',
-        'description',
-        'status',
-        'is_verified',
-        'verified_at',
-        'verified_by',
-        'notes',
+        'file_path',
+        'type',
+        'version',
+        'expires_at',
+        'is_active',
+        'batch_id',
     ];
 
     protected $casts = [
-        'issue_date' => 'date',
-        'expiry_date' => 'date',
-        'verified_at' => 'datetime',
-        'is_verified' => 'boolean',
+        'expires_at' => 'datetime',
+        'is_active' => 'boolean',
     ];
 
     public function employee(): BelongsTo

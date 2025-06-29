@@ -34,7 +34,9 @@ class User extends Authenticatable
         'password',
         'is_active',
         'last_login_at',
-        'locale'
+        'locale',
+        'provider', // Social login provider
+        'provider_id', // Social login provider user id
     ];
 
     /**

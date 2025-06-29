@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration; 
+use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
@@ -31,6 +31,7 @@ return new class extends Migration
             $table->string('payment_reference')->nullable();
             $table->string('payment_status')->nullable();
             $table->timestamp('payment_processed_at')->nullable();
+            $table->string('currency', 3)->nullable()->default(config('payroll.default_currency', 'SAR'));
             $table->timestamps();
             $table->softDeletes();
 

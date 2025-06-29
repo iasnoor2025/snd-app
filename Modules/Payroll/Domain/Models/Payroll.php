@@ -39,7 +39,8 @@ class Payroll extends Model
         'payment_method',
         'payment_reference',
         'payment_status',
-        'payment_processed_at'
+        'payment_processed_at',
+        'currency',
     ];
 
     protected $casts = [
@@ -154,6 +155,31 @@ class Payroll extends Model
     public function isPaid(): bool
     {
         return $this->status === 'paid';
+    }
+
+    public function getCurrencySymbolAttribute()
+    {
+        $currency = $this->currency ?: config('payroll.default_currency', 'SAR');
+        $symbols = [
+            'SAR' => '﷼',
+            'USD' => '$',
+            'EUR' => '€',
+            'GBP' => '£',
+            'INR' => '₹',
+            'AED' => 'د.إ',
+        ];
+        return $symbols[$currency] ?? $currency;
+    }
+
+    public function calculateTax(): float
+    {
+        $tax = 0;
+        foreach ($this->items as $item) {
+            if ($item->is_taxable && $item->tax_rate > 0) {
+                $tax += $item->amount * ($item->tax_rate / 100);
+            }
+        }
+        return round($tax, 2);
     }
 
     protected static function newFactory()

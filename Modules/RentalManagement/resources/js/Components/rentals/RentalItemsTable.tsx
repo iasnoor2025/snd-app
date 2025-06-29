@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { RentalItem, Equipment, Employee } from "@/Core/types/models";
 
@@ -10,8 +10,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Button,
 } from "@/Core";
 import { Badge } from "@/Core";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/Core";
+import { DynamicPricingManager } from "../../DynamicPricingManager";
 
 interface ExtendedRentalItem extends Omit<RentalItem, 'operator'> {
   daily_rate?: number;
@@ -32,6 +35,7 @@ interface Props {
 
 export default function RentalItemsTable({ rentalItems, items = [], readOnly = true }: Props) {
   const { t } = useTranslation('rental');
+  const [openEquipmentId, setOpenEquipmentId] = useState<number | null>(null);
 
   // Format currency for display
   const formatCurrency = (amount: number) => {
@@ -69,12 +73,13 @@ export default function RentalItemsTable({ rentalItems, items = [], readOnly = t
             <TableHead className="w-[10%]">Quantity</TableHead>
             <TableHead className="w-[10%]">Days</TableHead>
             <TableHead className="w-[20%] text-right">Subtotal</TableHead>
+            <TableHead className="w-[10%] text-right">Pricing</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {(!items || items.length === 0) ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center">
+              <TableCell colSpan={7} className="text-center">
                 No items found for this rental.
               </TableCell>
             </TableRow>
@@ -111,18 +116,32 @@ export default function RentalItemsTable({ rentalItems, items = [], readOnly = t
                 <TableCell className="text-right font-medium">
                   {formatCurrency(item.total_price || item.total_amount || 0)}
                 </TableCell>
+                <TableCell className="text-right">
+                  <Button size="sm" variant="outline" onClick={() => setOpenEquipmentId(item.equipment_id)}>
+                    Manage Pricing
+                  </Button>
+                  <Dialog open={openEquipmentId === item.equipment_id} onOpenChange={() => setOpenEquipmentId(null)}>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle>Dynamic Pricing for Equipment #{item.equipment_id}</DialogTitle>
+                      </DialogHeader>
+                      <DynamicPricingManager equipmentId={item.equipment_id} />
+                    </DialogContent>
+                  </Dialog>
+                </TableCell>
               </TableRow>
             ))
           )}
 
           {/* Totals */}
           <TableRow>
-            <TableCell colSpan={5} className="text-right font-medium">
+            <TableCell colSpan={6} className="text-right font-medium">
               Subtotal
             </TableCell>
             <TableCell className="text-right font-medium">
               {formatCurrency(subtotal)}
             </TableCell>
+            <TableCell />
           </TableRow>
         </TableBody>
       </Table>

@@ -13,6 +13,8 @@ use Inertia\Inertia;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Modules\Core\Domain\Models\User;
+use Modules\Payroll\Services\BankIntegrationService;
+use Modules\Payroll\Services\PayslipService;
 
 class PayrollController extends Controller
 {
@@ -32,7 +34,7 @@ class PayrollController extends Controller
         $this->authorize('viewAny', Payroll::class);
 
         $query = Payroll::with(['employee', 'approver', 'payer']);
-        
+
         if ($request->month) {
             $date = Carbon::parse($request->month);
             $query->where(function($q) use ($date) {
@@ -40,11 +42,11 @@ class PayrollController extends Controller
                   ->where('year', $date->year);
             });
         }
-        
+
         if ($request->status) {
             $query->where('status', $request->status);
         }
-        
+
         if ($request->employee_id) {
             $query->where('employee_id', $request->employee_id);
         }
@@ -148,7 +150,7 @@ class PayrollController extends Controller
         if ($request->has('items')) {
             // Update payroll items
             $payroll->items()->delete();
-            
+
             foreach ($request->items as $item) {
                 $payroll->items()->create([
                     'type' => $item['type'],
@@ -288,6 +290,27 @@ class PayrollController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to reject payroll run: ' . $e->getMessage());
         }
+    }
+
+    public function exportBankFile(Request $request, BankIntegrationService $bankIntegrationService)
+    {
+        $payrollIds = $request->input('payroll_ids', []);
+        $payrolls = \Modules\Payroll\Domain\Models\Payroll::with('employee')->whereIn('id', $payrollIds)->get();
+        $csv = $bankIntegrationService->exportPayrollBankFile($payrolls->all());
+        return response($csv, 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="payroll_bank_file.csv"',
+        ]);
+    }
+
+    public function downloadPayslip($payrollId, PayslipService $payslipService)
+    {
+        $payroll = \Modules\Payroll\Domain\Models\Payroll::with('employee')->findOrFail($payrollId);
+        $pdf = $payslipService->generatePayslip($payroll);
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="payslip_{$payroll->employee->id}_{$payroll->id}.pdf"',
+        ]);
     }
 }
 

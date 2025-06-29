@@ -92,10 +92,10 @@ interface Props extends PageProps {
 export default function Show({ taxDocument }: Props) {
   const { t } = useTranslation('payroll');
 
-    const formatCurrency = (amount: number) => {
+    const formatCurrency = (amount: number, currency: string = 'SAR') => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: 'SAR',
+            currency,
         }).format(amount);
     };
 
@@ -225,7 +225,7 @@ export default function Show({ taxDocument }: Props) {
                             <DollarSign className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{formatCurrency(taxDocument.gross_income)}</div>
+                            <div className="text-2xl font-bold">{formatCurrency(taxDocument.gross_income, taxDocument.currency)}</div>
                         </CardContent>
                     </Card>
                     <Card>
@@ -234,7 +234,7 @@ export default function Show({ taxDocument }: Props) {
                             <TrendingUp className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{formatCurrency(taxDocument.tax_withheld)}</div>
+                            <div className="text-2xl font-bold">{formatCurrency(taxDocument.tax_withheld, taxDocument.currency)}</div>
                         </CardContent>
                     </Card>
                     <Card>
@@ -243,7 +243,7 @@ export default function Show({ taxDocument }: Props) {
                             <DollarSign className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{formatCurrency(taxDocument.net_income)}</div>
+                            <div className="text-2xl font-bold">{formatCurrency(taxDocument.net_income, taxDocument.currency)}</div>
                         </CardContent>
                     </Card>
                     <Card>
@@ -273,13 +273,13 @@ export default function Show({ taxDocument }: Props) {
                                             <p className="font-medium">{item.label}</p>
                                             <p className="text-sm text-gray-500">{item.percentage.toFixed(1)}% of total</p>
                                         </div>
-                                        <p className="font-semibold">{formatCurrency(item.amount)}</p>
+                                        <p className="font-semibold">{formatCurrency(item.amount, taxDocument.currency)}</p>
                                     </div>
                                 ))}
                                 <Separator />
                                 <div className="flex justify-between items-center font-bold">
                                     <p>{t('total_gross_income')}</p>
-                                    <p>{formatCurrency(taxDocument.gross_income)}</p>
+                                    <p>{formatCurrency(taxDocument.gross_income, taxDocument.currency)}</p>
                                 </div>
                             </div>
                         </CardContent>
@@ -299,13 +299,13 @@ export default function Show({ taxDocument }: Props) {
                                             <p className="font-medium">{item.label}</p>
                                             <p className="text-sm text-gray-500">{item.percentage.toFixed(1)}% of total</p>
                                         </div>
-                                        <p className="font-semibold">{formatCurrency(item.amount)}</p>
+                                        <p className="font-semibold">{formatCurrency(item.amount, taxDocument.currency)}</p>
                                     </div>
                                 ))}
                                 <Separator />
                                 <div className="flex justify-between items-center font-bold">
                                     <p>{t('total_deductions')}</p>
-                                    <p>{formatCurrency(taxDocument.total_deductions)}</p>
+                                    <p>{formatCurrency(taxDocument.total_deductions, taxDocument.currency)}</p>
                                 </div>
                             </div>
                         </CardContent>
@@ -340,11 +340,11 @@ export default function Show({ taxDocument }: Props) {
                                             <TableCell className="font-medium">
                                                 {format(new Date(month.month + '-01'), 'MMM yyyy')}
                                             </TableCell>
-                                            <TableCell>{formatCurrency(month.gross_income)}</TableCell>
-                                            <TableCell>{formatCurrency(month.tax_withheld)}</TableCell>
-                                            <TableCell>{formatCurrency(month.net_income)}</TableCell>
-                                            <TableCell>{formatCurrency(month.overtime)}</TableCell>
-                                            <TableCell>{formatCurrency(month.bonus)}</TableCell>
+                                            <TableCell>{formatCurrency(month.gross_income, taxDocument.currency)}</TableCell>
+                                            <TableCell>{formatCurrency(month.tax_withheld, taxDocument.currency)}</TableCell>
+                                            <TableCell>{formatCurrency(month.net_income, taxDocument.currency)}</TableCell>
+                                            <TableCell>{formatCurrency(month.overtime, taxDocument.currency)}</TableCell>
+                                            <TableCell>{formatCurrency(month.bonus, taxDocument.currency)}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -381,11 +381,11 @@ export default function Show({ taxDocument }: Props) {
                                             <TableCell className="font-medium">
                                                 {format(new Date(payroll.payroll_month + '-01'), 'MMM yyyy')}
                                             </TableCell>
-                                            <TableCell>{formatCurrency(payroll.base_salary)}</TableCell>
-                                            <TableCell>{formatCurrency(payroll.overtime_amount)}</TableCell>
-                                            <TableCell>{formatCurrency(payroll.bonus_amount)}</TableCell>
-                                            <TableCell>{formatCurrency(payroll.deduction_amount)}</TableCell>
-                                            <TableCell>{formatCurrency(payroll.final_amount)}</TableCell>
+                                            <TableCell>{formatCurrency(payroll.base_salary, payroll.currency)}</TableCell>
+                                            <TableCell>{formatCurrency(payroll.overtime_amount, payroll.currency)}</TableCell>
+                                            <TableCell>{formatCurrency(payroll.bonus_amount, payroll.currency)}</TableCell>
+                                            <TableCell>{formatCurrency(payroll.deduction_amount, payroll.currency)}</TableCell>
+                                            <TableCell>{formatCurrency(payroll.final_amount, payroll.currency)}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>

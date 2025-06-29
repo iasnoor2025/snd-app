@@ -5,6 +5,11 @@ namespace Modules\Core\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
+use Modules\Core\Services\MfaService;
+use Modules\Core\Services\ApiKeyService;
+use Modules\Core\Http\Middleware\MfaVerification;
+use Modules\Core\Http\Middleware\ApiKeyAuthentication;
+use Laravel\Socialite\Facades\Socialite;
 
 class CoreServiceProvider extends ServiceProvider
 {
@@ -14,6 +19,13 @@ class CoreServiceProvider extends ServiceProvider
      * @var string
      */
     protected $moduleName = 'Core';
+
+    /**
+     * The module name in lowercase.
+     *
+     * @var string
+     */
+    protected $moduleNameLower = 'core';
 
     /**
      * Register services.
@@ -56,6 +68,19 @@ class CoreServiceProvider extends ServiceProvider
                 return new \Modules\Core\Services\LegacyCodeHandler();
             });
         }
+
+        // Register MFA service
+        $this->app->singleton(MfaService::class, function ($app) {
+            return new MfaService();
+        });
+
+        // Register API Key service
+        $this->app->singleton(ApiKeyService::class, function ($app) {
+            return new ApiKeyService();
+        });
+
+        // Register Socialite
+        $this->app->register(\Laravel\Socialite\SocialiteServiceProvider::class);
     }
 
     /**
@@ -92,6 +117,11 @@ class CoreServiceProvider extends ServiceProvider
 
         // Register observers
         $this->registerObservers();
+
+        // Register MFA middleware
+        $router = $this->app['router'];
+        $router->aliasMiddleware('mfa', MfaVerification::class);
+        $router->aliasMiddleware('api-key', ApiKeyAuthentication::class);
     }
 
     /**
@@ -128,9 +158,9 @@ class CoreServiceProvider extends ServiceProvider
 
         if (file_exists($configPath)) {
             $this->publishes([
-                $configPath => config_path('core.php')
+                $configPath => config_path($this->moduleNameLower . '.php')
             ], 'config');
-            $this->mergeConfigFrom($configPath, 'core');
+            $this->mergeConfigFrom($configPath, $this->moduleNameLower);
         }
     }
 
@@ -141,17 +171,15 @@ class CoreServiceProvider extends ServiceProvider
      */
     protected function registerViews()
     {
-        $viewPath = resource_path('views/modules/core');
+        $viewPath = resource_path('views/modules/' . $this->moduleNameLower);
         $sourcePath = module_path('Core', 'Resources/views');
 
         if (is_dir($sourcePath)) {
             $this->publishes([
                 $sourcePath => $viewPath
-            ],'views');
+            ], ['views', $this->moduleNameLower . '-module-views']);
 
-            $this->loadViewsFrom(array_merge(array_map(function ($path) {
-                return $path . '/modules/core';
-            }, \Config::get('view.paths')), [$sourcePath]), 'core');
+            $this->loadViewsFrom(array_merge($this->getPublishableViewPaths(), [$sourcePath]), $this->moduleNameLower);
         }
     }
 
@@ -162,14 +190,14 @@ class CoreServiceProvider extends ServiceProvider
      */
     protected function registerTranslations()
     {
-        $langPath = resource_path('lang/modules/core');
+        $langPath = resource_path('lang/modules/' . $this->moduleNameLower);
 
         if (is_dir($langPath)) {
-            $this->loadTranslationsFrom($langPath, 'core');
+            $this->loadTranslationsFrom($langPath, $this->moduleNameLower);
         } else {
             $sourcePath = module_path('Core', 'Resources/lang');
             if (is_dir($sourcePath)) {
-                $this->loadTranslationsFrom($sourcePath, 'core');
+                $this->loadTranslationsFrom($sourcePath, $this->moduleNameLower);
             }
         }
     }
@@ -224,6 +252,22 @@ class CoreServiceProvider extends ServiceProvider
         }
 
         return $provides;
+    }
+
+    /**
+     * Get the publishable view paths.
+     *
+     * @return array
+     */
+    private function getPublishableViewPaths(): array
+    {
+        $paths = [];
+        foreach (config('view.paths') as $path) {
+            if (is_dir($path . '/modules/' . $this->moduleNameLower)) {
+                $paths[] = $path . '/modules/' . $this->moduleNameLower;
+            }
+        }
+        return $paths;
     }
 }
 

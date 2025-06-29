@@ -5,12 +5,14 @@ namespace Modules\ProjectManagement\Domain\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\User;
 
 class ProjectDocument extends Model
 {
     protected $fillable = [
         'project_id',
+        'user_id',
         'name',
         'description',
         'category',
@@ -62,11 +64,21 @@ class ProjectDocument extends Model
     {
         $bytes = $this->file_size;
         $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-        
+
         for ($i = 0; $bytes > 1024; $i++) {
             $bytes /= 1024;
         }
-        
+
         return round($bytes, 2) . ' ' . $units[$i];
     }
-} 
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\User::class);
+    }
+
+    public function versions(): HasMany
+    {
+        return $this->hasMany(ProjectDocumentVersion::class, 'document_id');
+    }
+}

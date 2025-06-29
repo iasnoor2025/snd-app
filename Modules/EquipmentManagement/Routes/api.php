@@ -7,7 +7,7 @@ use Modules\EquipmentManagement\Http\Controllers\EquipmentCostController as Equi
 use Modules\EquipmentManagement\Http\Controllers\EquipmentUtilizationController as EquipmentUtilizationApiController;
 use Modules\EquipmentManagement\Http\Controllers\EquipmentTrackingController as EquipmentTrackingApiController;
 use Modules\EquipmentManagement\Http\Controllers\MaintenanceController as MaintenanceApiController;
-use Modules\EquipmentManagement\Http\Controllers\MaintenanceScheduleController as MaintenanceScheduleApiController;
+use Modules\EquipmentManagement\Http\Controllers\MaintenanceScheduleController;
 use Modules\EquipmentManagement\Http\Controllers\MaintenanceTaskController as MaintenanceTaskApiController;
 use Modules\EquipmentManagement\Http\Controllers\MaintenanceRecordController as MaintenanceRecordApiController;
 use Modules\EquipmentManagement\Http\Controllers\TechnicianController as TechnicianApiController;
@@ -16,6 +16,8 @@ use Modules\Core\Http\Controllers\MediaLibraryController;
 use Modules\EquipmentManagement\Http\Controllers\EquipmentMediaController;
 use Modules\EquipmentManagement\Http\Controllers\EquipmentPerformanceController;
 use Modules\EquipmentManagement\Http\Controllers\EquipmentController;
+use Modules\EquipmentManagement\Http\Controllers\EquipmentCodeController;
+use Modules\EquipmentManagement\Http\Controllers\UsageLogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -151,7 +153,26 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::get('/upcoming', [MaintenanceApiController::class, 'getUpcomingMaintenance']);
             Route::get('/history', [MaintenanceApiController::class, 'getMaintenanceHistory']);
             Route::get('/costs', [MaintenanceApiController::class, 'getMaintenanceCostsSummary']);
+            Route::get('/', [MaintenanceScheduleController::class, 'index']);
+            Route::post('/', [MaintenanceScheduleController::class, 'store']);
+            Route::put('/{schedule}', [MaintenanceScheduleController::class, 'update']);
+            Route::delete('/{schedule}', [MaintenanceScheduleController::class, 'destroy']);
         });
+    });
+
+    // Equipment Code Routes
+    Route::get('equipment/{equipment}/codes', [EquipmentCodeController::class, 'index']);
+    Route::post('equipment/{equipment}/codes/qr', [EquipmentCodeController::class, 'generateQr']);
+    Route::post('equipment/{equipment}/codes/barcode', [EquipmentCodeController::class, 'generateBarcode']);
+    Route::post('equipment/codes/scan', [EquipmentCodeController::class, 'scan']);
+    Route::post('equipment/codes/{code}/primary', [EquipmentCodeController::class, 'setPrimary']);
+    Route::delete('equipment/codes/{code}', [EquipmentCodeController::class, 'destroy']);
+
+    // Usage Log Routes
+    Route::prefix('equipment/{equipment}/usage')->group(function () {
+        Route::get('/', [UsageLogController::class, 'index']);
+        Route::post('/', [UsageLogController::class, 'store']);
+        Route::get('/analytics', [UsageLogController::class, 'analytics']);
     });
 });
 

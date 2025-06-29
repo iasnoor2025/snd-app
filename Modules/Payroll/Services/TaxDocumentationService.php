@@ -118,12 +118,12 @@ class TaxDocumentationService
             $data['bonus_income'] += $payroll->bonus_amount;
             $data['advance_deductions'] += $payroll->advance_deduction ?? 0;
 
+            // Use the tax engine for this payroll
+            $data['tax_withheld'] += $payroll->calculateTax();
+
             // Calculate from payroll items
             foreach ($payroll->items as $item) {
                 switch ($item->type) {
-                    case 'tax':
-                        $data['tax_withheld'] += abs($item->amount);
-                        break;
                     case 'insurance':
                         $data['insurance_deductions'] += abs($item->amount);
                         break;

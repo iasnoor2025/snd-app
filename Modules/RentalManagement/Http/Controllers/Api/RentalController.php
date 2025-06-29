@@ -38,6 +38,12 @@ class RentalController extends Controller
 
             $rentals = $query->paginate($request->get('per_page', 15));
 
+            // Add followup_sent_at to each rental in the response
+            $rentals->getCollection()->transform(function ($rental) {
+                $rental->followup_sent_at = $rental->followup_sent_at;
+                return $rental;
+            });
+
             return response()->json([
                 'success' => true,
                 'data' => $rentals,
@@ -105,7 +111,7 @@ class RentalController extends Controller
         try {
             $rental = Rental::with(['customer', 'rentalItems', 'equipment', 'extensions', 'history'])
                 ->findOrFail($id);
-
+            $rental->followup_sent_at = $rental->followup_sent_at;
             return response()->json([
                 'success' => true,
                 'data' => $rental,
@@ -262,5 +268,29 @@ class RentalController extends Controller
                 'error' => $e->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    /**
+     * Get automated follow-up settings.
+     */
+    public function getFollowUpSettings()
+    {
+        $settings = config('rentalmanagement.automated_followups');
+        return response()->json($settings);
+    }
+
+    /**
+     * Update automated follow-up settings.
+     */
+    public function updateFollowUpSettings(Request $request)
+    {
+        // In a real app, this should be persisted in DB or settings table
+        $validated = $request->validate([
+            'enabled' => 'boolean',
+            'delay_days' => 'integer|min:1|max:30',
+            'default_template' => 'string|max:1000',
+        ]);
+        // For now, just return the new settings (simulate update)
+        return response()->json($validated);
     }
 }

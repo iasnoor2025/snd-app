@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use Modules\TimesheetManagement\Http\Controllers\TimesheetController;
 use Modules\TimesheetManagement\Http\Controllers\TimeEntryController;
 use Modules\TimesheetManagement\Http\Controllers\GeofenceController;
+use Modules\TimesheetManagement\Http\Controllers\RealTimeDashboardController;
+use Modules\TimesheetManagement\Http\Controllers\Api\CustomReportController;
+use Modules\TimesheetManagement\Http\Controllers\Api\TimeOffRequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -86,4 +89,14 @@ Route::get('/timesheets/public/status', function () {
         'version' => '1.0.0'
     ]);
 });
+
+Route::get('/timesheets/realtime-dashboard', RealTimeDashboardController::class);
+
+Route::post('/timesheets/custom-report', CustomReportController::class);
+
+Route::get('/time-off-requests', [TimeOffRequestController::class, 'index']);
+Route::post('/time-off-requests', [TimeOffRequestController::class, 'store']);
+Route::get('/time-off-requests/{id}', [TimeOffRequestController::class, 'show']);
+Route::post('/time-off-requests/{id}/approve', [TimeOffRequestController::class, 'approve']);
+Route::post('/time-off-requests/{id}/reject', [TimeOffRequestController::class, 'reject']);
 

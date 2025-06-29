@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Modules\EmployeeManagement\Repositories\PerformanceReviewRepository;
+use Modules\EmployeeManagement\Domain\Models\PerformanceReview;
+use Modules\EmployeeManagement\Domain\Models\Employee;
 
 class PerformanceReviewService
 {
@@ -46,108 +48,25 @@ class PerformanceReviewService
         return $this->performanceReviewRepository->getEmployeeReviewsByPeriod($employeeId, $startDate, $endDate);
     }
 
-    public function createReview(array $data)
+    public function getReviewsForEmployee(Employee $employee)
     {
-        try {
-            DB::beginTransaction();
-
-            // Calculate overall rating from individual category ratings
-            if (!isset($data['overall_rating'])) {
-                $categoryRatings = [
-                    $data['job_knowledge_rating'],
-                    $data['work_quality_rating'],
-                    $data['attendance_rating'],
-                    $data['communication_rating'],
-                    $data['teamwork_rating'],
-                    $data['initiative_rating']
-                ];
-                $data['overall_rating'] = array_sum($categoryRatings) / count($categoryRatings);
-            }
-
-            // Ensure arrays are properly formatted
-            foreach (['strengths', 'weaknesses', 'goals'] as $arrayField) {
-                if (isset($data[$arrayField]) && is_string($data[$arrayField])) {
-                    $data[$arrayField] = json_decode($data[$arrayField], true);
-                }
-            }
-
-            $review = $this->performanceReviewRepository->create($data);
-
-            DB::commit();
-            return $review;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Failed to create performance review: ' . $e->getMessage());
-            throw $e;
-        }
+        return PerformanceReview::where('employee_id', $employee->id)->orderByDesc('review_date')->get();
     }
 
-    public function updateReview(int $id, array $data)
+    public function createReview(array $data): PerformanceReview
     {
-        try {
-            DB::beginTransaction();
-
-            // Recalculate overall rating if category ratings are provided
-            $categoryFields = [
-                'job_knowledge_rating',
-                'work_quality_rating',
-                'attendance_rating',
-                'communication_rating',
-                'teamwork_rating',
-                'initiative_rating',
-            ];
-
-            $hasAllRatings = true;
-            $ratingSum = 0;
-            $review = $this->performanceReviewRepository->find($id);
-
-            foreach ($categoryFields as $field) {
-                if (isset($data[$field])) {
-                    $ratingSum += $data[$field];
-                } elseif (isset($review->$field)) {
-                    $ratingSum += $review->$field;
-                } else {
-                    $hasAllRatings = false;
-                    break;
-                }
-            }
-
-            if ($hasAllRatings && !isset($data['overall_rating'])) {
-                $data['overall_rating'] = $ratingSum / count($categoryFields);
-            }
-
-            // Ensure arrays are properly formatted
-            foreach (['strengths', 'weaknesses', 'goals'] as $arrayField) {
-                if (isset($data[$arrayField]) && is_string($data[$arrayField])) {
-                    $data[$arrayField] = json_decode($data[$arrayField], true);
-                }
-            }
-
-            $review = $this->performanceReviewRepository->update($id, $data);
-
-            DB::commit();
-            return $review;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Failed to update performance review: ' . $e->getMessage());
-            throw $e;
-        }
+        return PerformanceReview::create($data);
     }
 
-    public function deleteReview(int $id)
+    public function updateReview(PerformanceReview $review, array $data): PerformanceReview
     {
-        try {
-            DB::beginTransaction();
+        $review->update($data);
+        return $review->fresh();
+    }
 
-            $result = $this->performanceReviewRepository->delete($id);
-
-            DB::commit();
-            return $result;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Failed to delete performance review: ' . $e->getMessage());
-            throw $e;
-        }
+    public function deleteReview(PerformanceReview $review): void
+    {
+        $review->delete();
     }
 
     public function approveReview(int $id, int $approverId)

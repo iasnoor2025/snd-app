@@ -1,296 +1,107 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import {
-    Button,
-    Input,
-    Label,
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/Core';
-import { toast } from 'sonner';
-import { ProjectToastService } from '../services/ProjectToastService';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
+import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label } from '@/Core';
+import { toast } from 'sonner';
 
-interface Document {
-    id: number;
-    name: string;
-    description: string;
-    category: string;
-    file_type: string;
-    version: number;
-    uploaded_by: {
-        name: string;
-    };
-    formatted_file_size: string;
-    created_at: string;
-    is_shared: boolean;
-}
+export default function ProjectDocuments({ projectId, currentUser }: { projectId: number, currentUser: { id: number, name: string } }) {
+  const [documents, setDocuments] = useState([]);
+  const [file, setFile] = useState<File | null>(null);
+  const [name, setName] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [versionFile, setVersionFile] = useState<File | null>(null);
+  const [selectedDoc, setSelectedDoc] = useState<any>(null);
 
-const DOCUMENT_CATEGORIES = [
-    'contract',
-    'proposal',
-    'report',
-    'specification',
-    'other'
-];
+  const fetchDocuments = async () => {
+    const { data } = await axios.get(`/api/projects/${projectId}/documents`);
+    setDocuments(data);
+  };
 
-export default function ProjectDocuments() {
-    const { projectId } = useParams<{ projectId: string }>();
-    const [documents, setDocuments] = useState<Record<string, Document[]>>({});
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [uploadData, setUploadData] = useState({
-        name: '',
-        description: '',
-        category: 'other',
-        is_shared: false
-    });
-    const [loading, setLoading] = useState(false);
+  useEffect(() => { fetchDocuments(); }, [projectId]);
 
-    useEffect(() => {
-        loadDocuments();
-    }, [projectId]);
+  const handleUpload = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!file || !name) return toast.error('Name and file required');
+    setUploading(true);
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('file', file);
+    try {
+      await axios.post(`/api/projects/${projectId}/documents`, formData);
+      toast.success('Document uploaded');
+      setFile(null); setName('');
+      fetchDocuments();
+    } catch {
+      toast.error('Upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
 
-    const loadDocuments = async () => {
-        try {
-            const documentsByCategory: Record<string, Document[]> = {};
-            
-            for (const category of DOCUMENT_CATEGORIES) {
-                const response = await axios.get(`/api/projects/${projectId}/documents/${category}`);
-                documentsByCategory[category] = response.data.data;
-            }
-            
-            setDocuments(documentsByCategory);
-        } catch (error) {
-            toast.error('Failed to load documents');
-        }
-    };
+  const handleDownload = async (docId: number) => {
+    window.location.href = `/api/projects/${projectId}/documents/${docId}/download`;
+  };
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            setSelectedFile(file);
-            setUploadData(prev => ({
-                ...prev,
-                name: file.name
-            }));
-        }
-    };
+  const handleVersionUpload = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!versionFile || !selectedDoc) return toast.error('Select a document and file');
+    const formData = new FormData();
+    formData.append('file', versionFile);
+    try {
+      await axios.post(`/api/projects/${projectId}/documents/${selectedDoc.id}/version`, formData);
+      toast.success('New version uploaded');
+      setVersionFile(null); setSelectedDoc(null);
+      fetchDocuments();
+    } catch {
+      toast.error('Version upload failed');
+    }
+  };
 
-    const handleUpload = async () => {
-        if (!selectedFile) {
-            toast.error('Please select a file');
-            return;
-        }
-
-        setLoading(true);
-        const formData = new FormData();
-        formData.append('file', selectedFile);
-        Object.entries(uploadData).forEach(([key, value]) => {
-            formData.append(key, value.toString());
-        });
-
-        try {
-            await axios.post(`/api/projects/${projectId}/documents`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            
-            ProjectToastService.documentUploaded(uploadData.name, 'Project');
-            await loadDocuments();
-            
-            // Reset form
-            setSelectedFile(null);
-            setUploadData({
-                name: '',
-                description: '',
-                category: 'other',
-                is_shared: false
-            });
-            
-            // Reset file input
-            const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
-            if (fileInput) fileInput.value = '';
-            
-        } catch (error) {
-            toast.error('Failed to upload document');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleDelete = async (document: Document) => {
-        try {
-            await axios.delete(`/api/documents/${document.id}`);
-            ProjectToastService.documentDeleted(document.name);
-            await loadDocuments();
-        } catch (error) {
-            toast.error('Failed to delete document');
-        }
-    };
-
-    const handleShare = async (document: Document, userIds: number[]) => {
-        try {
-            await axios.post(`/api/documents/${document.id}/share`, {
-                user_ids: userIds
-            });
-            ProjectToastService.documentShared(document.name, 'team members');
-            await loadDocuments();
-        } catch (error) {
-            toast.error('Failed to share document');
-        }
-    };
-
-    return (
-        <div className="container mx-auto py-6">
-            <Card className="mb-6">
-                <CardHeader>
-                    <CardTitle>Upload Document</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="grid gap-4">
-                        <div>
-                            <Label htmlFor="file">File</Label>
-                            <Input
-                                id="file"
-                                type="file"
-                                onChange={handleFileChange}
-                                className="mt-1"
-                            />
-                        </div>
-                        <div>
-                            <Label htmlFor="name">Name</Label>
-                            <Input
-                                id="name"
-                                value={uploadData.name}
-                                onChange={(e) => setUploadData(prev => ({
-                                    ...prev,
-                                    name: e.target.value
-                                }))}
-                                className="mt-1"
-                            />
-                        </div>
-                        <div>
-                            <Label htmlFor="description">Description</Label>
-                            <Input
-                                id="description"
-                                value={uploadData.description}
-                                onChange={(e) => setUploadData(prev => ({
-                                    ...prev,
-                                    description: e.target.value
-                                }))}
-                                className="mt-1"
-                            />
-                        </div>
-                        <div>
-                            <Label htmlFor="category">Category</Label>
-                            <Select
-                                value={uploadData.category}
-                                onValueChange={(value) => setUploadData(prev => ({
-                                    ...prev,
-                                    category: value
-                                }))}
-                            >
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select category" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {DOCUMENT_CATEGORIES.map(category => (
-                                        <SelectItem key={category} value={category}>
-                                            {category.charAt(0).toUpperCase() + category.slice(1)}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <Button onClick={handleUpload} disabled={loading}>
-                            {loading ? 'Uploading...' : 'Upload Document'}
-                        </Button>
-                    </div>
-                </CardContent>
-            </Card>
-
-            <Tabs defaultValue={DOCUMENT_CATEGORIES[0]}>
-                <TabsList>
-                    {DOCUMENT_CATEGORIES.map(category => (
-                        <TabsTrigger key={category} value={category}>
-                            {category.charAt(0).toUpperCase() + category.slice(1)}
-                        </TabsTrigger>
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Project Documents</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleUpload} className="flex gap-2 mb-6">
+          <Input type="text" placeholder="Document name" value={name} onChange={e => setName(e.target.value)} required />
+          <Input type="file" onChange={e => setFile(e.target.files?.[0] || null)} required />
+          <Button type="submit" disabled={uploading}>{uploading ? 'Uploading...' : 'Upload'}</Button>
+        </form>
+        <div className="space-y-4">
+          {documents.map((doc: any) => (
+            <Card key={doc.id} className="p-3">
+              <div className="flex justify-between items-center">
+                <div>
+                  <div className="font-semibold">{doc.name}</div>
+                  <div className="text-xs text-gray-500">Uploaded by: {doc.user?.name || 'User'} | Version: {doc.version}</div>
+                  <div className="flex gap-2 mt-1">
+                    <Button size="sm" variant="outline" onClick={() => handleDownload(doc.id)}>Download</Button>
+                    <Button size="sm" variant="secondary" onClick={() => setSelectedDoc(doc)}>Upload New Version</Button>
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-400">History:</div>
+                  <ul className="text-xs">
+                    {doc.versions?.map((ver: any) => (
+                      <li key={ver.id}>
+                        v{ver.version} by {ver.user?.name || 'User'}
+                      </li>
                     ))}
-                </TabsList>
-
-                {DOCUMENT_CATEGORIES.map(category => (
-                    <TabsContent key={category} value={category}>
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>{category.charAt(0).toUpperCase() + category.slice(1)} Documents</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>Name</TableHead>
-                                            <TableHead>Description</TableHead>
-                                            <TableHead>Size</TableHead>
-                                            <TableHead>Version</TableHead>
-                                            <TableHead>Uploaded By</TableHead>
-                                            <TableHead>Date</TableHead>
-                                            <TableHead>Actions</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {documents[category]?.map((doc) => (
-                                            <TableRow key={doc.id}>
-                                                <TableCell>{doc.name}</TableCell>
-                                                <TableCell>{doc.description}</TableCell>
-                                                <TableCell>{doc.formatted_file_size}</TableCell>
-                                                <TableCell>v{doc.version}</TableCell>
-                                                <TableCell>{doc.uploaded_by.name}</TableCell>
-                                                <TableCell>{new Date(doc.created_at).toLocaleDateString()}</TableCell>
-                                                <TableCell>
-                                                    <div className="flex gap-2">
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            onClick={() => handleDelete(doc)}
-                                                        >
-                                                            Delete
-                                                        </Button>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            onClick={() => handleShare(doc, [])} // Add user selection UI
-                                                        >
-                                                            Share
-                                                        </Button>
-                                                    </div>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-                ))}
-            </Tabs>
+                  </ul>
+                </div>
+              </div>
+            </Card>
+          ))}
         </div>
-    );
-} 
+        {selectedDoc && (
+          <form onSubmit={handleVersionUpload} className="flex gap-2 mt-6">
+            <Label>Upload new version for: {selectedDoc.name}</Label>
+            <Input type="file" onChange={e => setVersionFile(e.target.files?.[0] || null)} required />
+            <Button type="submit">Upload Version</Button>
+            <Button type="button" variant="secondary" onClick={() => { setSelectedDoc(null); setVersionFile(null); }}>Cancel</Button>
+          </form>
+        )}
+      </CardContent>
+    </Card>
+  );
+}

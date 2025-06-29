@@ -11,6 +11,9 @@ use Modules\EmployeeManagement\Http\Controllers\ResignationController;
 use Modules\EmployeeManagement\Http\Controllers\SalaryIncrementController;
 use Illuminate\Http\Request;
 use Modules\EmployeeManagement\Http\Controllers\EmployeeNumberController;
+use Modules\EmployeeManagement\Http\Controllers\SkillController;
+use Modules\EmployeeManagement\Http\Controllers\PerformanceReviewController;
+use Modules\EmployeeManagement\Http\Controllers\TrainingController;
 
 // Public route for last-file-number (no auth middleware)
 Route::prefix('v1')->group(function () {
@@ -82,4 +85,32 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 });
+
+Route::prefix('skills')->group(function () {
+    Route::get('/', [SkillController::class, 'index']);
+});
+
+Route::prefix('employees/{employee}/skills')->group(function () {
+    Route::get('/', [SkillController::class, 'employeeSkills']);
+    Route::post('/assign', [SkillController::class, 'assign']);
+    Route::post('/remove', [SkillController::class, 'remove']);
+    Route::post('/update-proficiency', [SkillController::class, 'updateProficiency']);
+});
+
+Route::prefix('employees/{employee}/reviews')->group(function () {
+    Route::get('/', [PerformanceReviewController::class, 'index']);
+    Route::post('/', [PerformanceReviewController::class, 'store']);
+    Route::put('/{review}', [PerformanceReviewController::class, 'update']);
+    Route::delete('/{review}', [PerformanceReviewController::class, 'destroy']);
+});
+
+Route::prefix('trainings')->group(function () {
+    Route::get('/', [TrainingController::class, 'index']);
+    Route::post('/', [TrainingController::class, 'store']);
+    Route::put('/{training}', [TrainingController::class, 'update']);
+    Route::delete('/{training}', [TrainingController::class, 'destroy']);
+    Route::post('/{training}/assign', [TrainingController::class, 'assign']);
+    Route::post('/{training}/complete/{employee}', [TrainingController::class, 'markCompleted']);
+});
+Route::get('employees/{employee}/trainings', [TrainingController::class, 'employeeTrainings']);
 

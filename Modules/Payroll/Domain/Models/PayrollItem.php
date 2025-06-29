@@ -18,7 +18,7 @@ class PayrollItem extends Model
         'is_taxable',
         'tax_rate',
         'order',
-        'metadata'
+        'metadata',
     ];
 
     protected $casts = [
@@ -52,6 +52,11 @@ class PayrollItem extends Model
     public function scopeAdvance($query)
     {
         return $query->where('type', 'advance');
+    }
+
+    public function scopeBenefit($query)
+    {
+        return $query->where('type', 'benefits');
     }
 
     public function isEarning(): bool
@@ -95,6 +100,10 @@ class PayrollItem extends Model
             'benefits' => 'Benefits'
         ];
     }
+
+    /**
+     * Supported types: overtime, bonus, deduction, advance, earnings, taxes, benefits
+     */
 }
 
 

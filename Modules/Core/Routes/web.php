@@ -6,6 +6,9 @@ use Modules\Core\Http\Controllers\RoleController;
 use Modules\Core\Http\Controllers\PermissionController;
 use Modules\Core\Http\Controllers\CoreController;
 use Modules\Core\Http\Controllers\SystemSettingsController;
+use Modules\Core\Http\Controllers\MfaController;
+use Modules\Core\Http\Controllers\BackupController;
+use Laravel\Socialite\Facades\Socialite;
 
 /*
 |--------------------------------------------------------------------------
@@ -83,6 +86,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['permission:permissions.delete'])->group(function () {
         Route::delete('settings/permissions/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
     });
+
+    Route::get('/settings/security', function () {
+        return inertia('Core/pages/settings/SecuritySettings');
+    })->name('settings.security');
+
+    // MFA Routes
+    Route::match(['get', 'post'], 'mfa/verify', [MfaController::class, 'verify'])
+        ->name('mfa.verify');
 });
 
 // Core resource routes
@@ -98,4 +109,22 @@ Route::group([], function () {
         Route::post('/import', [SystemSettingsController::class, 'import'])->name('import');
         Route::get('/health', [SystemSettingsController::class, 'health'])->name('health');
     });
+});
+
+// Social Login Routes
+Route::get('/auth/redirect/{provider}', [
+    'as' => 'social.redirect',
+    'uses' => 'Modules\\Core\\Http\\Controllers\\SocialAuthController@redirectToProvider',
+]);
+Route::get('/auth/callback/{provider}', [
+    'as' => 'social.callback',
+    'uses' => 'Modules\\Core\\Http\\Controllers\\SocialAuthController@handleProviderCallback',
+]);
+
+Route::prefix('system/backup')->middleware(['auth', 'can:admin'])->group(function () {
+    Route::post('/', [BackupController::class, 'backup']);
+    Route::get('/', [BackupController::class, 'list']);
+    Route::get('/download/{filename}', [BackupController::class, 'download']);
+    Route::delete('/{filename}', [BackupController::class, 'delete']);
+    Route::post('/restore', [BackupController::class, 'restore']);
 });

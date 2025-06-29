@@ -57,6 +57,7 @@ import {
 } from "@/Core";
 import { Label } from "@/Core";
 import { Textarea } from "@/Core";
+import { toast } from 'sonner';
 
 interface PerformanceReviewListProps {
   employeeId?: number;
@@ -99,7 +100,8 @@ export const PerformanceReviewList: React.FC<PerformanceReviewListProps> = ({
   }, [searchQuery, statusFilter, startDate, endDate, reviews]);
 
   const fetchReviews = async () => {
-    await withLoading(async () => {
+    setIsLoading(true);
+    try {
       let url = '/api/performance-reviews';
       const params: PerformanceReviewFilter = {};
 
@@ -114,7 +116,11 @@ export const PerformanceReviewList: React.FC<PerformanceReviewListProps> = ({
       const response = await axios.get(url);
       setReviews(response.data.data);
       setFilteredReviews(response.data.data);
-    })
+    } catch {
+      toast.error('Failed to fetch reviews');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const applyFilters = () => {
@@ -168,27 +174,43 @@ export const PerformanceReviewList: React.FC<PerformanceReviewListProps> = ({
 
   const confirmDelete = async () => {
     if (reviewToDelete) {
-      await withLoading(async () => {
+      setIsLoading(true);
+      try {
         await axios.delete(`/api/performance-reviews/${reviewToDelete}`);
         setReviews(reviews.filter(r => r.id !== reviewToDelete));
         setShowDeleteConfirm(false);
         setReviewToDelete(null);
-      })
+        toast.success('Review deleted');
+      } catch {
+        toast.error('Failed to delete review');
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
   const handleApprove = async (reviewId: number) => {
-    await withLoading(async () => {
+    setIsLoading(true);
+    try {
       const response = await axios.post(`/api/performance-reviews/${reviewId}/approve`);
       setReviews(reviews.map(r => (r.id === reviewId ? response.data.data : r)));
-    })
+    } catch {
+      toast.error('Failed to approve review');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleReject = async (reviewId: number) => {
-    await withLoading(async () => {
+    setIsLoading(true);
+    try {
       const response = await axios.post(`/api/performance-reviews/${reviewId}/reject`);
       setReviews(reviews.map(r => (r.id === reviewId ? response.data.data : r)));
-    })
+    } catch {
+      toast.error('Failed to reject review');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleAddComment = (review: PerformanceReview) => {
@@ -199,7 +221,8 @@ export const PerformanceReviewList: React.FC<PerformanceReviewListProps> = ({
 
   const submitEmployeeComment = async () => {
     if (reviewForComment) {
-      await withLoading(async () => {
+      setIsLoading(true);
+      try {
         const response = await axios.post(
           `/api/performance-reviews/${reviewForComment.id}/employee-comments`,
           { employee_comments: employeeComment }
@@ -207,7 +230,11 @@ export const PerformanceReviewList: React.FC<PerformanceReviewListProps> = ({
         setReviews(reviews.map(r => (r.id === reviewForComment.id ? response.data.data : r)));
         setShowCommentDialog(false);
         setReviewForComment(null);
-      })
+      } catch {
+        toast.error('Failed to add employee comment');
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 

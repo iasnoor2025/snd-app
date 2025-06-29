@@ -90,6 +90,7 @@ const projectPages: Record<string, string> = {
   'Projects/Show': './Modules/ProjectManagement/resources/js/pages/Show.tsx',
   'Projects/Resources': './Modules/ProjectManagement/resources/js/pages/Resources.tsx',
   'Projects/Projects': './Modules/ProjectManagement/resources/js/pages/Projects.tsx',
+  'Projects/ProjectTemplates': './Modules/ProjectManagement/resources/js/pages/ProjectTemplates.tsx',
 };
 
 // Rental Management module pages

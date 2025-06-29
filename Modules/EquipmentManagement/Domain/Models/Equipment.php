@@ -69,6 +69,12 @@ class Equipment extends Model implements HasMedia
         'lifetime_maintenance_cost',
         'efficiency_rating',
         'next_performance_review',
+        'latitude',
+        'longitude',
+        'depreciation_years',
+        'current_value',
+        'quantity',
+        'low_stock_threshold',
     ];
 
     /**
@@ -87,7 +93,7 @@ class Equipment extends Model implements HasMedia
         'default_unit_cost' => 'decimal:2',
         'is_active' => 'boolean',
         'purchase_date' => 'date',
-        'purchase_cost' => 'decimal:2',
+        'purchase_cost' => 'float',
         'purchase_price' => 'decimal:2',
         'warranty_expiry_date' => 'date',
         'daily_rate' => 'decimal:2',
@@ -109,6 +115,12 @@ class Equipment extends Model implements HasMedia
         'lifetime_maintenance_cost' => 'decimal:2',
         'efficiency_rating' => 'decimal:2',
         'next_performance_review' => 'datetime',
+        'latitude' => 'float',
+        'longitude' => 'float',
+        'depreciation_years' => 'integer',
+        'current_value' => 'float',
+        'quantity' => 'integer',
+        'low_stock_threshold' => 'integer',
     ];
 
     /**

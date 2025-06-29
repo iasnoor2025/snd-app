@@ -219,6 +219,24 @@ class EmployeeDocumentService extends BaseService
     {
         return $this->uploadDocument($employeeId, 'medical', $metadata, $file);
     }
+
+    public function getExpiringDocuments($days = 30)
+    {
+        return EmployeeDocument::whereNotNull('expires_at')
+            ->where('expires_at', '<=', now()->addDays($days))
+            ->where('is_active', true)
+            ->get();
+    }
+
+    public function bulkUpload(Employee $employee, array $documents, $batchId = null)
+    {
+        $batchId = $batchId ?? uniqid('batch_', true);
+        foreach ($documents as $doc) {
+            $doc['batch_id'] = $batchId;
+            $this->uploadDocument($employee->id, $doc['type'], $doc, $doc['file']);
+        }
+        return $batchId;
+    }
 }
 
 

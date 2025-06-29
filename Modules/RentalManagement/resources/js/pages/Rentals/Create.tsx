@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from 'react-i18next';
-import { Head, Link, router } from "@inertiajs/react"; 
-import { PageProps, User, Customer, Equipment } from '@/Core/types'; 
+import { Head, Link, router } from "@inertiajs/react";
+import { PageProps, User, Customer, Equipment } from '@/Core/types';
 import { AppLayout } from '@/Core';
 import { format, isAfter, isBefore, startOfToday } from "date-fns";
 import { toast } from "sonner";
@@ -102,6 +102,7 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
     });
 
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isPriceLoading, setIsPriceLoading] = useState(false);
 
     const addRentalItem = () => {
         setData('rental_items', [...data.rental_items, {
@@ -123,7 +124,7 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-        
+
         try {
             // Format dates to YYYY-MM-DD
             const startDate = data.start_date ? format(new Date(data.start_date), 'yyyy-MM-dd') : '';
@@ -236,6 +237,52 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
             setIsSubmitting(false);
         }
     };
+
+    // Helper to fetch dynamic price for selected equipment
+    const fetchDynamicPrice = async (equipmentId: string, days: number, quantity: number) => {
+        setIsPriceLoading(true);
+        try {
+            const response = await fetch(`/api/equipment/${equipmentId}/calculate-price`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    rental_date: data.start_date || new Date().toISOString().slice(0, 10),
+                    duration: days,
+                    quantity: quantity,
+                }),
+            });
+            if (!response.ok) throw new Error('Failed to fetch dynamic price');
+            const result = await response.json();
+            return result.data?.final_price || null;
+        } catch (err) {
+            toast.error('Failed to calculate dynamic price');
+            return null;
+        } finally {
+            setIsPriceLoading(false);
+        }
+    };
+
+    // Update price when equipment, days, or quantity changes
+    useEffect(() => {
+        const updatePrice = async () => {
+            if (!data.selected_equipment_id || !data.start_date || !data.expected_end_date) return;
+            const selectedEquipment = equipment.find(eq => eq.id.toString() === data.selected_equipment_id);
+            if (!selectedEquipment) return;
+            const startDateObj = new Date(data.start_date);
+            const endDateObj = new Date(data.expected_end_date);
+            const days = Math.ceil((endDateObj.getTime() - startDateObj.getTime()) / (1000 * 60 * 60 * 24));
+            if (days <= 0) return;
+            const quantity = 1; // You can extend this if quantity is user-editable
+            const dynamicPrice = await fetchDynamicPrice(data.selected_equipment_id, days, quantity);
+            if (dynamicPrice !== null) {
+                setData('rental_rate', dynamicPrice);
+            } else {
+                setData('rental_rate', selectedEquipment.unit_price);
+            }
+        };
+        updatePrice();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [data.selected_equipment_id, data.start_date, data.expected_end_date]);
 
     console.log("Ziggy routes in Create.tsx:", Ziggy.routes);
 
@@ -379,10 +426,10 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                                 </div>
                                                 <div className="grid gap-3">
                                                     <Label htmlFor="rental-period">{String(t('rental_period')) || 'Rental Period'}</Label>
-                                                    <ToggleGroup 
-                                                        type="single" 
-                                                        value={data.billing_cycle} 
-                                                        onValueChange={(value) => value && setData('billing_cycle', value)} 
+                                                    <ToggleGroup
+                                                        type="single"
+                                                        value={data.billing_cycle}
+                                                        onValueChange={(value) => value && setData('billing_cycle', value)}
                                                         variant="outline"
                                                     >
                                                         <ToggleGroupItem value="daily">{String(t('daily')) || 'Daily'}</ToggleGroupItem>
@@ -392,22 +439,22 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                                 </div>
                                                 <div className="grid gap-3">
                                                     <Label htmlFor="rental-rate">{String(t('rental_rate')) || 'Rental Rate'} ({defaultCurrency})</Label>
-                                                    <Input 
-                                                        id="rental-rate" 
-                                                        type="number" 
-                                                        placeholder="0.00" 
-                                                        value={data.rental_rate || ''} 
-                                                        onChange={(e) => setData('rental_rate', parseFloat(e.target.value) || 0)} 
+                                                    <Input
+                                                        id="rental-rate"
+                                                        type="number"
+                                                        placeholder="0.00"
+                                                        value={data.rental_rate || ''}
+                                                        onChange={(e) => setData('rental_rate', parseFloat(e.target.value) || 0)}
                                                     />
                                                 </div>
                                                 <div className="grid gap-3">
                                                     <Label htmlFor="deposit">{String(t('deposit')) || 'Deposit'} ({defaultCurrency})</Label>
-                                                    <Input 
-                                                        id="deposit" 
-                                                        type="number" 
-                                                        placeholder="0.00" 
-                                                        value={data.deposit_amount || ''} 
-                                                        onChange={(e) => setData('deposit_amount', parseFloat(e.target.value) || 0)} 
+                                                    <Input
+                                                        id="deposit"
+                                                        type="number"
+                                                        placeholder="0.00"
+                                                        value={data.deposit_amount || ''}
+                                                        onChange={(e) => setData('deposit_amount', parseFloat(e.target.value) || 0)}
                                                     />
                                                 </div>
                                             </div>

@@ -13,6 +13,10 @@ use Modules\RentalManagement\Http\Controllers\SupplierController;
 use Modules\RentalManagement\Http\Controllers\RentalTimesheetController;
 use Modules\RentalManagement\Http\Controllers\RentalAnalyticsController;
 use Modules\RentalManagement\Http\Controllers\BookingController;
+use Modules\RentalManagement\Http\Controllers\DynamicPricingController;
+use Modules\RentalManagement\Http\Controllers\Api\RentalCalendarController;
+use Modules\RentalManagement\Http\Controllers\Api\CustomerPortalController;
+use Modules\RentalManagement\Http\Controllers\LoyaltyController;
 
 // API routes uncommented
 
@@ -145,6 +149,29 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     Route::prefix('equipment')->group(function () {
         Route::get('/{equipment}/available-slots', [BookingController::class, 'getAvailableSlots']);
         Route::get('/{equipment}/calendar', [BookingController::class, 'getCalendarEvents']);
+        Route::get('/{equipmentId}/calendar', [RentalCalendarController::class, 'index']);
+        Route::get('/{equipmentId}/calendar/conflict', [RentalCalendarController::class, 'conflict']);
     });
+
+    // Dynamic Pricing Routes
+    Route::get('equipment/{equipment}/pricing-rules', [DynamicPricingController::class, 'index']);
+    Route::post('equipment/{equipment}/pricing-rules', [DynamicPricingController::class, 'store']);
+    Route::patch('pricing-rules/{rule}', [DynamicPricingController::class, 'update']);
+    Route::delete('pricing-rules/{rule}', [DynamicPricingController::class, 'destroy']);
+    Route::post('equipment/{equipment}/calculate-price', [DynamicPricingController::class, 'calculatePrice']);
+
+    // Loyalty routes
+    Route::prefix('customers/{customer}/loyalty')->group(function () {
+        Route::post('/earn/{rental}', [LoyaltyController::class, 'earn']);
+        Route::post('/redeem', [LoyaltyController::class, 'redeem']);
+        Route::get('/points', [LoyaltyController::class, 'points']);
+        Route::get('/history', [LoyaltyController::class, 'history']);
+    });
+
+    // Automated follow-up settings
+    Route::get('rental/followup-settings', [\Modules\RentalManagement\Http\Controllers\Api\RentalController::class, 'getFollowUpSettings'])
+        ->middleware('permission:rentals.settings');
+    Route::put('rental/followup-settings', [\Modules\RentalManagement\Http\Controllers\Api\RentalController::class, 'updateFollowUpSettings'])
+        ->middleware('permission:rentals.settings');
 });
 

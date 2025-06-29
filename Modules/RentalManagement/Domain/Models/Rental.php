@@ -74,6 +74,8 @@ class Rental extends Model implements HasMedia
         'location_id',
         'billing_cycle',
         'has_operators',
+        'equipment_id',
+        'end_date',
     ];
 
     /**
@@ -122,7 +124,7 @@ class Rental extends Model implements HasMedia
      */
     public function customer(): BelongsTo
     {
-        return $this->belongsTo(Customer::class);
+        return $this->belongsTo(\Modules\CustomerManagement\Domain\Models\Customer::class);
     }
 
     /**
@@ -868,6 +870,11 @@ class Rental extends Model implements HasMedia
     public function getThTotalAmountAttribute(): float
     {
         return $this->total_amount ?? 0.00;
+    }
+
+    public function getCustomerNameAttribute()
+    {
+        return $this->customer ? $this->customer->name : null;
     }
 }
 

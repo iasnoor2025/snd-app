@@ -15,6 +15,10 @@ class Project extends Model
         'end_date',
         'status',
         'budget',
+        'initial_budget',
+        'current_budget',
+        'budget_status',
+        'budget_notes',
         'manager_id',
         'client_name',
         'client_contact',
@@ -26,6 +30,8 @@ class Project extends Model
         'start_date' => 'datetime',
         'end_date' => 'datetime',
         'budget' => 'decimal:2',
+        'initial_budget' => 'decimal:2',
+        'current_budget' => 'decimal:2',
         'progress' => 'decimal:2',
     ];
 
@@ -67,6 +73,16 @@ class Project extends Model
     public function expenses(): HasMany
     {
         return $this->hasMany(ProjectExpense::class);
+    }
+
+    public function risks(): HasMany
+    {
+        return $this->hasMany(ProjectRisk::class);
+    }
+
+    public function chats(): HasMany
+    {
+        return $this->hasMany(ProjectChat::class);
     }
 }
 

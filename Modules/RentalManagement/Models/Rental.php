@@ -31,6 +31,7 @@ class Rental extends Model
         'created_by',
         'approved_by',
         'completed_by',
+        'followup_sent_at',
     ];
 
     /**
@@ -47,6 +48,7 @@ class Rental extends Model
         'discount_percentage' => 'decimal:2',
         'has_timesheet' => 'boolean',
         'has_operators' => 'boolean',
+        'followup_sent_at' => 'datetime',
     ];
 
     /**

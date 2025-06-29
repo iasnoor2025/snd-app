@@ -33,6 +33,7 @@ interface Payroll {
     items: PayrollItem[];
     created_at: string;
     updated_at: string;
+    currency: string;
 }
 
 interface Props extends PageProps {
@@ -56,6 +57,18 @@ export default function Show({ auth, payroll }: Props) {
                 {status.charAt(0).toUpperCase() + status.slice(1)}
             </span>
         );
+    };
+
+    const getCurrencySymbol = (currency: string) => {
+        const symbols: Record<string, string> = {
+            SAR: '﷼',
+            USD: '$',
+            EUR: '€',
+            GBP: '£',
+            INR: '₹',
+            AED: 'د.إ',
+        };
+        return symbols[currency] || currency;
     };
 
     return (
@@ -156,31 +169,31 @@ export default function Show({ auth, payroll }: Props) {
                                     <div>
                                         <dt className="text-sm font-medium text-gray-500">{t('base_salary')}</dt>
                                         <dd className="mt-1 text-sm text-gray-900">
-                                            ${payroll.base_salary.toFixed(2)}
+                                            {getCurrencySymbol(payroll.currency)}{payroll.base_salary.toFixed(2)}
                                         </dd>
                                     </div>
                                     <div>
                                         <dt className="text-sm font-medium text-gray-500">Overtime</dt>
                                         <dd className="mt-1 text-sm text-gray-900">
-                                            {payroll.overtime_hours} hours × ${payroll.overtime_rate.toFixed(2)} = ${(payroll.overtime_hours * payroll.overtime_rate).toFixed(2)}
+                                            {payroll.overtime_hours} hours × {getCurrencySymbol(payroll.currency)}{payroll.overtime_rate.toFixed(2)} = {getCurrencySymbol(payroll.currency)}{(payroll.overtime_hours * payroll.overtime_rate).toFixed(2)}
                                         </dd>
                                     </div>
                                     <div>
                                         <dt className="text-sm font-medium text-gray-500">Bonus</dt>
                                         <dd className="mt-1 text-sm text-gray-900">
-                                            ${payroll.bonus_amount.toFixed(2)}
+                                            {getCurrencySymbol(payroll.currency)}{payroll.bonus_amount.toFixed(2)}
                                         </dd>
                                     </div>
                                     <div>
                                         <dt className="text-sm font-medium text-gray-500">Deductions</dt>
                                         <dd className="mt-1 text-sm text-gray-900">
-                                            ${payroll.deduction_amount.toFixed(2)}
+                                            {getCurrencySymbol(payroll.currency)}{payroll.deduction_amount.toFixed(2)}
                                         </dd>
                                     </div>
                                     <div className="pt-4 border-t">
                                         <dt className="text-sm font-medium text-gray-500">{t('final_amount')}</dt>
                                         <dd className="mt-1 text-lg font-semibold text-gray-900">
-                                            ${payroll.final_amount.toFixed(2)}
+                                            {getCurrencySymbol(payroll.currency)}{payroll.final_amount.toFixed(2)}
                                         </dd>
                                     </div>
                                 </dl>
@@ -219,7 +232,7 @@ export default function Show({ auth, payroll }: Props) {
                                                         {item.description}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
-                                                        ${item.amount.toFixed(2)}
+                                                        {getCurrencySymbol(payroll.currency)}{item.amount.toFixed(2)}
                                                     </td>
                                                 </tr>
                                             ))}

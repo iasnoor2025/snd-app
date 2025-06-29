@@ -35,9 +35,30 @@ export default function Create({ auth, employees }: Props) {
         notes: '',
     });
 
+    const currencyOptions = [
+        { code: 'SAR', label: 'Saudi Riyal (SAR)' },
+        { code: 'USD', label: 'US Dollar (USD)' },
+        { code: 'EUR', label: 'Euro (EUR)' },
+        { code: 'GBP', label: 'British Pound (GBP)' },
+        { code: 'INR', label: 'Indian Rupee (INR)' },
+        { code: 'AED', label: 'UAE Dirham (AED)' },
+    ];
+
+    const [currency, setCurrency] = React.useState('SAR');
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('payrolls.store'));
+        const formData = new FormData();
+        Object.entries(data).forEach(([key, value]) => {
+            formData.append(key, value.toString());
+        });
+        formData.append('currency', currency);
+        post(route('payrolls.store'), {
+            data: formData,
+            transformResponse: (data) => {
+                // Handle the response
+            },
+        });
     };
 
     const handleEmployeeChange = (employeeId: string) => {
@@ -177,6 +198,20 @@ export default function Create({ auth, employees }: Props) {
                                         {errors.notes && (
                                             <p className="text-sm text-red-500">{errors.notes}</p>
                                         )}
+                                    </div>
+
+                                    <div className="mb-4">
+                                        <Label htmlFor="currency">Currency</Label>
+                                        <Select value={currency} onValueChange={setCurrency} name="currency">
+                                            <SelectTrigger id="currency">
+                                                <SelectValue placeholder="Select currency" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {currencyOptions.map(opt => (
+                                                    <SelectItem key={opt.code} value={opt.code}>{opt.label}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                     </div>
                                 </div>
 

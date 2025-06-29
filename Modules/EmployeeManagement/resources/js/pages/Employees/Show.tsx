@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
 import type { PageProps } from '@inertiajs/core';
@@ -48,18 +48,18 @@ import {
 } from "@/Core";
 import { Alert, AlertDescription } from "@/Core";
 import axios from 'axios';
-import DocumentManager from '../../components/employees/EmployeeDocumentManager';
+// Replace static imports with React.lazy for large components
+const DocumentManager = React.lazy(() => import('../../components/employees/EmployeeDocumentManager'));
+const FinalSettlementTab = React.lazy(() => import('../../components/employees/FinalSettlementTab'));
+const TimesheetSummary = React.lazy(() => import('../../components/employees/timesheets/TimesheetSummary'));
+const TimesheetList = React.lazy(() => import('../../components/employees/timesheets/TimesheetList'));
+const TimesheetForm = React.lazy(() => import('../../components/employees/timesheets/TimesheetForm'));
+const AssignmentHistory = React.lazy(() => import('../../components/assignments/AssignmentHistory'));
 import { useQueryClient } from '@tanstack/react-query';
 import { Separator } from "@/Core";
 import { Avatar, AvatarFallback } from "@/Core";
-import FinalSettlementTab from '../../components/employees/FinalSettlementTab';
 import { Textarea } from "@/Core";
-import { TimesheetSummary, TimesheetList, TimesheetForm } from '../../components/employees/timesheets';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
-import { AssignmentHistory } from '../../components/assignments/AssignmentHistory';
 
 // MediaLibrary and DailyTimesheetRecords components - implement as needed
 const MediaLibrary = ({ employeeId }: { employeeId: number }) => (
@@ -2023,7 +2023,9 @@ export default function Show({
               </CardHeader>
               <CardContent>
                 {/* Timesheet Summary */}
-                <TimesheetSummary employeeId={employee.id} />
+                <Suspense fallback={<div>Loading...</div>}>
+                  <TimesheetSummary employeeId={employee.id} />
+                </Suspense>
                 {/* Add Timesheet Button and Dialog */}
                 {hasPermission('timesheets.create') && (
                   <Dialog>
@@ -2034,12 +2036,16 @@ export default function Show({
                       <DialogHeader>
                         <DialogTitle>{t('ttl_add_new_timesheet')}</DialogTitle>
                       </DialogHeader>
-                      <TimesheetForm employeeId={employee.id} onSuccess={() => window.location.reload()} />
+                      <Suspense fallback={<div>Loading...</div>}>
+                        <TimesheetForm employeeId={employee.id} onSuccess={() => window.location.reload()} />
+                      </Suspense>
                     </DialogContent>
                   </Dialog>
                 )}
                 {/* Timesheet List */}
-                <TimesheetList employeeId={employee.id} />
+                <Suspense fallback={<div>Loading...</div>}>
+                  <TimesheetList employeeId={employee.id} />
+                </Suspense>
               </CardContent>
             </Card>
           </TabsContent>

@@ -149,6 +149,7 @@ export default function RentalsList({ rentals, onDelete }: Props) {
               <TableHead className="w-[10%]">Status</TableHead>
               <TableHead className="w-[15%]">{t('th_has_operators')}</TableHead>
               <TableHead className="w-[10%]">Total</TableHead>
+              <TableHead className="w-[10%]">Follow-Up</TableHead>
               <TableHead className="text-right w-[15%]">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -212,6 +213,13 @@ export default function RentalsList({ rentals, onDelete }: Props) {
                     </TableCell>
                     <TableCell className="font-medium py-4">
                       {formatCurrency(rental.total_amount)}
+                    </TableCell>
+                    <TableCell className="py-4">
+                      {rental.followup_sent_at ? (
+                        <span className="text-green-600">Sent<br/>{format(new Date(rental.followup_sent_at), "MMM dd, yyyy")}</span>
+                      ) : (
+                        <span className="text-yellow-600">Pending</span>
+                      )}
                     </TableCell>
                     <TableCell className="text-right py-4">
                       <TooltipProvider>

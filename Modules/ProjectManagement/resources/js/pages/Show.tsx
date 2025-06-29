@@ -33,6 +33,7 @@ import { useTranslation } from 'react-i18next';
 import TaskList, { ProjectTask } from '../components/project/TaskList';
 import TaskDialog from '../components/project/TaskDialog';
 import { ProjectProgress } from '../components/project/ProjectProgress';
+import ProjectTimesheets from './ProjectTimesheets';
 
 // Declare window.route for TypeScript
 // @ts-ignore
@@ -961,6 +962,9 @@ export default function Show({ project, manpower = [], equipment = [], materials
                         </div>
                     </div>
                 </div>
+
+                {/* Project Timesheets Section */}
+                <ProjectTimesheets projectId={project.id} />
 
                 <ResourceDialog
                     projectId={project.id}

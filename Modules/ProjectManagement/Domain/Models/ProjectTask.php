@@ -6,6 +6,7 @@ use Modules\Core\Domain\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ProjectTask extends Model
 {
@@ -45,6 +46,26 @@ class ProjectTask extends Model
     public function assignedTo(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_to_id');
+    }
+
+    public function dependencies()
+    {
+        return $this->belongsToMany(
+            ProjectTask::class,
+            'project_task_dependencies',
+            'task_id',
+            'depends_on_task_id'
+        );
+    }
+
+    public function dependents()
+    {
+        return $this->belongsToMany(
+            ProjectTask::class,
+            'project_task_dependencies',
+            'depends_on_task_id',
+            'task_id'
+        );
     }
 }
 

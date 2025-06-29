@@ -43,6 +43,10 @@ class PayrollServiceProvider extends ServiceProvider
         // Temporarily comment out to fix class loading errors
         // $this->app->register(EventServiceProvider::class);
         // $this->app->register(PayrollRouteServiceProvider::class);
+
+        $this->commands([
+            \Modules\Payroll\Console\Commands\AutomatePayrollProcessing::class,
+        ]);
     }
 
     /**
@@ -166,7 +170,7 @@ class PayrollServiceProvider extends ServiceProvider
     private function getPublishableViewPaths(): array
     {
         $paths = [];
-        foreach (config('view.paths') as $path) { 
+        foreach (config('view.paths') as $path) {
             if (is_dir($path.'/modules/'.$this->nameLower)) {
                 $paths[] = $path.'/modules/'.$this->nameLower;
             }

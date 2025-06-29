@@ -5,6 +5,7 @@ use Modules\Payroll\Http\Controllers\PayrollController;
 use Modules\Payroll\Http\Controllers\SalaryAdvanceController;
 use Modules\Payroll\Http\Controllers\FinalSettlementController;
 use Modules\Payroll\Http\Controllers\AdvancePaymentController;
+use Modules\Payroll\Http\Controllers\ComplianceReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,6 +60,12 @@ Route::middleware(['auth:sanctum']).group(function () {
                 ->middleware('permission:payroll.edit')
                 ->name('reject');
         });
+
+        Route::post('/export-bank-file', [PayrollController::class, 'exportBankFile'])->middleware('permission:payroll.view')->name('export-bank-file');
+
+        Route::get('/{payroll}/payslip', [PayrollController::class, 'downloadPayslip'])->middleware('permission:payroll.view')->name('download-payslip');
+
+        Route::get('/compliance-report', [ComplianceReportController::class, 'index'])->middleware('permission:payroll.view')->name('compliance-report');
     });
 
     // Salary Advance API Routes

@@ -1,19 +1,23 @@
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { AppLayout } from '@/Core';
-import { 
-    User, 
-    Lock, 
-    Bell, 
-    Palette, 
-    Globe, 
-    Shield, 
+import {
+    User,
+    Lock,
+    Bell,
+    Palette,
+    Globe,
+    Shield,
     Database,
     Settings as SettingsIcon,
     ChevronRight
 } from 'lucide-react';
+import { Link as RouterLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function SettingsIndex() {
+    const { t } = useTranslation();
+
     const settingsGroups = [
         {
             title: 'Account',
@@ -139,7 +143,7 @@ export default function SettingsIndex() {
                     <div className="mt-12 p-6 bg-blue-50 rounded-lg border border-blue-200">
                         <h3 className="font-semibold text-blue-900 mb-2">Need Help?</h3>
                         <p className="text-blue-800 text-sm mb-4">
-                            If you need assistance with any settings or have questions about your account, 
+                            If you need assistance with any settings or have questions about your account,
                             our support team is here to help.
                         </p>
                         <button className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors">
@@ -150,4 +154,4 @@ export default function SettingsIndex() {
             </div>
         </AppLayout>
     );
-} 
+}

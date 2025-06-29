@@ -38,6 +38,10 @@ const projectSchema = z.object({
     end_date: z.date().optional(),
     status: z.enum(['active', 'completed', 'on_hold', 'cancelled']),
     budget: z.number().min(0),
+    initial_budget: z.number().min(0).optional(),
+    current_budget: z.number().min(0).optional(),
+    budget_status: z.string().optional(),
+    budget_notes: z.string().optional(),
     manager_id: z.number(),
     client_name: z.string().min(1, 'Client name is required'),
     client_contact: z.string().min(1, 'Client contact is required'),
@@ -66,6 +70,10 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
             end_date: initialData?.end_date,
             status: initialData?.status || 'active',
             budget: initialData?.budget || 0,
+            initial_budget: initialData?.initial_budget || 0,
+            current_budget: initialData?.current_budget || 0,
+            budget_status: initialData?.budget_status || '',
+            budget_notes: initialData?.budget_notes || '',
             manager_id: initialData?.manager_id || managers[0]?.id,
             client_name: initialData?.client_name || '',
             client_contact: initialData?.client_contact || '',
@@ -257,6 +265,62 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                                     {...field}
                                     onChange={(e) => field.onChange(parseFloat(e.target.value))}
                                 />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="initial_budget"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Initial Budget</FormLabel>
+                            <FormControl>
+                                <Input type="number" step="0.01" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="current_budget"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Current Budget</FormLabel>
+                            <FormControl>
+                                <Input type="number" step="0.01" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="budget_status"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Budget Status</FormLabel>
+                            <FormControl>
+                                <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="budget_notes"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Budget Notes</FormLabel>
+                            <FormControl>
+                                <Textarea {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
