@@ -192,7 +192,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
 
     if (confirm(`Are you sure you want to approve ${selectedTimesheets.length} selected timesheets?`)) {
       setBulkProcessing(true);
-      router.post('/api/timesheets/bulk-approve', {
+      router.post(route('timesheets.bulk-approve'), {
         timesheet_ids: selectedTimesheets
       }, {
         onSuccess: () => {
@@ -242,7 +242,14 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
   const getStatusBadge = (status: string) => {
     switch (status?.toLowerCase()) {
       case 'approved':
+      case 'manager_approved':
         return <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">Approved</Badge>;
+      case 'foreman_approved':
+        return <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-200">Foreman Approved</Badge>;
+      case 'incharge_approved':
+        return <Badge variant="outline" className="bg-orange-100 text-orange-800 border-orange-200">Incharge Approved</Badge>;
+      case 'checking_approved':
+        return <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-200">Checking Approved</Badge>;
       case 'submitted':
         return <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200">Submitted</Badge>;
       case 'rejected':
@@ -269,7 +276,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
 
   const handleApprove = (id: number) => {
     setProcessing(id);
-    router.post(`/api/timesheets/${id}/approve`, {}, {
+    router.put(route('timesheets.approve', id), {}, {
       onSuccess: () => {
         toast("Timesheet approved successfully");
         setProcessing(null);
@@ -283,7 +290,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
 
   const handleReject = (id: number) => {
     setProcessing(id);
-    router.put(route('hr.api.timesheets.reject', id), {}, {
+    router.put(route('timesheets.reject', id), {}, {
       onSuccess: () => {
         toast("Timesheet rejected successfully");
         setProcessing(null);
@@ -583,7 +590,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                                         onClick={() => {
                                           if (confirm(t('approve_confirm', 'Are you sure you want to approve this timesheet?'))) {
                                             setProcessing(timesheet.id);
-                                            router.post(`/api/timesheets/${timesheet.id}/approve`, {}, {
+                                            router.put(route('timesheets.approve', timesheet.id), {}, {
                                               onSuccess: () => {
                                                 setProcessing(null);
                                                 toast("Timesheet approved successfully");
@@ -619,7 +626,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                                         onClick={() => {
                                           if (confirm(t('reject_confirm', 'Are you sure you want to reject this timesheet?'))) {
                                             setProcessing(timesheet.id);
-                                            router.put(route('hr.api.timesheets.reject', timesheet.id), {}, {
+                                            router.put(route('timesheets.reject', timesheet.id), {}, {
                                               preserveState: true,
                                               onSuccess: () => {
                                                 setProcessing(null);

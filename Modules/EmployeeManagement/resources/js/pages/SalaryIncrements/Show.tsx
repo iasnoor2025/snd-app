@@ -1,6 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
+import { router } from '@/Core';
+import Link from '@/Core/components/text-link';
 import { Button } from "@/Core";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Core";
 import { Badge } from "@/Core";
@@ -139,8 +141,8 @@ export default function Show({ increment }: Props) {
         <AppLayout
             title={t('ttl_salary_increment_details')}
             breadcrumbs={[
-                { label: 'Salary Increments', href: route('salary-increments.index') },
-                { label: `${increment.employee.first_name} ${increment.employee.last_name}` }
+                { title: 'Salary Increments', href: route('salary-increments.index') },
+                { title: `${increment.employee.first_name} ${increment.employee.last_name}` }
             ]}>
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
@@ -205,7 +207,7 @@ export default function Show({ increment }: Props) {
             <Head title={`Salary Increment - ${increment.employee.first_name} ${increment.employee.last_name}`} />
 
             <div className="py-12">
-                <div className="max-w-6xl mx-auto sm:px-6 lg:px-8">
+                <div className="sm:px-6 lg:px-8 w-full">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         {/* Left Column - Employee & Increment Info */}
                         <div className="lg:col-span-2 space-y-6">

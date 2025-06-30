@@ -66,6 +66,15 @@ Route::prefix('timesheets')->name('timesheets.')->middleware(['auth', 'verified'
     Route::post('/{timesheet}/submit', [TimesheetController::class, 'submit'])
         ->middleware('permission:timesheets.edit')
         ->name('submit');
+    Route::put('/{timesheet}/approve', [TimesheetController::class, 'approveWeb'])
+        ->middleware('permission:timesheets.approve')
+        ->name('approve');
+    Route::put('/{timesheet}/reject', [TimesheetController::class, 'rejectWeb'])
+        ->middleware('permission:timesheets.approve')
+        ->name('reject');
+    Route::post('/bulk-approve', [TimesheetController::class, 'bulkApproveWeb'])
+        ->middleware('permission:timesheets.approve')
+        ->name('bulk-approve');
 
     // Daily timesheet entries
     Route::get('/entries', [TimeEntryController::class, 'index'])

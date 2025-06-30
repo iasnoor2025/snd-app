@@ -203,7 +203,7 @@ export default function Edit({ increment, employees, incrementTypes }: Props) {
             <Head title={t('ttl_edit_salary_increment')} />
 
             <div className="py-12">
-                <div className="max-w-4xl mx-auto sm:px-6 lg:px-8">
+                <div className="sm:px-6 lg:px-8">
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {/* Employee Selection */}
                         <Card>

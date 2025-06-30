@@ -154,7 +154,7 @@ export default function Index({ increments, statistics, projectedCost, filters, 
             <Head title={t('salary_increments')} />
 
             <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div className="sm:px-6 lg:px-8">
                     {/* Header with Action Button */}
                     <div className="flex justify-between items-center mb-6">
                         <h1 className="text-2xl font-bold text-gray-900">{t('salary_increments')}</h1>
@@ -299,7 +299,7 @@ export default function Index({ increments, statistics, projectedCost, filters, 
                                         <TableHead>{t('lbl_effective_date')}</TableHead>
                                         <TableHead>{t('status')}</TableHead>
                                         <TableHead>{t('th_requested_by')}</TableHead>
-                                        <TableHead>{t('actions')}</TableHead>
+                                        <TableHead>{t('lbl_actions')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>

@@ -10,7 +10,7 @@ import {
 } from "@/Core";
 import { Badge } from "@/Core";
 import { format } from 'date-fns';
-import { AppLayout } from '@/Core';
+import { AppLayout, Button } from '@/Core';
 
 interface SalaryRecord {
     id: number;
@@ -46,13 +46,21 @@ export default function SalaryHistory({ records = [] }: Props) {
     };
 
     const breadcrumbs = [
-        { label: 'Employees', href: '/employees' },
-        { label: 'Salary History', href: '#' }
+        { title: 'Employees', href: '/employees' },
+        { title: 'Salary History', href: '#' }
     ];
 
     return (
         <AppLayout title="Salary History" breadcrumbs={breadcrumbs} requiredPermission="employees.view">
-            <div className="rounded-md border">
+            <div className="flex items-center justify-between mb-6">
+                <h1 className="text-2xl font-bold text-gray-900">{t('salary_history', 'Salary History')}</h1>
+                <a href="/employees">
+                    <Button variant="outline" size="sm">
+                        Back
+                    </Button>
+                </a>
+            </div>
+            <div className="rounded-md border w-full">
                 <Table>
                     <TableHeader>
                         <TableRow>

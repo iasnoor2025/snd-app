@@ -922,7 +922,7 @@ class TimesheetController extends Controller
     }
 
     /**
-     * Approve a single timesheet (temporarily allow any authenticated user for debugging).
+     * Approve a single timesheet.
      */
     public function approve(Request $request, $id)
     {
@@ -931,6 +931,21 @@ class TimesheetController extends Controller
         if (!$user || !$timesheet) {
             return response()->json(['error' => 'Unauthorized or timesheet not found'], 403);
         }
+
+        // Check if user has general approval permission - if so, allow direct final approval
+        if ($user->can('timesheets.approve')) {
+            if ($timesheet->status === $timesheet::STATUS_SUBMITTED) {
+                // Direct approval to final stage for users with general approval permission
+                $timesheet->status = $timesheet::STATUS_MANAGER_APPROVED;
+                $timesheet->manager_approval_by = $user->id;
+                $timesheet->manager_approval_at = now();
+                $timesheet->save();
+                return response()->json(['success' => true, 'message' => 'Timesheet approved successfully.']);
+            }
+            return response()->json(['error' => 'Only submitted timesheets can be approved.'], 400);
+        }
+
+        // Multi-stage approval workflow for specific roles
         // Foreman approval
         if ($timesheet->status === $timesheet::STATUS_SUBMITTED) {
             if ($user->hasRole(['foreman', 'admin', 'hr'])) {
@@ -972,6 +987,87 @@ class TimesheetController extends Controller
             return response()->json(['error' => 'Only manager, admin, or hr can approve at this stage.'], 403);
         }
         return response()->json(['error' => 'No approval possible at this stage.'], 400);
+    }
+
+    /**
+     * Approve a timesheet (web route version).
+     */
+    public function approveWeb(Request $request, Timesheet $timesheet)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return redirect()->back()->withErrors(['error' => 'Unauthorized']);
+        }
+
+        // Check if user has general approval permission - if so, allow direct final approval
+        if ($user->can('timesheets.approve')) {
+            if ($timesheet->status === $timesheet::STATUS_SUBMITTED) {
+                // Direct approval to final stage for users with general approval permission
+                $timesheet->status = $timesheet::STATUS_MANAGER_APPROVED;
+                $timesheet->manager_approval_by = $user->id;
+                $timesheet->manager_approval_at = now();
+                $timesheet->save();
+                return redirect()->back()->with('success', 'Timesheet approved successfully.');
+            }
+            return redirect()->back()->withErrors(['error' => 'Only submitted timesheets can be approved.']);
+        }
+
+        return redirect()->back()->withErrors(['error' => 'You do not have permission to approve timesheets.']);
+    }
+
+    /**
+     * Reject a timesheet (web route version).
+     */
+    public function rejectWeb(Request $request, Timesheet $timesheet)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return redirect()->back()->withErrors(['error' => 'Unauthorized']);
+        }
+
+        if ($user->can('timesheets.approve')) {
+            if ($timesheet->status === $timesheet::STATUS_SUBMITTED) {
+                $timesheet->status = $timesheet::STATUS_REJECTED;
+                $timesheet->rejected_by = $user->id;
+                $timesheet->rejected_at = now();
+                $timesheet->rejection_reason = $request->input('reason', 'No reason provided');
+                $timesheet->save();
+                return redirect()->back()->with('success', 'Timesheet rejected successfully.');
+            }
+            return redirect()->back()->withErrors(['error' => 'Only submitted timesheets can be rejected.']);
+        }
+
+        return redirect()->back()->withErrors(['error' => 'You do not have permission to reject timesheets.']);
+    }
+
+    /**
+     * Bulk approve timesheets (web route version).
+     */
+    public function bulkApproveWeb(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user || !$user->can('timesheets.approve')) {
+            return redirect()->back()->withErrors(['error' => 'Unauthorized']);
+        }
+
+        $ids = $request->input('timesheet_ids', []);
+        if (!is_array($ids) || empty($ids)) {
+            return redirect()->back()->withErrors(['error' => 'No timesheet IDs provided']);
+        }
+
+        $approved = 0;
+        foreach ($ids as $id) {
+            $timesheet = \Modules\TimesheetManagement\Domain\Models\Timesheet::find($id);
+            if ($timesheet && $timesheet->status === \Modules\TimesheetManagement\Domain\Models\Timesheet::STATUS_SUBMITTED) {
+                $timesheet->status = \Modules\TimesheetManagement\Domain\Models\Timesheet::STATUS_MANAGER_APPROVED;
+                $timesheet->manager_approval_by = $user->id;
+                $timesheet->manager_approval_at = now();
+                $timesheet->save();
+                $approved++;
+            }
+        }
+
+        return redirect()->back()->with('success', "{$approved} timesheets approved successfully");
     }
 }
 
