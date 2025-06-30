@@ -35,7 +35,7 @@ const countries = [
 ];
 
 export default function PersonalInfoTab({ form }: PersonalInfoTabProps) {
-  const { t } = useTranslation(['employees', 'common']);
+  const { t } = useTranslation('employee');
   const [lastFileNumber, setLastFileNumber] = useState<number>(0);
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -46,19 +46,19 @@ export default function PersonalInfoTab({ form }: PersonalInfoTabProps) {
         if (form.getValues('file_number')) {
           return; // Skip fetching if we already have a file number
         }
-        
+
         // Generate a default sequential file number
         const nextNumber = lastFileNumber + 1;
         const formattedNumber = nextNumber.toString().padStart(4, '0');
         const defaultFileNumber = `EMP-${formattedNumber}`;
         form.setValue('file_number', defaultFileNumber, { shouldValidate: true });
         setLastFileNumber(nextNumber);
-        
+
         // Try to get a proper file number from API
         try {
           const response = await axios.get('/api/employees/simple-file-number');
           console.log('API response:', response.data);
-          
+
           if (response.data && response.data.file_number) {
             form.setValue('file_number', response.data.file_number, { shouldValidate: true });
             if (response.data.lastFileNumber) {
@@ -119,7 +119,7 @@ export default function PersonalInfoTab({ form }: PersonalInfoTabProps) {
       form.setValue('file_number', fileNumber, { shouldValidate: true });
       setLastFileNumber(nextNumber);
       toast.success(`Generated file number: ${fileNumber}`);
-      
+
     } catch (error) {
       console.error('Error generating file number:', error);
       let errorMessage = "Failed to generate unique file number. Please try again.";
@@ -153,7 +153,7 @@ export default function PersonalInfoTab({ form }: PersonalInfoTabProps) {
             render={({ field }: any) => (
               <FormItem>
                 <FormLabel className="flex items-center">
-                  Employee File Number <span className="text-red-500 ml-1">*</span>
+                  {t('file_number')} <span className="text-red-500 ml-1">*</span>
                 </FormLabel>
                 <div className="flex space-x-2">
                   <FormControl>
@@ -213,7 +213,7 @@ export default function PersonalInfoTab({ form }: PersonalInfoTabProps) {
             render={({ field }: any) => (
               <FormItem>
                 <FormLabel className="flex items-center">
-                  Email <span className="text-red-500 ml-1">*</span>
+                  {t('email')} <span className="text-red-500 ml-1">*</span>
                 </FormLabel>
                 <FormControl>
                   <Input type="email" {...field} placeholder="name@example.com" />
@@ -229,7 +229,7 @@ export default function PersonalInfoTab({ form }: PersonalInfoTabProps) {
             render={({ field }: any) => (
               <FormItem>
                 <FormLabel className="flex items-center">
-                  Phone <span className="text-red-500 ml-1">*</span>
+                  {t('phone')} <span className="text-red-500 ml-1">*</span>
                 </FormLabel>
                 <FormControl>
                   <Input {...field} placeholder="Enter phone number" />
@@ -245,7 +245,7 @@ export default function PersonalInfoTab({ form }: PersonalInfoTabProps) {
             render={({ field }: any) => (
               <FormItem>
                 <FormLabel className="flex items-center">
-                  Nationality <span className="text-red-500 ml-1">*</span>
+                  {t('nationality')} <span className="text-red-500 ml-1">*</span>
                 </FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
@@ -287,7 +287,7 @@ export default function PersonalInfoTab({ form }: PersonalInfoTabProps) {
             name="address"
             render={({ field }: any) => (
               <FormItem>
-                <FormLabel>Address</FormLabel>
+                <FormLabel>{t('address')}</FormLabel>
                 <FormControl>
                   <Input {...field} placeholder="Enter address" />
                 </FormControl>
@@ -301,7 +301,7 @@ export default function PersonalInfoTab({ form }: PersonalInfoTabProps) {
             name="city"
             render={({ field }: any) => (
               <FormItem>
-                <FormLabel>City</FormLabel>
+                <FormLabel>{t('city')}</FormLabel>
                 <FormControl>
                   <Input {...field} placeholder="Enter city" />
                 </FormControl>

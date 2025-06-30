@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, usePage } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import axios from 'axios';
 import { Employee } from '../../types/employee';
 import { Button } from '../ui/button';
@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Badge } from '../ui/badge';
 import { ArrowLeft, Edit, FileText, ClipboardList, Clock, CreditCard, BarChart } from 'lucide-react';
 import { getTranslation } from "@/Core";
-import { FinalSettlementTab } from './FinalSettlementTab';
+import FinalSettlementTab from './FinalSettlementTab';
 import PerformanceReviewList from './PerformanceReviewList';
 
 interface EmployeeDetailProps {
@@ -24,6 +24,7 @@ export const EmployeeDetail: React.FC<EmployeeDetailProps> = ({
   const [employee, setEmployee] = useState<Employee | null>(initialEmployee || null);
   const [loading, setLoading] = useState(!initialEmployee);
   const [activeTab, setActiveTab] = useState('personal');
+  const { t } = useTranslation('employee');
 
   useEffect(() => {
     if (!initialEmployee) {
@@ -139,6 +140,7 @@ export const EmployeeDetail: React.FC<EmployeeDetailProps> = ({
             value={activeTab}
             onValueChange={setActiveTab}
             className="w-full"
+          >
             <TabsList className="mb-4">
               <TabsTrigger value="personal" className="flex gap-1 items-center">
                 <FileText className="h-4 w-4" />
@@ -146,27 +148,27 @@ export const EmployeeDetail: React.FC<EmployeeDetailProps> = ({
               </TabsTrigger>
               <TabsTrigger value="employment" className="flex gap-1 items-center">
                 <ClipboardList className="h-4 w-4" />
-                Employment
+                {t('employment_details')}
               </TabsTrigger>
               <TabsTrigger value="documents" className="flex gap-1 items-center">
                 <FileText className="h-4 w-4" />
-                Documents
+                {t('documents')}
               </TabsTrigger>
               <TabsTrigger value="timesheets" className="flex gap-1 items-center">
                 <Clock className="h-4 w-4" />
-                Timesheets
+                {t('timesheets')}
               </TabsTrigger>
               <TabsTrigger value="salary" className="flex gap-1 items-center">
                 <CreditCard className="h-4 w-4" />
-                Salary
+                {t('salary')}
               </TabsTrigger>
               <TabsTrigger value="performance" className="flex gap-1 items-center">
                 <BarChart className="h-4 w-4" />
-                Performance
+                {t('performance')}
               </TabsTrigger>
               <TabsTrigger value="settlement" className="flex gap-1 items-center">
                 <CreditCard className="h-4 w-4" />
-                Settlement
+                {t('settlement')}
               </TabsTrigger>
             </TabsList>
 
@@ -178,11 +180,11 @@ export const EmployeeDetail: React.FC<EmployeeDetailProps> = ({
                     <p>{employee.first_name} {employee.last_name}</p>
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">Email</h3>
+                    <h3 className="text-sm font-medium text-gray-500">{t('email')}</h3>
                     <p>{employee.email}</p>
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">Phone</h3>
+                    <h3 className="text-sm font-medium text-gray-500">{t('phone')}</h3>
                     <p>{employee.phone || '-'}</p>
                   </div>
                   <div>
@@ -192,7 +194,7 @@ export const EmployeeDetail: React.FC<EmployeeDetailProps> = ({
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">Nationality</h3>
+                    <h3 className="text-sm font-medium text-gray-500">{t('nationality')}</h3>
                     <p>{employee.nationality || '-'}</p>
                   </div>
                   <div>
@@ -208,16 +210,16 @@ export const EmployeeDetail: React.FC<EmployeeDetailProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">Position</h3>
-                    <p>{employee.position || '-'}</p>
+                    <h3 className="text-sm font-medium text-gray-500">{t('position')}</h3>
+                    <p>{employee.position?.name || '-'}</p>
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">Department</h3>
-                    <p>{employee.department || '-'}</p>
+                    <h3 className="text-sm font-medium text-gray-500">{t('department')}</h3>
+                    <p>{employee.department?.name || '-'}</p>
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">{t('join_date')}</h3>
-                    <p>{employee.join_date || '-'}</p>
+                    <h3 className="text-sm font-medium text-gray-500">{t('hire_date')}</h3>
+                    <p>{employee.hire_date || '-'}</p>
                   </div>
                 </div>
                 <div className="space-y-4">
@@ -229,14 +231,11 @@ export const EmployeeDetail: React.FC<EmployeeDetailProps> = ({
                   </div>
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">{t('user_account')}</h3>
-                    <p>{employee.user ? employee.user.email : 'No user account'}</p>
-                    {employee.user && employee.user.roles && (
+                    {employee.user && (
                       <div className="mt-1 flex gap-1">
-                        {employee.user.roles.map(role => (
-                          <Badge key={role.id} variant="secondary" className="text-xs">
-                            {role.display_name || role.name}
-                          </Badge>
-                        ))}
+                        <Badge variant="secondary" className="text-xs">
+                          {employee.user.email}
+                        </Badge>
                       </div>
                     )}
                   </div>
@@ -256,17 +255,14 @@ export const EmployeeDetail: React.FC<EmployeeDetailProps> = ({
                     <div className="flex justify-between border-b pb-2">
                       <div>
                         <p className="font-medium">Passport</p>
-                        <p className="text-sm text-gray-500">{employee.passport || 'Not provided'}</p>
+                        <p className="text-sm text-gray-500">{employee.passport_number || 'Not provided'}</p>
                       </div>
                     </div>
                     <div className="flex justify-between border-b pb-2">
                       <div>
                         <p className="font-medium">Iqama</p>
-                        <p className="text-sm text-gray-500">{employee.iqama || 'Not provided'}</p>
+                        <p className="text-sm text-gray-500">{employee.iqama_number || 'Not provided'}</p>
                       </div>
-                      {employee.iqama_cost && (
-                        <p className="text-sm">Cost: SAR {employee.iqama_cost}</p>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -277,61 +273,29 @@ export const EmployeeDetail: React.FC<EmployeeDetailProps> = ({
                     <div className="flex justify-between border-b pb-2">
                       <div>
                         <p className="font-medium">{t('driving_license')}</p>
-                        <p className="text-sm text-gray-500">{employee.driving_license || 'Not provided'}</p>
+                        <p className="text-sm text-gray-500">{employee.driving_license_number || 'Not provided'}</p>
                       </div>
-                      {employee.driving_license_cost && (
-                        <p className="text-sm">Cost: SAR {employee.driving_license_cost}</p>
-                      )}
                     </div>
                     <div className="flex justify-between border-b pb-2">
                       <div>
                         <p className="font-medium">{t('lbl_operator_license')}</p>
-                        <p className="text-sm text-gray-500">{employee.operator_license || 'Not provided'}</p>
+                        <p className="text-sm text-gray-500">{employee.operator_license_number || 'Not provided'}</p>
                       </div>
-                      {employee.operator_license_cost && (
-                        <p className="text-sm">Cost: SAR {employee.operator_license_cost}</p>
-                      )}
                     </div>
                     <div className="flex justify-between border-b pb-2">
                       <div>
                         <p className="font-medium">TUV Certification</p>
-                        <p className="text-sm text-gray-500">{employee.tuv_certification || 'Not provided'}</p>
+                        <p className="text-sm text-gray-500">{employee.tuv_certification_number || 'Not provided'}</p>
                       </div>
-                      {employee.tuv_certification_cost && (
-                        <p className="text-sm">Cost: SAR {employee.tuv_certification_cost}</p>
-                      )}
                     </div>
                     <div className="flex justify-between border-b pb-2">
                       <div>
                         <p className="font-medium">SPSP License</p>
-                        <p className="text-sm text-gray-500">{employee.spsp_license || 'Not provided'}</p>
+                        <p className="text-sm text-gray-500">{employee.spsp_license_number || 'Not provided'}</p>
                       </div>
-                      {employee.spsp_license_cost && (
-                        <p className="text-sm">Cost: SAR {employee.spsp_license_cost}</p>
-                      )}
                     </div>
                   </div>
                 </div>
-
-                {employee.custom_certifications && employee.custom_certifications.length > 0 && (
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500 mb-2">{t('custom_certifications')}</h3>
-                    <div className="space-y-3">
-                      {employee.custom_certifications.map((cert, index) => (
-                        <div key={index} className="flex justify-between border-b pb-2">
-                          <div>
-                            <p className="font-medium">{cert.name}</p>
-                            <p className="text-sm text-gray-500">Number: {cert.number}</p>
-                            <p className="text-sm text-gray-500">Expires: {cert.expiry_date}</p>
-                          </div>
-                          {cert.cost && (
-                            <p className="text-sm">Cost: SAR {cert.cost}</p>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             </TabsContent>
 
@@ -426,7 +390,7 @@ export const EmployeeDetail: React.FC<EmployeeDetailProps> = ({
             </TabsContent>
 
             <TabsContent value="settlement">
-              <FinalSettlementTab employeeId={employee.id} />
+              <FinalSettlementTab employee={employee} settlements={[]} />
             </TabsContent>
           </Tabs>
         </CardContent>

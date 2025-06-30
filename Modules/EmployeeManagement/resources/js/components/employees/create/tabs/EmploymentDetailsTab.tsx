@@ -41,9 +41,9 @@ interface EmploymentDetailsTabProps {
   users: any[];
 }
 
-type PositionType = { 
-  id: number; 
-  name: string | { [key: string]: string }; 
+type PositionType = {
+  id: number;
+  name: string | { [key: string]: string };
   description?: string | { [key: string]: string };
   active?: boolean;
 };
@@ -68,14 +68,14 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
   const [positionsState, setPositionsState] = useState<PositionType[]>(
     positions && positions.length > 0 ? positions : defaultPositions
   );
-  
+
   // Fetch positions on component mount if not provided or empty
   React.useEffect(() => {
     const fetchPositions = async () => {
       try {
         // Try to fetch positions from the public API
         const response = await axios.get('/public-api/positions');
-        
+
         if (response.data && Array.isArray(response.data) && response.data.length > 0) {
           console.log('Fetched positions from API:', response.data);
           setPositionsState(response.data);
@@ -91,7 +91,7 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
         console.log('Error fetching positions, using defaults');
       }
     };
-    
+
     fetchPositions();
   }, []);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -105,7 +105,7 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
     setShowAddModal(true);
     setEditingPosition(null);
     setNewPosition({ name: '', description: '' });
-    
+
     // Show toast message for user feedback
     toast.info('Adding position locally. This will not be saved to the database in this demo.');
   };
@@ -116,31 +116,31 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
   };
   const handleAddPositionSubmit = async () => {
     setAdding(true);
-    
+
     // Validate input
     if (!newPosition.name.trim()) {
       setAdding(false);
       toast.error('Position name is required');
       return;
     }
-    
+
     // Uniqueness check (case-insensitive, trim)
     const exists = positionsState.some(
       (p: any) => {
         // Handle translatable names (objects with language keys)
         const posName = typeof p.name === 'object' ? (p.name.en || Object.values(p.name)[0]) : p.name;
         const newName = newPosition.name.trim().toLowerCase();
-        return posName.toString().trim().toLowerCase() === newName && 
+        return posName.toString().trim().toLowerCase() === newName &&
                 (!editingPosition || p.id !== editingPosition.id);
       }
     );
-    
+
     if (exists) {
       setAdding(false);
       toast.error('Position name must be unique.');
       return;
     }
-    
+
     try {
       if (editingPosition) {
         // Edit logic - use public API
@@ -149,12 +149,12 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
           description: newPosition.description,
           is_active: true
         });
-        
+
         console.log('Position update response:', response.data);
-        
+
         // Update in local state
         if (response.data) {
-          setPositionsState(prev => 
+          setPositionsState(prev =>
             prev.map((p: any) => p.id === editingPosition.id ? response.data : p)
           );
           toast.success('Position updated successfully');
@@ -165,8 +165,8 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
             name: newPosition.name,
             description: newPosition.description
           };
-          
-          setPositionsState(prev => 
+
+          setPositionsState(prev =>
             prev.map((p: any) => p.id === editingPosition.id ? updatedPosition : p)
           );
           toast.success('Position updated successfully');
@@ -178,9 +178,9 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
           description: newPosition.description,
           is_active: true
         });
-        
+
         console.log('Position creation response:', response.data);
-        
+
         // Add to local state
         if (response.data && response.data.id) {
           setPositionsState(prev => [...prev, response.data]);
@@ -197,12 +197,12 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
             description: newPosition.description,
             active: true
           };
-          
+
           setPositionsState(prev => [...prev, newPositionObj]);
           toast.success('Position added successfully');
         }
       }
-      
+
       // Fetch updated positions list
       try {
         const response = await axios.get('/api/positions');
@@ -212,11 +212,11 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
       } catch (fetchError) {
         console.error('Error refreshing positions:', fetchError);
       }
-      
+
       handleCloseModal();
     } catch (err: any) {
       console.error('Error saving position:', err);
-      
+
       if (err.response?.data?.message) {
         toast.error(err.response.data.message);
       } else if (err.response?.data?.errors) {
@@ -255,16 +255,16 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
       if (deletingPosition) {
         // Delete via public API
         await axios.delete(`/public-api/positions/${deletingPosition.id}`);
-        
+
         // Remove from local state
         setPositionsState(prev => prev.filter((p: any) => p.id !== deletingPosition.id));
         toast.success('Position deleted successfully');
-        
+
         // Clear selection if deleted
         if (form.getValues('position_id')?.toString() === deletingPosition.id.toString()) {
           form.setValue('position_id', '', { shouldValidate: true });
         }
-        
+
         // Fetch updated positions list
         try {
           const response = await axios.get('/public-api/positions');
@@ -277,17 +277,17 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
       }
     } catch (err: any) {
       console.error('Error deleting position:', err);
-      
+
       // Even if API call fails, remove from local state for better UX
       if (deletingPosition) {
         setPositionsState(prev => prev.filter((p: any) => p.id !== deletingPosition.id));
-        
+
         // Clear selection if deleted
         if (form.getValues('position_id')?.toString() === deletingPosition.id.toString()) {
           form.setValue('position_id', '', { shouldValidate: true });
         }
       }
-      
+
       if (err.response?.data?.message) {
         toast.error(err.response.data.message);
       } else {
@@ -310,10 +310,8 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
       <CardContent>
         <Alert className="mb-6">
           <Info className="h-4 w-4" />
-          <AlertTitle>Information</AlertTitle>
-          <AlertDescription>
-            These fields are optional. You can update them later after creating the employee.
-          </AlertDescription>
+          <AlertTitle>{t('information')}</AlertTitle>
+          <AlertDescription>{t('employment_optional_info')}</AlertDescription>
         </Alert>
 
         <div className="space-y-6">
@@ -337,7 +335,7 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
               name="position_id"
               render={({ field }: any) => (
                 <FormItem>
-                  <FormLabel>Position</FormLabel>
+                  <FormLabel>{t('position')}</FormLabel>
                   <div className="flex items-center gap-1">
                     <div className="flex-1">
                       <Select
@@ -353,8 +351,8 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
                         <SelectContent>
                           {positionsState.filter(p => p && typeof p.id === 'number').map((position) => (
                             <SelectItem key={position.id} value={position.id.toString()}>
-                              {typeof position.name === 'object' 
-                                ? (position.name.en || Object.values(position.name)[0]) 
+                              {typeof position.name === 'object'
+                                ? (position.name.en || Object.values(position.name)[0])
                                 : position.name}
                             </SelectItem>
                           ))}
@@ -419,7 +417,7 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
               name="status"
               render={({ field }: any) => (
                 <FormItem>
-                  <FormLabel>Status</FormLabel>
+                  <FormLabel>{t('status')}</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -442,7 +440,7 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
               name="role"
               render={({ field }: any) => (
                 <FormItem>
-                  <FormLabel>Role</FormLabel>
+                  <FormLabel>{t('role')}</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -467,7 +465,7 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
               name="supervisor"
               render={({ field }: any) => (
                 <FormItem>
-                  <FormLabel>Supervisor</FormLabel>
+                  <FormLabel>{t('supervisor')}</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -492,7 +490,7 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
               name="contract_hours_per_day"
               render={({ field }: any) => (
                 <FormItem>
-                  <FormLabel>{t('lbl_contract_hours_per_day')}</FormLabel>
+                  <FormLabel>{t('contract_hours_per_day')}</FormLabel>
                   <FormControl>
                     <Input type="number" min="1" max="24" {...field} />
                   </FormControl>
@@ -506,9 +504,23 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
               name="contract_days_per_month"
               render={({ field }: any) => (
                 <FormItem>
-                  <FormLabel>{t('lbl_contract_days_per_month')}</FormLabel>
+                  <FormLabel>{t('contract_days_per_month')}</FormLabel>
                   <FormControl>
                     <Input type="number" min="1" max="31" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="notes"
+              render={({ field }: any) => (
+                <FormItem>
+                  <FormLabel>{t('notes')}</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
+import { router } from '@inertiajs/core';
 import type { PageProps } from '@inertiajs/core';
 import type { BreadcrumbItem } from '@/Core';
 import { AppLayout, ToastService } from '@/Core';
@@ -51,15 +52,19 @@ import axios from 'axios';
 // Replace static imports with React.lazy for large components
 const DocumentManager = React.lazy(() => import('../../components/employees/EmployeeDocumentManager'));
 const FinalSettlementTab = React.lazy(() => import('../../components/employees/FinalSettlementTab'));
-const TimesheetSummary = React.lazy(() => import('../../components/employees/timesheets/TimesheetSummary.lazy'));
-const TimesheetList = React.lazy(() => import('../../components/employees/timesheets/TimesheetList.lazy'));
-const TimesheetForm = React.lazy(() => import('../../components/employees/timesheets/TimesheetForm.lazy'));
-const AssignmentHistory = React.lazy(() => import('../../components/assignments/AssignmentHistory.lazy'));
+// Commented out lazy imports for missing modules
+// const TimesheetSummary = React.lazy(() => import('../../components/employees/timesheets/TimesheetSummary.lazy'));
+// const TimesheetList = React.lazy(() => import('../../components/employees/timesheets/TimesheetList.lazy'));
+// const TimesheetForm = React.lazy(() => import('../../components/employees/timesheets/TimesheetForm.lazy'));
+// const AssignmentHistory = React.lazy(() => import('../../components/assignments/AssignmentHistory.lazy'));
 import { useQueryClient } from '@tanstack/react-query';
 import { Separator } from "@/Core";
 import { Avatar, AvatarFallback } from "@/Core";
 import { Textarea } from "@/Core";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
+import { TimesheetSummary } from '../../components/employees/timesheets/TimesheetSummary';
+import { TimesheetList } from '../../components/employees/timesheets/TimesheetList';
+import { TimesheetForm } from '../../components/employees/timesheets/TimesheetForm';
 
 // MediaLibrary and DailyTimesheetRecords components - implement as needed
 const MediaLibrary = ({ employeeId }: { employeeId: number }) => (
@@ -77,7 +82,7 @@ const DailyTimesheetRecords = ({ employeeId }: { employeeId: number }) => (
 );
 
 // PaymentHistory component placeholder
-const PaymentHistory = ({ employeeId, initialMonthlyHistory, initialTotalRepaid, initialPagination, showOnlyLast }: any) => (
+const PaymentHistory = () => (
   <div className="p-4 text-center text-muted-foreground">
     Payment History component not yet implemented
   </div>
@@ -109,6 +114,8 @@ interface Payment {
 }
 
 interface Employee extends Omit<BaseEmployee, 'file_number'> {
+  emergency_contact_name: any;
+  emergency_contact_phone: any;
   file_number?: string;
   department?: string;
   supervisor?: string;
@@ -411,10 +418,10 @@ export default function Show({
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center justify-between mb-6">
             <Button variant="outline" asChild>
-              <Link href={route('employees.index')} className="flex items-center">
+              <a href={route('employees.index')} className="flex items-center">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 {t('btn_back_to_employees')}
-              </Link>
+              </a>
             </Button>
           </div>
         </div>
@@ -429,7 +436,7 @@ export default function Show({
     try {
       await axios.delete(`/api/employees/${employee.id}/documents/${documentId}`);
       ToastService.success(`${documentType} deleted successfully`);
-      fetchDocuments();
+      // fetchDocuments(); // Commented out as fetchDocuments is not defined
     } catch (error) {
       console.error('Error deleting document:', error);
       ToastService.error(`Failed to delete ${documentType}`);
@@ -469,7 +476,7 @@ export default function Show({
 
       ToastService.dismiss(loadingToastId);
       ToastService.success(`${documentType.replace('_', ' ')} uploaded successfully`);
-      fetchDocuments();
+      // fetchDocuments(); // Commented out as fetchDocuments is not defined
     } catch (error: any) {
       ToastService.dismiss(loadingToastId);
       const errorMessage = error.response?.data?.message || error.message;
@@ -631,7 +638,7 @@ export default function Show({
   // Function to handle tab changes with document loading control
   const handleTabChange = (value: string) => {
     if (value === 'advances' && !hasPermission('advances.view')) {
-      EmployeeToastService.permissionDenied('view advances');
+      ToastService.error('You do not have permission to view advances');
       return;
     }
     setActiveTab(value);
@@ -884,17 +891,17 @@ export default function Show({
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Button variant="outline" size="sm" asChild>
-              <Link href={route('employees.index')}>
+              <a href={route('employees.index')}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back
-              </Link>
+              </a>
             </Button>
             {hasPermission('employees.edit') && (
               <Button size="sm" asChild>
-                <Link href={route('employees.edit', { employee: employee.id })}>
+                <a href={route('employees.edit', { employee: employee.id })}>
                   <Edit className="mr-2 h-4 w-4" />
                   Edit
-                </Link>
+                </a>
               </Button>
             )}
             {hasPermission('employees.delete') && (
@@ -909,17 +916,17 @@ export default function Show({
               </Button>
             )}
             <Button size="sm" asChild>
-              <Link href={route('payroll.employees.advances.index', { employee: employee.id })}>
+              <a href={route('payroll.employees.advances.index', { employee: employee.id })}>
                 <CreditCard className="mr-2 h-4 w-4" />
                 View Advances
-              </Link>
+              </a>
             </Button>
             {hasPermission('resignations.create') && (
               <Button size="sm" asChild>
-                <Link href={route('resignations.create', { employee: employee.id })}>
+                <a href={route('resignations.create', { employee: employee.id })}>
                   <FileText className="mr-2 h-4 w-4" />
                   Submit Resignation
-                </Link>
+                </a>
               </Button>
             )}
           </div>
@@ -998,7 +1005,7 @@ export default function Show({
             <Card>
               <CardHeader>
                 <CardTitle>{t('personal_information')}</CardTitle>
-                <CardDescription>Employee's personal and identification details</CardDescription>
+                <CardDescription>{t('personal_and_identification_details')}</CardDescription>
               </CardHeader>
               <CardContent className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -1035,7 +1042,7 @@ export default function Show({
                       </dl>
                     </div>
 
-                    {/* <div>
+                    <div>
                       <h3 className="text-sm font-medium text-muted-foreground mb-3">{t('emergency_contact')}</h3>
                       {(employee.emergency_contact_name || employee.emergency_contact_phone) ? (
                         <dl className="space-y-2">
@@ -1055,12 +1062,12 @@ export default function Show({
                       ) : (
                         <p className="text-sm text-muted-foreground italic">{t('no_emergency_contact_information')}</p>
                       )}
-                    </div> */}
+                    </div>
                   </div>
 
                   <div className="space-y-4">
                     <div>
-                      <h3 className="text-sm font-medium text-muted-foreground mb-3">Identification</h3>
+                      <h3 className="text-sm font-medium text-muted-foreground mb-3">{t('identification')}</h3>
                       <dl className="space-y-2">
                         {employee.iqama_number && (
                           <div className="flex justify-between border-b pb-2">
@@ -1093,7 +1100,7 @@ export default function Show({
                     </div>
 
                     <div>
-                      <h3 className="text-sm font-medium text-muted-foreground mb-3">Licenses & Certifications</h3>
+                      <h3 className="text-sm font-medium text-muted-foreground mb-3">{t('licenses_and_certifications')}</h3>
                       {(employee.driving_license_number ||
                         employee.operator_license_number ||
                         employee.tuv_certification_number ||
@@ -1125,25 +1132,25 @@ export default function Show({
                           )}
                           {employee.tuv_certification_number && (
                             <div className="flex justify-between border-b pb-2">
-                              <dt className="text-sm font-medium">TÜV Certification</dt>
+                              <dt className="text-sm font-medium">{t('tuv_certification')}</dt>
                               <dd className="text-sm">{employee.tuv_certification_number}</dd>
                             </div>
                           )}
                           {employee.tuv_certification_expiry && (
                             <div className="flex justify-between border-b pb-2">
-                              <dt className="text-sm font-medium">TÜV Certification Expiry</dt>
+                              <dt className="text-sm font-medium">{t('tuv_certification_expiry')}</dt>
                               <dd className="text-sm">{format(new Date(employee.tuv_certification_expiry), 'PPP')}</dd>
                             </div>
                           )}
                           {employee.spsp_license_number && (
                             <div className="flex justify-between border-b pb-2">
-                              <dt className="text-sm font-medium">SPSP License</dt>
+                              <dt className="text-sm font-medium">{t('spsp_license')}</dt>
                               <dd className="text-sm">{employee.spsp_license_number}</dd>
                             </div>
                           )}
                           {employee.spsp_license_expiry && (
                             <div className="flex justify-between border-b pb-2">
-                              <dt className="text-sm font-medium">SPSP License Expiry</dt>
+                              <dt className="text-sm font-medium">{t('spsp_license_expiry')}</dt>
                               <dd className="text-sm">{format(new Date(employee.spsp_license_expiry), 'PPP')}</dd>
                             </div>
                           )}
@@ -1162,7 +1169,7 @@ export default function Show({
             <Card>
               <CardHeader>
                 <CardTitle>{t('employment_details')}</CardTitle>
-                <CardDescription>Work-related information and position details</CardDescription>
+                <CardDescription>{t('work_and_position_details')}</CardDescription>
               </CardHeader>
               <CardContent className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -1180,11 +1187,11 @@ export default function Show({
                         </div>
                         <div className="flex justify-between border-b pb-2">
                           <dt className="text-sm font-medium">{t('employees:fields.position')}</dt>
-                          <dd className="text-sm">{getTranslation(employee.position?.name ?? employee.position)}</dd>
+                          <dd className="text-sm">{typeof employee.position === 'object' && employee.position !== null && Object.prototype.hasOwnProperty.call(employee.position, 'name') ? getTranslation((employee.position as { name: string }).name) : (typeof employee.position === 'string' ? getTranslation(employee.position) : '')}</dd>
                         </div>
                         <div className="flex justify-between border-b pb-2">
                           <dt className="text-sm font-medium">{t('employees:fields.department')}</dt>
-                          <dd className="text-sm">{getTranslation((employee.department && typeof employee.department === 'object' && 'name' in employee.department) ? employee.department.name : employee.department)}</dd>
+                          <dd className="text-sm">{typeof employee.department === 'object' && employee.department !== null && 'name' in employee.department ? getTranslation((employee.department as { name: string }).name) : (typeof employee.department === 'string' ? getTranslation(employee.department) : '')}</dd>
                         </div>
                         {employee.supervisor && (
                           <div className="flex justify-between border-b pb-2">
@@ -1363,7 +1370,7 @@ export default function Show({
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle>{t('ttl_document_overview')}</CardTitle>
-                    <CardDescription>Employee's document status and expiry tracking</CardDescription>
+                    <CardDescription>{t('document_status_and_expiry_tracking')}</CardDescription>
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
@@ -1428,7 +1435,7 @@ export default function Show({
                               <span className="text-sm font-medium text-amber-600">{expiringSoon.length}</span>
                             </div>
                             <div className="flex items-center justify-between">
-                              <span className="text-sm text-muted-foreground">Expired</span>
+                              <span className="text-sm text-muted-foreground">{t('expired')}</span>
                               <span className="text-sm font-medium text-destructive">{expiredDocuments.length}</span>
                             </div>
                           </>
@@ -1482,7 +1489,7 @@ export default function Show({
                         return (
                           <>
                             <div className="flex items-center justify-between">
-                              <span className="text-sm text-muted-foreground">Document</span>
+                              <span className="text-sm text-muted-foreground">{t('document')}</span>
                               <span className="text-sm font-medium">{nextExpiringDoc.name}</span>
                             </div>
                             <div className="flex items-center justify-between">
@@ -1543,7 +1550,7 @@ export default function Show({
                             }, 1000);
                           } catch (error) {
                             console.error('Error generating document summary:', error);
-                            toast.error('Failed to generate document summary. Please try again.');
+                            ToastService.error('Failed to generate document summary. Please try again.');
                           }
                         }}
                       >
@@ -1641,11 +1648,11 @@ export default function Show({
                   employeeId={employee.id}
                   onUploadSuccess={() => {
                     // Refresh the page data if needed
-                    router.reload();
+                    Link.reload();
                   }}
                   onDeleteSuccess={() => {
                     // Refresh the page data if needed
-                    router.reload();
+                    Link.reload();
                   }}
                 />
               </CardContent>
@@ -1997,9 +2004,9 @@ export default function Show({
                                 size="sm"
                                 asChild
                               >
-                                <Link href={route('assignments.show', { assignment: assignment.id })}>
+                                <a href={route('assignments.show', { assignment: assignment.id })}>
                                   {t('ttl_view_details')}
-                                </Link>
+                                </a>
                               </Button>
                             </div>
                           </div>
@@ -2015,14 +2022,12 @@ export default function Show({
           <TabsContent value="timesheets" className="mt-6">
             <Card>
               <CardHeader>
-                    <CardTitle>{t('ttl_timesheet_records')}</CardTitle>
-                    <CardDescription>{t('view_and_manage_employee_timesheet_records')}</CardDescription>
+                <CardTitle>{t('ttl_timesheet_records')}</CardTitle>
+                <CardDescription>{t('view_and_manage_employee_timesheet_records')}</CardDescription>
               </CardHeader>
               <CardContent>
                 {/* Timesheet Summary */}
-                <Suspense fallback={<div>Loading...</div>}>
-                  <TimesheetSummary employeeId={employee.id} />
-                </Suspense>
+                <TimesheetSummary employeeId={employee.id} />
                 {/* Add Timesheet Button and Dialog */}
                 {hasPermission('timesheets.create') && (
                   <Dialog>
@@ -2033,16 +2038,12 @@ export default function Show({
                       <DialogHeader>
                         <DialogTitle>{t('ttl_add_new_timesheet')}</DialogTitle>
                       </DialogHeader>
-                      <Suspense fallback={<div>Loading...</div>}>
-                        <TimesheetForm employeeId={employee.id} onSuccess={() => window.location.reload()} />
-                      </Suspense>
+                      <TimesheetForm employeeId={employee.id} onSuccess={() => window.location.reload()} />
                     </DialogContent>
                   </Dialog>
                 )}
                 {/* Timesheet List */}
-                <Suspense fallback={<div>Loading...</div>}>
-                  <TimesheetList employeeId={employee.id} />
-                </Suspense>
+                <TimesheetList employeeId={employee.id} />
               </CardContent>
             </Card>
           </TabsContent>
@@ -2122,8 +2123,8 @@ export default function Show({
                             <TableHead>{t('lbl_start_date')}</TableHead>
                             <TableHead>{t('lbl_end_date')}</TableHead>
                             <TableHead>Duration</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Actions</TableHead>
+                            <TableHead>{t('status')}</TableHead>
+                            <TableHead>{t('actions')}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -2144,9 +2145,9 @@ export default function Show({
                               </TableCell>
                               <TableCell>
                                 <Button variant="outline" size="sm" asChild>
-                                  <Link href={route('leave-requests.show', { leaveRequest: request.id })}>
+                                  <a href={route('leave-requests.show', { leaveRequest: request.id })}>
                                     {t('ttl_view_details')}
-                                  </Link>
+                                  </a>
                                 </Button>
                               </TableCell>
                             </TableRow>
@@ -2209,7 +2210,7 @@ export default function Show({
                               // Store all active advances for repayment
                               setSelectedAdvance(activeAdvances[0].id); // We'll use the first advance ID as a reference
                             } else {
-                              toast.error("No active advances available for repayment");
+                              ToastService.error("No active advances available for repayment");
                               return;
                             }
                           }}
@@ -2291,18 +2292,18 @@ export default function Show({
                                     <Button
                                       onClick={() => {
                                         if (!repaymentAmount) {
-                                          toast.error('Please enter a repayment amount');
+                                          ToastService.error('Please enter a repayment amount');
                                           return;
                                         }
 
                                         const amount = Number(repaymentAmount);
                                         if (amount < totalMonthlyDeduction) {
-                                          toast.error(`Minimum repayment amount is SAR ${totalMonthlyDeduction.toFixed(2)}`);
+                                          ToastService.error(`Minimum repayment amount is SAR ${totalMonthlyDeduction.toFixed(2)}`);
                                           return;
                                         }
 
                                         if (amount > totalRemainingBalance) {
-                                          toast.error(`Repayment amount cannot exceed remaining balance of SAR ${totalRemainingBalance.toFixed(2)}`);
+                                          ToastService.error(`Repayment amount cannot exceed remaining balance of SAR ${totalRemainingBalance.toFixed(2)}`);
                                           return;
                                         }
 
@@ -2407,7 +2408,7 @@ export default function Show({
                                 onError: (errors) => {
                                   // Revert the value if there's an error
                                   setMonthlyDeduction(advances?.data?.[0]?.monthly_deduction?.toString() || '');
-                                  toast.error('Failed to update monthly deduction. Please try again.');
+                                  ToastService.error('Failed to update monthly deduction. Please try again.');
                                 },
                                 onCancel: () => {
                                   // Revert the value if request is cancelled
@@ -2421,7 +2422,7 @@ export default function Show({
                             const value = e.target.value;
                             if (!value || isNaN(Number(value)) || Number(value) < 0) {
                               setMonthlyDeduction(advances?.data?.[0]?.monthly_deduction?.toString() || '');
-                              toast.error('Please enter a valid monthly deduction amount');
+                              ToastService.error('Please enter a valid monthly deduction amount');
                             }
                           }}
                           className="text-2xl font-bold text-primary w-32"
@@ -2430,13 +2431,13 @@ export default function Show({
                         <span className="text-2xl font-bold text-primary">SAR</span>
                       </div>
                       <div className="flex items-center justify-between text-sm text-muted-foreground">
-                        <span>Current Monthly Deduction:</span>
+                        <span>{t('current_monthly_deduction')}</span>
                         <span className="font-medium">
                           SAR {Number(advances?.data?.[0]?.monthly_deduction || 0).toFixed(2)}
                         </span>
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        Company will decide the monthly deduction amount
+                        {t('company_will_decide_monthly_deduction')}
                       </p>
                     </div>
                   </div>
@@ -2456,7 +2457,7 @@ export default function Show({
                         </p>
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        Based on current balance and monthly deduction
+                        {t('based_on_current_balance_and_monthly_deduction')}
                       </p>
                     </div>
                   </div>
@@ -2483,11 +2484,11 @@ export default function Show({
                       <TableHeader>
                         <TableRow className="bg-muted/50">
                           <TableHead>Amount</TableHead>
-                          <TableHead>Reason</TableHead>
+                          <TableHead>{t('reason')}</TableHead>
                           <TableHead>Date</TableHead>
                           <TableHead>Status</TableHead>
                           <TableHead>Type</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
+                          <TableHead className="text-right">{t('actions')}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -2511,8 +2512,8 @@ export default function Show({
                                   {getRepaymentStatus(advance)}
                                 </TableCell>
                                 <TableCell className="capitalize">
-                                  {advance.type === 'advance' ? 'Request' :
-                                   advance.amount < 0 ? 'Repayment' : 'Payment'}
+                                  {advance.type === 'advance' ? t('request') :
+                                   advance.amount < 0 ? t('repayment') : t('payment')}
                                 </TableCell>
                                 <TableCell className="text-right">
                                   <div className="flex justify-end gap-2">
@@ -2531,7 +2532,7 @@ export default function Show({
                                               </Button>
                                             </TooltipTrigger>
                                             <TooltipContent>
-                                              <p>Approve</p>
+                                              <p>{t('approve')}</p>
                                             </TooltipContent>
                                           </Tooltip>
                                         </TooltipProvider>
@@ -2551,7 +2552,7 @@ export default function Show({
                                               </Button>
                                             </TooltipTrigger>
                                             <TooltipContent>
-                                              <p>Reject</p>
+                                              <p>{t('reject')}</p>
                                             </TooltipContent>
                                           </Tooltip>
                                         </TooltipProvider>
@@ -2573,7 +2574,7 @@ export default function Show({
                                           </Button>
                                         </TooltipTrigger>
                                         <TooltipContent>
-                                          <p>Delete</p>
+                                          <p>{t('delete')}</p>
                                         </TooltipContent>
                                       </Tooltip>
                                     </TooltipProvider>
@@ -2602,13 +2603,7 @@ export default function Show({
                     <h3 className="text-lg font-semibold">{t('payment_history')}</h3>
                   </div> */}
 
-                  <PaymentHistory
-                    employeeId={employee.id}
-                    initialMonthlyHistory={initialMonthlyHistory}
-                    initialTotalRepaid={initialTotalRepaid}
-                    initialPagination={initialPagination}
-                    showOnlyLast={true}
-                  />
+                  <PaymentHistory />
                 </div>
               </CardContent>
             </Card>
@@ -2618,7 +2613,7 @@ export default function Show({
             <Card>
               <CardHeader>
                 <CardTitle>{t('final_settlement')}</CardTitle>
-                <CardDescription>Manage employee's final settlement and clearance</CardDescription>
+                <CardDescription>{t('manage_final_settlement_and_clearance')}</CardDescription>
               </CardHeader>
               <CardContent>
                 {/* Final settlement details are commented out due to missing properties on Employee */}
@@ -2688,13 +2683,13 @@ export default function Show({
                           </div>
                           {employee.settlement_notes && (
                             <div className="text-sm text-muted-foreground">
-                              <p className="font-medium mb-1">Notes:</p>
+                              <p className="font-medium mb-1">{t('notes')}:</p>
                               <p>{employee.settlement_notes}</p>
                             </div>
                           )}
                           {employee.settlement_agreement_terms && (
                             <div className="text-sm text-muted-foreground">
-                              <p className="font-medium mb-1">Agreement Terms:</p>
+                              <p className="font-medium mb-1">{t('agreement_terms')}:</p>
                               <p>{employee.settlement_agreement_terms}</p>
                             </div>
                           )}
@@ -2704,12 +2699,12 @@ export default function Show({
                     <div className="flex justify-end space-x-2">
                       <Button variant="outline" onClick={() => window.print()}>
                         <Printer className="mr-2 h-4 w-4" />
-                        Print Settlement
+                        {t('print_settlement')}
                       </Button>
                       {hasPermission('final-settlements.approve') && (
                         <Button onClick={() => handleApproveSettlement(employee.final_settlement_id)}>
                           <Check className="mr-2 h-4 w-4" />
-                          Approve Settlement
+                          {t('approve_settlement')}
                         </Button>
                       )}
                     </div>
@@ -2729,10 +2724,10 @@ export default function Show({
                   <TableHeader>
                     <TableRow>
                       <TableHead>{t('last_working_day')}</TableHead>
-                      <TableHead>Reason</TableHead>
-                      <TableHead>Status</TableHead>
+                      <TableHead>{t('reason')}</TableHead>
+                      <TableHead>{t('status')}</TableHead>
                       <TableHead>{t('th_submitted_on')}</TableHead>
-                      <TableHead>Actions</TableHead>
+                      <TableHead>{t('actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -2757,9 +2752,9 @@ export default function Show({
                               size="sm"
                               asChild
                             >
-                              <Link href={route('resignations.show', { resignation: resignation.id })}>
+                              <a href={route('resignations.show', { resignation: resignation.id })}>
                                 {t('ttl_view_details')}
-                              </Link>
+                              </a>
                             </Button>
                           </div>
                         </TableCell>
@@ -2785,12 +2780,12 @@ export default function Show({
             <DialogHeader>
               <DialogTitle>{t('ttl_request_advance')}</DialogTitle>
               <DialogDescription>
-                Enter the advance payment details below.
+                {t('enter_advance_payment_details')}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="amount">Amount (SAR)</Label>
+                <Label htmlFor="amount">{t('amount_sar')}</Label>
                 <Input
                   id="amount"
                   type="number"
@@ -2802,7 +2797,7 @@ export default function Show({
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="monthlyDeduction">Monthly Deduction (SAR)</Label>
+                <Label htmlFor="monthlyDeduction">{t('monthly_deduction_sar')}</Label>
                 <Input
                   id="monthlyDeduction"
                   type="number"
@@ -2814,7 +2809,7 @@ export default function Show({
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="reason">Reason</Label>
+                <Label htmlFor="reason">{t('reason')}</Label>
                 <Textarea
                   id="reason"
                   value={advanceReason}
@@ -2896,7 +2891,7 @@ export default function Show({
                   if (selectedAdvance) {
                     handleDeleteAdvance(selectedAdvance);
                   } else {
-                    toast.error('No advance selected for deletion');
+                    ToastService.error('No advance selected for deletion');
                   }
                 }}
               >

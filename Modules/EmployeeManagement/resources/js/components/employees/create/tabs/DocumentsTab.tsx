@@ -27,14 +27,14 @@ export default function DocumentsTab({ form, files, setFiles }: DocumentsTabProp
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Documents</CardTitle>
+        <CardTitle>{t('documents')}</CardTitle>
       </CardHeader>
       <CardContent>
         <Alert className="mb-6">
           <Info className="h-4 w-4" />
-          <AlertTitle>Information</AlertTitle>
+          <AlertTitle>{t('information')}</AlertTitle>
           <AlertDescription>
-            These fields are optional. You can update them later after creating the employee.
+            {t('documents_optional_info')}
           </AlertDescription>
         </Alert>
 
@@ -42,7 +42,7 @@ export default function DocumentsTab({ form, files, setFiles }: DocumentsTabProp
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Iqama Section */}
             <div className="space-y-4">
-              <h3 className="text-lg font-medium">Iqama</h3>
+              <h3 className="text-lg font-medium">{t('iqama')}</h3>
               <FormField
                 control={form.control}
                 name="iqama_number"
@@ -76,7 +76,7 @@ export default function DocumentsTab({ form, files, setFiles }: DocumentsTabProp
                 name="iqama_cost"
                 render={({ field }: any) => (
                   <FormItem>
-                    <FormLabel>Iqama Cost (SAR)</FormLabel>
+                    <FormLabel>{t('iqama_cost')}</FormLabel>
                     <FormControl>
                       <Input type="number" min="0" step="0.01" {...field} />
                     </FormControl>
@@ -99,7 +99,7 @@ export default function DocumentsTab({ form, files, setFiles }: DocumentsTabProp
                   onClick={() => document.getElementById('iqama-file')?.click()}
                 >
                   <Upload className="mr-2 h-4 w-4" />
-                  Upload Iqama
+                  {t('upload_iqama')}
                 </Button>
                 {files.iqama && (
                   <div className="flex items-center gap-2">
@@ -119,7 +119,7 @@ export default function DocumentsTab({ form, files, setFiles }: DocumentsTabProp
 
             {/* Passport Section */}
             <div className="space-y-4">
-              <h3 className="text-lg font-medium">Passport</h3>
+              <h3 className="text-lg font-medium">{t('passport')}</h3>
               <FormField
                 control={form.control}
                 name="passport_number"
@@ -162,7 +162,7 @@ export default function DocumentsTab({ form, files, setFiles }: DocumentsTabProp
                   onClick={() => document.getElementById('passport-file')?.click()}
                 >
                   <Upload className="mr-2 h-4 w-4" />
-                  Upload Passport
+                  {t('upload_passport')}
                 </Button>
                 {files.passport && (
                   <div className="flex items-center gap-2">

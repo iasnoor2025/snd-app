@@ -106,23 +106,23 @@ export default function SalaryInfoTab<TFormValues extends FieldValues = SalaryIn
 
   // Define fallback translations
   const translations = {
-    salary_information: t('salary_information') || 'Salary Information',
-    basic_salary: t('basic_salary') || 'Basic Salary (SAR)',
-    hourly_rate: t('hourly_rate') || 'Hourly Rate (SAR)',
-    lbl_overtime_rate_multiplier: t('lbl_overtime_rate_multiplier') || 'Overtime Rate Multiplier',
-    overtime_fixed_rate: t('overtime_fixed_rate') || 'Overtime Fixed Rate (SAR)',
-    food_allowance: t('food_allowance') || 'Food Allowance (SAR)',
-    housing_allowance: t('housing_allowance') || 'Housing Allowance (SAR)',
-    transport_allowance: t('transport_allowance') || 'Transport Allowance (SAR)',
-    advance_payment: t('advance_payment') || 'Advance Payment (SAR)',
-    absent_deduction_rate: t('absent_deduction_rate') || 'Absent Deduction Rate (%)',
-    additional_allowances: t('additional_allowances') || 'Additional Allowances',
-    other_allowance: t('other_allowance') || 'Other Allowance (SAR)',
-    mobile_allowance: t('mobile_allowance') || 'Mobile Allowance (SAR)',
-    bank_details: t('bank_details') || 'Bank Details',
-    bank_name: t('bank_name') || 'Bank Name',
-    lbl_bank_account_number: t('lbl_bank_account_number') || 'Bank Account Number',
-    lbl_bank_iban: t('lbl_bank_iban') || 'Bank IBAN'
+    salary_information: t('salary_information'),
+    basic_salary: t('basic_salary'),
+    hourly_rate: t('hourly_rate'),
+    lbl_overtime_rate_multiplier: t('lbl_overtime_rate_multiplier'),
+    overtime_fixed_rate: t('overtime_fixed_rate'),
+    food_allowance: t('food_allowance'),
+    housing_allowance: t('housing_allowance'),
+    transport_allowance: t('transport_allowance'),
+    advance_payment: t('advance_payment'),
+    absent_deduction_rate: t('absent_deduction_rate'),
+    additional_allowances: t('additional_allowances'),
+    other_allowance: t('other_allowance'),
+    mobile_allowance: t('mobile_allowance'),
+    bank_details: t('bank_details'),
+    bank_name: t('bank_name'),
+    lbl_bank_account_number: t('lbl_bank_account_number'),
+    lbl_bank_iban: t('lbl_bank_iban')
   };
 
   return (
@@ -173,7 +173,7 @@ export default function SalaryInfoTab<TFormValues extends FieldValues = SalaryIn
             name="overtime_rate_multiplier"
             render={({ field }: any) => (
               <FormItem>
-                <FormLabel>{t('lbl_overtime_rate_multiplier')}</FormLabel>
+                <FormLabel>{translations.lbl_overtime_rate_multiplier}</FormLabel>
                 <FormControl>
                   <Input type="number" min="0" step="0.1" {...field} onChange={(e) => field.onChange(Number(e.target.value) || 0)} />
                 </FormControl>
@@ -187,7 +187,7 @@ export default function SalaryInfoTab<TFormValues extends FieldValues = SalaryIn
             name="overtime_fixed_rate"
             render={({ field }: any) => (
               <FormItem>
-                <FormLabel>Overtime Fixed Rate (SAR)</FormLabel>
+                <FormLabel>{translations.overtime_fixed_rate}</FormLabel>
                 <FormControl>
                   <Input type="number" min="0" step="0.01" {...field} onChange={(e) => field.onChange(Number(e.target.value) || 0)} />
                 </FormControl>
@@ -201,7 +201,7 @@ export default function SalaryInfoTab<TFormValues extends FieldValues = SalaryIn
             name="food_allowance"
             render={({ field }: any) => (
               <FormItem>
-                <FormLabel>Food Allowance (SAR)</FormLabel>
+                <FormLabel>{translations.food_allowance}</FormLabel>
                 <FormControl>
                   <Input type="number" min="0" step="0.01" {...field} onChange={(e) => field.onChange(Number(e.target.value) || 0)} />
                 </FormControl>
@@ -215,7 +215,7 @@ export default function SalaryInfoTab<TFormValues extends FieldValues = SalaryIn
             name="housing_allowance"
             render={({ field }: any) => (
               <FormItem>
-                <FormLabel>Housing Allowance (SAR)</FormLabel>
+                <FormLabel>{translations.housing_allowance}</FormLabel>
                 <FormControl>
                   <Input type="number" min="0" step="0.01" {...field} onChange={(e) => field.onChange(Number(e.target.value) || 0)} />
                 </FormControl>
@@ -229,7 +229,7 @@ export default function SalaryInfoTab<TFormValues extends FieldValues = SalaryIn
             name="transport_allowance"
             render={({ field }: any) => (
               <FormItem>
-                <FormLabel>Transport Allowance (SAR)</FormLabel>
+                <FormLabel>{translations.transport_allowance}</FormLabel>
                 <FormControl>
                   <Input type="number" min="0" step="0.01" {...field} onChange={(e) => field.onChange(Number(e.target.value) || 0)} />
                 </FormControl>
@@ -243,7 +243,7 @@ export default function SalaryInfoTab<TFormValues extends FieldValues = SalaryIn
             name="advance_payment"
             render={({ field }: any) => (
               <FormItem>
-                <FormLabel>Advance Payment (SAR)</FormLabel>
+                <FormLabel>{translations.advance_payment}</FormLabel>
                 <FormControl>
                   <Input type="number" min="0" step="0.01" {...field} onChange={(e) => field.onChange(Number(e.target.value) || 0)} />
                 </FormControl>
@@ -257,7 +257,7 @@ export default function SalaryInfoTab<TFormValues extends FieldValues = SalaryIn
             name="absent_deduction_rate"
             render={({ field }: any) => (
               <FormItem>
-                <FormLabel>Absent Deduction Rate (%)</FormLabel>
+                <FormLabel>{translations.absent_deduction_rate}</FormLabel>
                 <FormControl>
                   <Input type="number" min="0" max="100" step="0.01" {...field} onChange={(e) => field.onChange(Number(e.target.value) || 0)} />
                 </FormControl>
@@ -286,7 +286,7 @@ export default function SalaryInfoTab<TFormValues extends FieldValues = SalaryIn
               name="other_allowance"
               render={({ field }: any) => (
                 <FormItem>
-                  <FormLabel>Other Allowance (SAR)</FormLabel>
+                  <FormLabel>{translations.other_allowance}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -306,7 +306,7 @@ export default function SalaryInfoTab<TFormValues extends FieldValues = SalaryIn
               name="mobile_allowance"
               render={({ field }: any) => (
                 <FormItem>
-                  <FormLabel>Mobile Allowance (SAR)</FormLabel>
+                  <FormLabel>{translations.mobile_allowance}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -342,7 +342,7 @@ export default function SalaryInfoTab<TFormValues extends FieldValues = SalaryIn
               name="bank_name"
               render={({ field }: any) => (
                 <FormItem>
-                  <FormLabel>{t('bank_name')}</FormLabel>
+                  <FormLabel>{translations.bank_name}</FormLabel>
                   <FormControl>
                     <Input {...field} placeholder="Enter bank name" />
                   </FormControl>
@@ -356,7 +356,7 @@ export default function SalaryInfoTab<TFormValues extends FieldValues = SalaryIn
               name="bank_account_number"
               render={({ field }: any) => (
                 <FormItem>
-                  <FormLabel>{t('lbl_bank_account_number')}</FormLabel>
+                  <FormLabel>{translations.lbl_bank_account_number}</FormLabel>
                   <FormControl>
                     <Input {...field} placeholder="Enter bank account number" />
                   </FormControl>
@@ -370,7 +370,7 @@ export default function SalaryInfoTab<TFormValues extends FieldValues = SalaryIn
               name="bank_iban"
               render={({ field }: any) => (
                 <FormItem>
-                  <FormLabel>{t('lbl_bank_iban')}</FormLabel>
+                  <FormLabel>{translations.lbl_bank_iban}</FormLabel>
                   <FormControl>
                     <Input {...field} placeholder="Enter bank IBAN" />
                   </FormControl>

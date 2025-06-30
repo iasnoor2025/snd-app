@@ -111,7 +111,7 @@ export default function CertificationsTab({ form, files, setFiles, onTotalCostCh
           name={`${prefix}.cost` as const}
           render={({ field }: any) => (
             <FormItem>
-              <FormLabel>Cost</FormLabel>
+              <FormLabel>{t('cost')}</FormLabel>
               <FormControl>
                 <Input
                   type="number"
@@ -154,7 +154,7 @@ export default function CertificationsTab({ form, files, setFiles, onTotalCostCh
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Certifications</CardTitle>
+        <CardTitle>{t('certifications')}</CardTitle>
       </CardHeader>
       <CardContent>
         <Form>
@@ -219,7 +219,7 @@ export default function CertificationsTab({ form, files, setFiles, onTotalCostCh
                   className="w-full flex items-center justify-between"
                   onClick={() => setShowTuvCertification(!showTuvCertification)}
                 >
-                  <span>TUV Certification</span>
+                  <span>{t('tuv_certification')}</span>
                   {showTuvCertification ? (
                     <>
                       <EyeOff className="h-4 w-4" />
@@ -243,7 +243,7 @@ export default function CertificationsTab({ form, files, setFiles, onTotalCostCh
                   className="w-full flex items-center justify-between"
                   onClick={() => setShowSpspLicense(!showSpspLicense)}
                 >
-                  <span>SPSP License</span>
+                  <span>{t('spsp_license')}</span>
                   {showSpspLicense ? (
                     <>
                       <EyeOff className="h-4 w-4" />
@@ -287,7 +287,7 @@ export default function CertificationsTab({ form, files, setFiles, onTotalCostCh
                   {fields.map((field, index) => (
                     <div key={field.id} className="space-y-4 p-4 border rounded-lg">
                       <div className="flex justify-between items-center">
-                        <h4 className="text-md font-medium">Certification {index + 1}</h4>
+                        <h4 className="text-md font-medium">{t('certification')} {index + 1}</h4>
                         <Button
                           type="button"
                           variant="ghost"
@@ -382,7 +382,7 @@ export default function CertificationsTab({ form, files, setFiles, onTotalCostCh
                           name={`custom_certifications.${index}.cost`}
                           render={({ field }: any) => (
                             <FormItem>
-                              <FormLabel>Cost</FormLabel>
+                              <FormLabel>{t('cost')}</FormLabel>
                               <FormControl>
                                 <Input
                                   type="number"
@@ -415,7 +415,7 @@ export default function CertificationsTab({ form, files, setFiles, onTotalCostCh
                     })}
                   >
                     <Plus className="h-4 w-4 mr-2" />
-                    Add Custom Certification
+                    {t('add_custom_certification')}
                   </Button>
                 </div>
               )}
