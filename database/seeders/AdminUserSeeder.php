@@ -38,8 +38,8 @@ class AdminUserSeeder extends Seeder
             Permission::firstOrCreate(['name' => $permission]);
         }
 
-        // Give all permissions to admin role
-        $adminRole->givePermissionTo(Permission::all());
+        // Ensure admin role has all permissions
+        $adminRole->syncPermissions(Permission::all());
 
         // Create admin user if it doesn't exist
         $admin = User::firstOrCreate(

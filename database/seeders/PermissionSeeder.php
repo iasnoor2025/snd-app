@@ -61,6 +61,12 @@ class PermissionSeeder extends Seeder
             'suppliers.view', 'suppliers.create', 'suppliers.edit', 'suppliers.delete',
             // Timesheets
             'timesheets.view', 'timesheets.create', 'timesheets.edit', 'timesheets.delete',
+            // Timesheet Approvals
+            'timesheets.approve',
+            'timesheets.approve.foreman',
+            'timesheets.approve.incharge',
+            'timesheets.approve.checking',
+            'timesheets.approve.manager',
             // Tasks
             'tasks.view', 'tasks.create', 'tasks.edit', 'tasks.delete',
             // Manpower
