@@ -78,7 +78,9 @@ class PermissionSeeder extends Seeder
             // Expense
             'expense.view', 'expense.create', 'expense.edit', 'expense.delete',
             // Payroll
-            'payroll-managenent.view', 'payroll-managenent.create', 'payroll-managenent.edit', 'payroll-managenent.delete',
+            'payroll.view', 'payroll.create', 'payroll.edit', 'payroll.delete',
+            // Tax Documentation
+            'tax-documentation.view', 'tax-documentation.create', 'tax-documentation.edit', 'tax-documentation.delete',
             // Salary Advances
             'salary-advances.view', 'salary-advances.create', 'salary-advances.edit', 'salary-advances.delete',
             // Salary Increments

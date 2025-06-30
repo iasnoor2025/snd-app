@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Head, useForm, router } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
+import { router } from '@inertiajs/core';
 import { AppLayout } from '@/Core';
 import { PageProps } from "@/Core/types";
 import { Button } from "@/Core";
@@ -53,12 +54,14 @@ type Payroll = {
 };
 
 export default function Index({ auth, payrolls, employees, filters, hasRecords }: Props) {
-  const { t } = useTranslation('payrolls');
+  const { t } = useTranslation('PayrollManagement');
 
     const [showModal, setShowModal] = useState(false);
-    const { data, setData, post, processing, errors } = useForm({
+    const [formData, setFormData] = useState({
         month: new Date().toISOString().slice(0, 7),
     });
+    const [processing, setProcessing] = useState(false);
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -103,21 +106,21 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
 
     return (
         <AppLayout
-            title={t('PayrollManagement:pages.payroll')}
+            title="Payroll Management"
             breadcrumbs={[
                 { title: 'Payroll', href: route('payroll.index') },
             ]}
             requiredPermission="payroll.view"
         >
-            <Head title={t('PayrollManagement:pages.payroll')} />
+            <Head title="Payroll Management" />
 
             <div className="container mx-auto py-6">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between">
-                        <CardTitle>{t('PayrollManagement:pages.payroll')}</CardTitle>
+                        <CardTitle>Payroll Management</CardTitle>
                         <div className="flex gap-2">
                             <Button onClick={() => setShowModal(true)}>
-                                {t('PayrollManagement:actions.process_payroll')}
+                                Process Payroll
                             </Button>
                             <Button
                                 variant="outline"
@@ -141,7 +144,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                     onValueChange={(value) => handleFilter('status', value)}
                                 >
                                     <SelectTrigger className="w-48">
-                                        <SelectValue placeholder={t('PayrollManagement:placeholders.select_status')} />
+                                        <SelectValue placeholder="Select Status" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="pending">Pending</SelectItem>
@@ -155,7 +158,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                     onValueChange={(value) => handleFilter('employee_id', value)}
                                 >
                                     <SelectTrigger className="w-48">
-                                        <SelectValue placeholder={t('PayrollManagement:placeholders.select_employee')} />
+                                        <SelectValue placeholder="Select Employee" />
                                     </SelectTrigger>
                                     {hasInvalidOriginalEmployee ? (
                                         <div style={{ color: 'red', padding: 8 }}>
@@ -183,7 +186,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                 </Select>
                             </div>
                         </div>
-                        <div className="rounded-md border">
+                        <div className="rounded-md border mt-6">
                             <Table>
                                 <TableHeader>
                                     <TableRow>
@@ -210,7 +213,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                                 <TableCell>${payroll.overtime_amount.toFixed(2)}</TableCell>
                                                 <TableCell>${payroll.bonus.toFixed(2)}</TableCell>
                                                 <TableCell>
-                                                    ${(payroll.deduction.toFixed(2) + (payroll.advance_deduction || 0).toFixed(2))}
+                                                    ${(payroll.deduction + (payroll.advance_deduction || 0)).toFixed(2)}
                                                 </TableCell>
                                                 <TableCell>${payroll.net_salary.toFixed(2)}</TableCell>
                                                 <TableCell>{getStatusBadge(payroll.status)}</TableCell>
@@ -227,15 +230,42 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                     ) : (
                                         <TableRow>
                                             <TableCell colSpan={9} className="text-center py-8">
-                                                <div className="flex flex-col items-center justify-center text-muted-foreground">
-                                                    <p>{t('PayrollManagement:messages.no_records')}</p>
-                                                </div>
+                                                                                            <div className="flex flex-col items-center justify-center text-muted-foreground">
+                                                <p>No payroll records found</p>
+                                            </div>
                                             </TableCell>
                                         </TableRow>
                                     )}
                                 </TableBody>
                             </Table>
                         </div>
+
+                        {/* Pagination Controls */}
+                        {payrolls?.data && payrolls.data.length > 0 && (
+                            <div className="flex items-center justify-between mt-4">
+                                <div className="text-sm text-muted-foreground">
+                                    Showing {payrolls.data.length} records
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        disabled={!payrolls.links?.prev}
+                                        onClick={() => payrolls.links?.prev && router.get(payrolls.links.prev)}
+                                    >
+                                        Previous
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        disabled={!payrolls.links?.next}
+                                        onClick={() => payrolls.links?.next && router.get(payrolls.links.next)}
+                                    >
+                                        Next
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
             </div>
@@ -243,7 +273,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
             <Dialog open={showModal} onOpenChange={setShowModal}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>{t('PayrollManagement:actions.process_payroll')}</DialogTitle>
+                        <DialogTitle>Process Payroll</DialogTitle>
                         <DialogDescription>
                             Select the month for which you want to generate payroll records.
                         </DialogDescription>
@@ -251,7 +281,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                     <form onSubmit={handleSubmit}>
                         <div className="grid gap-4 py-4">
                             <div className="grid gap-2">
-                                <Label htmlFor="month">{t('PayrollManagement:fields.select_month')}</Label>
+                                <Label htmlFor="month">Select Month</Label>
                                 <Input
                                     type="month"
                                     id="month"
