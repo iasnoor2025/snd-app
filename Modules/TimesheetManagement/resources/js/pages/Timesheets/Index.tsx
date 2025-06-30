@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head } from '@inertiajs/react';
 import { router } from '@inertiajs/core';
@@ -126,6 +126,18 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
   const [perPage, setPerPage] = useState<number>(filters.per_page || 15);
   const [selectedTimesheets, setSelectedTimesheets] = useState<number[]>([]);
   const [bulkProcessing, setBulkProcessing] = useState(false);
+  const isFirstMount = useRef(true);
+
+  useEffect(() => {
+    if (isFirstMount.current) {
+      setSearchTerm(filters.search || '');
+      setSelectedStatus(filters.status || 'all');
+      setStartDate(filters.date_from ? new Date(filters.date_from) : undefined);
+      setEndDate(filters.date_to ? new Date(filters.date_to) : undefined);
+      setPerPage(filters.per_page || 15);
+      isFirstMount.current = false;
+    }
+  }, [filters]);
 
   // Ensure timesheets.data is always an array
   const timesheetsData = timesheets?.data || [];
@@ -180,7 +192,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
 
     if (confirm(`Are you sure you want to approve ${selectedTimesheets.length} selected timesheets?`)) {
       setBulkProcessing(true);
-      router.post(route('hr.api.timesheets.bulk-approve'), {
+      router.post('/api/timesheets/bulk-approve', {
         timesheet_ids: selectedTimesheets
       }, {
         onSuccess: () => {
@@ -197,9 +209,9 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
   };
 
   const handleSearch = () => {
-    router.get(route('hr.api.timesheets.index'), {
+    router.get(route('timesheets.index'), {
       search: searchTerm,
-      status: selectedStatus === 'all' ? undefined : selectedStatus,
+      status: selectedStatus,
       date_from: startDate ? format(startDate, 'yyyy-MM-dd') : undefined,
       date_to: endDate ? format(endDate, 'yyyy-MM-dd') : undefined,
       per_page: perPage,
@@ -209,7 +221,6 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
     });
   };
 
-  // Handle key press for search input
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleSearch();
@@ -222,7 +233,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
     setStartDate(undefined);
     setEndDate(undefined);
     setPerPage(15);
-    router.get(route('hr.api.timesheets.index'), {}, {
+    router.get(route('timesheets.index'), {}, {
       preserveState: true,
       replace: true,
     });
@@ -258,7 +269,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
 
   const handleApprove = (id: number) => {
     setProcessing(id);
-    router.put(route('hr.api.timesheets.approve', id), {}, {
+    router.post(`/api/timesheets/${id}/approve`, {}, {
       onSuccess: () => {
         toast("Timesheet approved successfully");
         setProcessing(null);
@@ -281,6 +292,64 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
         toast(errors.error || t('reject_failed', 'Failed to reject timesheet'));
         setProcessing(null);
       },
+    });
+  };
+
+  // Determine if user is admin
+  const isAdmin = auth?.user?.roles?.includes('admin');
+
+  // Accept page as argument for reloadPage
+  const reloadPage = (page = timesheets.current_page) => {
+    router.get(route('timesheets.index'), {
+      page,
+      search: searchTerm,
+      status: selectedStatus,
+      date_from: startDate ? format(startDate, 'yyyy-MM-dd') : undefined,
+      date_to: endDate ? format(endDate, 'yyyy-MM-dd') : undefined,
+      per_page: perPage,
+    }, {
+      preserveState: true,
+      replace: true,
+      onSuccess: () => setSelectedTimesheets([]),
+    });
+  };
+
+  const handleBulkDelete = () => {
+    const draftIds = timesheetsData
+      .filter(t => t.status === 'draft' && selectedTimesheets.includes(t.id))
+      .map(t => t.id);
+    if (draftIds.length === 0) {
+      toast(t('select_draft_to_delete', 'Please select at least one draft timesheet to delete'));
+      return;
+    }
+    if (confirm(t('delete_confirm', 'Are you sure you want to delete the selected draft timesheets?'))) {
+      setBulkProcessing(true);
+      router.visit(route('hr.api.timesheets.bulk-delete'), {
+        method: 'delete',
+        data: { timesheet_ids: draftIds },
+        onSuccess: () => {
+          toast(t('bulk_delete_success', 'Draft timesheets deleted successfully'));
+          reloadPage();
+          setBulkProcessing(false);
+        },
+        onError: (errors: any) => {
+          toast(errors.error || t('bulk_delete_failed', 'Failed to delete draft timesheets'));
+          setBulkProcessing(false);
+        },
+      });
+    }
+  };
+
+  const handleSearchWithStatus = (status: string) => {
+    router.get(route('timesheets.index'), {
+      search: searchTerm,
+      status: status,
+      date_from: startDate ? format(startDate, 'yyyy-MM-dd') : undefined,
+      date_to: endDate ? format(endDate, 'yyyy-MM-dd') : undefined,
+      per_page: perPage,
+    }, {
+      preserveState: true,
+      replace: true,
     });
   };
 
@@ -322,6 +391,26 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                   )}
                 </Button>
               )}
+
+              {isAdmin && timesheetsData.some(t => t.status === 'draft' && selectedTimesheets.includes(t.id)) && (
+                <Button
+                  onClick={handleBulkDelete}
+                  disabled={bulkProcessing}
+                  variant="destructive"
+                >
+                  {bulkProcessing ? (
+                    <>
+                      <ArrowPathIcon className="mr-2 h-4 w-4 animate-spin" />
+                      {t('btn_processing')}
+                    </>
+                  ) : (
+                    <>
+                      <TrashIcon className="mr-2 h-4 w-4" />
+                      {t('btn_delete_selected', 'Delete Selected')}
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
           </CardHeader>
           <CardContent>
@@ -338,16 +427,22 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                     />
                   </div>
                   <div className="w-full md:w-40">
-                    <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                    <Select value={selectedStatus} onValueChange={(value) => {
+                      setSelectedStatus(value);
+                      setTimeout(() => handleSearchWithStatus(value), 0);
+                    }}>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder={t('ph_status')} />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">{t('opt_all_statuses_1')}</SelectItem>
-                        <SelectItem value="draft">{t('status_draft')}</SelectItem>
-                        <SelectItem value="submitted">{t('status_submitted')}</SelectItem>
-                        <SelectItem value="approved">{t('status_approved')}</SelectItem>
-                        <SelectItem value="rejected">{t('status_rejected')}</SelectItem>
+                        <SelectItem value="draft">Draft</SelectItem>
+                        <SelectItem value="submitted">Submitted</SelectItem>
+                        <SelectItem value="foreman_approved">Foreman Approved</SelectItem>
+                        <SelectItem value="incharge_approved">Incharge Approved</SelectItem>
+                        <SelectItem value="checking_approved">Checking Approved</SelectItem>
+                        <SelectItem value="manager_approved">Manager Approved</SelectItem>
+                        <SelectItem value="rejected">Rejected</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -488,8 +583,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                                         onClick={() => {
                                           if (confirm(t('approve_confirm', 'Are you sure you want to approve this timesheet?'))) {
                                             setProcessing(timesheet.id);
-                                            router.put(route('hr.api.timesheets.approve', timesheet.id), {}, {
-                                              preserveState: true,
+                                            router.post(`/api/timesheets/${timesheet.id}/approve`, {}, {
                                               onSuccess: () => {
                                                 setProcessing(null);
                                                 toast("Timesheet approved successfully");
@@ -579,56 +673,28 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                     size="sm"
                     onClick={() => {
                       if (timesheets.current_page > 1) {
-                        router.get(
-                          route('hr.api.timesheets.index'),
-                          {
-                            page: timesheets.current_page - 1,
-                            search: searchTerm,
-                            status: selectedStatus === 'all' ? undefined : selectedStatus,
-                            date_from: startDate ? format(startDate, 'yyyy-MM-dd') : undefined,
-                            date_to: endDate ? format(endDate, 'yyyy-MM-dd') : undefined,
-                            per_page: perPage,
-                          },
-                          {
-                            preserveState: true,
-                            replace: true,
-                          }
-                        );
+                        reloadPage(timesheets.current_page - 1);
                       }
                     }}
                     disabled={timesheets.current_page <= 1}
-                                      >
-                      {t('btn_previous')}
-                    </Button>
-                                      <span className="text-sm">
-                      {t('page_info', { current: timesheets.current_page, total: timesheets.last_page })}
-                    </span>
+                  >
+                    {t('btn_previous')}
+                  </Button>
+                  <span className="text-sm">
+                    {t('page_info', { current: timesheets.current_page, total: timesheets.last_page })}
+                  </span>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => {
                       if (timesheets.current_page < timesheets.last_page) {
-                        router.get(
-                          route('hr.api.timesheets.index'),
-                          {
-                            page: timesheets.current_page + 1,
-                            search: searchTerm,
-                            status: selectedStatus === 'all' ? undefined : selectedStatus,
-                            date_from: startDate ? format(startDate, 'yyyy-MM-dd') : undefined,
-                            date_to: endDate ? format(endDate, 'yyyy-MM-dd') : undefined,
-                            per_page: perPage,
-                          },
-                          {
-                            preserveState: true,
-                            replace: true,
-                          }
-                        );
+                        reloadPage(timesheets.current_page + 1);
                       }
                     }}
                     disabled={timesheets.current_page >= timesheets.last_page}
-                                      >
-                      {t('btn_next')}
-                    </Button>
+                  >
+                    {t('btn_next')}
+                  </Button>
                 </div>
               </div>
             )}

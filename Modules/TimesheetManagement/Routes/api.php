@@ -40,6 +40,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('timesheets/reports/monthly', [TimesheetController::class, 'monthlyReport']);
     Route::get('timesheets/export/pdf', [TimesheetController::class, 'exportPdf']);
     Route::get('timesheets/export/excel', [TimesheetController::class, 'exportExcel']);
+    Route::delete('timesheets/bulk-delete', [
+        \Modules\TimesheetManagement\Http\Controllers\TimesheetController::class,
+        'bulkDelete'
+    ])->middleware(['auth:sanctum', 'role:admin'])->name('hr.api.timesheets.bulk-delete');
+    Route::post('timesheets/bulk-approve', [
+        \Modules\TimesheetManagement\Http\Controllers\TimesheetController::class,
+        'bulkApprove'
+    ])->middleware(['auth:sanctum', 'role:admin'])->name('hr.api.timesheets.bulk-approve');
 
     // Time Entry Routes
     Route::apiResource('time-entries', TimeEntryController::class)->names([

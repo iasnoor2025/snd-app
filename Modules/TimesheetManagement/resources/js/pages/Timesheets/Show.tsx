@@ -37,6 +37,9 @@ import {
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
+import axios from 'axios';
+
+axios.defaults.withCredentials = true;
 
 export default function TimesheetShow({ auth, timesheet }: Props) {
   const { t } = useTranslation('TimesheetManagement');
@@ -68,34 +71,34 @@ export default function TimesheetShow({ auth, timesheet }: Props) {
     if (confirm(t('delete_confirm', 'Are you sure you want to delete this timesheet?'))) {
       router.delete(route('timesheets.destroy', timesheet.id), {
         onSuccess: () => {
-          toast.success(t('success', 'Success'));
+          toast(t('success', 'Success'));
           router.visit(route('timesheets.index'));
         },
         onError: (errors) => {
-          toast.error(errors.error || t('delete_failed', 'Failed to delete timesheet'));
+          toast(errors.error || t('delete_failed', 'Failed to delete timesheet'));
         },
       });
     }
   };
 
-  const handleApprove = () => {
-    router.put(route('timesheets.approve', timesheet.id), {}, {
-      onSuccess: () => {
-        toast.success(t('success', 'Success'));
-      },
-      onError: (errors) => {
-        toast.error(errors.error || t('approve_failed', 'Failed to approve timesheet'));
-      },
-    });
+  const handleApprove = async () => {
+    try {
+      await axios.get('/sanctum/csrf-cookie');
+      await axios.post(`/api/timesheets/${timesheet.id}/approve`);
+      toast(t('success', 'Success'));
+      window.location.reload();
+    } catch (error: any) {
+      toast(error?.response?.data?.error || t('approve_failed', 'Failed to approve timesheet'));
+    }
   };
 
   const handleReject = () => {
     router.put(route('timesheets.reject', timesheet.id), {}, {
       onSuccess: () => {
-        toast.success(t('success', 'Success'));
+        toast(t('success', 'Success'));
       },
       onError: (errors) => {
-        toast.error(errors.error || t('reject_failed', 'Failed to reject timesheet'));
+        toast(errors.error || t('reject_failed', 'Failed to reject timesheet'));
       },
     });
   };

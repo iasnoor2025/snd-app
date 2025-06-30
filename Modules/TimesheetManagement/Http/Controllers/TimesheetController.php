@@ -28,6 +28,12 @@ class TimesheetController extends Controller
      */
     public function index(Request $request)
     {
+        dd($request->all(), $request->getQueryString(), $request->status);
+        \Log::debug('Timesheet index request', [
+            'all' => $request->all(),
+            'query' => $request->getQueryString(),
+            'status' => $request->status,
+        ]);
         $query = Timesheet::with(['employee:id,first_name,last_name', 'project'])
             ->when($request->month, function ($query, $month) {
                 return $query->whereMonth('date', Carbon::parse($month)->month)
@@ -35,6 +41,24 @@ class TimesheetController extends Controller
             })
             ->when($request->employee_id, function ($query, $employeeId) {
                 return $query->where('employee_id', $employeeId);
+            })
+            ->when($request->search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('employee', function ($q2) use ($search) {
+                        $q2->where('first_name', 'like', "%$search%")
+                            ->orWhere('last_name', 'like', "%$search%")
+                            ->orWhereRaw("CONCAT(first_name, ' ', last_name) like ?", ["%$search%"]);
+                    })
+                    ->orWhereHas('project', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%$search%");
+                    })
+                    ->orWhere('description', 'like', "%$search%")
+                    ->orWhere('tasks', 'like', "%$search%")
+                    ;
+                });
+            })
+            ->when($request->status, function ($query, $status) {
+                $query->where('status', $status);
             });
 
         // If user is not admin/hr, only show their own timesheets
@@ -45,9 +69,8 @@ class TimesheetController extends Controller
         $timesheets = $query->latest()->paginate(10);
 
         return Inertia::render('Timesheets/Index', [
-
             'timesheets' => $timesheets,
-            'filters' => $request->only(['month', 'employee_id'])
+            'filters' => $request->only(['month', 'employee_id', 'search', 'status'])
         ]);
     }
 
@@ -749,8 +772,8 @@ class TimesheetController extends Controller
                         'rental_id' => $validated['rental_id'],
                         'description' => $validated['description'],
                         'tasks' => $validated['tasks_completed'],
-                        'status' => Timesheet::STATUS_DRAFT,
-                        'start_time' => '09:00',
+                        'status' => Timesheet::STATUS_SUBMITTED,
+                        'start_time' => '08:00',
                         'end_time' => null,
                     ]);
 
@@ -847,6 +870,76 @@ class TimesheetController extends Controller
             ->first();
 
         return response()->json($summary);
+    }
+
+    /**
+     * Bulk delete draft timesheets (admin only).
+     */
+    public function bulkDelete(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user || !$user->hasRole('admin')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        $ids = $request->input('timesheet_ids', []);
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['error' => 'No timesheet IDs provided'], 400);
+        }
+        $deleted = 0;
+        foreach ($ids as $id) {
+            $timesheet = \Modules\TimesheetManagement\Domain\Models\Timesheet::find($id);
+            if ($timesheet && $timesheet->status === \Modules\TimesheetManagement\Domain\Models\Timesheet::STATUS_DRAFT) {
+                $timesheet->delete();
+                $deleted++;
+            }
+        }
+        return response()->json(['success' => true, 'deleted' => $deleted]);
+    }
+
+    /**
+     * Bulk approve timesheets (admin only).
+     */
+    public function bulkApprove(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user || !$user->hasRole('admin')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        $ids = $request->input('timesheet_ids', []);
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['error' => 'No timesheet IDs provided'], 400);
+        }
+        $approved = 0;
+        foreach ($ids as $id) {
+            $timesheet = \Modules\TimesheetManagement\Domain\Models\Timesheet::find($id);
+            if ($timesheet && $timesheet->status === \Modules\TimesheetManagement\Domain\Models\Timesheet::STATUS_SUBMITTED) {
+                $timesheet->status = \Modules\TimesheetManagement\Domain\Models\Timesheet::STATUS_MANAGER_APPROVED;
+                $timesheet->save();
+                $approved++;
+            }
+        }
+        return response()->json(['success' => true, 'approved' => $approved]);
+    }
+
+    /**
+     * Approve a single timesheet (temporarily allow any authenticated user for debugging).
+     */
+    public function approve(Request $request, $id)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        $timesheet = \Modules\TimesheetManagement\Domain\Models\Timesheet::find($id);
+        if (!$timesheet) {
+            return response()->json(['error' => 'Timesheet not found'], 404);
+        }
+        if ($timesheet->status !== \Modules\TimesheetManagement\Domain\Models\Timesheet::STATUS_SUBMITTED) {
+            return response()->json(['error' => 'Only submitted timesheets can be approved'], 400);
+        }
+        $timesheet->status = \Modules\TimesheetManagement\Domain\Models\Timesheet::STATUS_MANAGER_APPROVED;
+        $timesheet->save();
+        return response()->json(['success' => true, 'message' => 'Timesheet approved successfully.']);
     }
 }
 

@@ -81,7 +81,7 @@ export default function Edit({ auth, role, permissions, selectedPermissions: ini
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     router.put(`/settings/roles/${role.id}`, {
       data: {
         ...data,
@@ -142,18 +142,23 @@ export default function Edit({ auth, role, permissions, selectedPermissions: ini
     }
   };
 
+  // If permissions is an object (grouped), flatten it to an array
+  const flatPermissions = Array.isArray(permissions)
+    ? permissions
+    : Object.values(permissions).flat();
+
   // Group permissions by module
-  const groupedPermissions = permissions.reduce((acc, permission) => {
+  const groupedPermissions = flatPermissions.reduce((acc, permission) => {
     const [module] = permission.name.split('.');
     if (!acc[module]) acc[module] = [];
     acc[module].push(permission);
     return acc;
-  }, {} as Record<string, typeof permissions>);
+  }, {} as Record<string, typeof flatPermissions>);
 
   return (
-    <AppLayout 
-      title={t('edit_role')} 
-      breadcrumbs={breadcrumbs} 
+    <AppLayout
+      title={t('edit_role')}
+      breadcrumbs={breadcrumbs}
       requiredPermission="roles.edit"
     >
       <Head title={t('edit_role')} />
@@ -187,12 +192,12 @@ export default function Edit({ auth, role, permissions, selectedPermissions: ini
                       <TabsTrigger value="general">{t('common:general')}</TabsTrigger>
                       <TabsTrigger value="permissions">{t('common:permissions')}</TabsTrigger>
                     </TabsList>
-                    
+
                     <TabsContent value="general" className="space-y-4">
                       <div className="space-y-2">
                         <Label htmlFor="name">{t('role_name')} *</Label>
-                        <Input 
-                          id="name" 
+                        <Input
+                          id="name"
                           value={data.name}
                           onChange={e => setData('name', e.target.value)}
                           placeholder={t('role_name_placeholder')}
@@ -202,8 +207,8 @@ export default function Edit({ auth, role, permissions, selectedPermissions: ini
 
                       <div className="space-y-2">
                         <Label htmlFor="display_name">{t('display_name')}</Label>
-                        <Input 
-                          id="display_name" 
+                        <Input
+                          id="display_name"
                           value={data.display_name}
                           onChange={e => setData('display_name', e.target.value)}
                           placeholder={t('display_name_placeholder')}
@@ -213,8 +218,8 @@ export default function Edit({ auth, role, permissions, selectedPermissions: ini
 
                       <div className="space-y-2">
                         <Label htmlFor="description">{t('description')}</Label>
-                        <Textarea 
-                          id="description" 
+                        <Textarea
+                          id="description"
                           value={data.description}
                           onChange={e => setData('description', e.target.value)}
                           placeholder={t('description_placeholder')}
@@ -223,7 +228,7 @@ export default function Edit({ auth, role, permissions, selectedPermissions: ini
                         {errors.description && <p className="text-sm text-red-500">{errors.description}</p>}
                       </div>
                     </TabsContent>
-                    
+
                     <TabsContent value="permissions" className="space-y-6">
                       {Object.entries(groupedPermissions).map(([module, permissions]) => (
                         <div key={module} className="space-y-3">
@@ -231,24 +236,24 @@ export default function Edit({ auth, role, permissions, selectedPermissions: ini
                             <h4 className="text-sm font-medium capitalize">
                               {module.replace('_', ' ')} ({permissions.length})
                             </h4>
-                            <Button 
-                              type="button" 
-                              variant="outline" 
+                            <Button
+                              type="button"
+                              variant="outline"
                               size="sm"
                               onClick={() => handleModuleSelectAll(permissions)}
                             >
-                              {permissions.every(p => selectedPermissions.includes(p.id)) 
-                                ? t('common:deselect_all') 
+                              {permissions.every(p => selectedPermissions.includes(p.id))
+                                ? t('common:deselect_all')
                                 : t('common:select_all')}
                             </Button>
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                             {permissions.map((permission) => (
                               <div key={permission.id} className="flex items-center space-x-2">
-                                <Checkbox 
+                                <Checkbox
                                   id={`permission-${permission.id}`}
                                   checked={selectedPermissions.includes(permission.id)}
-                                  onCheckedChange={(checked) => 
+                                  onCheckedChange={(checked) =>
                                     handlePermissionChange(permission.id, checked as boolean)
                                   }
                                 />
@@ -273,9 +278,9 @@ export default function Edit({ auth, role, permissions, selectedPermissions: ini
                   <CardTitle>{t('common:actions')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <Button 
-                    type="submit" 
-                    className="w-full" 
+                  <Button
+                    type="submit"
+                    className="w-full"
                     disabled={processing}
                   >
                     {processing ? (
@@ -290,11 +295,11 @@ export default function Edit({ auth, role, permissions, selectedPermissions: ini
                       </>
                     )}
                   </Button>
-                  
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    className="w-full" 
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full"
                     asChild
                   >
                     <Link href={`/settings/roles/${role.id}`}>
@@ -310,4 +315,4 @@ export default function Edit({ auth, role, permissions, selectedPermissions: ini
       </div>
     </AppLayout>
   );
-} 
+}

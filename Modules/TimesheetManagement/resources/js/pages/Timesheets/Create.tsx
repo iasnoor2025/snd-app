@@ -447,11 +447,21 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
                   <div>
                     <label className="block text-sm font-medium text-gray-700">{t('TimesheetManagement:fields.start_date', 'Start Date')}</label>
                     <input
-                      type="date"
-                      value={startDate ? format(startDate, 'yyyy-MM-dd') : ''}
-                      onChange={e => onStartDateSelect(e.target.value ? new Date(e.target.value) : undefined)}
+                      type="month"
+                      value={startDate ? format(startDate, 'yyyy-MM') : ''}
+                      onChange={e => {
+                        if (e.target.value) {
+                          const [year, month] = e.target.value.split('-').map(Number);
+                          const firstDay = new Date(year, month - 1, 1);
+                          const lastDay = new Date(year, month, 0);
+                          setStartDate(firstDay);
+                          setEndDate(lastDay);
+                          setData('start_date', format(firstDay, 'yyyy-MM-dd'));
+                          setData('end_date', format(lastDay, 'yyyy-MM-dd'));
+                          generateDailyOvertimeHours(firstDay, lastDay);
+                        }
+                      }}
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                      disabled={isBulkMode}
                     />
                   </div>
                   <div>
