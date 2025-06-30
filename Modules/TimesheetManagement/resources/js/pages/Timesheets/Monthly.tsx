@@ -43,9 +43,11 @@ import { format, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMont
 import { Popover, PopoverContent, PopoverTrigger } from "@/Core";
 import { Calendar } from "@/Core";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
 
 const breadcrumbs: BreadcrumbItem[] = [
-  { title: 'Dashboard', href: '/dashboard' },
+  { title: t('dashboard', 'Dashboard'), href: '/dashboard' },
   { title: 'Timesheets', href: '/timesheets' },
   { title: 'Monthly View', href: '#' }
 ];
@@ -79,7 +81,7 @@ interface Props extends PageProps {
 }
 
 export default function MonthlyTimesheets({ auth, timesheets = [], employees = [] }: Props) {
-  const { t } = useTranslation('timesheet');
+  const { t } = useTranslation('TimesheetManagement');
 
   const { toast } = useToast();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -235,10 +237,7 @@ export default function MonthlyTimesheets({ auth, timesheets = [], employees = [
   };
 
   const handleExport = () => {
-    toast({
-      title: "Export Started",
-      description: "Your monthly timesheet export is being prepared."
-    });
+    toast.success(t('export_started', 'Export Started'));
 
     // Here you would implement the actual export functionality
     // For example, making an API call to generate a PDF or Excel file
@@ -246,11 +245,7 @@ export default function MonthlyTimesheets({ auth, timesheets = [], employees = [
 
   const handleGeneratePaySlip = () => {
     if (!selectedEmployee || selectedEmployee === 'all') {
-      toast({
-        title: "Error",
-        description: "Please select an employee to generate a pay slip",
-        variant: "destructive"
-      });
+      toast.error(t('error', 'Error'));
       return;
     }
 
@@ -260,11 +255,7 @@ export default function MonthlyTimesheets({ auth, timesheets = [], employees = [
     );
 
     if (!employeeTimesheet) {
-      toast({
-        title: "Error",
-        description: "No timesheet data found for the selected employee in this month",
-        variant: "destructive"
-      });
+      toast.error(t('generate_failed', 'Failed to generate pay slip. Please try again.'));
       return;
     }
 
@@ -282,11 +273,7 @@ export default function MonthlyTimesheets({ auth, timesheets = [], employees = [
 
 
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to generate pay slip. Please try again.",
-        variant: "destructive"
-      });
+      toast.error(t('generate_failed', 'Failed to generate pay slip. Please try again.'));
 
     }
   };
@@ -372,11 +359,7 @@ export default function MonthlyTimesheets({ auth, timesheets = [], employees = [
             <Button variant="outline" size="sm" className="w-full sm:w-auto"
               onClick={() => {
                 if (!selectedEmployee || selectedEmployee === 'all') {
-                  toast({
-                    title: "Error",
-                    description: "Please select an employee to generate a pay slip",
-                    variant: "destructive"
-                  });
+                  toast.error(t('error', 'Error'));
                   return;
                 }
 
@@ -391,11 +374,7 @@ export default function MonthlyTimesheets({ auth, timesheets = [], employees = [
             <Button variant="outline" size="sm" className="w-full sm:w-auto"
               onClick={() => {
                 if (!selectedEmployee || selectedEmployee === 'all') {
-                  toast({
-                    title: "Error",
-                    description: "Please select an employee to generate a pay slip",
-                    variant: "destructive"
-                  });
+                  toast.error(t('error', 'Error'));
                   return;
                 }
 

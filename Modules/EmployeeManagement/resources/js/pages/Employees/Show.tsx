@@ -51,10 +51,10 @@ import axios from 'axios';
 // Replace static imports with React.lazy for large components
 const DocumentManager = React.lazy(() => import('../../components/employees/EmployeeDocumentManager'));
 const FinalSettlementTab = React.lazy(() => import('../../components/employees/FinalSettlementTab'));
-const TimesheetSummary = React.lazy(() => import('../../components/employees/timesheets/TimesheetSummary'));
-const TimesheetList = React.lazy(() => import('../../components/employees/timesheets/TimesheetList'));
-const TimesheetForm = React.lazy(() => import('../../components/employees/timesheets/TimesheetForm'));
-const AssignmentHistory = React.lazy(() => import('../../components/assignments/AssignmentHistory'));
+const TimesheetSummary = React.lazy(() => import('../../components/employees/timesheets/TimesheetSummary.lazy'));
+const TimesheetList = React.lazy(() => import('../../components/employees/timesheets/TimesheetList.lazy'));
+const TimesheetForm = React.lazy(() => import('../../components/employees/timesheets/TimesheetForm.lazy'));
+const AssignmentHistory = React.lazy(() => import('../../components/assignments/AssignmentHistory.lazy'));
 import { useQueryClient } from '@tanstack/react-query';
 import { Separator } from "@/Core";
 import { Avatar, AvatarFallback } from "@/Core";
@@ -228,6 +228,7 @@ const DocumentTab = ({ employeeId }: { employeeId: number }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [documents, setDocuments] = useState<any[]>([]);
   const [retryCount, setRetryCount] = useState(0);
+  const { t } = useTranslation(['EmployeeManagement', 'common']);
 
   // Direct API fetch without DocumentManager
   useEffect(() => {
@@ -334,10 +335,10 @@ const DocumentTab = ({ employeeId }: { employeeId: number }) => {
                   if (confirm('Are you sure you want to delete this document?')) {
                     axios.delete(`/api/employee/${employeeId}/documents/${doc.id}`)
                       .then(() => {
-                        EmployeeToastService.documentDeleted(documentType);
+                        ToastService.success(`${doc.file_type || 'Document'} deleted successfully`);
                       })
                       .catch((error) => {
-                        EmployeeToastService.documentUploadFailed(documentType, 'Failed to delete document');
+                        ToastService.error(`Failed to delete ${doc.file_type || 'Document'}`);
                       });
                   }
                 }}
@@ -857,7 +858,7 @@ export default function Show({
                 {employee?.first_name || ''} {employee?.middle_name ? `${employee.middle_name} ` : ''}{employee?.last_name || ''}
               </h1>
               <div className="flex items-center gap-2 text-muted-foreground">
-                <span>{typeof employee?.position === 'object' && employee?.position !== null ? getTranslation(employee.position.name) : employee?.position}</span>
+                <span>{getTranslation(employee.position?.name ?? employee.position)}</span>
                 <span className="text-xs">•</span>
                 <span>ID: {employee?.employee_id || 'N/A'}</span>
                 {employee?.status && getStatusBadge(employee.status)}
@@ -1016,12 +1017,12 @@ export default function Show({
                           <dd className="text-sm">{employee.user?.email || 'Not set'}</dd>
                         </div> */}
                         <div className="flex justify-between border-b pb-2">
-                          <dt className="text-sm font-medium">Phone</dt>
+                          <dt className="text-sm font-medium">{t('employees:fields.phone')}</dt>
                           <dd className="text-sm">{employee.phone || 'Not set'}</dd>
                         </div>
                         {employee.nationality && (
                           <div className="flex justify-between border-b pb-2">
-                            <dt className="text-sm font-medium">Nationality</dt>
+                            <dt className="text-sm font-medium">{t('employees:fields.nationality')}</dt>
                             <dd className="text-sm">{employee.nationality}</dd>
                           </div>
                         )}
@@ -1178,25 +1179,21 @@ export default function Show({
                           <dd className="text-sm">{employee.file_number || "Not assigned"}</dd>
                         </div>
                         <div className="flex justify-between border-b pb-2">
-                          <dt className="text-sm font-medium">Position</dt>
-                          <dd className="text-sm">{typeof employee.position === 'object' && employee.position !== null ? getTranslation(employee.position.name) : employee.position}</dd>
+                          <dt className="text-sm font-medium">{t('employees:fields.position')}</dt>
+                          <dd className="text-sm">{getTranslation(employee.position?.name ?? employee.position)}</dd>
                         </div>
                         <div className="flex justify-between border-b pb-2">
-                          <dt className="text-sm font-medium">Department</dt>
-                          <dd className="text-sm">{
-                            (typeof employee.department === 'object' && employee.department !== null && 'name' in employee.department)
-                              ? (employee.department as { name: string }).name
-                              : employee.department || 'Not assigned'
-                          }</dd>
+                          <dt className="text-sm font-medium">{t('employees:fields.department')}</dt>
+                          <dd className="text-sm">{getTranslation((employee.department && typeof employee.department === 'object' && 'name' in employee.department) ? employee.department.name : employee.department)}</dd>
                         </div>
                         {employee.supervisor && (
                           <div className="flex justify-between border-b pb-2">
-                            <dt className="text-sm font-medium">Supervisor</dt>
+                            <dt className="text-sm font-medium">{t('employees:fields.supervisor')}</dt>
                             <dd className="text-sm">{employee.supervisor}</dd>
                           </div>
                         )}
                         <div className="flex justify-between border-b pb-2">
-                          <dt className="text-sm font-medium">Status</dt>
+                          <dt className="text-sm font-medium">{t('employees:fields.status')}</dt>
                           <dd className="text-sm">{getStatusBadge(employee.status)}</dd>
                         </div>
                       </dl>

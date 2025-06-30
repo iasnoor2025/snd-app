@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Head } from '@inertiajs/react';
 import { AppLayout } from '@/Core';
 import { Bell, Mail, MessageSquare, Calendar, AlertTriangle, CheckCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface NotificationSettings {
     email_notifications: boolean;
@@ -20,7 +21,8 @@ interface NotificationSettings {
     marketing_notifications: boolean;
 }
 
-export default function Notifications() {
+export default function NotificationSettings() {
+    const { t } = useTranslation();
     const [settings, setSettings] = useState<NotificationSettings>({
         email_notifications: true,
         sms_notifications: false,
@@ -153,73 +155,75 @@ export default function Notifications() {
     ];
 
     const breadcrumbs = [
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Settings', href: '/settings' },
-        { title: 'Notifications', href: '/settings/notifications' },
+        { title: t('ui.titles.settings'), href: route('settings.index') },
+        { title: t('settings.notifications'), href: route('settings.notifications') }
     ];
 
     return (
-        <AppLayout title="Notification Settings" breadcrumbs={breadcrumbs}>
-            <Head title="Notification Settings" />
+        <AppLayout title={t('settings.notifications')} breadcrumbs={breadcrumbs}>
+            <Head title={t('settings.notifications')} />
 
-            <div className="max-w-4xl mx-auto py-8 px-4">
-                <div className="space-y-6">
-                    <header>
-                        <h1 className="text-2xl font-bold text-gray-900">Notification Settings</h1>
-                        <p className="text-gray-600 mt-1">
-                            Manage how and when you receive notifications from the system.
+            <div className="py-12">
+                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    <div className="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
+                        <h2 className="text-lg font-medium text-gray-900">
+                            {t('settings.notification_preferences')}
+                        </h2>
+
+                        <p className="mt-1 text-sm text-gray-600">
+                            {t('settings.notification_preferences_description')}
                         </p>
-                    </header>
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        {notificationGroups.map((group, groupIndex) => (
-                            <div key={groupIndex} className="bg-white rounded-lg shadow p-6">
-                                <div className="mb-4">
-                                    <h3 className="text-lg font-semibold flex items-center gap-2 mb-2">
-                                        {group.icon}
-                                        {group.title}
-                                    </h3>
-                                    <p className="text-sm text-gray-600">{group.description}</p>
-                                </div>
-                                
-                                <div className="space-y-4">
-                                    {group.settings.map((setting, settingIndex) => (
-                                        <div key={settingIndex} className="flex items-center justify-between py-2">
-                                            <div className="flex items-start gap-3">
-                                                {setting.icon && <div className="mt-0.5">{setting.icon}</div>}
-                                                <div>
-                                                    <label className="font-medium text-gray-900 cursor-pointer">
-                                                        {setting.label}
-                                                    </label>
-                                                    <p className="text-sm text-gray-600">{setting.description}</p>
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            {notificationGroups.map((group, groupIndex) => (
+                                <div key={groupIndex} className="bg-white rounded-lg shadow p-6">
+                                    <div className="mb-4">
+                                        <h3 className="text-lg font-semibold flex items-center gap-2 mb-2">
+                                            {group.icon}
+                                            {group.title}
+                                        </h3>
+                                        <p className="text-sm text-gray-600">{group.description}</p>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        {group.settings.map((setting, settingIndex) => (
+                                            <div key={settingIndex} className="flex items-center justify-between py-2">
+                                                <div className="flex items-start gap-3">
+                                                    {setting.icon && <div className="mt-0.5">{setting.icon}</div>}
+                                                    <div>
+                                                        <label className="font-medium text-gray-900 cursor-pointer">
+                                                            {setting.label}
+                                                        </label>
+                                                        <p className="text-sm text-gray-600">{setting.description}</p>
+                                                    </div>
                                                 </div>
+                                                <label className="relative inline-flex items-center cursor-pointer">
+                                                    <input
+                                                        type="checkbox"
+                                                        className="sr-only peer"
+                                                        checked={settings[setting.key]}
+                                                        onChange={(e) => handleSwitchChange(setting.key, e.target.checked)}
+                                                    />
+                                                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                                </label>
                                             </div>
-                                            <label className="relative inline-flex items-center cursor-pointer">
-                                                <input
-                                                    type="checkbox"
-                                                    className="sr-only peer"
-                                                    checked={settings[setting.key]}
-                                                    onChange={(e) => handleSwitchChange(setting.key, e.target.checked)}
-                                                />
-                                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                                            </label>
-                                        </div>
-                                    ))}
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
 
-                        <div className="flex justify-end pt-6">
-                            <button
-                                type="submit"
-                                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                            >
-                                Save Settings
-                            </button>
-                        </div>
-                    </form>
+                            <div className="flex justify-end pt-6">
+                                <button
+                                    type="submit"
+                                    className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                >
+                                    {t('settings.save_settings')}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </AppLayout>
     );
-} 
+}

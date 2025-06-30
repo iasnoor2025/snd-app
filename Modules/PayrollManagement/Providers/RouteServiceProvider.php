@@ -40,7 +40,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         Route::middleware('web')
             ->namespace($this->moduleNamespace)
-            ->group(module_path('Payroll', '/routes/web.php'));
+            ->group(module_path('PayrollManagement', '/Routes/web.php'));
     }
 
     /**
@@ -53,7 +53,7 @@ class RouteServiceProvider extends ServiceProvider
         Route::prefix('api')
             ->middleware('api')
             ->namespace($this->moduleNamespace)
-            ->group(module_path('Payroll', '/routes/api.php'));
+            ->group(module_path('PayrollManagement', '/Routes/api.php'));
     }
 }
 

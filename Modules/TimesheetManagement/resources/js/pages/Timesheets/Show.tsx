@@ -35,11 +35,12 @@ import {
   TooltipTrigger,
 } from "@/Core";
 import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
 
 const breadcrumbs: BreadcrumbItem[] = [
-  { title: 'Dashboard', href: '/dashboard' },
-  { title: 'Timesheets', href: '/timesheets' },
-  { title: 'View', href: '#' }
+  { title: t('dashboard', 'Dashboard'), href: '/dashboard' },
+  { title: t('view', 'View'), href: '#' }
 ];
 
 interface Props extends PageProps {
@@ -47,7 +48,7 @@ interface Props extends PageProps {
 }
 
 export default function TimesheetShow({ auth, timesheet }: Props) {
-  const { t } = useTranslation('timesheet');
+  const { t } = useTranslation('TimesheetManagement');
 
   const { toast } = useToast();
   const { hasPermission } = usePermission();
@@ -68,21 +69,14 @@ export default function TimesheetShow({ auth, timesheet }: Props) {
   };
 
   const handleDelete = () => {
-    if (confirm('Are you sure you want to delete this timesheet?')) {
+    if (confirm(t('delete_confirm', 'Are you sure you want to delete this timesheet?'))) {
       router.delete(route('timesheets.destroy', timesheet.id), {
         onSuccess: () => {
-          toast({
-            title: "Success",
-            description: "Timesheet deleted successfully"
-          });
+          toast.success(t('success', 'Success'));
           router.visit(route('timesheets.index'));
         },
         onError: (errors) => {
-          toast({
-            title: "Error",
-            description: errors.error || 'Failed to delete timesheet',
-            variant: "destructive"
-          });
+          toast.error(errors.error || t('delete_failed', 'Failed to delete timesheet'));
         },
       });
     }
@@ -91,17 +85,10 @@ export default function TimesheetShow({ auth, timesheet }: Props) {
   const handleApprove = () => {
     router.put(route('timesheets.approve', timesheet.id), {}, {
       onSuccess: () => {
-        toast({
-          title: "Success",
-          description: "Timesheet approved successfully"
-        });
+        toast.success(t('success', 'Success'));
       },
       onError: (errors) => {
-        toast({
-          title: "Error",
-          description: errors.error || 'Failed to approve timesheet',
-          variant: "destructive"
-        });
+        toast.error(errors.error || t('approve_failed', 'Failed to approve timesheet'));
       },
     });
   };
@@ -109,17 +96,10 @@ export default function TimesheetShow({ auth, timesheet }: Props) {
   const handleReject = () => {
     router.put(route('timesheets.reject', timesheet.id), {}, {
       onSuccess: () => {
-        toast({
-          title: "Success",
-          description: "Timesheet rejected successfully"
-        });
+        toast.success(t('success', 'Success'));
       },
       onError: (errors) => {
-        toast({
-          title: "Error",
-          description: errors.error || 'Failed to reject timesheet',
-          variant: "destructive"
-        });
+        toast.error(errors.error || t('reject_failed', 'Failed to reject timesheet'));
       },
     });
   };

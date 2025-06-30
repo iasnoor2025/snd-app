@@ -39,9 +39,9 @@ import { format } from 'date-fns';
 import { route } from 'ziggy-js';
 
 const breadcrumbs: BreadcrumbItem[] = [
-  { title: 'Dashboard', href: '/dashboard' },
+  { title: t('dashboard', 'Dashboard'), href: '/dashboard' },
   { title: 'Timesheets', href: '/timesheets' },
-  { title: 'Edit', href: '#' }
+  { title: t('edit', 'Edit'), href: '#' }
 ];
 
 // Define interfaces
@@ -89,7 +89,7 @@ const formSchema = z.object({
 });
 
 export default function TimesheetEdit({ auth, timesheet, employees = [], projects = [] }: Props) {
-  const { t } = useTranslation('timesheet');
+  const { t } = useTranslation('TimesheetManagement');
 
   const { toast } = useToast();
   const [processing, setProcessing] = useState(false);
@@ -130,18 +130,11 @@ export default function TimesheetEdit({ auth, timesheet, employees = [], project
 
     router.put(route('timesheets.update', timesheet.id), formData, {
       onSuccess: () => {
-        toast({
-          title: "Success",
-          description: "Timesheet updated successfully"
-        });
+        toast.success(t('success', 'Success'));
         setProcessing(false);
       },
       onError: (errors) => {
-        toast({
-          title: "Error",
-          description: errors.error || 'Failed to update timesheet',
-          variant: "destructive"
-        });
+        toast.error(errors.error || t('update_failed', 'Failed to update timesheet'));
         setProcessing(false);
 
         // Map errors to form
@@ -378,7 +371,7 @@ export default function TimesheetEdit({ auth, timesheet, employees = [], project
                   </Button>
                   <Button type="submit" disabled={processing}>
                     <SaveIcon className="mr-2 h-4 w-4" />
-                    Update Timesheet
+                    {t('update', 'Update')}
                   </Button>
                 </div>
             </Form>

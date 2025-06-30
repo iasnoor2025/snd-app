@@ -13,6 +13,8 @@ import { Label } from "@/Core";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/Core";
 import { format } from 'date-fns';
 import { route } from 'ziggy-js';
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
 
 interface Props extends PageProps {
     payrolls: {
@@ -101,21 +103,21 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
 
     return (
         <AppLayout
-            title={t('payroll_management')}
+            title={t('PayrollManagement:pages.payroll')}
             breadcrumbs={[
                 { title: 'Payroll', href: route('payroll.index') },
             ]}
             requiredPermission="payroll.view"
         >
-            <Head title={t('payroll_management')} />
+            <Head title={t('PayrollManagement:pages.payroll')} />
 
             <div className="container mx-auto py-6">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between">
-                        <CardTitle>{t('ttl_payroll_records')}</CardTitle>
+                        <CardTitle>{t('PayrollManagement:pages.payroll')}</CardTitle>
                         <div className="flex gap-2">
                             <Button onClick={() => setShowModal(true)}>
-                                {t('generate_payroll')}
+                                {t('PayrollManagement:actions.process_payroll')}
                             </Button>
                             <Button
                                 variant="outline"
@@ -139,7 +141,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                     onValueChange={(value) => handleFilter('status', value)}
                                 >
                                     <SelectTrigger className="w-48">
-                                        <SelectValue placeholder={t('all_status')} />
+                                        <SelectValue placeholder={t('PayrollManagement:placeholders.select_status')} />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="pending">Pending</SelectItem>
@@ -153,7 +155,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                     onValueChange={(value) => handleFilter('employee_id', value)}
                                 >
                                     <SelectTrigger className="w-48">
-                                        <SelectValue placeholder={t('ph_all_employees')} />
+                                        <SelectValue placeholder={t('PayrollManagement:placeholders.select_employee')} />
                                     </SelectTrigger>
                                     {hasInvalidOriginalEmployee ? (
                                         <div style={{ color: 'red', padding: 8 }}>
@@ -226,7 +228,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                         <TableRow>
                                             <TableCell colSpan={9} className="text-center py-8">
                                                 <div className="flex flex-col items-center justify-center text-muted-foreground">
-                                                    <p>{t('no_payroll_records_found')}</p>
+                                                    <p>{t('PayrollManagement:messages.no_records')}</p>
                                                 </div>
                                             </TableCell>
                                         </TableRow>
@@ -241,7 +243,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
             <Dialog open={showModal} onOpenChange={setShowModal}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>{t('generate_payroll')}</DialogTitle>
+                        <DialogTitle>{t('PayrollManagement:actions.process_payroll')}</DialogTitle>
                         <DialogDescription>
                             Select the month for which you want to generate payroll records.
                         </DialogDescription>
@@ -249,7 +251,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                     <form onSubmit={handleSubmit}>
                         <div className="grid gap-4 py-4">
                             <div className="grid gap-2">
-                                <Label htmlFor="month">{t('lbl_select_month')}</Label>
+                                <Label htmlFor="month">{t('PayrollManagement:fields.select_month')}</Label>
                                 <Input
                                     type="month"
                                     id="month"

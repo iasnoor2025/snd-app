@@ -18,9 +18,11 @@ use Modules\PayrollManagement\Http\Controllers\ComplianceReportController;
 
 // API routes uncommented
 
-Route::middleware(['auth:sanctum']).group(function () {
-    // Payroll Routes
-    Route::prefix('api/payroll')->name('api.payroll.')->group(function () {
+// Payroll Routes
+Route::prefix('payroll')
+    ->name('payroll.')
+    ->middleware('auth:sanctum')
+    ->group(function () {
         // Payroll listing and management
         Route::get('/', [PayrollController::class, 'index'])
             ->middleware('permission:payroll.view')
@@ -68,8 +70,11 @@ Route::middleware(['auth:sanctum']).group(function () {
         Route::get('/compliance-report', [ComplianceReportController::class, 'index'])->middleware('permission:payroll.view')->name('compliance-report');
     });
 
-    // Salary Advance API Routes
-    Route::prefix('api/salary-advances')->name('api.salary-advances.')->group(function() {
+// Salary Advance API Routes
+Route::prefix('salary-advances')
+    ->name('salary-advances.')
+    ->middleware('auth:sanctum')
+    ->group(function() {
         Route::get('/', [SalaryAdvanceController::class, 'index'])
             ->middleware('permission:salary-advances.view')
             ->name('index');
@@ -87,8 +92,11 @@ Route::middleware(['auth:sanctum']).group(function () {
             ->name('reject');
     });
 
-    // Final Settlement API Routes
-    Route::prefix('api/final-settlements')->name('api.final-settlements.')->group(function() {
+// Final Settlement API Routes
+Route::prefix('final-settlements')
+    ->name('final-settlements.')
+    ->middleware('auth:sanctum')
+    ->group(function() {
         Route::get('/', [FinalSettlementController::class, 'index'])
             ->middleware('permission:final-settlements.view')
             ->name('index');
@@ -112,15 +120,14 @@ Route::middleware(['auth:sanctum']).group(function () {
             ->name('report');
     });
 
-    // Advance Payment API Routes
-    Route::get('/employees/{employee}/advance-payments/history', [AdvancePaymentController::class, 'apiPaymentHistory'])
-        ->middleware('permission:advances.view')
-        ->name('api.employees.advance-payments.history');
+// Advance Payment API Routes
+Route::get('/employees/{employee}/advance-payments/history', [AdvancePaymentController::class, 'apiPaymentHistory'])
+    ->middleware(['auth:sanctum', 'permission:advances.view'])
+    ->name('employees.advance-payments.history');
 
-    Route::get('/employees/{employee}/advance-payments', [AdvancePaymentController::class, 'getEmployeeAdvances'])
-        ->middleware('permission:advances.view')
-        ->name('api.employees.advance-payments');
-});
+Route::get('/employees/{employee}/advance-payments', [AdvancePaymentController::class, 'getEmployeeAdvances'])
+    ->middleware(['auth:sanctum', 'permission:advances.view'])
+    ->name('employees.advance-payments');
 
 
 

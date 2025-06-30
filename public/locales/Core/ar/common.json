@@ -87,17 +87,17 @@
     "settings": "الإعدادات",
     "reports": "التقارير",
     "notifications": "الإشعارات",
-    "audit_compliance": "التدقيق والامتثال",
+    "auditCompliance": "التدقيق والامتثال",
     "api": "واجهة برمجة التطبيقات",
-    "mobile_bridge": "تطبيق الجوال",
+    "mobileBridge": "تطبيق الجوال",
     "localization": "الترجمة",
-    "customer_management": "إدارة العملاء",
-    "equipment_management": "إدارة المعدات",
-    "rental_management": "إدارة التأجير",
-    "payroll_managenent": "إدارة الرواتب",
-    "timesheet_management": "إدارة سجلات الدوام",
-    "leave_management": "إدارة الإجازات",
-    "project_management": "إدارة المشاريع",
+    "customerManagement": "إدارة العملاء",
+    "equipmentManagement": "إدارة المعدات",
+    "rentalManagement": "إدارة التأجير",
+    "payrollManagement": "إدارة الرواتب",
+    "timesheetManagement": "إدارة سجلات الدوام",
+    "leaveManagement": "إدارة الإجازات",
+    "projectManagement": "إدارة المشاريع",
     "reporting": "التقارير"
   },
   "modules": {
@@ -105,7 +105,7 @@
     "EmployeeManagement": "إدارة الموظفين",
     "LeaveManagement": "إدارة الإجازات",
     "TimesheetManagement": "إدارة سجلات الدوام",
-    "PayrollManagenent": "إدارة الرواتب",
+    "PayrollManagement": "إدارة الرواتب",
     "ProjectManagement": "إدارة المشاريع",
     "RentalManagement": "إدارة التأجير",
     "EquipmentManagement": "إدارة المعدات",
@@ -118,8 +118,93 @@
     "AuditCompliance": "التدقيق والامتثال",
     "API": "واجهة برمجة التطبيقات"
   },
+  "footer": {
+    "documentation": "التوثيق",
+    "support": "الدعم"
+  },
   "employeemanagement": {
     "employees": "الموظفين",
     "salary_increments": "زيادات الرواتب"
+  },
+  "ui": {
+    "buttons": {
+      "toggle_sidebar": "تبديل الشريط الجانبي",
+      "cancel": "إلغاء",
+      "save": "حفظ",
+      "delete": "حذف",
+      "edit": "تعديل",
+      "view": "عرض",
+      "create": "إنشاء",
+      "update": "تحديث",
+      "back": "رجوع",
+      "close": "إغلاق",
+      "confirm": "تأكيد",
+      "search": "بحث",
+      "filter": "تصفية",
+      "clear": "مسح",
+      "export": "تصدير",
+      "import": "استيراد",
+      "download": "تحميل",
+      "upload": "رفع",
+      "submit": "إرسال",
+      "reset": "إعادة تعيين"
+    },
+    "placeholders": {
+      "search": "بحث...",
+      "select_date": "اختر التاريخ",
+      "select_time": "اختر الوقت",
+      "select_option": "اختر خيارًا",
+      "enter_value": "أدخل قيمة",
+      "type_to_search": "اكتب للبحث...",
+      "no_options": "لا توجد خيارات متاحة"
+    },
+    "labels": {
+      "status": "الحالة",
+      "type": "النوع",
+      "name": "الاسم",
+      "description": "الوصف",
+      "date": "التاريخ",
+      "time": "الوقت",
+      "from": "من",
+      "to": "إلى",
+      "notes": "ملاحظات",
+      "details": "تفاصيل",
+      "actions": "إجراءات"
+    },
+    "messages": {
+      "loading": "جاري التحميل...",
+      "no_results": "لم يتم العثور على نتائج",
+      "error": "حدث خطأ",
+      "success": "تمت العملية بنجاح",
+      "confirm_delete": "هل أنت متأكد من حذف هذا العنصر؟",
+      "required_field": "هذا الحقل مطلوب"
+    },
+    "titles": {
+      "create_new": "إنشاء جديد",
+      "edit_item": "تعديل العنصر",
+      "view_details": "عرض التفاصيل",
+      "delete_item": "حذف العنصر",
+      "settings": "الإعدادات",
+      "profile": "الملف الشخصي",
+      "dashboard": "لوحة التحكم",
+      "welcome": "مرحباً"
+    }
+  },
+  "settings": {
+    "password": "كلمة المرور",
+    "current_password": "كلمة المرور الحالية",
+    "new_password": "كلمة المرور الجديدة",
+    "confirm_password": "تأكيد كلمة المرور",
+    "enter_current_password": "أدخل كلمة المرور الحالية",
+    "enter_new_password": "أدخل كلمة المرور الجديدة",
+    "confirm_new_password": "تأكيد كلمة المرور الجديدة",
+    "notifications": "الإشعارات",
+    "notification_preferences": "تفضيلات الإشعارات",
+    "notification_preferences_description": "إدارة كيفية ووقت تلقي الإشعارات من النظام",
+    "save_settings": "حفظ الإعدادات",
+    "email_notifications": "إشعارات البريد الإلكتروني",
+    "push_notifications": "إشعارات الدفع",
+    "in_app_notifications": "إشعارات داخل التطبيق",
+    "sms_notifications": "إشعارات الرسائل القصيرة"
   }
 }

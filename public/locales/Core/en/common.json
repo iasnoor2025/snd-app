@@ -1,4 +1,5 @@
 {
+    "add": "Add",
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",
@@ -77,20 +78,37 @@
     "no_items_found": "No {{items}} found",
     "try_adjusting_search": "Try adjusting your search",
     "navigation": {
+        "navigation": "Navigation",
         "dashboard": "Dashboard",
+        "profile": "Profile",
+        "logout": "Logout",
+        "roles": "Roles",
         "employees": "Employees",
         "projects": "Projects",
         "customers": "Customers",
         "settings": "Settings",
-        "reports": "Reports"
+        "reports": "Reports",
+        "notifications": "Notifications",
+        "auditCompliance": "Audit & Compliance",
+        "api": "API",
+        "mobileBridge": "Mobile Bridge",
+        "localization": "Localization",
+        "customerManagement": "Customer Management",
+        "equipmentManagement": "Equipment Management",
+        "rentalManagement": "Rental Management",
+        "payrollManagement": "Payroll Management",
+        "timesheetManagement": "Timesheet Management",
+        "leaveManagement": "Leave Management",
+        "projectManagement": "Project Management",
+        "reporting": "Reporting",
+        "users": "Users"
     },
     "modules": {
         "Core": "Core",
         "EmployeeManagement": "Employee Management",
         "LeaveManagement": "Leave Management",
         "TimesheetManagement": "Timesheet Management",
-        "PayrollManagenent": "Payroll Managenent",
-        "Payroll": "Payroll Managenent",
+        "PayrollManagement": "Payroll Management",
         "ProjectManagement": "Project Management",
         "RentalManagement": "Rental Management",
         "EquipmentManagement": "Equipment Management",
@@ -103,8 +121,93 @@
         "AuditCompliance": "Audit & Compliance",
         "API": "API"
     },
+    "footer": {
+        "documentation": "Documentation",
+        "support": "Support"
+    },
     "employeemanagement": {
         "employees": "Employees",
         "salary_increments": "Salary Increments"
+    },
+    "ui": {
+        "buttons": {
+            "toggle_sidebar": "Toggle Sidebar",
+            "cancel": "Cancel",
+            "save": "Save",
+            "delete": "Delete",
+            "edit": "Edit",
+            "view": "View",
+            "create": "Create",
+            "update": "Update",
+            "back": "Back",
+            "close": "Close",
+            "confirm": "Confirm",
+            "search": "Search",
+            "filter": "Filter",
+            "clear": "Clear",
+            "export": "Export",
+            "import": "Import",
+            "download": "Download",
+            "upload": "Upload",
+            "submit": "Submit",
+            "reset": "Reset"
+        },
+        "placeholders": {
+            "search": "Search...",
+            "select_date": "Select date",
+            "select_time": "Select time",
+            "select_option": "Select an option",
+            "enter_value": "Enter value",
+            "type_to_search": "Type to search...",
+            "no_options": "No options available"
+        },
+        "labels": {
+            "status": "Status",
+            "type": "Type",
+            "name": "Name",
+            "description": "Description",
+            "date": "Date",
+            "time": "Time",
+            "from": "From",
+            "to": "To",
+            "notes": "Notes",
+            "details": "Details",
+            "actions": "Actions"
+        },
+        "messages": {
+            "loading": "Loading...",
+            "no_results": "No results found",
+            "error": "An error occurred",
+            "success": "Operation successful",
+            "confirm_delete": "Are you sure you want to delete this item?",
+            "required_field": "This field is required"
+        },
+        "titles": {
+            "create_new": "Create New",
+            "edit_item": "Edit Item",
+            "view_details": "View Details",
+            "delete_item": "Delete Item",
+            "settings": "Settings",
+            "profile": "Profile",
+            "dashboard": "Dashboard",
+            "welcome": "Welcome"
+        }
+    },
+    "settings": {
+        "password": "Password",
+        "current_password": "Current Password",
+        "new_password": "New Password",
+        "confirm_password": "Confirm Password",
+        "enter_current_password": "Enter your current password",
+        "enter_new_password": "Enter your new password",
+        "confirm_new_password": "Confirm your new password",
+        "notifications": "Notifications",
+        "notification_preferences": "Notification Preferences",
+        "notification_preferences_description": "Manage how and when you receive notifications from the system",
+        "save_settings": "Save Settings",
+        "email_notifications": "Email Notifications",
+        "push_notifications": "Push Notifications",
+        "in_app_notifications": "In-App Notifications",
+        "sms_notifications": "SMS Notifications"
     }
 }

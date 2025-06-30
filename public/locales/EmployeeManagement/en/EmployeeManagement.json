@@ -1,0 +1,9 @@
+{
+  "employeeDetails": "Employee Details",
+  "name": "Name",
+  "position": "Position",
+  "advances": "Advances",
+  "assignments": "Assignments",
+  "timesheets": "Timesheets",
+  "leaveRequests": "Leave Requests"
+}

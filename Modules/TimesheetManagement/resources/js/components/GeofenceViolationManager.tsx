@@ -192,6 +192,7 @@ const GeofenceViolationManager: React.FC = () => {
         total: 0,
         total_pages: 0
     });
+    const { t } = useTranslation('TimesheetManagement');
 
     useEffect(() => {
         fetchViolations();
@@ -216,7 +217,7 @@ const GeofenceViolationManager: React.FC = () => {
             }));
         } catch (error) {
             console.error('Failed to fetch violations:', error);
-            toast.error('Failed to load violations');
+            toast.error(t('load_violations_failed', 'Failed to load violations'));
         } finally {
             setLoading(false);
         }
@@ -237,8 +238,6 @@ const GeofenceViolationManager: React.FC = () => {
     };
 
     const handleFilterChange = (key: keyof ViolationFilters, value: string) => {
-  const { t } = useTranslation('timesheet');
-
         setFilters(prev => ({ ...prev, [key]: value }));
         setPagination(prev => ({ ...prev, page: 1 }));
     };
@@ -264,7 +263,7 @@ const GeofenceViolationManager: React.FC = () => {
             }
         } catch (error) {
             console.error('Failed to update status:', error);
-            toast.error('Failed to update violation status');
+            toast.error(t('update_violation_failed', 'Failed to update violation status'));
         } finally {
             setActionLoading(null);
         }
@@ -303,7 +302,7 @@ const GeofenceViolationManager: React.FC = () => {
             toast.success('Note added successfully');
         } catch (error) {
             console.error('Failed to add note:', error);
-            toast.error('Failed to add note');
+            toast.error(t('add_note_failed', 'Failed to add note'));
         }
     };
 
@@ -317,7 +316,7 @@ const GeofenceViolationManager: React.FC = () => {
             toast.success(`Notification sent to ${type}`);
         } catch (error) {
             console.error('Failed to send notification:', error);
-            toast.error('Failed to send notification');
+            toast.error(t('send_notification_failed', 'Failed to send notification'));
         } finally {
             setActionLoading(null);
         }
@@ -345,7 +344,7 @@ const GeofenceViolationManager: React.FC = () => {
             toast.success('Violations exported successfully');
         } catch (error) {
             console.error('Failed to export violations:', error);
-            toast.error('Failed to export violations');
+            toast.error(t('export_violations_failed', 'Failed to export violations'));
         }
     };
 
@@ -510,11 +509,11 @@ const GeofenceViolationManager: React.FC = () => {
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="">{t('opt_all_statuses')}</SelectItem>
-                                    <SelectItem value="pending">Pending</SelectItem>
-                                    <SelectItem value="acknowledged">Acknowledged</SelectItem>
-                                    <SelectItem value="resolved">Resolved</SelectItem>
-                                    <SelectItem value="dismissed">Dismissed</SelectItem>
-                                    <SelectItem value="escalated">Escalated</SelectItem>
+                                    <SelectItem value="pending">{t('pending', 'Pending')}</SelectItem>
+                                    <SelectItem value="acknowledged">{t('acknowledged', 'Acknowledged')}</SelectItem>
+                                    <SelectItem value="resolved">{t('resolved', 'Resolved')}</SelectItem>
+                                    <SelectItem value="dismissed">{t('dismissed', 'Dismissed')}</SelectItem>
+                                    <SelectItem value="escalated">{t('escalated', 'Escalated')}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>

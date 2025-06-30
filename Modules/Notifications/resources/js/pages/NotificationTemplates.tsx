@@ -157,7 +157,13 @@ export default function NotificationTemplates() {
                 </label>
               </div>
               <div className="flex justify-end">
-                <button type="button" className="btn btn-secondary mr-2" onClick={closeModal}>{t('common:cancel')}</button>
+                <button
+                  type="button"
+                  className="btn btn-secondary mr-2"
+                  onClick={closeModal}
+                >
+                  {t('ui.buttons.cancel')}
+                </button>
                 <button type="submit" className="btn btn-primary">{editingId ? t('common:update') : t('common:create')}</button>
               </div>
             </form>

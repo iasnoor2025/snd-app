@@ -1,124 +1,97 @@
-import { Head, useForm } from '@inertiajs/react';
-import { FormEventHandler, useRef, useState } from 'react';
+import { Head } from '@inertiajs/react'
+import { useForm } from '@inertiajs/react'
+import { useTranslation } from 'react-i18next'
+import { AppLayout } from '@/Core'
 
-export default function Password() {
-    const passwordInput = useRef<HTMLInputElement>(null);
-    const currentPasswordInput = useRef<HTMLInputElement>(null);
-    const [recentlySuccessful, setRecentlySuccessful] = useState(false);
+export default function UpdatePasswordForm() {
+  const { t } = useTranslation()
+  const { data, setData, errors, put, reset, processing } = useForm({
+    current_password: '',
+    password: '',
+    password_confirmation: '',
+  })
 
-    const { data, setData, errors, put, reset, processing } = useForm({
-        current_password: '',
-        password: '',
-        password_confirmation: '',
-    });
+  function updatePassword(e: React.FormEvent) {
+    e.preventDefault()
 
-    const updatePassword: FormEventHandler = (e) => {
-        e.preventDefault();
+    put(route('user-password.update'), {
+      preserveScroll: true,
+      onSuccess: () => reset(),
+    })
+  }
 
-        // Simulate form submission
-        setTimeout(() => {
-            setRecentlySuccessful(true);
-            reset();
-            setTimeout(() => setRecentlySuccessful(false), 3000);
-        }, 1000);
-    };
+  return (
+    <AppLayout title={t('ui.titles.settings')} breadcrumbs={[
+      { title: t('ui.titles.settings'), href: route('settings.index') },
+      { title: t('settings.password'), href: route('settings.password') }
+    ]}>
+      <Head title={t('settings.password')} />
 
-    return (
-        <div className="min-h-screen bg-gray-50">
-            <Head title="Password Settings" />
-            
-            <div className="max-w-2xl mx-auto py-8 px-4">
-                <div className="space-y-6">
-                    <header>
-                        <h1 className="text-2xl font-bold text-gray-900">Update Password</h1>
-                        <p className="text-gray-600 mt-1">Ensure your account is using a long, random password to stay secure.</p>
-                    </header>
+      <div className="py-12">
+        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+          <div className="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+            <form onSubmit={updatePassword} className="p-6">
+              <div className="col-span-6 sm:col-span-4">
+                <label htmlFor="current_password" className="block font-medium text-sm text-gray-700">
+                  {t('settings.current_password')}
+                </label>
+                <input
+                  id="current_password"
+                  type="password"
+                  className="mt-1 block w-full"
+                  value={data.current_password}
+                  onChange={e => setData('current_password', e.target.value)}
+                  autoComplete="current-password"
+                  placeholder={t('settings.enter_current_password')}
+                />
+                {errors.current_password && <div className="text-sm text-red-600">{errors.current_password}</div>}
+              </div>
 
-                    <div className="bg-white rounded-lg shadow p-6">
-                        <form onSubmit={updatePassword} className="space-y-6">
-                            <div className="grid gap-2">
-                                <label htmlFor="current_password" className="text-sm font-medium text-gray-700">
-                                    Current password
-                                </label>
-                                <input
-                                    id="current_password"
-                                    ref={currentPasswordInput}
-                                    value={data.current_password}
-                                    onChange={(e) => setData('current_password', e.target.value)}
-                                    type="password"
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                    autoComplete="current-password"
-                                    placeholder="Current password"
-                                />
-                                {errors.current_password && (
-                                    <p className="text-sm text-red-600">{errors.current_password}</p>
-                                )}
-                            </div>
+              <div className="col-span-6 sm:col-span-4 mt-4">
+                <label htmlFor="password" className="block font-medium text-sm text-gray-700">
+                  {t('settings.new_password')}
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  className="mt-1 block w-full"
+                  value={data.password}
+                  onChange={e => setData('password', e.target.value)}
+                  autoComplete="new-password"
+                  placeholder={t('settings.enter_new_password')}
+                />
+                {errors.password && <div className="text-sm text-red-600">{errors.password}</div>}
+              </div>
 
-                            <div className="grid gap-2">
-                                <label htmlFor="password" className="text-sm font-medium text-gray-700">
-                                    New password
-                                </label>
-                                <input
-                                    id="password"
-                                    ref={passwordInput}
-                                    value={data.password}
-                                    onChange={(e) => setData('password', e.target.value)}
-                                    type="password"
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                    autoComplete="new-password"
-                                    placeholder="New password"
-                                />
-                                {errors.password && (
-                                    <p className="text-sm text-red-600">{errors.password}</p>
-                                )}
-                            </div>
+              <div className="col-span-6 sm:col-span-4 mt-4">
+                <label htmlFor="password_confirmation" className="block font-medium text-sm text-gray-700">
+                  {t('settings.confirm_password')}
+                </label>
+                <input
+                  id="password_confirmation"
+                  type="password"
+                  className="mt-1 block w-full"
+                  value={data.password_confirmation}
+                  onChange={e => setData('password_confirmation', e.target.value)}
+                  autoComplete="new-password"
+                  placeholder={t('settings.confirm_new_password')}
+                />
+                {errors.password_confirmation && <div className="text-sm text-red-600">{errors.password_confirmation}</div>}
+              </div>
 
-                            <div className="grid gap-2">
-                                <label htmlFor="password_confirmation" className="text-sm font-medium text-gray-700">
-                                    Confirm password
-                                </label>
-                                <input
-                                    id="password_confirmation"
-                                    value={data.password_confirmation}
-                                    onChange={(e) => setData('password_confirmation', e.target.value)}
-                                    type="password"
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                    autoComplete="new-password"
-                                    placeholder="Confirm password"
-                                />
-                                {errors.password_confirmation && (
-                                    <p className="text-sm text-red-600">{errors.password_confirmation}</p>
-                                )}
-                            </div>
-
-                            <div className="flex items-center gap-4">
-                                <button
-                                    type="submit"
-                                    disabled={processing}
-                                    className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-                                >
-                                    {processing ? 'Saving...' : 'Save Password'}
-                                </button>
-
-                                {recentlySuccessful && (
-                                    <p className="text-sm text-green-600">Password updated successfully!</p>
-                                )}
-                            </div>
-                        </form>
-                    </div>
-
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <h3 className="font-medium text-blue-900 mb-2">Password Requirements</h3>
-                        <ul className="text-sm text-blue-800 space-y-1">
-                            <li>• At least 8 characters long</li>
-                            <li>• Include uppercase and lowercase letters</li>
-                            <li>• Include at least one number</li>
-                            <li>• Include at least one special character</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+              <div className="flex items-center justify-end mt-4">
+                <button
+                  type="submit"
+                  className="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 disabled:opacity-25 transition"
+                  disabled={processing}
+                >
+                  {t('ui.buttons.save')}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-    );
-} 
+      </div>
+    </AppLayout>
+  )
+}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/../../Modules/Core/resources/js/components/ui/card';
 import { Badge } from '@/../../Modules/Core/resources/js/components/ui/badge';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 interface TimeEntry {
   id: number;
@@ -24,6 +25,7 @@ export default function RealTimeDashboard() {
   });
   const [recentEntries, setRecentEntries] = useState<TimeEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation('TimesheetManagement');
 
   const fetchStats = async () => {
     setLoading(true);
@@ -34,7 +36,7 @@ export default function RealTimeDashboard() {
       setRecentEntries(data.recentEntries);
       setLoading(false);
     } catch (e) {
-      toast.error('Failed to load real-time dashboard');
+      toast.error(t('realtime_dashboard_failed', 'Failed to load real-time dashboard'));
       setLoading(false);
     }
   };
@@ -82,7 +84,7 @@ export default function RealTimeDashboard() {
                 <span className="font-medium">{entry.employee.name}</span>
                 <span className="text-muted-foreground">{entry.project.name}</span>
                 <span>{entry.hours}h</span>
-                {entry.is_overtime && <Badge variant="warning">Overtime</Badge>}
+                {entry.is_overtime && <Badge variant="warning">{t('overtime', 'Overtime')}</Badge>}
                 <span className="text-xs text-muted-foreground">{new Date(entry.created_at).toLocaleTimeString()}</span>
               </li>
             ))}

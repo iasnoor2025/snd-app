@@ -36,11 +36,14 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/Core";
 import { Calendar } from "@/Core";
 import { format } from 'date-fns';
 import { route } from 'ziggy-js';
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
+import { Controller } from 'react-hook-form';
 
 const breadcrumbs: BreadcrumbItem[] = [
-  { title: 'Dashboard', href: '/dashboard' },
+  { title: t('dashboard', 'Dashboard'), href: '/dashboard' },
   { title: 'Timesheets', href: '/hr/timesheets' },
-  { title: 'Create', href: '/hr/timesheets/create' }
+  { title: t('create', 'Create'), href: '/hr/timesheets/create' }
 ];
 
 // Define interfaces
@@ -92,7 +95,7 @@ const formSchema = z.object({
   ),
   project_id: z.string().optional(),
   rental_id: z.string().optional(),
-  description: z.string().max(1000, { message: "Description must not exceed 1000 characters" }).optional(),
+  description: z.string().max(1000, { message: t('description_max', 'Description must not exceed 1000 characters') }).optional(),
   tasks_completed: z.string().max(1000, { message: "Tasks completed must not exceed 1000 characters" }).optional(),
   bulk_mode: z.boolean().optional(),
   start_date: z.string().optional(),
@@ -100,7 +103,7 @@ const formSchema = z.object({
 });
 
 export default function TimesheetCreate({ auth, employees = [], projects = [], rentals = [], include_rentals = false, rental_id }: Props) {
-  const { t } = useTranslation('timesheet');
+  const { t } = useTranslation('TimesheetManagement');
 
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [startDate, setStartDate] = useState<Date | undefined>(new Date());
@@ -133,17 +136,17 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
     if (employees.length > 0) {
       const employeeId = employees[0].id.toString();
       form.setValue('employee_id', employeeId);
-      setData('employee_id', employeeId);
+      form.setValue('employee_id', employeeId);
     }
 
     // Set default hours worked and overtime
     if (!form.getValues('hours_worked')) {
       form.setValue('hours_worked', '8');
-      setData('hours_worked', '8');
+      form.setValue('hours_worked', '8');
     }
     if (!form.getValues('overtime_hours')) {
       form.setValue('overtime_hours', '0');
-      setData('overtime_hours', '0');
+      form.setValue('overtime_hours', '0');
     }
   }, []);
 
@@ -256,28 +259,28 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
       // Validate form
       const isValid = await form.trigger();
       if (!isValid) {
-        toast.error('Please fix the validation errors');
+        toast.error(t('submit_error', 'An error occurred while submitting the form'));
         return;
       }
 
       if (isBulkMode) {
         // Bulk mode validation
         if (!startDate || !endDate) {
-          toast.error('Please select both start and end dates for bulk entry');
+          toast.error(t('bulk_error', 'Please select both start and end dates for bulk entry'));
           form.setError('start_date', { type: 'manual', message: 'Start date is required' });
           form.setError('end_date', { type: 'manual', message: 'End date is required' });
           return;
         }
 
         if (startDate > endDate) {
-          toast.error('End date must be after start date');
+          toast.error(t('end_date_error', 'End date must be after start date'));
           form.setError('end_date', { type: 'manual', message: 'End date must be after start date' });
           return;
         }
 
         // Check if employee is selected
         if (!values.employee_id) {
-          toast.error('Please select an employee');
+          toast.error(t('employee_error', 'Please select an employee'));
           form.setError('employee_id', { type: 'manual', message: 'Employee is required' });
           return;
         }
@@ -285,7 +288,7 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
         // Submit bulk timesheet
         post(route('timesheets.store-bulk'), {
           onSuccess: () => {
-            toast.success('Timesheets created successfully!');
+            toast.success(t('bulk_success', 'Timesheets created successfully!'));
             form.reset();
             router.visit(route('hr.api.timesheets.index'));
           },
@@ -303,25 +306,25 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
             // Show first error message
             const firstError = Object.values(errors)[0];
             const message = Array.isArray(firstError) ? firstError[0] : firstError;
-            toast.error(message || 'Please check the form for errors');
+            toast.error(message || t('check_form', 'Please check the form for errors'));
           },
         });
       } else {
         // Single mode validation
         if (!values.employee_id) {
-          toast.error('Please select an employee');
+          toast.error(t('employee_error', 'Please select an employee'));
           form.setError('employee_id', { type: 'manual', message: 'Employee is required' });
           return;
         }
 
         if (!values.date) {
-          toast.error('Please select a date');
+          toast.error(t('date_error', 'Please select a date'));
           form.setError('date', { type: 'manual', message: 'Date is required' });
           return;
         }
 
         if (!values.hours_worked) {
-          toast.error('Please enter hours worked');
+          toast.error(t('hours_worked_error', 'Please enter hours worked'));
           form.setError('hours_worked', { type: 'manual', message: 'Hours worked is required' });
           return;
         }
@@ -330,7 +333,7 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
         try {
           const isDuplicate = await checkDuplicate(values.employee_id, values.date);
           if (isDuplicate) {
-            toast.error('A timesheet for this employee and date already exists');
+            toast.error(t('duplicate_error', 'A timesheet for this employee and date already exists'));
             form.setError('date', { type: 'manual', message: 'Timesheet already exists for this date' });
             return;
           }
@@ -342,7 +345,7 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
         // Submit single timesheet
         post(route('timesheets.store'), {
           onSuccess: () => {
-            toast.success('Timesheet created successfully!');
+            toast.success(t('single_success', 'Timesheet created successfully!'));
             form.reset();
             router.visit(route('hr.api.timesheets.index'));
           },
@@ -360,13 +363,13 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
             // Show first error message
             const firstError = Object.values(errors)[0];
             const message = Array.isArray(firstError) ? firstError[0] : firstError;
-            toast.error(message || 'Please check the form for errors');
+            toast.error(message || t('check_form', 'Please check the form for errors'));
           },
         });
       }
     } catch (error) {
       console.error('Form submission error:', error);
-      toast.error('An error occurred while submitting the form');
+      toast.error(t('submit_error', 'An error occurred while submitting the form'));
     }
   };
 
@@ -502,585 +505,136 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
   };
 
   return (
-    <AppLayout title={t('ttl_create_timesheet')} breadcrumbs={breadcrumbs} requiredPermission="timesheets.create">
-      <Head title={t('ttl_create_timesheet')} />
+    <AppLayout
+      title={t('TimesheetManagement:actions.create_timesheet')}
+      breadcrumbs={[
+        { title: t('TimesheetManagement:pages.timesheets'), href: route('timesheets.index') },
+        { title: t('TimesheetManagement:actions.create_timesheet'), href: route('timesheets.create') }
+      ]}
+      requiredPermission="timesheets.create"
+    >
+      <Head title={t('TimesheetManagement:actions.create_timesheet')} />
 
-      <div className="flex h-full flex-1 flex-col gap-4 p-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <div className="space-y-1">
-              <CardTitle className="text-2xl font-bold">{t('ttl_create_timesheet')}</CardTitle>
-              <CardDescription>
-                {t('record_work_hours')}
-              </CardDescription>
-            </div>
-            <Button variant="outline" asChild>
-              <Link href="/timesheets">
-                <ArrowLeftIcon className="mr-2 h-4 w-4" />
-                {t('back_to_timesheets')}
-              </Link>
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <Form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6" noValidate>
-                <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''} />
+      <div className="py-12">
+        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+          <div className="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label htmlFor="employee_id" className="block text-sm font-medium text-gray-700">
+                  {t('TimesheetManagement:fields.employee')}
+                </label>
+                <Controller
+                  name="employee_id"
+                  control={form.control}
+                  render={({ field }) => (
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('TimesheetManagement:placeholders.select_employee')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {employees.map((employee) => (
+                          <SelectItem key={employee.id} value={employee.id}>
+                            {employee.first_name} {employee.last_name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
                 {inertiaErrors.employee_id && (
-                  <div className="text-red-500 text-sm">
+                  <p className="mt-1 text-sm text-red-600">
                     {inertiaErrors.employee_id}
-                  </div>
+                  </p>
                 )}
+              </div>
+
+              <div>
+                <label htmlFor="project_id" className="block text-sm font-medium text-gray-700">
+                  {t('TimesheetManagement:fields.project')}
+                </label>
+                <Controller
+                  name="project_id"
+                  control={form.control}
+                  render={({ field }) => (
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('TimesheetManagement:placeholders.select_project')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">None</SelectItem>
+                        {projects.map((project) => (
+                          <SelectItem key={project.id} value={project.id}>
+                            {project.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {inertiaErrors.project_id && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {inertiaErrors.project_id}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="hours" className="block text-sm font-medium text-gray-700">
+                  {t('TimesheetManagement:fields.hours')}
+                </label>
+                <input
+                  type="number"
+                  step="0.5"
+                  min="0"
+                  max="24"
+                  {...form.register('hours_worked')}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  placeholder={t('TimesheetManagement:placeholders.enter_hours')}
+                />
                 {inertiaErrors.hours_worked && (
-                  <div className="text-red-500 text-sm">
+                  <p className="mt-1 text-sm text-red-600">
                     {inertiaErrors.hours_worked}
-                  </div>
+                  </p>
                 )}
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                  <FormField
-                    control={form.control}
-                    name="bulk_mode"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                        <FormControl>
-                          <input
-                            type="checkbox"
-                            checked={field.value}
-                            onChange={(e) => {
-                              toggleBulkMode(e.target.checked);
-                              field.onChange(e.target.checked);
-                            }}
-                            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                          />
-                        </FormControl>
-                        <div className="space-y-1 leading-none">
-                          <FormLabel>{t('lbl_bulk_entry_mode')}</FormLabel>
-                        </div>
-                      </FormItem>
-                    )}
-                  />
+              </div>
 
-                  <div className="md:col-span-2">
-                    {isBulkMode && (
-                      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 border rounded-md p-4 mb-4">
-                        <FormField
-                          control={form.control}
-                          name="start_date"
-                          render={({ field }) => (
-                            <FormItem className="flex flex-col">
-                              <FormLabel>{t('lbl_start_date')} <span className="text-red-500">*</span></FormLabel>
-                              <Popover>
-                                <PopoverTrigger asChild>
-                                  <FormControl>
-                                    <Button
-                                      variant="outline"
-                                      className={`w-full pl-3 text-left font-normal ${form.formState.errors.start_date ? "border-red-500" : ""}`}
-                                    >
-                                      <CalendarIcon className="mr-2 h-4 w-4" />
-                                      {startDate ? format(startDate, 'PPP') : <span>Pick a start date</span>}
-                                    </Button>
-                                  </FormControl>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" align="start">
-                                  <Calendar
-                                    mode="single"
-                                    selected={startDate}
-                                    onSelect={onStartDateSelect}
-                                    initialFocus
-                                    disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
-                                  />
-                                </PopoverContent>
-                              </Popover>
-                              <FormMessage />
-                              {inertiaErrors.start_date && (
-                                <p className="text-sm text-red-500">{inertiaErrors.start_date}</p>
-                              )}
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="end_date"
-                          render={({ field }) => (
-                            <FormItem className="flex flex-col">
-                              <FormLabel>{t('lbl_end_date')} <span className="text-red-500">*</span></FormLabel>
-                              <Popover>
-                                <PopoverTrigger asChild>
-                                  <FormControl>
-                                    <Button
-                                      variant="outline"
-                                      className={`w-full pl-3 text-left font-normal ${form.formState.errors.end_date ? "border-red-500" : ""}`}
-                                    >
-                                      <CalendarIcon className="mr-2 h-4 w-4" />
-                                      {endDate ? format(endDate, 'PPP') : <span>Pick an end date</span>}
-                                    </Button>
-                                  </FormControl>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" align="start">
-                                  <Calendar
-                                    mode="single"
-                                    selected={endDate}
-                                    onSelect={onEndDateSelect}
-                                    initialFocus
-                                    disabled={(date) => {
-                                      const today = new Date();
-                                      const minDate = new Date('1900-01-01');
-                                      if (date > today || date < minDate) return true;
-                                      if (startDate && date < startDate) return true;
-                                      return false;
-                                    }}
-                                  />
-                                </PopoverContent>
-                              </Popover>
-                              <FormMessage />
-                              {inertiaErrors.end_date && (
-                                <p className="text-sm text-red-500">{inertiaErrors.end_date}</p>
-                              )}
-                            </FormItem>
-                          )}
-                        />
-
-                        <div className="md:col-span-2">
-                          <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                            <FormControl>
-                              <input
-                                type="checkbox"
-                                checked={customOvertimePerDay}
-                                onChange={(e) => setCustomOvertimePerDay(e.target.checked)}
-                                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                              />
-                            </FormControl>
-                            <div className="space-y-1 leading-none">
-                              <FormLabel>{t('lbl_custom_overtime_per_day')}</FormLabel>
-                            </div>
-                          </FormItem>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {isBulkMode && customOvertimePerDay && startDate && endDate && (
-                    <div className="md:col-span-2 border rounded-md p-4 mb-4">
-                      <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-medium">{t('daily_overtime_hours')}</h3>
-                        <div className="flex items-center space-x-2">
-                          <Input
-                            type="number"
-                            step="0.5"
-                            min="0"
-                            max="24"
-                            placeholder={t('ph_hours')}
-                            className="w-24"
-                            id="bulk-overtime"
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              const value = (document.getElementById('bulk-overtime') as HTMLInputElement)?.value || '0';
-                              const newDailyOvertimeHours = { ...dailyOvertimeHours };
-                              Object.keys(newDailyOvertimeHours).forEach(dateString => {
-                                newDailyOvertimeHours[dateString] = value;
-                              });
-                              setDailyOvertimeHours(newDailyOvertimeHours);
-                            }}
-                          >
-                            {t('btn_apply_to_all')}
-                          </Button>
-                        </div>
-                      </div>
-
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            const value = (document.getElementById('bulk-overtime') as HTMLInputElement)?.value || '0';
-                            const newDailyOvertimeHours = { ...dailyOvertimeHours };
-                            Object.keys(newDailyOvertimeHours).forEach(dateString => {
-                              const date = new Date(dateString);
-                              const day = date.getDay();
-                              // If weekday (Monday-Friday)
-                              if (day >= 1 && day <= 5) {
-                                newDailyOvertimeHours[dateString] = value;
-                              }
-                            });
-                            setDailyOvertimeHours(newDailyOvertimeHours);
-                          }}
-                        >
-                          {t('btn_apply_to_weekdays')}
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            const value = (document.getElementById('bulk-overtime') as HTMLInputElement)?.value || '0';
-                            const newDailyOvertimeHours = { ...dailyOvertimeHours };
-                            Object.keys(newDailyOvertimeHours).forEach(dateString => {
-                              const date = new Date(dateString);
-                              const day = date.getDay();
-                              // If weekend (Saturday-Sunday)
-                              if (day === 0 || day === 6) {
-                                newDailyOvertimeHours[dateString] = value;
-                              }
-                            });
-                            setDailyOvertimeHours(newDailyOvertimeHours);
-                          }}
-                        >
-                          {t('btn_apply_to_weekends')}
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            const newDailyOvertimeHours = { ...dailyOvertimeHours };
-                            Object.keys(newDailyOvertimeHours).forEach(dateString => {
-                              const date = new Date(dateString);
-                              const day = date.getDay();
-                              // If weekday (Monday-Friday)
-                              if (day >= 1 && day <= 5) {
-                                newDailyOvertimeHours[dateString] = '0';
-                              }
-                            });
-                            setDailyOvertimeHours(newDailyOvertimeHours);
-                          }}
-                        >
-                          {t('btn_clear_weekdays')}
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            const newDailyOvertimeHours = { ...dailyOvertimeHours };
-                            Object.keys(newDailyOvertimeHours).forEach(dateString => {
-                              const date = new Date(dateString);
-                              const day = date.getDay();
-                              // If weekend (Saturday-Sunday)
-                              if (day === 0 || day === 6) {
-                                newDailyOvertimeHours[dateString] = '0';
-                              }
-                            });
-                            setDailyOvertimeHours(newDailyOvertimeHours);
-                          }}
-                        >
-                          {t('btn_clear_weekends')}
-                        </Button>
-                      </div>
-
-                      <div className="overflow-auto max-h-[400px] mt-4">
-                        <table className="w-full border-collapse">
-                          <thead>
-                            <tr className="bg-muted">
-                              <th className="p-2 text-left">Date</th>
-                              <th className="p-2 text-left">Day</th>
-                              <th className="p-2 text-left">{t('lbl_overtime_hours')}</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {Object.keys(dailyOvertimeHours).sort().map(dateString => {
-                              const date = new Date(dateString);
-                              return (
-                                <tr key={dateString} className="border-b">
-                                  <td className="p-2">{format(date, 'MMM dd, yyyy')}</td>
-                                  <td className="p-2">{format(date, 'EEEE')}</td>
-                                  <td className="p-2">
-                                    <Input
-                                      type="number"
-                                      step="0.5"
-                                      min="0"
-                                      max="24"
-                                      value={dailyOvertimeHours[dateString]}
-                                      onChange={(e) => handleDailyOvertimeChange(dateString, e.target.value)}
-                                      className="w-24"
-                                    />
-                                  </td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  )}
-
-                  <FormField
-                    control={form.control}
-                    name="employee_id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Employee <span className="text-red-500">*</span></FormLabel>
-                        <Select
-                          onValueChange={(value) => {
-                            field.onChange(value);
-                            setData('employee_id', value);
-                          }}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className={form.formState.errors.employee_id ? "border-red-500" : undefined}>
-                              <SelectValue placeholder={t('ph_select_employee')} />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {employees.map((employee) => (
-                              <SelectItem key={employee.id} value={employee.id.toString()}>
-                                {employee.first_name} {employee.last_name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                        {inertiaErrors.employee_id && (
-                          <p className="text-sm text-red-500">{inertiaErrors.employee_id}</p>
-                        )}
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="date"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel>Date <span className="text-red-500">*</span></FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                className={`w-full pl-3 text-left font-normal ${form.formState.errors.date ? "border-red-500" : ""}`}
-                                disabled={isBulkMode}
-                              >
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                {selectedDate ? format(selectedDate, 'PPP') : <span>{t('pick_a_date')}</span>}
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={selectedDate}
-                              onSelect={onDateSelect}
-                              initialFocus
-                              disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage />
-                        {inertiaErrors.date && (
-                          <p className="text-sm text-red-500">{inertiaErrors.date}</p>
-                        )}
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="hours_worked"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('lbl_hours_worked')} <span className="text-red-500">*</span></FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            step="0.5"
-                            min="0.5"
-                            max="24"
-                            placeholder="8"
-                            className={form.formState.errors.hours_worked ? "border-red-500" : undefined}
-                            onChange={(e) => {
-                              field.onChange(e);
-                              setData('hours_worked', e.target.value);
-                              // Clear error when value is entered
-                              if (e.target.value) {
-                                form.clearErrors('hours_worked');
-                              }
-                            }}
-                            value={field.value}
-                            required
-                          />
-                        </FormControl>
-                        <FormMessage />
-                        {inertiaErrors.hours_worked && (
-                          <p className="text-sm text-red-500">{inertiaErrors.hours_worked}</p>
-                        )}
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="overtime_hours"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('lbl_overtime_hours')}</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            step="0.5"
-                            min="0"
-                            max="24"
-                            placeholder="0"
-                            {...field}
-                            onChange={(e) => {
-                              field.onChange(e);
-                              setData('overtime_hours', e.target.value);
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                        {inertiaErrors.overtime_hours && (
-                          <p className="text-sm text-red-500">{inertiaErrors.overtime_hours}</p>
-                        )}
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="project_id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Project (Optional)</FormLabel>
-                        <Select
-                          onValueChange={(value) => {
-                            field.onChange(value);
-                            setData('project_id', value);
-                          }}
-                          defaultValue={field.value || 'none'}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder={t('ph_select_project')} />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="none">None</SelectItem>
-                            {projects.map((project) => (
-                              <SelectItem key={project.id} value={project.id.toString()}>
-                                {project.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                        {inertiaErrors.project_id && (
-                          <p className="text-sm text-red-500">{inertiaErrors.project_id}</p>
-                        )}
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="rental_id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Rental Equipment (Optional)</FormLabel>
-                        <Select
-                          onValueChange={(value) => {
-                            field.onChange(value);
-                            setData('rental_id', value);
-                          }}
-                          defaultValue={field.value || 'none'}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder={t('ph_select_rental')} />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="none">None</SelectItem>
-                            {rentals?.map((rental) => (
-                              <SelectItem key={rental.id} value={rental.id.toString()}>
-                                {rental.equipment.name} - {rental.rental_number}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                        {inertiaErrors.rental_id && (
-                          <p className="text-sm text-red-500">{inertiaErrors.rental_id}</p>
-                        )}
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description (Optional)</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder={t('ph_brief_description_of_work_performed_max_1000_ch')}
-                          className="min-h-[80px]"
-                          maxLength={1000}
-                          {...field}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            setData('description', e.target.value);
-                          }}
-                        />
-                      </FormControl>
-                      <div className="text-sm text-gray-500 text-right">
-                        {field.value?.length || 0}/1000
-                      </div>
-                      <FormMessage />
-                      {inertiaErrors.description && (
-                        <p className="text-sm text-red-500">{inertiaErrors.description}</p>
-                      )}
-                    </FormItem>
-                  )}
+              <div>
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                  {t('TimesheetManagement:fields.description')}
+                </label>
+                <textarea
+                  {...form.register('description')}
+                  rows={4}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  placeholder={t('TimesheetManagement:placeholders.brief_description')}
                 />
+                {inertiaErrors.description && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {inertiaErrors.description}
+                  </p>
+                )}
+              </div>
 
-                <FormField
-                  control={form.control}
-                  name="tasks_completed"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tasks Completed (Optional)</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder={t('ph_list_of_tasks_completed_during_this_time_max_10')}
-                          className="min-h-[120px]"
-                          maxLength={1000}
-                          {...field}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            setData('tasks_completed', e.target.value);
-                          }}
-                        />
-                      </FormControl>
-                      <div className="text-sm text-gray-500 text-right">
-                        {field.value?.length || 0}/1000
-                      </div>
-                      <FormMessage />
-                      {inertiaErrors.tasks_completed && (
-                        <p className="text-sm text-red-500">{inertiaErrors.tasks_completed}</p>
-                      )}
-                    </FormItem>
-                  )}
-                />
-
-                <div className="flex justify-end space-x-2">
-                  <Button variant="outline" asChild>
-                    <Link href={route('hr.api.timesheets.index')}>Cancel</Link>
-                  </Button>
-                  <Button type="submit" disabled={processing}>
-                    <ClockIcon className="mr-2 h-4 w-4" />
-                    {isBulkMode ? t('btn_submit_bulk_timesheets') : t('btn_submit_timesheet')}
-                  </Button>
-                </div>
-            </Form>
-          </CardContent>
-        </Card>
+              <div className="flex justify-end space-x-3">
+                <Link
+                  href={route('timesheets.index')}
+                  className={cn(buttonVariants({ variant: 'outline' }))}
+                >
+                  {t('ui.buttons.cancel')}
+                </Link>
+                <Button type="submit" disabled={processing}>
+                  {t('ui.buttons.create')}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </AppLayout>
   );

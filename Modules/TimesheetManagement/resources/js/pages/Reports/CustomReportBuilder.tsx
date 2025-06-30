@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/../../Modules/Core/resources/js/components/ui/card';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 const FIELDS = [
   { key: 'date', label: 'Date' },
@@ -23,6 +24,7 @@ export default function CustomReportBuilder() {
   const [groupBy, setGroupBy] = useState('');
   const [report, setReport] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation('TimesheetManagement');
 
   const handleFieldChange = (key: string) => {
     setSelectedFields((prev) =>
@@ -50,7 +52,7 @@ export default function CustomReportBuilder() {
       setReport(data.report);
       setLoading(false);
     } catch (e) {
-      toast.error('Failed to generate report');
+      toast.error(t('custom_report_failed', 'Failed to generate report'));
       setLoading(false);
     }
   };

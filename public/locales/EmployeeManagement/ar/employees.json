@@ -105,5 +105,13 @@
     "tuv_certification": "شهادة TUV",
     "spsp_license": "رخصة SPSP",
     "not_set": "غير محدد",
-    "download": "تحميل"
+    "download": "تحميل",
+    "fields": {
+        "phone": "رقم الهاتف",
+        "nationality": "الجنسية",
+        "position": "المسمى الوظيفي",
+        "department": "القسم",
+        "supervisor": "المشرف",
+        "status": "الحالة"
+    }
 }

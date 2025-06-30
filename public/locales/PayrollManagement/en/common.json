@@ -10,5 +10,83 @@
     "back_button": "Back",
     "success_message": "Operation completed successfully",
     "error_message": "An error occurred",
-    "loading_message": "Loading..."
+    "loading_message": "Loading...",
+    "title": "Payroll Management",
+    "description": "Manage employee payroll and salary processing",
+    "pages": {
+        "dashboard": "Dashboard",
+        "payroll": "Payroll",
+        "salary_advances": "Salary Advances",
+        "tax_documents": "Tax Documents",
+        "reports": "Reports"
+    },
+    "actions": {
+        "process_payroll": "Process Payroll",
+        "approve_advance": "Approve Advance",
+        "reject_advance": "Reject Advance",
+        "generate_payslip": "Generate Pay Slip",
+        "download_tax_document": "Download Tax Document",
+        "generate_report": "Generate Report"
+    },
+    "fields": {
+        "employee": "Employee",
+        "salary": "Salary",
+        "advance_amount": "Advance Amount",
+        "reason": "Reason",
+        "payment_date": "Payment Date",
+        "tax_year": "Tax Year",
+        "document_type": "Document Type",
+        "document_number": "Document Number"
+    },
+    "placeholders": {
+        "select_employee": "Select an employee",
+        "enter_amount": "Enter amount",
+        "enter_reason": "Enter reason for advance",
+        "select_date": "Select date",
+        "select_tax_year": "Select tax year",
+        "search_by_employee": "Search by employee name",
+        "select_report_type": "Select report type",
+        "select_period": "Select period"
+    },
+    "messages": {
+        "payroll_processed": "Payroll processed successfully",
+        "advance_approved": "Salary advance approved successfully",
+        "advance_rejected": "Salary advance rejected successfully",
+        "payslip_generated": "Pay slip generated successfully",
+        "document_downloaded": "Tax document downloaded successfully",
+        "no_records": "No records found",
+        "select_report_options": "Please select report type and period to generate a report"
+    },
+    "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "processed": "Processed"
+    },
+    "validation": {
+        "required_employee": "Please select an employee",
+        "required_amount": "Please enter an amount",
+        "required_reason": "Please enter a reason",
+        "required_date": "Please select a date",
+        "invalid_amount": "Please enter a valid amount"
+    },
+    "reports": {
+        "payroll_summary": "Payroll Summary",
+        "tax_summary": "Tax Summary",
+        "advances_summary": "Advances Summary",
+        "monthly": "Monthly",
+        "quarterly": "Quarterly",
+        "yearly": "Yearly",
+        "columns": {
+            "employee": "Employee",
+            "department": "Department",
+            "base_salary": "Base Salary",
+            "overtime": "Overtime",
+            "deductions": "Deductions",
+            "tax": "Tax",
+            "net_salary": "Net Salary",
+            "payment_date": "Payment Date",
+            "status": "Status"
+        }
+    }
 }

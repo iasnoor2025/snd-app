@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/../../Modules/Core/resources/js/components/ui/card';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 export default function BillableHoursReport() {
   const [filters, setFilters] = useState({
@@ -12,6 +13,7 @@ export default function BillableHoursReport() {
   });
   const [report, setReport] = useState<any>({ totalBillable: 0, totalNonBillable: 0, entries: [] });
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation('TimesheetManagement');
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
@@ -29,7 +31,7 @@ export default function BillableHoursReport() {
       setReport(data);
       setLoading(false);
     } catch (e) {
-      toast.error('Failed to generate billable hours report');
+      toast.error(t('billable_report_failed', 'Failed to generate billable hours report'));
       setLoading(false);
     }
   };

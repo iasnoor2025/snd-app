@@ -136,7 +136,13 @@ export default function ScheduledNotifications() {
                 <textarea name="payload" value={JSON.stringify(form.payload || {}, null, 2)} onChange={handleJsonChange} className="input input-bordered w-full" rows={2} />
               </div>
               <div className="flex justify-end">
-                <button type="button" className="btn btn-secondary mr-2" onClick={closeModal}>{t('common:cancel')}</button>
+                <button
+                  type="button"
+                  className="btn btn-secondary mr-2"
+                  onClick={closeModal}
+                >
+                  {t('ui.buttons.cancel')}
+                </button>
                 <button type="submit" className="btn btn-primary">{t('common:create')}</button>
               </div>
             </form>

@@ -58,9 +58,11 @@ import { CreateButton } from "@/Core";
 import { CrudButtons } from "@/Core";
 import { route } from 'ziggy-js';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
 
 const breadcrumbs: BreadcrumbItem[] = [
-  { title: 'Dashboard', href: '/dashboard' },
+  { title: t('dashboard', 'Dashboard'), href: '/dashboard' },
   { title: 'Timesheets', href: '/timesheets' }
 ];
 
@@ -108,7 +110,7 @@ interface Props extends PageProps {
 }
 
 export default function TimesheetsIndex({ auth, timesheets, filters = { status: 'all', search: '', date_from: '', date_to: '', per_page: 15 } }: Props) {
-  const { t } = useTranslation('timesheet');
+  const { t } = useTranslation('TimesheetManagement');
 
   const { hasPermission } = usePermission();
   const [processing, setProcessing] = useState<number | null>(null);
@@ -241,13 +243,13 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
   };
 
   const handleDelete = (id: number) => {
-    if (confirm('Are you sure you want to delete this timesheet?')) {
+    if (confirm(t('delete_confirm', 'Are you sure you want to delete this timesheet?'))) {
       router.delete(route('hr.api.timesheets.destroy', id), {
         onSuccess: () => {
           toast("Timesheet deleted successfully");
         },
         onError: (errors) => {
-          toast(errors.error || 'Failed to delete timesheet');
+          toast(errors.error || t('delete_failed', 'Failed to delete timesheet'));
         },
       });
     }
@@ -261,7 +263,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
         setProcessing(null);
       },
       onError: (errors) => {
-        toast(errors.error || 'Failed to approve timesheet');
+        toast(errors.error || t('approve_failed', 'Failed to approve timesheet'));
         setProcessing(null);
       },
     });
@@ -275,7 +277,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
         setProcessing(null);
       },
       onError: (errors) => {
-        toast(errors.error || 'Failed to reject timesheet');
+        toast(errors.error || t('reject_failed', 'Failed to reject timesheet'));
         setProcessing(null);
       },
     });
@@ -483,7 +485,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                                         variant="outline"
                                         size="icon"
                                         onClick={() => {
-                                          if (confirm('Are you sure you want to approve this timesheet?')) {
+                                          if (confirm(t('approve_confirm', 'Are you sure you want to approve this timesheet?'))) {
                                             setProcessing(timesheet.id);
                                             router.put(route('hr.api.timesheets.approve', timesheet.id), {}, {
                                               preserveState: true,
@@ -493,7 +495,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                                               },
                                               onError: () => {
                                                 setProcessing(null);
-                                                toast("Failed to approve timesheet");
+                                                toast(t('approve_failed', 'Failed to approve timesheet'));
                                               }
                                             });
                                           }
@@ -520,7 +522,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                                         variant="outline"
                                         size="icon"
                                         onClick={() => {
-                                          if (confirm('Are you sure you want to reject this timesheet?')) {
+                                          if (confirm(t('reject_confirm', 'Are you sure you want to reject this timesheet?'))) {
                                             setProcessing(timesheet.id);
                                             router.put(route('hr.api.timesheets.reject', timesheet.id), {}, {
                                               preserveState: true,
@@ -530,7 +532,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                                               },
                                               onError: () => {
                                                 setProcessing(null);
-                                                toast("Failed to reject timesheet");
+                                                toast(t('reject_failed', 'Failed to reject timesheet'));
                                               }
                                             });
                                           }

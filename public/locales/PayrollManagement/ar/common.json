@@ -10,5 +10,83 @@
     "back_button": "Back",
     "success_message": "Operation completed successfully",
     "error_message": "An error occurred",
-    "loading_message": "Loading..."
+    "loading_message": "Loading...",
+    "title": "إدارة الرواتب",
+    "description": "إدارة رواتب الموظفين ومعالجة الأجور",
+    "pages": {
+        "dashboard": "لوحة التحكم",
+        "payroll": "الرواتب",
+        "salary_advances": "السلف",
+        "tax_documents": "المستندات الضريبية",
+        "reports": "التقارير"
+    },
+    "actions": {
+        "process_payroll": "معالجة الرواتب",
+        "approve_advance": "الموافقة على السلفة",
+        "reject_advance": "رفض السلفة",
+        "generate_payslip": "إنشاء قسيمة الراتب",
+        "download_tax_document": "تحميل المستند الضريبي",
+        "generate_report": "إنشاء التقرير"
+    },
+    "fields": {
+        "employee": "الموظف",
+        "salary": "الراتب",
+        "advance_amount": "مبلغ السلفة",
+        "reason": "السبب",
+        "payment_date": "تاريخ الدفع",
+        "tax_year": "السنة الضريبية",
+        "document_type": "نوع المستند",
+        "document_number": "رقم المستند"
+    },
+    "placeholders": {
+        "select_employee": "اختر موظفاً",
+        "enter_amount": "أدخل المبلغ",
+        "enter_reason": "أدخل سبب السلفة",
+        "select_date": "اختر التاريخ",
+        "select_tax_year": "اختر السنة الضريبية",
+        "search_by_employee": "البحث باسم الموظف",
+        "select_report_type": "اختر نوع التقرير",
+        "select_period": "اختر الفترة"
+    },
+    "messages": {
+        "payroll_processed": "تمت معالجة الرواتب بنجاح",
+        "advance_approved": "تمت الموافقة على السلفة بنجاح",
+        "advance_rejected": "تم رفض السلفة بنجاح",
+        "payslip_generated": "تم إنشاء قسيمة الراتب بنجاح",
+        "document_downloaded": "تم تحميل المستند الضريبي بنجاح",
+        "no_records": "لم يتم العثور على سجلات",
+        "select_report_options": "الرجاء اختيار نوع التقرير والفترة لإنشاء التقرير"
+    },
+    "status": {
+        "pending": "قيد الانتظار",
+        "approved": "تمت الموافقة",
+        "rejected": "مرفوض",
+        "processed": "تمت المعالجة"
+    },
+    "validation": {
+        "required_employee": "الرجاء اختيار موظف",
+        "required_amount": "الرجاء إدخال المبلغ",
+        "required_reason": "الرجاء إدخال السبب",
+        "required_date": "الرجاء اختيار التاريخ",
+        "invalid_amount": "الرجاء إدخال مبلغ صحيح"
+    },
+    "reports": {
+        "payroll_summary": "ملخص الرواتب",
+        "tax_summary": "ملخص الضرائب",
+        "advances_summary": "ملخص السلف",
+        "monthly": "شهري",
+        "quarterly": "ربع سنوي",
+        "yearly": "سنوي",
+        "columns": {
+            "employee": "الموظف",
+            "department": "القسم",
+            "base_salary": "الراتب الأساسي",
+            "overtime": "العمل الإضافي",
+            "deductions": "الاستقطاعات",
+            "tax": "الضريبة",
+            "net_salary": "صافي الراتب",
+            "payment_date": "تاريخ الدفع",
+            "status": "الحالة"
+        }
+    }
 }

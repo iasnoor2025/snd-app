@@ -36,7 +36,7 @@ import {
 import { format, parseISO } from 'date-fns';
 
 const breadcrumbs: BreadcrumbItem[] = [
-  { title: 'Dashboard', href: '/dashboard' },
+  { title: t('dashboard', 'Dashboard'), href: '/dashboard' },
   { title: 'Employees', href: '/employees' },
   { title: 'Pay Slip', href: '#' }
 ];
@@ -186,7 +186,7 @@ export default function PaySlip({
   calendar,
   salary_details
 }: Props) {
-  const { t } = useTranslation('timesheet');
+  const { t } = useTranslation('TimesheetManagement');
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -307,7 +307,7 @@ export default function PaySlip({
             </Button>
             <Button variant="default" onClick={handleDownload} disabled={isLoading}>
               <Download className="mr-2 h-4 w-4" />
-              {isLoading ? 'Generating...' : 'Download PDF'}
+              {isLoading ? t('generating', 'Generating...') : t('download_pdf', 'Download PDF')}
             </Button>
           </div>
         </div>

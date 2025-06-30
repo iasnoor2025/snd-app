@@ -1,26 +1,27 @@
 import React, { useState } from 'react';
 import { AppLayout } from '@/Core';
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
+import { Page } from '@inertiajs/core';
 import { BreadcrumbItem } from '../../types';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
-import { 
-    Table, 
-    TableBody, 
-    TableCell, 
-    TableHead, 
-    TableHeader, 
-    TableRow 
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow
 } from '../../components/ui/table';
-import { 
-    Card, 
-    CardContent, 
-    CardDescription, 
-    CardHeader, 
-    CardTitle 
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle
 } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
-import { 
+import {
     Dialog,
     DialogContent,
     DialogDescription,
@@ -28,19 +29,19 @@ import {
     DialogHeader,
     DialogTitle,
 } from '../../components/ui/dialog';
-import { 
-    DropdownMenu, 
-    DropdownMenuContent, 
-    DropdownMenuItem, 
-    DropdownMenuTrigger 
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
 } from '../../components/ui/dropdown-menu';
-import { 
-    Plus, 
-    Search, 
-    MoreHorizontal, 
-    Eye, 
-    Edit, 
-    Trash2, 
+import {
+    Plus,
+    Search,
+    MoreHorizontal,
+    Eye,
+    Edit,
+    Trash2,
     Users as UsersIcon,
     Loader2
 } from 'lucide-react';
@@ -128,17 +129,17 @@ export default function Index({ users, roles, can }: Props) {
                                 <div>
                                     <CardTitle className="flex items-center gap-2">
                                         <UsersIcon className="h-5 w-5" />
-                                        {t('navigation.users')}
+                                        {t('users:title')}
                                     </CardTitle>
                                     <CardDescription>
-                                        {t('messages.manage_users_description')}
+                                        {t('users:messages.manage_user_description')}
                                     </CardDescription>
                                 </div>
                                 {can.create_users && (
                                     <Link href={route('users.create')}>
                                         <Button>
                                             <Plus className="h-4 w-4 mr-2" />
-                                            {t('actions.add', { resource: t('users') })}
+                                            {t('users:create')}
                                         </Button>
                                     </Link>
                                 )}
@@ -150,7 +151,7 @@ export default function Index({ users, roles, can }: Props) {
                                 <div className="relative">
                                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                                     <Input
-                                        placeholder={t('search.search_users')}
+                                        placeholder={t('users:search')}
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                         className="pl-10"
@@ -163,12 +164,12 @@ export default function Index({ users, roles, can }: Props) {
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead>{t('fields.name')}</TableHead>
-                                            <TableHead>{t('fields.email')}</TableHead>
-                                            <TableHead>{t('fields.roles')}</TableHead>
-                                            <TableHead>{t('fields.status')}</TableHead>
-                                            <TableHead>{t('fields.created_at')}</TableHead>
-                                            <TableHead className="text-right">{t('fields.actions')}</TableHead>
+                                            <TableHead>{t('users:fields.name')}</TableHead>
+                                            <TableHead>{t('users:fields.email')}</TableHead>
+                                            <TableHead>{t('users:fields.roles')}</TableHead>
+                                            <TableHead>{t('users:fields.status')}</TableHead>
+                                            <TableHead>{t('users:fields.created_at')}</TableHead>
+                                            <TableHead className="text-right">{t('users:fields.actions')}</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -195,7 +196,7 @@ export default function Index({ users, roles, can }: Props) {
                                                         </div>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Badge 
+                                                        <Badge
                                                             variant={user.email_verified_at ? "default" : "destructive"}
                                                         >
                                                             {user.email_verified_at ? t('status.verified') : t('status.unverified')}
@@ -208,7 +209,7 @@ export default function Index({ users, roles, can }: Props) {
                                                         <DropdownMenu>
                                                             <DropdownMenuTrigger asChild>
                                                                 <Button variant="ghost" className="h-8 w-8 p-0">
-                                                                    <span className="sr-only">{t('actions.view')}</span>
+                                                                    <span className="sr-only">{t('users:view')}</span>
                                                                     <MoreHorizontal className="h-4 w-4" />
                                                                 </Button>
                                                             </DropdownMenuTrigger>
@@ -219,7 +220,7 @@ export default function Index({ users, roles, can }: Props) {
                                                                         className="flex items-center"
                                                                     >
                                                                         <Eye className="mr-2 h-4 w-4" />
-                                                                        {t('actions.view')}
+                                                                        {t('users:view')}
                                                                     </Link>
                                                                 </DropdownMenuItem>
                                                                 <DropdownMenuItem>
@@ -228,7 +229,7 @@ export default function Index({ users, roles, can }: Props) {
                                                                         className="flex items-center"
                                                                     >
                                                                         <Edit className="mr-2 h-4 w-4" />
-                                                                        {t('actions.edit')}
+                                                                        {t('users:edit')}
                                                                     </Link>
                                                                 </DropdownMenuItem>
                                                                 <DropdownMenuItem
@@ -236,7 +237,7 @@ export default function Index({ users, roles, can }: Props) {
                                                                     className="text-red-600"
                                                                 >
                                                                     <Trash2 className="mr-2 h-4 w-4" />
-                                                                    {t('actions.delete')}
+                                                                    {t('users:delete')}
                                                                 </DropdownMenuItem>
                                                             </DropdownMenuContent>
                                                         </DropdownMenu>
@@ -256,9 +257,9 @@ export default function Index({ users, roles, can }: Props) {
             <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>{t('messages.confirm_delete')}</DialogTitle>
+                        <DialogTitle>{t('users:messages.confirm_delete')}</DialogTitle>
                         <DialogDescription>
-                            {userToDelete && t('messages.delete_user_confirmation', { name: userToDelete.name })}
+                            {userToDelete && t('users:messages.delete_user_confirmation', { name: userToDelete.name })}
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
@@ -267,7 +268,7 @@ export default function Index({ users, roles, can }: Props) {
                             onClick={() => setDeleteDialogOpen(false)}
                             disabled={isDeleting}
                         >
-                            {t('actions.cancel')}
+                            {t('users:messages.cancel')}
                         </Button>
                         <Button
                             variant="destructive"
@@ -275,11 +276,11 @@ export default function Index({ users, roles, can }: Props) {
                             disabled={isDeleting}
                         >
                             {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            {t('actions.delete')}
+                            {t('users:messages.delete')}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
         </AppLayout>
     );
-} 
+}

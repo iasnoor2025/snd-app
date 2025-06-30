@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/../../Modules/Core/resources/js/components/ui/card';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 export default function TimeOffRequests({ isAdmin = false, employeeId = null }: { isAdmin?: boolean; employeeId?: number | null }) {
   const [requests, setRequests] = useState<any[]>([]);
@@ -13,6 +14,7 @@ export default function TimeOffRequests({ isAdmin = false, employeeId = null }: 
     reason: '',
   });
   const [submitting, setSubmitting] = useState(false);
+  const { t } = useTranslation('TimesheetManagement');
 
   const fetchRequests = async () => {
     setLoading(true);
@@ -42,12 +44,12 @@ export default function TimeOffRequests({ isAdmin = false, employeeId = null }: 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, employee_id: employeeId }),
       });
-      if (!res.ok) throw new Error('Failed to submit request');
+      if (!res.ok) throw new Error(t('submit_failed', 'Failed to submit request'));
       toast.success('Time-off request submitted');
       setForm({ start_date: '', end_date: '', type: '', reason: '' });
       fetchRequests();
     } catch {
-      toast.error('Failed to submit request');
+      toast.error(t('submit_failed', 'Failed to submit request'));
     }
     setSubmitting(false);
   };
@@ -55,11 +57,11 @@ export default function TimeOffRequests({ isAdmin = false, employeeId = null }: 
   const handleApprove = async (id: number) => {
     try {
       const res = await fetch(`/api/time-off-requests/${id}/approve`, { method: 'POST' });
-      if (!res.ok) throw new Error('Failed to approve');
+      if (!res.ok) throw new Error(t('approve_failed', 'Failed to approve'));
       toast.success('Request approved');
       fetchRequests();
     } catch {
-      toast.error('Failed to approve request');
+      toast.error(t('approve_failed', 'Failed to approve request'));
     }
   };
 
@@ -72,11 +74,11 @@ export default function TimeOffRequests({ isAdmin = false, employeeId = null }: 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rejection_reason: reason }),
       });
-      if (!res.ok) throw new Error('Failed to reject');
+      if (!res.ok) throw new Error(t('reject_failed', 'Failed to reject'));
       toast.success('Request rejected');
       fetchRequests();
     } catch {
-      toast.error('Failed to reject request');
+      toast.error(t('reject_failed', 'Failed to reject request'));
     }
   };
 
@@ -109,7 +111,7 @@ export default function TimeOffRequests({ isAdmin = false, employeeId = null }: 
             <textarea name="reason" value={form.reason} onChange={handleChange} className="input" rows={2} />
           </div>
           <div className="md:col-span-2">
-            <Button type="submit" disabled={submitting}>{submitting ? 'Submitting...' : 'Submit Request'}</Button>
+            <Button type="submit" disabled={submitting}>{submitting ? t('submitting', 'Submitting...') : t('submit_request', 'Submit Request')}</Button>
           </div>
         </form>
         <div className="font-semibold mb-2">Your Requests</div>
