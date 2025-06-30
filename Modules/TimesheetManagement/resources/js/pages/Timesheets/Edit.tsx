@@ -38,12 +38,6 @@ import { Calendar } from "@/Core";
 import { format } from 'date-fns';
 import { route } from 'ziggy-js';
 
-const breadcrumbs: BreadcrumbItem[] = [
-  { title: t('dashboard', 'Dashboard'), href: '/dashboard' },
-  { title: 'Timesheets', href: '/timesheets' },
-  { title: t('edit', 'Edit'), href: '#' }
-];
-
 // Define interfaces
 interface Employee {
   id: number;
@@ -96,6 +90,12 @@ export default function TimesheetEdit({ auth, timesheet, employees = [], project
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
     timesheet.date ? new Date(timesheet.date) : new Date()
   );
+
+  const breadcrumbs: BreadcrumbItem[] = [
+    { title: t('dashboard', 'Dashboard'), href: '/dashboard' },
+    { title: 'Timesheets', href: '/timesheets' },
+    { title: t('edit', 'Edit'), href: '#' }
+  ];
 
   // React Hook Form with Zod validation
   const form = useReactHookForm({

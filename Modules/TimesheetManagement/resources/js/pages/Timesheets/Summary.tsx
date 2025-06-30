@@ -97,7 +97,7 @@ interface Props extends PageProps {
 }
 
 export default function TimesheetSummary({ auth, summary, employees = [], projects = [] }: Props) {
-  const { t } = useTranslation('timesheet');
+  const { t } = useTranslation('TimesheetManagement');
 
   const { toast } = useToast();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());

@@ -21,7 +21,7 @@ interface Props extends PageProps {
 }
 
 export default function PaySlipTest(props: any) {
-  const { t } = useTranslation('timesheet');
+  const { t } = useTranslation('TimesheetManagement');
   const { auth } = props;
 
   return (

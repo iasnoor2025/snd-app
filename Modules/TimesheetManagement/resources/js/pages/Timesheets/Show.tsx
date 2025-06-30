@@ -38,20 +38,16 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
 
-const breadcrumbs: BreadcrumbItem[] = [
-  { title: t('dashboard', 'Dashboard'), href: '/dashboard' },
-  { title: t('view', 'View'), href: '#' }
-];
-
-interface Props extends PageProps {
-  timesheet: Timesheet;
-}
-
 export default function TimesheetShow({ auth, timesheet }: Props) {
   const { t } = useTranslation('TimesheetManagement');
 
   const { toast } = useToast();
   const { hasPermission } = usePermission();
+
+  const breadcrumbs: BreadcrumbItem[] = [
+    { title: t('dashboard', 'Dashboard'), href: '/dashboard' },
+    { title: t('view', 'View'), href: '#' }
+  ];
 
   const getStatusBadge = (status: string) => {
     switch (status?.toLowerCase()) {

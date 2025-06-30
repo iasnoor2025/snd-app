@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
+import { router } from '@inertiajs/core';
 import { PageProps, BreadcrumbItem } from "@/Core/types";
 import { AppLayout } from '@/Core';
 import { usePermission } from "@/Core";
@@ -61,11 +62,6 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
 
-const breadcrumbs: BreadcrumbItem[] = [
-  { title: t('dashboard', 'Dashboard'), href: '/dashboard' },
-  { title: 'Timesheets', href: '/timesheets' }
-];
-
 // Define the Timesheet interface here to ensure it has all required properties
 interface Project {
   id: number;
@@ -111,6 +107,11 @@ interface Props extends PageProps {
 
 export default function TimesheetsIndex({ auth, timesheets, filters = { status: 'all', search: '', date_from: '', date_to: '', per_page: 15 } }: Props) {
   const { t } = useTranslation('TimesheetManagement');
+
+  const breadcrumbs: BreadcrumbItem[] = [
+    { title: t('dashboard', 'Dashboard'), href: '/dashboard' },
+    { title: 'Timesheets', href: '/timesheets' }
+  ];
 
   const { hasPermission } = usePermission();
   const [processing, setProcessing] = useState<number | null>(null);
@@ -187,7 +188,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
           setSelectedTimesheets([]);
           setBulkProcessing(false);
         },
-        onError: (errors) => {
+        onError: (errors: any) => {
           toast(errors.error || 'Failed to approve timesheets');
           setBulkProcessing(false);
         },
@@ -248,7 +249,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
         onSuccess: () => {
           toast("Timesheet deleted successfully");
         },
-        onError: (errors) => {
+        onError: (errors: any) => {
           toast(errors.error || t('delete_failed', 'Failed to delete timesheet'));
         },
       });
@@ -262,7 +263,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
         toast("Timesheet approved successfully");
         setProcessing(null);
       },
-      onError: (errors) => {
+      onError: (errors: any) => {
         toast(errors.error || t('approve_failed', 'Failed to approve timesheet'));
         setProcessing(null);
       },
@@ -276,7 +277,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
         toast("Timesheet rejected successfully");
         setProcessing(null);
       },
-      onError: (errors) => {
+      onError: (errors: any) => {
         toast(errors.error || t('reject_failed', 'Failed to reject timesheet'));
         setProcessing(null);
       },
@@ -493,7 +494,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                                                 setProcessing(null);
                                                 toast("Timesheet approved successfully");
                                               },
-                                              onError: () => {
+                                              onError: (errors: any) => {
                                                 setProcessing(null);
                                                 toast(t('approve_failed', 'Failed to approve timesheet'));
                                               }
@@ -530,7 +531,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                                                 setProcessing(null);
                                                 toast("Timesheet rejected successfully");
                                               },
-                                              onError: () => {
+                                              onError: (errors: any) => {
                                                 setProcessing(null);
                                                 toast(t('reject_failed', 'Failed to reject timesheet'));
                                               }
