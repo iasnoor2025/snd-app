@@ -9,7 +9,9 @@
     ],
     "extra": {
         "laravel": {
-            "providers": [],
+            "providers": [
+                "Modules\\PayrollManagement\\Providers\\PayrollServiceProvider"
+            ],
             "aliases": {
 
             }
@@ -17,14 +19,14 @@
     },
     "autoload": {
         "psr-4": {
-            "Modules\\Payroll\\": "app/",
-            "Modules\\Payroll\\Database\\Factories\\": "database/factories/",
-            "Modules\\Payroll\\Database\\Seeders\\": "database/seeders/"
+            "Modules\\PayrollManagement\\": "app/",
+            "Modules\\PayrollManagement\\Database\\Factories\\": "database/factories/",
+            "Modules\\PayrollManagement\\Database\\Seeders\\": "database/seeders/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Modules\\Payroll\\Tests\\": "tests/"
+            "Modules\\PayrollManagement\\Tests\\": "tests/"
         }
     }
 }

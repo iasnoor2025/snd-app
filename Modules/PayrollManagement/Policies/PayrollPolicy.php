@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\PayrollManagement\app\Policies;
+namespace Modules\PayrollManagement\Policies;
 
 class PayrollPolicy
 {

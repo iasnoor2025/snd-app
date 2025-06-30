@@ -65,8 +65,16 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('payroll.generate'), {
-            onSuccess: () => setShowModal(false),
+        setProcessing(true);
+        router.post(route('payroll.generate'), formData, {
+            onSuccess: () => {
+                setShowModal(false);
+                setProcessing(false);
+            },
+            onError: (errors) => {
+                setErrors(errors);
+                setProcessing(false);
+            }
         });
     };
 
@@ -207,15 +215,26 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                             <TableRow key={payroll.id}>
                                                 <TableCell>{payroll.employee.name}</TableCell>
                                                 <TableCell>
-                                                    {format(new Date(payroll.salary_month), 'MMM yyyy')}
+                                                    {(() => {
+                                                        try {
+                                                            const date = new Date(payroll.salary_month);
+                                                            if (isNaN(date.getTime())) {
+                                                                return payroll.salary_month || 'Invalid Date';
+                                                            }
+                                                            return format(date, 'MMM yyyy');
+                                                        } catch (error) {
+                                                            console.error('Date formatting error:', error, 'Value:', payroll.salary_month);
+                                                            return payroll.salary_month || 'Invalid Date';
+                                                        }
+                                                    })()}
                                                 </TableCell>
-                                                <TableCell>${payroll.base_salary.toFixed(2)}</TableCell>
-                                                <TableCell>${payroll.overtime_amount.toFixed(2)}</TableCell>
-                                                <TableCell>${payroll.bonus.toFixed(2)}</TableCell>
+                                                <TableCell>${(Number(payroll.base_salary) || 0).toFixed(2)}</TableCell>
+                                                <TableCell>${(Number(payroll.overtime_amount) || 0).toFixed(2)}</TableCell>
+                                                <TableCell>${(Number(payroll.bonus) || 0).toFixed(2)}</TableCell>
                                                 <TableCell>
-                                                    ${(payroll.deduction + (payroll.advance_deduction || 0)).toFixed(2)}
+                                                    ${((Number(payroll.deduction) || 0) + (Number(payroll.advance_deduction) || 0)).toFixed(2)}
                                                 </TableCell>
-                                                <TableCell>${payroll.net_salary.toFixed(2)}</TableCell>
+                                                <TableCell>${(Number(payroll.net_salary) || 0).toFixed(2)}</TableCell>
                                                 <TableCell>{getStatusBadge(payroll.status)}</TableCell>
                                                 <TableCell className="text-right">
                                                     <Button
@@ -285,8 +304,8 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                 <Input
                                     type="month"
                                     id="month"
-                                    value={data.month}
-                                    onChange={e => setData('month', e.target.value)}
+                                    value={formData.month}
+                                    onChange={e => setFormData(prev => ({ ...prev, month: e.target.value }))}
                                     required
                                 />
                                 {errors.month && (

@@ -9,7 +9,7 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Illuminate\Database\Eloquent\Factory;
 use Modules\PayrollManagement\Domain\Models\Payroll;
-use Modules\PayrollManagement\app\Policies\PayrollPolicy;
+use Modules\PayrollManagement\Policies\PayrollPolicy;
 use Illuminate\Support\Facades\Gate;
 
 class PayrollServiceProvider extends ServiceProvider
