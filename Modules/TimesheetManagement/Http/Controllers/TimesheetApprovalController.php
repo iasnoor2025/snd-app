@@ -33,7 +33,7 @@ class TimesheetApprovalController extends Controller
         $this->approveTimesheetAction = $approveTimesheetAction;
         $this->rejectTimesheetAction = $rejectTimesheetAction;
 
-        $this->middleware('can:approve-timesheets');
+        $this->middleware('can:timesheets.approve');
     }
 
     /**

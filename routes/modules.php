@@ -29,24 +29,7 @@ Route::middleware(['auth', 'verified'])->prefix('leave-requests')->group(functio
     });
 });
 
-// Direct routes for timesheets
-Route::middleware(['auth', 'verified'])->prefix('timesheets')->group(function () {
-    Route::get('/', function () {
-        $query = \Modules\TimesheetManagement\Domain\Models\Timesheet::with(['employee:id,first_name,last_name', 'project']);
-
-        // If user is not admin/hr, only show their own timesheets
-        if (!auth()->user()->hasRole(['admin', 'hr'])) {
-            $query->where('employee_id', auth()->user()->employee->id);
-        }
-
-        $timesheets = $query->latest()->paginate(10);
-
-        return Inertia::render('Timesheets/Index', [
-            'timesheets' => $timesheets,
-            'filters' => []
-        ]);
-    })->name('timesheets.index');
-});
+// Direct routes for timesheets are handled by the TimesheetManagement module
 
 // Direct routes for HR timesheets
 Route::middleware(['auth', 'verified'])->prefix('hr/timesheets')->group(function () {

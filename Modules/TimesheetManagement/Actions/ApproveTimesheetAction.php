@@ -35,7 +35,7 @@ class ApproveTimesheetAction
             $user = Auth::user();
 
             // Check if user has permission to approve
-            if (!$user->can('approve-timesheets')) {
+            if (!$user->can('timesheets.approve')) {
                 throw ValidationException::withMessages([
                     'permission' => ['You do not have permission to approve timesheets.']
                 ]);

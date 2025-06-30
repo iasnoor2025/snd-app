@@ -61,6 +61,7 @@ import { route } from 'ziggy-js';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
+import { ApprovalDialog } from '../../components/ApprovalDialog';
 
 // Define the Timesheet interface here to ensure it has all required properties
 interface Project {
@@ -436,7 +437,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                   <div className="w-full md:w-40">
                     <Select value={selectedStatus} onValueChange={(value) => {
                       setSelectedStatus(value);
-                      setTimeout(() => handleSearchWithStatus(value), 0);
+                      handleSearchWithStatus(value);
                     }}>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder={t('ph_status')} />
@@ -499,7 +500,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
               </div>
             </div>
 
-            <div className="rounded-md border">
+            <div className="rounded-md border mt-6">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -581,78 +582,51 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
 
                             {canApproveTimesheet && timesheet.status === 'submitted' && (
                               <>
-                                <TooltipProvider>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <Button
-                                        variant="outline"
-                                        size="icon"
-                                        onClick={() => {
-                                          if (confirm(t('approve_confirm', 'Are you sure you want to approve this timesheet?'))) {
-                                            setProcessing(timesheet.id);
-                                            router.put(route('timesheets.approve', timesheet.id), {}, {
-                                              onSuccess: () => {
-                                                setProcessing(null);
-                                                toast("Timesheet approved successfully");
-                                              },
-                                              onError: (errors: any) => {
-                                                setProcessing(null);
-                                                toast(t('approve_failed', 'Failed to approve timesheet'));
-                                              }
-                                            });
-                                          }
-                                        }}
-                                        disabled={processing === timesheet.id}
-                                      >
-                                        {processing === timesheet.id ? (
-                                          <ArrowPathIcon className="h-4 w-4 animate-spin" />
-                                        ) : (
-                                          <CheckIcon className="h-4 w-4" />
-                                        )}
-                                      </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                      <p>{t('approve_timesheet')}</p>
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
+                                <ApprovalDialog
+                                  timesheet={timesheet}
+                                  action="approve"
+                                  onSuccess={() => {
+                                    // Reload the page to show updated data
+                                    reloadPage();
+                                  }}
+                                  trigger={
+                                    <TooltipProvider>
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <Button variant="outline" size="icon">
+                                            <CheckIcon className="h-4 w-4" />
+                                          </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                          <p>{t('approve_timesheet', 'Approve Timesheet')}</p>
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    </TooltipProvider>
+                                  }
+                                />
 
-                                <TooltipProvider>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <Button
-                                        variant="outline"
-                                        size="icon"
-                                        onClick={() => {
-                                          if (confirm(t('reject_confirm', 'Are you sure you want to reject this timesheet?'))) {
-                                            setProcessing(timesheet.id);
-                                            router.put(route('timesheets.reject', timesheet.id), {}, {
-                                              preserveState: true,
-                                              onSuccess: () => {
-                                                setProcessing(null);
-                                                toast("Timesheet rejected successfully");
-                                              },
-                                              onError: (errors: any) => {
-                                                setProcessing(null);
-                                                toast(t('reject_failed', 'Failed to reject timesheet'));
-                                              }
-                                            });
-                                          }
-                                        }}
-                                        disabled={processing === timesheet.id}
-                                      >
-                                        {processing === timesheet.id ? (
-                                          <ArrowPathIcon className="h-4 w-4 animate-spin" />
-                                        ) : (
-                                          <XIcon className="h-4 w-4" />
-                                        )}
-                                      </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                      <p>{t('reject_timesheet')}</p>
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
+                                <ApprovalDialog
+                                  timesheet={timesheet}
+                                  action="reject"
+                                  onSuccess={() => {
+                                    // Reload the page to show updated data
+                                    reloadPage();
+                                  }}
+                                  trigger={
+                                    <TooltipProvider>
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <Button variant="outline" size="icon">
+                                            <XIcon className="h-4 w-4" />
+                                          </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                          <p>{t('reject_timesheet', 'Reject Timesheet')}</p>
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    </TooltipProvider>
+                                  }
+                                />
                               </>
                             )}
                           </div>
@@ -668,11 +642,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
             {timesheets.last_page > 1 && (
               <div className="flex items-center justify-between mt-4">
                 <div className="text-sm text-muted-foreground">
-                  {t('showing_records', {
-                    from: (timesheets.current_page - 1) * timesheets.per_page + 1,
-                    to: Math.min(timesheets.current_page * timesheets.per_page, timesheets.total),
-                    total: timesheets.total
-                  })}
+                  Showing {(timesheets.current_page - 1) * timesheets.per_page + 1} to {Math.min(timesheets.current_page * timesheets.per_page, timesheets.total)} of {timesheets.total} results
                 </div>
                 <div className="flex items-center space-x-2">
                   <Button
@@ -688,7 +658,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                     {t('btn_previous')}
                   </Button>
                   <span className="text-sm">
-                    {t('page_info', { current: timesheets.current_page, total: timesheets.last_page })}
+                    Page {timesheets.current_page} of {timesheets.last_page}
                   </span>
                   <Button
                     variant="outline"

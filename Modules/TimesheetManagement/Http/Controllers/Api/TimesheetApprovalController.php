@@ -31,7 +31,7 @@ class TimesheetApprovalController extends BaseApiController
         $this->approveTimesheetAction = $approveTimesheetAction;
         $this->rejectTimesheetAction = $rejectTimesheetAction;
 
-        $this->middleware('can:approve-timesheets');
+        $this->middleware('can:timesheets.approve');
     }
 
     /**

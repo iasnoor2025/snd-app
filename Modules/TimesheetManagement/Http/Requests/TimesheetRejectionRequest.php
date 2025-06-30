@@ -13,7 +13,7 @@ class TimesheetRejectionRequest extends FormRequest
      */
     public function authorize()
     {
-        return $this->user()->can('approve-timesheets');
+        return $this->user()->can('timesheets.approve');
     }
 
     /**

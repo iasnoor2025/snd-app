@@ -11,8 +11,8 @@ class RejectTimesheetRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // Check if the user has the 'approve-timesheets' permission (same as for approving)
-        return $this->user() && $this->user()->can('approve-timesheets');
+        // Check if the user has the 'timesheets.approve' permission (same as for approving)
+        return $this->user() && $this->user()->can('timesheets.approve');
     }
 
     /**

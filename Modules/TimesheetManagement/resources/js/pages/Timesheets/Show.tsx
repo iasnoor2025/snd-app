@@ -25,7 +25,6 @@ import {
   User as UserIcon
 } from 'lucide-react';
 import { useToast } from "@/Core";
-import { Timesheet } from '../../../../resources/js/types/models';
 import { formatDate } from "@/Core";
 import { usePermission } from "@/Core";
 import {
@@ -37,9 +36,27 @@ import {
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
-import axios from 'axios';
+import { ApprovalDialog } from '../../components/ApprovalDialog';
 
-axios.defaults.withCredentials = true;
+interface Timesheet {
+  id: number;
+  employee_id: number;
+  date: string;
+  hours_worked: number;
+  overtime_hours: number;
+  status: string;
+  employee?: {
+    first_name: string;
+    last_name: string;
+  };
+  project?: {
+    name: string;
+  };
+}
+
+interface Props extends PageProps {
+  timesheet: Timesheet;
+}
 
 export default function TimesheetShow({ auth, timesheet }: Props) {
   const { t } = useTranslation('TimesheetManagement');
@@ -88,15 +105,15 @@ export default function TimesheetShow({ auth, timesheet }: Props) {
     }
   };
 
-  const handleApprove = async () => {
-    try {
-      await axios.get('/sanctum/csrf-cookie');
-      await axios.post(`/api/timesheets/${timesheet.id}/approve`);
-      toast(t('success', 'Success'));
-      window.location.reload();
-    } catch (error: any) {
-      toast(error?.response?.data?.error || t('approve_failed', 'Failed to approve timesheet'));
-    }
+  const handleApprove = () => {
+    router.put(route('timesheets.approve', timesheet.id), {}, {
+      onSuccess: () => {
+        toast(t('success', 'Timesheet approved successfully'));
+      },
+      onError: (errors: any) => {
+        toast(errors.error || t('approve_failed', 'Failed to approve timesheet'));
+      },
+    });
   };
 
   const handleReject = () => {
@@ -230,22 +247,34 @@ export default function TimesheetShow({ auth, timesheet }: Props) {
 
             {timesheet.status === 'submitted' && hasPermission('timesheets.approve') && (
               <CardFooter className="flex justify-end space-x-2 border-t pt-4">
-                <Button
-                  variant="outline"
-                  onClick={handleReject}
-                  className="text-destructive"
-                >
-                  <XIcon className="mr-2 h-4 w-4" />
-                  Reject
-                </Button>
-                <Button
-                  variant="default"
-                  onClick={handleApprove}
-                  className="bg-green-600 hover:bg-green-700"
-                >
-                  <CheckIcon className="mr-2 h-4 w-4" />
-                  Approve
-                </Button>
+                <ApprovalDialog
+                  timesheet={timesheet}
+                  action="reject"
+                  onSuccess={() => {
+                    // Reload the page to show updated data
+                    window.location.reload();
+                  }}
+                  trigger={
+                    <Button variant="outline" className="text-destructive">
+                      <XIcon className="mr-2 h-4 w-4" />
+                      Reject
+                    </Button>
+                  }
+                />
+                <ApprovalDialog
+                  timesheet={timesheet}
+                  action="approve"
+                  onSuccess={() => {
+                    // Reload the page to show updated data
+                    window.location.reload();
+                  }}
+                  trigger={
+                    <Button variant="default" className="bg-green-600 hover:bg-green-700">
+                      <CheckIcon className="mr-2 h-4 w-4" />
+                      Approve
+                    </Button>
+                  }
+                />
               </CardFooter>
             )}
           </Card>

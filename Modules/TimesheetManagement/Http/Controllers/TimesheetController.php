@@ -28,11 +28,16 @@ class TimesheetController extends Controller
      */
     public function index(Request $request)
     {
-        dd($request->all(), $request->getQueryString(), $request->status);
+        $user = auth()->user();
         \Log::debug('Timesheet index request', [
             'all' => $request->all(),
             'query' => $request->getQueryString(),
             'status' => $request->status,
+            'status_filter_applied' => $request->status && $request->status !== 'all',
+            'user_id' => $user->id,
+            'user_roles' => $user->roles->pluck('name')->toArray(),
+            'has_admin_hr_role' => $user->hasRole(['admin', 'hr']),
+            'user_employee_id' => $user->employee ? $user->employee->id : null,
         ]);
         $query = Timesheet::with(['employee:id,first_name,last_name', 'project'])
             ->when($request->month, function ($query, $month) {
@@ -57,20 +62,65 @@ class TimesheetController extends Controller
                     ;
                 });
             })
-            ->when($request->status, function ($query, $status) {
-                $query->where('status', $status);
+            ->when($request->status && $request->status !== 'all', function ($query) use ($request) {
+                $query->where('status', $request->status);
+            })
+            ->when($request->date_from, function ($query, $dateFrom) {
+                return $query->where('date', '>=', $dateFrom);
+            })
+            ->when($request->date_to, function ($query, $dateTo) {
+                return $query->where('date', '<=', $dateTo);
             });
 
         // If user is not admin/hr, only show their own timesheets
-        if (!auth()->user()->hasRole(['admin', 'hr'])) {
-            $query->where('employee_id', auth()->user()->employee->id);
+        $shouldFilterByEmployee = !$user->hasRole(['admin', 'hr']);
+        \Log::debug('Employee filtering logic', [
+            'should_filter_by_employee' => $shouldFilterByEmployee,
+            'user_employee_exists' => $user->employee !== null,
+        ]);
+
+        if ($shouldFilterByEmployee) {
+            if ($user->employee) {
+                $query->where('employee_id', $user->employee->id);
+                \Log::debug('Applied employee filter', ['employee_id' => $user->employee->id]);
+            } else {
+                \Log::warning('User has no employee record but should be filtered by employee');
+                // Return empty result if user has no employee record
+                $query->where('employee_id', -1);
+            }
         }
 
-        $timesheets = $query->latest()->paginate(10);
+        // Debug the SQL query
+        \Log::debug('Final query SQL', [
+            'sql' => $query->toSql(),
+            'bindings' => $query->getBindings(),
+        ]);
+
+        $timesheets = $query->latest()->paginate($request->per_page ?: 15);
+
+        // Get actual status distribution for debugging
+        $statusDistribution = Timesheet::select('status', DB::raw('count(*) as count'))
+            ->when(!$user->hasRole(['admin', 'hr']), function ($query) use ($user) {
+                $query->where('employee_id', $user->employee->id);
+            })
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
+
+        \Log::debug('Timesheet query results', [
+            'total_count' => $timesheets->total(),
+            'current_page_count' => $timesheets->count(),
+            'per_page' => $timesheets->perPage(),
+            'current_page' => $timesheets->currentPage(),
+            'status_distribution' => $statusDistribution,
+        ]);
 
         return Inertia::render('Timesheets/Index', [
             'timesheets' => $timesheets,
-            'filters' => $request->only(['month', 'employee_id', 'search', 'status'])
+            'filters' => array_merge(
+                $request->only(['month', 'employee_id', 'search', 'status', 'date_from', 'date_to', 'per_page']),
+                ['status' => $request->status ?: 'all']
+            )
         ]);
     }
 

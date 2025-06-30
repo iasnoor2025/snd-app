@@ -109,6 +109,24 @@ Route::get('auth/login', function () {
 require __DIR__.'/health.php';
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
+
+// Temporary debug route
+Route::get('/debug-permissions', function() {
+    $user = auth()->user();
+    if (!$user) {
+        return response()->json(['error' => 'Not authenticated'], 401);
+    }
+
+    return response()->json([
+        'user_id' => $user->id,
+        'user_email' => $user->email,
+        'roles' => $user->roles->pluck('name'),
+        'permissions' => $user->getAllPermissions()->pluck('name'),
+        'has_timesheets_approve' => $user->can('timesheets.approve'),
+        'is_admin' => $user->hasRole('admin'),
+        'is_hr' => $user->hasRole('hr'),
+    ]);
+})->middleware(['auth']);
 require __DIR__.'/modules.php';
 require __DIR__.'/avatar.php';
 require __DIR__.'/employee-avatar.php';
