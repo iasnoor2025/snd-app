@@ -119,7 +119,7 @@ class AuthController extends Controller
     public function me(Request $request)
     {
         $user = $request->user();
-        
+
         if (!$user) {
             return response()->json(['error' => 'Unauthenticated'], 401);
         }
@@ -197,7 +197,7 @@ class AuthController extends Controller
     public function updateUserRole(Request $request, User $user)
     {
         $currentUser = $request->user();
-        
+
         if (!$this->authService->canManageUser($currentUser, $user)) {
             abort(403, 'Unauthorized to manage this user.');
         }
@@ -217,7 +217,7 @@ class AuthController extends Controller
     public function toggleUserStatus(Request $request, User $user)
     {
         $currentUser = $request->user();
-        
+
         if (!$this->authService->canManageUser($currentUser, $user)) {
             abort(403, 'Unauthorized to manage this user.');
         }
@@ -247,5 +247,17 @@ class AuthController extends Controller
             'roles' => $roles,
             'permissions' => $permissions,
         ]);
+    }
+
+    /**
+     * Return the currently authenticated user (API endpoint)
+     */
+    public function currentUser(Request $request)
+    {
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['error' => 'Unauthenticated'], 401);
+        }
+        return response()->json($user);
     }
 }

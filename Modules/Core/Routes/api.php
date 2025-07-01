@@ -8,6 +8,7 @@ use Modules\Core\Http\Controllers\RoleController;
 use Modules\Core\Http\Controllers\MfaController;
 use Modules\Core\Http\Controllers\ApiKeyController;
 use Modules\Core\Http\Controllers\DeviceSessionController;
+use Modules\Core\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +43,9 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     Route::post('users', [UserController::class, 'store']);
     Route::put('users/{user}', [UserController::class, 'update']);
     Route::delete('users/{user}', [UserController::class, 'destroy']);
+
+    // Add current user endpoint
+    Route::get('current-user', [AuthController::class, 'currentUser']);
 
     // Role management
     Route::get('roles', [RoleController::class, 'index']);

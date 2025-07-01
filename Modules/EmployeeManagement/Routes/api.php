@@ -25,6 +25,10 @@ Route::prefix('v1')->group(function () {
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     // Employee core routes
     Route::apiResource('employees', EmployeeController::class);
+    Route::get('employees/all', function () {
+        $repo = app(\Modules\EmployeeManagement\Repositories\EmployeeRepositoryInterface::class);
+        return response()->json($repo->all());
+    });
     Route::get('employees/{employee}/documents', [EmployeeController::class, 'documents']);
     Route::get('employees/{employee}/timesheets', [EmployeeController::class, 'timesheets']);
     Route::get('employees/{employee}/advances', [EmployeeController::class, 'advances']);
@@ -116,4 +120,11 @@ Route::prefix('trainings')->group(function () {
     Route::post('/{training}/complete/{employee}', [TrainingController::class, 'markCompleted']);
 });
 Route::get('employees/{employee}/trainings', [TrainingController::class, 'employeeTrainings']);
+
+Route::middleware(['api', 'auth:sanctum'])->prefix('v1')->group(function () {
+    Route::get('employees/all', function () {
+        $repo = app(\Modules\EmployeeManagement\Repositories\EmployeeRepositoryInterface::class);
+        return response()->json($repo->all());
+    });
+});
 

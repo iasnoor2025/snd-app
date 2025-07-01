@@ -104,7 +104,7 @@ interface RequestData {
 
 const manpowerSchema = z.object({
     employee_id: z.number().nullable().optional(),
-    worker_name: z.string().min(1, 'Worker name is required').optional(),
+    worker_name: z.string().optional(),
     job_title: z.string().min(1, 'Job title is required').max(255, 'Job title cannot exceed 255 characters'),
     start_date: z.string().min(1, 'Start date is required'),
     end_date: z.string().nullable().optional(),
@@ -116,12 +116,16 @@ const manpowerSchema = z.object({
     if (data.end_date && data.start_date) {
         const startDate = new Date(data.start_date);
         const endDate = new Date(data.end_date);
-        return endDate >= startDate;
+        if (endDate < startDate) return false;
+    }
+    // Require worker_name if employee_id is not set
+    if (!data.employee_id && !(data.worker_name && data.worker_name.length > 0)) {
+        return false;
     }
     return true;
 }, {
-    message: 'End date must be after or equal to start date',
-    path: ['end_date']
+    message: 'Worker name is required if no employee is selected',
+    path: ['worker_name'],
 });
 
 const materialSchema = z.object({
@@ -234,9 +238,11 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
             setIsLoading(true);
             try {
                 if (type === 'manpower') {
-                    // Using dummy data instead of API call
+                    // Ensure CSRF cookie is set for Sanctum
+                    await axios.get('/sanctum/csrf-cookie');
+                    const response = await axios.get('/api/v1/employees', { withCredentials: true });
                     if (mounted.current) {
-                        setEmployees(dummyEmployees);
+                        setEmployees(response.data);
                     }
                 } else if (type === 'equipment' || type === 'fuel') {
                     const response = await axios.get('/api/equipment');
