@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, useForm } from '@inertiajs/react';
 import { PageProps } from '../../types';
@@ -55,6 +55,8 @@ export default function Create({ auth, employee, initialData }: Props) {
     const { hasPermission } = usePermission();
 
     const { data, setData, post, processing, errors } = useForm({
+        employee_id: employee.id,
+        settlement_date: initialData.last_working_day,
         last_working_day: initialData.last_working_day,
         leave_encashment: initialData.leave_encashment,
         unpaid_salary: initialData.unpaid_salary,
@@ -66,9 +68,28 @@ export default function Create({ auth, employee, initialData }: Props) {
         agreement_terms: '',
     });
 
+    // Auto-calculate total_payable
+    useEffect(() => {
+        const total =
+            Number(data.leave_encashment || 0) +
+            Number(data.unpaid_salary || 0) +
+            Number(data.unpaid_overtime || 0) +
+            Number(data.gratuity || 0) -
+            Number(data.deductions || 0);
+        if (data.total_payable !== total) {
+            setData('total_payable', total);
+        }
+    }, [data.leave_encashment, data.unpaid_salary, data.unpaid_overtime, data.gratuity, data.deductions]);
+
+    // Keep employee_id and settlement_date in sync
+    useEffect(() => {
+        setData('employee_id', employee.id);
+        setData('settlement_date', data.last_working_day);
+    }, [employee.id, data.last_working_day]);
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('employees.final-settlement.store', employee.id));
+        post(route('payroll.final-settlements.store'));
     };
 
     return (
@@ -197,8 +218,7 @@ export default function Create({ auth, employee, initialData }: Props) {
                                         type="number"
                                         step="0.01"
                                         value={data.total_payable}
-                                        onChange={e => setData('total_payable', parseFloat(e.target.value))}
-                                        required
+                                        readOnly
                                     />
                                     {errors.total_payable && (
                                         <p className="text-sm text-red-500">{errors.total_payable}</p>

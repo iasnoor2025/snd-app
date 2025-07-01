@@ -49,9 +49,19 @@ class FinalSettlementController extends Controller
     public function create()
     {
         $employees = Employee::active()->get();
-
-        return Inertia::render('FinalSettlement/Create', [
-            'employees' => $employees,
+        $employee = $employees->first();
+        $initialData = [
+            'last_working_day' => $employee ? $employee->hire_date?->format('Y-m-d') : '',
+            'leave_encashment' => 0,
+            'unpaid_salary' => 0,
+            'unpaid_overtime' => 0,
+            'deductions' => 0,
+            'gratuity' => 0,
+            'total_payable' => 0,
+        ];
+        return Inertia::render('FinalSettlements/Create', [
+            'employee' => $employee,
+            'initialData' => $initialData,
         ]);
     }
 
@@ -91,8 +101,7 @@ class FinalSettlementController extends Controller
             // Get overtime amount
             $overtimeAmount = Timesheet::where('employee_id', $employee->id)
                 ->where('status', 'approved')
-                ->whereNull('payroll_id')
-                ->sum('overtime_amount');
+                ->sum('overtime_hours');
 
             // Get pending bonuses
             $bonusAmount = Payroll::where('employee_id', $employee->id)
@@ -114,7 +123,7 @@ class FinalSettlementController extends Controller
                 'employee_id' => $employee->id,
                 'settlement_date' => $request->settlement_date,
                 'unpaid_salary' => $unpaidSalary,
-                'overtime_amount' => $overtimeAmount,
+                'overtime_hours' => $overtimeAmount,
                 'bonus_amount' => $bonusAmount,
                 'deduction_amount' => $deductionAmount,
                 'leave_encashment' => $leaveEncashment,

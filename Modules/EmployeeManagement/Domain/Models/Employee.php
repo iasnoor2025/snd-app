@@ -837,6 +837,14 @@ class Employee extends Model implements HasMedia
     {
         return \Modules\EmployeeManagement\database\factories\EmployeeFactory::new();
     }
+
+    /**
+     * Scope a query to only include active employees.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
 }
 
 

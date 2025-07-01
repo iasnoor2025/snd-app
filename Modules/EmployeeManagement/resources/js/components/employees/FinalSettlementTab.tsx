@@ -133,7 +133,7 @@ export default function FinalSettlementTab({ employee, settlements }: Props) {
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">{t('final_settlement')}</h2>
         {hasPermission('final-settlements.create') && (
-          <Button onClick={() => window.location.href = route('employees.final-settlements.create', { employee: employee.id })}>
+          <Button onClick={() => window.location.href = route('payroll.final-settlements.create')}>
             Create Settlement
           </Button>
         )}
@@ -146,7 +146,7 @@ export default function FinalSettlementTab({ employee, settlements }: Props) {
               <Receipt className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <p>No final settlements found for this employee.</p>
               {hasPermission('final-settlements.create') && (
-                <Button className="mt-4" onClick={() => window.location.href = route('employees.final-settlements.create', { employee: employee.id })}>
+                <Button className="mt-4" onClick={() => window.location.href = route('payroll.final-settlements.create')}>
                   Create New Settlement
                 </Button>
               )}
