@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, router } from '@inertiajs/react';
 import {
   Card,
   CardContent,
@@ -71,14 +70,24 @@ export default function FinalSettlementTab({ employee, settlements }: Props) {
   const [rejectionReason, setRejectionReason] = useState('');
 
   const handleApprove = (settlement: FinalSettlement) => {
-    router.post(route('final-settlements.approve', settlement.id), {}, {
-      onSuccess: () => {
+    fetch(route('final-settlements.approve', settlement.id), {
+      method: 'POST',
+      headers: {
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+      },
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
         toast({
           title: 'Success',
           description: 'Final settlement approved successfully.',
         })
-      },
+      }
     })
+    .catch(error => {
+      console.error('Error approving final settlement:', error);
+    });
   };
 
   const handleReject = (settlement: FinalSettlement) => {
@@ -89,10 +98,18 @@ export default function FinalSettlementTab({ employee, settlements }: Props) {
   const submitRejection = () => {
     if (!selectedSettlement || !rejectionReason) return;
 
-    router.post(route('final-settlements.reject', selectedSettlement.id), {
-      rejection_reason: rejectionReason,
-    }, {
-      onSuccess: () => {
+    fetch(route('final-settlements.reject', selectedSettlement.id), {
+      method: 'POST',
+      headers: {
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+      },
+      body: JSON.stringify({
+        rejection_reason: rejectionReason,
+      }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
         toast({
           title: 'Success',
           description: 'Final settlement rejected successfully.',
@@ -100,8 +117,11 @@ export default function FinalSettlementTab({ employee, settlements }: Props) {
         setIsRejectDialogOpen(false);
         setRejectionReason('');
         setSelectedSettlement(null);
-      },
+      }
     })
+    .catch(error => {
+      console.error('Error rejecting final settlement:', error);
+    });
   };
 
   const downloadSettlement = (settlement: FinalSettlement) => {
@@ -113,10 +133,8 @@ export default function FinalSettlementTab({ employee, settlements }: Props) {
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">{t('final_settlement')}</h2>
         {hasPermission('final-settlements.create') && (
-          <Button asChild>
-            <Link href={route('employees.final-settlements.create', { employee: employee.id })}>
-              Create Settlement
-            </Link>
+          <Button onClick={() => window.location.href = route('employees.final-settlements.create', { employee: employee.id })}>
+            Create Settlement
           </Button>
         )}
       </div>
@@ -128,10 +146,8 @@ export default function FinalSettlementTab({ employee, settlements }: Props) {
               <Receipt className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <p>No final settlements found for this employee.</p>
               {hasPermission('final-settlements.create') && (
-                <Button className="mt-4" asChild>
-                  <Link href={route('employees.final-settlements.create', { employee: employee.id })}>
-                    Create New Settlement
-                  </Link>
+                <Button className="mt-4" onClick={() => window.location.href = route('employees.final-settlements.create', { employee: employee.id })}>
+                  Create New Settlement
                 </Button>
               )}
             </div>
@@ -152,11 +168,12 @@ export default function FinalSettlementTab({ employee, settlements }: Props) {
                   <Badge
                     variant={
                       settlement.status === 'approved'
-                        ? 'success'
+                        ? 'secondary'
                         : settlement.status === 'rejected'
                         ? 'destructive'
                         : 'outline'
                     }
+                  >
                     {settlement.status.charAt(0).toUpperCase() + settlement.status.slice(1)}
                   </Badge>
                 </div>
@@ -184,9 +201,11 @@ export default function FinalSettlementTab({ employee, settlements }: Props) {
                       Download
                     </Button>
                     {settlement.status === 'pending' && hasPermission('final-settlements.approve') && (
+                      <>
                         <Button
                           variant="destructive"
                           onClick={() => handleReject(settlement)}
+                        >
                           Reject
                         </Button>
                         <Button onClick={() => handleApprove(settlement)}>
@@ -231,12 +250,14 @@ export default function FinalSettlementTab({ employee, settlements }: Props) {
                 setRejectionReason('');
                 setSelectedSettlement(null);
               }}
+            >
               Cancel
             </Button>
             <Button
               variant="destructive"
               onClick={submitRejection}
               disabled={!rejectionReason.trim()}
+            >
               Reject Settlement
             </Button>
           </DialogFooter>

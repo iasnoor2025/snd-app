@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
-import { Employee, EmployeeDocument } from '../../types/employee';
-import { Button } from '../ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
+import { Employee, Document } from '../../types/employee';
+import { Button } from '@/Core/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Core/components/ui/card';
+import { Input } from '@/Core/components/ui/input';
+import { Label } from '@/Core/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '../ui/select';
+} from '@/Core/components/ui/select';
 import {
   Table,
   TableBody,
@@ -20,7 +20,7 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from '../ui/table';
+} from '@/Core/components/ui/table';
 import {
   Dialog,
   DialogContent,
@@ -30,9 +30,9 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose
-} from '../ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { Badge } from '../ui/badge';
+} from '@/Core/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Core/components/ui/tabs';
+import { Badge } from '@/Core/components/ui/badge';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -42,7 +42,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '../ui/alert-dialog';
+} from '@/Core/components/ui/alert-dialog';
 import {
   Download,
   File,
@@ -63,7 +63,7 @@ interface DocumentCategory {
 
 interface EmployeeDocumentManagerProps {
   employeeId: number;
-  initialDocuments?: EmployeeDocument[];
+  initialDocuments?: Document[];
 }
 
 const DOCUMENT_CATEGORIES: DocumentCategory[] = [
@@ -76,11 +76,19 @@ const DOCUMENT_CATEGORIES: DocumentCategory[] = [
   { id: 'other', name: 'Other Documents' }
 ];
 
+// Add declaration merging for Document to include expiry_date?
+declare module '../../types/employee' {
+  interface Document {
+    expiry_date?: string;
+  }
+}
+
 export const EmployeeDocumentManager: React.FC<EmployeeDocumentManagerProps> = ({
   employeeId,
   initialDocuments = []
 }) => {
-  const [documents, setDocuments] = useState<EmployeeDocument[]>(initialDocuments);
+  const { t } = useTranslation('employee');
+  const [documents, setDocuments] = useState<Document[]>(initialDocuments);
   const [loading, setLoading] = useState(!initialDocuments.length);
   const [currentUpload, setCurrentUpload] = useState<{
     file: File | null;
@@ -96,8 +104,8 @@ export const EmployeeDocumentManager: React.FC<EmployeeDocumentManagerProps> = (
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [documentToDelete, setDocumentToDelete] = useState<EmployeeDocument | null>(null);
-  const [documentsByCategory, setDocumentsByCategory] = useState<Record<string, EmployeeDocument[]>>({})
+  const [documentToDelete, setDocumentToDelete] = useState<Document | null>(null);
+  const [documentsByCategory, setDocumentsByCategory] = useState<Record<string, Document[]>>({})
   const [currentTab, setCurrentTab] = useState('all');
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
 
@@ -122,15 +130,13 @@ export const EmployeeDocumentManager: React.FC<EmployeeDocumentManagerProps> = (
     }
   };
 
-  const organizeDocumentsByCategory = (docs: EmployeeDocument[]) => {
-  const { t } = useTranslation('employee');
-
-    const byCategory: Record<string, EmployeeDocument[]> = {
+  const organizeDocumentsByCategory = (docs: Document[]) => {
+    const byCategory: Record<string, Document[]> = {
       all: [...docs]
     };
 
     DOCUMENT_CATEGORIES.forEach(category => {
-      byCategory[category.id] = docs.filter(doc => doc.type === category.id);
+      byCategory[category.id] = docs.filter(doc => doc.collection_name === category.id);
     })
 
     setDocumentsByCategory(byCategory);
@@ -172,7 +178,7 @@ export const EmployeeDocumentManager: React.FC<EmployeeDocumentManagerProps> = (
           },
           onUploadProgress: (progressEvent) => {
             const percentCompleted = Math.round(
-              (progressEvent.loaded * 100) / (progressEvent.total || 1);
+              (progressEvent.loaded * 100) / (progressEvent.total || 1)
             );
             setUploadProgress(percentCompleted);
           }
@@ -201,7 +207,7 @@ export const EmployeeDocumentManager: React.FC<EmployeeDocumentManagerProps> = (
     }
   };
 
-  const confirmDeleteDocument = (document: EmployeeDocument) => {
+  const confirmDeleteDocument = (document: Document) => {
     setDocumentToDelete(document);
     setDeleteDialogOpen(true);
   };
@@ -231,7 +237,7 @@ export const EmployeeDocumentManager: React.FC<EmployeeDocumentManagerProps> = (
 
       // Update document in state
       const updatedDocs = documents.map(doc =>
-        doc.id === documentId ? response.data.data : doc;
+        doc.id === documentId ? response.data.data : doc
       );
 
       setDocuments(updatedDocs);
@@ -242,8 +248,8 @@ export const EmployeeDocumentManager: React.FC<EmployeeDocumentManagerProps> = (
     }
   };
 
-  const renderDocumentIcon = (document: EmployeeDocument) => {
-    const fileType = document.file_path.split('.').pop()?.toLowerCase();
+  const renderDocumentIcon = (document: Document) => {
+    const fileType = document.url.split('.').pop()?.toLowerCase();
 
     if (fileType === 'pdf') {
       return <File className="h-6 w-6 text-red-500" />
@@ -256,7 +262,7 @@ export const EmployeeDocumentManager: React.FC<EmployeeDocumentManagerProps> = (
     }
   };
 
-  const isDocumentExpired = (document: EmployeeDocument) => {
+  const isDocumentExpired = (document: Document) => {
     if (!document.expiry_date) return false;
 
     const expiryDate = new Date(document.expiry_date);
@@ -265,12 +271,12 @@ export const EmployeeDocumentManager: React.FC<EmployeeDocumentManagerProps> = (
     return expiryDate < today;
   };
 
-  const getExpiryStatusBadge = (document: EmployeeDocument) => {
+  const getExpiryStatusBadge = (document: Document) => {
     if (!document.expiry_date) return null;
 
     const expiryDate = new Date(document.expiry_date);
     const today = new Date();
-    const monthDiff = (expiryDate.getFullYear() - today.getFullYear()) * 12 +;
+    const monthDiff = (expiryDate.getFullYear() - today.getFullYear()) * 12 +
                       (expiryDate.getMonth() - today.getMonth());
 
     if (expiryDate < today) {
@@ -281,7 +287,7 @@ export const EmployeeDocumentManager: React.FC<EmployeeDocumentManagerProps> = (
       );
     } else if (monthDiff <= 1) {
       return (
-        <Badge variant="warning" className="ml-2 bg-yellow-200 text-yellow-800 border-yellow-300">
+        <Badge variant="secondary" className="ml-2 bg-yellow-200 text-yellow-800 border-yellow-300">
           {t('expiring_soon')}
         </Badge>
       );
@@ -341,6 +347,7 @@ export const EmployeeDocumentManager: React.FC<EmployeeDocumentManagerProps> = (
                     <Select
                       value={currentUpload.type}
                       onValueChange={(value) => setCurrentUpload({...currentUpload, type: value})}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder={t('ph_select_document_type')} />
                       </SelectTrigger>
@@ -385,6 +392,7 @@ export const EmployeeDocumentManager: React.FC<EmployeeDocumentManagerProps> = (
                   <Button
                     onClick={handleUpload}
                     disabled={!currentUpload.file || !currentUpload.name || isUploading}
+                  >
                     {isUploading ? 'Uploading...' : 'Upload'}
                   </Button>
                 </DialogFooter>
@@ -402,6 +410,7 @@ export const EmployeeDocumentManager: React.FC<EmployeeDocumentManagerProps> = (
                   key={category.id}
                   value={category.id}
                   disabled={!documentsByCategory[category.id]?.length}
+                >
                   {category.name}
                 </TabsTrigger>
               ))}
@@ -437,7 +446,7 @@ export const EmployeeDocumentManager: React.FC<EmployeeDocumentManagerProps> = (
                             <TableCell>
                               <div className="font-medium">{document.name}</div>
                               <div className="text-sm text-gray-500">
-                                {DOCUMENT_CATEGORIES.find(c => c.id === document.type)?.name || document.type}
+                                {DOCUMENT_CATEGORIES.find(c => c.id === document.collection_name)?.name || document.collection_name}
                               </div>
                             </TableCell>
                             <TableCell>
@@ -458,7 +467,8 @@ export const EmployeeDocumentManager: React.FC<EmployeeDocumentManagerProps> = (
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  onClick={() => window.open(document.file_path, '_blank')}
+                                  onClick={() => window.open(document.url, '_blank')}
+                                >
                                   <Download className="h-4 w-4" />
                                   <span className="sr-only">Download</span>
                                 </Button>
@@ -466,6 +476,7 @@ export const EmployeeDocumentManager: React.FC<EmployeeDocumentManagerProps> = (
                                   variant="ghost"
                                   size="icon"
                                   onClick={() => handleVerifyDocument(document.id)}
+                                >
                                   <FileCheck className="h-4 w-4" />
                                   <span className="sr-only">Verify</span>
                                 </Button>
@@ -473,6 +484,7 @@ export const EmployeeDocumentManager: React.FC<EmployeeDocumentManagerProps> = (
                                   variant="ghost"
                                   size="icon"
                                   onClick={() => confirmDeleteDocument(document)}
+                                >
                                   <Trash className="h-4 w-4" />
                                   <span className="sr-only">Delete</span>
                                 </Button>
@@ -504,6 +516,7 @@ export const EmployeeDocumentManager: React.FC<EmployeeDocumentManagerProps> = (
             <AlertDialogAction
               onClick={handleDeleteDocument}
               className="bg-red-500 hover:bg-red-600"
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

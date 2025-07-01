@@ -1,11 +1,14 @@
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import AppLayout from '../../../../Core/resources/js/layouts/AppLayout';
 
-const { t } = useTranslation('TimesheetManagement');
+export default function DashboardPage() {
+  const { t } = useTranslation('TimesheetManagement');
+  const breadcrumbs: any[] = [];
 
-title: t('dashboard', 'Dashboard'),
-
-console.error(t('fetch_statuses_error', 'Error fetching module statuses:'), error);
-
-console.error(t('load_modules_error', 'Error loading modules:'), error);
-
-<AppLayout title={t('dashboard', 'Dashboard')} breadcrumbs={breadcrumbs}>
+  return (
+    <AppLayout title={t('dashboard', 'Dashboard')} breadcrumbs={breadcrumbs}>
+      <></>
+    </AppLayout>
+  );
+}
