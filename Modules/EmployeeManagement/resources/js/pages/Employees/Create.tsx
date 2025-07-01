@@ -127,6 +127,7 @@ const formSchema = z.object({
   emergency_contact_name: z.string().optional().default(""),
   emergency_contact_phone: z.string().optional().default(""),
   date_of_birth: z.string().min(1, "Date of birth is required"),
+  department_id: z.coerce.number().min(1, 'Department is required'),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -148,7 +149,7 @@ export default function Create({ users, positions, employee, isEditing = false }
     passport: null,
     iqama: null,
   });
-  
+
   // Initialize existing files from employee data if editing
   useEffect(() => {
     if (isEditing && employee) {
@@ -215,6 +216,7 @@ export default function Create({ users, positions, employee, isEditing = false }
       emergency_contact_name: employee?.emergency_contact_name || '',
       emergency_contact_phone: employee?.emergency_contact_phone || '',
       date_of_birth: employee?.date_of_birth || '',
+      department_id: employee?.department_id ? Number(employee.department_id) : 1,
     },
   });
 
@@ -258,7 +260,7 @@ export default function Create({ users, positions, employee, isEditing = false }
       // Only update hourly rate if we're not manually setting it
       // Check if hourly_rate has been manually modified
       const manuallySetHourlyRate = form.getFieldState('hourly_rate').isDirty;
-      
+
       if (!manuallySetHourlyRate) {
         // Add total certification cost to basic salary for hourly rate calculation
         const totalMonthlyCost = basicSalary;
@@ -359,6 +361,15 @@ export default function Create({ users, positions, employee, isEditing = false }
         return;
       }
 
+      // Format date fields to 'yyyy-MM-dd'
+      const formatDate = (dateString) => {
+        if (!dateString) return '';
+        return dateString.split('T')[0];
+      };
+      data.date_of_birth = formatDate(data.date_of_birth);
+      data.hire_date = formatDate(data.hire_date);
+      // Add more date fields here if needed
+
       // Add all form data to the FormData object
       for (const [key, value] of Object.entries(data)) {
         if (value !== null && value !== undefined) {
@@ -447,6 +458,12 @@ export default function Create({ users, positions, employee, isEditing = false }
         // Display the first validation error
         const firstError = Object.values(error.response.data.errors)[0];
         toast.error(Array.isArray(firstError) ? firstError[0] : firstError);
+      } else if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        toast.error(error.response.data.message);
       } else {
         toast.error('An error occurred while saving the employee.');
       }

@@ -155,6 +155,16 @@ class User extends Authenticatable
         $this->last_login_at = now();
         $this->save();
     }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    protected static function newFactory()
+    {
+        return \Modules\Core\Database\factories\UserFactory::new();
+    }
 }
 
 

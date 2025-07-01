@@ -83,12 +83,13 @@ export default function Index({ auth, employees, filters, departments, positions
   const [position, setPosition] = useState(filters.position || 'all');
   const [isLoading, setIsLoading] = useState(false);
   const { hasPermission } = usePermission();
+  const [perPage, setPerPage] = useState(employees.meta?.per_page || 15);
 
   const handleSearch = debounce((value: string) => {
     setSearch(value);
     router.get(
       '/employees',
-      { search: value, status, department, position },
+      { search: value, status, department, position, per_page: perPage },
       { preserveState: true, preserveScroll: true }
     );
   }, 300);
@@ -113,7 +114,17 @@ export default function Index({ auth, employees, filters, departments, positions
         status: type === 'status' ? normalizedValue : (status === 'all' ? '' : status),
         department: type === 'department' ? normalizedValue : (department === 'all' ? '' : department),
         position: type === 'position' ? normalizedValue : (position === 'all' ? '' : position),
+        per_page: perPage,
       },
+      { preserveState: true, preserveScroll: true }
+    );
+  };
+
+  const handlePerPageChange = (value: string) => {
+    setPerPage(Number(value));
+    router.get(
+      '/employees',
+      { search, status, department, position, per_page: Number(value) },
       { preserveState: true, preserveScroll: true }
     );
   };
@@ -278,17 +289,17 @@ export default function Index({ auth, employees, filters, departments, positions
                           </div>
                           <div className="text-sm">
                             <BriefcaseBusiness className="inline-block w-3 h-3 mr-1" />
-                            {typeof employee.position === 'string' 
-                              ? employee.position 
-                              : employee.position 
-                                ? getTranslation(employee.position?.name) 
+                            {typeof employee.position === 'string'
+                              ? employee.position
+                              : employee.position
+                                ? getTranslation(employee.position?.name)
                                 : 'N/A'}
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            Dept: {typeof employee.department === 'string' 
-                              ? employee.department 
-                              : employee.department 
-                                ? getTranslation(employee.department?.name) 
+                            Dept: {typeof employee.department === 'string'
+                              ? employee.department
+                              : employee.department
+                                ? getTranslation(employee.department?.name)
                                 : 'N/A'}
                           </div>
                         </div>
@@ -386,16 +397,28 @@ export default function Index({ auth, employees, filters, departments, positions
             </div>
 
             {employees?.meta?.total > 0 && (
-              <div className="mt-4 flex items-center justify-between">
+              <div className="mt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                 <div className="text-sm text-muted-foreground">
                   Showing {employees.meta.from} to {employees.meta.to} of {employees.meta.total} results
                 </div>
                 <div className="flex items-center space-x-2">
+                  <Select value={perPage.toString()} onValueChange={handlePerPageChange}>
+                    <SelectTrigger className="w-24">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="15">15</SelectItem>
+                      <SelectItem value="25">25</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                      <SelectItem value="100">100</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <Button
                     variant="outline"
                     size="sm"
                     disabled={!employees.links.prev}
-                    onClick={() => router.get(employees.links.prev!)}
+                    onClick={() => router.get(employees.links.prev + `&per_page=${perPage}`)}
                   >
                     Previous
                   </Button>
@@ -403,7 +426,7 @@ export default function Index({ auth, employees, filters, departments, positions
                     variant="outline"
                     size="sm"
                     disabled={!employees.links.next}
-                    onClick={() => router.get(employees.links.next!)}
+                    onClick={() => router.get(employees.links.next + `&per_page=${perPage}`)}
                   >
                     Next
                   </Button>

@@ -49,6 +49,7 @@ import {
 } from "@/Core";
 import { Alert, AlertDescription } from "@/Core";
 import axios from 'axios';
+axios.defaults.withCredentials = true;
 // Replace static imports with React.lazy for large components
 const DocumentManager = React.lazy(() => import('../../components/employees/EmployeeDocumentManager'));
 const FinalSettlementTab = React.lazy(() => import('../../components/employees/FinalSettlementTab'));
@@ -340,7 +341,7 @@ const DocumentTab = ({ employeeId }: { employeeId: number }) => {
                 size="sm"
                 onClick={() => {
                   if (confirm('Are you sure you want to delete this document?')) {
-                    axios.delete(`/api/employee/${employeeId}/documents/${doc.id}`)
+                    axios.delete(`/api/v1/employees/${employeeId}/documents/${doc.id}`)
                       .then(() => {
                         ToastService.success(`${doc.file_type || 'Document'} deleted successfully`);
                       })
@@ -366,6 +367,10 @@ function formatFileSize(bytes: number): string {
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
   return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+async function ensureSanctumCsrf() {
+  await axios.get('/sanctum/csrf-cookie');
 }
 
 export default function Show({
@@ -434,7 +439,8 @@ export default function Show({
 
   const handleDocumentDelete = async (documentId: number, documentType: string) => {
     try {
-      await axios.delete(`/api/employees/${employee.id}/documents/${documentId}`);
+      await ensureSanctumCsrf();
+      await axios.delete(`/api/v1/employees/${employee.id}/documents/${documentId}`);
       ToastService.success(`${documentType} deleted successfully`);
       // fetchDocuments(); // Commented out as fetchDocuments is not defined
     } catch (error) {
@@ -468,7 +474,7 @@ export default function Show({
       formData.append('document', file);
       formData.append('type', documentType);
 
-      await axios.post(`/api/employees/${employee.id}/documents`, formData, {
+      await axios.post(`/api/v1/employees/${employee.id}/documents`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -2610,107 +2616,7 @@ export default function Show({
           </TabsContent>
 
           <TabsContent value="final-settlements" className="mt-6 space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('final_settlement')}</CardTitle>
-                <CardDescription>{t('manage_final_settlement_and_clearance')}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {/* Final settlement details are commented out due to missing properties on Employee */}
-                {/* <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-4">
-                        <h3 className="text-sm font-medium text-muted-foreground">{t('settlement_details')}</h3>
-                        <dl className="space-y-2">
-                          <div className="flex justify-between border-b pb-2">
-                            <dt className="text-sm font-medium">{t('last_working_day')}</dt>
-                            <dd className="text-sm">
-                              {employee.resignations?.find(r => r.status === 'approved')?.last_working_day || 'Not set'}
-                            </dd>
-                          </div>
-                          <div className="flex justify-between border-b pb-2">
-                            <dt className="text-sm font-medium">{t('leave_balance')}</dt>
-                            <dd className="text-sm">
-                              {employee.leave_balance || 0} days
-                            </dd>
-                          </div>
-                          <div className="flex justify-between border-b pb-2">
-                            <dt className="text-sm font-medium">{t('leave_encashment')}</dt>
-                            <dd className="text-sm">
-                              SAR {employee.leave_balance * (employee.basic_salary / 30) || 0}
-                            </dd>
-                          </div>
-                          <div className="flex justify-between border-b pb-2">
-                            <dt className="text-sm font-medium">{t('unpaid_salary')}</dt>
-                            <dd className="text-sm">
-                              SAR {employee.unpaid_salary || 0}
-                            </dd>
-                          </div>
-                          <div className="flex justify-between border-b pb-2">
-                            <dt className="text-sm font-medium">{t('unpaid_overtime')}</dt>
-                            <dd className="text-sm">
-                              SAR {employee.unpaid_overtime || 0}
-                            </dd>
-                          </div>
-                          <div className="flex justify-between border-b pb-2">
-                            <dt className="text-sm font-medium">Deductions</dt>
-                            <dd className="text-sm">
-                              SAR {employee.deductions || 0}
-                            </dd>
-                          </div>
-                          <div className="flex justify-between border-b pb-2">
-                            <dt className="text-sm font-medium">Gratuity</dt>
-                            <dd className="text-sm">
-                              SAR {employee.gratuity || 0}
-                            </dd>
-                          </div>
-                          <div className="flex justify-between border-b pb-2 font-semibold">
-                            <dt className="text-sm">{t('total_payable')}</dt>
-                            <dd className="text-sm">
-                              SAR {employee.total_payable || 0}
-                            </dd>
-                          </div>
-                        </dl>
-                      </div>
-                      <div className="space-y-4">
-                        <h3 className="text-sm font-medium text-muted-foreground">{t('settlement_status')}</h3>
-                        <div className="space-y-4">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm">Status</span>
-                            <Badge variant={employee.settlement_status === 'completed' ? 'default' : 'secondary'}>
-                              {employee.settlement_status || 'Pending'}
-                            </Badge>
-                          </div>
-                          {employee.settlement_notes && (
-                            <div className="text-sm text-muted-foreground">
-                              <p className="font-medium mb-1">{t('notes')}:</p>
-                              <p>{employee.settlement_notes}</p>
-                            </div>
-                          )}
-                          {employee.settlement_agreement_terms && (
-                            <div className="text-sm text-muted-foreground">
-                              <p className="font-medium mb-1">{t('agreement_terms')}:</p>
-                              <p>{employee.settlement_agreement_terms}</p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex justify-end space-x-2">
-                      <Button variant="outline" onClick={() => window.print()}>
-                        <Printer className="mr-2 h-4 w-4" />
-                        {t('print_settlement')}
-                      </Button>
-                      {hasPermission('final-settlements.approve') && (
-                        <Button onClick={() => handleApproveSettlement(employee.final_settlement_id)}>
-                          <Check className="mr-2 h-4 w-4" />
-                          {t('approve_settlement')}
-                        </Button>
-                      )}
-                    </div>
-                </div> */}
-              </CardContent>
-            </Card>
+            <FinalSettlementTab employee={employee} settlements={finalSettlements.data || []} />
           </TabsContent>
 
           <TabsContent value="resignations" className="mt-6 space-y-6">

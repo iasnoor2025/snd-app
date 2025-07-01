@@ -55,6 +55,8 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 
+axios.defaults.withCredentials = true;
+
 interface DocumentCategory {
   id: string;
   name: string;
@@ -81,6 +83,10 @@ declare module '../../types/employee' {
   interface Document {
     expiry_date?: string;
   }
+}
+
+async function ensureSanctumCsrf() {
+  await axios.get('/sanctum/csrf-cookie');
 }
 
 export const EmployeeDocumentManager: React.FC<EmployeeDocumentManagerProps> = ({
@@ -120,7 +126,8 @@ export const EmployeeDocumentManager: React.FC<EmployeeDocumentManagerProps> = (
   const fetchDocuments = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`/api/employees/${employeeId}/documents`);
+      await ensureSanctumCsrf();
+      const response = await axios.get(`/api/v1/employees/${employeeId}/documents`);
       setDocuments(response.data.data);
       organizeDocumentsByCategory(response.data.data);
     } catch (error) {
@@ -169,8 +176,9 @@ export const EmployeeDocumentManager: React.FC<EmployeeDocumentManagerProps> = (
     }
 
     try {
+      await ensureSanctumCsrf();
       const response = await axios.post(
-        `/api/employees/${employeeId}/documents`,
+        `/api/v1/employees/${employeeId}/documents`,
         formData,
         {
           headers: {
@@ -216,7 +224,7 @@ export const EmployeeDocumentManager: React.FC<EmployeeDocumentManagerProps> = (
     if (!documentToDelete) return;
 
     try {
-      await axios.delete(`/api/employees/${employeeId}/documents/${documentToDelete.id}`);
+      await axios.delete(`/api/v1/employees/${employeeId}/documents/${documentToDelete.id}`);
 
       // Remove document from state
       const updatedDocs = documents.filter(doc => doc.id !== documentToDelete.id);
@@ -233,7 +241,7 @@ export const EmployeeDocumentManager: React.FC<EmployeeDocumentManagerProps> = (
 
   const handleVerifyDocument = async (documentId: number) => {
     try {
-      const response = await axios.patch(`/api/employees/${employeeId}/documents/${documentId}/verify`);
+      const response = await axios.patch(`/api/v1/employees/${employeeId}/documents/${documentId}/verify`);
 
       // Update document in state
       const updatedDocs = documents.map(doc =>

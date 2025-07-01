@@ -14,6 +14,7 @@ use Modules\EmployeeManagement\Http\Controllers\EmployeeNumberController;
 use Modules\EmployeeManagement\Http\Controllers\SkillController;
 use Modules\EmployeeManagement\Http\Controllers\PerformanceReviewController;
 use Modules\EmployeeManagement\Http\Controllers\TrainingController;
+use Modules\EmployeeManagement\Http\Controllers\Api\DepartmentApiController;
 
 // Public route for last-file-number (no auth middleware)
 Route::prefix('v1')->group(function () {
@@ -46,6 +47,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
         Route::post('/passport', [EmployeeDocumentController::class, 'uploadPassport']);
         Route::post('/contract', [EmployeeDocumentController::class, 'uploadContract']);
         Route::post('/medical', [EmployeeDocumentController::class, 'uploadMedical']);
+        Route::post('/', [EmployeeDocumentController::class, 'uploadGeneral']);
         Route::delete('/{document}', [EmployeeDocumentController::class, 'destroy']);
         Route::get('/{document}/download', [EmployeeDocumentController::class, 'download']);
     });
@@ -78,6 +80,7 @@ Route::prefix('v1/positions')->group(function() {
 
 // Other public API endpoints
 Route::get('/employee-numbers/next', [EmployeeNumberController::class, 'getNextEmployeeNumber']);
+Route::get('/departments', [DepartmentApiController::class, 'index']);
 
 // Authenticated API endpoints
 Route::middleware('auth:sanctum')->group(function () {

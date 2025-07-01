@@ -827,6 +827,16 @@ class Employee extends Model implements HasMedia
             ->withPivot('proficiency', 'certified_at')
             ->withTimestamps();
     }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    protected static function newFactory()
+    {
+        return \Modules\EmployeeManagement\database\factories\EmployeeFactory::new();
+    }
 }
 
 

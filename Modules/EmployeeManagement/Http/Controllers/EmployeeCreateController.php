@@ -318,10 +318,16 @@ class EmployeeCreateController extends Controller
         $employee->load('user');
 
         $users = \Modules\Core\Domain\Models\User::all();
-        $positions = Position::where('is_active', true)->pluck('name')->toArray();
+        $positions = Position::where('is_active', true)->get(['id', 'name']);
+
+        // Build a flat array for the employee, including user.email and formatted dates
+        $employeeArray = $employee->toArray();
+        $employeeArray['email'] = $employee->user ? $employee->user->email : '';
+        $employeeArray['date_of_birth'] = $employee->date_of_birth ? $employee->date_of_birth->format('Y-m-d') : '';
+        $employeeArray['hire_date'] = $employee->hire_date ? $employee->hire_date->format('Y-m-d') : '';
 
         return Inertia::render('Employees/Edit', [
-            'employee' => $employee,
+            'employee' => $employeeArray,
             'users' => $users,
             'positions' => $positions,
         ]);

@@ -49,16 +49,21 @@ class EmployeeController extends Controller
                 'employee' => $employee,
                 'redirect' => route('employees.index')
             ], 201);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             \Log::error('Api/EmployeeController@store - Exception', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
+                'exception' => $e
             ]);
 
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to create employee: ' . $e->getMessage(),
-                'errors' => ['error' => $e->getMessage()]
+                'errors' => [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                    'exception' => (string) $e
+                ]
             ], 500);
         }
     }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
 import { Input } from "@/Core";
@@ -24,6 +24,7 @@ const positionSchema = z.object({
 
 const employmentDetailsSchema = z.object({
   position_id: z.number().nullable(),
+  department_id: z.number().min(1, 'Department is required'),
   hire_date: z.string().min(1, 'Hire date is required'),
   status: z.enum(['active', 'inactive', 'on_leave']),
   role: z.enum(['admin', 'manager', 'foreman', 'workshop', 'employee']),
@@ -69,37 +70,24 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
     positions && positions.length > 0 ? positions : defaultPositions
   );
 
-  // Fetch positions on component mount if not provided or empty
-  React.useEffect(() => {
-    const fetchPositions = async () => {
-      try {
-        // Try to fetch positions from the public API
-        const response = await axios.get('/public-api/positions');
-
-        if (response.data && Array.isArray(response.data) && response.data.length > 0) {
-          console.log('Fetched positions from API:', response.data);
-          setPositionsState(response.data);
-        } else {
-          // Use default positions if API returns empty
-          console.log('API returned no positions, using defaults');
-          setPositionsState(defaultPositions);
-        }
-      } catch (error) {
-        console.error('Error fetching positions:', error);
-        // Use default positions as fallback
-        setPositionsState(defaultPositions);
-        console.log('Error fetching positions, using defaults');
-      }
-    };
-
-    fetchPositions();
-  }, []);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newPosition, setNewPosition] = useState<{ name: string; description: string }>({ name: '', description: '' });
   const [adding, setAdding] = useState(false);
   const [editingPosition, setEditingPosition] = useState<PositionType | null>(null);
   const [deletingPosition, setDeletingPosition] = useState<PositionType | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [departments, setDepartments] = useState<any[]>([]);
+
+  useEffect(() => {
+    axios.get('/api/departments?is_active=true')
+      .then(res => {
+        setDepartments(res.data.data || []);
+      })
+      .catch(err => {
+        setDepartments([]);
+        toast.error('Could not load departments.');
+      });
+  }, []);
 
   const handleAddPositionClick = () => {
     setShowAddModal(true);
@@ -522,6 +510,41 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="department_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('department')}</FormLabel>
+                  <Select
+                    value={field.value ? field.value.toString() : ''}
+                    onValueChange={value => field.onChange(Number(value))}
+                    disabled={departments.length === 0}
+                  >
+                    <FormControl>
+                      <SelectTrigger id="department_id">
+                        <SelectValue placeholder={t('ph_select_department')} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {departments.length === 0 ? (
+                        <SelectItem value="0" disabled>
+                          {t('No departments found')}
+                        </SelectItem>
+                      ) : (
+                        departments.map(dept => (
+                          <SelectItem key={dept.id} value={dept.id.toString()}>
+                            {getTranslation(dept.name)}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

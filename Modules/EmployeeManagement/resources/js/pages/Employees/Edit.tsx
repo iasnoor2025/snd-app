@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { getTranslation } from "@/Core";
 
 import axios from 'axios';
+axios.defaults.withCredentials = true;
 
 // Placeholder components
 const FileUpload = ({ field, name, onFileSelect }: { field: any, name: string, onFileSelect: (file: File) => void }) => {
@@ -24,14 +25,14 @@ const FileUpload = ({ field, name, onFileSelect }: { field: any, name: string, o
       onFileSelect(e.target.files[0]);
     }
   };
-  
+
   return (
     <div className="flex items-center space-x-2">
-      <Input 
-        type="file" 
-        onChange={handleFileChange} 
+      <Input
+        type="file"
+        onChange={handleFileChange}
         className="max-w-xs"
-        accept="image/*,.pdf" 
+        accept="image/*,.pdf"
       />
       {field.value && typeof field.value === 'string' && field.value.length > 0 && (
         <span className="text-sm text-muted-foreground">File uploaded</span>
@@ -95,7 +96,12 @@ interface Props extends PageProps {
   positions: Position[];
 }
 
+async function ensureSanctumCsrf() {
+  await axios.get('/sanctum/csrf-cookie');
+}
+
 export default function Edit({ auth, employee, users, positions }: Props) {
+  console.log('employee', employee);
   const { t } = useTranslation('employees');
 
   const [isLoading, setIsLoading] = useState(false);
@@ -110,28 +116,34 @@ export default function Edit({ auth, employee, users, positions }: Props) {
     spsp_license: null,
   });
 
+  // Format date fields for defaultValues
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '';
+    // Handles both ISO and already formatted dates
+    return dateString.split('T')[0];
+  };
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       file_number: employee.file_number || '',
       first_name: employee.first_name || '',
       last_name: employee.last_name || '',
-      email: employee.email || '',
+      email: employee.user?.email || '',
       phone: employee.phone || '',
-      date_of_birth: employee.date_of_birth || '',
+      date_of_birth: formatDate(employee.date_of_birth),
       nationality: employee.nationality || '',
       emergency_contact_name: employee.emergency_contact_name || '',
       emergency_contact_phone: employee.emergency_contact_phone || '',
-      position_id: employee.position_id?.toString() || '',
+      position_id: employee.position_id ? employee.position_id.toString() : '',
       department: employee.department || '',
-      join_date: employee.join_date || '',
+      join_date: formatDate(employee.join_date),
       status: employee.status || 'active',
       basic_salary: employee.basic_salary || 0,
       hourly_rate: employee.hourly_rate || 0,
       food_allowance: employee.food_allowance || 0,
       housing_allowance: employee.housing_allowance || 0,
       transport_allowance: employee.transport_allowance || 0,
-      // These fields may not exist in the employee model
       absent_deduction_rate: employee.absent_deduction_rate || 0,
       advance_payment: employee.advance_payment || 0,
       overtime_rate_multiplier: employee.overtime_rate_multiplier || 1.5,
@@ -152,7 +164,8 @@ export default function Edit({ auth, employee, users, positions }: Props) {
 
   const fetchDocuments = async () => {
     try {
-      const response = await axios.get(`/api/employees/${employee.id}/documents`);
+      await ensureSanctumCsrf();
+      const response = await axios.get(`/api/v1/employees/${employee.id}/documents`);
       setDocuments(response.data);
     } catch (error) {
       console.error('Error fetching documents:', error);
@@ -165,10 +178,11 @@ export default function Edit({ auth, employee, users, positions }: Props) {
     const loadingToastId = ToastService.loading('Updating employee...');
 
     try {
-      // Create FormData for file uploads
-      const formData = new FormData();
-      
-      // Format the data to ensure proper types
+      // Format date fields to 'yyyy-MM-dd'
+      const formatDate = (dateString: string) => {
+        if (!dateString) return '';
+        return dateString.split('T')[0];
+      };
       const formattedData = {
         ...data,
         position_id: data.position_id ? parseInt(data.position_id) : null,
@@ -185,9 +199,12 @@ export default function Edit({ auth, employee, users, positions }: Props) {
         contract_days_per_month: data.contract_days_per_month || 22,
         other_allowance: data.other_allowance || 0,
         mobile_allowance: data.mobile_allowance || 0,
+        date_of_birth: formatDate(data.date_of_birth),
+        join_date: formatDate(data.join_date),
       };
 
       // Add all form data to the FormData object
+      const formData = new FormData();
       for (const [key, value] of Object.entries(formattedData)) {
         if (value !== null && value !== undefined) {
           if (typeof value === 'object') {
@@ -214,7 +231,7 @@ export default function Edit({ auth, employee, users, positions }: Props) {
         },
         onError: (errors) => {
           console.error('Update errors:', errors);
-          
+
           // Handle validation errors
           if (errors) {
             Object.keys(errors).forEach(field => {
@@ -401,7 +418,6 @@ export default function Edit({ auth, employee, users, positions }: Props) {
                               <Input
                                 placeholder={t('ph_email')}
                                 {...field}
-                                value={employee.user?.email || ''}
                               />
                             </FormControl>
                             <FormMessage />
@@ -433,7 +449,6 @@ export default function Edit({ auth, employee, users, positions }: Props) {
                               <Input
                                 type="date"
                                 {...field}
-                                value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
                               />
                             </FormControl>
                             <FormMessage />
@@ -579,7 +594,6 @@ export default function Edit({ auth, employee, users, positions }: Props) {
                               <Input
                                 type="date"
                                 {...field}
-                                value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
                               />
                             </FormControl>
                             <FormMessage />

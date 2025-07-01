@@ -164,6 +164,42 @@ class EmployeeDocumentController extends Controller
     }
 
     /**
+     * Upload a general document
+     */
+    public function uploadGeneral(Request $request, Employee $employee)
+    {
+        try {
+            if (Gate::denies('update', $employee)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You are not authorized to upload documents for this employee'
+                ], 403);
+            }
+
+            $rules = $this->documentTypeService->getValidationRules('general');
+            $request->validate($rules['metadata']);
+            $request->validate(['file' => $rules['file']]);
+
+            $media = $this->documentService->uploadGeneral(
+                $employee->id,
+                $request->only([
+                    'document_type',
+                    'document_number',
+                    'issue_date',
+                    'expiry_date',
+                    'issuing_authority',
+                    'description',
+                ]),
+                $request->file('file')
+            );
+
+            return $this->documentResponse($media);
+        } catch (\Exception $e) {
+            return $this->handleError($e, 'general', $employee->id);
+        }
+    }
+
+    /**
      * Get all documents for an employee
      */
     public function index(Employee $employee)

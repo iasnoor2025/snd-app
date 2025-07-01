@@ -75,7 +75,7 @@ class EmployeeController extends Controller
             ->orderBy('first_name')
             ->orderBy('last_name');
 
-        $employees = $query->paginate($request->per_page ?? 10)
+        $employees = $query->paginate($request->per_page ?? 15)
             ->withQueryString();
 
         return Inertia::render('Employees/Index', [

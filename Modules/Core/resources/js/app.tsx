@@ -15,6 +15,20 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './i18n.js';
 import { initializeTheme } from './hooks/use-appearance';
+import axios from 'axios';
+
+axios.defaults.withCredentials = true;
+
+async function ensureSanctumAuth() {
+  try {
+    await axios.get('/sanctum/csrf-cookie');
+  } catch (e) {
+    // Optionally log or handle error
+  }
+}
+
+// Call this once on app load
+ensureSanctumAuth();
 
 // Initialize document direction based on language
 const DirectionProvider = ({ children }: { children: React.ReactNode }) => {
