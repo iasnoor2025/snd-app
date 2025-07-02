@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from '@/Core/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/Core/components/ui/card';
+import { Input } from '@/Core/components/ui/input';
+import { Label } from '@/Core/components/ui/label';
 import { toast } from 'sonner';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { MultiSelect } from '@/components/ui/multi-select';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/Core/components/ui/dialog';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/components/ui/table';
+import { MultiSelect } from '@/Core/components/ui/multi-select';
 
 interface ApiKey {
     id: string;
@@ -113,8 +113,8 @@ export default function ApiKeySettings({ initialKeys }: ApiKeySettingsProps) {
                                     </DialogTitle>
                                     <DialogDescription>
                                         {createdKey
-                                            ? 'Copy your API key now. You won't be able to see it again!'
-                                            : 'Create a new API key to access the API'}
+                                            ? "Copy your API key now. You won't be able to see it again!"
+                                            : "Create a new API key to access the API"}
                                     </DialogDescription>
                                 </DialogHeader>
 
@@ -226,4 +226,4 @@ export default function ApiKeySettings({ initialKeys }: ApiKeySettingsProps) {
             </Card>
         </>
     );
-} 
+}

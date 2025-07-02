@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import AppLayout from '../../../../Core/resources/js/layouts/AppLayout';
+import { AppLayout } from '@/Core';
 
 export default function DashboardPage() {
   const { t } = useTranslation('TimesheetManagement');

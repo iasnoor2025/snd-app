@@ -1,8 +1,8 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MfaSettings } from '@/components/settings/MfaSettings';
-import { ApiKeySettings } from '@/components/settings/ApiKeySettings';
-import { DeviceSessions } from '@/components/settings/DeviceSessions';
-import { PageHeader } from '@/components/page-header';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
+import MfaSettings from '../../components/settings/MfaSettings';
+import ApiKeySettings from '../../components/settings/ApiKeySettings';
+import { DeviceSessions } from '../../components/settings/DeviceSessions';
+import PageHeader from '../../components/page-header';
 
 interface SecuritySettingsProps {
     mfa_enabled: boolean;
@@ -40,4 +40,4 @@ export default function SecuritySettings({ mfa_enabled, api_keys }: SecuritySett
             <DeviceSessions />
         </div>
     );
-} 
+}

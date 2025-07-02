@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
-import AppLayout from '../../layouts/AppLayout';
+import { AppLayout } from '@/Core';
 import { ProfileNav } from '../../components/profile-nav';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
@@ -331,4 +331,4 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
             </div>
         </AppLayout>
     );
-} 
+}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../../components/ui/table';
 import { toast } from 'sonner';
 
 interface Metric {

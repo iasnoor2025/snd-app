@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/Core/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/Core/components/ui/dialog';
 import { toast } from 'sonner';
 import { AlertCircle, Laptop, Smartphone, Tablet, Globe, X } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -184,4 +184,4 @@ export function DeviceSessions() {
             </Dialog>
         </Card>
     );
-} 
+}

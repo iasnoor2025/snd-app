@@ -3,8 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Head, Link } from '@inertiajs/react';
 // Placeholder type
 type PageProps = any;
-// Minimal placeholder AppLayout component
-const AppLayout = ({ children }: { children: React.ReactNode }) => <div className="admin-layout-placeholder">{children}</div>;
+import { AppLayout } from '@/Core';
 import { Button } from "@/Core";
 import {
   Card,

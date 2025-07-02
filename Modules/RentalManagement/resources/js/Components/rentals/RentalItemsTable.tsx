@@ -13,8 +13,8 @@ import {
   Button,
 } from "@/Core";
 import { Badge } from "@/Core";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/Core";
-import { DynamicPricingManager } from "../../DynamicPricingManager";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/Core/components/ui/dialog";
+import { DynamicPricingManager } from '../DynamicPricingManager';
 
 interface ExtendedRentalItem extends Omit<RentalItem, 'operator'> {
   daily_rate?: number;

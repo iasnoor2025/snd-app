@@ -24,16 +24,16 @@ export default function AppLayout({ children, title, breadcrumbs, requiredPermis
         title: t(item.title)
     }));
 
+    console.log('AppLayout - Rendering with title:', translatedTitle); // Debug log
+
     return (
         <>
             <AppShell variant="sidebar">
-                <Sidebar collapsible="offcanvas" className="bg-white border-r border-gray-200" side={isRTL ? "right" : "left"}>
-                    <AppSidebar />
-                </Sidebar>
-                <SidebarInset className="min-h-screen bg-gray-50">
+                <AppSidebar />
+                <SidebarInset>
                     {translatedTitle && <Head title={translatedTitle} />}
                     <AppSidebarHeader breadcrumbs={translatedBreadcrumbs} />
-                    <main className="flex-1 p-6">
+                    <main className="flex-1 p-6 bg-gray-50">
                         {children}
                     </main>
                 </SidebarInset>

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../../components/ui/table';
+import { Input } from '../../components/ui/input';
+import { Badge } from '../../components/ui/badge';
 import { toast } from 'sonner';
 
 interface LogEntry {

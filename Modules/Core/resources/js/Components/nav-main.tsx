@@ -14,18 +14,33 @@ export function NavMain({ items }: NavMainProps) {
     const { t } = useTranslation('common');
     const { hasPermission } = usePermission();
 
-    console.log('NavMain received items:', items); // Debug log
-    console.log('Items count:', items.length); // Debug log
+    console.log('NavMain: Received items:', items);
+    console.log('NavMain: Items count:', items.length);
+
+    if (!items || items.length === 0) {
+        console.log('NavMain: No items to render');
+        return (
+            <SidebarGroup>
+                <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+                <SidebarMenu>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton>No items to display</SidebarMenuButton>
+                    </SidebarMenuItem>
+                </SidebarMenu>
+            </SidebarGroup>
+        );
+    }
 
     return (
         <SidebarGroup>
             <SidebarGroupLabel>Navigation</SidebarGroupLabel>
             <SidebarMenu>
                 {items.map((item, index) => {
-                    console.log('Rendering item:', item.title); // Debug log
+                    console.log('NavMain: Rendering item:', item.title, 'at index:', index);
 
                     // Temporarily disable permission checks for debugging
                     // if (item.permission && !hasPermission(item.permission)) {
+                    //     console.log('NavMain: Permission denied for:', item.title);
                     //     return null;
                     // }
 
@@ -71,7 +86,10 @@ export function NavMain({ items }: NavMainProps) {
                         <SidebarMenuItem key={index}>
                             <SidebarMenuButton asChild>
                                 <button
-                                    onClick={() => router.visit(item.href)}
+                                    onClick={() => {
+                                        console.log('NavMain: Clicking on:', item.title, 'href:', item.href);
+                                        router.visit(item.href);
+                                    }}
                                     className="w-full text-left flex items-center"
                                 >
                                     {item.icon && <Icon name={item.icon} className="h-4 w-4 mr-2" />}
