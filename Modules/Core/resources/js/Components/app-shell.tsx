@@ -12,6 +12,9 @@ interface AppShellProps {
 export function AppShell({ children, variant = 'header' }: AppShellProps) {
     const isOpen = usePage<SharedData>().props.sidebarOpen;
 
+    console.log('AppShell - Sidebar open state:', isOpen); // Debug log
+    console.log('AppShell - Variant:', variant); // Debug log
+
     if (variant === 'header') {
         return (
             <div className="flex min-h-screen w-full flex-col">
@@ -21,7 +24,7 @@ export function AppShell({ children, variant = 'header' }: AppShellProps) {
     }
 
     return (
-        <SidebarProvider defaultOpen={isOpen}>
+        <SidebarProvider defaultOpen={true}>
             <PWAWrapper>{children}</PWAWrapper>
         </SidebarProvider>
     );

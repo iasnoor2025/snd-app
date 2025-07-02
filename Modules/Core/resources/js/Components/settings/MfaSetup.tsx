@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+import { Button } from '@/Core/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/Core/components/ui/card';
+import { Input } from '@/Core/components/ui/input';
+import { Label } from '@/Core/components/ui/label';
+import { Switch } from '@/Core/components/ui/switch';
 import { toast } from 'sonner';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import QRCode from 'qrcode.react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/Core/components/ui/dialog';
+import { Alert, AlertDescription } from '@/Core/components/ui/alert';
+import { QRCodeSVG } from 'qrcode.react';
 
 interface MfaSetupProps {
     isEnabled: boolean;
@@ -105,9 +105,9 @@ export default function MfaSetup({ isEnabled, secretKey, backupCodes }: MfaSetup
                             Scan this QR code with your authenticator app, then enter the verification code below.
                         </DialogDescription>
                     </DialogHeader>
-                    
+
                     <div className="flex justify-center py-4">
-                        <QRCode
+                        <QRCodeSVG
                             value={`otpauth://totp/SND-App:${encodeURIComponent(
                                 'user@email.com'
                             )}?secret=${secretKey}&issuer=SND-App`}
@@ -166,4 +166,4 @@ export default function MfaSetup({ isEnabled, secretKey, backupCodes }: MfaSetup
             </Dialog>
         </Card>
     );
-} 
+}

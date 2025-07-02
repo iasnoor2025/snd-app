@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+import { Button } from '@/Core/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/Core/components/ui/card';
+import { Input } from '@/Core/components/ui/input';
+import { Label } from '@/Core/components/ui/label';
+import { Switch } from '@/Core/components/ui/switch';
 import { toast } from 'sonner';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import QRCode from 'qrcode.react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/Core/components/ui/dialog';
+import { QRCodeSVG } from 'qrcode.react';
 
 interface MfaSettingsProps {
     isEnabled: boolean;
@@ -130,7 +130,7 @@ export default function MfaSettings({ isEnabled: initialEnabled }: MfaSettingsPr
                     {setupData && (
                         <div className="space-y-4">
                             <div className="flex justify-center">
-                                <QRCode value={setupData.qr_code_url} size={200} />
+                                <QRCodeSVG value={setupData.qr_code_url} size={200} />
                             </div>
                             <div className="space-y-2">
                                 <Label>Secret Key</Label>
@@ -176,4 +176,4 @@ export default function MfaSettings({ isEnabled: initialEnabled }: MfaSettingsPr
             </Dialog>
         </>
     );
-} 
+}

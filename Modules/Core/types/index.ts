@@ -18,4 +18,30 @@ export interface User {
     avatar_color?: string;
     laravolt_avatar?: string;
     gravatar_url?: string;
-} 
+}
+
+export interface NavItem {
+    title: string;
+    href: string;
+    icon?: string;
+    permission?: string;
+    items?: NavItem[];
+}
+
+export interface BreadcrumbItem {
+    title: string;
+    href?: string;
+}
+
+export interface SharedData {
+    auth: {
+        user: User;
+    };
+    sidebarOpen?: boolean;
+    flash?: {
+        success?: string;
+        error?: string;
+        warning?: string;
+        info?: string;
+    };
+}

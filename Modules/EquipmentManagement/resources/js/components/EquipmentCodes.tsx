@@ -3,7 +3,7 @@ import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/../../Modules/Core/resources/js/components/ui/dialog';
 import { toast } from 'sonner';
-import QRCode from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 import Barcode from 'react-barcode';
 import axios from 'axios';
 
@@ -196,7 +196,7 @@ export function EquipmentCodes({ equipmentId }: EquipmentCodesProps) {
                     </DialogHeader>
                     {selectedCode?.qr_url && (
                         <div className="flex flex-col items-center space-y-4">
-                            <QRCode value={selectedCode.qr_url} size={200} />
+                            <QRCodeSVG value={selectedCode.qr_url} size={200} />
                             <Button
                                 variant="outline"
                                 onClick={() => {
@@ -237,4 +237,4 @@ export function EquipmentCodes({ equipmentId }: EquipmentCodesProps) {
             </Dialog>
         </Card>
     );
-} 
+}
