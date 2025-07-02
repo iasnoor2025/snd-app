@@ -194,5 +194,15 @@ class EmployeeController extends Controller
         $this->employeeService->deleteEmployeeDocument($id, $mediaId);
         return response()->json(null, 204);
     }
+
+    /**
+     * Get employee summary (total, active, inactive, top employees)
+     * GET /api/v1/employees/summary
+     */
+    public function employeeSummary(): JsonResponse
+    {
+        $summary = $this->employeeService->getEmployeeSummary();
+        return response()->json($summary);
+    }
 }
 

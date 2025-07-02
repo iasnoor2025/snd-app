@@ -313,6 +313,26 @@ class EmployeeService extends BaseService
     {
         \Log::info('clearEmployeeCaches called (no-op)');
     }
+
+    public function getEmployeeSummary(): array
+    {
+        $total = $this->employeeRepository->count();
+        $active = $this->employeeRepository->findByStatus('active');
+        $inactive = $this->employeeRepository->findByStatus('inactive');
+        $topEmployees = $this->employeeRepository->getTopEmployees(3);
+        return [
+            'total' => $total,
+            'active' => count($active),
+            'inactive' => count($inactive),
+            'topEmployees' => array_map(function ($emp) {
+                return [
+                    'id' => $emp->id,
+                    'name' => $emp->name,
+                    'status' => ucfirst($emp->status),
+                ];
+            }, $topEmployees),
+        ];
+    }
 }
 
 

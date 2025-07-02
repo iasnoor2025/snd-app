@@ -75,6 +75,9 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     Route::post('salary-increments/{salaryIncrement}/apply', [SalaryIncrementController::class, 'apply']);
     Route::get('salary-increments/statistics/overview', [SalaryIncrementController::class, 'statistics']);
     Route::get('employees/{employee}/salary-increments', [SalaryIncrementController::class, 'getEmployeeSalaryHistory']);
+
+    // New employee summary API endpoint
+    Route::get('employees/summary', [EmployeeController::class, 'employeeSummary']);
 });
 
 // Public API endpoints - no authentication required

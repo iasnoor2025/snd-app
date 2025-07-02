@@ -93,6 +93,16 @@ interface RentalRepositoryInterface
      * @return Collection;
      */
     public function getByStatus(string $status): Collection;
+
+    /**
+     * Get rental summary (total, active, overdue)
+     */
+    public function getSummary(): array;
+
+    /**
+     * Get top N rentals (by recent creation)
+     */
+    public function getTopRentals(int $limit = 3): array;
 }
 
 

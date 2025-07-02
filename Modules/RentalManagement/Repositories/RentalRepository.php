@@ -65,11 +65,11 @@ class RentalRepository implements RentalRepositoryInterface
                     'customers.name as customer_name',
                     'customers.email as customer_email',
                     DB::raw('COALESCE(rentals.actual_end_date, rentals.expected_end_date) as end_date'),
-                    DB::raw('CASE 
+                    DB::raw('CASE
                         WHEN rentals.status = \'completed\' THEN \'completed\'
                         WHEN rentals.status = \'pending\' THEN \'pending\'
                         WHEN rentals.status = \'active\' AND rentals.expected_end_date < NOW() AND rentals.actual_end_date IS NULL THEN \'overdue\'
-                        ELSE rentals.status 
+                        ELSE rentals.status
                     END as calculated_status')
                 ])
                 ->leftJoin('customers', 'rentals.customer_id', '=', 'customers.id');
@@ -219,6 +219,23 @@ class RentalRepository implements RentalRepositoryInterface
     public function getByStatus(string $status): Collection
     {
         return $this->model->where('status', $status)->get();
+    }
+
+    public function getSummary(): array
+    {
+        $total = $this->model->count();
+        $active = $this->model->where('status', 'active')->count();
+        $overdue = $this->model->where('status', 'overdue')->count();
+        return [
+            'total' => $total,
+            'active' => $active,
+            'overdue' => $overdue,
+        ];
+    }
+
+    public function getTopRentals(int $limit = 3): array
+    {
+        return $this->model->orderByDesc('created_at')->limit($limit)->get()->all();
     }
 }
 

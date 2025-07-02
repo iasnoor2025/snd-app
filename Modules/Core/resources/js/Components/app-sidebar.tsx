@@ -1,7 +1,7 @@
 import { NavFooter } from './nav-footer';
 import { NavMain } from './nav-main';
 import { NavUser } from './nav-user';
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from './ui/sidebar';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger } from './ui/sidebar';
 import { type NavItem } from '../types';
 
 import AppLogo from './app-logo';
@@ -95,13 +95,12 @@ export function AppSidebar() {
 
     return (
         <Sidebar collapsible="icon" className="bg-white border-r">
-            <SidebarHeader className="border-b p-4">
+            <SidebarHeader className="border-b p-4 flex items-center gap-2">
+                <SidebarTrigger className="mr-2" />
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <div className="flex items-center gap-2">
-                                <AppLogo />
-                            </div>
+                        <SidebarMenuButton size="lg">
+                            <AppLogo />
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>

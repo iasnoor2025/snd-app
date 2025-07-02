@@ -181,6 +181,24 @@ class RentalService
     {
         return $this->repository->getByStatus($status);
     }
+
+    public function getRentalSummary(): array
+    {
+        $summary = $this->repository->getSummary();
+        $topRentals = $this->repository->getTopRentals(3);
+        return [
+            'total' => $summary['total'],
+            'active' => $summary['active'],
+            'overdue' => $summary['overdue'],
+            'topRentals' => array_map(function ($rental) {
+                return [
+                    'id' => $rental->id,
+                    'name' => $rental->name ?? $rental->reference ?? ('Rental #' . $rental->id),
+                    'status' => ucfirst($rental->status),
+                ];
+            }, $topRentals),
+        ];
+    }
 }
 
 

@@ -51,5 +51,10 @@ interface EmployeeRepositoryInterface extends BaseRepositoryInterface
      * Get employees with their pending advances
      */
     public function getWithPendingAdvances(): array;
+
+    /**
+     * Get top N employees (by recent creation)
+     */
+    public function getTopEmployees(int $limit = 3): array;
 }
 

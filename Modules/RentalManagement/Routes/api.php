@@ -173,5 +173,8 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
         ->middleware('permission:rentals.settings');
     Route::put('rental/followup-settings', [\Modules\RentalManagement\Http\Controllers\Api\RentalController::class, 'updateFollowUpSettings'])
         ->middleware('permission:rentals.settings');
+
+    // New rental summary API endpoint
+    Route::get('rentals/summary', [\Modules\RentalManagement\Http\Controllers\Api\RentalController::class, 'rentalSummary']);
 });
 

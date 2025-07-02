@@ -12,7 +12,6 @@ export * from './services/avatar-service';
 
 // Components
 export * from './components/ui/toast';
-export * from './components/Common/Toast';
 
 // Core Module - Shared Resources Index
 // This file exports all shared resources for use by other modules
@@ -33,16 +32,15 @@ export * from './services';
 export * from './lib';
 
 // Re-export commonly used external libraries for consistency
-export { 
-  createRoot 
+export {
+  createRoot
 } from 'react-dom/client';
 
-export { 
-  createInertiaApp,
-  router
+export {
+  createInertiaApp
 } from '@inertiajs/react';
 
-export { 
+export {
   QueryClient,
   QueryClientProvider,
   useQuery,
@@ -75,7 +73,7 @@ export {
   zodResolver
 } from '@hookform/resolvers/zod';
 
-export * as z from 'zod'; 
+export * as z from 'zod';
 
 // Export UI components
 export * from './components/ui';
@@ -137,5 +135,24 @@ export {
   debugTranslationObject,
   withTranslationDebug
 } from './utils/debugTranslation';
+
+// Export new Dashboard page
+export { default as Dashboard } from './pages/Dashboard';
+
+// Export new Dashboard widgets
+export { default as StatsCard } from './components/dashboard/StatsCard';
+export { default as ChartWidget } from './components/dashboard/ChartWidget';
+export { default as ActivityFeed } from './components/dashboard/ActivityFeed';
+export { default as TeamWidget } from './components/dashboard/TeamWidget';
+export { default as RecentProjects } from './components/dashboard/RecentProjects';
+export { default as EmployeeWidget } from './components/dashboard/EmployeeWidget';
+export { default as RentalWidget } from './components/dashboard/RentalWidget';
+export { default as VacationWidget } from './components/dashboard/VacationWidget';
+export { default as PayrollWidget } from './components/dashboard/PayrollWidget';
+export { default as EquipmentWidget } from './components/dashboard/EquipmentWidget';
+export { default as AnalyticsWidget } from './components/dashboard/AnalyticsWidget';
+export { default as AuditWidget } from './components/dashboard/AuditWidget';
+export { default as ProjectWidget } from './components/dashboard/ProjectWidget';
+export { default as CustomerWidget } from './components/dashboard/CustomerWidget';
 
 

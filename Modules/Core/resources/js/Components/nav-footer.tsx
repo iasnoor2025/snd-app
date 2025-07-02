@@ -1,5 +1,5 @@
 import { Icon } from "./icon";
-import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar";
+import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar";
 import { type NavItem } from '@/Core/types';
 import { type ComponentPropsWithoutRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +16,7 @@ export function NavFooter({
 
     return (
         <SidebarGroup {...props} className={`group-data-[collapsible=icon]:p-0 ${className || ''}`}>
-            <SidebarGroupContent>
+            <>
                 <SidebarMenu>
                     {items.map((item) => (
                         <SidebarMenuItem key={item.title}>
@@ -40,7 +40,7 @@ export function NavFooter({
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
-            </SidebarGroupContent>
+            </>
         </SidebarGroup>
     );
 }

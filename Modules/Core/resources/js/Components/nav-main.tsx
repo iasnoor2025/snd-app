@@ -48,8 +48,8 @@ export function NavMain({ items }: NavMainProps) {
                         return (
                             <SidebarMenuItem key={index}>
                                 <Collapsible>
-                                    <CollapsibleTrigger asChild>
-                                        <SidebarMenuButton>
+                                    <CollapsibleTrigger>
+                                        <SidebarMenuButton onClick={() => router.visit(item.href)} className="w-full text-left">
                                             {item.icon && <Icon name={item.icon} className="h-4 w-4 mr-2" />}
                                             {item.title}
                                         </SidebarMenuButton>
@@ -64,13 +64,8 @@ export function NavMain({ items }: NavMainProps) {
 
                                                 return (
                                                     <SidebarMenuSubItem key={childIndex}>
-                                                        <SidebarMenuSubButton asChild>
-                                                            <button
-                                                                onClick={() => router.visit(child.href)}
-                                                                className="w-full text-left"
-                                                            >
-                                                                {child.title}
-                                                            </button>
+                                                        <SidebarMenuSubButton onClick={() => router.visit(child.href)} className="w-full text-left">
+                                                            {child.title}
                                                         </SidebarMenuSubButton>
                                                     </SidebarMenuSubItem>
                                                 );
@@ -84,17 +79,12 @@ export function NavMain({ items }: NavMainProps) {
 
                     return (
                         <SidebarMenuItem key={index}>
-                            <SidebarMenuButton asChild>
-                                <button
-                                    onClick={() => {
-                                        console.log('NavMain: Clicking on:', item.title, 'href:', item.href);
-                                        router.visit(item.href);
-                                    }}
-                                    className="w-full text-left flex items-center"
-                                >
-                                    {item.icon && <Icon name={item.icon} className="h-4 w-4 mr-2" />}
-                                    {item.title}
-                                </button>
+                            <SidebarMenuButton onClick={() => {
+                                console.log('NavMain: Clicking on:', item.title, 'href:', item.href);
+                                router.visit(item.href);
+                            }} className="w-full text-left flex items-center">
+                                {item.icon && <Icon name={item.icon} className="h-4 w-4 mr-2" />}
+                                {item.title}
                             </SidebarMenuButton>
                         </SidebarMenuItem>
                     );

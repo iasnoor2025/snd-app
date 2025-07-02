@@ -75,6 +75,11 @@ class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInt
             $query->where('status', 'pending');
         }])->get()->all();
     }
+
+    public function getTopEmployees(int $limit = 3): array
+    {
+        return $this->model->orderByDesc('created_at')->limit($limit)->get()->all();
+    }
 }
 
 

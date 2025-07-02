@@ -8,9 +8,17 @@ use Illuminate\Http\JsonResponse;
 use Modules\RentalManagement\Domain\Models\Rental;
 use Illuminate\Http\Response;
 use Exception;
+use Modules\RentalManagement\Services\RentalService;
 
 class RentalController extends Controller
 {
+    protected $rentalService;
+
+    public function __construct(RentalService $rentalService)
+    {
+        $this->rentalService = $rentalService;
+    }
+
     /**
      * Display a listing of rentals.
      */
@@ -292,5 +300,15 @@ class RentalController extends Controller
         ]);
         // For now, just return the new settings (simulate update)
         return response()->json($validated);
+    }
+
+    /**
+     * Get rental summary (total, active, overdue, top rentals)
+     * GET /api/v1/rentals/summary
+     */
+    public function rentalSummary(): \Illuminate\Http\JsonResponse
+    {
+        $summary = $this->rentalService->getRentalSummary();
+        return response()->json($summary);
     }
 }
