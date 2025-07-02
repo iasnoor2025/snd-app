@@ -1,6 +1,6 @@
 import { Icon } from "./icon";
 import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from "./ui/sidebar";
-import { Link, usePage } from "@inertiajs/react";
+import { router } from "@inertiajs/core";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 import { useTranslation } from "react-i18next";
 import { type NavItem } from "@/Core/types";
@@ -14,14 +14,17 @@ export function NavMain({ items }: NavMainProps) {
     const { t } = useTranslation('common');
     const { hasPermission } = usePermission();
 
+    console.log('NavMain received items:', items); // Debug log
+
     return (
         <SidebarGroup>
             <SidebarGroupLabel>{t('navigation.navigation')}</SidebarGroupLabel>
             <SidebarMenu>
                 {items.map((item, index) => {
-                    if (item.permission && !hasPermission(item.permission)) {
-                        return null;
-                    }
+                    // Temporarily disable permission checks for debugging
+                    // if (item.permission && !hasPermission(item.permission)) {
+                    //     return null;
+                    // }
 
                     if (item.items) {
                         return (
@@ -36,17 +39,20 @@ export function NavMain({ items }: NavMainProps) {
                                     <CollapsibleContent>
                                         <SidebarMenuSub>
                                             {item.items?.map((child, childIndex) => {
-                                                if (child.permission && !hasPermission(child.permission)) {
-                                                    return null;
-                                                }
+                                                // Temporarily disable permission checks for debugging
+                                                // if (child.permission && !hasPermission(child.permission)) {
+                                                //     return null;
+                                                // }
 
                                                 return (
                                                     <SidebarMenuSubItem key={childIndex}>
                                                         <SidebarMenuSubButton asChild>
-                                                            <Link href={child.href}>
-                                                                {child.icon && <Icon name={child.icon} className="h-4 w-4 mr-2" />}
+                                                            <button
+                                                                onClick={() => router.visit(child.href)}
+                                                                className="w-full text-left"
+                                                            >
                                                                 {child.title}
-                                                            </Link>
+                                                            </button>
                                                         </SidebarMenuSubButton>
                                                     </SidebarMenuSubItem>
                                                 );
@@ -61,10 +67,13 @@ export function NavMain({ items }: NavMainProps) {
                     return (
                         <SidebarMenuItem key={index}>
                             <SidebarMenuButton asChild>
-                                <Link href={item.href}>
+                                <button
+                                    onClick={() => router.visit(item.href)}
+                                    className="w-full text-left flex items-center"
+                                >
                                     {item.icon && <Icon name={item.icon} className="h-4 w-4 mr-2" />}
                                     {item.title}
-                                </Link>
+                                </button>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
                     );

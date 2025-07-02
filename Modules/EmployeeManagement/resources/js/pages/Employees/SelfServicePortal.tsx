@@ -3,8 +3,8 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/../../Modules/Core/r
 import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
 import { Input } from '@/../../Modules/Core/resources/js/components/ui/input';
 import { toast } from 'sonner';
-import { SkillsMatrix } from '../components/employees/SkillsMatrix';
-import { PerformanceReviewList } from '../components/employees/PerformanceReviewList';
+import { SkillsMatrix } from '../../components/employees/SkillsMatrix';
+import { PerformanceReviewList } from '../../components/employees/PerformanceReviewList';
 
 export default function SelfServicePortal() {
   const [profile, setProfile] = useState<any>(null);

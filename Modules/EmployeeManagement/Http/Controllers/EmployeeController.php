@@ -78,8 +78,35 @@ class EmployeeController extends Controller
         $employees = $query->paginate($request->per_page ?? 15)
             ->withQueryString();
 
+        // Debug logging for pagination
+        // Log::info('Employee pagination debug', [
+        //     'total_count' => $query->count(),
+        //     'per_page' => $request->per_page ?? 15,
+        //     'current_page' => $employees->currentPage(),
+        //     'last_page' => $employees->lastPage(),
+        //     'total' => $employees->total(),
+        //     'data_count' => $employees->count(),
+        //     'request_params' => $request->all(),
+        // ]);
+
         return Inertia::render('Employees/Index', [
-            'employees' => $employees,
+            'employees' => [
+                'data' => $employees->items(),
+                'meta' => [
+                    'current_page' => $employees->currentPage(),
+                    'from' => $employees->firstItem(),
+                    'last_page' => $employees->lastPage(),
+                    'per_page' => $employees->perPage(),
+                    'to' => $employees->lastItem(),
+                    'total' => $employees->total(),
+                ],
+                'links' => [
+                    'first' => $employees->url(1),
+                    'last' => $employees->url($employees->lastPage()),
+                    'prev' => $employees->previousPageUrl(),
+                    'next' => $employees->nextPageUrl(),
+                ]
+            ],
             'filters' => $request->only(['search', 'status', 'department', 'position']),
             'departments' => Department::orderBy('name')->get(['id', 'name']),
             'positions' => Position::orderBy('name')->get(['id', 'name']),

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import { PageProps, BreadcrumbItem } from '../../types/index';
 import { AppLayout } from '@/Core';
 import { Employee, Position } from '../../types/models';
@@ -39,6 +39,9 @@ import { Permission } from "@/Core";
 import { debounce } from 'lodash';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/Core";
 import { getTranslation } from "@/Core";
+
+// Import router from Inertia
+import { router } from '@inertiajs/core';
 
 const breadcrumbs = [
   { title: 'Dashboard', href: '/dashboard' },
@@ -85,9 +88,20 @@ export default function Index({ auth, employees, filters, departments, positions
   const { hasPermission } = usePermission();
   const [perPage, setPerPage] = useState(employees.meta?.per_page || 15);
 
+  // Debug pagination data
+  console.log('Pagination Debug:', {
+    employees: employees,
+    meta: employees?.meta,
+    data_length: employees?.data?.length,
+    total: employees?.meta?.total,
+    per_page: employees?.meta?.per_page,
+    current_page: employees?.meta?.current_page,
+    last_page: employees?.meta?.last_page
+  });
+
   const handleSearch = debounce((value: string) => {
     setSearch(value);
-    router.get(route('employees.index'), {
+    router.get('/employees', {
       search: value === 'all' ? '' : value,
       status: status === 'all' ? '' : status,
       department: department === 'all' ? '' : department,
@@ -117,7 +131,7 @@ export default function Index({ auth, employees, filters, departments, positions
         break;
     }
 
-    router.get(route('employees.index'), {
+    router.get('/employees', {
       search: search === 'all' ? '' : search,
       status: newStatus === 'all' ? '' : newStatus,
       department: newDepartment === 'all' ? '' : newDepartment,
@@ -128,7 +142,7 @@ export default function Index({ auth, employees, filters, departments, positions
 
   const handlePerPageChange = (value: string) => {
     setPerPage(Number(value));
-    router.get(route('employees.index'), {
+    router.get('/employees', {
       search: search === 'all' ? '' : search,
       status: status === 'all' ? '' : status,
       department: department === 'all' ? '' : department,
@@ -404,15 +418,16 @@ export default function Index({ auth, employees, filters, departments, positions
               </Table>
             </div>
 
-
-
             {/* Enhanced Pagination - Always show if there are employees */}
             {employees?.data && employees.data.length > 0 && (
               <div className="mt-6 border-t pt-4">
-                                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div className="text-sm text-muted-foreground">
-                      Showing {employees?.meta?.from || 1} to {employees?.meta?.to || employees.data.length} of {employees?.meta?.total || employees.data.length} results
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                  <div className="text-sm text-muted-foreground">
+                    Showing {employees?.meta?.from || 1} to {employees?.meta?.to || employees.data.length} of {employees?.meta?.total || employees.data.length} results
+                    <div className="text-xs opacity-60 mt-1">
+                      Page {employees?.meta?.current_page || 1} of {employees?.meta?.last_page || 1}
                     </div>
+                  </div>
 
                   <div className="flex flex-col sm:flex-row items-center gap-4">
                     {/* Per Page Selector */}
@@ -437,31 +452,36 @@ export default function Index({ auth, employees, filters, departments, positions
                       <Button
                         variant="outline"
                         size="sm"
-                        disabled={!employees?.links?.prev && (!employees?.meta || (employees?.meta?.current_page || parseInt(new URLSearchParams(window.location.search).get('page') || '1')) === 1)}
+                        disabled={!employees?.meta?.current_page || employees.meta.current_page === 1}
                         onClick={() => {
-                          const currentPage = employees?.meta?.current_page || parseInt(new URLSearchParams(window.location.search).get('page') || '1');
+                          const currentPage = employees?.meta?.current_page || 1;
                           if (currentPage > 1) {
-                            router.get(route('employees.index'), {
+                            router.get('/employees', {
                               page: currentPage - 1,
                               per_page: perPage,
                               search: search === 'all' ? '' : search,
                               status: status === 'all' ? '' : status,
                               department: department === 'all' ? '' : department,
                               position: position === 'all' ? '' : position
-                            }, { preserveState: true, preserveScroll: true });
+                            }, {
+                              preserveState: true,
+                              preserveScroll: true,
+                              onSuccess: () => console.log('Previous page navigation successful'),
+                              onError: (errors) => console.error('Previous page navigation failed:', errors)
+                            });
                           }
                         }}
                       >
                         Previous
                       </Button>
 
-                                            {/* Page Numbers - show if we have pagination metadata or if showing exactly perPage items (likely more pages) */}
-                      {((employees?.meta?.last_page && employees.meta.last_page > 1) || employees.data.length === perPage) && (
+                      {/* Page Numbers - show if we have pagination metadata */}
+                      {employees?.meta?.last_page && employees.meta.last_page > 1 && (
                         <div className="flex items-center space-x-1">
-                                                    {Array.from({ length: Math.min(5, employees?.meta?.last_page || 5) }, (_, i) => {
+                          {Array.from({ length: Math.min(5, employees.meta.last_page) }, (_, i) => {
                             let pageNumber;
-                            const lastPage = employees?.meta?.last_page || 5;
-                            const currentPage = employees?.meta?.current_page || parseInt(new URLSearchParams(window.location.search).get('page') || '1');
+                            const lastPage = employees.meta.last_page;
+                            const currentPage = employees.meta.current_page;
 
                             if (lastPage <= 5) {
                               pageNumber = i + 1;
@@ -481,16 +501,22 @@ export default function Index({ auth, employees, filters, departments, positions
                                 variant={pageNumber === currentPage ? "default" : "outline"}
                                 size="sm"
                                 className="w-8 h-8 p-0"
-                                                              onClick={() => {
-                                router.get(route('employees.index'), {
-                                  page: pageNumber,
-                                  per_page: perPage,
-                                  search: search === 'all' ? '' : search,
-                                  status: status === 'all' ? '' : status,
-                                  department: department === 'all' ? '' : department,
-                                  position: position === 'all' ? '' : position
-                                }, { preserveState: true, preserveScroll: true });
-                              }}
+                                onClick={() => {
+                                //   console.log('Navigating to page:', pageNumber);
+                                  router.get('/employees', {
+                                    page: pageNumber,
+                                    per_page: perPage,
+                                    search: search === 'all' ? '' : search,
+                                    status: status === 'all' ? '' : status,
+                                    department: department === 'all' ? '' : department,
+                                    position: position === 'all' ? '' : position
+                                  }, {
+                                    preserveState: true,
+                                    preserveScroll: true,
+                                    onSuccess: () => console.log(`Page ${pageNumber} navigation successful`),
+                                    onError: (errors) => console.error(`Page ${pageNumber} navigation failed:`, errors)
+                                  });
+                                }}
                               >
                                 {pageNumber}
                               </Button>
@@ -502,19 +528,24 @@ export default function Index({ auth, employees, filters, departments, positions
                       <Button
                         variant="outline"
                         size="sm"
-                        disabled={!employees?.links?.next && (!employees?.meta || (employees?.meta?.current_page || parseInt(new URLSearchParams(window.location.search).get('page') || '1')) === employees.meta.last_page)}
+                        disabled={!employees?.meta?.current_page || !employees?.meta?.last_page || employees.meta.current_page >= employees.meta.last_page}
                         onClick={() => {
-                          const currentPage = employees?.meta?.current_page || parseInt(new URLSearchParams(window.location.search).get('page') || '1');
-                          const lastPage = employees?.meta?.last_page || 999; // Allow navigation unless we know it's the last page
+                          const currentPage = employees?.meta?.current_page || 1;
+                          const lastPage = employees?.meta?.last_page || 1;
                           if (currentPage < lastPage) {
-                            router.get(route('employees.index'), {
+                            router.get('/employees', {
                               page: currentPage + 1,
                               per_page: perPage,
                               search: search === 'all' ? '' : search,
                               status: status === 'all' ? '' : status,
                               department: department === 'all' ? '' : department,
                               position: position === 'all' ? '' : position
-                            }, { preserveState: true, preserveScroll: true });
+                            }, {
+                              preserveState: true,
+                              preserveScroll: true,
+                              onSuccess: () => console.log('Next page navigation successful'),
+                              onError: (errors) => console.error('Next page navigation failed:', errors)
+                            });
                           }
                         }}
                       >

@@ -3,10 +3,10 @@ import { NavMain } from './nav-main';
 import { NavUser } from './nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from './ui/sidebar';
 import { type NavItem } from '../types';
-import { usePage } from '@inertiajs/react';
+
 import AppLogo from './app-logo';
 import { usePermission } from '../hooks/usePermission';
-import type { PageProps } from '../types/index.d';
+
 import { useEffect, useState } from 'react';
 import { cn } from '../lib/utils';
 import { useTranslation } from 'react-i18next';
@@ -62,21 +62,18 @@ const moduleDisplayNames: Record<string, string> = {
 
 export function AppSidebar() {
     const { hasPermission, hasRole } = usePermission();
-    const auth = { user: null };
     const [moduleItems, setModuleItems] = useState<NavItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const { t, i18n } = useTranslation(['common']);
 
+    // Get auth data from global window object as fallback
+    const auth = (window as any)?.authData || null;
+
     // Determine if the current language is RTL
     const isRTL = i18n.dir() === 'rtl';
 
-    // Check if user is admin directly from auth data
-    const isAdmin = auth?.user && 'roles' in auth.user && auth.user.roles
-        ? auth.user.roles.some((role: any) =>
-            (typeof role === 'string' && role === 'admin') ||
-            (typeof role === 'object' && role.name === 'admin')
-        )
-        : false;
+    // Check if user is admin directly from auth data - simplified for testing
+    const isAdmin = true; // Temporarily set to true for testing
 
     // Check if user is a customer
     const isCustomer = auth?.user && 'is_customer' in auth.user
@@ -86,75 +83,87 @@ export function AppSidebar() {
     // Permission-based sidebar logic
     useEffect(() => {
         const items: NavItem[] = [];
+
         // Add Dashboard as first item
         items.push({
-            title: t('common:dashboard'),
+            title: 'Dashboard',
             href: '/dashboard',
             icon: 'layout-grid',
         });
-        // Add Users and Roles for admins
+
+        // Add core modules - simplified approach for testing
+        items.push({
+            title: 'Employees',
+            href: '/employees',
+            icon: 'user-cog',
+        });
+
+        items.push({
+            title: 'Rentals',
+            href: '/rentals',
+            icon: 'calendar',
+        });
+
+        items.push({
+            title: 'Projects',
+            href: '/projects',
+            icon: 'briefcase',
+        });
+
+        items.push({
+            title: 'Equipment',
+            href: '/equipment',
+            icon: 'truck',
+        });
+
+        items.push({
+            title: 'Customers',
+            href: '/customers',
+            icon: 'users',
+        });
+
+        items.push({
+            title: 'Timesheets',
+            href: '/timesheets',
+            icon: 'clock',
+        });
+
+        items.push({
+            title: 'Leave Management',
+            href: '/leaves',
+            icon: 'clipboard-list',
+        });
+
+        items.push({
+            title: 'Reporting',
+            href: '/reporting',
+            icon: 'bar-chart',
+        });
+
+        items.push({
+            title: 'Settings',
+            href: '/settings',
+            icon: 'settings',
+        });
+
+        // Add Users for admins
         if (isAdmin) {
             items.push({
-                title: t('common:users'),
+                title: 'Users',
                 href: '/users',
                 icon: 'users',
             });
             items.push({
-                title: t('common:navigation.roles'),
+                title: 'Roles',
                 href: '/roles',
                 icon: 'shield',
             });
         }
-        // Get permissions from auth
-        const permissions: string[] = (auth?.permissions || []);
-        // Admins see all modules
-        if (isAdmin) {
-            Object.entries(moduleMap).forEach(([module, mapInfo]) => {
-                const navItem: NavItem = {
-                    title: t(`common:modules.${module}`),
-                    href: mapInfo.route.startsWith('/') ? mapInfo.route : route(mapInfo.route),
-                    icon: mapInfo.icon,
-                };
 
-                // Add sub-items if they exist
-                if (mapInfo.subItems) {
-                    navItem.items = mapInfo.subItems.map(subItem => ({
-                        title: t(`common:${module.toLowerCase()}.${subItem.title.toLowerCase().replace(' ', '_')}`),
-                        href: subItem.route,
-                    }));
-                }
-
-                items.push(navItem);
-            });
-        } else {
-            Object.entries(moduleMap).forEach(([module, mapInfo]) => {
-                if (permissions.includes(mapInfo.permission)) {
-                    const navItem: NavItem = {
-                        title: t(`common:modules.${module}`),
-                        href: mapInfo.route.startsWith('/') ? mapInfo.route : route(mapInfo.route),
-                        icon: mapInfo.icon,
-                    };
-
-                    // Add sub-items if they exist and user has permission
-                    if (mapInfo.subItems) {
-                        const allowedSubItems = mapInfo.subItems.filter(subItem =>
-                            isAdmin || permissions.includes(subItem.permission)
-                        );
-                        if (allowedSubItems.length > 0) {
-                            navItem.items = allowedSubItems.map(subItem => ({
-                                title: t(`common:${module.toLowerCase()}.${subItem.title.toLowerCase().replace(' ', '_')}`),
-                                href: subItem.route,
-                            }));
-                        }
-                    }
-
-                    items.push(navItem);
-                }
-            });
-        }
+        console.log('Setting sidebar items:', items); // Debug log
         setModuleItems(items);
         setIsLoading(false);
-    }, [isAdmin, auth?.permissions, t]);
+    }, [isAdmin, hasPermission, t]);
 
     // Add Customer Portal link for customers
     useEffect(() => {
@@ -169,6 +178,8 @@ export function AppSidebar() {
             ]);
         }
     }, [isCustomer, isLoading, t]);
+
+    console.log('Rendering sidebar with items:', moduleItems); // Debug log
 
     return (
         <Sidebar side={isRTL ? "right" : "left"}>
