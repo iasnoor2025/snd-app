@@ -22,6 +22,9 @@ use Modules\ProjectManagement\Domain\Models\ProjectManpower;
 use Modules\RentalManagement\Domain\Models\RentalOperatorAssignment;
 use Modules\RentalManagement\Domain\Models\RentalItem;
 use Modules\Core\Domain\Models\User;
+use Modules\Core\Domain\Models\Location;
+use Modules\EmployeeManagement\Domain\Models\Position;
+use Modules\EmployeeManagement\Domain\Models\Department;
 
 // Add SalaryIncrement import
 use Modules\EmployeeManagement\Domain\Models\SalaryIncrement;
@@ -579,7 +582,7 @@ class Employee extends Model implements HasMedia
                 $query->whereNull('end_date')
                     ->orWhere('end_date', '>=', now()->toDateString());
             })
-            ->with(['project:id,name,location'])
+            ->with(['project:id,name'])
             ->orderBy('start_date', 'desc')
             ->first();
 
@@ -588,7 +591,7 @@ class Employee extends Model implements HasMedia
                 'type' => 'project',
                 'id' => $projectAssignment->project_id,
                 'name' => $projectAssignment->project->name,
-                'location' => $projectAssignment->project->location,
+                'location' => 'Project Location', // Projects don't have location in current schema
                 'date' => $projectAssignment->start_date,
                 'role' => $projectAssignment->job_title,
             ];
@@ -597,7 +600,7 @@ class Employee extends Model implements HasMedia
         // Try to find active rental assignment
         $rentalAssignment = $this->rentalAssignments()
             ->where('status', 'active')
-            ->with(['rental:id,customer_id,location', 'rental.customer:id,name'])
+            ->with(['rental:id,customer_id,location_id', 'rental.customer:id,name', 'rental.location:id,name'])
             ->orderBy('assignment_date', 'desc')
             ->first();
 
@@ -606,7 +609,7 @@ class Employee extends Model implements HasMedia
                 'type' => 'rental',
                 'id' => $rentalAssignment->rental_id,
                 'name' => $rentalAssignment->rental->customer->name ?? 'Unknown Customer',
-                'location' => $rentalAssignment->rental->location,
+                'location' => $rentalAssignment->rental->location->name ?? 'Unknown Location',
                 'date' => $rentalAssignment->assignment_date,
                 'role' => 'Operator',
             ];
@@ -617,7 +620,7 @@ class Employee extends Model implements HasMedia
             ->whereHas('rental', function ($query) {
                 $query->where('status', 'active');
             })
-            ->with(['equipment:id,name', 'rental:id,customer_id,location', 'rental.customer:id,name'])
+            ->with(['equipment:id,name', 'rental:id,customer_id,location_id', 'rental.customer:id,name', 'rental.location:id,name'])
             ->orderBy('created_at', 'desc')
             ->first();
 
@@ -627,7 +630,7 @@ class Employee extends Model implements HasMedia
                 'id' => $rentalItem->rental_id,
                 'name' => $rentalItem->rental->customer->name ?? 'Unknown Customer',
                 'equipment' => $rentalItem->equipment->name ?? 'Unknown Equipment',
-                'location' => $rentalItem->rental->location,
+                'location' => $rentalItem->rental->location->name ?? 'Unknown Location',
                 'date' => $rentalItem->created_at,
                 'role' => 'Equipment Operator',
             ];
@@ -646,10 +649,11 @@ class Employee extends Model implements HasMedia
 
     /**
      * Get the location of the employee
+     * Note: Using current_location as string field since current_location_id doesn't exist in migration
      */
     public function location(): BelongsTo
     {
-        return $this->belongsTo(Location::class, 'current_location_id');
+        return $this->belongsTo(Location::class, 'current_location', 'name');
     }
 
     /**

@@ -63,14 +63,14 @@ class EmployeeController extends Controller
                         ->orWhere('file_number', 'like', "%{$search}%");
                 });
             })
-            ->when($request->status, function ($query, $status) {
-                $query->where('status', $status);
+            ->when($request->status && $request->status !== 'all', function ($query) use ($request) {
+                $query->where('status', $request->status);
             })
-            ->when($request->department, function ($query, $department) {
-                $query->where('department_id', $department);
+            ->when($request->department && $request->department !== 'all' && is_numeric($request->department), function ($query) use ($request) {
+                $query->where('department_id', (int) $request->department);
             })
-            ->when($request->position, function ($query, $position) {
-                $query->where('position_id', $position);
+            ->when($request->position && $request->position !== 'all' && is_numeric($request->position), function ($query) use ($request) {
+                $query->where('position_id', (int) $request->position);
             })
             ->orderBy('first_name')
             ->orderBy('last_name');

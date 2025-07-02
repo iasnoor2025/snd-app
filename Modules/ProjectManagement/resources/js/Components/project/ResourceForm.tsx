@@ -238,8 +238,8 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
             setIsLoading(true);
             try {
                 if (type === 'manpower') {
-                    // Use the employees endpoint that's available to authenticated users
-                    const response = await axios.get('/api/employees');
+                    // Use the authenticated employees endpoint
+                    const response = await axios.get('/api/v1/employees/all');
                     if (mounted.current) {
                         setEmployees(response.data);
                     }

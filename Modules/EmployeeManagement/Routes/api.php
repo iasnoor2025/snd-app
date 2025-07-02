@@ -23,7 +23,6 @@ Route::prefix('v1')->group(function () {
 });
 
 // Public API endpoints - no authentication required
-Route::get('/employees', [EmployeeController::class, 'index']);
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     // Employee core routes

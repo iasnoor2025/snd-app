@@ -87,46 +87,54 @@ export default function Index({ auth, employees, filters, departments, positions
 
   const handleSearch = debounce((value: string) => {
     setSearch(value);
-    router.get(
-      '/employees',
-      { search: value, status, department, position, per_page: perPage },
-      { preserveState: true, preserveScroll: true }
-    );
+    router.get(route('employees.index'), {
+      search: value === 'all' ? '' : value,
+      status: status === 'all' ? '' : status,
+      department: department === 'all' ? '' : department,
+      position: position === 'all' ? '' : position,
+      per_page: perPage
+    }, { preserveState: true, preserveScroll: true });
   }, 300);
 
   const handleFilter = (type: string, value: string) => {
     const normalizedValue = value === 'all' ? '' : value;
+    let newStatus = status;
+    let newDepartment = department;
+    let newPosition = position;
+
     switch (type) {
       case 'status':
         setStatus(value);
+        newStatus = value;
         break;
       case 'department':
         setDepartment(value);
+        newDepartment = value;
         break;
       case 'position':
         setPosition(value);
+        newPosition = value;
         break;
     }
-    router.get(
-      '/employees',
-      {
-        search,
-        status: type === 'status' ? normalizedValue : (status === 'all' ? '' : status),
-        department: type === 'department' ? normalizedValue : (department === 'all' ? '' : department),
-        position: type === 'position' ? normalizedValue : (position === 'all' ? '' : position),
-        per_page: perPage,
-      },
-      { preserveState: true, preserveScroll: true }
-    );
+
+    router.get(route('employees.index'), {
+      search: search === 'all' ? '' : search,
+      status: newStatus === 'all' ? '' : newStatus,
+      department: newDepartment === 'all' ? '' : newDepartment,
+      position: newPosition === 'all' ? '' : newPosition,
+      per_page: perPage,
+    }, { preserveState: true, preserveScroll: true });
   };
 
   const handlePerPageChange = (value: string) => {
     setPerPage(Number(value));
-    router.get(
-      '/employees',
-      { search, status, department, position, per_page: Number(value) },
-      { preserveState: true, preserveScroll: true }
-    );
+    router.get(route('employees.index'), {
+      search: search === 'all' ? '' : search,
+      status: status === 'all' ? '' : status,
+      department: department === 'all' ? '' : department,
+      position: position === 'all' ? '' : position,
+      per_page: Number(value)
+    }, { preserveState: true, preserveScroll: true });
   };
 
   const getStatusBadge = (status: string) => {
@@ -396,41 +404,132 @@ export default function Index({ auth, employees, filters, departments, positions
               </Table>
             </div>
 
-            {employees?.meta?.total > 0 && (
-              <div className="mt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                <div className="text-sm text-muted-foreground">
-                  Showing {employees.meta.from} to {employees.meta.to} of {employees.meta.total} results
+
+
+            {/* Enhanced Pagination - Always show if there are employees */}
+            {employees?.data && employees.data.length > 0 && (
+              <div className="mt-6 border-t pt-4">
+                                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div className="text-sm text-muted-foreground">
+                      Showing {employees?.meta?.from || 1} to {employees?.meta?.to || employees.data.length} of {employees?.meta?.total || employees.data.length} results
+                    </div>
+
+                  <div className="flex flex-col sm:flex-row items-center gap-4">
+                    {/* Per Page Selector */}
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm text-muted-foreground">Show:</span>
+                      <Select value={perPage.toString()} onValueChange={handlePerPageChange}>
+                        <SelectTrigger className="w-20">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="10">10</SelectItem>
+                          <SelectItem value="15">15</SelectItem>
+                          <SelectItem value="25">25</SelectItem>
+                          <SelectItem value="50">50</SelectItem>
+                          <SelectItem value="100">100</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Page Navigation */}
+                    <div className="flex items-center space-x-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={!employees?.links?.prev && (!employees?.meta || (employees?.meta?.current_page || parseInt(new URLSearchParams(window.location.search).get('page') || '1')) === 1)}
+                        onClick={() => {
+                          const currentPage = employees?.meta?.current_page || parseInt(new URLSearchParams(window.location.search).get('page') || '1');
+                          if (currentPage > 1) {
+                            router.get(route('employees.index'), {
+                              page: currentPage - 1,
+                              per_page: perPage,
+                              search: search === 'all' ? '' : search,
+                              status: status === 'all' ? '' : status,
+                              department: department === 'all' ? '' : department,
+                              position: position === 'all' ? '' : position
+                            }, { preserveState: true, preserveScroll: true });
+                          }
+                        }}
+                      >
+                        Previous
+                      </Button>
+
+                                            {/* Page Numbers - show if we have pagination metadata or if showing exactly perPage items (likely more pages) */}
+                      {((employees?.meta?.last_page && employees.meta.last_page > 1) || employees.data.length === perPage) && (
+                        <div className="flex items-center space-x-1">
+                                                    {Array.from({ length: Math.min(5, employees?.meta?.last_page || 5) }, (_, i) => {
+                            let pageNumber;
+                            const lastPage = employees?.meta?.last_page || 5;
+                            const currentPage = employees?.meta?.current_page || parseInt(new URLSearchParams(window.location.search).get('page') || '1');
+
+                            if (lastPage <= 5) {
+                              pageNumber = i + 1;
+                            } else {
+                              if (currentPage <= 3) {
+                                pageNumber = i + 1;
+                              } else if (currentPage >= lastPage - 2) {
+                                pageNumber = lastPage - 4 + i;
+                              } else {
+                                pageNumber = currentPage - 2 + i;
+                              }
+                            }
+
+                            return (
+                              <Button
+                                key={pageNumber}
+                                variant={pageNumber === currentPage ? "default" : "outline"}
+                                size="sm"
+                                className="w-8 h-8 p-0"
+                                                              onClick={() => {
+                                router.get(route('employees.index'), {
+                                  page: pageNumber,
+                                  per_page: perPage,
+                                  search: search === 'all' ? '' : search,
+                                  status: status === 'all' ? '' : status,
+                                  department: department === 'all' ? '' : department,
+                                  position: position === 'all' ? '' : position
+                                }, { preserveState: true, preserveScroll: true });
+                              }}
+                              >
+                                {pageNumber}
+                              </Button>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={!employees?.links?.next && (!employees?.meta || (employees?.meta?.current_page || parseInt(new URLSearchParams(window.location.search).get('page') || '1')) === employees.meta.last_page)}
+                        onClick={() => {
+                          const currentPage = employees?.meta?.current_page || parseInt(new URLSearchParams(window.location.search).get('page') || '1');
+                          const lastPage = employees?.meta?.last_page || 999; // Allow navigation unless we know it's the last page
+                          if (currentPage < lastPage) {
+                            router.get(route('employees.index'), {
+                              page: currentPage + 1,
+                              per_page: perPage,
+                              search: search === 'all' ? '' : search,
+                              status: status === 'all' ? '' : status,
+                              department: department === 'all' ? '' : department,
+                              position: position === 'all' ? '' : position
+                            }, { preserveState: true, preserveScroll: true });
+                          }
+                        }}
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Select value={perPage.toString()} onValueChange={handlePerPageChange}>
-                    <SelectTrigger className="w-24">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="15">15</SelectItem>
-                      <SelectItem value="25">25</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={!employees.links.prev}
-                    onClick={() => router.get(employees.links.prev + `&per_page=${perPage}`)}
-                  >
-                    Previous
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={!employees.links.next}
-                    onClick={() => router.get(employees.links.next + `&per_page=${perPage}`)}
-                  >
-                    Next
-                  </Button>
-                </div>
+              </div>
+            )}
+
+            {/* Show message when no employees found */}
+            {employees?.data && employees.data.length === 0 && (
+              <div className="mt-4 text-center text-sm text-muted-foreground">
+                No employees found matching your criteria.
               </div>
             )}
           </CardContent>
