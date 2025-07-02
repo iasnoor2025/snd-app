@@ -88,17 +88,6 @@ export default function Index({ auth, employees, filters, departments, positions
   const { hasPermission } = usePermission();
   const [perPage, setPerPage] = useState(employees.meta?.per_page || 15);
 
-  // Debug pagination data
-  console.log('Pagination Debug:', {
-    employees: employees,
-    meta: employees?.meta,
-    data_length: employees?.data?.length,
-    total: employees?.meta?.total,
-    per_page: employees?.meta?.per_page,
-    current_page: employees?.meta?.current_page,
-    last_page: employees?.meta?.last_page
-  });
-
   const handleSearch = debounce((value: string) => {
     setSearch(value);
     router.get('/employees', {
@@ -463,12 +452,7 @@ export default function Index({ auth, employees, filters, departments, positions
                               status: status === 'all' ? '' : status,
                               department: department === 'all' ? '' : department,
                               position: position === 'all' ? '' : position
-                            }, {
-                              preserveState: true,
-                              preserveScroll: true,
-                              onSuccess: () => console.log('Previous page navigation successful'),
-                              onError: (errors) => console.error('Previous page navigation failed:', errors)
-                            });
+                                                        }, { preserveState: true, preserveScroll: true });
                           }
                         }}
                       >
@@ -510,12 +494,7 @@ export default function Index({ auth, employees, filters, departments, positions
                                     status: status === 'all' ? '' : status,
                                     department: department === 'all' ? '' : department,
                                     position: position === 'all' ? '' : position
-                                  }, {
-                                    preserveState: true,
-                                    preserveScroll: true,
-                                    onSuccess: () => console.log(`Page ${pageNumber} navigation successful`),
-                                    onError: (errors) => console.error(`Page ${pageNumber} navigation failed:`, errors)
-                                  });
+                                                                     }, { preserveState: true, preserveScroll: true });
                                 }}
                               >
                                 {pageNumber}
@@ -540,12 +519,7 @@ export default function Index({ auth, employees, filters, departments, positions
                               status: status === 'all' ? '' : status,
                               department: department === 'all' ? '' : department,
                               position: position === 'all' ? '' : position
-                            }, {
-                              preserveState: true,
-                              preserveScroll: true,
-                              onSuccess: () => console.log('Next page navigation successful'),
-                              onError: (errors) => console.error('Next page navigation failed:', errors)
-                            });
+                                                        }, { preserveState: true, preserveScroll: true });
                           }
                         }}
                       >

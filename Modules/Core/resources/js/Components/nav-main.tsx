@@ -15,12 +15,15 @@ export function NavMain({ items }: NavMainProps) {
     const { hasPermission } = usePermission();
 
     console.log('NavMain received items:', items); // Debug log
+    console.log('Items count:', items.length); // Debug log
 
     return (
         <SidebarGroup>
-            <SidebarGroupLabel>{t('navigation.navigation')}</SidebarGroupLabel>
+            <SidebarGroupLabel>Navigation</SidebarGroupLabel>
             <SidebarMenu>
                 {items.map((item, index) => {
+                    console.log('Rendering item:', item.title); // Debug log
+
                     // Temporarily disable permission checks for debugging
                     // if (item.permission && !hasPermission(item.permission)) {
                     //     return null;

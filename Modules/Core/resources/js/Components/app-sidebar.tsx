@@ -82,6 +82,8 @@ export function AppSidebar() {
 
     // Permission-based sidebar logic
     useEffect(() => {
+        console.log('Setting up sidebar items...'); // Debug log
+
         const items: NavItem[] = [];
 
         // Add Dashboard as first item
@@ -161,25 +163,14 @@ export function AppSidebar() {
         }
 
         console.log('Setting sidebar items:', items); // Debug log
+        console.log('Items count:', items.length); // Debug log
+
         setModuleItems(items);
         setIsLoading(false);
     }, [isAdmin, hasPermission, t]);
 
-    // Add Customer Portal link for customers
-    useEffect(() => {
-        if (isCustomer && !isLoading) {
-            setModuleItems(prev => [
-                ...prev,
-                {
-                    title: t('common:customer_portal'),
-                    href: route('customer.dashboard'),
-                    icon: 'user',
-                }
-            ]);
-        }
-    }, [isCustomer, isLoading, t]);
-
     console.log('Rendering sidebar with items:', moduleItems); // Debug log
+    console.log('Is loading:', isLoading); // Debug log
 
     return (
         <Sidebar side={isRTL ? "right" : "left"}>
