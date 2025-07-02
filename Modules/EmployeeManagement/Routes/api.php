@@ -15,11 +15,18 @@ use Modules\EmployeeManagement\Http\Controllers\SkillController;
 use Modules\EmployeeManagement\Http\Controllers\PerformanceReviewController;
 use Modules\EmployeeManagement\Http\Controllers\TrainingController;
 use Modules\EmployeeManagement\Http\Controllers\Api\DepartmentApiController;
+use Modules\EmployeeManagement\Http\Controllers\Api\WidgetController;
 
 // Public route for last-file-number (no auth middleware)
 Route::prefix('v1')->group(function () {
     Route::get('employees/last-file-number', [EmployeeController::class, 'getNextFileNumber']);
     Route::apiResource('positions', PositionController::class);
+    Route::get('employees/all', function () {
+        $repo = app(\Modules\EmployeeManagement\Repositories\EmployeeRepositoryInterface::class);
+        return response()->json($repo->all())
+            ->header('X-Debug-API', 'true')
+            ->header('Content-Type', 'application/json');
+    });
 });
 
 // Public API endpoints - no authentication required
@@ -136,4 +143,6 @@ Route::middleware('auth:sanctum')->group(function () {
             ->header('Content-Type', 'application/json');
     });
 });
+
+Route::get('/employees/all', [\Modules\EmployeeManagement\Http\Controllers\Api\WidgetController::class, 'all']);
 

@@ -17,6 +17,7 @@ use Modules\RentalManagement\Http\Controllers\DynamicPricingController;
 use Modules\RentalManagement\Http\Controllers\Api\RentalCalendarController;
 use Modules\RentalManagement\Http\Controllers\Api\CustomerPortalController;
 use Modules\RentalManagement\Http\Controllers\LoyaltyController;
+use Modules\RentalManagement\Http\Controllers\Api\WidgetController;
 
 // API routes uncommented
 
@@ -176,5 +177,8 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
 
     // New rental summary API endpoint
     Route::get('rentals/summary', [\Modules\RentalManagement\Http\Controllers\Api\RentalController::class, 'rentalSummary']);
+
+    // New rentals/analytics route
+    Route::get('/rentals/analytics', [WidgetController::class, 'analytics']);
 });
 

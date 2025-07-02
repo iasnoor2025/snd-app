@@ -18,6 +18,7 @@ use Modules\EquipmentManagement\Http\Controllers\EquipmentPerformanceController;
 use Modules\EquipmentManagement\Http\Controllers\EquipmentController;
 use Modules\EquipmentManagement\Http\Controllers\EquipmentCodeController;
 use Modules\EquipmentManagement\Http\Controllers\UsageLogController;
+use Modules\EquipmentManagement\Http\Controllers\Api\WidgetController;
 
 /*
 |--------------------------------------------------------------------------
@@ -174,5 +175,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/', [UsageLogController::class, 'store']);
         Route::get('/analytics', [UsageLogController::class, 'analytics']);
     });
+
+    // New route for WidgetController@all
+    Route::get('/equipment', [WidgetController::class, 'all']);
 });
 

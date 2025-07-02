@@ -13,6 +13,9 @@ use Modules\ProjectManagement\Http\Controllers\Api\ProjectChatController;
 use Modules\ProjectManagement\Http\Controllers\Api\ProjectTaskDependencyController;
 use Modules\ProjectManagement\Http\Controllers\Api\ProjectTemplateController;
 use Modules\ProjectManagement\Http\Controllers\Api\ProjectTimesheetController;
+use Modules\ProjectManagement\Http\Controllers\Api\WidgetController;
+use Modules\ProjectManagement\Http\Controllers\Api\FilesWidgetController;
+use Modules\ProjectManagement\Http\Controllers\Api\KanbanWidgetController;
 
 /*
 |--------------------------------------------------------------------------
@@ -105,6 +108,12 @@ Route::prefix('project-timesheets')->group(function () {
     Route::post('{timesheet}/reject', [ProjectTimesheetController::class, 'reject']);
     Route::get('project/{projectId}/summary', [ProjectTimesheetController::class, 'projectSummary']);
 });
+
+Route::get('/projects', [WidgetController::class, 'all']);
+
+Route::get('/files/recent', [FilesWidgetController::class, 'recent']);
+
+Route::get('/kanban', [KanbanWidgetController::class, 'index']);
 
 
 

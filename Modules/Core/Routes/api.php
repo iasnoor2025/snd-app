@@ -9,6 +9,8 @@ use Modules\Core\Http\Controllers\MfaController;
 use Modules\Core\Http\Controllers\ApiKeyController;
 use Modules\Core\Http\Controllers\DeviceSessionController;
 use Modules\Core\Http\Controllers\AuthController;
+use Modules\Core\Http\Controllers\Api\CalendarWidgetController;
+use Modules\Core\Http\Controllers\Api\TimelineWidgetController;
 
 /*
 |--------------------------------------------------------------------------
@@ -84,4 +86,7 @@ Route::middleware(['auth:sanctum'])->prefix('sessions')->group(function () {
     Route::post('/revoke', [DeviceSessionController::class, 'revoke']);
     Route::post('/revoke-all', [DeviceSessionController::class, 'revokeAll']);
 });
+
+Route::get('/calendar/events', [CalendarWidgetController::class, 'events']);
+Route::get('/timeline', [TimelineWidgetController::class, 'index']);
 
