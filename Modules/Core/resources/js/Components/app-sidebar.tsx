@@ -11,22 +11,15 @@ import { useEffect, useState } from 'react';
 import { cn } from '../lib/utils';
 import { useTranslation } from 'react-i18next';
 import { Button } from "./ui/button";
+import { Icon } from "./icon";
 
 // Map module names to their respective icon, route, and required permission
-const moduleMap: Record<string, { icon: string; route: string; permission: string; subItems?: Array<{ title: string; route: string; permission: string }> }> = {
+const moduleMap: Record<string, { icon: string; route: string; permission: string }> = {
     Core: { icon: 'network', route: '/core', permission: 'core.view' },
-    EmployeeManagement: {
-        icon: 'user-cog',
-        route: '/employees',
-        permission: 'employees.view',
-        subItems: [
-            { title: 'Employees', route: '/employees', permission: 'employees.view' },
-            { title: 'Salary Increments', route: '/salary-increments', permission: 'salary-increments.view' }
-        ]
-    },
+    EmployeeManagement: { icon: 'user-cog', route: '/employees', permission: 'employees.view' },
     LeaveManagement: { icon: 'clipboard-list', route: '/leaves', permission: 'leave-requests.view' },
     TimesheetManagement: { icon: 'clock', route: '/timesheets', permission: 'timesheets.view' },
-    PayrollManagenent: { icon: 'dollar-sign', route: '/payroll-managenent', permission: 'payroll-managenent.view' },
+    PayrollManagement: { icon: 'dollar-sign', route: '/payroll', permission: 'payroll.view' },
     ProjectManagement: { icon: 'briefcase', route: '/projects', permission: 'projects.view' },
     RentalManagement: { icon: 'calendar', route: '/rentals', permission: 'rentals.view' },
     EquipmentManagement: { icon: 'truck', route: '/equipment', permission: 'equipment.view' },
@@ -61,139 +54,63 @@ const moduleDisplayNames: Record<string, string> = {
 };
 
 export function AppSidebar() {
-    const { hasPermission, hasRole } = usePermission();
-    const [moduleItems, setModuleItems] = useState<NavItem[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const { t, i18n } = useTranslation(['common']);
+    const { i18n } = useTranslation(['common']);
+    const { hasPermission, isAdmin, user } = usePermission();
+    const [modules, setModules] = useState<string[]>([]);
 
-    // Get auth data from global window object as fallback
-    const auth = (window as any)?.authData || null;
-
-    // Determine if the current language is RTL
-    const isRTL = i18n.dir() === 'rtl';
-
-    // Check if user is admin directly from auth data - simplified for testing
-    const isAdmin = true; // Temporarily set to true for testing
-
-    // Check if user is a customer
-    const isCustomer = auth?.user && 'is_customer' in auth.user
-        ? auth.user.is_customer
-        : false;
-
-    // Permission-based sidebar logic
     useEffect(() => {
-        console.log('Setting up sidebar items...'); // Debug log
-
-        const items: NavItem[] = [];
-
-        // Add Dashboard as first item
-        items.push({
-            title: 'Dashboard',
-            href: '/dashboard',
-            icon: 'layout-grid',
-        });
-
-        // Add core modules - simplified approach for testing
-        items.push({
-            title: 'Employees',
-            href: '/employees',
-            icon: 'user-cog',
-        });
-
-        items.push({
-            title: 'Rentals',
-            href: '/rentals',
-            icon: 'calendar',
-        });
-
-        items.push({
-            title: 'Projects',
-            href: '/projects',
-            icon: 'briefcase',
-        });
-
-        items.push({
-            title: 'Equipment',
-            href: '/equipment',
-            icon: 'truck',
-        });
-
-        items.push({
-            title: 'Customers',
-            href: '/customers',
-            icon: 'users',
-        });
-
-        items.push({
-            title: 'Timesheets',
-            href: '/timesheets',
-            icon: 'clock',
-        });
-
-        items.push({
-            title: 'Leave Management',
-            href: '/leaves',
-            icon: 'clipboard-list',
-        });
-
-        items.push({
-            title: 'Reporting',
-            href: '/reporting',
-            icon: 'bar-chart',
-        });
-
-        items.push({
-            title: 'Settings',
-            href: '/settings',
-            icon: 'settings',
-        });
-
-        // Add Users for admins
-        if (isAdmin) {
-            items.push({
-                title: 'Users',
-                href: '/users',
-                icon: 'users',
+        fetch('/modules_statuses.json')
+            .then((res) => res.json())
+            .then((data) => {
+                const enabledModules = Object.entries(data)
+                    .filter(([_, enabled]) => enabled)
+                    .map(([module]) => module)
+                    .filter((module) => moduleMap[module]);
+                console.log('[Sidebar] Enabled modules from JSON:', enabledModules);
+                setModules(enabledModules);
+            })
+            .catch((err) => {
+                console.error('[Sidebar] Error fetching modules_statuses.json:', err);
             });
-            items.push({
-                title: 'Roles',
-                href: '/roles',
-                icon: 'shield',
-            });
-        }
+    }, []);
 
-        console.log('Setting sidebar items:', items); // Debug log
-        console.log('Items count:', items.length); // Debug log
+    // Build navigation items from enabled modules and user permissions
+    const navigationItems: NavItem[] = modules
+        .filter((module) => {
+            if (isAdmin) return true; // Admin sees all enabled modules
+            const perm = moduleMap[module]?.permission;
+            const allowed = !perm || hasPermission(perm);
+            console.log(`[Sidebar] Module: ${module}, Permission: ${perm}, Allowed: ${allowed}, isAdmin: ${isAdmin}`);
+            return allowed;
+        })
+        .map((module) => ({
+            title: module.replace(/([A-Z])/g, ' $1').trim(),
+            href: moduleMap[module].route,
+            icon: moduleMap[module].icon,
+            permission: moduleMap[module].permission,
+        }));
 
-        setModuleItems(items);
-        setIsLoading(false);
-    }, [isAdmin, hasPermission, t]);
-
-    console.log('Rendering sidebar with items:', moduleItems); // Debug log
-    console.log('Is loading:', isLoading); // Debug log
+    console.log('[Sidebar] navigationItems:', navigationItems);
+    console.log('[Sidebar] Current user:', user);
 
     return (
-        <Sidebar side={isRTL ? "right" : "left"}>
-            <SidebarHeader>
-                <AppLogo />
+        <Sidebar collapsible="icon" className="bg-white border-r">
+            <SidebarHeader className="border-b p-4">
+                <SidebarMenu>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton size="lg" asChild>
+                            <div className="flex items-center gap-2">
+                                <AppLogo />
+                            </div>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                </SidebarMenu>
             </SidebarHeader>
-            <SidebarContent>
-                <NavMain items={moduleItems} />
+            <SidebarContent className="flex-1">
+                <NavMain items={navigationItems} />
             </SidebarContent>
-            <SidebarFooter>
+            <SidebarFooter className="border-t p-4">
                 <NavUser />
-                {/* <NavFooter items={[
-                    {
-                        title: 'Documentation',
-                        href: '/docs',
-                        icon: 'book-open'
-                    },
-                    {
-                        title: 'Support',
-                        href: '/support',
-                        icon: 'help-circle'
-                    }
-                ]} /> */}
             </SidebarFooter>
         </Sidebar>
     );
