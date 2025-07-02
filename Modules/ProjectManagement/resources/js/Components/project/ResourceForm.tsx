@@ -238,9 +238,8 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
             setIsLoading(true);
             try {
                 if (type === 'manpower') {
-                    // Ensure CSRF cookie is set for Sanctum
-                    await axios.get('/sanctum/csrf-cookie');
-                    const response = await axios.get('/api/v1/employees', { withCredentials: true });
+                    // Use the employees endpoint that's available to authenticated users
+                    const response = await axios.get('/api/employees');
                     if (mounted.current) {
                         setEmployees(response.data);
                     }

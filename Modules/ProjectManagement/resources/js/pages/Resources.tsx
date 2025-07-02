@@ -592,19 +592,21 @@ export default ResourcesPage;
 // Main component implementation
 function Resources({ project, manpower = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 }, equipment = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 }, materials = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 }, fuel = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 }, expenses = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 }, tasks = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 }, assignableUsers = [], type = 'manpower', page = 1 }: ResourcesPageProps) {
     const { t } = useTranslation(['projects', 'common']);
-    // Keep debug logging for future troubleshooting
-    console.log('Resources component - rendering start', {
-        projectInfo: { id: project?.id, name: project?.name },
-        dataProvided: {
-            manpowerCount: Array.isArray(manpower.data) ? manpower.data.length : 'not an array',
-            equipmentCount: Array.isArray(equipment.data) ? equipment.data.length : 'not an array',
-            materialsCount: Array.isArray(materials.data) ? materials.data.length : 'not an array',
-            fuelCount: Array.isArray(fuel.data) ? fuel.data.length : 'not an array',
-            expensesCount: Array.isArray(expenses.data) ? expenses.data.length : 'not an array',
-            tasksCount: Array.isArray(tasks.data) ? tasks.data.length : 'not an array',
-            hasAssignableUsers: Array.isArray(assignableUsers) && assignableUsers.length > 0
-        }
-    });
+    // Debug logging only in development mode
+    if (process.env.NODE_ENV === 'development') {
+        console.log('Resources component - rendering start', {
+            projectInfo: { id: project?.id, name: project?.name },
+            dataProvided: {
+                manpowerCount: Array.isArray(manpower.data) ? manpower.data.length : 'not an array',
+                equipmentCount: Array.isArray(equipment.data) ? equipment.data.length : 'not an array',
+                materialsCount: Array.isArray(materials.data) ? materials.data.length : 'not an array',
+                fuelCount: Array.isArray(fuel.data) ? fuel.data.length : 'not an array',
+                expensesCount: Array.isArray(expenses.data) ? expenses.data.length : 'not an array',
+                tasksCount: Array.isArray(tasks.data) ? tasks.data.length : 'not an array',
+                hasAssignableUsers: Array.isArray(assignableUsers) && assignableUsers.length > 0
+            }
+        });
+    }
 
     try {
         const { tab } = usePage().props as any;

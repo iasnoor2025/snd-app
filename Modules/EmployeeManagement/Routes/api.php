@@ -22,12 +22,17 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('positions', PositionController::class);
 });
 
+// Public API endpoints - no authentication required
+Route::get('/employees', [EmployeeController::class, 'index']);
+
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     // Employee core routes
     Route::apiResource('employees', EmployeeController::class);
     Route::get('employees/all', function () {
         $repo = app(\Modules\EmployeeManagement\Repositories\EmployeeRepositoryInterface::class);
-        return response()->json($repo->all());
+        return response()->json($repo->all())
+            ->header('X-Debug-API', 'true')
+            ->header('Content-Type', 'application/json');
     });
     Route::get('employees/{employee}/documents', [EmployeeController::class, 'documents']);
     Route::get('employees/{employee}/timesheets', [EmployeeController::class, 'timesheets']);
@@ -121,10 +126,12 @@ Route::prefix('trainings')->group(function () {
 });
 Route::get('employees/{employee}/trainings', [TrainingController::class, 'employeeTrainings']);
 
-Route::middleware(['api', 'auth:sanctum'])->prefix('v1')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('employees/all', function () {
         $repo = app(\Modules\EmployeeManagement\Repositories\EmployeeRepositoryInterface::class);
-        return response()->json($repo->all());
+        return response()->json($repo->all())
+            ->header('X-Debug-API', 'true')
+            ->header('Content-Type', 'application/json');
     });
 });
 

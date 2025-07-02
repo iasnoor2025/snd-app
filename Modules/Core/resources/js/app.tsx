@@ -207,7 +207,10 @@ const moduleMap: Record<string, string[]> = {
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: async (name) => {
-        console.log('Resolving page:', name); // Add debug logging
+        // Only log page resolution in development mode
+        if (process.env.NODE_ENV === 'development') {
+            console.log('Resolving page:', name);
+        }
 
         // Special case for auth pages - add more debug logging
         if (name.startsWith('auth/')) {
