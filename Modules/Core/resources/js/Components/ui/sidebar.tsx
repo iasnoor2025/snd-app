@@ -27,7 +27,7 @@ export function Sidebar({ collapsible = false, className = '', children }: { col
       data-collapsible={collapsible ? (typeof collapsible === 'string' ? collapsible : 'true') : undefined}
       data-open={open}
       className={cn(
-        'sidebar-wrapper group/sidebar-wrapper flex flex-col transition-all duration-300 bg-white border-r min-w-[64px]',
+        'sidebar-wrapper group/sidebar-wrapper flex flex-col transition-all duration-300 bg-white border-r min-w-[64px] h-screen',
         !open && collapsible ? 'w-16' : 'w-64',
         className
       )}
@@ -62,7 +62,7 @@ export function SidebarHeader({ className = '', children }: { className?: string
 
 // Sidebar Content
 export function SidebarContent({ className = '', children }: { className?: string; children: React.ReactNode }) {
-  return <div className={cn('sidebar-content flex-1 overflow-y-auto', className)}>{children}</div>;
+  return <div className={cn('sidebar-content flex-1', className)}>{children}</div>;
 }
 
 // Sidebar Footer

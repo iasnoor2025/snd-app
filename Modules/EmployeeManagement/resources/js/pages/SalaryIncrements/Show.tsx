@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head } from '@inertiajs/react';
-import { router } from '@/Core';
+import { router } from '@inertiajs/react';
 import Link from '@/Core/components/text-link';
 import { Button } from "@/Core";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Core";
