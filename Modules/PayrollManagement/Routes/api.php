@@ -26,41 +26,41 @@ Route::prefix('payroll')
         // Payroll listing and management
         Route::get('/', [PayrollController::class, 'index'])
             ->middleware('permission:payroll.view')
-            ->name('index');
+            ->name('payroll.api.index');
         Route::post('/', [PayrollController::class, 'store'])
             ->middleware('permission:payroll.create')
-            ->name('store');
+            ->name('payroll.api.store');
         Route::get('/{payroll}', [PayrollController::class, 'show'])
             ->middleware('permission:payroll.view')
-            ->name('show');
+            ->name('payroll.api.show');
 
         // Payroll actions
         Route::post('/{payroll}/approve', [PayrollController::class, 'approve'])
             ->middleware('permission:payroll.edit')
-            ->name('approve');
+            ->name('payroll.api.approve');
         Route::post('/{payroll}/process-payment', [PayrollController::class, 'processPayment'])
             ->middleware('permission:payroll.edit')
-            ->name('process-payment');
+            ->name('payroll.api.process-payment');
         Route::post('/{payroll}/cancel', [PayrollController::class, 'cancel'])
             ->middleware('permission:payroll.edit')
-            ->name('cancel');
+            ->name('payroll.api.cancel');
 
         // Bulk payroll operations
         Route::post('/generate-monthly', [PayrollController::class, 'generateMonthlyPayroll'])
             ->middleware('permission:payroll.create')
-            ->name('generate-monthly');
+            ->name('payroll.api.generate-monthly');
 
         // Payroll runs
         Route::prefix('runs')->name('runs.')->group(function () {
             Route::get('/{payrollRun}', [PayrollController::class, 'showPayrollRun'])
                 ->middleware('permission:payroll.view')
-                ->name('show');
+                ->name('payroll.api.runs.show');
             Route::post('/{payrollRun}/approve', [PayrollController::class, 'approvePayrollRun'])
                 ->middleware('permission:payroll.edit')
-                ->name('approve');
+                ->name('payroll.api.runs.approve');
             Route::post('/{payrollRun}/reject', [PayrollController::class, 'rejectPayrollRun'])
                 ->middleware('permission:payroll.edit')
-                ->name('reject');
+                ->name('payroll.api.runs.reject');
         });
 
         Route::post('/export-bank-file', [PayrollController::class, 'exportBankFile'])->middleware('permission:payroll.view')->name('export-bank-file');
@@ -77,16 +77,16 @@ Route::prefix('salary-advances')
     ->group(function() {
         Route::get('/', [SalaryAdvanceController::class, 'index'])
             ->middleware('permission:salary-advances.view')
-            ->name('index');
+            ->name('salary-advances.index');
         Route::post('/', [SalaryAdvanceController::class, 'store'])
             ->middleware('permission:salary-advances.create')
-            ->name('store');
+            ->name('salary-advances.api.store');
         Route::get('/{salaryAdvance}', [SalaryAdvanceController::class, 'show'])
             ->middleware('permission:salary-advances.view')
-            ->name('show');
+            ->name('salary-advances.api.show');
         Route::post('/{salaryAdvance}/approve', [SalaryAdvanceController::class, 'approve'])
             ->middleware('permission:salary-advances.edit')
-            ->name('approve');
+            ->name('salary-advances.api.approve');
         Route::post('/{salaryAdvance}/reject', [SalaryAdvanceController::class, 'reject'])
             ->middleware('permission:salary-advances.edit')
             ->name('reject');
@@ -99,22 +99,22 @@ Route::prefix('final-settlements')
     ->group(function() {
         Route::get('/', [FinalSettlementController::class, 'index'])
             ->middleware('permission:final-settlements.view')
-            ->name('index');
+            ->name('final-settlements.index');
         Route::post('/', [FinalSettlementController::class, 'store'])
             ->middleware('permission:final-settlements.create')
-            ->name('store');
+            ->name('final-settlements.api.store');
         Route::get('/{finalSettlement}', [FinalSettlementController::class, 'show'])
             ->middleware('permission:final-settlements.view')
-            ->name('show');
+            ->name('final-settlements.api.show');
         Route::post('/{finalSettlement}/approve', [FinalSettlementController::class, 'approve'])
             ->middleware('permission:final-settlements.edit')
-            ->name('approve');
+            ->name('final-settlements.api.approve');
         Route::post('/{finalSettlement}/process-payment', [FinalSettlementController::class, 'processPayment'])
             ->middleware('permission:final-settlements.edit')
-            ->name('process-payment');
+            ->name('final-settlements.api.process-payment');
         Route::post('/{finalSettlement}/cancel', [FinalSettlementController::class, 'cancel'])
             ->middleware('permission:final-settlements.edit')
-            ->name('cancel');
+            ->name('final-settlements.api.cancel');
         Route::get('/{finalSettlement}/report', [FinalSettlementController::class, 'generateReport'])
             ->middleware('permission:final-settlements.view')
             ->name('report');

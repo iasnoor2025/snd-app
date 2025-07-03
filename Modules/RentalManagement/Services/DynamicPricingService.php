@@ -1,3 +1,4 @@
+<?php
 namespace Modules\RentalManagement\Services;
 
 use Modules\RentalManagement\Domain\Models\DynamicPricing;

@@ -77,7 +77,7 @@ Route::prefix('hr/payroll')->name('payroll.')->middleware(['auth', 'verified'])-
     Route::prefix('tax-documentation')->name('tax-documentation.')->group(function () {
         Route::get('/', [TaxDocumentationController::class, 'index'])
             ->middleware('permission:tax-documentation.view')
-            ->name('index');
+            ->name('tax-documentation.index');
         Route::get('/{taxDocument}', [TaxDocumentationController::class, 'show'])
             ->middleware('permission:tax-documentation.view')
             ->name('show');
@@ -102,7 +102,7 @@ Route::prefix('hr/payroll')->name('payroll.')->middleware(['auth', 'verified'])-
     Route::prefix('final-settlements')->name('final-settlements.')->group(function () {
         Route::get('/', [FinalSettlementController::class, 'index'])
             ->middleware('permission:final-settlements.view')
-            ->name('index');
+            ->name('final-settlements.index');
         Route::get('/create', [FinalSettlementController::class, 'create'])
             ->middleware('permission:final-settlements.create')
             ->name('create');
