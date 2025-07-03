@@ -15,6 +15,9 @@ import { Icon } from "./icon";
 
 // Map module names to their respective icon, route, and required permission
 const moduleMap: Record<string, { icon: string; route: string; permission: string }> = {
+    Dashboard: { icon: 'home', route: '/dashboard', permission: 'dashboard.view' },
+    Users: { icon: 'users', route: '/users', permission: 'users.view' },
+    Roles: { icon: 'shield', route: '/roles', permission: 'roles.view' },
     Core: { icon: 'network', route: '/core', permission: 'core.view' },
     EmployeeManagement: { icon: 'user-cog', route: '/employees', permission: 'employees.view' },
     LeaveManagement: { icon: 'clipboard-list', route: '/leaves', permission: 'leave-requests.view' },
@@ -35,6 +38,9 @@ const moduleMap: Record<string, { icon: string; route: string; permission: strin
 
 // Map module keys to human-friendly display names
 const moduleDisplayNames: Record<string, string> = {
+    Dashboard: 'Dashboard',
+    Users: 'Users',
+    Roles: 'Roles',
     Core: 'Core',
     EmployeeManagement: 'Employee Management',
     LeaveManagement: 'Leave Management',
@@ -117,26 +123,3 @@ export function AppSidebar() {
 
 // Default export for compatibility with index.ts
 export default AppSidebar;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
