@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
+import DashboardWidgetCard from './DashboardWidgetCard';
 
 interface Project {
   id: string;
@@ -11,6 +12,7 @@ interface Project {
 interface RecentProjectsProps {
   projects: Project[];
   className?: string;
+  onRemove: () => void;
 }
 
 const statusColor: Record<string, string> = {
@@ -19,27 +21,13 @@ const statusColor: Record<string, string> = {
   Pending: 'text-yellow-600 dark:text-yellow-400',
 };
 
-const RecentProjects: React.FC<RecentProjectsProps> = ({ projects, className = '' }) => (
-  <Card className={className}>
-    <CardHeader>
-      <CardTitle>Recent Projects</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <ul className="space-y-2">
-        {projects.length === 0 ? (
-          <li className="text-muted-foreground text-sm">No recent projects.</li>
-        ) : (
-          projects.map((project) => (
-            <li key={project.id} className="flex items-center justify-between text-sm">
-              <span className="font-medium">{project.name}</span>
-              <span className={`ml-2 ${statusColor[project.status]}`}>{project.status}</span>
-              <span className="ml-4 text-xs text-muted-foreground">{project.updatedAt}</span>
-            </li>
-          ))
-        )}
-      </ul>
-    </CardContent>
-  </Card>
+const RecentProjects: React.FC<RecentProjectsProps> = ({ projects, className = '', onRemove }) => (
+  <DashboardWidgetCard
+    title="Recent Projects"
+    summary={projects.length === 0 ? 'No recent projects.' : `Projects: ${projects.length}`}
+    onRemove={onRemove}
+    className={className}
+  />
 );
 
 export default RecentProjects;

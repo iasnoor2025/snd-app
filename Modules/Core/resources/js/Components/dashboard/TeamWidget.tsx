@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import DashboardWidgetCard from './DashboardWidgetCard';
 
 interface TeamMember {
   id: string;
@@ -12,13 +13,12 @@ interface TeamMember {
 interface TeamWidgetProps {
   members: TeamMember[];
   className?: string;
+  onRemove: () => void;
 }
 
-const TeamWidget: React.FC<TeamWidgetProps> = ({ members, className = '' }) => (
-  <Card className={className}>
-    <CardHeader>
-      <CardTitle>Team</CardTitle>
-    </CardHeader>
+const TeamWidget: React.FC<TeamWidgetProps> = ({ members, className = '', onRemove }) => (
+  <DashboardWidgetCard title="Team" summary={members.length === 0 ? 'No team members.' : undefined} onRemove={onRemove} className={className}>
+    {/*
     <CardContent>
       <ul className="space-y-3">
         {members.length === 0 ? (
@@ -42,7 +42,8 @@ const TeamWidget: React.FC<TeamWidgetProps> = ({ members, className = '' }) => (
         )}
       </ul>
     </CardContent>
-  </Card>
+    */}
+  </DashboardWidgetCard>
 );
 
 export default TeamWidget;

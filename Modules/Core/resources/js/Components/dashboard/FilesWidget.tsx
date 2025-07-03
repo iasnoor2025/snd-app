@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from '../ui/dialog';
 import { FileText, Image as ImageIcon, Upload, File as FileIcon } from 'lucide-react';
+import DashboardWidgetCard from './DashboardWidgetCard';
 
 interface FileItem {
   id: string;
@@ -15,6 +16,7 @@ interface FileItem {
 interface FilesWidgetProps {
   files: FileItem[];
   className?: string;
+  onRemove: () => void;
 }
 
 const typeMap = {
@@ -24,24 +26,22 @@ const typeMap = {
   other: <FileIcon className="h-4 w-4 text-gray-400" />,
 };
 
-const FilesWidget: React.FC<FilesWidgetProps> = ({ files, className = '' }) => {
+const FilesWidget: React.FC<FilesWidgetProps> = ({ files, className = '', onRemove }) => {
   const [open, setOpen] = useState(false);
   return (
-    <Card className={className}>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Recent Files</CardTitle>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <button className="ml-2 p-1 rounded-full bg-primary text-primary-foreground hover:bg-primary/80" title="Upload File">
-              <Upload className="h-4 w-4" />
-            </button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogTitle>Upload File</DialogTitle>
-            <DialogDescription>File upload form coming soon...</DialogDescription>
-          </DialogContent>
-        </Dialog>
-      </CardHeader>
+    <DashboardWidgetCard title="Files" summary={files.length === 0 ? 'No files uploaded' : `Total: ${files.length}`} onRemove={onRemove} className={className}>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <button className="ml-2 p-1 rounded-full bg-primary text-primary-foreground hover:bg-primary/80" title="Upload File">
+            <Upload className="h-4 w-4" />
+          </button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogTitle>Upload File</DialogTitle>
+          <DialogDescription>File upload form coming soon...</DialogDescription>
+        </DialogContent>
+      </Dialog>
+      {/*
       <CardContent>
         <ul className="space-y-2">
           {files.length === 0 ? (
@@ -61,7 +61,8 @@ const FilesWidget: React.FC<FilesWidgetProps> = ({ files, className = '' }) => {
           )}
         </ul>
       </CardContent>
-    </Card>
+      */}
+    </DashboardWidgetCard>
   );
 };
 

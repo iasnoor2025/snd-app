@@ -41,6 +41,12 @@ import type { FileItem } from '../components/dashboard/FilesWidget';
 import type { CalendarEvent } from '../components/dashboard/CalendarWidget';
 import ClockWidget from '../components/dashboard/ClockWidget';
 import DualClockWidget from '../components/dashboard/DualClockWidget';
+import GlassCard from '../components/GlassCard';
+import { widgetRegistry } from '../components/dashboard/widgetRegistry';
+import { Responsive, WidthProvider, Layout } from 'react-grid-layout';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
+import { Dialog, DialogClose } from '../components/ui/dialog';
 
 interface ModuleInfo {
     icon: React.ElementType;
@@ -163,6 +169,17 @@ const breadcrumbs = [
     { title: 'Dashboard', href: '/dashboard' },
 ];
 
+const ResponsiveGridLayout = WidthProvider(Responsive);
+
+function getSavedLayout(key: string, fallback: Layout[]) {
+    if (typeof window === 'undefined') return fallback;
+    try {
+        const saved = localStorage.getItem(key);
+        if (saved) return JSON.parse(saved);
+    } catch {}
+    return fallback;
+}
+
 export default function Dashboard() {
     const { t } = useTranslation();
     const [moduleCards, setModuleCards] = useState<ModuleCard[]>([]);
@@ -246,6 +263,67 @@ export default function Dashboard() {
     const [files, setFiles] = useState<FileItem[]>([]);
     const [loadingFiles, setLoadingFiles] = useState(true);
     const [errorFiles, setErrorFiles] = useState('');
+
+    // Parallax state for animated background
+    const [parallax, setParallax] = useState({ x: 0, y: 0 });
+
+    // Layout state for drag-and-drop (persisted)
+    const [layout, setLayout] = useState<Layout[]>(() => getSavedLayout('dashboard-layout', [
+        { i: 'employee', x: 0, y: 0, w: 1, h: 2 },
+        { i: 'rental', x: 1, y: 0, w: 1, h: 2 },
+        { i: 'vacation', x: 2, y: 0, w: 1, h: 2 },
+        { i: 'payroll', x: 3, y: 0, w: 1, h: 2 },
+        { i: 'equipment', x: 4, y: 0, w: 1, h: 2 },
+    ]));
+    const [layoutLower, setLayoutLower] = useState<Layout[]>(() => getSavedLayout('dashboard-layout-lower', [
+        { i: 'analytics', x: 0, y: 0, w: 1, h: 2 },
+        { i: 'audit', x: 1, y: 0, w: 1, h: 2 },
+        { i: 'project', x: 2, y: 0, w: 1, h: 2 },
+        { i: 'customer', x: 3, y: 0, w: 1, h: 2 },
+        { i: 'timeline', x: 4, y: 0, w: 1, h: 2 },
+    ]));
+    const [layoutBottom, setLayoutBottom] = useState<Layout[]>(() => getSavedLayout('dashboard-layout-bottom', [
+        { i: 'activity', x: 0, y: 0, w: 1, h: 2 },
+        { i: 'team', x: 1, y: 0, w: 1, h: 2 },
+        { i: 'recentProjects', x: 2, y: 0, w: 1, h: 2 },
+        { i: 'calendar', x: 3, y: 0, w: 1, h: 2 },
+        { i: 'files', x: 4, y: 0, w: 1, h: 2 },
+        { i: 'kanban', x: 5, y: 0, w: 1, h: 2 },
+    ]));
+
+    // Persist layouts
+    useEffect(() => { localStorage.setItem('dashboard-layout', JSON.stringify(layout)); }, [layout]);
+    useEffect(() => { localStorage.setItem('dashboard-layout-lower', JSON.stringify(layoutLower)); }, [layoutLower]);
+    useEffect(() => { localStorage.setItem('dashboard-layout-bottom', JSON.stringify(layoutBottom)); }, [layoutBottom]);
+
+    // Widget visibility state (persisted)
+    const allWidgetIds = widgetRegistry.map(w => w.id);
+    const [visibleWidgets, setVisibleWidgets] = useState<string[]>(() => {
+        if (typeof window === 'undefined') return allWidgetIds;
+        try {
+            const saved = localStorage.getItem('dashboard-visible-widgets');
+            if (saved) return JSON.parse(saved);
+        } catch {}
+        return allWidgetIds;
+    });
+    useEffect(() => {
+        localStorage.setItem('dashboard-visible-widgets', JSON.stringify(visibleWidgets));
+    }, [visibleWidgets]);
+
+    // Add Widget modal
+    const [addWidgetOpen, setAddWidgetOpen] = useState(false);
+    const hiddenWidgets = widgetRegistry.filter(w => !visibleWidgets.includes(w.id));
+
+    // Remove widget handler
+    function handleRemoveWidget(id: string) {
+        setVisibleWidgets(w => w.filter(wid => wid !== id));
+    }
+
+    // Add widget handler
+    function handleAddWidget(id: string) {
+        setVisibleWidgets(w => [...w, id]);
+        setAddWidgetOpen(false);
+    }
 
     useEffect(() => {
         // Fetch user and module status from Inertia or API
@@ -425,54 +503,145 @@ export default function Dashboard() {
             .catch(() => setLoadingKanban(false));
     }, []);
 
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 40;
+            const y = (e.clientY / window.innerHeight - 0.5) * 40;
+            setParallax({ x, y });
+        };
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
+    }, []);
+
     return (
         <AppLayout title="Dashboard" breadcrumbs={breadcrumbs}>
+            {/* Animated SVG Blob Background with Parallax */}
+            <div
+                aria-hidden="true"
+                className="fixed inset-0 z-0 pointer-events-none"
+                style={{
+                    transform: `translate3d(${parallax.x}px, ${parallax.y}px, 0)`
+                }}
+            >
+                <svg width="100%" height="100%" viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', width: '100%', height: '100%' }}>
+                    <defs>
+                        <radialGradient id="bg1" cx="50%" cy="50%" r="80%" fx="50%" fy="50%" gradientTransform="rotate(45)">
+                            <stop offset="0%" stopColor="#00eaff" stopOpacity="0.18" />
+                            <stop offset="100%" stopColor="#fff" stopOpacity="0" />
+                        </radialGradient>
+                        <radialGradient id="bg2" cx="50%" cy="50%" r="80%" fx="50%" fy="50%" gradientTransform="rotate(120)">
+                            <stop offset="0%" stopColor="#ff00ea" stopOpacity="0.13" />
+                            <stop offset="100%" stopColor="#fff" stopOpacity="0" />
+                        </radialGradient>
+                    </defs>
+                    <ellipse cx="900" cy="200" rx="600" ry="300" fill="url(#bg1)" />
+                    <ellipse cx="400" cy="700" rx="500" ry="250" fill="url(#bg2)" />
+                </svg>
+            </div>
             {/* Branded Header */}
             <div className="flex items-center gap-3 bg-primary text-primary-foreground rounded-md mx-6 mt-6 mb-2 p-4 shadow-sm">
                 <AppLogo />
-                <span className="text-lg font-bold tracking-tight">{import.meta.env.VITE_APP_NAME || 'Dashboard'}</span>
+                <span className="text-lg font-extrabold tracking-tight" style={{ color: 'var(--accent)' }}>{import.meta.env.VITE_APP_NAME || 'Dashboard'}</span>
             </div>
             {/* Top: Stats, Dual Clock, and Chart */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-6">
                 {loadingWidgets ? (
                     Array.from({ length: 4 }).map((_, idx) => (
-                        <StatsCard key={idx} icon={<BarChart className="h-5 w-5 text-muted-foreground" />} label="---" value="--" trend="" className="animate-pulse" />
+                        <GlassCard key={idx} className="animate-pulse">
+                            <span className="font-bold text-[1.1rem]" style={{ color: 'var(--accent)' }}>
+                                <StatsCard icon={<BarChart className="h-5 w-5 text-muted-foreground" />} label="---" value="--" trend="" />
+                            </span>
+                        </GlassCard>
                     ))
                 ) : (
                     stats.map((stat, idx) => (
-                        <StatsCard key={idx} {...stat} />
+                        <GlassCard key={idx}>
+                            <span className="font-bold text-[1.1rem]" style={{ color: 'var(--accent)' }}>
+                                <StatsCard {...stat} />
+                            </span>
+                        </GlassCard>
                     ))
                 )}
-                <DualClockWidget />
+                <GlassCard><DualClockWidget /></GlassCard>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 px-6 pb-6">
-                <ChartWidget title="Project Progress" description="Overview of project completion" />
+                <GlassCard><ChartWidget title="Project Progress" description="Overview of project completion" /></GlassCard>
             </div>
-            {/* Middle: Key Business Widgets */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 px-6 pb-6">
-                <EmployeeWidget {...employees} />
-                <RentalWidget {...rentals} />
-                <VacationWidget {...vacations} />
-                <PayrollWidget {...payrolls} />
-                <EquipmentWidget {...equipment} />
+            {/* Main widgets grid: all widgets same fixed size, responsive grid, no overlap, no horizontal scroll */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 pb-4 px-6">
+                {visibleWidgets.map(id => (
+                    <div key={id} className="w-full h-30">
+                        {(() => {
+                            switch (id) {
+                                case 'employee':
+                                    return <GlassCard onRemove={() => handleRemoveWidget(id)} className="w-full h-full overflow-hidden"><EmployeeWidget {...employees} onRemove={() => handleRemoveWidget(id)} /></GlassCard>;
+                                case 'rental':
+                                    return <GlassCard onRemove={() => handleRemoveWidget(id)} className="w-full h-full overflow-hidden"><RentalWidget {...rentals} onRemove={() => handleRemoveWidget(id)} /></GlassCard>;
+                                case 'vacation':
+                                    return <GlassCard onRemove={() => handleRemoveWidget(id)} className="w-full h-full overflow-hidden"><VacationWidget {...vacations} onRemove={() => handleRemoveWidget(id)} /></GlassCard>;
+                                case 'payroll':
+                                    return <GlassCard onRemove={() => handleRemoveWidget(id)} className="w-full h-full overflow-hidden"><PayrollWidget {...payrolls} onRemove={() => handleRemoveWidget(id)} /></GlassCard>;
+                                case 'equipment':
+                                    return <GlassCard onRemove={() => handleRemoveWidget(id)} className="w-full h-full overflow-hidden"><EquipmentWidget {...equipment} onRemove={() => handleRemoveWidget(id)} /></GlassCard>;
+                                case 'analytics':
+                                    return <GlassCard onRemove={() => handleRemoveWidget(id)} className="w-full h-full overflow-hidden"><AnalyticsWidget {...analytics} onRemove={() => handleRemoveWidget(id)} /></GlassCard>;
+                                case 'audit':
+                                    return <GlassCard onRemove={() => handleRemoveWidget(id)} className="w-full h-full overflow-hidden"><AuditWidget {...audits} onRemove={() => handleRemoveWidget(id)} /></GlassCard>;
+                                case 'project':
+                                    return <GlassCard onRemove={() => handleRemoveWidget(id)} className="w-full h-full overflow-hidden"><ProjectWidget {...projectsWidget} onRemove={() => handleRemoveWidget(id)} /></GlassCard>;
+                                case 'customer':
+                                    return <GlassCard onRemove={() => handleRemoveWidget(id)} className="w-full h-full overflow-hidden"><CustomerWidget {...customers} onRemove={() => handleRemoveWidget(id)} /></GlassCard>;
+                                case 'timeline':
+                                    return <GlassCard onRemove={() => handleRemoveWidget(id)} className="w-full h-full overflow-hidden"><TimelineWidget events={timelineEvents} className={loadingTimeline ? 'animate-pulse' : ''} onRemove={() => handleRemoveWidget(id)} /></GlassCard>;
+                                case 'activity':
+                                    return <GlassCard onRemove={() => handleRemoveWidget(id)} className="w-full h-full overflow-hidden"><ActivityFeed activities={loadingWidgets ? [] : activities} onRemove={() => handleRemoveWidget(id)} /></GlassCard>;
+                                case 'team':
+                                    return <GlassCard onRemove={() => handleRemoveWidget(id)} className="w-full h-full overflow-hidden"><TeamWidget members={loadingWidgets ? [] : team} onRemove={() => handleRemoveWidget(id)} /></GlassCard>;
+                                case 'recentProjects':
+                                    return <GlassCard onRemove={() => handleRemoveWidget(id)} className="w-full h-full overflow-hidden"><RecentProjects projects={loadingWidgets ? [] : projects} onRemove={() => handleRemoveWidget(id)} /></GlassCard>;
+                                case 'calendar':
+                                    return <GlassCard onRemove={() => handleRemoveWidget(id)} className="w-full h-full overflow-hidden"><CalendarWidget events={calendarEvents} className={loadingCalendar ? 'animate-pulse' : ''} onRemove={() => handleRemoveWidget(id)} /></GlassCard>;
+                                case 'files':
+                                    return <GlassCard onRemove={() => handleRemoveWidget(id)} className="w-full h-full overflow-hidden"><FilesWidget files={files} className={loadingFiles ? 'animate-pulse' : ''} onRemove={() => handleRemoveWidget(id)} /></GlassCard>;
+                                case 'kanban':
+                                    return <GlassCard onRemove={() => handleRemoveWidget(id)} className="w-full h-full overflow-hidden"><KanbanWidget tasks={kanbanTasks} className={loadingKanban ? 'animate-pulse' : ''} onRemove={() => handleRemoveWidget(id)} /></GlassCard>;
+                                default:
+                                    return null;
+                            }
+                        })()}
+                    </div>
+                ))}
             </div>
-            {/* Lower: Analytics, Audit, Project, Customer, Timeline */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 px-6 pb-6">
-                <AnalyticsWidget {...analytics} />
-                <AuditWidget {...audits} />
-                <ProjectWidget {...projectsWidget} />
-                <CustomerWidget {...customers} />
-                <TimelineWidget events={timelineEvents} className={loadingTimeline ? 'animate-pulse' : ''} />
-            </div>
-            {/* Bottom: Activity, Team, Recent Projects, Calendar, Files, Kanban */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4 px-6 pb-6">
-                <ActivityFeed activities={loadingWidgets ? [] : activities} />
-                <TeamWidget members={loadingWidgets ? [] : team} />
-                <RecentProjects projects={loadingWidgets ? [] : projects} />
-                <CalendarWidget events={calendarEvents} className={loadingCalendar ? 'animate-pulse' : ''} />
-                <FilesWidget files={files} className={loadingFiles ? 'animate-pulse' : ''} />
-                <KanbanWidget tasks={kanbanTasks} className={loadingKanban ? 'animate-pulse' : ''} />
-            </div>
+            {/* Add Widget Button */}
+            <button
+                className="fixed top-6 right-8 z-30 bg-accent text-white px-4 py-2 rounded-full shadow-lg font-bold hover:bg-accent/80 transition"
+                onClick={() => setAddWidgetOpen(true)}
+            >
+                + Add Widget
+            </button>
+            {/* Add Widget Modal (simple conditional render for guaranteed close) */}
+            {addWidgetOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 animate-fade-in" style={{ pointerEvents: 'auto' }}>
+                    <div className="bg-white dark:bg-black rounded-2xl p-6 min-w-[320px] shadow-2xl">
+                        <h2 className="text-lg font-bold mb-4">Add Widget</h2>
+                        <div className="flex flex-col gap-2">
+                            {hiddenWidgets.length === 0 && <div className="text-muted-foreground">All widgets are visible.</div>}
+                            {hiddenWidgets.map(w => (
+                                <button
+                                    key={w.id}
+                                    className="px-3 py-2 rounded hover:bg-accent/10 text-left font-medium"
+                                    onClick={() => handleAddWidget(w.id)}
+                                >
+                                    {w.id.charAt(0).toUpperCase() + w.id.slice(1)}
+                                </button>
+                            ))}
+                        </div>
+                        <button className="mt-4 px-4 py-2 rounded bg-gray-200 dark:bg-gray-800" onClick={() => setAddWidgetOpen(false)}>Close</button>
+                    </div>
+                </div>
+            )}
         </AppLayout>
     );
 }
+
+// NOTE: If you want to use a registry for dynamic dashboards in the future, use it only for ordering/metadata, and render each widget with the correct props explicitly, or use a type-safe discriminated union pattern.

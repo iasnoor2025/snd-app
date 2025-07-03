@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
+import DashboardWidgetCard from './DashboardWidgetCard';
 
 interface ActivityItem {
   id: string;
@@ -11,28 +11,16 @@ interface ActivityItem {
 interface ActivityFeedProps {
   activities: ActivityItem[];
   className?: string;
+  onRemove: () => void;
 }
 
-const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities, className = '' }) => (
-  <Card className={className}>
-    <CardHeader>
-      <CardTitle>Activity Feed</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <ul className="space-y-2">
-        {activities.length === 0 ? (
-          <li className="text-muted-foreground text-sm">No recent activity.</li>
-        ) : (
-          activities.map((item) => (
-            <li key={item.id} className="flex items-center justify-between text-sm">
-              <span><span className="font-medium">{item.user}</span> {item.action}</span>
-              <span className="text-xs text-muted-foreground">{item.time}</span>
-            </li>
-          ))
-        )}
-      </ul>
-    </CardContent>
-  </Card>
+const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities, className = '', onRemove }) => (
+  <DashboardWidgetCard
+    title="Activity Feed"
+    summary={activities.length === 0 ? 'No recent activity.' : `Activities: ${activities.length}`}
+    onRemove={onRemove}
+    className={className}
+  />
 );
 
 export default ActivityFeed;

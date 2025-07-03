@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
+import { motion } from 'framer-motion';
 
 interface StatsCardProps {
   icon: React.ReactNode;
@@ -9,19 +9,22 @@ interface StatsCardProps {
   className?: string;
 }
 
-const StatsCard: React.FC<StatsCardProps> = ({ icon, label, value, trend, className = '' }) => (
-  <Card className={`flex flex-col justify-between ${className}`}>
-    <CardHeader className="flex flex-row items-center justify-between pb-2">
-      <CardTitle className="text-sm font-medium flex items-center gap-2">
+const StatsCard: React.FC<StatsCardProps> = ({ icon, label, value, trend, className = '' }) => {
+  return (
+    <div className={`flex flex-col gap-2 p-4 rounded-xl bg-transparent ${className}`}>
+      <motion.div
+        whileHover={{ rotate: 12, color: 'var(--accent, #00eaff)' }}
+        whileTap={{ scale: 0.95 }}
+        className="w-7 h-7 mb-1"
+        style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+      >
         {icon}
-        {label}
-      </CardTitle>
-      {trend && <span className="text-xs text-green-600 dark:text-green-400">{trend}</span>}
-    </CardHeader>
-    <CardContent>
-      <div className="text-2xl font-bold">{value}</div>
-    </CardContent>
-  </Card>
-);
+      </motion.div>
+      <div className="text-xs font-semibold uppercase opacity-80 tracking-wide">{label}</div>
+      <div className="text-2xl font-extrabold leading-tight">{value}</div>
+      {trend && <div className="text-xs opacity-60">{trend}</div>}
+    </div>
+  );
+};
 
 export default StatsCard;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from '../ui/dialog';
 import { Calendar, AlertCircle, CheckCircle, Plus } from 'lucide-react';
+import DashboardWidgetCard from './DashboardWidgetCard';
 
 interface CalendarEvent {
   id: string;
@@ -14,6 +14,7 @@ interface CalendarEvent {
 interface CalendarWidgetProps {
   events: CalendarEvent[];
   className?: string;
+  onRemove: () => void;
 }
 
 const typeMap = {
@@ -22,24 +23,22 @@ const typeMap = {
   alert: { color: 'bg-red-500', icon: <AlertCircle className="h-4 w-4 text-red-500" /> },
 };
 
-const CalendarWidget: React.FC<CalendarWidgetProps> = ({ events, className = '' }) => {
+const CalendarWidget: React.FC<CalendarWidgetProps> = ({ events, className = '', onRemove }) => {
   const [open, setOpen] = useState(false);
   return (
-    <Card className={className}>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Upcoming Events</CardTitle>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <button className="ml-2 p-1 rounded-full bg-primary text-primary-foreground hover:bg-primary/80" title="Create Event">
-              <Plus className="h-4 w-4" />
-            </button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogTitle>Create Event</DialogTitle>
-            <DialogDescription>Event creation form coming soon...</DialogDescription>
-          </DialogContent>
-        </Dialog>
-      </CardHeader>
+    <DashboardWidgetCard title="Calendar" summary={events.length === 0 ? 'No upcoming events' : `Upcoming events: ${events.length}`} onRemove={onRemove} className={className}>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <button className="ml-2 p-1 rounded-full bg-primary text-primary-foreground hover:bg-primary/80" title="Create Event">
+            <Plus className="h-4 w-4" />
+          </button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogTitle>Create Event</DialogTitle>
+          <DialogDescription>Event creation form coming soon...</DialogDescription>
+        </DialogContent>
+      </Dialog>
+      {/*
       <CardContent>
         <ul className="space-y-2">
           {events.length === 0 ? (
@@ -56,7 +55,8 @@ const CalendarWidget: React.FC<CalendarWidgetProps> = ({ events, className = '' 
           )}
         </ul>
       </CardContent>
-    </Card>
+      */}
+    </DashboardWidgetCard>
   );
 };
 
