@@ -23,7 +23,7 @@ class PurchaseOrderDeliveryController extends Controller
     {
         $deliveryStatus = $this->deliveryService->getDeliveryStatus($purchaseOrder);
 
-        return Inertia::render('PurchaseOrders/Delivery/Show', [;
+        return Inertia::render('PurchaseOrders/Delivery/Show', [
             'purchaseOrder' => $purchaseOrder->load(['supplier', 'items.inventoryItem']),
             'deliveryStatus' => $deliveryStatus
         ]);
@@ -43,7 +43,7 @@ class PurchaseOrderDeliveryController extends Controller
         try {
             $this->deliveryService->receiveItems($purchaseOrder, $request->received_items, auth()->user());
 
-            return redirect()->route('purchase-orders.delivery.show', $purchaseOrder);
+            return redirect()->route('purchase-orders.delivery.show', $purchaseOrder)
                 ->with('success', 'Items received successfully.');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
@@ -66,7 +66,7 @@ class PurchaseOrderDeliveryController extends Controller
                 auth()->user()
             );
 
-            return redirect()->route('purchase-orders.delivery.show', $purchaseOrder);
+            return redirect()->route('purchase-orders.delivery.show', $purchaseOrder)
                 ->with('success', 'Delivery date updated successfully.');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
@@ -80,7 +80,7 @@ class PurchaseOrderDeliveryController extends Controller
     {
         $overdueOrders = $this->deliveryService->getOverduePurchaseOrders();
 
-        return Inertia::render('PurchaseOrders/Delivery/Overdue', [;
+        return Inertia::render('PurchaseOrders/Delivery/Overdue', [
             'overdueOrders' => $overdueOrders
         ]);
     }
@@ -93,7 +93,7 @@ class PurchaseOrderDeliveryController extends Controller
         $days = $request->input('days', 7);
         $upcomingDeliveries = $this->deliveryService->getUpcomingDeliveries($days);
 
-        return Inertia::render('PurchaseOrders/Delivery/Upcoming', [;
+        return Inertia::render('PurchaseOrders/Delivery/Upcoming', [
             'upcomingDeliveries' => $upcomingDeliveries,
             'days' => $days
         ]);
@@ -116,7 +116,7 @@ class PurchaseOrderDeliveryController extends Controller
     {
         $overdueOrders = $this->deliveryService->getOverduePurchaseOrders();
 
-        return response()->json([;
+        return response()->json([
             'count' => count($overdueOrders)
         ]);
     }

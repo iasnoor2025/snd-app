@@ -1,3 +1,4 @@
+
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
@@ -13,4 +14,4 @@
         "../Core/resources/js/**/*.ts",
         "../Core/resources/js/**/*.tsx"
     ]
-} 
+}

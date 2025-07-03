@@ -1,5 +1,6 @@
-namespace Modules\RentalManagement\Http\Controllers;
+<?php
 
+namespace Modules\RentalManagement\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -136,4 +137,4 @@ class DynamicPricingController extends Controller
             'data' => $priceDetails,
         ]);
     }
-} 
+}

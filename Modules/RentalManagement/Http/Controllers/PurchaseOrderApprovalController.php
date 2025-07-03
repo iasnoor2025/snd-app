@@ -23,7 +23,7 @@ class PurchaseOrderApprovalController extends Controller
         $pendingApprovals = $this->approvalService->getPendingApprovals();
         $pendingCount = $this->approvalService->getPendingApprovalsCount();
 
-        return Inertia::render('PurchaseOrders/Approvals/Index', [;
+        return Inertia::render('PurchaseOrders/Approvals/Index', [
             'pendingApprovals' => $pendingApprovals,
             'pendingCount' => $pendingCount
         ]);
@@ -36,7 +36,7 @@ class PurchaseOrderApprovalController extends Controller
     {
         $approvalHistory = $this->approvalService->getApprovalHistory($purchaseOrder);
 
-        return Inertia::render('PurchaseOrders/Approvals/Show', [;
+        return Inertia::render('PurchaseOrders/Approvals/Show', [
             'purchaseOrder' => $purchaseOrder->load(['supplier', 'creator', 'items.inventoryItem']),
             'approvalHistory' => $approvalHistory
         ]);
@@ -54,7 +54,7 @@ class PurchaseOrderApprovalController extends Controller
         try {
             $this->approvalService->approve($purchaseOrder, auth()->user(), $request->notes);
 
-            return redirect()->route('purchase-orders.approvals.index');
+            return redirect()->route('purchase-orders.approvals.index')
                 ->with('success', 'Purchase order approved successfully.');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
@@ -73,7 +73,7 @@ class PurchaseOrderApprovalController extends Controller
         try {
             $this->approvalService->reject($purchaseOrder, auth()->user(), $request->reason);
 
-            return redirect()->route('purchase-orders.approvals.index');
+            return redirect()->route('purchase-orders.approvals.index')
                 ->with('success', 'Purchase order rejected successfully.');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
@@ -88,7 +88,7 @@ class PurchaseOrderApprovalController extends Controller
         try {
             $this->approvalService->placeOrder($purchaseOrder, auth()->user());
 
-            return redirect()->route('purchase-orders.show', $purchaseOrder);
+            return redirect()->route('purchase-orders.show', $purchaseOrder)
                 ->with('success', 'Purchase order placed successfully.');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
@@ -107,7 +107,7 @@ class PurchaseOrderApprovalController extends Controller
         try {
             $this->approvalService->cancel($purchaseOrder, auth()->user(), $request->reason);
 
-            return redirect()->route('purchase-orders.show', $purchaseOrder);
+            return redirect()->route('purchase-orders.show', $purchaseOrder)
                 ->with('success', 'Purchase order cancelled successfully.');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
@@ -119,7 +119,7 @@ class PurchaseOrderApprovalController extends Controller
      */
     public function getPendingCount()
     {
-        return response()->json([;
+        return response()->json([
             'count' => $this->approvalService->getPendingApprovalsCount()
         ]);
     }
