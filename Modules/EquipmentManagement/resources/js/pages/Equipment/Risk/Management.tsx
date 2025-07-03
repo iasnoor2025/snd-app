@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Head } from '@inertiajs/react';
 import { AppLayout } from '@/Core';
 import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
@@ -110,6 +110,8 @@ import {
   UserPlus
 } from 'lucide-react';
 import { formatCurrency, formatPercentage } from "@/Core";
+import axios from 'axios';
+import { toast } from 'sonner';
 
 interface RiskFactor {
   id: string;
@@ -243,6 +245,7 @@ const RiskManagement: React.FC<Props> = ({
   const [showMitigated, setShowMitigated] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [dateRange, setDateRange] = useState<{from: Date, to: Date} | undefined>();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Event handlers
   const handleViewRiskDetails = (riskId: string) => {
@@ -277,59 +280,123 @@ const RiskManagement: React.FC<Props> = ({
     // Add edit logic here
   };
 
-  const handleCreateNewRisk = () => {
-    console.log('Creating new risk');
-    // Add create logic here
+  const handleCreateNewRisk = async () => {
+    try {
+      await axios.post('/api/equipment/risk', {/* risk data */});
+      toast.success('Risk created successfully');
+    } catch (error) {
+      toast.error('Failed to create risk');
+    }
   };
 
-  const handleCreateNewAssessment = () => {
-    console.log('Creating new assessment');
-    // Add create logic here
+  const handleCreateNewAssessment = async () => {
+    try {
+      await axios.post('/api/equipment/risk/assessment', {/* assessment data */});
+      toast.success('Assessment created successfully');
+    } catch (error) {
+      toast.error('Failed to create assessment');
+    }
   };
 
-  const handleCreateNewStrategy = () => {
-    console.log('Creating new strategy');
-    // Add create logic here
+  const handleCreateNewStrategy = async () => {
+    try {
+      await axios.post('/api/equipment/risk/strategy', {/* strategy data */});
+      toast.success('Strategy created successfully');
+    } catch (error) {
+      toast.error('Failed to create strategy');
+    }
   };
 
-  const handleExportReport = () => {
-    console.log('Exporting risk report');
-    // Add export logic here
+  const handleExportReport = async () => {
+    try {
+      const response = await axios.get('/api/equipment/risk/export', { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'risk_report.pdf');
+      document.body.appendChild(link);
+      link.click();
+      if (link.parentNode) link.parentNode.removeChild(link);
+      toast.success('Risk report exported');
+    } catch (error) {
+      toast.error('Failed to export risk report');
+    }
   };
 
-  const handleResolveIssue = (issueIndex: number) => {
-    console.log('Resolving compliance issue:', issueIndex);
-    // Add resolve logic here
+  const handleResolveIssue = async (issueIndex: number) => {
+    try {
+      await axios.post(`/api/equipment/risk/resolve`, { issueIndex });
+      toast.success('Compliance issue resolved');
+    } catch (error) {
+      toast.error('Failed to resolve compliance issue');
+    }
   };
 
-  const handleCreateNewComplianceCheck = () => {
-    console.log('Creating new compliance check');
-    // Add create logic here
+  const handleCreateNewComplianceCheck = async () => {
+    try {
+      await axios.post('/api/equipment/risk/compliance', {/* compliance data */});
+      toast.success('Compliance check created');
+    } catch (error) {
+      toast.error('Failed to create compliance check');
+    }
   };
 
-  const handleAssignTask = (itemId: string, itemType: string, assignee: string) => {
-    console.log('Assigning task:', { itemId, itemType, assignee });
-    // Add assignment logic here
+  const handleAssignTask = async (itemId: string, itemType: string, assignee: string) => {
+    try {
+      await axios.post('/api/equipment/risk/assign', { itemId, itemType, assignee });
+      toast.success('Task assigned successfully');
+    } catch (error) {
+      toast.error('Failed to assign task');
+    }
   };
 
-  const handleViewAssignmentHistory = (itemId?: string) => {
-    console.log('Viewing assignment history for:', itemId || 'all');
-    // Add view logic here
+  const handleViewAssignmentHistory = async (itemId?: string) => {
+    try {
+      await axios.get(`/api/equipment/risk/assignment-history`, { params: { itemId } });
+      toast.success('Assignment history loaded');
+    } catch (error) {
+      toast.error('Failed to load assignment history');
+    }
   };
 
-  const handleUploadDocument = () => {
-    console.log('Uploading document');
-    // Add upload logic here
+  const handleUploadDocument = async () => {
+    try {
+      if (!fileInputRef.current || !fileInputRef.current.files || !fileInputRef.current.files[0]) {
+        return toast.error('No file selected');
+      }
+      const file = fileInputRef.current.files[0];
+      const formData = new FormData();
+      formData.append('document', file);
+      await axios.post('/api/equipment/risk/document/upload', formData);
+      toast.success('Document uploaded');
+    } catch (error) {
+      toast.error('Failed to upload document');
+    }
   };
 
-  const handleDownloadDocument = (documentId: string) => {
-    console.log('Downloading document:', documentId);
-    // Add download logic here
+  const handleDownloadDocument = async (documentId: string) => {
+    try {
+      const response = await axios.get(`/api/equipment/risk/document/${documentId}/download`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'document.pdf');
+      document.body.appendChild(link);
+      link.click();
+      if (link.parentNode) link.parentNode.removeChild(link);
+      toast.success('Document downloaded');
+    } catch (error) {
+      toast.error('Failed to download document');
+    }
   };
 
-  const handleDeleteDocument = (documentId: string) => {
-    console.log('Deleting document:', documentId);
-    // Add delete logic here
+  const handleDeleteDocument = async (documentId: string) => {
+    try {
+      await axios.delete(`/api/equipment/risk/document/${documentId}`);
+      toast.success('Document deleted');
+    } catch (error) {
+      toast.error('Failed to delete document');
+    }
   };
 
   // Mock data

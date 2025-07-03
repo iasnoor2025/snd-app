@@ -35,6 +35,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 const ToastService = { success: (msg: string) => alert(msg), error: (msg: string) => alert(msg) };
 import { PageProps } from '@/Core/types/index.d';
+import FileUpload from '@/components/FileUpload';
 
 // Define a simple usePermission hook for this component
 function usePermission() {
@@ -100,6 +101,7 @@ export default function LeaveRequestCreate({ employees = [], currentUserOnly = f
   const [isFormReady, setIsFormReady] = useState(false);
   const [safeEmployees, setSafeEmployees] = useState<Employee[]>([]);
   const [daysBetween, setDaysBetween] = useState<number | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
   // Initialize safe employees
   useEffect(() => {
@@ -149,14 +151,15 @@ export default function LeaveRequestCreate({ employees = [], currentUserOnly = f
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
     setSubmitting(true);
-
-    // Use the correct field name as expected by the updated controller
-    const formData = {
-      ...values,
-      // leave_type is already the correct field name
-    };
-
+    const formData = new FormData();
+    Object.entries(values).forEach(([key, value]) => {
+      formData.append(key, value as any);
+    });
+    if (uploadedFile) {
+      formData.append('document', uploadedFile);
+    }
     router.post(route('leaves.requests.store'), formData, {
+      forceFormData: true,
       onSuccess: () => {
         ToastService.success("Leave request created successfully");
         form.reset();
@@ -387,6 +390,11 @@ export default function LeaveRequestCreate({ employees = [], currentUserOnly = f
                       </FormItem>
                     )}
                   />
+                </div>
+
+                <div>
+                  <label className="block font-medium mb-1">Upload Leave Request Document</label>
+                  <FileUpload onFileSelect={setUploadedFile} accept=".pdf,.jpg,.jpeg,.png" maxSize={10 * 1024 * 1024} />
                 </div>
               </CardContent>
               <CardFooter className="flex justify-between border-t px-6 py-4">

@@ -67,8 +67,8 @@ interface PerformanceReviewListProps {
 
 // Placeholder for useLoadingState
 const useLoadingState = () => ({ isLoading: false, error: null, withLoading: async (fn: any) => await fn() });
-// Placeholder translation function
-const t = (s: string) => s;
+
+const { t } = useTranslation('EmployeeManagement');
 
 export const PerformanceReviewList: React.FC<PerformanceReviewListProps> = ({
   employeeId,

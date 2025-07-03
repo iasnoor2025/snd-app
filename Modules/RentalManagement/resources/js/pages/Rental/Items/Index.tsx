@@ -11,8 +11,7 @@ import { useForm } from '@inertiajs/react';
 // Placeholder type for RentalItem
 type RentalItem = any;
 
-// Placeholder translation function
-const t = (s: string) => s;
+const { t } = useTranslation('RentalManagement');
 
 interface Props {
     items: RentalItem[];

@@ -9,6 +9,7 @@ import { Label } from "@/Core";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
 import { format } from 'date-fns';
+import FileUpload from '@/components/FileUpload';
 
 interface Employee {
     id: number;
@@ -45,6 +46,7 @@ export default function Create({ auth, employees }: Props) {
     ];
 
     const [currency, setCurrency] = React.useState('SAR');
+    const [uploadedFile, setUploadedFile] = React.useState<File | null>(null);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -53,9 +55,13 @@ export default function Create({ auth, employees }: Props) {
             formData.append(key, value.toString());
         });
         formData.append('currency', currency);
+        if (uploadedFile) {
+            formData.append('document', uploadedFile);
+        }
         post(route('payrolls.store'), {
             data: formData,
-            transformResponse: (data) => {
+            forceFormData: true,
+            onSuccess: () => {
                 // Handle the response
             },
         });
@@ -213,6 +219,11 @@ export default function Create({ auth, employees }: Props) {
                                             </SelectContent>
                                         </Select>
                                     </div>
+
+                                    <div>
+                                        <label className="block font-medium mb-1">Upload Payroll Document</label>
+                                        <FileUpload onFileSelect={setUploadedFile} accept=".pdf,.jpg,.jpeg,.png" maxSize={10 * 1024 * 1024} />
+                                    </div>
                                 </div>
 
                                 <div className="flex justify-end gap-4">
@@ -224,7 +235,7 @@ export default function Create({ auth, employees }: Props) {
                                         {t('btn_cancel')}
                                     </Button>
                                     <Button type="submit" disabled={processing}>
-                                        {t('ttl_create_payroll')}
+                                        {processing ? 'Submitting...' : t('btn_create_payroll')}
                                     </Button>
                                 </div>
                             </form>

@@ -31,6 +31,7 @@ import { useForm as useReactHookForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { PageProps } from '@/Modules/LeaveManagement/resources/js/types';
+import FileUpload from '@/components/FileUpload';
 
 // Temporary inline implementation of usePermission hook
 function usePermission() {
@@ -87,6 +88,7 @@ const formSchema = z.object({
 
 export default function LeaveRequestEdit({ leaveRequest, employees = [] }: Props) {
   const [processing, setProcessing] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
   const leaveTypes = [
     { id: 'annual', name: 'Annual Leave' },
@@ -115,18 +117,15 @@ export default function LeaveRequestEdit({ leaveRequest, employees = [] }: Props
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
     setProcessing(true);
-
-    // Use the correct field names as expected by the updated controller
-    const formData = {
-      employee_id: values.employee_id,
-      start_date: values.start_date,
-      end_date: values.end_date,
-      leave_type: values.leave_type, // Use leave_type instead of type
-      reason: values.reason,
-      notes: values.notes,
-    };
-
+    const formData = new FormData();
+    Object.entries(values).forEach(([key, value]) => {
+      formData.append(key, value as any);
+    });
+    if (uploadedFile) {
+      formData.append('document', uploadedFile);
+    }
     router.put(route('leaves.requests.update', leaveRequest.id), formData, {
+      forceFormData: true,
       onSuccess: () => {
         ToastService.success('Leave request updated successfully');
         router.visit(route('leaves.requests.index'));
@@ -358,6 +357,11 @@ export default function LeaveRequestEdit({ leaveRequest, employees = [] }: Props
                     )}
                   />
                 )}
+
+                <div>
+                  <label className="block font-medium mb-1">Upload Leave Request Document</label>
+                  <FileUpload onFileSelect={setUploadedFile} accept=".pdf,.jpg,.jpeg,.png" maxSize={10 * 1024 * 1024} />
+                </div>
               </CardContent>
               <CardFooter className="flex justify-between border-t p-6">
                 <Link href={route('leaves.requests.index')}>

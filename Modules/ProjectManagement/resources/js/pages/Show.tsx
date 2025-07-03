@@ -34,6 +34,10 @@ import TaskList, { ProjectTask } from '../components/project/TaskList';
 import TaskDialog from '../components/project/TaskDialog';
 import { ProjectProgress } from '../components/project/ProjectProgress';
 import ProjectTimesheets from './ProjectTimesheets';
+import BurndownChart from '../components/project/BurndownChart';
+import VelocityChart from '../components/project/VelocityChart';
+import CostAnalysisCard from '../components/project/CostAnalysisCard';
+import RiskAssessmentCard from '../components/project/RiskAssessmentCard';
 
 // Declare window.route for TypeScript
 // @ts-ignore
@@ -1056,6 +1060,46 @@ export default function Show({ project, manpower = [], equipment = [], materials
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
+
+                {/* Additional Project Analytics */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+                    <div className="col-span-1">
+                        <BurndownChart data={[
+                            { date: '2024-07-01', remaining: 40 },
+                            { date: '2024-07-02', remaining: 38 },
+                            { date: '2024-07-03', remaining: 35 },
+                            { date: '2024-07-04', remaining: 30 },
+                            { date: '2024-07-05', remaining: 25 },
+                            { date: '2024-07-06', remaining: 20 },
+                            { date: '2024-07-07', remaining: 10 },
+                            { date: '2024-07-08', remaining: 0 },
+                        ]} />
+                    </div>
+                    <div className="col-span-1">
+                        <VelocityChart data={[
+                            { sprint: 'Sprint 1', completed: 10 },
+                            { sprint: 'Sprint 2', completed: 12 },
+                            { sprint: 'Sprint 3', completed: 15 },
+                            { sprint: 'Sprint 4', completed: 13 },
+                        ]} />
+                    </div>
+                    <div className="col-span-1">
+                        <CostAnalysisCard budget={project.budget} spent={[
+                            ...manpower,
+                            ...equipment,
+                            ...materials,
+                            ...fuel,
+                            ...expenses
+                        ].reduce((sum, resource) => sum + (Number(resource.total_cost) || Number(resource.amount) || 0), 0)} />
+                    </div>
+                    <div className="col-span-1">
+                        <RiskAssessmentCard risks={[
+                            { id: 1, description: 'Delayed vendor delivery', severity: 'High', status: 'Open' },
+                            { id: 2, description: 'Resource shortage', severity: 'Medium', status: 'Mitigated' },
+                            { id: 3, description: 'Scope creep', severity: 'Low', status: 'Closed' },
+                        ]} />
+                    </div>
+                </div>
             </div>
         </AppLayout>
     );

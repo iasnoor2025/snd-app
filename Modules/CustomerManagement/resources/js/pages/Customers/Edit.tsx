@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
 import { BreadcrumbItem } from "@/Core/types";
@@ -38,17 +38,22 @@ export default function Edit({ customer }: Props) {
   const [address, setAddress] = useState(customer.address);
   const [notes, setNotes] = useState(customer.notes);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [document, setDocument] = useState<File | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    router.put(`/customers/${customer.id}`, {
-      name,
-      email,
-      phone,
-      address,
-      notes,
-    }, {
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('email', email);
+    formData.append('phone', phone);
+    formData.append('address', address);
+    formData.append('notes', notes);
+    if (document) {
+      formData.append('document', document);
+    }
+    router.post(`/customers/${customer.id}?_method=PUT`, formData, {
+      forceFormData: true,
       onSuccess: () => {
         toast.success('Customer updated successfully');
       },
@@ -67,9 +72,9 @@ export default function Edit({ customer }: Props) {
   ];
 
   return (
-    <AppLayout 
-      title={`Edit Customer: ${customer.name}`} 
-      breadcrumbs={breadcrumbs} 
+    <AppLayout
+      title={`Edit Customer: ${customer.name}`}
+      breadcrumbs={breadcrumbs}
       requiredPermission="customers.edit"
     >
       <Head title={`Edit Customer: ${customer.name}`} />
@@ -167,6 +172,20 @@ export default function Edit({ customer }: Props) {
                   />
                   {errors.notes && (
                     <p className="text-sm text-red-500 mt-1">{errors.notes}</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="document">Customer Document</Label>
+                  <Input
+                    id="document"
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={(e) => setDocument(e.target.files?.[0] || null)}
+                    className={errors.document ? 'border-red-500' : ''}
+                  />
+                  {errors.document && (
+                    <p className="text-sm text-red-500 mt-1">{errors.document}</p>
                   )}
                 </div>
               </div>

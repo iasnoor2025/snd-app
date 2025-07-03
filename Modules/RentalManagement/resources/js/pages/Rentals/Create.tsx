@@ -38,7 +38,8 @@ import { CalendarIcon } from "lucide-react";
 
 // Our components
 import RentalForm from "../../Components/rentals/RentalForm";
-import Ziggy from "@/ziggy";
+import { route } from 'ziggy-js';
+import FileUpload from '@/components/FileUpload';
 
 interface Customer {
     id: number;
@@ -103,6 +104,7 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isPriceLoading, setIsPriceLoading] = useState(false);
+    const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
     const addRentalItem = () => {
         setData('rental_items', [...data.rental_items, {
@@ -217,24 +219,30 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                 total_amount: totalAmount
             };
 
-            router.post(route('rentals.store'), submitData, {
+            // If file is uploaded, append to FormData
+            const formData = new FormData();
+            Object.entries(submitData).forEach(([key, value]) => {
+                formData.append(key, value as any);
+            });
+            if (uploadedFile) {
+                formData.append('document', uploadedFile);
+            }
+
+            // Use Inertia post with FormData
+            post(route('rentals.store'), {
+                data: formData,
+                forceFormData: true,
                 onSuccess: () => {
                     toast.success('Rental created successfully');
-                    router.visit(route('rentals.index'));
+                    setIsSubmitting(false);
                 },
-                onError: (errors) => {
-                    console.error('Validation errors:', errors);
-                    Object.values(errors).forEach((error: any) => {
-                        toast.error(error);
-                    });
-                },
-                preserveScroll: true,
+                onError: () => {
+                    setIsSubmitting(false);
+                }
             });
         } catch (error) {
             console.error('Error submitting rental:', error);
             toast.error('An unexpected error occurred');
-        } finally {
-            setIsSubmitting(false);
         }
     };
 
@@ -567,6 +575,10 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                 <Button size="sm" type="submit" disabled={isSubmitting}>
                                     {isSubmitting ? 'Saving...' : (t('save_rental') || 'Save Rental')}
                                 </Button>
+                            </div>
+                            <div>
+                                <label className="block font-medium mb-1">Upload Rental Document/Media</label>
+                                <FileUpload onFileSelect={setUploadedFile} accept=".pdf,.jpg,.jpeg,.png" maxSize={10 * 1024 * 1024} />
                             </div>
                         </form>
                     </main>

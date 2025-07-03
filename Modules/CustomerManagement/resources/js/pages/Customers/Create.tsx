@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
 import { BreadcrumbItem } from "@/Core/types";
@@ -25,17 +25,22 @@ export default function Create() {
   const [address, setAddress] = useState('');
   const [notes, setNotes] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [document, setDocument] = useState<File | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    router.post('/customers', {
-      name,
-      email,
-      phone,
-      address,
-      notes,
-    }, {
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('email', email);
+    formData.append('phone', phone);
+    formData.append('address', address);
+    formData.append('notes', notes);
+    if (document) {
+      formData.append('document', document);
+    }
+    router.post('/customers', formData, {
+      forceFormData: true,
       onSuccess: () => {
         toast.success('Customer created successfully');
       },
@@ -53,9 +58,9 @@ export default function Create() {
   ];
 
   return (
-    <AppLayout 
-      title="Create Customer" 
-      breadcrumbs={breadcrumbs} 
+    <AppLayout
+      title="Create Customer"
+      breadcrumbs={breadcrumbs}
       requiredPermission="customers.create"
     >
       <Head title="Create Customer" />
@@ -153,6 +158,20 @@ export default function Create() {
                   />
                   {errors.notes && (
                     <p className="text-sm text-red-500 mt-1">{errors.notes}</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="document">Customer Document</Label>
+                  <Input
+                    id="document"
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={(e) => setDocument(e.target.files?.[0] || null)}
+                    className={errors.document ? 'border-red-500' : ''}
+                  />
+                  {errors.document && (
+                    <p className="text-sm text-red-500 mt-1">{errors.document}</p>
                   )}
                 </div>
               </div>

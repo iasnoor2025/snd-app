@@ -81,6 +81,7 @@ const TimesheetForm: React.FC<TimesheetFormProps> = ({
   const [projects, setProjects] = useState<Project[]>([]);
   const [useTimeClock, setUseTimeClock] = useState(!!timesheet?.clock_in);
   const { isLoading, error, withLoading } = useLoadingState('timesheetForm');
+  const { t } = useTranslation('TimesheetManagement');
 
   const {
     register,
@@ -159,8 +160,6 @@ const TimesheetForm: React.FC<TimesheetFormProps> = ({
 
   // Toggle between time clock and direct hours input
   const toggleTimeClockMode = () => {
-    const { t } = useTranslation('timesheet');
-
     setUseTimeClock(!useTimeClock);
     if (!useTimeClock) {
       // Switching to time clock mode
@@ -225,9 +224,6 @@ const TimesheetForm: React.FC<TimesheetFormProps> = ({
     setValue('regular_hours', Math.round(regularHours * 10) / 10); // Round to 1 decimal
     setValue('overtime_hours', Math.round(overtimeHours * 10) / 10); // Round to 1 decimal
   };
-
-  // Minimal placeholder translation function
-  const t = (s: string) => s;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

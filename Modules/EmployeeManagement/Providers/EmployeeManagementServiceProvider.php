@@ -61,6 +61,10 @@ class EmployeeManagementServiceProvider extends ServiceProvider
             \Modules\EmployeeManagement\Repositories\EmployeeDocumentRepositoryInterface::class,
             \Modules\EmployeeManagement\Repositories\EmployeeDocumentRepository::class
         );
+        $this->app->bind(
+            \Modules\EmployeeManagement\Repositories\PerformanceReviewRepository::class,
+            \Modules\EmployeeManagement\Repositories\EloquentPerformanceReviewRepository::class
+        );
     }
 
     /**

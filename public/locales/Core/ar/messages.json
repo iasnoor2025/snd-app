@@ -1,0 +1,28 @@
+{
+    "success": {
+        "created": "Created successfully",
+        "updated": "Updated successfully",
+        "deleted": "Deleted successfully",
+        "saved": "Saved successfully",
+        "imported": "Imported successfully",
+        "exported": "Exported successfully"
+    },
+    "error": {
+        "general": "An error occurred",
+        "not_found": "Not found",
+        "unauthorized": "Unauthorized access",
+        "validation": "Validation error",
+        "server": "Server error",
+        "connection": "Connection error"
+    },
+    "confirmation": {
+        "delete": "Are you sure you want to delete this item?",
+        "cancel": "Are you sure you want to cancel?",
+        "discard": "Are you sure you want to discard changes?"
+    },
+    "empty": {
+        "data": "No data available",
+        "results": "No results found",
+        "search": "No search results found"
+    }
+}

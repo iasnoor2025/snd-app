@@ -10,9 +10,6 @@ import { getTranslation } from '@/Core/utils/translation';
 // Placeholder type for RentalItem
 type RentalItem = any;
 
-// Placeholder translation function
-const t = (s: string) => s;
-
 interface Props {
     rental: {
         id: number;
@@ -21,7 +18,7 @@ interface Props {
 }
 
 export const Index: FC<Props> = ({ rental }) => {
-    const { t } = useTranslation('rental');
+    const { t } = useTranslation('RentalManagement');
     const { props } = usePage();
     const locale = props.locale || 'en';
 

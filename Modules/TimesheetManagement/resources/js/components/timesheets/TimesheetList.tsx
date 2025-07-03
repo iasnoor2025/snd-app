@@ -63,9 +63,9 @@ const TimesheetList: React.FC<TimesheetListProps> = ({
   const [timesheetToReject, setTimesheetToReject] = useState<number | null>(null);
   const [processing, setProcessing] = useState(false);
 
-  const handleToggleSelect = (id: number) => {
-  const { t } = useTranslation('timesheet');
+  const { t } = useTranslation('TimesheetManagement');
 
+  const handleToggleSelect = (id: number) => {
     setSelectedTimesheets((prev) =>
       prev.includes(id)
         ? prev.filter((timesheetId) => timesheetId !== id)
@@ -152,9 +152,6 @@ const TimesheetList: React.FC<TimesheetListProps> = ({
         return <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-300">Pending</Badge>
     }
   };
-
-  // Placeholder translation function
-  const t = (s: string) => s;
 
   return (
     <div className="space-y-4">

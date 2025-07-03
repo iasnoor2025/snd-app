@@ -15,6 +15,7 @@ import { ArrowLeft } from "lucide-react";
 
 // Our components
 import { RentalForm } from '../../components/rentals/RentalForm';
+import FileUpload from '@/components/FileUpload';
 
 interface Props extends PageProps {
   customers: any[];
@@ -27,6 +28,7 @@ export default function Edit({ customers, equipment, rental, employees = [] }: P
   const { t } = useTranslation('rental');
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
   // Handle form submission
   const handleSubmit = (
@@ -43,33 +45,13 @@ export default function Edit({ customers, equipment, rental, employees = [] }: P
     setIsSubmitting(true);
 
     // Prepare data for submission
-    const formData = {
-      _method: "PUT",
-      customer_id: values.customer_id,
-      client_id: values.customer_id,
-      rental_number: values.rental_number,
-      start_date: format(values.start_date, "yyyy-MM-dd"),
-      expected_end_date: format(values.expected_end_date, "yyyy-MM-dd"),
-      actual_end_date: values.actual_end_date ? format(values.actual_end_date, "yyyy-MM-dd") : null,
-      status: values.status,
-      deposit_amount: values.deposit_amount,
-      notes: values.notes || "",
-      tax_rate: values.tax_rate,
-      rental_items: rentalItems.map(item => ({
-        id: item.id || null,
-        equipment_id: item.equipment_id,
-        quantity: item.quantity,
-        rate: item.daily_rate,
-        rate_type: "daily",
-        days: item.days,
-        operator_id: item.operator_id,
-      })),
-      deleted_items: financials.deletedItemIds || [],
-      discount: financials.discount,
-      subtotal: financials.subtotal,
-      tax_amount: financials.taxAmount,
-      total_amount: financials.totalAmount,
-    };
+    const formData = new FormData();
+    Object.entries(formData).forEach(([key, value]) => {
+      formData.append(key, value as any);
+    });
+    if (uploadedFile) {
+      formData.append('document', uploadedFile);
+    }
 
     console.log('Updating rental with data:', {
       rental_items: formData.rental_items,
@@ -77,8 +59,9 @@ export default function Edit({ customers, equipment, rental, employees = [] }: P
       expected_end_date: formData.expected_end_date
     });
 
-    // Submit the form
-    router.put(route("rentals.update", rental.id), formData, {
+    // Use Inertia post with FormData
+    router.post(route("rentals.update", rental.id), formData, {
+      forceFormData: true,
       onSuccess: () => {
         toast.success("Rental updated successfully");
         setIsSubmitting(false);
@@ -124,6 +107,10 @@ export default function Edit({ customers, equipment, rental, employees = [] }: P
               onSubmit={handleSubmit}
               isSubmitting={isSubmitting}
             />
+            <div className="mt-4">
+              <label className="block font-medium mb-1">Upload Rental Document/Media</label>
+              <FileUpload onFileSelect={setUploadedFile} accept=".pdf,.jpg,.jpeg,.png" maxSize={10 * 1024 * 1024} />
+            </div>
           </CardContent>
         </Card>
       </div>

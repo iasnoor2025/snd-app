@@ -1233,6 +1233,14 @@ export default function Show({
                 />
               </div>
             </div>
+
+            <DocumentsCard
+              rentalId={rental.id}
+              documents={rental.documents || []}
+              canUpload={permissions.update}
+              canDelete={permissions.update}
+              className="mt-8"
+            />
           </div>
         </div>
       )}

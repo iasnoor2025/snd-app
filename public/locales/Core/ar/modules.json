@@ -1,0 +1,18 @@
+{
+    "Core": "Core",
+    "EmployeeManagement": "EmployeeManagement",
+    "LeaveManagement": "LeaveManagement",
+    "TimesheetManagement": "TimesheetManagement",
+    "Payroll": "Payroll",
+    "ProjectManagement": "ProjectManagement",
+    "RentalManagement": "RentalManagement",
+    "EquipmentManagement": "EquipmentManagement",
+    "Settings": "Settings",
+    "Notifications": "Notifications",
+    "Reporting": "Reporting",
+    "MobileBridge": "MobileBridge",
+    "Localization": "Localization",
+    "CustomerManagement": "CustomerManagement",
+    "AuditCompliance": "AuditCompliance",
+    "API": "API"
+}
