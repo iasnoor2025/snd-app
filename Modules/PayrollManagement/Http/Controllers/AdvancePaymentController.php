@@ -58,6 +58,8 @@ class AdvancePaymentController extends Controller
     public function index(Employee $employee)
     {
         $advancePayments = $employee->advancePayments()
+            ->whereIn('status', ['approved', 'partially_repaid'])
+            ->whereRaw('amount > repaid_amount')
             ->with(['approver', 'rejecter'])
             ->orderBy('created_at', 'desc')
             ->get();

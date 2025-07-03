@@ -26,7 +26,7 @@ import { CalendarIcon } from 'lucide-react';
 import { AppLayout } from '@/Core';
 
 // Minimal type definitions for build
-type PageProps = { [key: string]: any };
+type PageProps = { [key: string]: unknown };
 type BreadcrumbItem = { title: string; href: string };
 
 // Minimal type definitions for build

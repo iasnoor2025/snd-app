@@ -252,14 +252,14 @@ const GeofenceViolationManager: React.FC = () => {
 
             setViolations(prev => prev.map(v =>
                 v.id === violationId
-                    ? { ...v, status: status as any, resolved_at: status === 'resolved' ? new Date().toISOString() : undefined }
+                    ? { ...v, status: status as string, resolved_at: status === 'resolved' ? new Date().toISOString() : undefined }
                     : v
             ));
 
             toast.success('Violation status updated');
 
             if (selectedViolation?.id === violationId) {
-                setSelectedViolation(prev => prev ? { ...prev, status: status as any } : null);
+                setSelectedViolation(prev => prev ? { ...prev, status: status as string } : null);
             }
         } catch (error) {
             console.error('Failed to update status:', error);

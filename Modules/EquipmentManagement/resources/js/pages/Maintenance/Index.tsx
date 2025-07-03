@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 // Minimal type definitions for build
-type PageProps = { [key: string]: any };
+type PageProps = { [key: string]: unknown };
 type BreadcrumbItem = { title: string; href: string };
 // ... existing code ...
-type MaintenanceRecord = { id: number; [key: string]: any };
+type MaintenanceRecord = { id: number; [key: string]: unknown };
 type Equipment = { id: number; name: string };
 // ... existing code ...
 import { formatCurrency, formatDate } from '../../utils/format';

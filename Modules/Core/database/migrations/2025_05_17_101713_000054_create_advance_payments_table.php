@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('employee_id')->cascadeOnDelete();
             $table->decimal('amount', 10, 2);
             $table->string('purpose');
+            $table->string('reason')->nullable()->after('purpose');
             $table->string('status')->default('pending');
             $table->unsignedBigInteger('approved_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('approved_at')->nullable();

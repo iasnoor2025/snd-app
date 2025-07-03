@@ -1,7 +1,7 @@
 import './bootstrap';
 import './i18n.js';
 import '../css/app.css';
-import { Ziggy } from './ziggy';
+import Ziggy from './ziggy';
 
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
@@ -339,9 +339,11 @@ createInertiaApp({
                 }
 
                 // Try generic match for any module as a last resort
-                const normalizedName = name.replace(/\\/g, '/');
+                // eslint-disable-next-line no-useless-escape
+                const normalizedName = name.replace(/\//g, '/');
                 for (const key in modulePages) {
-                  const keyNoExt = key.replace(/\.tsx$/, '').replace(/\\/g, '/');
+                  // eslint-disable-next-line no-useless-escape
+                  const keyNoExt = key.replace(/\.tsx$/, '').replace(/\//g, '/');
                     if (keyNoExt.endsWith(`/${normalizedName}`) ||
                         keyNoExt.toLowerCase().endsWith(`/${normalizedName.toLowerCase()}`)) {
                     return await modulePages[key]();

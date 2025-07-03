@@ -285,7 +285,7 @@ class OfflineStorage {
   /**
    * Get cached data
    */
-  async getCachedData(key: string): Promise<any | null> {
+  async getCachedData(key: string): Promise<unknown | null> {
     await this.ensureInitialized();
 
     return new Promise((resolve, reject) => {

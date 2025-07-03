@@ -62,12 +62,20 @@ class ShowEmployeeAction
             $pagination = [];
 
             if (class_exists('Modules\PayrollManagement\Domain\Models\AdvancePayment')) {
+                $eligibleAdvances = AdvancePayment::where('employee_id', $employee->id)
+                    ->whereIn('status', ['approved', 'partially_repaid'])
+                    ->whereRaw('amount > repaid_amount')
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+
                 $advances = [
-                    'data' => AdvancePayment::where('employee_id', $employee->id)
-                        ->orderBy('created_at', 'desc')
-                        ->get()
-                        ->toArray()
+                    'data' => $eligibleAdvances->toArray()
                 ];
+
+                // Calculate current balance from eligible advances
+                $currentBalance = $eligibleAdvances->sum(function ($advance) {
+                    return $advance->amount - $advance->repaid_amount;
+                });
 
                 // Calculate total repaid amount (simplified implementation)
                 $totalRepaid = AdvancePayment::where('employee_id', $employee->id)
@@ -91,6 +99,8 @@ class ShowEmployeeAction
                     'per_page' => 10,
                     'total' => 0
                 ];
+            } else {
+                $currentBalance = 0;
             }
 
             // Get assignments
@@ -121,6 +131,7 @@ class ShowEmployeeAction
                 'timesheets' => $timesheets,
                 'leaveRequests' => $leaveRequests,
                 'advances' => $advances,
+                'current_balance' => $currentBalance,
                 'assignments' => $assignments,
                 'finalSettlements' => $finalSettlements,
                 'monthlyHistory' => $monthlyHistory,

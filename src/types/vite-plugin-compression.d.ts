@@ -4,5 +4,5 @@ declare module 'vite-plugin-compression' {
         ext?: string;
     }
 
-    export default function (options?: VitePluginCompressionOptions): any;
-} 
+    export default function (options?: VitePluginCompressionOptions): unknown;
+}

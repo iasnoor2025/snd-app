@@ -38,7 +38,7 @@ import { CalendarIcon } from "lucide-react";
 
 // Our components
 import RentalForm from "../../Components/rentals/RentalForm";
-import { Ziggy } from "@/ziggy";
+import Ziggy from "@/ziggy";
 
 interface Customer {
     id: number;

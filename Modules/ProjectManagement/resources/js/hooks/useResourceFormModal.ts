@@ -10,7 +10,7 @@ interface UseResourceFormModalProps {
 interface UseResourceFormModalReturn {
     isCreateModalOpen: boolean;
     isEditModalOpen: boolean;
-    selectedResource: any | null;
+    selectedResource: unknown | null;
     isLoading: boolean;
     openCreateModal: () => void;
     openEditModal: (resource: any) => void;
@@ -25,7 +25,7 @@ export function useResourceFormModal({
 }: UseResourceFormModalProps): UseResourceFormModalReturn {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [selectedResource, setSelectedResource] = useState<any | null>(null);
+    const [selectedResource, setSelectedResource] = useState<unknown | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
     const openCreateModal = () => {

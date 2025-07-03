@@ -9,7 +9,7 @@ const __dirname = dirname(__filename);
 async function updateImports(filePath) {
     try {
         const content = await readFile(filePath, 'utf8');
-        
+
         // Replace old import paths with new ones
         let updatedContent = content
             // Fix incorrect Core imports
@@ -50,11 +50,11 @@ async function updateImports(filePath) {
 
 async function walkDir(dir) {
     const files = await readdir(dir);
-    
+
     for (const file of files) {
         const filePath = join(dir, file);
         const stats = await stat(filePath);
-        
+
         if (stats.isDirectory()) {
             await walkDir(filePath);
         } else if (file.endsWith('.tsx') || file.endsWith('.ts')) {
@@ -72,4 +72,4 @@ async function walkDir(dir) {
     } catch (error) {
         console.error('Error updating import paths:', error);
     }
-})(); 
+})();

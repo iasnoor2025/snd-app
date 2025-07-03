@@ -6,7 +6,7 @@
 /**
  * Check if a value is a translatable object that might cause React errors
  */
-export function isTranslatableObject(value: any): value is Record<string, string> {
+export function isTranslatableObject(value: unknown): value is Record<string, string> {
   return (
     value !== null &&
     typeof value === 'object' &&
@@ -71,4 +71,4 @@ export function withTranslationDebug<T>(component: T, name?: string): T {
   // In development, wrap the component to catch potential issues
   // This is a simplified version - full implementation would require more React internals
   return component;
-} 
+}

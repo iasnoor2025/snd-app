@@ -127,9 +127,9 @@ export default function ForRental({ auth, rental, timesheets, debug }: Props) {
   );
 
   // Filter timesheets by status, using type-safe comparisons
-  const completedTimesheets = timesheets.filter(t => t.status === 'completed' as any);
-  const pendingTimesheets = timesheets.filter(t => t.status === 'pending' as any);
-  const activeTimesheets = timesheets.filter(t => t.status === 'active' as any);
+  const completedTimesheets = timesheets.filter(t => t.status === 'completed' as boolean);
+  const pendingTimesheets = timesheets.filter(t => t.status === 'pending' as boolean);
+  const activeTimesheets = timesheets.filter(t => t.status === 'active' as boolean);
 
   // Get filtered timesheets
   const getFilteredTimesheets = () => {
@@ -141,7 +141,7 @@ export default function ForRental({ auth, rental, timesheets, debug }: Props) {
     // Apply status filter
     let filtered = timesheets;
     if (statusFilter && statusFilter !== "all") {
-      filtered = timesheets.filter(timesheet => timesheet.status === statusFilter as any);
+      filtered = timesheets.filter(timesheet => timesheet.status === statusFilter as boolean);
     }
 
     // Apply search filter if search term exists
@@ -229,7 +229,7 @@ export default function ForRental({ auth, rental, timesheets, debug }: Props) {
   // Select/deselect all active timesheets
   const selectAll = () => {
     const activeTimesheetIds = filteredTimesheets
-      .filter(timesheet => timesheet.status !== 'completed' as any)
+      .filter(timesheet => timesheet.status !== 'completed' as boolean)
       .map(timesheet => timesheet.id);
 
     if (activeTimesheetIds.length > 0 && selectedIds.length === activeTimesheetIds.length) {
@@ -607,7 +607,7 @@ export default function ForRental({ auth, rental, timesheets, debug }: Props) {
 
                   {timesheets.length > 0 && (
                     <Button variant="outline" size="sm" onClick={selectAll}>
-                      {selectedIds.length === filteredTimesheets.filter(t => t.status !== 'completed' as any).length &&
+                      {selectedIds.length === filteredTimesheets.filter(t => t.status !== 'completed' as boolean).length &&
                       selectedIds.length > 0 ? "Deselect All" : "Select All Active"}
                     </Button>
                   )}
@@ -655,7 +655,7 @@ export default function ForRental({ auth, rental, timesheets, debug }: Props) {
                       {paginatedTimesheets.map((timesheet) => (
                         <TableRow key={timesheet.id}>
                           <TableCell>
-                            {timesheet.status !== 'completed' as any && (
+                            {timesheet.status !== 'completed' as boolean && (
                               <Checkbox
                                 checked={selectedIds.includes(timesheet.id)}
                                 onCheckedChange={() => toggleSelection(timesheet.id)}
@@ -808,7 +808,7 @@ export default function ForRental({ auth, rental, timesheets, debug }: Props) {
                           <TableCell className="text-right">
                             <div className="flex justify-end gap-2">
                               {/* Complete button - only visible for non-completed timesheets */}
-                              {timesheet.status !== 'completed' as any && (
+                              {timesheet.status !== 'completed' as boolean && (
                                 <Button
                                   variant="ghost"
                                   size="icon"
@@ -826,7 +826,7 @@ export default function ForRental({ auth, rental, timesheets, debug }: Props) {
                               </Button>
 
                               {/* Edit button - only visible for non-completed timesheets */}
-                              {canEdit && timesheet.status !== 'completed' as any && (
+                              {canEdit && timesheet.status !== 'completed' as boolean && (
                                 <Button variant="ghost" size="icon" asChild>
                                   <Link href={route('rental-timesheets.edit', timesheet.id)}>
                                     <Pencil className="h-4 w-4" />
@@ -848,7 +848,7 @@ export default function ForRental({ auth, rental, timesheets, debug }: Props) {
 
                               {/* Mark Absent button - only visible for timesheets with operators that aren't already marked absent */}
                               {canEdit &&
-                               timesheet.status !== 'completed' as any &&
+                               timesheet.status !== 'completed' as boolean &&
                                (timesheet.operator || timesheet.rentalItem?.operator) &&
                                !timesheet.operator_absent && (
                                 <Button

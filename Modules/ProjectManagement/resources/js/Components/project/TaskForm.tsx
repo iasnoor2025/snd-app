@@ -152,7 +152,7 @@ const TaskForm = memo(function TaskForm({ projectId, initialData = null, assigna
                 <FormField
                     control={form.control}
                     name="title"
-                    render={({ field }: { field: any }) => (
+                    render={({ field }: { field: unknown }) => (
                         <FormItem>
                             <FormLabel>Title</FormLabel>
                             <FormControl>
@@ -166,7 +166,7 @@ const TaskForm = memo(function TaskForm({ projectId, initialData = null, assigna
                 <FormField
                     control={form.control}
                     name="description"
-                    render={({ field }: { field: any }) => (
+                    render={({ field }: { field: unknown }) => (
                         <FormItem>
                             <FormLabel>Description</FormLabel>
                             <FormControl>
@@ -185,7 +185,7 @@ const TaskForm = memo(function TaskForm({ projectId, initialData = null, assigna
                     <FormField
                         control={form.control}
                         name="status"
-                        render={({ field }: { field: any }) => (
+                        render={({ field }: { field: unknown }) => (
                             <FormItem>
                                 <FormLabel>Status</FormLabel>
                                 <Select
@@ -213,7 +213,7 @@ const TaskForm = memo(function TaskForm({ projectId, initialData = null, assigna
                     <FormField
                         control={form.control}
                         name="priority"
-                        render={({ field }: { field: any }) => (
+                        render={({ field }: { field: unknown }) => (
                             <FormItem>
                                 <FormLabel>Priority</FormLabel>
                                 <Select
@@ -242,7 +242,7 @@ const TaskForm = memo(function TaskForm({ projectId, initialData = null, assigna
                     <FormField
                     control={form.control}
                     name="due_date"
-                    render={({ field }: { field: any }) => (
+                    render={({ field }: { field: unknown }) => (
                         <FormItem className="flex flex-col">
                             <FormLabel>{t('lbl_due_date')}</FormLabel>
                             <FormControl>
@@ -260,7 +260,7 @@ const TaskForm = memo(function TaskForm({ projectId, initialData = null, assigna
                     <FormField
                         control={form.control}
                         name="completion_percentage"
-                        render={({ field }: { field: any }) => (
+                        render={({ field }: { field: unknown }) => (
                             <FormItem>
                                 <FormLabel>{t('lbl_completion_percentage')}</FormLabel>
                                 <FormControl>
@@ -276,7 +276,7 @@ const TaskForm = memo(function TaskForm({ projectId, initialData = null, assigna
                     <FormField
                         control={form.control}
                         name="assigned_to_id"
-                        render={({ field }: { field: any }) => (
+                        render={({ field }: { field: unknown }) => (
                             <FormItem>
                                 <FormLabel>{t('lbl_assigned_to')}</FormLabel>
                                 <Select

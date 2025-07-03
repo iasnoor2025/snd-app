@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { route } from 'ziggy-js';
-import { Ziggy } from './ziggy';
+import Ziggy from './ziggy';
 
 // Bootstrap configuration - imports from Core module for centralized resource management
 import '../../Modules/Core/resources/js/bootstrap';

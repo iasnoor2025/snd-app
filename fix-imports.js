@@ -5,16 +5,16 @@ import { glob } from 'glob';
 // Function to fix imports in a file
 function fixImportsInFile(filePath) {
   let content = fs.readFileSync(filePath, 'utf8');
-  
+
   // Fix Core module imports
   content = content.replace(
-    /from ["']@\/Core\/components\/ui\/(.*?)["']/g,
+    /from ["']@/Core/components/ui/(.*?)["']/g,
     (match, componentPath) => `from "@/components/ui/${componentPath}"`
   );
-  
+
   // Fix other Core module imports
   content = content.replace(
-    /from ["']@\/Core\/(.*?)["']/g,
+    /from ["']@/Core/(.*?)["']/g,
     (match, path) => `from "@/${path}"`
   );
 
@@ -30,4 +30,4 @@ const files = await glob('**/*.{ts,tsx}', {
 files.forEach(file => {
   console.log(`Processing ${file}...`);
   fixImportsInFile(file);
-}); 
+});

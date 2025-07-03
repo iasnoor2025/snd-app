@@ -303,7 +303,7 @@ interface Props extends PageProps {
 
 export default function Show({
   auth,
-  rental = {} as ExtendedRental & { customer: any },
+  rental = {} as ExtendedRental & { customer: unknown },
   rentalItems = { data: [], total: 0 },
   invoices = { data: [], total: 0 },
   maintenanceRecords = { data: [], total: 0 },
@@ -811,7 +811,7 @@ export default function Show({
     }
 
     // Handle different property name variations for customer data using type assertion
-    const customerAny = customer as any;
+    const customerAny = customer as unknown;
     const companyName = customerAny.company_name || customerAny.name || 'Unknown Company';
     const contactPerson = customerAny.contact_person || customerAny.contact_name || '';
     const email = customerAny.email || 'No email';

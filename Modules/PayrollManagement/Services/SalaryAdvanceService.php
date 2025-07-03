@@ -283,30 +283,22 @@ class SalaryAdvanceService
      */
     protected function validateAdvanceEligibility(Employee $employee, float $amount): void
     {
-        // Check if employee has pending advances
-        $pendingAdvances = SalaryAdvance::where('employee_id', $employee->id)
-                                       ->whereIn('status', ['pending', 'approved'])
-                                       ->count();
-
-        if ($pendingAdvances > 0) {
-            throw new \Exception('Employee has pending advance requests');
-        }
-
-        // Check if amount exceeds monthly salary
+        // Check if amount exceeds 50% of monthly salary (including all active advances)
         $monthlySalary = $employee->basic_salary ?? 0;
         $maxAdvanceAmount = $monthlySalary * 0.5; // 50% of monthly salary
-
-        if ($amount > $maxAdvanceAmount) {
-            throw new \Exception("Advance amount cannot exceed 50% of monthly salary (Max: {$maxAdvanceAmount})");
+        $currentOutstanding = SalaryAdvance::where('employee_id', $employee->id)
+            ->whereIn('status', ['pending', 'approved'])
+            ->sum('amount');
+        if (($currentOutstanding + $amount) > $maxAdvanceAmount) {
+            throw new \Exception("Total advance amount cannot exceed 50% of monthly salary (Max: {$maxAdvanceAmount})");
         }
 
-        // Check employment duration (minimum 3 months)
-        $employmentDuration = $employee->joining_date ?
-            Carbon::parse($employee->joining_date)->diffInMonths(now()) : 0;
-
-        if ($employmentDuration < 3) {
-            throw new \Exception('Employee must complete at least 3 months of employment to request advance');
-        }
+        // Optionally relax employment duration check
+        // $employmentDuration = $employee->joining_date ?
+        //     Carbon::parse($employee->joining_date)->diffInMonths(now()) : 0;
+        // if ($employmentDuration < 3) {
+        //     throw new \Exception('Employee must complete at least 3 months of employment to request advance');
+        // }
     }
 
     /**

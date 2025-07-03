@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, router } from '@inertiajs/react';
 // Minimal type definitions for build
-type PageProps = { [key: string]: any };
+type PageProps = { [key: string]: unknown };
 type BreadcrumbItem = { title: string; href: string };
 import { AppLayout, Card, CardContent, CardDescription, CardHeader, CardTitle, Button } from '@/Core';
 // PaymentHistory component placeholder

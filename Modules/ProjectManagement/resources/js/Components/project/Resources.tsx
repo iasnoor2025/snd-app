@@ -55,7 +55,7 @@ interface SortState {
     direction: 'asc' | 'desc';
 }
 
-export default function Resources({ project }: { project: any }) {
+export default function Resources({ project }: { project: unknown }) {
   const { t } = useTranslation('project');
 
     const [resources, setResources] = useState<Resource[]>([]);
