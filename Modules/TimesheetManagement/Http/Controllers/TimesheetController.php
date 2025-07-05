@@ -692,26 +692,26 @@ class TimesheetController extends Controller
         // Fill all days in the month with default values
         $daysInMonth = (int)date('t', strtotime($startDate));
         for ($d = 1; $d <= $daysInMonth; $d++) {
-            $dateStr = sprintf('%04d-%02d-%02d', $month->year, $month->month, $d);
+            $dateStr = sprintf('%04d-%02d-%02d', $month->year, str_pad($month->month, 2, '0', STR_PAD_LEFT), str_pad($d, 2, '0', STR_PAD_LEFT));
             $dayOfWeek = date('w', strtotime($dateStr));
             $calendar[$dateStr] = [
                 'date' => $dateStr,
                 'day_of_week' => $dayOfWeek,
                 'day_name' => date('l', strtotime($dateStr)),
-                'regular_hours' => 0,
-                'overtime_hours' => 0,
+                'regular_hours' => 0.0,
+                'overtime_hours' => 0.0,
             ];
         }
         // Overwrite with actual timesheet data
-        foreach ($timesheets as $timesheet) {
-            $date = (string)$timesheet->date;
+        $grouped = $timesheets->groupBy(function($t) { return date('Y-m-d', strtotime($t->date)); });
+        foreach ($grouped as $date => $items) {
             $dayOfWeek = date('w', strtotime($date));
             $calendar[$date] = [
                 'date' => $date,
                 'day_of_week' => $dayOfWeek,
                 'day_name' => date('l', strtotime($date)),
-                'regular_hours' => $timesheet->hours_worked,
-                'overtime_hours' => $timesheet->overtime_hours,
+                'regular_hours' => $items->sum('hours_worked'),
+                'overtime_hours' => $items->sum('overtime_hours'),
             ];
         }
 
@@ -1354,26 +1354,26 @@ class TimesheetController extends Controller
         // Fill all days in the month with default values
         $daysInMonth = (int)date('t', strtotime($startDate));
         for ($d = 1; $d <= $daysInMonth; $d++) {
-            $dateStr = sprintf('%04d-%02d-%02d', $year, $monthNum, $d);
+            $dateStr = sprintf('%04d-%02d-%02d', $year, str_pad($monthNum, 2, '0', STR_PAD_LEFT), str_pad($d, 2, '0', STR_PAD_LEFT));
             $dayOfWeek = date('w', strtotime($dateStr));
             $calendar[$dateStr] = [
                 'date' => $dateStr,
                 'day_of_week' => $dayOfWeek,
                 'day_name' => date('l', strtotime($dateStr)),
-                'regular_hours' => 0,
-                'overtime_hours' => 0,
+                'regular_hours' => 0.0,
+                'overtime_hours' => 0.0,
             ];
         }
         // Overwrite with actual timesheet data
-        foreach ($timesheets as $timesheet) {
-            $date = (string)$timesheet->date;
+        $grouped = $timesheets->groupBy(function($t) { return date('Y-m-d', strtotime($t->date)); });
+        foreach ($grouped as $date => $items) {
             $dayOfWeek = date('w', strtotime($date));
             $calendar[$date] = [
                 'date' => $date,
                 'day_of_week' => $dayOfWeek,
                 'day_name' => date('l', strtotime($date)),
-                'regular_hours' => $timesheet->hours_worked,
-                'overtime_hours' => $timesheet->overtime_hours,
+                'regular_hours' => $items->sum('hours_worked'),
+                'overtime_hours' => $items->sum('overtime_hours'),
             ];
         }
 
@@ -1407,7 +1407,7 @@ class TimesheetController extends Controller
                 'transport_allowance' => $employee->transport_allowance,
                 'advance_payment' => $employee->advance_payment,
             ],
-            'month' => $monthNum,
+            'month' => str_pad($monthNum, 2, '0', STR_PAD_LEFT),
             'year' => $year,
             'start_date' => $startDate,
             'end_date' => $endDate,

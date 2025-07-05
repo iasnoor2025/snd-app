@@ -485,7 +485,7 @@ export default function PaySlip({
                         let bgColor = '';
 
                         if (dayData) {
-                          if (dayData.regular_hours === 0 && dayData.overtime_hours === 0) {
+                          if (Number(dayData.regular_hours) === 0 && Number(dayData.overtime_hours) === 0) {
                             content = 'A'; // Absent
                             textColor = 'text-red-600';
                           } else {
