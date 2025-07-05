@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/Core/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/components/ui/table';
 import { MultiSelect } from '@/Core/components/ui/multi-select';
+import { formatDateTime } from '@/Core/utils/dateFormatter';
 
 interface ApiKey {
     id: string;
@@ -200,7 +201,7 @@ export default function ApiKeySettings({ initialKeys }: ApiKeySettingsProps) {
                                     <TableCell>
                                         {key.last_used_at || 'Never'}
                                     </TableCell>
-                                    <TableCell>{key.created_at}</TableCell>
+                                    <TableCell>{formatDateTime(key.created_at)}</TableCell>
                                     <TableCell className="text-right">
                                         <Button
                                             variant="destructive"

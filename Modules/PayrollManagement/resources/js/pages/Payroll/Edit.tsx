@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head } from '@inertiajs/react';
 import FileUpload from '@/components/FileUpload';
@@ -8,12 +8,19 @@ import axios from 'axios';
 
 interface Props {
     payroll: any;
+    employee?: any;
+    items?: any[];
+    employees?: any[];
+    created_at?: string;
+    updated_at?: string;
+    deleted_at?: string;
 }
 
 const { t } = useTranslation('payrolls');
 
-export const Edit: FC<Props> = ({ payroll }) => {
+export const Edit: FC<Props> = ({ payroll, employee = {}, items = [], employees = [], created_at, updated_at, deleted_at }) => {
     const [uploadedFile, setUploadedFile] = React.useState<File | null>(null);
+    React.useEffect(() => { if (payroll) {} }, [payroll]);
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const formData = new FormData();

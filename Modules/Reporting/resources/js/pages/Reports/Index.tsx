@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
 import { BarChart, LineChart } from "recharts";
 import { DataTable } from "@/Core";
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Stats {
   revenue: any;
@@ -53,7 +54,7 @@ interface ReportsIndexProps {
   filters: {
     report_type: string;
     department: string;
-    status: string; date_from?: string; date_to?: string 
+    status: string; date_from?: string; date_to?: string
 };
 }
 
@@ -142,7 +143,7 @@ const ReportsIndex: React.FC<ReportsIndexProps> = ({ stats, recentActivity, char
       header: 'Total Amount',
       cell: ({ row }) => (
         <span>
-          ${row.original.total_amount?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}
+          ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(row.original.total_amount) || '0.00'}
         </span>
       ),
     },
@@ -178,7 +179,7 @@ const ReportsIndex: React.FC<ReportsIndexProps> = ({ stats, recentActivity, char
       header: 'Status',
       cell: ({ row }) => (
         <span className={`capitalize ${
-          row.original.status === 'approved' ? 'text-green-600' : 
+          row.original.status === 'approved' ? 'text-green-600' :
           row.original.status === 'rejected' ? 'text-red-600' : 'text-yellow-600'
         }`}>
           {row.original.status}
@@ -216,7 +217,7 @@ const ReportsIndex: React.FC<ReportsIndexProps> = ({ stats, recentActivity, char
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    ${stats.revenue.total.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(stats.revenue.total)}
                   </div>
                 </CardContent>
               </Card>
@@ -406,7 +407,7 @@ const ReportsIndex: React.FC<ReportsIndexProps> = ({ stats, recentActivity, char
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    ${stats.revenue.total.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(stats.revenue.total)}
                   </div>
                 </CardContent>
               </Card>
@@ -416,7 +417,7 @@ const ReportsIndex: React.FC<ReportsIndexProps> = ({ stats, recentActivity, char
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    ${stats.revenue.monthly.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(stats.revenue.monthly)}
                   </div>
                 </CardContent>
               </Card>
@@ -426,7 +427,7 @@ const ReportsIndex: React.FC<ReportsIndexProps> = ({ stats, recentActivity, char
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    ${stats.revenue.yearly.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(stats.revenue.yearly)}
                   </div>
                 </CardContent>
               </Card>

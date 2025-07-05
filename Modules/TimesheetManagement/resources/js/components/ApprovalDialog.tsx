@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { route } from 'ziggy-js';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Timesheet {
   id: number;
@@ -175,7 +176,7 @@ export function ApprovalDialog({
                 <span>Date</span>
               </div>
               <p className="font-medium">
-                {new Date(timesheet.date).toLocaleDateString()}
+                {new Date(timesheet.date)}
               </p>
             </div>
 

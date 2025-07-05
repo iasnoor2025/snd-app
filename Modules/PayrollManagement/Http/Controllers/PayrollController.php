@@ -111,11 +111,16 @@ class PayrollController extends Controller
     public function show(Payroll $payroll)
     {
         $this->authorize('view', $payroll);
-
         $payroll->load(['employee', 'items', 'approver', 'payer']);
-
         return Inertia::render('Payroll/Show', [
             'payroll' => $payroll,
+            'employee' => $payroll->employee,
+            'items' => $payroll->items,
+            'approver' => $payroll->approver,
+            'payer' => $payroll->payer,
+            'created_at' => $payroll->created_at,
+            'updated_at' => $payroll->updated_at,
+            'deleted_at' => $payroll->deleted_at,
         ]);
     }
 
@@ -125,11 +130,16 @@ class PayrollController extends Controller
     public function edit(Payroll $payroll)
     {
         $this->authorize('update', $payroll);
-
         $payroll->load(['employee', 'items']);
-
+        $employees = Employee::active()->get();
         return Inertia::render('Payroll/Edit', [
             'payroll' => $payroll,
+            'employee' => $payroll->employee,
+            'items' => $payroll->items,
+            'employees' => $employees,
+            'created_at' => $payroll->created_at,
+            'updated_at' => $payroll->updated_at,
+            'deleted_at' => $payroll->deleted_at,
         ]);
     }
 

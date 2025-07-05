@@ -67,8 +67,8 @@ class RentalController extends Controller
             ->with(['category:id,name'])
             ->orderBy('name')
             ->get([
-                'id', 'name', 'description', 'model_number', 'manufacturer', 
-                'serial_number', 'door_number', 'daily_rate', 'weekly_rate', 
+                'id', 'name', 'description', 'model_number', 'manufacturer',
+                'serial_number', 'door_number', 'daily_rate', 'weekly_rate',
                 'monthly_rate', 'category_id'
             ]);
 
@@ -127,18 +127,51 @@ class RentalController extends Controller
             return redirect()->route('rentals.index')->with('error', 'Rental not found.');
         }
 
+        // Eager load all relationships and fields
+        $rental->load([
+            'customer',
+            'rentalItems.equipment',
+            'invoices',
+            'timesheets',
+            'payments',
+            'maintenanceRecords',
+            'location',
+        ]);
+
+        // Dropdowns for related entities
+        $customers = \Modules\CustomerManagement\Domain\Models\Customer::where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name', 'company_name', 'contact_person', 'email', 'phone']);
+        $equipment = \Modules\EquipmentManagement\Domain\Models\Equipment::where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name', 'model', 'manufacturer', 'serial_number', 'status']);
+        $employees = \Modules\EmployeeManagement\Domain\Models\Employee::where('is_operator', true)
+            ->where('status', 'active')
+            ->orderBy('first_name')
+            ->get(['id', 'first_name', 'last_name', 'employee_id']);
+
+        // Translations (if using Spatie Translatable)
+        $translations = method_exists($rental, 'getTranslations') ? $rental->getTranslations('notes') : [];
+
         return Inertia::render('Rentals/Show', [
             'rental' => $rental,
-            'equipment' => $rental->equipment,
-            'payments' => $rental->payments,
-            'timesheets' => $rental->timesheets,
             'customer' => $rental->customer,
-            'user' => $rental->user,
-            'rental_status' => $rental->status,
-            'rental_status_label' => $rental->getStatusLabel(),
-            'rental_status_color' => $rental->getStatusColor(),
-            'rental_status_color_label' => $rental->getStatusColorLabel(),
-            'rental_status_class' => $rental->getStatusClass(),
+            'rentalItems' => $rental->rentalItems,
+            'equipment' => $rental->equipment,
+            'invoices' => $rental->invoices,
+            'timesheets' => $rental->timesheets,
+            'payments' => $rental->payments,
+            'maintenanceRecords' => $rental->maintenanceRecords,
+            'location' => $rental->location,
+            'translations' => $translations,
+            'created_at' => $rental->created_at,
+            'updated_at' => $rental->updated_at,
+            'deleted_at' => $rental->deleted_at,
+            'dropdowns' => [
+                'customers' => $customers,
+                'equipment' => $equipment,
+                'employees' => $employees,
+            ],
         ]);
     }
 
@@ -148,8 +181,45 @@ class RentalController extends Controller
     public function edit($id)
     {
         $rental = $this->rentalService->findById($id);
+        $rental->load([
+            'customer',
+            'rentalItems.equipment',
+            'invoices',
+            'timesheets',
+            'payments',
+            'maintenanceRecords',
+            'location',
+        ]);
+        $customers = \Modules\CustomerManagement\Domain\Models\Customer::where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name', 'company_name', 'contact_person', 'email', 'phone']);
+        $equipment = \Modules\EquipmentManagement\Domain\Models\Equipment::where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name', 'model', 'manufacturer', 'serial_number', 'status']);
+        $employees = \Modules\EmployeeManagement\Domain\Models\Employee::where('is_operator', true)
+            ->where('status', 'active')
+            ->orderBy('first_name')
+            ->get(['id', 'first_name', 'last_name', 'employee_id']);
+        $translations = method_exists($rental, 'getTranslations') ? $rental->getTranslations('notes') : [];
         return Inertia::render('Rentals/Edit', [
-            'rental' => $rental
+            'rental' => $rental,
+            'customer' => $rental->customer,
+            'rentalItems' => $rental->rentalItems,
+            'equipment' => $rental->equipment,
+            'invoices' => $rental->invoices,
+            'timesheets' => $rental->timesheets,
+            'payments' => $rental->payments,
+            'maintenanceRecords' => $rental->maintenanceRecords,
+            'location' => $rental->location,
+            'translations' => $translations,
+            'created_at' => $rental->created_at,
+            'updated_at' => $rental->updated_at,
+            'deleted_at' => $rental->deleted_at,
+            'dropdowns' => [
+                'customers' => $customers,
+                'equipment' => $equipment,
+                'employees' => $employees,
+            ],
         ]);
     }
 

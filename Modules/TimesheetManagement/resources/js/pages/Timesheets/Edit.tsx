@@ -37,6 +37,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/Core";
 import { Calendar } from "@/Core";
 import { format } from 'date-fns';
 import { route } from 'ziggy-js';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 // Define interfaces
 interface Employee {
@@ -64,10 +65,17 @@ interface Timesheet {
   status: string;
 }
 
-interface Props extends PageProps {
-  timesheet: Timesheet;
-  employees: Employee[];
-  projects: Project[];
+interface Props {
+  timesheet: any;
+  employee?: any;
+  project?: any;
+  rental?: any;
+  user?: any;
+  created_at?: string;
+  updated_at?: string;
+  deleted_at?: string;
+  employees?: any[];
+  projects?: any[];
 }
 
 // Define form validation schema
@@ -82,7 +90,7 @@ const formSchema = z.object({
   status: z.string().optional(),
 });
 
-export default function TimesheetEdit({ auth, timesheet, employees = [], projects = [] }: Props) {
+export default function TimesheetEdit({ timesheet, employee = {}, project = {}, rental = {}, user = {}, created_at, updated_at, deleted_at, employees = [], projects = [] }: Props) {
   const { t } = useTranslation('TimesheetManagement');
 
   const { toast } = useToast();

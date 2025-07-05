@@ -3,6 +3,8 @@ import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from '../ui/dialog';
 import { FileText, Image as ImageIcon, Upload, File as FileIcon } from 'lucide-react';
 import DashboardWidgetCard from './DashboardWidgetCard';
+import { formatDateMedium } from '../../utils/dateFormatter';
+import { formatDateTime, formatDateShort } from '../../utils/dateFormatter';
 
 interface FileItem {
   id: string;
@@ -55,7 +57,7 @@ const FilesWidget: React.FC<FilesWidgetProps> = ({ files, className = '', onRemo
                   typeMap[file.type || 'other']
                 )}
                 <span className="font-medium">{file.name}</span>
-                <span className="text-xs text-muted-foreground ml-auto">{file.uploader} • {file.date}</span>
+                <span className="text-xs text-muted-foreground ml-auto">{file.uploader} • {formatDateMedium(file.date)}</span>
               </li>
             ))
           )}

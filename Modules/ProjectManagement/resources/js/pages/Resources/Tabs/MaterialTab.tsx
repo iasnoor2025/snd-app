@@ -7,6 +7,7 @@ import { ResourceFormModal } from '../../../components/project/resources/Resourc
 import { useResourceFormModal } from '../../../hooks/useResourceFormModal';
 import { useResourceSubmit } from '../../../hooks/useResourceSubmit';
 import { formatCurrency } from '../../../lib/utils';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface MaterialTabProps {
     project: {
@@ -89,7 +90,7 @@ export function MaterialTab({ project, projectMaterials }: MaterialTabProps) {
                             <TableCell>{material.quantity}</TableCell>
                             <TableCell>{formatCurrency(material.unit_price)}</TableCell>
                             <TableCell>{formatCurrency(material.quantity * material.unit_price)}</TableCell>
-                            <TableCell>{material.date_used}</TableCell>
+                            <TableCell>{formatDateMedium(material.date_used)}</TableCell>
                             <TableCell>
                                 <div className="flex space-x-2">
                                     <Button

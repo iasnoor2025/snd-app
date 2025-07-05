@@ -12,6 +12,7 @@ import { Badge } from "@/Core";
 import { Button } from "@/Core";
 import { Progress } from "@/Core";
 import { format } from 'date-fns';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Project {
     id: number;
@@ -95,7 +96,7 @@ export const ProjectList: React.FC<ProjectListProps> = ({
                                     ? format(new Date(project.end_date), 'MMM d, yyyy')
                                     : 'N/A'}
                             </TableCell>
-                            <TableCell>${project.budget.toLocaleString()}</TableCell>
+                            <TableCell>${project.budget}</TableCell>
                             <TableCell>
                                 <div className="flex gap-2">
                                     <Button

@@ -14,6 +14,7 @@ use Modules\Core\Traits\HasMediaAttachments;
 use Modules\Core\Traits\AutoLoadsRelations;
 use Modules\Core\Domain\Models\Category;
 use Modules\Core\Domain\Models\Location;
+use Modules\RentalManagement\Domain\Models\DynamicPricing;
 
 class Equipment extends Model implements HasMedia
 {
@@ -978,6 +979,14 @@ class Equipment extends Model implements HasMedia
         }
 
         return $this->depreciated_value / $latestValuation->valuation_amount;
+    }
+
+    /**
+     * Get the dynamic pricing rules for the equipment
+     */
+    public function dynamicPricingRules(): HasMany
+    {
+        return $this->hasMany(DynamicPricing::class);
     }
 }
 

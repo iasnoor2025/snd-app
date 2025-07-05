@@ -89,10 +89,14 @@ class DataRetentionController extends Controller
         $policy->load(['executionLogs' => function ($query) {
             $query->latest()->take(10);
         }]);
-
         return Inertia::render('AuditCompliance::DataRetention/Show', [
             'policy' => $policy,
+            'executionLogs' => $policy->executionLogs,
             'affectedRecords' => $this->getAffectedRecordsCount($policy),
+            'dataTypes' => $this->getDataTypes(),
+            'created_at' => $policy->created_at,
+            'updated_at' => $policy->updated_at,
+            'deleted_at' => $policy->deleted_at,
         ]);
     }
 
@@ -101,9 +105,16 @@ class DataRetentionController extends Controller
      */
     public function edit(DataRetentionPolicy $policy)
     {
+        $policy->load(['executionLogs' => function ($query) {
+            $query->latest()->take(10);
+        }]);
         return Inertia::render('AuditCompliance::DataRetention/Edit', [
             'policy' => $policy,
+            'executionLogs' => $policy->executionLogs,
             'dataTypes' => $this->getDataTypes(),
+            'created_at' => $policy->created_at,
+            'updated_at' => $policy->updated_at,
+            'deleted_at' => $policy->deleted_at,
         ]);
     }
 

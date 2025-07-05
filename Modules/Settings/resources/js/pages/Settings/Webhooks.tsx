@@ -3,6 +3,7 @@ import { Webhook } from '../../types';
 import { WebhookService } from '../../services/WebhookService';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 const defaultForm: Partial<Webhook> = {
   event: '',
@@ -107,7 +108,7 @@ export default function Webhooks() {
                 <td>{w.event}</td>
                 <td>{w.url}</td>
                 <td>{w.is_active ? t('common:yes') : t('common:no')}</td>
-                <td>{w.last_triggered_at ? new Date(w.last_triggered_at).toLocaleString() : '-'}</td>
+                <td>{w.last_triggered_at ? new Date(w.last_triggered_at) : '-'}</td>
                 <td>
                   <button className="btn btn-sm btn-secondary mr-2" onClick={() => openModal(w)}>{t('common:edit')}</button>
                   <button className="btn btn-sm btn-danger" onClick={() => handleDelete(w.id)}>{t('common:delete')}</button>

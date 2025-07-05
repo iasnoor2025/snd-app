@@ -28,9 +28,19 @@ interface Customer {
 
 interface Props {
   customer: Customer;
+  attachments?: any[];
+  rentals?: any;
+  invoices?: any;
+  payments?: any;
+  user?: any;
+  translations?: any;
+  created_at?: string;
+  updated_at?: string;
+  deleted_at?: string;
+  countries?: any[];
 }
 
-export default function Edit({ customer }: Props) {
+export default function Edit({ customer, attachments = [], rentals = {}, invoices = {}, payments = {}, user = {}, translations = {}, created_at, updated_at, deleted_at, countries = [] }: Props) {
   const { t } = useTranslation('customer');
   const [name, setName] = useState(customer.name);
   const [email, setEmail] = useState(customer.email);

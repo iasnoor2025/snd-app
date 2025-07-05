@@ -3,6 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/../../Modules/Core/r
 import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
 import { Input } from '@/../../Modules/Core/resources/js/components/ui/input';
 import { toast } from 'sonner';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Training {
   id: number;
@@ -55,8 +56,8 @@ export function TrainingList() {
             {trainings.map((training) => (
               <tr key={training.id}>
                 <td className="border px-2 py-1">{training.title}</td>
-                <td className="border px-2 py-1">{training.start_date}</td>
-                <td className="border px-2 py-1">{training.end_date}</td>
+                <td className="border px-2 py-1">{formatDateMedium(training.start_date)}</td>
+                <td className="border px-2 py-1">{formatDateMedium(training.end_date)}</td>
                 <td className="border px-2 py-1">{training.location}</td>
                 <td className="border px-2 py-1">
                   {/* Assignment and completion actions can be added here */}

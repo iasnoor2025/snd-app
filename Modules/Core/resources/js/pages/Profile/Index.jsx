@@ -15,17 +15,14 @@ import {
     Shield,
     Edit
 } from 'lucide-react';
+import { formatDateMedium } from '@/Core/utils/dateFormatter';
 
 const ProfileIndex = ({ auth }) => {
     const user = auth.user;
 
     const formatDate = (dateString) => {
         if (!dateString) return 'Not set';
-        return new Date(dateString).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
+        return formatDateMedium(dateString);
     };
 
     const breadcrumbs = [
@@ -214,4 +211,4 @@ const ProfileIndex = ({ auth }) => {
     );
 };
 
-export default ProfileIndex; 
+export default ProfileIndex;

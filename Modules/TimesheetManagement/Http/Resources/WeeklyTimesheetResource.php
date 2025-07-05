@@ -52,8 +52,8 @@ class WeeklyTimesheetResource extends JsonResource
             'date_range' => $this->date_range,
             'week_number' => $this->week_number,
             'year' => $this->year,
-            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
+            'created_at' => $this->created_at?->format('Y-m-d H:i:s')->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updated_at?->format('Y-m-d H:i:s')->format('Y-m-d H:i:s'),
         ];
     }
 }

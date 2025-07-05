@@ -277,7 +277,7 @@ class DocumentController extends Controller
                     'url' => $item->getUrl(),
                     'thumb' => $item->hasGeneratedConversion('thumb') ? $item->getUrl('thumb') : null,
                     'id_card' => $item->hasGeneratedConversion('id_card') ? $item->getUrl('id_card') : null,
-                    'created_at' => $item->created_at->toDateTimeString(),
+                    'created_at' => $item->created_at?->format('Y-m-d H:i:s')->toDateTimeString(),
                 ];
             });
 
@@ -595,7 +595,7 @@ class DocumentController extends Controller
                     'file_type' => $item->mime_type,
                     'size' => $item->size,
                     'url' => $item->getUrl(),
-                    'created_at' => $item->created_at->toDateTimeString(),
+                    'created_at' => $item->created_at?->format('Y-m-d H:i:s')->toDateTimeString(),
                 ];
             });
 
@@ -758,7 +758,7 @@ class DocumentController extends Controller
                     'file_type' => $mergedDocument->mime_type,
                     'size' => $mergedDocument->size,
                     'url' => $mergedDocument->getUrl(),
-                    'created_at' => $mergedDocument->created_at->toDateTimeString(),
+                    'created_at' => $mergedDocument->created_at?->format('Y-m-d H:i:s')->toDateTimeString(),
                 ]
             ]);
         } catch (\Exception $e) {
@@ -809,7 +809,7 @@ class DocumentController extends Controller
                     'file_type' => $media->mime_type,
                     'size' => $media->size,
                     'url' => $media->getUrl(),
-                    'created_at' => $media->created_at->toDateTimeString(),
+                    'created_at' => $media->created_at?->format('Y-m-d H:i:s')->toDateTimeString(),
                 ]
             ]);
         } catch (\Exception $e) {

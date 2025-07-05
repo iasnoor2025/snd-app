@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
 // import { LineChart, BarChart, PieChart, MapChart } from "@/Core";
 import { formatCurrency, formatPercentage } from "@/Core";
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Props {
     analytics: {
@@ -280,7 +281,7 @@ export const Dashboard: FC<Props> = ({ analytics, period }) => {
                                                 <p className="text-sm text-yellow-600">{alert.message}</p>
                                             </div>
                                             <span className="text-xs text-yellow-500">
-                                                {new Date(alert.timestamp).toLocaleString()}
+                                                {new Date(alert.timestamp)}
                                             </span>
                                         </div>
                                     </div>
@@ -310,7 +311,7 @@ export const Dashboard: FC<Props> = ({ analytics, period }) => {
                                                 </p>
                                             </div>
                                             <span className="text-xs text-red-500">
-                                                {new Date(violation.timestamp).toLocaleString()}
+                                                {new Date(violation.timestamp)}
                                             </span>
                                         </div>
                                     </div>

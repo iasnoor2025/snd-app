@@ -27,6 +27,7 @@ import {
 } from '../ui/select';
 import { Loader2, Save, FileDown, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Employee {
   id: number;
@@ -209,15 +210,11 @@ export const FinalSettlementCalculator: React.FC = () => {
   };
 
   const formatCurrency = (amount: number) => {
-    return amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    })
+    return formatDateMedium(dateString);
   };
 
   const selectedEmployee = employees.find(e => e.id === parseInt(selectedEmployeeId));

@@ -11,6 +11,7 @@ import { ArrowLeft, Edit, FileText, ClipboardList, Clock, CreditCard, BarChart }
 import { getTranslation } from "@/Core";
 import FinalSettlementTab from './FinalSettlementTab';
 import PerformanceReviewList from './PerformanceReviewList';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface EmployeeDetailProps {
   employeeId: number;

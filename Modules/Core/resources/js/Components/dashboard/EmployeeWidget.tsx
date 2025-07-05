@@ -25,13 +25,22 @@ const EmployeeWidget: React.FC<EmployeeWidgetProps> = ({ total, active, inactive
   <DashboardWidgetCard
     title="Employees"
     summary={
-      <>
-        Total: <b>{total}</b>
-        <span className="mx-2">&middot;</span>
-        <span className="text-green-600 dark:text-green-400">Active: <b>{active}</b></span>
-        <span className="mx-2">&middot;</span>
-        <span className="text-red-600 dark:text-red-400">Inactive: <b>{inactive}</b></span>
-      </>
+      <div className="space-y-1">
+        <div className="flex items-center gap-2">
+          <span className="text-gray-600 dark:text-gray-400">Total:</span>
+          <span className="font-semibold text-gray-900 dark:text-white">{total}</span>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1">
+            <span className="text-green-600 dark:text-green-400">Active:</span>
+            <span className="font-semibold text-green-600 dark:text-green-400">{active}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="text-red-600 dark:text-red-400">Inactive:</span>
+            <span className="font-semibold text-red-600 dark:text-red-400">{inactive}</span>
+          </div>
+        </div>
+      </div>
     }
     onRemove={onRemove}
     className={className}

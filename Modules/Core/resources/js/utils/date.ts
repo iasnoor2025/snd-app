@@ -6,7 +6,7 @@ export function formatDateTime(date: string | Date): string {
   if (isNaN(d.getTime())) {
     return ''; // Return empty string if the date is invalid
   }
-  return d.toLocaleString();
+  return d;
 }
 
 

@@ -37,6 +37,7 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
 import { ApprovalDialog } from '../../components/ApprovalDialog';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Timesheet {
   id: number;
@@ -54,11 +55,18 @@ interface Timesheet {
   };
 }
 
-interface Props extends PageProps {
-  timesheet: Timesheet;
+interface Props {
+  timesheet: any;
+  employee?: any;
+  project?: any;
+  rental?: any;
+  user?: any;
+  created_at?: string;
+  updated_at?: string;
+  deleted_at?: string;
 }
 
-export default function TimesheetShow({ auth, timesheet }: Props) {
+export default function TimesheetShow({ timesheet, employee = {}, project = {}, rental = {}, user = {}, created_at, updated_at, deleted_at }: Props) {
   const { t } = useTranslation('TimesheetManagement');
 
   const { toast } = useToast();

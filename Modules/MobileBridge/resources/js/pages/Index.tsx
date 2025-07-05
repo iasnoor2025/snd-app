@@ -2,6 +2,7 @@ import React from 'react';
 import { Head } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 import {
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
     Smartphone,
     Bell,
     Wifi,
@@ -90,7 +91,7 @@ const PWAIndex: React.FC<PWAIndexProps> = ({ stats }) => {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-medium text-gray-600">{t('active_users')}</p>
-                                    <p className="text-2xl font-bold">{stats.activeUsers.toLocaleString()}</p>
+                                    <p className="text-2xl font-bold">{stats.activeUsers}</p>
                                 </div>
                                 <Smartphone className="h-8 w-8 text-green-600" />
                             </div>

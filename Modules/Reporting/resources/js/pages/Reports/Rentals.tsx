@@ -9,6 +9,7 @@ import { DatePicker } from "@/Core";
 import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { toast } from 'sonner';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface RentalData {
   id: number;
@@ -104,7 +105,7 @@ export default function Rentals({ rentals, summary, filters }: Props) {
       header: 'Total Amount',
       cell: ({ row }) => (
         <span>
-          ${row.original.total_amount?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}
+          ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(row.original.total_amount) || '0.00'}
         </span>
       ),
     },
@@ -146,7 +147,7 @@ export default function Rentals({ rentals, summary, filters }: Props) {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                ${summary.total_amount?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}
+                ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(summary.total_amount) || '0.00'}
               </div>
             </CardContent>
           </Card>
@@ -218,4 +219,4 @@ export default function Rentals({ rentals, summary, filters }: Props) {
       </div>
     </>
   );
-} 
+}

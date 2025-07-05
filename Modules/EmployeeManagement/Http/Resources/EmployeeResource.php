@@ -58,7 +58,7 @@ class EmployeeResource extends JsonResource
             'advance_salary_eligible' => $this->advance_salary_eligible,
             'advance_salary_approved_this_month' => $this->advance_salary_approved_this_month,
             'personal_info' => [
-                'date_of_birth' => $this->date_of_birth->format('Y-m-d'),
+                'date_of_birth' => $this->date_of_birth?->format('Y-m-d')->format('Y-m-d'),
                 'iqama' => [
                     'number' => $this->iqama_number,
                     'expiry' => $this->iqama_expiry->format('Y-m-d'),
@@ -126,14 +126,14 @@ class EmployeeResource extends JsonResource
                     'id' => $advance->id,
                     'amount' => $advance->amount,
                     'status' => $advance->status,
-                    'created_at' => $advance->created_at->format('Y-m-d H:i:s'),
+                    'created_at' => $advance->created_at?->format('Y-m-d H:i:s')->format('Y-m-d H:i:s'),
                     'approved_at' => $advance->approved_at?->format('Y-m-d H:i:s'),
                 ];
             }),
             'timesheets' => $this->whenLoaded('timesheets', function ($timesheet) {
                 return [
                     'id' => $timesheet->id,
-                    'date' => $timesheet->date->format('Y-m-d'),
+                    'date' => $timesheet->date?->format('Y-m-d')->format('Y-m-d'),
                     'hours' => $timesheet->hours,
                     'overtime_hours' => $timesheet->overtime_hours,
                     'status' => $timesheet->status,
@@ -143,8 +143,8 @@ class EmployeeResource extends JsonResource
                 return [
                     'id' => $leave->id,
                     'type' => $leave->type,
-                    'start_date' => $leave->start_date->format('Y-m-d'),
-                    'end_date' => $leave->end_date->format('Y-m-d'),
+                    'start_date' => $leave->start_date?->format('Y-m-d')->format('Y-m-d'),
+                    'end_date' => $leave->end_date?->format('Y-m-d')->format('Y-m-d'),
                     'days' => $leave->days,
                     'status' => $leave->status,
                     'reason' => $leave->reason,
@@ -153,7 +153,7 @@ class EmployeeResource extends JsonResource
             'performance_reviews' => $this->whenLoaded('performanceReviews', function ($review) {
                 return [
                     'id' => $review->id,
-                    'date' => $review->date->format('Y-m-d'),
+                    'date' => $review->date?->format('Y-m-d')->format('Y-m-d'),
                     'rating' => $review->rating,
                     'comments' => $review->comments,
                     'reviewer' => $review->reviewer,
@@ -167,11 +167,11 @@ class EmployeeResource extends JsonResource
                     'mime_type' => $media->mime_type,
                     'size' => $media->size,
                     'url' => $media->getUrl(),
-                    'created_at' => $media->created_at->format('Y-m-d H:i:s'),
+                    'created_at' => $media->created_at?->format('Y-m-d H:i:s')->format('Y-m-d H:i:s'),
                 ];
             }),
-            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
+            'created_at' => $this->created_at?->format('Y-m-d H:i:s')->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updated_at?->format('Y-m-d H:i:s')->format('Y-m-d H:i:s'),
         ];
     }
 }

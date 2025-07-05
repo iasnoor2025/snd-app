@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { toast } from 'sonner';
 import { Upload } from 'lucide-react';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface SettingField {
   value: string | number | boolean;
@@ -228,7 +229,7 @@ export default function SystemSettings({ isAdmin }: { isAdmin?: boolean }) {
                       {backups.map((b) => (
                         <li key={b.name} className="flex items-center justify-between py-2">
                           <span>{b.name}</span>
-                          <span className="text-xs text-muted-foreground">{new Date(b.created_at * 1000).toLocaleString()}</span>
+                          <span className="text-xs text-muted-foreground">{new Date(b.created_at * 1000)}</span>
                           <a
                             href={`/system/backup/download/${b.name}`}
                             className="text-blue-600 hover:underline ml-4"

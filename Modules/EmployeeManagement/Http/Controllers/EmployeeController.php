@@ -323,7 +323,7 @@ class EmployeeController extends Controller
                     'size' => $media->size,
                     'url' => $media->getUrl(),
                     'custom_properties' => $media->custom_properties,
-                    'created_at' => $media->created_at->format('Y-m-d H:i:s'),
+                    'created_at' => $media->created_at?->format('Y-m-d H:i:s')->format('Y-m-d H:i:s'),
                 ]
             ]);
         } catch (\Exception $e) {

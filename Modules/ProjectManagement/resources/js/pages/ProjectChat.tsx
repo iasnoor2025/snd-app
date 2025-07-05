@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { Button, Card, CardContent, CardHeader, CardTitle, Input } from '@/Core';
 import { toast } from 'sonner';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 export default function ProjectChat({ projectId, currentUser }: { projectId: number, currentUser: { id: number, name: string } }) {
   const [messages, setMessages] = useState([]);
@@ -41,7 +42,7 @@ export default function ProjectChat({ projectId, currentUser }: { projectId: num
               <div className={`rounded-lg px-3 py-2 ${msg.user_id === currentUser.id ? 'bg-blue-100 text-blue-900' : 'bg-gray-100 text-gray-900'}`}>
                 <div className="text-xs font-semibold">{msg.user?.name || 'User'}</div>
                 <div>{msg.message}</div>
-                <div className="text-[10px] text-gray-500 text-right">{new Date(msg.created_at).toLocaleString()}</div>
+                <div className="text-[10px] text-gray-500 text-right">{new Date(msg.created_at)}</div>
               </div>
             </div>
           ))}

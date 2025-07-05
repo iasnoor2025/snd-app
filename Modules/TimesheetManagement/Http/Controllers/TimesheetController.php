@@ -275,7 +275,7 @@ class TimesheetController extends Controller
                 Log::info('Timesheet created successfully', [
                     'timesheet_id' => $timesheet->id,
                     'employee_id' => $timesheet->employee_id,
-                    'date' => $timesheet->date,
+                    'date' => $timesheet->date?->format('Y-m-d'),
                     'status' => $timesheet->status
                 ]);
 
@@ -377,14 +377,16 @@ class TimesheetController extends Controller
      */
     public function show(Timesheet $timesheet)
     {
-        $timesheet->load(['employee' => function ($query) {
-            $query->with(['recentTimesheets' => function ($query) {
-                $query->orderBy('date', 'desc')->limit(5);
-            }]);
-        }, 'project']);
-
+        $timesheet->load(['employee.user', 'project', 'rental']);
         return Inertia::render('Timesheets/Show', [
             'timesheet' => $timesheet,
+            'employee' => $timesheet->employee,
+            'project' => $timesheet->project,
+            'rental' => $timesheet->rental,
+            'user' => $timesheet->employee?->user,
+            'created_at' => $timesheet->created_at,
+            'updated_at' => $timesheet->updated_at,
+            'deleted_at' => $timesheet->deleted_at,
         ]);
     }
 
@@ -395,9 +397,16 @@ class TimesheetController extends Controller
     {
         $employees = Employee::orderBy('first_name')->get(['id', 'first_name', 'last_name']);
         $projects = Project::orderBy('name')->get(['id', 'name']);
-
+        $timesheet->load(['employee.user', 'project', 'rental']);
         return Inertia::render('Timesheets/Edit', [
             'timesheet' => $timesheet,
+            'employee' => $timesheet->employee,
+            'project' => $timesheet->project,
+            'rental' => $timesheet->rental,
+            'user' => $timesheet->employee?->user,
+            'created_at' => $timesheet->created_at,
+            'updated_at' => $timesheet->updated_at,
+            'deleted_at' => $timesheet->deleted_at,
             'employees' => $employees,
             'projects' => $projects,
         ]);

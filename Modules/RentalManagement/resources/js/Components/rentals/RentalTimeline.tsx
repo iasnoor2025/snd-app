@@ -4,6 +4,7 @@ import { format, isBefore, isAfter, isSameDay, differenceInDays } from 'date-fns
 import { Rental } from '@/Core/types/models';
 import { Separator } from "@/Core";
 import { 
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
   Calendar, 
   FileText, 
   Truck, 
@@ -163,8 +164,8 @@ const RentalTimeline = ({ rental }: RentalTimelineProps) => {
             <div>
               <div className="flex items-baseline gap-2">
                 <h4 className="text-sm font-medium">{step.title}</h4>
-                {step.date && (
-                  <span className="text-xs text-muted-foreground">{step.date}</span>
+                {formatDateMedium(step.date && (
+                  <span className="text-xs text-muted-foreground">{step.date)}</span>
                 )}
               </div>
               {step.description && (

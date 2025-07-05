@@ -57,9 +57,14 @@ class SettingController extends Controller
     public function show($id)
     {
         $setting = $this->settingService->repository->find($id);
-
+        $groups = array_keys($this->settingService->getGroupedSettings());
         return Inertia::render('Settings/Show', [
             'setting' => $setting,
+            'groups' => $groups,
+            'types' => ['string', 'boolean', 'integer', 'float', 'array', 'json'],
+            'created_at' => $setting->created_at ?? null,
+            'updated_at' => $setting->updated_at ?? null,
+            'deleted_at' => $setting->deleted_at ?? null,
         ]);
     }
 
@@ -67,11 +72,13 @@ class SettingController extends Controller
     {
         $setting = $this->settingService->repository->find($id);
         $groups = array_keys($this->settingService->getGroupedSettings());
-
         return Inertia::render('Settings/Edit', [
             'setting' => $setting,
             'groups' => $groups,
-            'types' => ['string', 'boolean', 'integer', 'float', 'array', 'json']
+            'types' => ['string', 'boolean', 'integer', 'float', 'array', 'json'],
+            'created_at' => $setting->created_at ?? null,
+            'updated_at' => $setting->updated_at ?? null,
+            'deleted_at' => $setting->deleted_at ?? null,
         ]);
     }
 

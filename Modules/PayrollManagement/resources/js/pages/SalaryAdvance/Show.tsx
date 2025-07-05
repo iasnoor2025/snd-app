@@ -38,6 +38,7 @@ import { Link } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { route } from 'ziggy-js';
 import { usePermission } from "@/Core";
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Employee {
     id: number;
@@ -222,7 +223,7 @@ export default function Show({ auth, salaryAdvance }: Props) {
                             <div>
                                 <p className="text-sm font-medium text-muted-foreground">Amount</p>
                                 <p className="text-2xl font-bold text-green-600">
-                                    ${salaryAdvance.amount.toLocaleString()}
+                                    ${salaryAdvance.amount}
                                 </p>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
@@ -310,7 +311,7 @@ export default function Show({ auth, salaryAdvance }: Props) {
                             <strong>
                                 {salaryAdvance.employee.first_name} {salaryAdvance.employee.last_name}
                             </strong>{' '}
-                            in the amount of <strong>${salaryAdvance.amount.toLocaleString()}</strong>?
+                            in the amount of <strong>${salaryAdvance.amount}</strong>?
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>

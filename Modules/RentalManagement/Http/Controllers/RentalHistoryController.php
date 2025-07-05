@@ -26,11 +26,11 @@ class RentalHistoryController extends Controller
                             'name' => $equipment ? $equipment->name : 'Unknown Equipment',
                             'image' => $equipment ? $equipment->getFirstMediaUrl('images') : null,
                         ],
-                        'start_date' => $rental->start_date,
+                        'start_date' => $rental->start_date?->format('Y-m-d'),
                         'end_date' => $rental->expected_end_date,
                         'total_amount' => $rental->total_amount,
                         'status' => $rental->status->value,
-                        'created_at' => $rental->created_at,
+                        'created_at' => $rental->created_at?->format('Y-m-d H:i:s'),
                     ];
                 });
 

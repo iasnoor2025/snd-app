@@ -33,12 +33,12 @@ class RealTimeDashboardController extends Controller
                     'id' => $entry->project?->id,
                     'name' => $entry->project?->name,
                 ],
-                'date' => $entry->date->toDateString(),
+                'date' => $entry->date?->format('Y-m-d')->toDateString(),
                 'hours' => $entry->hours_worked,
                 'is_overtime' => $entry->overtime_hours > 0,
                 'start_time' => $entry->start_time,
                 'end_time' => $entry->end_time,
-                'created_at' => $entry->created_at->toDateTimeString(),
+                'created_at' => $entry->created_at?->format('Y-m-d H:i:s')->toDateTimeString(),
             ];
         });
 

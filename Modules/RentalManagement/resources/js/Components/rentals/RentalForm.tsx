@@ -10,6 +10,7 @@ import { DatePicker } from '@/Core';
 import { Badge } from '@/Core';
 import { X } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface RentalFormProps {
   customers: { id: number; name: string }[];
@@ -264,11 +265,11 @@ export const RentalForm: React.FC<RentalFormProps> = ({
       <div>
         <Label htmlFor="start_date">{t('start_date')}</Label>
         <DatePicker
-          value={data.start_date}
+          value={formatDateMedium(data.start_date)}
           onChange={(date) => setData('start_date', date)}
         />
-        {errors.start_date && (
-          <p className="text-sm text-red-600">{errors.start_date}</p>
+        {formatDateMedium(errors.start_date && (
+          <p className="text-sm text-red-600">{errors.start_date)}</p>
         )}
       </div>
 

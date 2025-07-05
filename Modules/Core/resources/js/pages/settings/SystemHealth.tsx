@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../..
 import { Badge } from '../../components/ui/badge';
 import { Alert, AlertTitle, AlertDescription } from '../../components/ui/alert';
 import { toast } from 'sonner';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface HealthCheck {
   status: 'healthy' | 'warning' | 'unhealthy';
@@ -57,7 +58,7 @@ export default function SystemHealth() {
           <Badge variant={health.overall_status === 'healthy' ? 'success' : health.overall_status === 'warning' ? 'warning' : 'destructive'}>
             {health.overall_status.charAt(0).toUpperCase() + health.overall_status.slice(1)}
           </Badge>
-          <span className="ml-auto text-xs text-muted-foreground">Last checked: {new Date(health.last_checked).toLocaleString()}</span>
+          <span className="ml-auto text-xs text-muted-foreground">Last checked: {new Date(health.last_checked)}</span>
         </div>
         <div className="space-y-4">
           {Object.entries(health.checks).map(([key, check]) => (

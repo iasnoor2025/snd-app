@@ -66,6 +66,7 @@ import { useTranslation } from 'react-i18next';
 import { usePermission } from '@/Core/hooks/usePermission';
 import { Equipment } from '../../types';
 import { User, PageProps } from '@/Core/types';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface MediaItem {
   id: number;
@@ -455,7 +456,7 @@ export default function Show({ equipment, rentalItems = { data: [], total: 0 }, 
     if (typeof val === 'string') return t(val);
     if (typeof val === 'number') return String(val);
     if (typeof val === 'boolean') return val ? 'Yes' : 'No';
-    if (val instanceof Date) return val.toLocaleDateString();
+    if (val instanceof Date) return val;
     
     // Handle objects
     if (typeof val === 'object') {

@@ -47,6 +47,7 @@ import { toast } from "sonner";
 import { TimePicker } from "@/Core";
 import { Alert, AlertDescription, AlertTitle } from "@/Core";
 import { Checkbox } from "@/Core";
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Props {
   rentals?: any[];
@@ -608,12 +609,12 @@ export default function TimesheetForm({ rentals = [], rentalItems = [], operator
     }
 
     // Check for overlapping timesheets
-    const overlappingTimesheet = timesheet && timesheets.find(t => {
+    const overlappingTimesheet = timesheet && timesheets.find(t => {formatDateMedium(
       if (t.operator_id !== values.operator_id) return false;
       if (format(new Date(t.date), 'yyyy-MM-dd') !== format(values.date, 'yyyy-MM-dd')) return false;
 
-      const existingStart = new Date(`${t.date} ${t.start_time}`);
-      const existingEnd = new Date(`${t.date} ${t.end_time}`);
+      const existingStart = new Date(`${t.date)} ${t.start_time}`);
+      const existingEnd = new Date(`${formatDateMedium(t.date)} ${t.end_time}`);
       const newStart = new Date(`${format(values.date, 'yyyy-MM-dd')} ${values.start_time}`);
       const newEnd = new Date(`${format(values.date, 'yyyy-MM-dd')} ${values.end_time}`);
 
@@ -660,7 +661,7 @@ export default function TimesheetForm({ rentals = [], rentalItems = [], operator
       {/* Other hidden fields for non-Ajax submission */}
       <input type="hidden" name="rental_id" value={form.data.rental_id} />
       <input type="hidden" name="rental_item_id" value={form.data.rental_item_id} />
-      <input type="hidden" name="date" value={form.data.date} />
+      <input type="hidden" name="date" value={formatDateMedium(form.data.date)} />
       <input type="hidden" name="start_time" value={form.data.start_time} />
       <input type="hidden" name="end_time" value={form.data.end_time} />
       <input type="hidden" name="hours_used" value={form.data.hours_used} />
@@ -820,8 +821,8 @@ export default function TimesheetForm({ rentals = [], rentalItems = [], operator
                     </PopoverContent>
                   </Popover>
                 </div>
-                {form.errors.date && (
-                  <p className="text-xs text-destructive mt-1">{form.errors.date}</p>
+                {formatDateMedium(form.errors.date && (
+                  <p className="text-xs text-destructive mt-1">{form.errors.date)}</p>
                 )}
               </div>
 

@@ -40,8 +40,8 @@ class ProfileApiController extends Controller
                     'department' => $user->department ?? null,
                     'bio' => $user->bio ?? null,
                     'preferences' => $user->preferences ?? [],
-                    'created_at' => $user->created_at,
-                    'updated_at' => $user->updated_at,
+                    'created_at' => $user->created_at?->format('Y-m-d H:i:s'),
+                    'updated_at' => $user->updated_at?->format('Y-m-d H:i:s'),
                 ]
             ]);
         } catch (Exception $e) {

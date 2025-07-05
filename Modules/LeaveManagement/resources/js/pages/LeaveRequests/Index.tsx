@@ -39,6 +39,7 @@ import {
 } from "@/Core";
 import { AppLayout } from '@/Core';
 import {
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
   Plus as PlusIcon,
   Eye as EyeIcon,
   Pencil as PencilIcon,
@@ -92,7 +93,7 @@ function usePermission() {
 }
 
 // Define a local formatDate utility if needed
-const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString();
+const formatDate = (dateString: string) => new Date(dateString);
 
 const breadcrumbs = [
   { title: 'Dashboard', href: '/dashboard' },

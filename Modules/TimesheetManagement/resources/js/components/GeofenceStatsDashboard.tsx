@@ -65,6 +65,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface GeofenceStats {
     total_zones: number;
@@ -492,7 +493,7 @@ const GeofenceStatsDashboard: React.FC = () => {
                                             </TableCell>
                                             <TableCell>{formatDistance(violation.distance_from_zone)}</TableCell>
                                             <TableCell>
-                                                {new Date(violation.timestamp).toLocaleString()}
+                                                {new Date(violation.timestamp)}
                                             </TableCell>
                                             <TableCell>
                                                 {violation.resolved ? (

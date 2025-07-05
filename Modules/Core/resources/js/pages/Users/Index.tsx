@@ -47,6 +47,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface User {
     id: number;
@@ -203,7 +204,7 @@ export default function Index({ users, roles, can }: Props) {
                                                         </Badge>
                                                     </TableCell>
                                                     <TableCell>
-                                                        {new Date(user.created_at).toLocaleDateString()}
+                                                        {new Date(user.created_at)}
                                                     </TableCell>
                                                     <TableCell className="text-right">
                                                         <DropdownMenu>

@@ -6,6 +6,7 @@ import { Button } from "@/Core";
 import { Badge } from "@/Core";
 import { ArrowLeft, Edit, History, Calendar } from 'lucide-react';
 import { RentalItem } from '@/Modules/RentalManagement/resources/js/Types/rental';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Props {
     item: RentalItem;
@@ -150,7 +151,7 @@ export const Show: FC<Props> = ({ item, rentalHistory }) => {
                                                 <p className="font-medium">{rental.customer_name}</p>
                                                 <div className="flex items-center text-sm text-gray-500">
                                                     <Calendar className="w-4 h-4 mr-1" />
-                                                    {new Date(rental.start_date).toLocaleDateString()} - {new Date(rental.end_date).toLocaleDateString()}
+                                                    {new Date(rental.start_date)} - {new Date(rental.end_date)}
                                                 </div>
                                             </div>
                                             <div className="text-right">

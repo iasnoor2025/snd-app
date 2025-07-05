@@ -14,6 +14,7 @@ import { format } from 'date-fns';
 import { CalendarIcon, ArrowLeft, Save } from 'lucide-react';
 import { cn } from "@/Core";
 import { Separator } from "@/Core";
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Customer {
     id: number;
@@ -41,9 +42,17 @@ interface Location {
 }
 
 interface Props {
-    project: Project;
-    customers: Customer[];
-    locations: Location[];
+    project: any;
+    manager?: any;
+    tasks?: any[];
+    teamMembers?: any[];
+    client?: any;
+    location?: any;
+    customers?: any[];
+    locations?: any[];
+    created_at?: string;
+    updated_at?: string;
+    deleted_at?: string;
 }
 
 // Declare window.route for TypeScript
@@ -51,7 +60,7 @@ interface Props {
 // eslint-disable-next-line
 declare global { interface Window { route: any; } }
 
-export default function Edit({ project, customers, locations }: Props) {
+export default function Edit({ project, manager = {}, tasks = [], teamMembers = [], client = {}, location = {}, customers = [], locations = [], created_at, updated_at, deleted_at }: Props) {
   const { t } = useTranslation('project');
 
     // Deduplicate locations based on name, city, and state
@@ -201,14 +210,14 @@ export default function Edit({ project, customers, locations }: Props) {
                                         <PopoverContent className="w-auto p-0" align="start">
                                             <Calendar
                                                 mode="single"
-                                                selected={data.start_date}
+                                                selected={formatDateMedium(data.start_date)}
                                                 onSelect={(date) => setData('start_date', date)}
                                                 initialFocus
                                             />
                                         </PopoverContent>
                                     </Popover>
-                                    {errors.start_date && (
-                                        <p className="text-sm text-destructive">{errors.start_date}</p>
+                                    {formatDateMedium(errors.start_date && (
+                                        <p className="text-sm text-destructive">{errors.start_date)}</p>
                                     )}
                                 </div>
 
@@ -234,14 +243,14 @@ export default function Edit({ project, customers, locations }: Props) {
                                         <PopoverContent className="w-auto p-0" align="start">
                                             <Calendar
                                                 mode="single"
-                                                selected={data.end_date}
+                                                selected={formatDateMedium(data.end_date)}
                                                 onSelect={(date) => setData('end_date', date)}
                                                 initialFocus
                                             />
                                         </PopoverContent>
                                     </Popover>
-                                    {errors.end_date && (
-                                        <p className="text-sm text-destructive">{errors.end_date}</p>
+                                    {formatDateMedium(errors.end_date && (
+                                        <p className="text-sm text-destructive">{errors.end_date)}</p>
                                     )}
                                 </div>
 

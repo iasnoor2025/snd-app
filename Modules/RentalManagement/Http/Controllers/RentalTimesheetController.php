@@ -787,7 +787,7 @@ class RentalTimesheetController extends Controller
                 if (!$isValid) {
                     $problemTimesheets[] = [
                         'id' => $timesheet->id,
-                        'date' => $timesheet->date,
+                        'date' => $timesheet->date?->format('Y-m-d'),
                         'rental_item_id' => $timesheet->rental_item_id,
                         'rental_item_exists' => $timesheet->rentalItem ? true : false,
                         'equipment_id' => $timesheet->equipment_id,

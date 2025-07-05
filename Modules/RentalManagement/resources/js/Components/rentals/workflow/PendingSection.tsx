@@ -8,6 +8,7 @@ import { Clock, FileText, Loader2 } from "lucide-react";
 import RentalItemsCard from "../../rentals/RentalItemsCard";
 import { format } from "date-fns";
 import { Progress } from "@/Core";
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 // Interface for PendingSection props
 interface PendingSectionProps {

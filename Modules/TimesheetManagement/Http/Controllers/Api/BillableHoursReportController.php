@@ -36,7 +36,7 @@ class BillableHoursReportController extends Controller
 
         $entries = $rows->map(function ($row) {
             return [
-                'date' => $row->date->toDateString(),
+                'date' => $row->date?->format('Y-m-d')->toDateString(),
                 'employee' => $row->employee ? $row->employee->first_name . ' ' . $row->employee->last_name : '',
                 'project' => $row->project ? $row->project->name : '',
                 'hours' => $row->hours,

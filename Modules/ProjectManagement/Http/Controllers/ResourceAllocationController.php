@@ -206,8 +206,8 @@ use $start)
             foreach ($rentalConflicts as $conflict) {
                 $conflicts[] = [
                     'type' => 'rental',
-                    'start_date' => $conflict->start_date,
-                    'end_date' => $conflict->end_date,
+                    'start_date' => $conflict->start_date?->format('Y-m-d'),
+                    'end_date' => $conflict->end_date?->format('Y-m-d'),
                     'details' => 'Rented to: ' . ($conflict->customer->name ?? 'Unknown'),
                 ];
             }

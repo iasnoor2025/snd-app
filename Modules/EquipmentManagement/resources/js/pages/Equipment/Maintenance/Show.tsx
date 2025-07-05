@@ -29,6 +29,7 @@ import {
 } from "@/Core";
 import { Separator } from "@/Core";
 import { AppLayout } from '@/Core';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 // Inline type definitions
 interface Equipment {
@@ -61,7 +62,7 @@ interface MaintenanceRecord {
 
 // Simple placeholder formatters
 const formatCurrency = (amount: number) => `$${amount.toFixed(2)}`;
-const formatDate = (date: string) => new Date(date).toLocaleDateString();
+const formatDate = (date: string) => new Date(date);
 
 interface Props {
   maintenance: MaintenanceRecord & {

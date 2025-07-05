@@ -12,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/Core";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
 import { usePermission } from "@/Core";
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Props extends PageProps {
     auth?: any;
@@ -125,7 +126,7 @@ export default function Index({ auth, settlements, filters }: Props) {
                                 <div>
                                     <Input
                                         type="date"
-                                        value={filters.date_from}
+                                        value={formatDateMedium(filters.date_from)}
                                         onChange={(e) => {
                                             const url = new URL(window.location.href);
                                             url.searchParams.set('date_from', e.target.value);
@@ -136,7 +137,7 @@ export default function Index({ auth, settlements, filters }: Props) {
                                 <div>
                                     <Input
                                         type="date"
-                                        value={filters.date_to}
+                                        value={formatDateMedium(filters.date_to)}
                                         onChange={(e) => {
                                             const url = new URL(window.location.href);
                                             url.searchParams.set('date_to', e.target.value);

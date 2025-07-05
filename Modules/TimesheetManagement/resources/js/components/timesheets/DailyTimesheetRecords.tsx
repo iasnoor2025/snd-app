@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { Badge } from "@/Core";
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface TimesheetRecord {
   date: string;
@@ -128,11 +129,11 @@ export const DailyTimesheetRecords: React.FC<DailyTimesheetRecordsProps> = ({
             <tbody>
               {/* Days Row */}
               <tr className="border-b">
-                {timesheets.map((record) => {
+                {formatDateMedium(timesheets.map((record) => {
                   const isFridayDay = isFriday(record.date);
                   return (
                     <td
-                      key={`day-${record.date}`}
+                      key={`day-${record.date)}`}
                       className={`p-1 text-center ${isFridayDay ? 'bg-blue-50' : ''}`}
                     >
                       <div className={`text-[10px] ${isFridayDay ? 'text-blue-700 font-bold' : 'text-gray-500'}`}>
@@ -144,11 +145,11 @@ export const DailyTimesheetRecords: React.FC<DailyTimesheetRecordsProps> = ({
               </tr>
               {/* Regular Hours Row */}
               <tr className="border-b">
-                {timesheets.map((record) => {
+                {formatDateMedium(timesheets.map((record) => {
                   const isFridayDay = isFriday(record.date);
                   return (
                     <td
-                      key={`regular-${record.date}`}
+                      key={`regular-${record.date)}`}
                       className={`p-1 text-center ${isFridayDay ? 'bg-blue-50' : ''}`}
                     >
                       {record.regularHours > 0 ? (
@@ -166,11 +167,11 @@ export const DailyTimesheetRecords: React.FC<DailyTimesheetRecordsProps> = ({
               </tr>
               {/* Overtime Hours Row */}
               <tr className="border-b">
-                {timesheets.map((record) => {
+                {formatDateMedium(timesheets.map((record) => {
                   const isFridayDay = isFriday(record.date);
                   return (
                     <td
-                      key={`overtime-${record.date}`}
+                      key={`overtime-${record.date)}`}
                       className={`p-1 text-center ${isFridayDay ? 'bg-blue-50' : ''}`}
                     >
                       {record.overtimeHours > 0 ? (
@@ -188,11 +189,11 @@ export const DailyTimesheetRecords: React.FC<DailyTimesheetRecordsProps> = ({
               </tr>
               {/* Status Row */}
               <tr className="border-b">
-                {timesheets.map((record) => {
+                {formatDateMedium(timesheets.map((record) => {
                   const isFridayDay = isFriday(record.date);
                   return (
                     <td
-                      key={`status-${record.date}`}
+                      key={`status-${record.date)}`}
                       className={`p-1 text-center ${isFridayDay ? 'bg-blue-50' : ''}`}
                     >
                       <div className={`inline-block px-1.5 py-0.5 rounded-full text-[10px] font-bold ${

@@ -108,7 +108,7 @@ class MediaLibraryController extends Controller
                     'file_name' => $media->file_name,
                     'mime_type' => $media->mime_type,
                     'size' => $media->size,
-                    'created_at' => $media->created_at,
+                    'created_at' => $media->created_at?->format('Y-m-d H:i:s'),
                     'url' => $media->getFullUrl(),
                     'preview_url' => $media->hasGeneratedConversion('thumb') ? $media->getUrl('thumb') : null,
                     'collection_name' => $media->collection_name,
@@ -204,7 +204,7 @@ class MediaLibraryController extends Controller
                         'size' => $media->size,
                         'original_url' => $media->getUrl(),
                         'preview_url' => $media->hasGeneratedConversion('thumb') ? $media->getUrl('thumb') : null,
-                        'created_at' => $media->created_at->toDateTimeString(),
+                        'created_at' => $media->created_at?->format('Y-m-d H:i:s')->toDateTimeString(),
                     ];
                 }),
             ]);

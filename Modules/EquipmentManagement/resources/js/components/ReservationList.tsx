@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/../../Modules/Core/resources/js/components/ui/card';
 import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
 import { toast } from 'sonner';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Reservation {
   id: number;
@@ -55,8 +56,8 @@ export function ReservationList({ equipmentId }: { equipmentId: number }) {
             {reservations.map((r) => (
               <tr key={r.id}>
                 <td className="border px-2 py-1">{r.user?.name}</td>
-                <td className="border px-2 py-1">{new Date(r.reserved_from).toLocaleString()}</td>
-                <td className="border px-2 py-1">{new Date(r.reserved_to).toLocaleString()}</td>
+                <td className="border px-2 py-1">{new Date(r.reserved_from)}</td>
+                <td className="border px-2 py-1">{new Date(r.reserved_to)}</td>
                 <td className="border px-2 py-1">{r.status}</td>
                 <td className="border px-2 py-1">{r.notes}</td>
                 <td className="border px-2 py-1">

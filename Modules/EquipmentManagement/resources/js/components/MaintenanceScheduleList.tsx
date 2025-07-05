@@ -3,6 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/../../Modules/Core/r
 import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
 import { Input } from '@/../../Modules/Core/resources/js/components/ui/input';
 import { toast } from 'sonner';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Schedule {
   id: number;
@@ -53,7 +54,7 @@ export function MaintenanceScheduleList({ equipmentId }: { equipmentId: number }
           <tbody>
             {schedules.map((s) => (
               <tr key={s.id}>
-                <td className="border px-2 py-1">{new Date(s.scheduled_at).toLocaleString()}</td>
+                <td className="border px-2 py-1">{new Date(s.scheduled_at)}</td>
                 <td className="border px-2 py-1">{s.type}</td>
                 <td className="border px-2 py-1">{s.status}</td>
                 <td className="border px-2 py-1">{s.notes}</td>

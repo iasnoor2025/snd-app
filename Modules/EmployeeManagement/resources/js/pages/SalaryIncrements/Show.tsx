@@ -12,6 +12,7 @@ import { AppLayout } from '@/Core';
 import { PageProps } from '@/Core/types';
 import { getTranslation } from "@/Core";
 import { route } from 'ziggy-js';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Employee {
     id: number;
@@ -90,11 +91,7 @@ export default function Show({ increment }: Props) {
     };
 
     const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-        });
+        return formatDateMedium(dateString);
     };
 
     const getStatusBadge = (status: string) => {

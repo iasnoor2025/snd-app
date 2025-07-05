@@ -66,9 +66,14 @@ class ProjectController extends Controller
     public function show(Project $project)
     {
         $project->load(['manager', 'tasks', 'teamMembers']);
-
         return Inertia::render('Modules/ProjectManagement/resources/js/pages/Show', [
             'project' => $project,
+            'manager' => $project->manager,
+            'tasks' => $project->tasks,
+            'teamMembers' => $project->teamMembers,
+            'created_at' => $project->created_at,
+            'updated_at' => $project->updated_at,
+            'deleted_at' => $project->deleted_at,
         ]);
     }
 
@@ -77,8 +82,19 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
+        $project->load(['manager', 'tasks', 'teamMembers']);
+        $customers = Customer::all();
+        $locations = Location::all();
         return Inertia::render('Modules/ProjectManagement/resources/js/pages/Edit', [
             'project' => $project,
+            'manager' => $project->manager,
+            'tasks' => $project->tasks,
+            'teamMembers' => $project->teamMembers,
+            'customers' => $customers,
+            'locations' => $locations,
+            'created_at' => $project->created_at,
+            'updated_at' => $project->updated_at,
+            'deleted_at' => $project->deleted_at,
         ]);
     }
 
@@ -124,9 +140,9 @@ class ProjectController extends Controller
     public function generateReport(Request $request, Project $project)
     {
         $format = $request->input('format', 'pdf');
-        
+
         $project->load(['manager', 'tasks', 'teamMembers', 'resources']);
-        
+
         $reportData = [
             'project' => $project,
             'summary' => [
@@ -148,9 +164,9 @@ class ProjectController extends Controller
 
         // Generate HTML for PDF
         $html = $this->generateProjectReportHTML($reportData);
-        
+
         $filename = "project-report-{$project->id}-" . now()->format('Ymd_His') . ".{$format}";
-        
+
         return response($html, 200, [
             'Content-Type' => $format === 'pdf' ? 'application/pdf' : 'text/html',
             'Content-Disposition' => "attachment; filename=\"$filename\"",
@@ -164,7 +180,7 @@ class ProjectController extends Controller
     {
         $project = $data['project'];
         $summary = $data['summary'];
-        
+
         $html = '<!DOCTYPE html>
 <html>
 <head>
@@ -288,11 +304,11 @@ class ProjectController extends Controller
         $html .= '<div class="section">
         <div class="section-title">Team Members</div>
         <ul class="task-list">';
-        
+
         foreach ($project->teamMembers as $member) {
             $html .= '<li class="task-item">' . $member->name . ' - ' . ($member->pivot->role ?? 'Team Member') . '</li>';
         }
-        
+
         $html .= '</ul>
     </div>
 

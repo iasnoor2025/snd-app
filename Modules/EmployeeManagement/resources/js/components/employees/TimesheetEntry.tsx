@@ -40,6 +40,7 @@ import {
 import { cn } from '../../lib/utils';
 import { Badge } from '../ui/badge';
 import { CalendarIcon, MoreHorizontal, Plus, Save, Clock } from 'lucide-react';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Project {
   id: number;
@@ -371,7 +372,7 @@ export const TimesheetEntry: React.FC<TimesheetEntryProps> = ({
                   </DialogClose>
                   <Button
                     onClick={handleSubmit}
-                    disabled={!currentEntry.project_id || !currentEntry.date}
+                    disabled={formatDateMedium(!currentEntry.project_id || !currentEntry.date)}
                     <Save className="h-4 w-4 mr-2" />
                     Save Entry
                   </Button>

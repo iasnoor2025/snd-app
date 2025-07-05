@@ -7,6 +7,7 @@ import { Button } from "@/Core";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
 import { format } from 'date-fns';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface PayrollItem {
     id: number;
@@ -36,12 +37,18 @@ interface Payroll {
     currency: string;
 }
 
-interface Props extends PageProps {
-    payroll: Payroll;
-    auth?: any;
+interface Props {
+  payroll: any;
+  employee?: any;
+  items?: any[];
+  approver?: any;
+  payer?: any;
+  created_at?: string;
+  updated_at?: string;
+  deleted_at?: string;
 }
 
-export default function Show({ auth, payroll }: Props) {
+export default function Show({ payroll, employee = {}, items = [], approver = {}, payer = {}, created_at, updated_at, deleted_at }: Props) {
   const { t } = useTranslation('payrolls');
 
     const getStatusBadge = (status: string) => {
@@ -73,7 +80,7 @@ export default function Show({ auth, payroll }: Props) {
 
     return (
         <AppLayout
-            user={auth.user}
+            user={payroll.employee}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">{t('ttl_payroll_details')}</h2>}
         >
             <Head title={t('ttl_payroll_details')} />
@@ -132,7 +139,7 @@ export default function Show({ auth, payroll }: Props) {
                                 <dl className="space-y-4">
                                     <div>
                                         <dt className="text-sm font-medium text-gray-500">Employee</dt>
-                                        <dd className="mt-1 text-sm text-gray-900">{payroll.employee.name}</dd>
+                                        <dd className="mt-1 text-sm text-gray-900">{employee.name || 'N/A'}</dd>
                                     </div>
                                     <div>
                                         <dt className="text-sm font-medium text-gray-500">{t('lbl_payroll_month')}</dt>
@@ -147,13 +154,13 @@ export default function Show({ auth, payroll }: Props) {
                                     <div>
                                         <dt className="text-sm font-medium text-gray-500">{t('created_at')}</dt>
                                         <dd className="mt-1 text-sm text-gray-900">
-                                            {format(new Date(payroll.created_at), 'PPpp')}
+                                            {format(new Date(created_at || payroll.created_at), 'PPpp')}
                                         </dd>
                                     </div>
                                     <div>
                                         <dt className="text-sm font-medium text-gray-500">{t('last_updated')}</dt>
                                         <dd className="mt-1 text-sm text-gray-900">
-                                            {format(new Date(payroll.updated_at), 'PPpp')}
+                                            {format(new Date(updated_at || payroll.updated_at), 'PPpp')}
                                         </dd>
                                     </div>
                                 </dl>
@@ -201,7 +208,7 @@ export default function Show({ auth, payroll }: Props) {
                         </Card>
                     </div>
 
-                    {payroll.items.length > 0 && (
+                    {items.length > 0 && (
                         <Card className="mt-6">
                             <CardHeader>
                                 <CardTitle>{t('ttl_payroll_items')}</CardTitle>
@@ -223,7 +230,7 @@ export default function Show({ auth, payroll }: Props) {
                                             </tr>
                                         </thead>
                                         <tbody className="bg-white divide-y divide-gray-200">
-                                            {payroll.items.map((item) => (
+                                            {items.map((item) => (
                                                 <tr key={item.id}>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                         {item.type}

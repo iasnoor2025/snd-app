@@ -24,13 +24,29 @@ const statusColor: Record<string, string> = {
 };
 
 const PayrollWidget: React.FC<PayrollWidgetProps> = ({ total, processed, pending, recentPayrolls, className = '', onRemove }) => (
-  <DashboardWidgetCard title="Payrolls" summary={
-    <div className="flex gap-4 mt-2 text-xs">
-      <span>Total: <b>{total}</b></span>
-      <span className="text-green-600 dark:text-green-400">Processed: <b>{processed}</b></span>
-      <span className="text-yellow-600 dark:text-yellow-400">Pending: <b>{pending}</b></span>
-    </div>
-  } onRemove={onRemove} className={className} />
+  <DashboardWidgetCard
+    title="Payrolls"
+    summary={
+      <div className="space-y-1">
+        <div className="flex items-center gap-2">
+          <span className="text-gray-600 dark:text-gray-400">Total:</span>
+          <span className="font-semibold text-gray-900 dark:text-white">{total}</span>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1">
+            <span className="text-green-600 dark:text-green-400">Processed:</span>
+            <span className="font-semibold text-green-600 dark:text-green-400">{processed}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="text-yellow-600 dark:text-yellow-400">Pending:</span>
+            <span className="font-semibold text-yellow-600 dark:text-yellow-400">{pending}</span>
+          </div>
+        </div>
+      </div>
+    }
+    onRemove={onRemove}
+    className={className}
+  />
 );
 
 export default PayrollWidget;

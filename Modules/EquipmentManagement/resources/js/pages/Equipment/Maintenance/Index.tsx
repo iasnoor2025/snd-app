@@ -4,7 +4,7 @@ import { PageProps, BreadcrumbItem } from '@/Modules/EquipmentManagement/resourc
 import { AppLayout } from '@/Core';
 import { Equipment, MaintenanceRecord } from '@/Modules/EquipmentManagement/resources/js/types/models';
 // Simple format functions
-const formatDate = (date: string) => new Date(date).toLocaleDateString();
+const formatDate = (date: string) => new Date(date);
 const formatCurrency = (amount: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 import { Button } from "@/Core";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
@@ -30,6 +30,7 @@ import {
   XCircle as XCircleIcon
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Props extends PageProps {
   equipment: Equipment;

@@ -11,18 +11,26 @@ interface StatsCardProps {
 
 const StatsCard: React.FC<StatsCardProps> = ({ icon, label, value, trend, className = '' }) => {
   return (
-    <div className={`flex flex-col gap-2 p-4 rounded-xl bg-transparent ${className}`}>
+    <div className={`flex flex-col gap-3 p-4 rounded-xl bg-transparent ${className}`}>
       <motion.div
         whileHover={{ rotate: 12, color: 'var(--accent, #00eaff)' }}
         whileTap={{ scale: 0.95 }}
-        className="w-7 h-7 mb-1"
+        className="w-8 h-8 mb-1 text-accent"
         style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
       >
         {icon}
       </motion.div>
-      <div className="text-xs font-semibold uppercase opacity-80 tracking-wide">{label}</div>
-      <div className="text-2xl font-extrabold leading-tight">{value}</div>
-      {trend && <div className="text-xs opacity-60">{trend}</div>}
+      <div className="text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400">
+        {label}
+      </div>
+      <div className="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white">
+        {value}
+      </div>
+      {trend && (
+        <div className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+          {trend}
+        </div>
+      )}
     </div>
   );
 };

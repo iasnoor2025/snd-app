@@ -4,6 +4,7 @@ import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
 import { Input } from '@/../../Modules/Core/resources/js/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/../../Modules/Core/resources/js/components/ui/select';
 import { toast } from 'sonner';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Skill {
   id: number;
@@ -155,7 +156,7 @@ export function SkillsMatrix({ employeeId }: { employeeId: number }) {
                     className="w-16"
                   />
                 </td>
-                <td className="border px-2 py-1">{skill.certified_at ? new Date(skill.certified_at).toLocaleDateString() : '-'}</td>
+                <td className="border px-2 py-1">{skill.certified_at ? new Date(skill.certified_at) : '-'}</td>
                 <td className="border px-2 py-1">
                   <Button variant="destructive" size="sm" onClick={() => handleRemoveSkill(skill.id)} disabled={isLoading}>
                     Remove

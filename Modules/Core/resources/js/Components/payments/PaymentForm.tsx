@@ -23,6 +23,7 @@ import {
 import { CalendarIcon, CreditCard, DollarSign } from "lucide-react";
 import { toast } from 'sonner';
 import { format } from "date-fns";
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface PaymentFormData {
   amount: number;
@@ -205,13 +206,13 @@ export default function PaymentForm({
               <Input
                 id="date"
                 type="date"
-                value={formData.date}
+                value={formatDateMedium(formData.date)}
                 onChange={(e) => updateFormData('date', e.target.value)}
                 className={`pl-10 ${errors.date ? 'border-red-500' : ''}`}
               />
             </div>
-            {errors.date && (
-              <p className="text-sm text-red-500">{errors.date}</p>
+            {formatDateMedium(errors.date && (
+              <p className="text-sm text-red-500">{errors.date)}</p>
             )}
           </div>
 

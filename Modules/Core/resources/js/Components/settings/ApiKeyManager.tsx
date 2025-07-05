@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface ApiKey {
     id: number;
@@ -116,12 +117,12 @@ export default function ApiKeyManager({ apiKeys: initialApiKeys }: ApiKeyManager
                                 <TableRow key={key.id}>
                                     <TableCell>{key.name}</TableCell>
                                     <TableCell>{key.scopes.join(', ')}</TableCell>
-                                    <TableCell>{new Date(key.created_at).toLocaleDateString()}</TableCell>
+                                    <TableCell>{new Date(key.created_at)}</TableCell>
                                     <TableCell>
-                                        {key.expires_at ? new Date(key.expires_at).toLocaleDateString() : 'Never'}
+                                        {key.expires_at ? new Date(key.expires_at) : 'Never'}
                                     </TableCell>
                                     <TableCell>
-                                        {key.last_used_at ? new Date(key.last_used_at).toLocaleDateString() : 'Never'}
+                                        {key.last_used_at ? new Date(key.last_used_at) : 'Never'}
                                     </TableCell>
                                     <TableCell>
                                         <Button

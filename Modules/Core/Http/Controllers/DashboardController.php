@@ -147,7 +147,7 @@ class DashboardController extends Controller
                     'id' => $rental->id,
                     'rental_number' => $rental->rental_number,
                     'client_name' => $rental->client ? $rental->customer->company_name : 'Unknown Client',
-                    'start_date' => $rental->start_date,
+                    'start_date' => $rental->start_date?->format('Y-m-d'),
                     'status' => $rental->status,
                     'total_amount' => $rental->total_amount,
                 ];
@@ -200,8 +200,8 @@ class DashboardController extends Controller
                 return [
                     'id' => $leave->id,
                     'employee_name' => $leave->employee ? $leave->employee->first_name . ' ' . $leave->employee->last_name : 'Unknown Employee',
-                    'start_date' => $leave->start_date,
-                    'end_date' => $leave->end_date,
+                    'start_date' => $leave->start_date?->format('Y-m-d'),
+                    'end_date' => $leave->end_date?->format('Y-m-d'),
                     'status' => $leave->status,
                     'type' => $leave->leave_type,
                 ];
@@ -217,8 +217,8 @@ class DashboardController extends Controller
             ->map(function ($leave) {
                 return [
                     'id' => $leave->id,
-                    'start_date' => $leave->start_date,
-                    'end_date' => $leave->end_date,
+                    'start_date' => $leave->start_date?->format('Y-m-d'),
+                    'end_date' => $leave->end_date?->format('Y-m-d'),
                     'status' => $leave->status,
                     'type' => $leave->leave_type,
                 ];
@@ -235,7 +235,7 @@ class DashboardController extends Controller
                 return [
                     'id' => $timesheet->id,
                     'employee_name' => $timesheet->employee ? $timesheet->employee->first_name . ' ' . $timesheet->employee->last_name : 'Unknown Employee',
-                    'date' => $timesheet->date,
+                    'date' => $timesheet->date?->format('Y-m-d'),
                     'hours' => $timesheet->hours_worked + $timesheet->overtime_hours,
                     'status' => $timesheet->status ?? 'Submitted',
                 ];
@@ -251,7 +251,7 @@ class DashboardController extends Controller
             ->map(function ($timesheet) {
                 return [
                     'id' => $timesheet->id,
-                    'date' => $timesheet->date,
+                    'date' => $timesheet->date?->format('Y-m-d'),
                     'hours' => $timesheet->hours_worked + $timesheet->overtime_hours,
                     'status' => $timesheet->status ?? 'Submitted',
                 ];

@@ -51,6 +51,7 @@ import {
   Cpu
 } from 'lucide-react';
 import { formatCurrency } from "@/Core";
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Equipment {
   id: number;
@@ -209,7 +210,7 @@ const PredictiveMaintenance: React.FC<Props> = ({
   ];
 
   const maintenanceTrendData = Array.from({ length: 12 }, (_, i) => ({
-    month: new Date(2024, i, 1).toLocaleDateString('en', { month: 'short' }),
+    month: formatDateMedium(new Date(2024, i, 1)),
     preventive: Math.floor(Math.random() * 20) + 10,
     predictive: Math.floor(Math.random() * 15) + 5,
     corrective: Math.floor(Math.random() * 10) + 2,

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { RentalStatusBadge } from '../RentalStatusBadge';
 import { DocumentManager } from '../DocumentManager';
 import { dateTimeDisplay } from '../date-time-display';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Props {
     rental: {
@@ -77,11 +78,11 @@ export const RentalDetails: FC<Props> = ({ rental, onEdit }) => {
                             <div className="flex space-x-4">
                                 <div>
                                     <p className="text-gray-500">{t('lbl_start_date')}</p>
-                                    <p className="font-medium">{dateTimeDisplay(rental.start_date)}</p>
+                                    <p className="font-medium">{formatDateTime(rental.start_date)}</p>
                                 </div>
                                 <div>
                                     <p className="text-gray-500">{t('end_date')}</p>
-                                    <p className="font-medium">{dateTimeDisplay(rental.end_date)}</p>
+                                    <p className="font-medium">{formatDateTime(rental.end_date)}</p>
                                 </div>
                             </div>
                         </dd>
@@ -104,7 +105,7 @@ export const RentalDetails: FC<Props> = ({ rental, onEdit }) => {
                     <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt className="text-sm font-medium text-gray-500">{t('last_updated')}</dt>
                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                            {dateTimeDisplay(rental.updated_at)}
+                            {formatDateTime(rental.updated_at)}
                         </dd>
                     </div>
                 </dl>

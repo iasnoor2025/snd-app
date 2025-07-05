@@ -33,6 +33,7 @@ import { Plus, Search, Filter } from 'lucide-react';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { route } from 'ziggy-js';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Employee {
     id: number;
@@ -214,7 +215,7 @@ export default function Index({ auth, salaryAdvances, filters }: Props) {
                                                     {advance.employee.first_name} {advance.employee.last_name}
                                                 </TableCell>
                                                 <TableCell>
-                                                    ${advance.amount.toLocaleString()}
+                                                    ${advance.amount}
                                                 </TableCell>
                                                 <TableCell>
                                                     {format(new Date(advance.advance_date), 'MMM dd, yyyy')}

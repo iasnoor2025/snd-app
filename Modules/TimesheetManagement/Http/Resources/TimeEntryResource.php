@@ -33,7 +33,7 @@ class TimeEntryResource extends JsonResource
                     'name' => $this->task->name,
                 ];
             }),
-            'date' => $this->date->format('Y-m-d'),
+            'date' => $this->date?->format('Y-m-d')->format('Y-m-d'),
             'hours' => $this->hours,
             'description' => $this->description,
             'is_overtime' => $this->is_overtime,
@@ -44,8 +44,8 @@ class TimeEntryResource extends JsonResource
             'status' => $this->status,
             'day_of_week' => $this->day_of_week,
             'day_name' => $this->day_name,
-            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
+            'created_at' => $this->created_at?->format('Y-m-d H:i:s')->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updated_at?->format('Y-m-d H:i:s')->format('Y-m-d H:i:s'),
         ];
     }
 }

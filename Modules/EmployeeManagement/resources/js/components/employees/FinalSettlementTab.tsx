@@ -23,6 +23,7 @@ import { useToast } from "@/Core";
 import { usePermission } from "@/Core";
 import { Download, Receipt } from 'lucide-react';
 import { Textarea } from "@/Core";
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Deduction {
   id: number;

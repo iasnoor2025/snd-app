@@ -80,16 +80,17 @@ class ComplianceReportController extends Controller
     public function show(ComplianceReport $report)
     {
         $report->load('generatedBy');
-
-        // Load report data if file exists
         $reportData = null;
-        if ($report->file_path && Storage::disk('local')->exists($report->file_path)) {
-            $reportData = json_decode(Storage::disk('local')->get($report->file_path), true);
+        if ($report->file_path && \Storage::disk('local')->exists($report->file_path)) {
+            $reportData = json_decode(\Storage::disk('local')->get($report->file_path), true);
         }
-
         return Inertia::render('AuditCompliance::ComplianceReports/Show', [
             'report' => $report,
             'reportData' => $reportData,
+            'generatedBy' => $report->generatedBy,
+            'created_at' => $report->created_at,
+            'updated_at' => $report->updated_at,
+            'deleted_at' => $report->deleted_at,
         ]);
     }
 

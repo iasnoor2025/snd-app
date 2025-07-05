@@ -7,6 +7,7 @@ import { ResourceFormModal } from '../../../components/project/resources/Resourc
 import { useResourceFormModal } from '../../../hooks/useResourceFormModal';
 import { useResourceSubmit } from '../../../hooks/useResourceSubmit';
 import { formatCurrency } from '../../../lib/utils';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface ExpenseTabProps {
     project: {
@@ -84,7 +85,7 @@ export function ExpenseTab({ project, expenses }: ExpenseTabProps) {
                             <TableCell>{expense.category}</TableCell>
                             <TableCell>{expense.description}</TableCell>
                             <TableCell>{formatCurrency(expense.amount)}</TableCell>
-                            <TableCell>{expense.date}</TableCell>
+                            <TableCell>{formatDateMedium(expense.date)}</TableCell>
                             <TableCell>
                                 <div className="flex space-x-2">
                                     <Button

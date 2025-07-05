@@ -97,7 +97,7 @@ class PaymentDashboardController extends Controller
             ->get()
             ->map(function ($item) {
                 return [
-                    'date' => $item->date,
+                    'date' => $item->date?->format('Y-m-d'),
                     'amount' => $item->amount,
                 ];
             });

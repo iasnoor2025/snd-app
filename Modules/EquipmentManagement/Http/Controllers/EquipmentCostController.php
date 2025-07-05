@@ -238,8 +238,8 @@ class EquipmentCostController extends Controller
             'cost_per_hour' => $perHourCost,
             'cost_per_mile' => $perMileCost,
             'period' => [
-                'start_date' => $request->start_date ?? $costs->min('date'),
-                'end_date' => $request->end_date ?? $costs->max('date'),
+                'start_date' => $request->start_date?->format('Y-m-d') ?? $costs->min('date'),
+                'end_date' => $request->end_date?->format('Y-m-d') ?? $costs->max('date'),
             ],
         ]);
     }

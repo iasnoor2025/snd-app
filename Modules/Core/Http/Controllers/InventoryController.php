@@ -643,7 +643,7 @@ use 'like', "%{$search}%")
                 );
 
                 return [
-                    'date' => $trend->date,
+                    'date' => $trend->date?->format('Y-m-d'),
                     'stock_level' => (int) $trend->stock_level,
                     'demand' => (int) $trend->demand,
                     'forecast' => (int) $forecast,

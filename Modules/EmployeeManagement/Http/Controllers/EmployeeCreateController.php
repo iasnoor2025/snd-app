@@ -178,7 +178,7 @@ class EmployeeCreateController extends Controller
                 'spsp_license_number' => $request->spsp_license_number ?? '',
                 'spsp_license_expiry' => $request->spsp_license_expiry ? date('Y-m-d', strtotime($request->spsp_license_expiry)) : null,
                 'spsp_license_cost' => $request->spsp_license_cost ?? 0,
-                        'date_of_birth' => $request->date_of_birth ? date('Y-m-d', strtotime($request->date_of_birth)) : null,
+                        'date_of_birth' => $request->date_of_birth?->format('Y-m-d') ? date('Y-m-d', strtotime($request->date_of_birth)) : null,
                         'created_at' => now(),
                         'updated_at' => now(),
             ];

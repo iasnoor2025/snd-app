@@ -89,6 +89,7 @@ import {
   X,
   RefreshCw
 } from "lucide-react";
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 // Types
 interface RentalItem {
@@ -638,7 +639,7 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
                     <Input
                       type="date"
                       placeholder={t('lbl_start_date')}
-                      value={data.start_date}
+                      value={formatDateMedium(data.start_date)}
                       onChange={(e) => handleDateChange('start', e.target.value)}
                       className="w-full pl-9"
                       name="start_date"
@@ -667,7 +668,7 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
                     <Input
                       type="date"
                       placeholder={t('end_date')}
-                      value={data.end_date}
+                      value={formatDateMedium(data.end_date)}
                       onChange={(e) => handleDateChange('end', e.target.value)}
                       className="w-full pl-9"
                       name="end_date"

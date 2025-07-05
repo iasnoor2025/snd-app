@@ -41,8 +41,8 @@ class MobileAuthApiController extends Controller
                 'timezone' => $user->timezone ?? config('app.timezone', 'UTC'),
                 'locale' => $user->locale ?? config('app.locale', 'en'),
                 'email_verified_at' => $user->email_verified_at?->toISOString(),
-                'created_at' => $user->created_at->toISOString(),
-                'updated_at' => $user->updated_at->toISOString(),
+                'created_at' => $user->created_at?->format('Y-m-d H:i:s')->toISOString(),
+                'updated_at' => $user->updated_at?->format('Y-m-d H:i:s')->toISOString(),
                 'last_login_at' => $user->last_login_at?->toISOString(),
                 'is_active' => $user->is_active ?? true,
                 'roles' => $user->roles->pluck('name'),
@@ -137,7 +137,7 @@ class MobileAuthApiController extends Controller
                     'timezone' => $user->timezone,
                     'locale' => $user->locale,
                     'avatar' => $user->avatar,
-                    'updated_at' => $user->updated_at->toISOString()
+                    'updated_at' => $user->updated_at?->format('Y-m-d H:i:s')->toISOString()
                 ]
             ]);
 
@@ -327,7 +327,7 @@ class MobileAuthApiController extends Controller
                     'id' => $token->id,
                     'name' => $token->name,
                     'last_used_at' => $token->last_used_at?->toISOString(),
-                    'created_at' => $token->created_at->toISOString(),
+                    'created_at' => $token->created_at?->format('Y-m-d H:i:s')->toISOString(),
                     'expires_at' => $token->expires_at?->toISOString(),
                     'is_current' => $token->id === $request->user()->currentAccessToken()->id,
                     'abilities' => $tokenData

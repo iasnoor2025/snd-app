@@ -14,6 +14,7 @@ import { format } from 'date-fns';
 import { CalendarIcon, ArrowLeft, Plus } from 'lucide-react';
 import { cn } from "@/Core";
 import { Separator } from "@/Core";
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Customer {
     id: number;
@@ -196,8 +197,8 @@ export default function Create({ customers, locations }: Props) {
                                             />
                                         </PopoverContent>
                                     </Popover>
-                                    {errors.start_date && (
-                                        <p className="text-sm text-destructive">{errors.start_date}</p>
+                                    {formatDateMedium(errors.start_date && (
+                                        <p className="text-sm text-destructive">{errors.start_date)}</p>
                                     )}
                                 </div>
 
@@ -230,8 +231,8 @@ export default function Create({ customers, locations }: Props) {
                                             />
                                         </PopoverContent>
                                     </Popover>
-                                    {errors.end_date && (
-                                        <p className="text-sm text-destructive">{errors.end_date}</p>
+                                    {formatDateMedium(errors.end_date && (
+                                        <p className="text-sm text-destructive">{errors.end_date)}</p>
                                     )}
                                 </div>
 

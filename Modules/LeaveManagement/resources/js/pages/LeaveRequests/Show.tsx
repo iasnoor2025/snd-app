@@ -23,6 +23,7 @@ import { Label } from "@/Core";
 import { Input } from "@/Core";
 import { Textarea } from "@/Core";
 import { useState } from 'react';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Props {
   leaveRequest: LeaveRequest;
@@ -328,7 +329,7 @@ export default function LeaveRequestShow({ leaveRequest }: Props) {
                           type="date"
                           value={returnDate}
                           onChange={(e) => setReturnDate(e.target.value)}
-                          min={leaveRequest.end_date}
+                          min={formatDateMedium(leaveRequest.end_date)}
                         />
                       </div>
                       <div className="grid gap-2">

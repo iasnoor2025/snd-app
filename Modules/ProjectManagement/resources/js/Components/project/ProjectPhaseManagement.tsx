@@ -10,6 +10,7 @@ import { Textarea } from "@/Core";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/Core";
 import { Calendar, Plus, Edit, Trash2, Loader2 } from 'lucide-react';
 import { toast } from "@/Core";
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Phase {
   id: number;
@@ -55,8 +56,8 @@ const ProjectPhaseManagement: React.FC<ProjectPhaseManagementProps> = ({ project
   });
 
   // Mock functions - replace with actual implementations
-  const formatDate = (date: string) => new Date(date).toLocaleDateString();
-  const formatCurrency = (amount: number) => `$${amount.toLocaleString()}`;
+  const formatDate = (date: string) => new Date(date);
+  const formatCurrency = (amount: number) => `$${amount}`;
 
   const getProjectStatusBadge = (status: string) => {
   const { t } = useTranslation('project');
@@ -271,7 +272,7 @@ const ProjectPhaseManagement: React.FC<ProjectPhaseManagementProps> = ({ project
                       <Input
                         id="start_date"
                         type="date"
-                        value={formData.start_date}
+                        value={formatDateMedium(formData.start_date)}
                         onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
                       />
                     </div>
@@ -343,7 +344,7 @@ const ProjectPhaseManagement: React.FC<ProjectPhaseManagementProps> = ({ project
                       <Input
                         id="edit_start_date"
                         type="date"
-                        value={formData.start_date}
+                        value={formatDateMedium(formData.start_date)}
                         onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
                       />
                     </div>

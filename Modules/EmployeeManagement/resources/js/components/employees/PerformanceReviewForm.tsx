@@ -30,6 +30,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/Core";
 import { AlertCircle, Loader2, Save, Plus, X } from 'lucide-react';
 import { Badge } from "@/Core";
 import { Slider } from "@/Core";
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface PerformanceReviewFormProps {
   review?: PerformanceReview;

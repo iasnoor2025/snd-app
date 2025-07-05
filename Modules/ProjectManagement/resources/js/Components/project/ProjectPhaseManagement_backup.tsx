@@ -34,6 +34,7 @@ import {
   SelectValue,
 } from '../ui/select';
 import { Loader2, Plus, Calendar, Edit, BarChart, CheckCircle2 } from 'lucide-react';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Project {
   id: number;
@@ -232,15 +233,11 @@ export const ProjectPhaseManagement: React.FC<{ projectId: number }> = ({ projec
   const formatDate = (dateString: string | null) => {
     if (!dateString) return 'N/A';
 
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    })
+    return formatDateMedium(dateString);
   };
 
   const formatCurrency = (amount: number) => {
-    return amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
   };
 
   const calculateOverallProgress = () => {

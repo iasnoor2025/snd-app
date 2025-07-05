@@ -9,6 +9,7 @@ import { useResourceSubmit } from '../../../hooks/useResourceSubmit';
 import { formatCurrency } from '../../../lib/utils';
 import { usePage } from '@inertiajs/react';
 import { getTranslation } from '@/Core/utils/translation';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface FuelTabProps {
     project: {
@@ -110,7 +111,7 @@ export function FuelTab({ project, fuel, projectEquipment }: FuelTabProps) {
                             <TableCell>{item.quantity}</TableCell>
                             <TableCell>{formatCurrency(item.unit_price)}</TableCell>
                             <TableCell>{formatCurrency(item.quantity * item.unit_price)}</TableCell>
-                            <TableCell>{item.date}</TableCell>
+                            <TableCell>{formatDateMedium(item.date)}</TableCell>
                             <TableCell>
                                 <div className="flex space-x-2">
                                     <Button

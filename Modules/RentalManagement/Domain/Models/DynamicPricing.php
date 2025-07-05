@@ -1,5 +1,8 @@
+<?php
+
 namespace Modules\RentalManagement\Domain\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -81,22 +84,16 @@ class DynamicPricing extends Model
         switch ($this->condition_type) {
             case self::CONDITION_TYPES['DATE_RANGE']:
                 return $this->isDateInRange($context['rental_date'] ?? now());
-
             case self::CONDITION_TYPES['UTILIZATION']:
                 return $this->isUtilizationInRange($context['utilization'] ?? 0);
-
             case self::CONDITION_TYPES['RENTAL_DAYS']:
                 return $this->isDurationInRange($context['duration'] ?? 0);
-
             case self::CONDITION_TYPES['CUSTOMER_SEGMENT']:
                 return $this->isCustomerSegmentMatch($context['customer_segment'] ?? null);
-
             case self::CONDITION_TYPES['QUANTITY']:
                 return $this->isQuantityInRange($context['quantity'] ?? 0);
-
             case self::CONDITION_TYPES['CUSTOM']:
                 return $this->evaluateCustomCondition($context);
-
             default:
                 return false;
         }
@@ -107,13 +104,10 @@ class DynamicPricing extends Model
         switch ($this->adjustment_type) {
             case self::ADJUSTMENT_TYPES['PERCENTAGE']:
                 return $basePrice * ($this->adjustment_value / 100);
-
             case self::ADJUSTMENT_TYPES['FIXED']:
                 return $this->adjustment_value;
-
             case self::ADJUSTMENT_TYPES['MULTIPLIER']:
                 return $basePrice * ($this->adjustment_value - 1);
-
             default:
                 return 0;
         }
@@ -130,15 +124,13 @@ class DynamicPricing extends Model
     private function isUtilizationInRange(float $utilization): bool
     {
         $range = $this->condition_value;
-        return $utilization >= ($range['min'] ?? 0) &&
-               $utilization <= ($range['max'] ?? 100);
+        return $utilization >= ($range['min'] ?? 0) && $utilization <= ($range['max'] ?? 100);
     }
 
     private function isDurationInRange(int $days): bool
     {
         $range = $this->condition_value;
-        return $days >= ($range['min'] ?? 0) &&
-               $days <= ($range['max'] ?? PHP_INT_MAX);
+        return $days >= ($range['min'] ?? 0) && $days <= ($range['max'] ?? PHP_INT_MAX);
     }
 
     private function isCustomerSegmentMatch(?string $segment): bool
@@ -152,8 +144,7 @@ class DynamicPricing extends Model
     private function isQuantityInRange(int $quantity): bool
     {
         $range = $this->condition_value;
-        return $quantity >= ($range['min'] ?? 0) &&
-               $quantity <= ($range['max'] ?? PHP_INT_MAX);
+        return $quantity >= ($range['min'] ?? 0) && $quantity <= ($range['max'] ?? PHP_INT_MAX);
     }
 
     private function evaluateCustomCondition(array $context): bool

@@ -9,6 +9,7 @@ import { Switch } from '@/../../Modules/Core/resources/js/components/ui/switch';
 import { toast } from 'sonner';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/../../Modules/Core/resources/js/components/ui/table';
 import { DatePicker } from '@/../../Modules/Core/resources/js/components/ui/date-picker';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface DynamicPricingRule {
     id: number;
@@ -125,7 +126,7 @@ export function DynamicPricingManager({ equipmentId }: DynamicPricingManagerProp
     const renderConditionValue = (rule: DynamicPricingRule) => {
         switch (rule.condition_type) {
             case 'date_range':
-                return `${new Date(rule.condition_value.start).toLocaleDateString()} - ${new Date(rule.condition_value.end).toLocaleDateString()}`;
+                return `${new Date(rule.condition_value.start)} - ${new Date(rule.condition_value.end)}`;
             case 'utilization':
             case 'rental_days':
             case 'quantity':
@@ -299,14 +300,14 @@ export function DynamicPricingManager({ equipmentId }: DynamicPricingManagerProp
                             <div>
                                 <Label>Start Date</Label>
                                 <DatePicker
-                                    value={formData.start_date}
+                                    value={formatDateMedium(formData.start_date)}
                                     onChange={(date) => setFormData({ ...formData, start_date: date })}
                                 />
                             </div>
                             <div>
                                 <Label>End Date</Label>
                                 <DatePicker
-                                    value={formData.end_date}
+                                    value={formatDateMedium(formData.end_date)}
                                     onChange={(date) => setFormData({ ...formData, end_date: date })}
                                 />
                             </div>

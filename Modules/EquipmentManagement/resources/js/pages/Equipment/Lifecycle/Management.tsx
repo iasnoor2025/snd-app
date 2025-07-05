@@ -63,6 +63,7 @@ import {
   Activity
 } from 'lucide-react';
 import { formatCurrency } from "@/Core";
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Equipment {
   id: number;
@@ -491,9 +492,9 @@ const LifecycleManagement: React.FC<Props> = ({
                         </div>
                         <p className="text-sm text-muted-foreground mt-1">{stage.description}</p>
                         <div className="flex items-center gap-4 mt-2 text-sm">
-                          <span>Start: {new Date(stage.startDate).toLocaleDateString()}</span>
+                          <span>Start: {new Date(stage.startDate)}</span>
                           {stage.endDate && (
-                            <span>End: {new Date(stage.endDate).toLocaleDateString()}</span>
+                            <span>End: {new Date(stage.endDate)}</span>
                           )}
                           <span>Cost: {formatCurrency(stage.cost)}</span>
                           {stage.duration && (
@@ -632,12 +633,12 @@ const LifecycleManagement: React.FC<Props> = ({
                       <div className="grid grid-cols-2 gap-4 mb-6">
                         <div>
                           <Label className="text-sm font-medium">Start Date</Label>
-                          <p className="text-sm">{new Date(selectedStage.startDate).toLocaleDateString()}</p>
+                          <p className="text-sm">{new Date(selectedStage.startDate)}</p>
                         </div>
                         {selectedStage.endDate && (
                           <div>
                             <Label className="text-sm font-medium">End Date</Label>
-                            <p className="text-sm">{new Date(selectedStage.endDate).toLocaleDateString()}</p>
+                            <p className="text-sm">{new Date(selectedStage.endDate)}</p>
                           </div>
                         )}
                         <div>
@@ -668,7 +669,7 @@ const LifecycleManagement: React.FC<Props> = ({
                                   {milestone.name}
                                 </span>
                                 <div className="text-xs text-muted-foreground">
-                                  {new Date(milestone.date).toLocaleDateString()}
+                                  {new Date(milestone.date)}
                                 </div>
                               </div>
                             </div>
@@ -707,7 +708,7 @@ const LifecycleManagement: React.FC<Props> = ({
                                   <div>
                                     <span className="text-sm font-medium">{doc.name}</span>
                                     <div className="text-xs text-muted-foreground">
-                                      {doc.type} • {doc.size} • {new Date(doc.uploadDate).toLocaleDateString()}
+                                      {doc.type} • {doc.size} • {new Date(doc.uploadDate)}
                                     </div>
                                   </div>
                                 </div>
@@ -781,7 +782,7 @@ const LifecycleManagement: React.FC<Props> = ({
                               {event.impact} impact
                             </Badge>
                             <span className="text-sm text-muted-foreground">
-                              {new Date(event.date).toLocaleDateString()}
+                              {new Date(event.date)}
                             </span>
                           </div>
                         </div>

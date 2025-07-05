@@ -55,6 +55,7 @@ import {
 } from "@/Core";
 import { AppLayout } from '@/Core';
 import { format } from 'date-fns';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Employee {
   id: number;
@@ -344,7 +345,7 @@ const LeaveApprovalsIndex: React.FC = () => {
                 <label className="text-sm font-medium mb-2 block">{t('lbl_from_date')}</label>
                 <Input
                   type="date"
-                  value={filterForm.date_from}
+                  value={formatDateMedium(filterForm.date_from)}
                   onChange={(e) => setFilterForm(prev => ({ ...prev, date_from: e.target.value }))}
                 />
               </div>
@@ -353,7 +354,7 @@ const LeaveApprovalsIndex: React.FC = () => {
                 <label className="text-sm font-medium mb-2 block">{t('lbl_to_date')}</label>
                 <Input
                   type="date"
-                  value={filterForm.date_to}
+                  value={formatDateMedium(filterForm.date_to)}
                   onChange={(e) => setFilterForm(prev => ({ ...prev, date_to: e.target.value }))}
                 />
               </div>

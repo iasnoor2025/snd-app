@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from '../ui/dialog';
 import { Calendar, AlertCircle, CheckCircle, Plus } from 'lucide-react';
 import DashboardWidgetCard from './DashboardWidgetCard';
+import { formatDateMedium } from '../../utils/dateFormatter';
+import { formatDateTime, formatDateShort } from '../../utils/dateFormatter';
 
 interface CalendarEvent {
   id: string;
@@ -26,7 +28,8 @@ const typeMap = {
 const CalendarWidget: React.FC<CalendarWidgetProps> = ({ events, className = '', onRemove }) => {
   const [open, setOpen] = useState(false);
   return (
-    <DashboardWidgetCard title="Calendar" summary={events.length === 0 ? 'No upcoming events' : `Upcoming events: ${events.length}`} onRemove={onRemove} className={className}>
+    <>
+      <DashboardWidgetCard title="Calendar" summary={events.length === 0 ? 'No upcoming events' : `Upcoming events: ${events.length}`} onRemove={onRemove} className={className} />
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <button className="ml-2 p-1 rounded-full bg-primary text-primary-foreground hover:bg-primary/80" title="Create Event">
@@ -49,14 +52,14 @@ const CalendarWidget: React.FC<CalendarWidgetProps> = ({ events, className = '',
                 <span className={`inline-block w-2 h-2 rounded-full ${typeMap[event.type || 'meeting'].color}`}></span>
                 {typeMap[event.type || 'meeting'].icon}
                 <span className="font-medium">{event.title}</span>
-                <span className="text-xs text-muted-foreground ml-auto">{event.date}</span>
+                <span className="text-xs text-muted-foreground ml-auto">{formatDateMedium(event.date)}</span>
               </li>
             ))
           )}
         </ul>
       </CardContent>
       */}
-    </DashboardWidgetCard>
+    </>
   );
 };
 

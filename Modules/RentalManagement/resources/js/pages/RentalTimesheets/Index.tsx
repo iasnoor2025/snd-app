@@ -93,6 +93,7 @@ import { Pagination } from "@/Core";
 // Placeholder for ColumnDef
 type ColumnDef = any;
 import { formatCurrency } from "@/Core";
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Props extends PageProps {
   timesheets: {
@@ -470,7 +471,7 @@ export default function Index({ auth, timesheets, filters = {} }: Props) {
                     <PopoverContent className="w-auto p-0">
                       <Calendar
                         mode="single"
-                        selected={filterValues.start_date}
+                        selected={formatDateMedium(filterValues.start_date)}
                         onSelect={(date) => handleFilterChange('start_date', date)}
                         initialFocus
                       />
@@ -500,7 +501,7 @@ export default function Index({ auth, timesheets, filters = {} }: Props) {
                     <PopoverContent className="w-auto p-0">
                       <Calendar
                         mode="single"
-                        selected={filterValues.end_date}
+                        selected={formatDateMedium(filterValues.end_date)}
                         onSelect={(date) => handleFilterChange('end_date', date)}
                         initialFocus
                       />

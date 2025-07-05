@@ -299,6 +299,15 @@ interface Props extends PageProps {
     view_timesheets: boolean;
     request_extension: boolean;
   };
+  equipment: any[];
+  timesheets: any[];
+  payments: any[];
+  location: any;
+  translations: any;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string;
+  dropdowns: any;
 }
 
 export default function Show({
@@ -323,7 +332,17 @@ export default function Show({
     generate_invoice: false,
     view_timesheets: false,
     request_extension: false,
-  }
+  },
+  equipment = [],
+  timesheets = [],
+  payments = [],
+  location = {},
+  translations = {},
+  created_at,
+  updated_at,
+  deleted_at,
+  dropdowns = {},
+  ...rest
 }: Props) {
   const { t } = useTranslation('rental');
 
@@ -1154,8 +1173,8 @@ export default function Show({
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0">
                 <div>
-                  <CardTitle>{t('rental_number')}: {rental?.rental_number}</CardTitle>
-                  <CardDescription>{rental?.customer?.company_name}</CardDescription>
+                  <CardTitle>{t('rental_number')}: {rental?.rental_number ?? '-'}</CardTitle>
+                  <CardDescription>{rental?.customer?.company_name ?? '-'}</CardDescription>
                 </div>
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" asChild>

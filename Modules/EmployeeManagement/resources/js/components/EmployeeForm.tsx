@@ -19,6 +19,7 @@ import { AlertCircle, Loader2, Save, Plus, Trash } from 'lucide-react';
 import DocumentManager from '../../@/Core/components/DocumentManager';
 import { Employee, Department, Position } from '../types/employee';
 import { getTranslation } from "@/Core";
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface EmployeeFormProps {
   employee?: Employee;

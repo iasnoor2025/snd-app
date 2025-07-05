@@ -73,6 +73,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface GeofenceViolation {
     id: number;
@@ -541,7 +542,7 @@ const GeofenceViolationManager: React.FC = () => {
                             <Label>{t('lbl_date_from')}</Label>
                             <Input
                                 type="date"
-                                value={filters.date_from}
+                                value={formatDateMedium(filters.date_from)}
                                 onChange={(e) => handleFilterChange('date_from', e.target.value)}
                             />
                         </div>
@@ -549,7 +550,7 @@ const GeofenceViolationManager: React.FC = () => {
                             <Label>{t('lbl_date_to')}</Label>
                             <Input
                                 type="date"
-                                value={filters.date_to}
+                                value={formatDateMedium(filters.date_to)}
                                 onChange={(e) => handleFilterChange('date_to', e.target.value)}
                             />
                         </div>
@@ -621,7 +622,7 @@ const GeofenceViolationManager: React.FC = () => {
                                             </TableCell>
                                             <TableCell>
                                                 <div className="text-sm">
-                                                    {new Date(violation.detected_at).toLocaleDateString()}
+                                                    {new Date(violation.detected_at)}
                                                     <div className="text-xs text-muted-foreground">
                                                         {new Date(violation.detected_at).toLocaleTimeString()}
                                                     </div>
@@ -780,7 +781,7 @@ const GeofenceViolationManager: React.FC = () => {
                                     <div>
                                         <Label className="text-sm font-medium">{t('lbl_detected_at')}</Label>
                                         <div className="mt-1">
-                                            <div>{new Date(selectedViolation.detected_at).toLocaleString()}</div>
+                                            <div>{new Date(selectedViolation.detected_at)}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -880,7 +881,7 @@ const GeofenceViolationManager: React.FC = () => {
                                                     </div>
                                                     <div className="text-right text-sm text-muted-foreground">
                                                         <div>{action.performed_by}</div>
-                                                        <div>{new Date(action.performed_at).toLocaleString()}</div>
+                                                        <div>{new Date(action.performed_at)}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -901,7 +902,7 @@ const GeofenceViolationManager: React.FC = () => {
                                                 <div className="flex justify-between items-start mb-2">
                                                     <div className="font-medium">{note.user_name}</div>
                                                     <div className="text-sm text-muted-foreground">
-                                                        {new Date(note.created_at).toLocaleString()}
+                                                        {new Date(note.created_at)}
                                                     </div>
                                                 </div>
                                                 <div className="text-sm">{note.note}</div>

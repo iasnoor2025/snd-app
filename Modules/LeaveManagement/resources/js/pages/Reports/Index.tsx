@@ -19,6 +19,7 @@ import { cn } from "@/Core";
 import { Calendar } from "@/Core";
 import { Popover, PopoverContent, PopoverTrigger } from "@/Core";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 // Temporary inline permission hook
 const usePermission = () => {
@@ -436,8 +437,8 @@ export default function ReportsIndex() {
                                 </TableCell>
                                 <TableCell>
                                     <div className="text-sm">
-                                        <div>{leave.start_date}</div>
-                                        <div className="text-muted-foreground">to {leave.end_date}</div>
+                                        <div>{formatDateMedium(leave.start_date)}</div>
+                                        <div className="text-muted-foreground">to {formatDateMedium(leave.end_date)}</div>
                                     </div>
                                 </TableCell>
                                 <TableCell>{leave.total_days}</TableCell>

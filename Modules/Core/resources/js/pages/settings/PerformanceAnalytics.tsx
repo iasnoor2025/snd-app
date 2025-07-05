@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../../components/ui/table';
 import { toast } from 'sonner';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Metric {
   metric_name: string;
@@ -64,7 +65,7 @@ export default function PerformanceAnalytics() {
                     <TableCell>{metric.metric_name}</TableCell>
                     <TableCell>{metric.metric_value}</TableCell>
                     <TableCell>{metric.category}</TableCell>
-                    <TableCell>{new Date(metric.timestamp).toLocaleString()}</TableCell>
+                    <TableCell>{new Date(metric.timestamp)}</TableCell>
                   </TableRow>
                 ))
               )}

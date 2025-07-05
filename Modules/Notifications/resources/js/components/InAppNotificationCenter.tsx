@@ -3,6 +3,7 @@ import { InAppNotification } from '../types';
 import { InAppNotificationService } from '../services/InAppNotificationService';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 export default function InAppNotificationCenter() {
   const { t } = useTranslation();
@@ -70,7 +71,7 @@ export default function InAppNotificationCenter() {
                   <div className="font-semibold">{n.type}</div>
                   <div className="text-sm text-gray-600">{n.data?.message || JSON.stringify(n.data)}</div>
                   <div className="flex justify-between items-center mt-2">
-                    <span className="text-xs text-gray-400">{new Date(n.created_at).toLocaleString()}</span>
+                    <span className="text-xs text-gray-400">{new Date(n.created_at)}</span>
                     {!n.read_at && (
                       <button className="btn btn-xs btn-primary" onClick={() => handleMarkAsRead(n.id)}>{t('notifications:center.mark')}</button>
                     )}

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 // Fix for default marker icons in Leaflet with Next.js
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -58,7 +59,7 @@ export const MapChart: FC<MapChartProps> = ({ data, height = 400, showPaths = fa
                                 <p className="text-sm">Equipment ID: {point.equipment_id}</p>
                                 {point.last_update && (
                                     <p className="text-sm text-gray-500">
-                                        Last update: {new Date(point.last_update).toLocaleString()}
+                                        Last update: {new Date(point.last_update)}
                                     </p>
                                 )}
                             </div>

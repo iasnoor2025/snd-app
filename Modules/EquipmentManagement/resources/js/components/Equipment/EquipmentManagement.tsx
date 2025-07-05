@@ -7,6 +7,7 @@ import { EquipmentForm } from './EquipmentForm';
 import { EquipmentDetails } from './EquipmentDetails';
 import { Modal } from '../Modal';
 import { Button } from '@/Core';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Equipment {
     id: number;

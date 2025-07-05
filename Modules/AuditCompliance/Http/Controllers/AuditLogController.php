@@ -91,6 +91,55 @@ class AuditLogController extends Controller
             'log' => $auditLog
         ]);
     }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        return Inertia::render('AuditCompliance::Create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        // Audit logs are typically created automatically by the system
+        // This method is here for completeness but should not be used directly
+        return redirect()->route('auditcompliance.index')
+            ->with('error', 'Audit logs are created automatically by the system.');
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(AuditLog $auditLog)
+    {
+        // Audit logs should not be editable for compliance reasons
+        return redirect()->route('auditcompliance.index')
+            ->with('error', 'Audit logs cannot be edited for compliance reasons.');
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, AuditLog $auditLog)
+    {
+        // Audit logs should not be editable for compliance reasons
+        return redirect()->route('auditcompliance.index')
+            ->with('error', 'Audit logs cannot be updated for compliance reasons.');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(AuditLog $auditLog)
+    {
+        // Audit logs should not be deletable for compliance reasons
+        return redirect()->route('auditcompliance.index')
+            ->with('error', 'Audit logs cannot be deleted for compliance reasons.');
+    }
 }
 
 

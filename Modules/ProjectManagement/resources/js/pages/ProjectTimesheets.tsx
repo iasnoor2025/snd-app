@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogTitle } from '@/Core/components/ui/dialog';
 import { toast } from 'sonner';
 import axios from 'axios';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface ProjectTimesheet {
   id: number;
@@ -149,7 +150,7 @@ const ProjectTimesheets: React.FC<{ projectId?: number }> = ({ projectId }) => {
           timesheets.map((ts) => (
             <div key={ts.id} className="border rounded p-4 flex flex-col md:flex-row md:items-center md:justify-between">
               <div>
-                <div className="font-semibold">{ts.date} - {ts.employee?.name || ts.employee_id}</div>
+                <div className="font-semibold">{formatDateMedium(ts.date)} - {ts.employee?.name || ts.employee_id}</div>
                 <div className="text-sm text-gray-500">{ts.hours_worked}h, OT: {ts.overtime_hours}h</div>
                 <div className="text-xs text-gray-400">{ts.status}</div>
               </div>

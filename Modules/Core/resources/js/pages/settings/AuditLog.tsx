@@ -4,6 +4,7 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '.
 import { Input } from '../../components/ui/input';
 import { Badge } from '../../components/ui/badge';
 import { toast } from 'sonner';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface LogEntry {
   id: number;
@@ -97,7 +98,7 @@ export default function AuditLog() {
                     </TableCell>
                     <TableCell>{log.description}</TableCell>
                     <TableCell>
-                      {new Date(log.created_at).toLocaleString()}
+                      {new Date(log.created_at)}
                     </TableCell>
                   </TableRow>
                 ))

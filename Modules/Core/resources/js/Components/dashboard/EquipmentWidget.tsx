@@ -23,13 +23,29 @@ const statusColor: Record<string, string> = {
 };
 
 const EquipmentWidget: React.FC<EquipmentWidgetProps> = ({ total, available, inUse, topEquipment, className = '', onRemove }) => (
-  <DashboardWidgetCard title="Equipment" summary={
-    <div className="flex gap-4 mt-2 text-xs">
-      <span>Total: <b>{total}</b></span>
-      <span className="text-green-600 dark:text-green-400">Available: <b>{available}</b></span>
-      <span className="text-blue-600 dark:text-blue-400">In Use: <b>{inUse}</b></span>
-    </div>
-  } onRemove={onRemove} className={className} />
+  <DashboardWidgetCard
+    title="Equipment"
+    summary={
+      <div className="space-y-1">
+        <div className="flex items-center gap-2">
+          <span className="text-gray-600 dark:text-gray-400">Total:</span>
+          <span className="font-semibold text-gray-900 dark:text-white">{total}</span>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1">
+            <span className="text-green-600 dark:text-green-400">Available:</span>
+            <span className="font-semibold text-green-600 dark:text-green-400">{available}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="text-blue-600 dark:text-blue-400">In Use:</span>
+            <span className="font-semibold text-blue-600 dark:text-blue-400">{inUse}</span>
+          </div>
+        </div>
+      </div>
+    }
+    onRemove={onRemove}
+    className={className}
+  />
 );
 
 export default EquipmentWidget;

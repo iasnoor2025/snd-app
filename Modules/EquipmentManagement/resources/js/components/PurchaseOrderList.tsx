@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/../../Modules/Core/resources/js/components/ui/card';
 import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
 import { toast } from 'sonner';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface PurchaseOrder {
   id: number;
@@ -58,7 +59,7 @@ export function PurchaseOrderList() {
               <tr key={o.id}>
                 <td className="border px-2 py-1">{o.supplier?.name}</td>
                 <td className="border px-2 py-1">{o.equipment?.name}</td>
-                <td className="border px-2 py-1">{new Date(o.order_date).toLocaleDateString()}</td>
+                <td className="border px-2 py-1">{new Date(o.order_date)}</td>
                 <td className="border px-2 py-1">{o.quantity}</td>
                 <td className="border px-2 py-1">${o.unit_price.toFixed(2)}</td>
                 <td className="border px-2 py-1">{o.status}</td>

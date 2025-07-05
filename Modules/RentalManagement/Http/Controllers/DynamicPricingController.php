@@ -29,8 +29,8 @@ class DynamicPricingController extends Controller
                     'adjustment_type' => $rule->adjustment_type,
                     'adjustment_value' => $rule->adjustment_value,
                     'priority' => $rule->priority,
-                    'start_date' => $rule->start_date?->format('Y-m-d H:i:s'),
-                    'end_date' => $rule->end_date?->format('Y-m-d H:i:s'),
+                    'start_date' => $rule->start_date?->format('Y-m-d')?->format('Y-m-d H:i:s'),
+                    'end_date' => $rule->end_date?->format('Y-m-d')?->format('Y-m-d H:i:s'),
                     'is_active' => $rule->is_active,
                 ];
             });

@@ -256,7 +256,7 @@ class AvatarController extends \Modules\Core\Http\Controllers\Controller
                 'size' => $avatarMedia->size,
                 'url' => $avatarMedia->getUrl(),
                 'thumbnail_url' => $avatarMedia->getUrl('thumb'),
-                'created_at' => $avatarMedia->created_at
+                'created_at' => $avatarMedia->created_at?->format('Y-m-d H:i:s')
             ];
         }
 

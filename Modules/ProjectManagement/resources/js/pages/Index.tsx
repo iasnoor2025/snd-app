@@ -14,6 +14,7 @@ import {
     Filter, Search
 } from 'lucide-react';
 import { Link as RouterLink } from 'react-router-dom';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 // Declare window.route for TypeScript
 // @ts-ignore
 // eslint-disable-next-line
@@ -233,7 +234,7 @@ export default function Index({ projects }: Props) {
                                                         )}
                                                     </div>
                                                 </TableCell>
-                                                <TableCell>SAR {project.budget.toLocaleString()}</TableCell>
+                                                <TableCell>SAR {project.budget}</TableCell>
                                                 <TableCell className="text-right space-x-2">
                                                     <Link href={window.route('projects.show', project.id)}>
                                                         <Button variant="ghost" size="icon" className="h-8 w-8">

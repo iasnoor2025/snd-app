@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/../../Modules/Core/resources/js/components/ui/card';
 import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
 import { toast } from 'sonner';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 export default function ResourceAllocation() {
   const [projectId, setProjectId] = useState('');
@@ -115,7 +116,7 @@ export default function ResourceAllocation() {
               </div>
               <div>
                 <label className="block mb-1">Date</label>
-                <input type="date" name="date" value={form.date} onChange={handleChange} className="input" required />
+                <input type="date" name="date" value={formatDateMedium(form.date)} onChange={handleChange} className="input" required />
               </div>
               <div className="md:col-span-3">
                 <label className="block mb-1">Notes</label>
@@ -155,7 +156,7 @@ export default function ResourceAllocation() {
                               <td className="border px-2 py-1">{r.quantity}</td>
                               <td className="border px-2 py-1">{r.unit_cost}</td>
                               <td className="border px-2 py-1">{r.total_cost}</td>
-                              <td className="border px-2 py-1">{r.date}</td>
+                              <td className="border px-2 py-1">{formatDateMedium(r.date)}</td>
                               <td className="border px-2 py-1">{r.status}</td>
                               <td className="border px-2 py-1">{r.notes}</td>
                             </tr>

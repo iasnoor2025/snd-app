@@ -3,6 +3,7 @@ import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/../../Modules/Core/resources/js/components/ui/card';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 export default function BillableHoursReport() {
   const [filters, setFilters] = useState({
@@ -84,7 +85,7 @@ export default function BillableHoursReport() {
               <tbody>
                 {report.entries.map((row: any, i: number) => (
                   <tr key={i}>
-                    <td className="border px-2 py-1">{row.date}</td>
+                    <td className="border px-2 py-1">{formatDateMedium(row.date)}</td>
                     <td className="border px-2 py-1">{row.employee}</td>
                     <td className="border px-2 py-1">{row.project}</td>
                     <td className="border px-2 py-1">{row.hours}</td>

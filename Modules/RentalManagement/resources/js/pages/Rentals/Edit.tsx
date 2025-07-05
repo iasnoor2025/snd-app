@@ -22,13 +22,41 @@ interface Props extends PageProps {
   equipment: any[];
   rental: any;
   employees?: any[];
+  rentalItems?: any[];
+  invoices?: any[];
+  timesheets?: any[];
+  payments?: any[];
+  maintenanceRecords?: any[];
+  location?: any;
+  translations?: any;
+  created_at?: string;
+  updated_at?: string;
+  deleted_at?: string;
+  dropdowns?: any;
 }
 
-export default function Edit({ customers, equipment, rental, employees = [] }: Props) {
+export default function Edit({ customers, equipment, rental, employees = [], rentalItems = [], invoices = [], timesheets = [], payments = [], maintenanceRecords = [], location, translations = {}, created_at, updated_at, deleted_at, dropdowns = {} }: Props) {
   const { t } = useTranslation('rental');
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+
+  // Prepare initial data for RentalForm
+  const initialData = {
+    ...rental,
+    customer: rental.customer || {},
+    rentalItems: rental.rentalItems || [],
+    equipment: rental.equipment || [],
+    invoices: rental.invoices || [],
+    timesheets: rental.timesheets || [],
+    payments: rental.payments || [],
+    maintenanceRecords: rental.maintenanceRecords || [],
+    location: rental.location || {},
+    translations: translations || {},
+    created_at,
+    updated_at,
+    deleted_at,
+  };
 
   // Handle form submission
   const handleSubmit = (
@@ -99,10 +127,10 @@ export default function Edit({ customers, equipment, rental, employees = [] }: P
 
           <CardContent>
             <RentalForm
-              customers={customers}
-              equipment={equipment}
-              employees={employees}
-              initialData={{ rental }}
+              customers={dropdowns.customers || customers}
+              equipment={dropdowns.equipment || equipment}
+              employees={dropdowns.employees || employees}
+              initialData={initialData}
               isEditMode={true}
               onSubmit={handleSubmit}
               isSubmitting={isSubmitting}

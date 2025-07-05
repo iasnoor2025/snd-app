@@ -25,6 +25,7 @@ import { ArrowLeft, DollarSign, Calendar, FileText } from 'lucide-react';
 import { route } from 'ziggy-js';
 import { Link } from '@inertiajs/react';
 import { format } from 'date-fns';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Employee {
     id: number;
@@ -159,7 +160,7 @@ export default function Create({ auth, employees }: Props) {
                                     </div>
                                     {maxAdvanceAmount > 0 && (
                                         <p className="text-sm text-muted-foreground">
-                                            Maximum advance: ${maxAdvanceAmount.toLocaleString()} (50% of basic salary)
+                                            Maximum advance: ${maxAdvanceAmount} (50% of basic salary)
                                         </p>
                                     )}
                                     {errors.amount && (

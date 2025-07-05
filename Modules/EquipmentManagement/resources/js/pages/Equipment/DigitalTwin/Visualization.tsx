@@ -58,6 +58,7 @@ import {
   Minimize
 } from 'lucide-react';
 import { formatCurrency } from "@/Core";
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Equipment {
   id: number;
@@ -754,7 +755,7 @@ const DigitalTwinVisualization: React.FC<Props> = ({
                     tickFormatter={(value) => new Date(value).toLocaleTimeString()}
                   />
                   <YAxis />
-                  <Tooltip labelFormatter={(value) => new Date(value).toLocaleString()} />
+                  <Tooltip labelFormatter={(value) => new Date(value)} />
                   <Line type="monotone" dataKey="efficiency" stroke="#3b82f6" strokeWidth={2} />
                   <Line type="monotone" dataKey="temperature" stroke="#10b981" strokeWidth={2} />
                   <Line type="monotone" dataKey="powerConsumption" stroke="#f59e0b" strokeWidth={2} />

@@ -15,6 +15,7 @@ import {
 
 // Icons
 import {
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
   CircleDashed,
   FileText,
   CheckCircle,
@@ -166,9 +167,9 @@ export default function StatusTimeline({ rental, className = "" }: StatusTimelin
                     <h3 className="flex items-center mb-1 text-sm font-semibold">
                       {event.name}
                     </h3>
-                    {event.date && (
+                    {formatDateMedium(event.date && (
                       <time className="block mb-1 text-xs font-normal text-muted-foreground">
-                        {event.date}
+                        {event.date)}
                       </time>
                     )}
                     <p className="text-xs text-muted-foreground">

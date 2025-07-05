@@ -4,6 +4,7 @@ import { ScheduledNotificationService } from '../services/ScheduledNotificationS
 import { NotificationTemplateService } from '../services/NotificationTemplateService';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 const defaultForm: Partial<ScheduledNotification> = {
   template_id: 0,
@@ -102,7 +103,7 @@ export default function ScheduledNotifications() {
             {notifications.map(n => (
               <tr key={n.id}>
                 <td>{templates.find(tpl => tpl.id === n.template_id)?.name || n.template_id}</td>
-                <td>{new Date(n.send_at).toLocaleString()}</td>
+                <td>{new Date(n.send_at)}</td>
                 <td>{n.status}</td>
                 <td>
                   {n.status === 'pending' && (

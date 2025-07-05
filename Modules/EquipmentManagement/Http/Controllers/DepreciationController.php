@@ -265,7 +265,7 @@ class DepreciationController extends Controller
                         'valuation_type' => $valuation->valuation_type,
                         'appraiser_name' => $valuation->appraiser_name,
                         'notes' => $valuation->notes,
-                        'created_at' => $valuation->created_at,
+                        'created_at' => $valuation->created_at?->format('Y-m-d H:i:s'),
                     ];
                 }),
             ]);

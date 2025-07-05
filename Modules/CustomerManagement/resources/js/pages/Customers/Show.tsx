@@ -8,6 +8,7 @@ import { Button } from "@/Core";
 import { Badge } from "@/Core";
 import { route } from 'ziggy-js';
 import { Mail, Phone, Globe, User, Building2, BadgeDollarSign, Calendar, Info, UserCheck, UserX } from 'lucide-react';
+import { formatDateTime } from '@/Core/utils/dateFormatter';
 
 const breadcrumbs = [
   { title: 'Dashboard', href: '/dashboard' },
@@ -17,9 +18,19 @@ const breadcrumbs = [
 
 interface Props extends PageProps {
   customer: Customer;
+  attachments?: any[];
+  rentals?: any;
+  invoices?: any;
+  payments?: any;
+  user?: any;
+  translations?: any;
+  created_at?: string;
+  updated_at?: string;
+  deleted_at?: string;
+  countries?: any[];
 }
 
-const ShowCustomer: React.FC<Props> = ({ customer }) => {
+const ShowCustomer: React.FC<Props> = ({ customer, attachments = [], rentals = {}, invoices = {}, payments = {}, user = {}, translations = {}, created_at, updated_at, deleted_at, countries = [] }) => {
   const { t } = useTranslation('customer');
 
   const getStatusBadge = (status: string) => {
@@ -109,7 +120,7 @@ const ShowCustomer: React.FC<Props> = ({ customer }) => {
                 <div className="flex items-center gap-2 mb-2">
                   <BadgeDollarSign className="w-4 h-4 text-muted-foreground" />
                   <span className="font-medium">{t('credit_limit')}:</span>
-                  <span>{customer.credit_limit ? `$${customer.credit_limit.toLocaleString()}` : <span className="text-muted-foreground">-</span>}</span>
+                  <span>{customer.credit_limit ? `$${customer.credit_limit}` : <span className="text-muted-foreground">-</span>}</span>
                 </div>
                 <div className="flex items-center gap-2 mb-2">
                   <span className="font-medium">{t('tax_id')}:</span>
@@ -146,12 +157,12 @@ const ShowCustomer: React.FC<Props> = ({ customer }) => {
               <div className="flex items-center gap-2 mb-2">
                 <Calendar className="w-4 h-4 text-muted-foreground" />
                 <span className="font-medium">{t('created_at')}:</span>
-                <span>{customer.created_at || <span className="text-muted-foreground">-</span>}</span>
+                <span>{formatDateTime(customer.created_at) || <span className="text-muted-foreground">-</span>}</span>
               </div>
               <div className="flex items-center gap-2 mb-2">
                 <Calendar className="w-4 h-4 text-muted-foreground" />
                 <span className="font-medium">{t('updated_at')}:</span>
-                <span>{customer.updated_at || <span className="text-muted-foreground">-</span>}</span>
+                <span>{formatDateTime(customer.updated_at) || <span className="text-muted-foreground">-</span>}</span>
               </div>
             </div>
           </CardContent>

@@ -62,5 +62,39 @@ class BaseApiController extends Controller
     {
         //
     }
+
+    /**
+     * Get system information.
+     */
+    public function systemInfo()
+    {
+        return response()->json([
+            'data' => [
+                'app_name' => config('app.name'),
+                'app_version' => config('app.version', '1.0.0'),
+                'laravel_version' => app()->version(),
+                'php_version' => PHP_VERSION,
+                'environment' => config('app.env'),
+                'timezone' => config('app.timezone'),
+                'locale' => config('app.locale'),
+            ]
+        ]);
+    }
+
+    /**
+     * Get system statistics.
+     */
+    public function systemStats()
+    {
+        return response()->json([
+            'data' => [
+                'users_count' => \Modules\Core\Domain\Models\User::count(),
+                'active_sessions' => \DB::table('sessions')->count(),
+                'memory_usage' => memory_get_usage(true),
+                'memory_peak' => memory_get_peak_usage(true),
+                'uptime' => uptime(),
+            ]
+        ]);
+    }
 }
 

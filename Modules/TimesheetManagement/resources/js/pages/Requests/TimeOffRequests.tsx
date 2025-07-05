@@ -3,6 +3,7 @@ import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/../../Modules/Core/resources/js/components/ui/card';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 export default function TimeOffRequests({ isAdmin = false, employeeId = null }: { isAdmin?: boolean; employeeId?: number | null }) {
   const [requests, setRequests] = useState<any[]>([]);
@@ -91,11 +92,11 @@ export default function TimeOffRequests({ isAdmin = false, employeeId = null }: 
         <form onSubmit={handleSubmit} className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block mb-1">Start Date</label>
-            <input type="date" name="start_date" value={form.start_date} onChange={handleChange} className="input" required />
+            <input type="date" name="start_date" value={formatDateMedium(form.start_date)} onChange={handleChange} className="input" required />
           </div>
           <div>
             <label className="block mb-1">End Date</label>
-            <input type="date" name="end_date" value={form.end_date} onChange={handleChange} className="input" required />
+            <input type="date" name="end_date" value={formatDateMedium(form.end_date)} onChange={handleChange} className="input" required />
           </div>
           <div>
             <label className="block mb-1">Type</label>
@@ -133,8 +134,8 @@ export default function TimeOffRequests({ isAdmin = false, employeeId = null }: 
               <tbody>
                 {requests.map((row) => (
                   <tr key={row.id}>
-                    <td className="border px-2 py-1">{row.start_date}</td>
-                    <td className="border px-2 py-1">{row.end_date}</td>
+                    <td className="border px-2 py-1">{formatDateMedium(row.start_date)}</td>
+                    <td className="border px-2 py-1">{formatDateMedium(row.end_date)}</td>
                     <td className="border px-2 py-1">{row.type}</td>
                     <td className="border px-2 py-1">{row.status}</td>
                     <td className="border px-2 py-1">{row.reason}</td>

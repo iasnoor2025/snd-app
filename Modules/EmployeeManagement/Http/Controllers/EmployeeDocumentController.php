@@ -291,7 +291,7 @@ class EmployeeDocumentController extends Controller
             'url' => $media->getUrl(),
             'preview_url' => $media->hasGeneratedConversion('thumb') ? $media->getUrl('thumb') : null,
             'custom_properties' => $media->custom_properties,
-            'created_at' => $media->created_at
+            'created_at' => $media->created_at?->format('Y-m-d H:i:s')
         ];
     }
 

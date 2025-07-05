@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link, router } from '@inertiajs/react';
 import { AppLayout } from '@/Core';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/Core";
 import { Button } from "@/Core";
@@ -22,22 +21,24 @@ import {
     PieChart,
     XIcon
 } from 'lucide-react';
-import ResourceList from '../components/project/ResourceList';
-import ResourceForm from '../components/project/ResourceForm';
+import ResourceList from '../Components/project/ResourceList';
+import ResourceForm from '../Components/project/ResourceForm';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/Core";
 import { Badge } from "@/Core";
 import { Separator } from "@/Core";
 import { Progress } from "@/Core";
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import TaskList, { ProjectTask } from '../components/project/TaskList';
-import TaskDialog from '../components/project/TaskDialog';
-import { ProjectProgress } from '../components/project/ProjectProgress';
+import TaskList, { ProjectTask } from '../Components/project/TaskList';
+import TaskDialog from '../Components/project/TaskDialog';
+import { ProjectProgress } from '../Components/project/ProjectProgress';
 import ProjectTimesheets from './ProjectTimesheets';
-import BurndownChart from '../components/project/BurndownChart';
-import VelocityChart from '../components/project/VelocityChart';
-import CostAnalysisCard from '../components/project/CostAnalysisCard';
-import RiskAssessmentCard from '../components/project/RiskAssessmentCard';
+import BurndownChart from '../Components/project/BurndownChart';
+import VelocityChart from '../Components/project/VelocityChart';
+import CostAnalysisCard from '../Components/project/CostAnalysisCard';
+import RiskAssessmentCard from '../Components/project/RiskAssessmentCard';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import { route } from 'ziggy-js';
 
 // Declare window.route for TypeScript
 // @ts-ignore
@@ -178,22 +179,15 @@ interface Resource {
 }
 
 interface Props {
-    project: Project;
-    manpower: Resource[];
-    equipment: Resource[];
-    materials: Resource[];
-    fuel: Resource[];
-    expenses: Resource[];
-    tasks?: ProjectTask[];
-    taskStats?: {
-        total: number;
-        completed: number;
-        inProgress: number;
-        pending: number;
-        overdue: number;
-        percentage: number;
-    };
-    assignableUsers?: Array<{ id: number; name: string }>;
+    project: any;
+    manager?: any[];
+    tasks?: any[];
+    teamMembers?: any[];
+    client?: any;
+    location?: any;
+    created_at?: string;
+    updated_at?: string;
+    deleted_at?: string;
 }
 
 // Add this wrapper component just before the main Show component
@@ -228,7 +222,7 @@ function TaskDialogWrapper({
     );
 }
 
-export default function Show({ project, manpower = [], equipment = [], materials = [], fuel = [], expenses = [], tasks = [], taskStats = { total: 0, completed: 0, inProgress: 0, pending: 0, overdue: 0, percentage: 0 }, assignableUsers = [] }: Props) {
+export default function Show({ project, manager = [], tasks = [], teamMembers = [], client = {}, location = {}, created_at, updated_at, deleted_at }: Props) {
     const { t } = useTranslation(['projects', 'common']);
     const [editingResource, setEditingResource] = useState<Resource | null>(null);
     const [editingResourceType, setEditingResourceType] = useState<ResourceType | null>(null);
@@ -287,13 +281,9 @@ export default function Show({ project, manpower = [], equipment = [], materials
 
         const routeName = routeMapping[type];
 
-        router.delete(route(routeName, {
+        window.location.href = route(routeName, {
             project: project.id,
             [type]: resource.id
-        }), {
-            onSuccess: () => {
-                toast.success(t('projects:resource_deleted_success'));
-            }
         });
     };
 
@@ -329,12 +319,12 @@ export default function Show({ project, manpower = [], equipment = [], materials
 
     // Calculate resource statistics
     const resourceStats = {
-        totalCount: manpower.length + equipment.length + materials.length + fuel.length + expenses.length,
-        manpowerCount: manpower.length,
-        equipmentCount: equipment.length,
-        materialsCount: materials.length,
-        fuelCount: fuel.length,
-        expensesCount: expenses.length
+        totalCount: manager.length,
+        manpowerCount: manager.length,
+        equipmentCount: 0,
+        materialsCount: 0,
+        fuelCount: 0,
+        expensesCount: 0
     };
 
     // Update the handler for delete button click
@@ -344,7 +334,7 @@ export default function Show({ project, manpower = [], equipment = [], materials
 
     // Add a new function to handle the actual deletion
     const handleConfirmProjectDelete = () => {
-        router.delete(route('projects.destroy', project.id));
+        window.location.href = route('projects.destroy', project.id);
         setProjectDeleteDialogOpen(false);
     };
 
@@ -360,30 +350,16 @@ export default function Show({ project, manpower = [], equipment = [], materials
     };
 
     const handleTaskStatusChange = (task: ProjectTask, status: 'pending' | 'in_progress' | 'completed' | 'cancelled') => {
-        router.put(route('projects.tasks.update', { project: project.id, task: task.id }), {
+        window.location.href = route('projects.tasks.update', { project: project.id, task: task.id }, {
             status,
             completion_percentage: status === 'completed' ? 100 : task.completion_percentage
-        }, {
-            onSuccess: () => {
-                toast.success(t('projects:task_updated_success'));
-            },
-            onError: () => {
-                toast.error(t('projects:error_updating_task'));
-            }
         });
     };
 
     const handleTaskCompletionChange = (task: ProjectTask, percentage: number) => {
-        router.put(route('projects.tasks.update', { project: project.id, task: task.id }), {
+        window.location.href = route('projects.tasks.update', { project: project.id, task: task.id }, {
             completion_percentage: percentage,
             status: percentage === 100 ? 'completed' : task.status
-        }, {
-            onSuccess: () => {
-                toast.success(t('projects:task_updated_success'));
-            },
-            onError: () => {
-                toast.error(t('projects:error_updating_task'));
-            }
         });
     };
 
@@ -403,17 +379,7 @@ export default function Show({ project, manpower = [], equipment = [], materials
         });
         console.log('Delete URL:', deleteUrl);
 
-        router.delete(deleteUrl, {
-            preserveState: false,
-            preserveScroll: false,
-            onSuccess: () => {
-                toast.success(t('projects:task_deleted_success'));
-            },
-            onError: (errors: any) => {
-                console.error('Delete errors:', errors);
-                toast.error(t('projects:error_deleting_task'));
-            }
-        });
+        window.location.href = deleteUrl;
     };
 
     // Add function to generate project report
@@ -486,16 +452,16 @@ export default function Show({ project, manpower = [], equipment = [], materials
                         </div>
                         <div className="flex items-center space-x-2 mt-3 md:mt-0">
                             <Button variant="outline" size="sm" asChild>
-                                <Link href={route('projects.index')}>
+                                <a href={route('projects.index')}>
                                     <ArrowLeft className="h-4 w-4 mr-2" />
                                     {t('back_to_projects')}
-                                </Link>
+                                </a>
                             </Button>
                             <Button variant="outline" size="sm" asChild>
-                                <Link href={route('projects.edit', project.id)}>
+                                <a href={route('projects.edit', project.id)}>
                                     <Edit className="h-4 w-4 mr-2" />
                                     {t('edit')}
-                                </Link>
+                                </a>
                             </Button>
                             <Button variant="destructive" size="sm" onClick={handleDeleteProject}>
                                 <Trash2 className="h-4 w-4 mr-2" />
@@ -526,16 +492,16 @@ export default function Show({ project, manpower = [], equipment = [], materials
                             )}
                         </Button>
                         <Button variant="outline" size="sm" className="bg-white shadow-sm" asChild>
-                            <Link href={route('projects.resources', project.id)}>
+                            <a href={route('projects.resources', project.id)}>
                                 <Package className="h-4 w-4 mr-2" />
                                 Manage Resources
-                            </Link>
+                            </a>
                         </Button>
                         <Button className="bg-purple-600 hover:bg-purple-700 shadow-sm" size="sm" asChild>
-                            <Link href={route('projects.resources', project.id) + '?tab=tasks'}>
+                            <a href={route('projects.resources', project.id) + '?tab=tasks'}>
                                 <CheckSquare className="h-4 w-4 mr-2" />
                                 Manage Tasks
-                            </Link>
+                            </a>
                         </Button>
                     </div>
 
@@ -548,8 +514,8 @@ export default function Show({ project, manpower = [], equipment = [], materials
                             <div>
                                 <p className="text-xs font-medium text-blue-800">Tasks</p>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-xl font-bold text-blue-700">{taskStats.total}</span>
-                                    <span className="text-xs bg-blue-100 text-blue-800 py-0.5 px-1.5 rounded-md">{taskStats.completed} completed</span>
+                                    <span className="text-xl font-bold text-blue-700">{tasks.length}</span>
+                                    <span className="text-xs bg-blue-100 text-blue-800 py-0.5 px-1.5 rounded-md">{tasks.filter(t => t.status === 'completed').length} completed</span>
                                 </div>
                             </div>
                         </div>
@@ -562,7 +528,7 @@ export default function Show({ project, manpower = [], equipment = [], materials
                                 <p className="text-xs font-medium text-green-800">Resources</p>
                                 <div className="flex items-center gap-2">
                                     <span className="text-xl font-bold text-green-700">{resourceStats.totalCount}</span>
-                                    <span className="text-xs bg-green-100 text-green-800 py-0.5 px-1.5 rounded-md">{resourceStats.equipmentCount} equipment</span>
+                                    <span className="text-xs bg-green-100 text-green-800 py-0.5 px-1.5 rounded-md">{resourceStats.manpowerCount} manpower</span>
                                 </div>
                             </div>
                         </div>
@@ -595,7 +561,7 @@ export default function Show({ project, manpower = [], equipment = [], materials
                             <div>
                                 <p className="text-xs font-medium text-red-800">Overdue</p>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-xl font-bold text-red-700">{taskStats.overdue}</span>
+                                    <span className="text-xl font-bold text-red-700">{tasks.filter(t => t.status === 'pending' && new Date(t.due_date) < new Date()).length}</span>
                                     <span className="text-xs bg-red-100 text-red-800 py-0.5 px-1.5 rounded-md">tasks</span>
                                 </div>
                             </div>
@@ -663,7 +629,7 @@ export default function Show({ project, manpower = [], equipment = [], materials
                                     </div>
                                     <div>
                                         {(() => {
-                                            const taskProgress = taskStats.total > 0 ? Math.round((taskStats.completed / taskStats.total) * 100) : 0;
+                                            const taskProgress = tasks.length > 0 ? Math.round((tasks.filter(t => t.status === 'completed').length / tasks.length) * 100) : 0;
                                             const today = new Date();
                                             const endDate = new Date(project.end_date);
                                             const startDate = new Date(project.start_date);
@@ -714,27 +680,22 @@ export default function Show({ project, manpower = [], equipment = [], materials
                                 <div>
                                     <div className="flex justify-between">
                                         <span className="text-sm text-gray-500">{t('th_total_cost')}</span>
-                                        <span className="text-sm font-medium">SAR {
-                                            ([...manpower, ...equipment, ...materials, ...fuel, ...expenses]
-                                                .reduce((sum, resource) => sum + (Number(resource.total_cost) || Number(resource.amount) || 0), 0))
-                                                .toLocaleString()
-                                        }</span>
+                                        <span className="text-sm font-medium">SAR {0}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-sm text-gray-500">Budget</span>
-                                        <span className="text-sm font-medium">SAR {Number(project.budget).toLocaleString()}</span>
+                                        <span className="text-sm font-medium">SAR {Number(project.budget)}</span>
                                     </div>
 
                                     {(() => {
-                                        const totalCost = [...manpower, ...equipment, ...materials, ...fuel, ...expenses]
-                                            .reduce((sum, resource) => sum + (Number(resource.total_cost) || Number(resource.amount) || 0), 0);
+                                        const totalCost = 0;
                                         const balance = Number(project.budget) - totalCost;
                                         const isProfitable = balance >= 0;
                                         return (
                                             <div className="flex justify-between mt-1">
                                                 <span className="text-sm text-gray-500">Balance</span>
                                                 <span className={`text-sm font-medium ${isProfitable ? 'text-green-600' : 'text-red-600'}`}>
-                                                    SAR {balance.toLocaleString()}
+                                                    SAR {balance}
                                                 </span>
                                             </div>
                                         );
@@ -742,8 +703,7 @@ export default function Show({ project, manpower = [], equipment = [], materials
                                 </div>
 
                                 {(() => {
-                                    const totalCost = [...manpower, ...equipment, ...materials, ...fuel, ...expenses]
-                                        .reduce((sum, resource) => sum + (Number(resource.total_cost) || Number(resource.amount) || 0), 0);
+                                    const totalCost = 0;
                                     const balance = Number(project.budget) - totalCost;
                                     const isProfitable = balance >= 0;
                                     const budgetPercentage = Math.min(Math.round((totalCost / Math.max(Number(project.budget), 1)) * 100), 100);
@@ -784,20 +744,15 @@ export default function Show({ project, manpower = [], equipment = [], materials
                             </h3>
                             <div className="space-y-4">
                                 {[
-                                    { name: 'Manpower', color: 'bg-blue-500', total: manpower.reduce((sum, r) => sum + (Number(r.total_cost) || 0), 0) },
-                                    { name: 'Equipment', color: 'bg-green-500', total: equipment.reduce((sum, r) => sum + (Number(r.total_cost) || 0), 0) },
-                                    { name: 'Materials', color: 'bg-amber-500', total: materials.reduce((sum, r) => sum + (Number(r.total_cost) || 0), 0) },
-                                    { name: 'Fuel', color: 'bg-orange-500', total: fuel.reduce((sum, r) => sum + (Number(r.total_cost) || 0), 0) },
-                                    { name: 'Expenses', color: 'bg-red-500', total: expenses.reduce((sum, r) => sum + (Number(r.amount) || 0), 0) }
+                                    { name: 'Manpower', color: 'bg-blue-500', total: 0 },
                                 ].map((category, index) => {
-                                    const grandTotal = [...manpower, ...equipment, ...materials, ...fuel, ...expenses]
-                                        .reduce((sum, resource) => sum + (Number(resource.total_cost) || Number(resource.amount) || 0), 0);
+                                    const grandTotal = 0;
                                     const percentage = grandTotal ? Math.round((category.total / grandTotal) * 100) : 0;
                                     return (
                                         <div key={index} className="space-y-1">
                                             <div className="flex justify-between text-sm">
                                                 <span className="text-muted-foreground">{category.name}</span>
-                                                <span>SAR {category.total.toLocaleString()} ({percentage}%)</span>
+                                                <span>SAR {category.total} ({percentage}%)</span>
                                             </div>
                                             <div className="relative w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
                                                 <div
@@ -821,20 +776,8 @@ export default function Show({ project, manpower = [], equipment = [], materials
                             </h3>
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="bg-gray-50 rounded-md p-3 text-center flex flex-col items-center justify-center">
-                                    <div className="text-2xl font-semibold text-blue-600">{manpower.length}</div>
+                                    <div className="text-2xl font-semibold text-blue-600">{manager.length}</div>
                                     <p className="text-xs text-muted-foreground mt-1">Manpower</p>
-                                </div>
-                                <div className="bg-gray-50 rounded-md p-3 text-center flex flex-col items-center justify-center">
-                                    <div className="text-2xl font-semibold text-green-600">{equipment.length}</div>
-                                    <p className="text-xs text-muted-foreground mt-1">Equipment</p>
-                                </div>
-                                <div className="bg-gray-50 rounded-md p-3 text-center flex flex-col items-center justify-center">
-                                    <div className="text-2xl font-semibold text-orange-600">{materials.length}</div>
-                                    <p className="text-xs text-muted-foreground mt-1">Materials</p>
-                                </div>
-                                <div className="bg-gray-50 rounded-md p-3 text-center flex flex-col items-center justify-center">
-                                    <div className="text-2xl font-semibold text-red-600">{fuel.length + expenses.length}</div>
-                                    <p className="text-xs text-muted-foreground mt-1">Fuel/Expenses</p>
                                 </div>
                             </div>
                         </CardContent>
@@ -842,12 +785,12 @@ export default function Show({ project, manpower = [], equipment = [], materials
 
                     {/* Project Progress Card */}
                     <ProjectProgress
-                        percentage={taskStats.percentage}
-                        completed={taskStats.completed}
-                        total={taskStats.total}
-                        inProgress={taskStats.inProgress}
-                        pending={taskStats.pending}
-                        overdue={taskStats.overdue}
+                        percentage={progressValue}
+                        completed={tasks.filter(t => t.status === 'completed').length}
+                        total={tasks.length}
+                        inProgress={tasks.filter(t => t.status === 'in_progress').length}
+                        pending={tasks.filter(t => t.status === 'pending').length}
+                        overdue={tasks.filter(t => t.status === 'pending' && new Date(t.due_date) < new Date()).length}
                         startDate={project.start_date || undefined}
                         endDate={project.end_date || undefined}
                         className="shadow-sm border border-gray-100 dark:border-gray-800"
@@ -985,7 +928,7 @@ export default function Show({ project, manpower = [], equipment = [], materials
                         onOpenChange={setTaskDialogOpen}
                         projectId={project.id}
                         initialData={editingTask}
-                        assignableUsers={assignableUsers}
+                        assignableUsers={teamMembers}
                         onSuccess={handleTaskSuccess}
                     />
                 )}
@@ -1084,13 +1027,7 @@ export default function Show({ project, manpower = [], equipment = [], materials
                         ]} />
                     </div>
                     <div className="col-span-1">
-                        <CostAnalysisCard budget={project.budget} spent={[
-                            ...manpower,
-                            ...equipment,
-                            ...materials,
-                            ...fuel,
-                            ...expenses
-                        ].reduce((sum, resource) => sum + (Number(resource.total_cost) || Number(resource.amount) || 0), 0)} />
+                        <CostAnalysisCard budget={project.budget} spent={0} />
                     </div>
                     <div className="col-span-1">
                         <RiskAssessmentCard risks={[

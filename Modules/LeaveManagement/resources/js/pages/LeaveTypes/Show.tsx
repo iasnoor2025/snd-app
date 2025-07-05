@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Head, router } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
+import { Inertia } from '@inertiajs/inertia';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Core";
 import { Button } from "@/Core";
 import { Badge } from "@/Core";
@@ -8,6 +9,8 @@ import { Separator } from "@/Core";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/Core";
 import { ArrowLeftIcon, EditIcon, TrashIcon, CalendarIcon, ClockIcon, UsersIcon, CreditCardIcon, CheckCircleIcon, XCircleIcon } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import route from 'ziggy-js';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -61,7 +64,7 @@ export default function ShowLeaveType({ leaveType }: Props) {
             toast.error('You do not have permission to edit leave types.');
             return;
         }
-        router.visit(route('leaves.types.edit', leaveType.id));
+        Inertia.visit(route('leaves.types.edit', leaveType.id));
     };
 
     const handleDelete = () => {
@@ -70,10 +73,10 @@ export default function ShowLeaveType({ leaveType }: Props) {
             return;
         }
 
-        router.delete(route('leaves.types.destroy', leaveType.id), {
+        Inertia.delete(route('leaves.types.destroy', leaveType.id), {
             onSuccess: () => {
                 toast.success('Leave type deleted successfully!');
-                router.visit(route('leaves.types.index'));
+                Inertia.visit(route('leaves.types.index'));
             },
             onError: () => {
                 toast.error('Failed to delete leave type. It may be in use.');
@@ -82,7 +85,7 @@ export default function ShowLeaveType({ leaveType }: Props) {
     };
 
     const handleBack = () => {
-        router.visit(route('leaves.types.index'));
+        Inertia.visit(route('leaves.types.index'));
     };
 
     const getGenderLabel = (gender: string) => {
@@ -97,13 +100,7 @@ export default function ShowLeaveType({ leaveType }: Props) {
     };
 
     const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-        });
+        return formatDateMedium(dateString);
     };
 
     return (
@@ -114,21 +111,27 @@ export default function ShowLeaveType({ leaveType }: Props) {
                 {/* Breadcrumb */}
                 <Breadcrumb>
                     <BreadcrumbList>
-                        <BreadcrumbItem>
+                        <li>
                             <BreadcrumbLink href={route('dashboard')}>Dashboard</BreadcrumbLink>
-                        </BreadcrumbItem>
-                        <BreadcrumbSeparator />
-                        <BreadcrumbItem>
+                        </li>
+                        <li>
+                            <BreadcrumbSeparator />
+                        </li>
+                        <li>
                             <BreadcrumbLink href={route('leaves.requests.index')}>Leave Management</BreadcrumbLink>
-                        </BreadcrumbItem>
-                        <BreadcrumbSeparator />
-                        <BreadcrumbItem>
+                        </li>
+                        <li>
+                            <BreadcrumbSeparator />
+                        </li>
+                        <li>
                             <BreadcrumbLink href={route('leaves.types.index')}>{t('leave_types')}</BreadcrumbLink>
-                        </BreadcrumbItem>
-                        <BreadcrumbSeparator />
-                        <BreadcrumbItem>
+                        </li>
+                        <li>
+                            <BreadcrumbSeparator />
+                        </li>
+                        <li>
                             <BreadcrumbPage>{leaveType.name}</BreadcrumbPage>
-                        </BreadcrumbItem>
+                        </li>
                     </BreadcrumbList>
                 </Breadcrumb>
 
@@ -400,17 +403,3 @@ export default function ShowLeaveType({ leaveType }: Props) {
         </>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

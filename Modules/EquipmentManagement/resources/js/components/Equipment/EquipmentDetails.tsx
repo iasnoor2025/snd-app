@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { dateTimeDisplay } from '../date-time-display';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Props {
     equipment: {
@@ -102,13 +103,13 @@ export const EquipmentDetails: FC<Props> = ({ equipment, onEdit }) => {
                     <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt className="text-sm font-medium text-gray-500">Purchase Date</dt>
                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                            {dateTimeDisplay(equipment.purchase_date)}
+                            {formatDateTime(equipment.purchase_date)}
                         </dd>
                     </div>
                     <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt className="text-sm font-medium text-gray-500">Last Maintenance</dt>
                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                            {dateTimeDisplay(equipment.last_maintenance_date)}
+                            {formatDateTime(equipment.last_maintenance_date)}
                         </dd>
                     </div>
                     <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -126,7 +127,7 @@ export const EquipmentDetails: FC<Props> = ({ equipment, onEdit }) => {
                     <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt className="text-sm font-medium text-gray-500">Last Updated</dt>
                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                            {dateTimeDisplay(equipment.updated_at)}
+                            {formatDateTime(equipment.updated_at)}
                         </dd>
                     </div>
                 </dl>

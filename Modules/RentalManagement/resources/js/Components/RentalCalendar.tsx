@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/../../Modules/Core/resources/js/components/ui/card';
 import { toast } from 'sonner';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Booking {
   id: number;
@@ -58,7 +59,7 @@ export function RentalCalendar({ equipmentId }: { equipmentId: number }) {
         <ul>
           {bookings.map((b) => (
             <li key={b.id}>
-              {b.customer_name}: {new Date(b.start_date).toLocaleDateString()} - {new Date(b.end_date).toLocaleDateString()}
+              {b.customer_name}: {new Date(b.start_date)} - {new Date(b.end_date)}
             </li>
           ))}
           {bookings.length === 0 && <li>No bookings found</li>}

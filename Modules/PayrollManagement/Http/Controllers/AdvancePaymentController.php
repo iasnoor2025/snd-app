@@ -37,7 +37,7 @@ class AdvancePaymentController extends Controller
                         'amount' => $payment->amount,
                         'reason' => $payment->reason,
                         'status' => $payment->status,
-                        'created_at' => $payment->created_at,
+                        'created_at' => $payment->created_at?->format('Y-m-d H:i:s'),
                         'rejection_reason' => $payment->rejection_reason,
                         'repayment_date' => $payment->repayment_date,
                         'type' => 'advance_payment'
@@ -73,7 +73,7 @@ class AdvancePaymentController extends Controller
                         'amount' => $payment->amount,
                         'reason' => $payment->reason,
                         'status' => $payment->status,
-                        'created_at' => $payment->created_at,
+                        'created_at' => $payment->created_at?->format('Y-m-d H:i:s'),
                         'rejection_reason' => $payment->rejection_reason,
                         'repayment_date' => $payment->repayment_date,
                         'type' => 'advance_payment'
@@ -634,7 +634,7 @@ class AdvancePaymentController extends Controller
                 'payment_date' => $paymentRecord->payment_date->format('Y-m-d'),
                 'notes' => $paymentRecord->notes,
                 'recorded_by' => $paymentRecord->recorder ? $paymentRecord->recorder->name : 'System',
-                'created_at' => $paymentRecord->created_at->format('Y-m-d H:i:s'),
+                'created_at' => $paymentRecord->created_at?->format('Y-m-d H:i:s')->format('Y-m-d H:i:s'),
             ],
             'advance' => [
                 'id' => $advance->id,

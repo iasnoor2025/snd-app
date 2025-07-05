@@ -49,7 +49,7 @@ class RentalExtensionController extends Controller
                 'new_end_date' => $extension->new_end_date->format('Y-m-d'),
                 'duration_days' => $extension->duration_days,
                 'status' => $extension->status,
-                'created_at' => $extension->created_at->format('Y-m-d H:i:s'),
+                'created_at' => $extension->created_at?->format('Y-m-d H:i:s')->format('Y-m-d H:i:s'),
                 'approver' => $extension->approver ? [
                     'id' => $extension->approver->id,
                     'name' => $extension->approver->name,
@@ -89,7 +89,7 @@ class RentalExtensionController extends Controller
                     'id' => $rental->customer->id,
                     'company_name' => $rental->customer->company_name,
                 ],
-                'start_date' => $rental->start_date->format('Y-m-d'),
+                'start_date' => $rental->start_date?->format('Y-m-d')->format('Y-m-d'),
                 'expected_end_date' => $rental->expected_end_date->format('Y-m-d'),
                 'status' => $rental->status,
             ],
@@ -157,7 +157,7 @@ class RentalExtensionController extends Controller
                 'keep_operators' => $extension->keep_operators,
                 'additional_equipment' => $extension->additional_equipment,
                 'status' => $extension->status,
-                'created_at' => $extension->created_at->format('Y-m-d H:i:s'),
+                'created_at' => $extension->created_at?->format('Y-m-d H:i:s')->format('Y-m-d H:i:s'),
                 'approver' => $extension->approver ? [
                     'id' => $extension->approver->id,
                     'name' => $extension->approver->name,

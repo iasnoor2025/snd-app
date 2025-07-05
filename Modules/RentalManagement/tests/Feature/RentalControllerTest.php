@@ -8,7 +8,7 @@ use Tests\TestCase;
 class RentalControllerTest extends TestCase
 {
     use RefreshDatabase;
-use /** @test */
+
     public function it_can_list_rentals()
     {
         Rental::factory()->count(3)->create();
@@ -113,6 +113,82 @@ use /** @test */
 
         $response->assertRedirect(route('rentals.index'));
         $this->assertDatabaseMissing('rentals', ['id' => $rental->id]);
+    }
+
+    /** @test */
+    public function show_and_edit_pages_contain_all_expected_inertia_props()
+    {
+        $rental = Rental::factory()->create();
+
+        $showResponse = $this->get(route('rentals.show', $rental->id));
+        $showResponse->assertStatus(200)
+            ->assertInertia(fn ($assert) => $assert
+                ->component('Rentals/Show')
+                ->hasAll([
+                    'rental',
+                    'customer',
+                    'rentalItems',
+                    'equipment',
+                    'invoices',
+                    'timesheets',
+                    'payments',
+                    'maintenanceRecords',
+                    'location',
+                    'translations',
+                    'created_at',
+                    'updated_at',
+                    'deleted_at',
+                    'dropdowns',
+                ])
+                ->whereNotNull('rental.id')
+                ->whereNotNull('rental.rental_number')
+                ->whereNotNull('rental.status')
+                ->whereNotNull('customer.id')
+            );
+
+        $editResponse = $this->get(route('rentals.edit', $rental->id));
+        $editResponse->assertStatus(200)
+            ->assertInertia(fn ($assert) => $assert
+                ->component('Rentals/Edit')
+                ->hasAll([
+                    'rental',
+                    'customer',
+                    'rentalItems',
+                    'equipment',
+                    'invoices',
+                    'timesheets',
+                    'payments',
+                    'maintenanceRecords',
+                    'location',
+                    'translations',
+                    'created_at',
+                    'updated_at',
+                    'deleted_at',
+                    'dropdowns',
+                ])
+                ->whereNotNull('rental.id')
+                ->whereNotNull('rental.rental_number')
+                ->whereNotNull('rental.status')
+                ->whereNotNull('customer.id')
+            );
+    }
+
+    /** @test */
+    public function edit_form_can_submit_unchanged_fields_without_validation_errors()
+    {
+        $rental = Rental::factory()->create();
+        $response = $this->put(route('rentals.update', $rental->id), [
+            'customer_id' => $rental->customer_id,
+            'start_date' => $rental->start_date->format('Y-m-d'),
+            'expected_end_date' => $rental->expected_end_date->format('Y-m-d'),
+            'status' => $rental->status,
+        ]);
+        $response->assertRedirect(route('rentals.index'));
+        $this->assertDatabaseHas('rentals', [
+            'id' => $rental->id,
+            'customer_id' => $rental->customer_id,
+            'status' => $rental->status,
+        ]);
     }
 }
 

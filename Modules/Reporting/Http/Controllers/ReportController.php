@@ -870,7 +870,7 @@ class ReportController extends Controller
                 'name' => $customer->name,
                 'email' => $customer->email,
                 'phone' => $customer->phone,
-                'created_at' => $customer->created_at->format('Y-m-d'),
+                'created_at' => $customer->created_at?->format('Y-m-d H:i:s')->format('Y-m-d'),
                 'total_rentals' => $customer->rentals()->count(),
                 'total_payments' => $customer->payments()->sum('amount')
             ];
@@ -903,11 +903,11 @@ class ReportController extends Controller
                 'id' => $rental->id,
                 'customer_name' => $rental->customer->name,
                 'equipment_count' => $rental->rentalItems()->count(),
-                'start_date' => $rental->start_date->format('Y-m-d'),
-                'end_date' => $rental->end_date ? $rental->end_date->format('Y-m-d') : '',
+                'start_date' => $rental->start_date?->format('Y-m-d')->format('Y-m-d'),
+                'end_date' => $rental->end_date ? $rental->end_date?->format('Y-m-d')->format('Y-m-d') : '',
                 'status' => $rental->status,
                 'total_amount' => $rental->total_amount,
-                'created_at' => $rental->created_at->format('Y-m-d')
+                'created_at' => $rental->created_at?->format('Y-m-d H:i:s')->format('Y-m-d')
             ];
         })->toArray();
     }
@@ -942,7 +942,7 @@ class ReportController extends Controller
                 'category' => $equipment->category,
                 'status' => $equipment->status,
                 'daily_rate' => $equipment->daily_rate,
-                'created_at' => $equipment->created_at->format('Y-m-d'),
+                'created_at' => $equipment->created_at?->format('Y-m-d H:i:s')->format('Y-m-d'),
                 'total_rentals' => $equipment->rentalItems()->count()
             ];
         })->toArray();
@@ -978,7 +978,7 @@ class ReportController extends Controller
                 'payment_date' => $payment->payment_date->format('Y-m-d'),
                 'status' => $payment->status,
                 'reference_number' => $payment->reference_number,
-                'created_at' => $payment->created_at->format('Y-m-d')
+                'created_at' => $payment->created_at?->format('Y-m-d H:i:s')->format('Y-m-d')
             ];
         })->toArray();
     }

@@ -56,6 +56,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Project {
     id: number;
@@ -546,7 +547,7 @@ const MobileTimesheetEntry: React.FC = () => {
                 <div>
                     <h1 className="text-2xl font-bold">{t('mobile_timesheet')}</h1>
                     <p className="text-sm text-muted-foreground">
-                        {new Date().toLocaleDateString()}
+                        {new Date()}
                     </p>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -714,7 +715,7 @@ const MobileTimesheetEntry: React.FC = () => {
                             <Input
                                 id="date"
                                 type="date"
-                                value={currentEntry.date}
+                                value={formatDateMedium(currentEntry.date)}
                                 onChange={(e) => setCurrentEntry(prev => ({ ...prev, date: e.target.value }))}
                             />
                         </div>
@@ -792,7 +793,7 @@ const MobileTimesheetEntry: React.FC = () => {
                                                 {projects.find(p => p.id === entry.project_id)?.name}
                                             </div>
                                             <div className="text-xs text-muted-foreground">
-                                                {entry.date} • {entry.hours_worked}h
+                                                {formatDateMedium(entry.date)} • {entry.hours_worked}h
                                             </div>
                                         </div>
                                         <Badge variant="secondary" className="text-xs">

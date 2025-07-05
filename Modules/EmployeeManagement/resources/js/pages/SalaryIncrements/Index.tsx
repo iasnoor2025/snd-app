@@ -12,6 +12,7 @@ import { Search, Plus, Eye, Edit, Check, X, Calendar } from 'lucide-react';
 import { AppLayout } from '@/Core';
 import { PageProps } from '@/Core/types';
 import SalaryHistory from '../Employees/SalaryHistory';
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Employee {
     id: number;
@@ -338,7 +339,7 @@ export default function Index({ increments, statistics, projectedCost, filters, 
                                                     </Badge>
                                                 </TableCell>
                                                 <TableCell>
-                                                    {new Date(increment.effective_date).toLocaleDateString()}
+                                                    {new Date(increment.effective_date)}
                                                 </TableCell>
                                                 <TableCell>{getStatusBadge(increment.status)}</TableCell>
                                                 <TableCell>{increment.requested_by.name}</TableCell>
