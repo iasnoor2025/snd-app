@@ -86,6 +86,15 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
   const [dailyOvertimeHours, setDailyOvertimeHours] = useState<Record<string, string>>({});
   const [dailyNormalHours, setDailyNormalHours] = useState<Record<string, string>>({});
   const [, forceUpdate] = useState(0);
+  const [assignmentBlocks, setAssignmentBlocks] = useState([
+    {
+      id: 1,
+      project_id: '',
+      rental_id: '',
+      start_date: '',
+      end_date: '',
+    },
+  ]);
 
   // Inertia useForm for form state and submission
   const { data, setData, post, processing, errors, reset } = useForm({
@@ -163,6 +172,50 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isBulkMode && assignmentBlocks.length > 1) {
+      // Validate all blocks
+      for (const block of assignmentBlocks) {
+        if (!block.start_date || !block.end_date || (!block.project_id && !block.rental_id)) {
+          toast.error('Please fill all assignment block fields');
+          return;
+        }
+      }
+      // Build timesheet entries for all blocks
+      const allEntries: any[] = [];
+      for (const block of assignmentBlocks) {
+        const start = new Date(block.start_date);
+        const end = new Date(block.end_date);
+        let current = new Date(start);
+        while (current <= end) {
+          allEntries.push({
+            employee_id: data.employee_id,
+            date: format(current, 'yyyy-MM-dd'),
+            project_id: block.project_id || '',
+            rental_id: block.rental_id || '',
+            hours_worked: '8',
+            overtime_hours: '0',
+            description: data.description,
+          });
+          current.setDate(current.getDate() + 1);
+        }
+      }
+      // Submit allEntries as a single bulk payload
+      post(route('timesheets.store-bulk-split'), {
+        data: { assignments: allEntries },
+        onSuccess: () => {
+          toast.success('Timesheets created successfully!');
+          reset();
+          router.visit(route('hr.api.timesheets.index'));
+        },
+        onError: (errors) => {
+          const firstError = Object.values(errors)[0];
+          const message = Array.isArray(firstError) ? firstError[0] : firstError;
+          toast.error(message || 'Please check the form for errors');
+        },
+      });
+      return;
+    }
 
     // Basic validation (add more as needed)
     if (!data.employee_id) {
@@ -349,6 +402,21 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
     forceUpdate(n => n + 1);
   }, [dailyNormalHours]);
 
+  const addAssignmentBlock = () => {
+    setAssignmentBlocks(blocks => [
+      ...blocks,
+      { id: Date.now(), project_id: '', rental_id: '', start_date: '', end_date: '' },
+    ]);
+  };
+
+  const removeAssignmentBlock = (id: number) => {
+    setAssignmentBlocks(blocks => blocks.filter(b => b.id !== id));
+  };
+
+  const updateAssignmentBlock = (id: number, field: string, value: string) => {
+    setAssignmentBlocks(blocks => blocks.map(b => b.id === id ? { ...b, [field]: value } : b));
+  };
+
   return (
     <AppLayout
       title={t('TimesheetManagement:actions.create_timesheet')}
@@ -446,7 +514,7 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
                         <table className="w-full text-sm table-fixed rounded-lg border border-gray-200 shadow-sm" style={{ tableLayout: 'fixed' }}>
                           <thead className="bg-white">
                             <tr>
-                              {Object.keys(dailyOvertimeHours).map((date) => {
+                              {Object.keys(dailyNormalHours).map((date) => {
                                 const day = new Date(date).getDay();
                                 const isFriday = day === 5;
                                 return (
@@ -531,6 +599,43 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
                         </table>
                       </div>
                     </div>
+                    <h2 className="text-lg font-semibold mb-2">Split Assignments</h2>
+                    {assignmentBlocks.map((block, idx) => (
+                      <div key={block.id} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end border p-4 rounded mb-2 bg-gray-50">
+                        <div>
+                          <FormLabel>Project</FormLabel>
+                          <Select value={block.project_id} onValueChange={v => updateAssignmentBlock(block.id, 'project_id', v)}>
+                            <SelectTrigger><SelectValue placeholder="Select project" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="none">None</SelectItem>
+                              {projects.map(p => <SelectItem key={p.id} value={p.id.toString()}>{p.name}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <FormLabel>Rental</FormLabel>
+                          <Select value={block.rental_id} onValueChange={v => updateAssignmentBlock(block.id, 'rental_id', v)}>
+                            <SelectTrigger><SelectValue placeholder="Select rental" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="none">None</SelectItem>
+                              {rentals && rentals.map(r => <SelectItem key={r.id} value={r.id.toString()}>{r.rental_number} - {r.equipment?.name || 'Unknown Equipment'}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <FormLabel>Start Date</FormLabel>
+                          <Input type="date" value={block.start_date} onChange={e => updateAssignmentBlock(block.id, 'start_date', e.target.value)} />
+                        </div>
+                        <div>
+                          <FormLabel>End Date</FormLabel>
+                          <Input type="date" value={block.end_date} onChange={e => updateAssignmentBlock(block.id, 'end_date', e.target.value)} />
+                        </div>
+                        {assignmentBlocks.length > 1 && (
+                          <Button type="button" variant="destructive" size="sm" className="mt-2" onClick={() => removeAssignmentBlock(block.id)}>Remove</Button>
+                        )}
+                      </div>
+                    ))}
+                    <Button type="button" variant="secondary" onClick={addAssignmentBlock}>Add Assignment Block</Button>
                   </div>
                 )}
                 {/* Timesheet Details Section */}

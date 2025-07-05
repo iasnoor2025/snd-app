@@ -74,6 +74,9 @@ Route::prefix('timesheets')->name('timesheets.')->middleware(['auth', 'verified'
     Route::post('/bulk-approve', [TimesheetController::class, 'bulkApproveWeb'])
         ->middleware('permission:timesheets.approve')
         ->name('bulk-approve');
+    Route::post('/bulk-split', [TimesheetController::class, 'storeBulkSplit'])
+        ->middleware('permission:timesheets.create')
+        ->name('store-bulk-split');
 
     // Daily timesheet entries
     Route::get('/entries', [TimeEntryController::class, 'index'])

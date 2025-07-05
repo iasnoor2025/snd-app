@@ -1097,6 +1097,71 @@ class TimesheetController extends Controller
 
         return redirect()->back()->with('success', "{$approved} timesheets approved successfully");
     }
+
+    /**
+     * Store multiple split assignment timesheets in bulk.
+     */
+    public function storeBulkSplit(Request $request)
+    {
+        $validated = $request->validate([
+            'assignments' => 'required|array|min:1',
+            'assignments.*.employee_id' => 'required|exists:employees,id',
+            'assignments.*.date_from' => 'required|date',
+            'assignments.*.date_to' => 'required|date|after_or_equal:assignments.*.date_from',
+            'assignments.*.project_id' => 'nullable|exists:projects,id',
+            'assignments.*.rental_id' => 'nullable|exists:rentals,id',
+            'assignments.*.hours_worked' => 'required|numeric|min:0',
+            'assignments.*.overtime_hours' => 'nullable|numeric|min:0',
+            'assignments.*.description' => 'nullable|string',
+            'assignments.*.tasks' => 'nullable|string',
+        ]);
+
+        $created = [];
+        DB::beginTransaction();
+        try {
+            foreach ($validated['assignments'] as $block) {
+                $dates = $this->getDateRange($block['date_from'], $block['date_to']);
+                foreach ($dates as $date) {
+                    $created[] = Timesheet::create([
+                        'employee_id' => $block['employee_id'],
+                        'project_id' => $block['project_id'] ?? null,
+                        'rental_id' => $block['rental_id'] ?? null,
+                        'date' => $date,
+                        'hours_worked' => $block['hours_worked'],
+                        'overtime_hours' => $block['overtime_hours'] ?? 0,
+                        'description' => $block['description'] ?? null,
+                        'tasks' => $block['tasks'] ?? null,
+                        'status' => 'draft',
+                    ]);
+                }
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Bulk split timesheet creation failed', ['error' => $e->getMessage()]);
+            return response()->json(['message' => 'Failed to create timesheets', 'error' => $e->getMessage()], 500);
+        }
+        // If request expects JSON (API), return JSON, else redirect
+        if ($request->wantsJson()) {
+            return response()->json(['message' => 'Timesheets created successfully', 'count' => count($created)]);
+        }
+        return redirect()->route('timesheets.index')->with('success', __('TimesheetManagement::timesheet.bulk_split_success'));
+    }
+
+    /**
+     * Helper to get all dates between two dates (inclusive).
+     */
+    protected function getDateRange($from, $to)
+    {
+        $dates = [];
+        $current = Carbon::parse($from);
+        $end = Carbon::parse($to);
+        while ($current->lte($end)) {
+            $dates[] = $current->format('Y-m-d');
+            $current->addDay();
+        }
+        return $dates;
+    }
 }
 
 
