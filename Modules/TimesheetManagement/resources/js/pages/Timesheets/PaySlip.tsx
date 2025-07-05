@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Head, Link } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import { PageProps, BreadcrumbItem } from '@/Core/types';
 import { AppLayout } from '@/Core';
 import { Button } from "@/Core";
@@ -78,6 +78,7 @@ interface Props extends PageProps {
   days_worked: number;
   calendar: Record<string, DayData>;
   salary_details?: SalaryDetails;
+  absent_days: number;
 }
 
 // Add print styles
@@ -178,7 +179,8 @@ export default function PaySlip({
   total_hours,
   days_worked,
   calendar,
-  salary_details
+  salary_details,
+  absent_days
 }: Props) {
   const { t } = useTranslation('TimesheetManagement');
 
@@ -274,10 +276,10 @@ export default function PaySlip({
             </CardHeader>
             <CardContent>
               <Button variant="outline" asChild>
-                <Link href={route('employees.index')}>
+                <a href={(route as any)('employees.index')}>
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   {t('employee:btn_back_to_employees')}
-                </Link>
+                </a>
               </Button>
             </CardContent>
           </Card>
@@ -295,10 +297,10 @@ export default function PaySlip({
           <h1 className="text-2xl font-bold tracking-tight">{t('pay_slip')}</h1>
           <div className="flex space-x-2">
             <Button variant="outline" asChild>
-              <Link href={route('employees.show', { employee: employee.id })}>
+              <a href={(route as any)('employees.show', { employee: employee.id })}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back
-              </Link>
+              </a>
             </Button>
             <Button variant="outline" onClick={handlePrint}>
               <Printer className="mr-2 h-4 w-4" />
@@ -434,7 +436,7 @@ export default function PaySlip({
                   <div>{days_worked}</div>
 
                   <div className="font-medium">Absent Days:</div>
-                  <div>{absentDays}</div>
+                  <div className="text-right text-red-600">{absent_days}</div>
                 </div>
               </div>
             </div>
@@ -452,9 +454,12 @@ export default function PaySlip({
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
-                        <TableHead key={day} className="text-center p-1 text-xs">
-                          {day}
+                      {Array.from({ length: 31 }, (_, i) => i + 1).map((day, idx, arr) => (
+                        <TableHead
+                          key={day}
+                          className={`text-center text-xs font-bold bg-black text-white align-middle border ${idx === 0 ? 'rounded-l-md' : ''} ${idx === arr.length - 1 ? 'rounded-r-md' : ''}`}
+                        >
+                          {day.toString().padStart(2, '0')}
                         </TableHead>
                       ))}
                     </TableRow>
@@ -561,7 +566,7 @@ export default function PaySlip({
                   <div className="text-right text-red-600">{absentHours}</div>
 
                   <div className="font-medium">Absent Days:</div>
-                  <div className="text-right text-red-600">{absentDays}</div>
+                  <div className="text-right text-red-600">{absent_days}</div>
 
                   <div className="font-medium">Overtime Hours:</div>
                   <div className="text-right text-green-600">{total_overtime_hours}</div>
@@ -579,6 +584,9 @@ export default function PaySlip({
 
                   <div className="font-medium">Absent Deduction:</div>
                   <div className="text-right text-red-600">SAR {absentDeduction.toFixed(2)}</div>
+
+                  <div className="font-medium">Absent Days:</div>
+                  <div className="text-right text-red-600">{absent_days}</div>
 
                   <div className="font-medium">Overtime Pay:</div>
                   <div className="text-right text-green-600">SAR {overtimePay.toFixed(2)}</div>

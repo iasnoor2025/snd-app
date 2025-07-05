@@ -1384,21 +1384,28 @@ class TimesheetController extends Controller
             ];
         }
 
+        // Calculate absent days (not Friday, no hours)
+        $absentDays = 0;
+        $daysInMonth = (int)date('t', strtotime($startDate));
+        for ($d = 1; $d <= $daysInMonth; $d++) {
+            $dateStr = sprintf('%04d-%02d-%02d', $year, str_pad($monthNum, 2, '0', STR_PAD_LEFT), str_pad($d, 2, '0', STR_PAD_LEFT));
+            $day = $calendar[$dateStr];
+            if ($day['regular_hours'] == 0 && $day['overtime_hours'] == 0) {
+                $absentDays++;
+            }
+        }
+        $totalWorkingDays = $daysInMonth;
+        // Calculate absent deduction
+        $absentDeduction = 0;
+        if ($totalWorkingDays > 0 && $absentDays > 0) {
+            $absentDeduction = ($employee->basic_salary / $totalWorkingDays) * $absentDays;
+        }
         // Calculate salary details (basic example, adjust as needed)
         $basicSalary = $employee->basic_salary ?? 0;
         $totalAllowances = ($employee->food_allowance ?? 0) + ($employee->housing_allowance ?? 0) + ($employee->transport_allowance ?? 0);
-        $absentDeduction = 0; // Implement absent logic if needed
         $overtimePay = $employee->calculateOvertimePay($totalOvertimeHours);
         $advancePayment = $employee->advance_payment ?? 0;
         $netSalary = $basicSalary + $totalAllowances + $overtimePay - $absentDeduction - $advancePayment;
-        $salaryDetails = [
-            'basic_salary' => $basicSalary,
-            'total_allowances' => $totalAllowances,
-            'absent_deduction' => $absentDeduction,
-            'overtime_pay' => $overtimePay,
-            'advance_payment' => $advancePayment,
-            'net_salary' => $netSalary,
-        ];
 
         return Inertia::render('Timesheets/PaySlip', [
             'employee' => [
@@ -1422,8 +1429,16 @@ class TimesheetController extends Controller
             'total_overtime_hours' => $totalOvertimeHours,
             'total_hours' => $totalHours,
             'days_worked' => $daysWorked,
+            'absent_days' => $absentDays,
             'calendar' => $calendar,
-            'salary_details' => $salaryDetails,
+            'salary_details' => [
+                'basic_salary' => $basicSalary,
+                'total_allowances' => $totalAllowances,
+                'absent_deduction' => $absentDeduction,
+                'overtime_pay' => $overtimePay,
+                'advance_payment' => $advancePayment,
+                'net_salary' => $netSalary,
+            ],
         ]);
     }
 }
