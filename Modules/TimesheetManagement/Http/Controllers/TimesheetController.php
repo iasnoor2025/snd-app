@@ -473,6 +473,7 @@ class TimesheetController extends Controller
             'project_id' => 'nullable|exists:projects,id',
             'description' => 'nullable|string|max:1000',
             'tasks_completed' => 'nullable|string|max:1000',
+            'status' => 'required|string|in:draft,submitted,foreman_approved,incharge_approved,checking_approved,manager_approved,rejected',
         ]);
 
         try {

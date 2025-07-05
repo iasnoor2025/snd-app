@@ -465,10 +465,10 @@ export default function PaySlip({
                         const dayDate = new Date(parseInt(year), parseInt(month) - 1, day);
                         const dayName = dayDate.toString() !== 'Invalid Date' ? format(dayDate, 'E') : '';
                         const isFriday = dayName === 'Fri';
-                        const bgClass = isFriday ? 'bg-yellow-100' : '';
+                        let bgColor = isFriday ? 'bg-blue-100' : '';
 
                         return (
-                          <TableCell key={`day-${day}`} className={`text-center ${bgClass} p-1 text-xs border`}>
+                          <TableCell key={`day-${day}`} className={`text-center ${bgColor} p-1 text-xs border`}>
                             <div className="text-xs text-gray-600">{dayName.substring(0, 1)}</div>
                           </TableCell>
                         );
@@ -478,39 +478,61 @@ export default function PaySlip({
                       {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => {
                         const dayDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
                         const dayData = calendar[dayDate];
-
-                        // Determine what to display for the day
+                        const checkDate = new Date(parseInt(year), parseInt(month) - 1, day);
+                        const dayName = checkDate.toString() !== 'Invalid Date' ? format(checkDate, 'E') : '';
+                        const isFriday = dayName === 'Fri';
                         let content = '';
                         let textColor = '';
-                        let bgColor = '';
-
+                        let bgColor = isFriday ? 'bg-blue-100' : '';
                         if (dayData) {
                           if (Number(dayData.regular_hours) === 0 && Number(dayData.overtime_hours) === 0) {
-                            content = 'A'; // Absent
-                            textColor = 'text-red-600';
-                          } else {
-                            content = `${dayData.regular_hours}/${dayData.overtime_hours}`;
-                            textColor = 'text-green-600';
-                          }
-                        } else {
-                          // Check if this is a valid day for the month
-                          const checkDate = new Date(parseInt(year), parseInt(month) - 1, day);
-                          if (checkDate.getMonth() !== parseInt(month) - 1) {
-                            content = '-';
-                          } else {
-                            // It's a valid day, but no data (likely a weekend or future day)
-                            const dayName = checkDate.toString() !== 'Invalid Date' ? format(checkDate, 'E') : '';
-                            if (dayName === 'Fri') {
+                            if (isFriday) {
                               content = 'F';
-                              bgColor = 'bg-yellow-100';
                             } else {
-                              content = '-';
+                              content = 'A';
+                              textColor = 'text-red-600';
+                            }
+                          } else {
+                            if (isFriday) {
+                              content = 'F';
+                            } else {
+                              content = `${Number(dayData.regular_hours)}`;
+                              textColor = 'text-green-600';
                             }
                           }
+                        } else {
+                          if (checkDate.getMonth() !== parseInt(month) - 1) {
+                            content = '-';
+                          } else if (isFriday) {
+                            content = 'F';
+                          } else {
+                            content = '-';
+                          }
                         }
-
                         return (
                           <TableCell key={`data-${day}`} className={`text-center ${bgColor} ${textColor} p-1 text-xs border`}>
+                            {content}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                    {/* Overtime row */}
+                    <TableRow>
+                      {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => {
+                        const dayDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+                        const dayData = calendar[dayDate];
+                        const checkDate = new Date(parseInt(year), parseInt(month) - 1, day);
+                        const dayName = checkDate.toString() !== 'Invalid Date' ? format(checkDate, 'E') : '';
+                        const isFriday = dayName === 'Fri';
+                        let content = '0';
+                        let textColor = '';
+                        let bgColor = isFriday ? 'bg-blue-100' : '';
+                        if (dayData && Number(dayData.overtime_hours) > 0) {
+                          content = `${dayData.overtime_hours}`;
+                          textColor = 'text-blue-600';
+                        }
+                        return (
+                          <TableCell key={`ot-${day}`} className={`text-center ${bgColor} ${textColor} p-1 text-xs border`}>
                             {content}
                           </TableCell>
                         );

@@ -28,7 +28,7 @@ import {
   Clock as ClockIcon,
   Save as SaveIcon
 } from 'lucide-react';
-import { useToast } from "@/Core";
+import { toast } from 'sonner';
 import { formatDate, formatCurrency } from "@/Core";
 import { useForm as useReactHookForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -93,7 +93,6 @@ const formSchema = z.object({
 export default function TimesheetEdit({ timesheet, employee = {}, project = {}, rental = {}, user = {}, created_at, updated_at, deleted_at, employees = [], projects = [] }: Props) {
   const { t } = useTranslation('TimesheetManagement');
 
-  const { toast } = useToast();
   const [processing, setProcessing] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
     timesheet.date ? new Date(timesheet.date) : new Date()
@@ -307,34 +306,35 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
                     )}
                   />
 
-                  {timesheet.status !== 'draft' && (
-                    <FormField
-                      control={form.control}
-                      name="status"
-                      render={({ field }: any) => (
-                        <FormItem>
-                          <FormLabel>Status</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder={t('ph_select_status')} />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="draft">Draft</SelectItem>
-                              <SelectItem value="submitted">Submitted</SelectItem>
-                              <SelectItem value="approved">Approved</SelectItem>
-                              <SelectItem value="rejected">Rejected</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  )}
+                  <FormField
+                    control={form.control}
+                    name="status"
+                    render={({ field }: any) => (
+                      <FormItem>
+                        <FormLabel>Status</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder={t('ph_select_status')} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="draft">Draft</SelectItem>
+                            <SelectItem value="submitted">Submitted</SelectItem>
+                            <SelectItem value="foreman_approved">Foreman Approved</SelectItem>
+                            <SelectItem value="incharge_approved">Incharge Approved</SelectItem>
+                            <SelectItem value="checking_approved">Checking Approved</SelectItem>
+                            <SelectItem value="manager_approved">Manager Approved</SelectItem>
+                            <SelectItem value="rejected">Rejected</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
 
                 <FormField
