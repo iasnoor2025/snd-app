@@ -543,9 +543,6 @@ export default function PaySlip({
                   <div className="font-medium">Absent Deduction:</div>
                   <div className="text-right text-red-600">SAR {absentDeduction.toFixed(2)}</div>
 
-                  <div className="font-medium">Absent Days:</div>
-                  <div className="text-right text-red-600">{absent_days}</div>
-
                   <div className="font-medium">Overtime Pay:</div>
                   <div className="text-right text-green-600">SAR {overtimePay.toFixed(2)}</div>
 
