@@ -129,15 +129,19 @@ export const DailyTimesheetRecords: React.FC<DailyTimesheetRecordsProps> = ({
             <tbody>
               {/* Days Row */}
               <tr className="border-b">
-                {formatDateMedium(timesheets.map((record) => {
-                  const isFridayDay = isFriday(record.date);
+                {Array.from({ length: new Date(Number(selectedMonth.split('-')[0]), Number(selectedMonth.split('-')[1]), 0).getDate() }, (_, i) => {
+                  const date = new Date(selectedMonth);
+                  date.setDate(i + 1);
+                  const dateString = date.toISOString().slice(0, 10);
+                  const record = timesheets.find(r => r.date === dateString);
+                  const isFridayDay = date.getDay() === 5;
                   return (
                     <td
-                      key={`day-${record.date)}`}
+                      key={`day-${dateString}`}
                       className={`p-1 text-center ${isFridayDay ? 'bg-blue-50' : ''}`}
                     >
                       <div className={`text-[10px] ${isFridayDay ? 'text-blue-700 font-bold' : 'text-gray-500'}`}>
-                        {record.dayName}
+                        {record ? record.dayName : ''}
                       </div>
                     </td>
                   );
@@ -145,14 +149,18 @@ export const DailyTimesheetRecords: React.FC<DailyTimesheetRecordsProps> = ({
               </tr>
               {/* Regular Hours Row */}
               <tr className="border-b">
-                {formatDateMedium(timesheets.map((record) => {
-                  const isFridayDay = isFriday(record.date);
+                {Array.from({ length: new Date(Number(selectedMonth.split('-')[0]), Number(selectedMonth.split('-')[1]), 0).getDate() }, (_, i) => {
+                  const date = new Date(selectedMonth);
+                  date.setDate(i + 1);
+                  const dateString = date.toISOString().slice(0, 10);
+                  const record = timesheets.find(r => r.date === dateString);
+                  const isFridayDay = date.getDay() === 5;
                   return (
                     <td
-                      key={`regular-${record.date)}`}
+                      key={`regular-${dateString}`}
                       className={`p-1 text-center ${isFridayDay ? 'bg-blue-50' : ''}`}
                     >
-                      {record.regularHours > 0 ? (
+                      {record && record.regularHours > 0 ? (
                         <div className={`text-[10px] font-medium ${isFridayDay ? 'text-blue-700' : 'text-gray-700'}`}>
                           {record.regularHours}h
                         </div>
@@ -167,14 +175,18 @@ export const DailyTimesheetRecords: React.FC<DailyTimesheetRecordsProps> = ({
               </tr>
               {/* Overtime Hours Row */}
               <tr className="border-b">
-                {formatDateMedium(timesheets.map((record) => {
-                  const isFridayDay = isFriday(record.date);
+                {Array.from({ length: new Date(Number(selectedMonth.split('-')[0]), Number(selectedMonth.split('-')[1]), 0).getDate() }, (_, i) => {
+                  const date = new Date(selectedMonth);
+                  date.setDate(i + 1);
+                  const dateString = date.toISOString().slice(0, 10);
+                  const record = timesheets.find(r => r.date === dateString);
+                  const isFridayDay = date.getDay() === 5;
                   return (
                     <td
-                      key={`overtime-${record.date)}`}
+                      key={`overtime-${dateString}`}
                       className={`p-1 text-center ${isFridayDay ? 'bg-blue-50' : ''}`}
                     >
-                      {record.overtimeHours > 0 ? (
+                      {record && record.overtimeHours > 0 ? (
                         <div className={`text-[10px] font-medium ${isFridayDay ? 'text-blue-700' : 'text-amber-600'}`}>
                           +{record.overtimeHours}h
                         </div>
@@ -189,23 +201,27 @@ export const DailyTimesheetRecords: React.FC<DailyTimesheetRecordsProps> = ({
               </tr>
               {/* Status Row */}
               <tr className="border-b">
-                {formatDateMedium(timesheets.map((record) => {
-                  const isFridayDay = isFriday(record.date);
+                {Array.from({ length: new Date(Number(selectedMonth.split('-')[0]), Number(selectedMonth.split('-')[1]), 0).getDate() }, (_, i) => {
+                  const date = new Date(selectedMonth);
+                  date.setDate(i + 1);
+                  const dateString = date.toISOString().slice(0, 10);
+                  const record = timesheets.find(r => r.date === dateString);
+                  const isFridayDay = date.getDay() === 5;
                   return (
                     <td
-                      key={`status-${record.date)}`}
+                      key={`status-${dateString}`}
                       className={`p-1 text-center ${isFridayDay ? 'bg-blue-50' : ''}`}
                     >
                       <div className={`inline-block px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
                         isFridayDay ? 'bg-blue-100 text-blue-800' :
-                        record.status === 'approved' || record.status === 'submitted' || record.status === 'present' ? 'bg-emerald-100 text-emerald-800' :
-                        record.status === 'absent' || record.status === 'A' ? 'bg-red-100 text-red-800' :
+                        record && (record.status === 'approved' || record.status === 'submitted' || record.status === 'present') ? 'bg-emerald-100 text-emerald-800' :
+                        record && (record.status === 'absent' || record.status === 'A') ? 'bg-red-100 text-red-800' :
                         'bg-gray-100 text-gray-600'
                       }`}>
                         {isFridayDay ? 'F' :
-                          record.status === 'approved' || record.status === 'submitted' || record.status === 'present' ? 'P' :
-                          record.status === 'absent' || record.status === 'A' ? 'A' :
-                          record.status}
+                          record && (record.status === 'approved' || record.status === 'submitted' || record.status === 'present') ? 'P' :
+                          record && (record.status === 'absent' || record.status === 'A') ? 'A' :
+                          record ? record.status : ''}
                       </div>
                     </td>
                   );

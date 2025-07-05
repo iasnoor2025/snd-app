@@ -233,12 +233,11 @@ const TimesheetCalendar: React.FC<TimesheetCalendarProps> = ({
           </DialogHeader>
 
           <TimesheetForm
-            open={showTimesheetForm}
-            onClose={handleFormClose}
-            onSaved={handleTimesheetSaved}
-            date={selectedDate}
             timesheet={selectedTimesheet as any}
+            date={selectedDate}
             employees={employees}
+            onSave={handleTimesheetSaved}
+            onCancel={handleFormClose}
           />
         </DialogContent>
       </Dialog>

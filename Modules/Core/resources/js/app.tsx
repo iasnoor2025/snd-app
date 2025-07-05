@@ -16,6 +16,7 @@ import { I18nextProvider } from 'react-i18next';
 import i18n from './i18n.js';
 import { initializeTheme } from './hooks/use-appearance';
 import axios from 'axios';
+import { ToastService } from './services/ToastService';
 
 axios.defaults.withCredentials = true;
 
@@ -203,6 +204,17 @@ const moduleMap: Record<string, string[]> = {
   'Audit': ['AuditCompliance'],
   'API': ['API']
 };
+
+axios.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response?.status === 401) {
+      ToastService.sessionExpired();
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,

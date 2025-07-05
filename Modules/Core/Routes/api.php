@@ -11,6 +11,7 @@ use Modules\Core\Http\Controllers\DeviceSessionController;
 use Modules\Core\Http\Controllers\AuthController;
 use Modules\Core\Http\Controllers\Api\CalendarWidgetController;
 use Modules\Core\Http\Controllers\Api\TimelineWidgetController;
+use Modules\Core\Http\Controllers\DebugController;
 
 /*
 |--------------------------------------------------------------------------
@@ -89,4 +90,18 @@ Route::middleware(['auth:sanctum'])->prefix('sessions')->group(function () {
 
 Route::get('/calendar/events', [CalendarWidgetController::class, 'events']);
 Route::get('/timeline', [TimelineWidgetController::class, 'index']);
+
+// Debug endpoints for session/cookie/csrf debugging
+Route::get('/debug/csrf-debug', [DebugController::class, 'csrfDebug']);
+Route::get('/debug/login-debug', [DebugController::class, 'loginDebug']);
+Route::get('/debug/session-debug', function (\Illuminate\Http\Request $request) {
+    return response()->json([
+        'session_id' => session_id(),
+        'session_status' => session_status() == PHP_SESSION_ACTIVE ? 'active' : 'not active',
+        'all_session' => $request->session()->all(),
+        'cookies' => $request->cookies->all(),
+        'headers' => $request->headers->all(),
+        'user' => $request->user(),
+    ]);
+});
 

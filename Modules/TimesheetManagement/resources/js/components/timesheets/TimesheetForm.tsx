@@ -29,6 +29,8 @@ import { Alert } from "@/Core";
 import { AlertDescription } from "@/Core";
 import { Loader2 } from 'lucide-react';
 import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import { I18nextProvider } from 'react-i18next';
+import i18n from '@/Core/i18n.js';
 
 interface TimesheetFormProps {
   timesheet?: EmployeeTimesheet;
@@ -72,7 +74,7 @@ const formSchema = z.object({
   path: ['clock_in'],
 })
 
-const TimesheetForm: React.FC<TimesheetFormProps> = ({
+const TimesheetFormInner: React.FC<TimesheetFormProps> = ({
   timesheet,
   date,
   employees,
@@ -472,6 +474,12 @@ const TimesheetForm: React.FC<TimesheetFormProps> = ({
     </form>
   );
 };
+
+const TimesheetForm: React.FC<TimesheetFormProps> = (props) => (
+  <I18nextProvider i18n={i18n}>
+    <TimesheetFormInner {...props} />
+  </I18nextProvider>
+);
 
 export default TimesheetForm;
 

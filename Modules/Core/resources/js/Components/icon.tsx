@@ -29,6 +29,7 @@ const iconMap: Record<string, ComponentType<LucideProps>> = {
     'user-cog': LucideIcons.UserCog,
     'users': LucideIcons.Users,
     'bell': LucideIcons.Bell,
+    'home': LucideIcons.Home,
 };
 
 export function Icon({ name, className, ...props }: IconProps) {
@@ -40,4 +41,4 @@ export function Icon({ name, className, ...props }: IconProps) {
     }
 
     return <IconComponent className={cn('h-4 w-4', className)} {...props} />;
-} 
+}
