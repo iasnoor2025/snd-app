@@ -612,15 +612,61 @@ class TimesheetController extends Controller
         $user = Auth::user();
         $employeeId = $user->employee->id ?? null;
 
+        // Use requested month if present, otherwise default to current month
+        $monthParam = request('month');
+        $month = $monthParam ? \Carbon\Carbon::parse($monthParam . '-01') : \Carbon\Carbon::today();
+        $startOfMonth = $month->copy()->startOfMonth();
+        $endOfMonth = $month->copy()->endOfMonth();
+
+        // If admin or HR, show all employees' monthly summary
+        if ($user->hasRole(['admin', 'hr'])) {
+            // Get all timesheet entries for this month
+            $timesheets = Timesheet::with(['employee', 'project'])
+                ->whereBetween('date', [$startOfMonth, $endOfMonth])
+                ->get();
+
+            // Group by employee
+            $employeeTimesheets = $timesheets->groupBy('employee_id');
+
+            $summaryData = [];
+            foreach ($employeeTimesheets as $empId => $empTimesheets) {
+                $employee = $empTimesheets->first()->employee;
+                $summaryData[] = [
+                    'employee' => [
+                        'id' => $employee->id ?? null,
+                        'name' => $employee ? ($employee->first_name . ' ' . $employee->last_name) : 'Unknown',
+                    ],
+                    'total_days' => $empTimesheets->count(),
+                    'total_hours' => $empTimesheets->sum('hours_worked'),
+                    'total_overtime' => $empTimesheets->sum('overtime_hours'),
+                    'projects' => $empTimesheets->groupBy('project_id')->map(function ($items, $projectId) {
+                        $project = $items->first()->project;
+                        return [
+                            'id' => $projectId,
+                            'name' => $project ? $project->name : 'No Project',
+                            'hours' => $items->sum('hours_worked'),
+                            'overtime' => $items->sum('overtime_hours'),
+                        ];
+                    })->values()->all(),
+                ];
+            }
+
+            // Get all employees for filter
+            $employees = \Modules\EmployeeManagement\Domain\Models\Employee::orderBy('first_name')->get(['id', 'first_name', 'last_name']);
+
+            return Inertia::render('Reports/Monthly', [
+                'summary' => $summaryData,
+                'employees' => $employees,
+                'filters' => [
+                    'month' => $month->format('Y-m'),
+                ],
+            ]);
+        }
+
+        // For non-admins, require employee record
         if (!$employeeId) {
             return Inertia::render('Reports/NoEmployeeRecord');
         }
-
-        // Get current month dates
-        $today = Carbon::today();
-        $startOfMonth = $today->copy()->startOfMonth();
-        $endOfMonth = $today->copy()->endOfMonth();
-        $daysInMonth = $today->daysInMonth;
 
         // Get all timesheet entries for this month
         $timesheets = Timesheet::where('employee_id', $employeeId)
@@ -632,8 +678,9 @@ class TimesheetController extends Controller
 
         // Build calendar data
         $calendarData = [];
+        $daysInMonth = $month->daysInMonth;
         for ($day = 1; $day <= $daysInMonth; $day++) {
-            $date = Carbon::create($today->year, $today->month, $day);
+            $date = \Carbon\Carbon::create($month->year, $month->month, $day);
             $dateString = $date->format('Y-m-d');
 
             $calendarData[] = [
@@ -675,7 +722,7 @@ class TimesheetController extends Controller
                 'totalHours' => $totalHours,
                 'totalDays' => $totalDays,
                 'projects' => $projects,
-                'month' => $today->format('F Y'),
+                'month' => $month->format('F Y'),
             ],
         ]);
     }
@@ -688,6 +735,63 @@ class TimesheetController extends Controller
         $user = Auth::user();
         $employeeId = $user->employee->id ?? null;
 
+        // If admin or HR, show summary for all employees
+        if ($user->hasRole(['admin', 'hr'])) {
+            $today = Carbon::today();
+            $thisWeekStart = $today->copy()->startOfWeek();
+            $thisWeekEnd = $today->copy()->endOfWeek();
+            $lastWeekStart = $thisWeekStart->copy()->subWeek();
+            $lastWeekEnd = $thisWeekEnd->copy()->subWeek();
+
+            // Get all timesheets for this week and last week
+            $thisWeekTimesheets = Timesheet::with('employee')
+                ->whereBetween('date', [$thisWeekStart, $thisWeekEnd])
+                ->orderBy('date')
+                ->get();
+            $lastWeekTimesheets = Timesheet::with('employee')
+                ->whereBetween('date', [$lastWeekStart, $lastWeekEnd])
+                ->orderBy('date')
+                ->get();
+
+            // Group by employee
+            $groupedThisWeek = $thisWeekTimesheets->groupBy('employee_id');
+            $groupedLastWeek = $lastWeekTimesheets->groupBy('employee_id');
+
+            $summary = [
+                'this_week' => [],
+                'last_week' => [],
+                'has_timesheets' => $thisWeekTimesheets->count() > 0 || $lastWeekTimesheets->count() > 0,
+            ];
+
+            foreach ($groupedThisWeek as $empId => $empTimesheets) {
+                $employee = $empTimesheets->first()->employee;
+                $summary['this_week'][] = [
+                    'employee' => [
+                        'id' => $employee->id ?? null,
+                        'name' => $employee ? ($employee->first_name . ' ' . $employee->last_name) : 'Unknown',
+                    ],
+                    'total_hours' => $empTimesheets->sum('hours_worked'),
+                    'total_overtime' => $empTimesheets->sum('overtime_hours'),
+                    'days_logged' => $empTimesheets->count(),
+                ];
+            }
+            foreach ($groupedLastWeek as $empId => $empTimesheets) {
+                $employee = $empTimesheets->first()->employee;
+                $summary['last_week'][] = [
+                    'employee' => [
+                        'id' => $employee->id ?? null,
+                        'name' => $employee ? ($employee->first_name . ' ' . $employee->last_name) : 'Unknown',
+                    ],
+                    'total_hours' => $empTimesheets->sum('hours_worked'),
+                    'total_overtime' => $empTimesheets->sum('overtime_hours'),
+                    'days_logged' => $empTimesheets->count(),
+                ];
+            }
+
+            return $summary;
+        }
+
+        // For non-admins, require employee record
         if (!$employeeId) {
             return [
                 'this_week' => [],

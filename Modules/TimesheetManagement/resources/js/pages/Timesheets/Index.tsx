@@ -385,6 +385,18 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                 href="/hr/timesheets/create"
               />
 
+              {/* Add navigation to summary and monthly summary pages */}
+              <Button asChild variant="outline">
+                <a href={route('timesheets.summary')}>
+                  {t('btn_timesheet_summary', 'Timesheet Summary')}
+                </a>
+              </Button>
+              <Button asChild variant="outline">
+                <a href={route('timesheets.monthly')}>
+                  {t('btn_monthly_summary', 'Monthly Summary')}
+                </a>
+              </Button>
+
               {canApproveTimesheet && selectedTimesheets.length > 0 && (
                 <Button
                   onClick={handleBulkApprove}
