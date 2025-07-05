@@ -362,300 +362,209 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
 
       <div className="py-12">
         <div className="w-full px-0">
-          <div className="bg-white shadow-xl p-6 w-full">
-            <div className="mb-2">
-              <a href={route('timesheets.index')} className="mb-4 inline-flex">
-                <Button variant="ghost" className="inline-flex items-center gap-2">
-                  <ArrowLeft className="w-4 h-4" />
-                  Back
+          <Card className="shadow-lg border border-gray-200 w-full">
+            <CardHeader>
+              <div className="flex items-center justify-between mb-2">
+                <Button asChild variant="ghost" size="sm" className="gap-2">
+                  <Link href={route('timesheets.index')}><ArrowLeft className="w-4 h-4" /> {t('ui.buttons.back', 'Back')}</Link>
                 </Button>
-              </a>
-            </div>
-            <h1 className="text-2xl font-bold mb-6">
-              {isBulkMode ? 'Create Timesheet (Bulk Entry)' : 'Create Timesheet'}
-            </h1>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Employee Selection - moved to top */}
-              <div>
-                <label htmlFor="employee_id" className="block text-sm font-medium text-gray-700">
-                  {t('TimesheetManagement:fields.employee')}
-                </label>
-                <Select
-                  onValueChange={value => setData('employee_id', value)}
-                  value={data.employee_id}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('TimesheetManagement:placeholders.select_employee')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {employees.map((employee) => (
-                      <SelectItem key={employee.id} value={employee.id.toString()}>
-                        {employee.first_name} {employee.last_name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors?.employee_id && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.employee_id}
-                  </p>
-                )}
+                <h1 className="text-2xl font-bold">{isBulkMode ? t('TimesheetManagement:actions.create_timesheet_bulk', 'Create Timesheet (Bulk Entry)') : t('TimesheetManagement:actions.create_timesheet', 'Create Timesheet')}</h1>
               </div>
-
-              {/* Project Selection - moved to top */}
-              <div>
-                <label htmlFor="project_id" className="block text-sm font-medium text-gray-700">
-                  {t('TimesheetManagement:fields.project')}
-                </label>
-                <Select
-                  onValueChange={value => setData('project_id', value)}
-                  value={data.project_id}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('TimesheetManagement:placeholders.select_project')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">None</SelectItem>
-                    {projects.map((project) => (
-                      <SelectItem key={project.id} value={project.id.toString()}>
-                        {project.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors?.project_id && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.project_id}
-                  </p>
-                )}
-              </div>
-
-              {/* Rental Selection - new, just like project */}
-              <div>
-                <label htmlFor="rental_id" className="block text-sm font-medium text-gray-700">
-                  {t('TimesheetManagement:fields.rental', 'Rental')}
-                </label>
-                <Select
-                  onValueChange={value => setData('rental_id', value)}
-                  value={data.rental_id}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('TimesheetManagement:placeholders.select_rental', 'Select rental')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">None</SelectItem>
-                    {rentals && rentals.map((rental) => (
-                      <SelectItem key={rental.id} value={rental.id.toString()}>
-                        {rental.rental_number} - {rental.equipment?.name || t('TimesheetManagement:fields.unknown_equipment', 'Unknown Equipment')}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors?.rental_id && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.rental_id}
-                  </p>
-                )}
-              </div>
-
-              {/* Bulk Mode Toggle */}
-              <div className="mb-4">
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={isBulkMode}
-                    onChange={e => toggleBulkMode(e.target.checked)}
-                  />
-                  <span>{t('TimesheetManagement:fields.bulk_mode', 'Bulk Mode')}</span>
-                </label>
-              </div>
-
-              {/* Bulk Date Range (only show in bulk mode) */}
-              {isBulkMode && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">{t('TimesheetManagement:fields.start_date', 'Start Date')}</label>
-                    <input
-                      type="month"
-                      value={startDate ? format(startDate, 'yyyy-MM') : ''}
-                      onChange={e => {
-                        if (e.target.value) {
-                          const [year, month] = e.target.value.split('-').map(Number);
-                          const firstDay = new Date(year, month - 1, 1);
-                          const lastDay = new Date(year, month, 0);
-                          setStartDate(firstDay);
-                          setEndDate(lastDay);
-                          setData('start_date', format(firstDay, 'yyyy-MM-dd'));
-                          setData('end_date', format(lastDay, 'yyyy-MM-dd'));
-                          generateDailyOvertimeHours(firstDay, lastDay);
-                        }
-                      }}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">{t('TimesheetManagement:fields.end_date', 'End Date')}</label>
-                    <input
-                      type="date"
-                      value={endDate ? format(endDate, 'yyyy-MM-dd') : ''}
-                      onChange={e => onEndDateSelect(e.target.value ? new Date(e.target.value) : undefined)}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                      disabled={isBulkMode}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Daily Overtime Table (only show in bulk mode) */}
-              {isBulkMode && (
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">{t('TimesheetManagement:fields.daily_overtime', 'Daily Overtime')}</label>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm table-fixed rounded-lg border border-gray-200 shadow-sm" style={{ tableLayout: 'fixed' }}>
-                      <thead className="bg-white">
-                        <tr>
-                          {Object.keys(dailyOvertimeHours).map((date) => {
-                            const day = new Date(date).getDay();
-                            const isFriday = day === 5;
-                            return (
-                              <th
-                                key={date}
-                                className={`text-center align-middle sticky top-0 z-10 font-semibold border-b border-gray-200 ${isFriday ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-900'}`}
-                                style={{ width: '40px', minWidth: '40px', maxWidth: '40px', padding: '6px 0' }}
-                              >
-                                {new Date(date).getDate()}
-                              </th>
-                            );
-                          })}
-                        </tr>
-                        <tr>
-                          {Object.keys(dailyOvertimeHours).map((date) => {
-                            const day = new Date(date).getDay();
-                            const isFriday = day === 5;
-                            return (
-                              <th
-                                key={date}
-                                className={`text-center align-middle sticky top-8 z-10 font-semibold border-b border-gray-200 ${isFriday ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-900'}`}
-                                style={{ width: '40px', minWidth: '40px', maxWidth: '40px', padding: '4px 0' }}
-                              >
-                                {format(new Date(date), 'EEE')}
-                              </th>
-                            );
-                          })}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          {Object.entries(dailyNormalHours).map(([date, value]) => {
-                            const day = new Date(date).getDay();
-                            const isFriday = day === 5;
-                            const isAbsent = !value || parseFloat(value) === 0;
-                            return (
-                              <td
-                                key={date}
-                                className={`text-center align-middle border-b border-gray-100 ${isFriday ? 'bg-blue-50' : 'bg-white'}`}
-                                style={{ width: '40px', minWidth: '40px', maxWidth: '40px', padding: '2px 0' }}
-                              >
-                                <input
-                                  type="number"
-                                  min="0"
-                                  max="24"
-                                  step="0.5"
-                                  value={isFriday ? '' : (isAbsent ? '' : value)}
-                                  onChange={e => handleDailyNormalChange(date, e.target.value)}
-                                  className={`border rounded text-xs text-center w-full px-0 py-0 bg-gray-50 focus:bg-white ${isFriday ? 'text-blue-600 font-bold' : (isAbsent ? 'text-red-600 font-bold' : '')}`}
-                                  style={{ width: '38px', minWidth: '38px', maxWidth: '38px', padding: 0, textAlign: 'center' }}
-                                  placeholder={isFriday ? 'F' : (isAbsent ? 'A' : '')}
-                                />
-                              </td>
-                            );
-                          })}
-                        </tr>
-                        <tr>
-                          {Object.entries(dailyOvertimeHours).map(([date, value]) => {
-                            const day = new Date(date).getDay();
-                            const isFriday = day === 5;
-                            return (
-                              <td
-                                key={date}
-                                className={`text-center align-middle border-b border-gray-100 ${isFriday ? 'bg-blue-50' : 'bg-white'}`}
-                                style={{ width: '40px', minWidth: '40px', maxWidth: '40px', padding: '2px 0' }}
-                              >
-                                <input
-                                  type="number"
-                                  min="0"
-                                  max="24"
-                                  step="0.5"
-                                  value={value}
-                                  onChange={e => handleDailyOvertimeChange(date, e.target.value)}
-                                  className="border rounded text-xs text-center w-full px-0 py-0 bg-gray-50 focus:bg-white"
-                                  style={{ width: '38px', minWidth: '38px', maxWidth: '38px', padding: 0, textAlign: 'center' }}
-                                />
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-
-              {/* Hours field - only show when not in bulk mode */}
-              {!isBulkMode && (
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-8">
+                {/* Assignment Details Section */}
                 <div>
-                  <label htmlFor="hours" className="block text-sm font-medium text-gray-700">
-                    {t('TimesheetManagement:fields.hours')}
-                  </label>
-                  <input
-                    type="number"
-                    step="0.5"
-                    min="0"
-                    max="24"
-                    value={data.hours_worked}
-                    onChange={e => setData('hours_worked', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    placeholder={t('TimesheetManagement:placeholders.enter_hours')}
-                  />
-                  {errors?.hours_worked && (
-                    <p className="mt-1 text-sm text-red-600">
-                      {errors.hours_worked}
-                    </p>
-                  )}
+                  <h2 className="text-lg font-semibold mb-4 border-b pb-2">{t('TimesheetManagement:sections.assignment_details', 'Assignment Details')}</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Employee Selection */}
+                    <div>
+                      <FormLabel htmlFor="employee_id">{t('TimesheetManagement:fields.employee')}</FormLabel>
+                      <Select onValueChange={value => setData('employee_id', value)} value={data.employee_id}>
+                        <SelectTrigger><SelectValue placeholder={t('TimesheetManagement:placeholders.select_employee')} /></SelectTrigger>
+                        <SelectContent>
+                          {employees.map((employee) => (
+                            <SelectItem key={employee.id} value={employee.id.toString()}>{employee.first_name} {employee.last_name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {errors?.employee_id && <FormMessage>{errors.employee_id}</FormMessage>}
+                    </div>
+                    {/* Project Selection */}
+                    <div>
+                      <FormLabel htmlFor="project_id">{t('TimesheetManagement:fields.project')}</FormLabel>
+                      <Select onValueChange={value => setData('project_id', value)} value={data.project_id}>
+                        <SelectTrigger><SelectValue placeholder={t('TimesheetManagement:placeholders.select_project')} /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">None</SelectItem>
+                          {projects.map((project) => (
+                            <SelectItem key={project.id} value={project.id.toString()}>{project.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {errors?.project_id && <FormMessage>{errors.project_id}</FormMessage>}
+                    </div>
+                    {/* Rental Selection */}
+                    <div className="md:col-span-2">
+                      <FormLabel htmlFor="rental_id">{t('TimesheetManagement:fields.rental', 'Rental')}</FormLabel>
+                      <Select onValueChange={value => setData('rental_id', value)} value={data.rental_id}>
+                        <SelectTrigger><SelectValue placeholder={t('TimesheetManagement:placeholders.select_rental', 'Select rental')} /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">None</SelectItem>
+                          {rentals && rentals.map((rental) => (
+                            <SelectItem key={rental.id} value={rental.id.toString()}>{rental.rental_number} - {rental.equipment?.name || t('TimesheetManagement:fields.unknown_equipment', 'Unknown Equipment')}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {errors?.rental_id && <FormMessage>{errors.rental_id}</FormMessage>}
+                    </div>
+                  </div>
                 </div>
-              )}
-
-              <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                  {t('TimesheetManagement:fields.description')}
-                </label>
-                <textarea
-                  value={data.description}
-                  onChange={e => setData('description', e.target.value)}
-                  rows={4}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                  placeholder={t('TimesheetManagement:placeholders.brief_description')}
-                />
-                {errors?.description && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.description}
-                  </p>
+                {/* Bulk Mode Toggle */}
+                <div className="flex items-center gap-2">
+                  <input type="checkbox" checked={isBulkMode} onChange={e => toggleBulkMode(e.target.checked)} id="bulk_mode" />
+                  <FormLabel htmlFor="bulk_mode">{t('TimesheetManagement:fields.bulk_mode', 'Bulk Mode')}</FormLabel>
+                </div>
+                {/* Bulk Section (unchanged) */}
+                {isBulkMode && (
+                  <div className="space-y-6">
+                    {/* Bulk Date Range */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <FormLabel>{t('TimesheetManagement:fields.start_date', 'Start Date')}</FormLabel>
+                        <input type="month" value={startDate ? format(startDate, 'yyyy-MM') : ''} onChange={e => { if (e.target.value) { const [year, month] = e.target.value.split('-').map(Number); const firstDay = new Date(year, month - 1, 1); const lastDay = new Date(year, month, 0); setStartDate(firstDay); setEndDate(lastDay); setData('start_date', format(firstDay, 'yyyy-MM-dd')); setData('end_date', format(lastDay, 'yyyy-MM-dd')); generateDailyOvertimeHours(firstDay, lastDay); } }} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                      </div>
+                      <div>
+                        <FormLabel>{t('TimesheetManagement:fields.end_date', 'End Date')}</FormLabel>
+                        <input type="date" value={endDate ? format(endDate, 'yyyy-MM-dd') : ''} onChange={e => onEndDateSelect(e.target.value ? new Date(e.target.value) : undefined)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" disabled={isBulkMode} />
+                      </div>
+                    </div>
+                    {/* Daily Overtime Table */}
+                    <div className="mb-4">
+                      <FormLabel>{t('TimesheetManagement:fields.daily_overtime', 'Daily Overtime')}</FormLabel>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm table-fixed rounded-lg border border-gray-200 shadow-sm" style={{ tableLayout: 'fixed' }}>
+                          <thead className="bg-white">
+                            <tr>
+                              {Object.keys(dailyOvertimeHours).map((date) => {
+                                const day = new Date(date).getDay();
+                                const isFriday = day === 5;
+                                return (
+                                  <th
+                                    key={date}
+                                    className={`text-center align-middle sticky top-0 z-10 font-semibold border-b border-gray-200 ${isFriday ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-900'}`}
+                                    style={{ width: '40px', minWidth: '40px', maxWidth: '40px', padding: '6px 0' }}
+                                  >
+                                    {new Date(date).getDate()}
+                                  </th>
+                                );
+                              })}
+                            </tr>
+                            <tr>
+                              {Object.keys(dailyOvertimeHours).map((date) => {
+                                const day = new Date(date).getDay();
+                                const isFriday = day === 5;
+                                return (
+                                  <th
+                                    key={date}
+                                    className={`text-center align-middle sticky top-8 z-10 font-semibold border-b border-gray-200 ${isFriday ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-900'}`}
+                                    style={{ width: '40px', minWidth: '40px', maxWidth: '40px', padding: '4px 0' }}
+                                  >
+                                    {format(new Date(date), 'EEE')}
+                                  </th>
+                                );
+                              })}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              {Object.entries(dailyNormalHours).map(([date, value]) => {
+                                const day = new Date(date).getDay();
+                                const isFriday = day === 5;
+                                const isAbsent = !value || parseFloat(value) === 0;
+                                return (
+                                  <td
+                                    key={date}
+                                    className={`text-center align-middle border-b border-gray-100 ${isFriday ? 'bg-blue-50' : 'bg-white'}`}
+                                    style={{ width: '40px', minWidth: '40px', maxWidth: '40px', padding: '2px 0' }}
+                                  >
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      max="24"
+                                      step="0.5"
+                                      value={isFriday ? '' : (isAbsent ? '' : value)}
+                                      onChange={e => handleDailyNormalChange(date, e.target.value)}
+                                      className={`border rounded text-xs text-center w-full px-0 py-0 bg-gray-50 focus:bg-white ${isFriday ? 'text-blue-600 font-bold' : (isAbsent ? 'text-red-600 font-bold' : '')}`}
+                                      style={{ width: '38px', minWidth: '38px', maxWidth: '38px', padding: 0, textAlign: 'center' }}
+                                      placeholder={isFriday ? 'F' : (isAbsent ? 'A' : '')}
+                                    />
+                                  </td>
+                                );
+                              })}
+                            </tr>
+                            <tr>
+                              {Object.entries(dailyOvertimeHours).map(([date, value]) => {
+                                const day = new Date(date).getDay();
+                                const isFriday = day === 5;
+                                return (
+                                  <td
+                                    key={date}
+                                    className={`text-center align-middle border-b border-gray-100 ${isFriday ? 'bg-blue-50' : 'bg-white'}`}
+                                    style={{ width: '40px', minWidth: '40px', maxWidth: '40px', padding: '2px 0' }}
+                                  >
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      max="24"
+                                      step="0.5"
+                                      value={value}
+                                      onChange={e => handleDailyOvertimeChange(date, e.target.value)}
+                                      className="border rounded text-xs text-center w-full px-0 py-0 bg-gray-50 focus:bg-white"
+                                      style={{ width: '38px', minWidth: '38px', maxWidth: '38px', padding: 0, textAlign: 'center' }}
+                                    />
+                                  </td>
+                                );
+                              })}
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
                 )}
-              </div>
-
-              <div className="flex justify-end space-x-3">
-                <Link
-                  href={route('timesheets.index')}
-                  className={cn(buttonVariants({ variant: 'outline' }))}
-                >
-                  {t('ui.buttons.cancel')}
-                </Link>
-                <Button type="submit" disabled={processing}>
-                  {t('ui.buttons.create')}
-                </Button>
-              </div>
-            </form>
-          </div>
+                {/* Timesheet Details Section */}
+                <div>
+                  <h2 className="text-lg font-semibold mb-4 border-b pb-2">{t('TimesheetManagement:sections.timesheet_details', 'Timesheet Details')}</h2>
+                  {!isBulkMode && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <FormLabel htmlFor="hours_worked">{t('TimesheetManagement:fields.hours')}</FormLabel>
+                        <Input type="number" step="0.5" min="0" max="24" value={data.hours_worked} onChange={e => setData('hours_worked', e.target.value)} placeholder={t('TimesheetManagement:placeholders.enter_hours')} />
+                        {errors?.hours_worked && <FormMessage>{errors.hours_worked}</FormMessage>}
+                      </div>
+                      <div>
+                        <FormLabel htmlFor="overtime_hours">{t('TimesheetManagement:fields.overtime_hours', 'Overtime Hours')}</FormLabel>
+                        <Input type="number" step="0.5" min="0" max="24" value={data.overtime_hours} onChange={e => setData('overtime_hours', e.target.value)} placeholder={t('TimesheetManagement:placeholders.enter_overtime', 'Enter overtime hours')} />
+                        {errors?.overtime_hours && <FormMessage>{errors.overtime_hours}</FormMessage>}
+                      </div>
+                    </div>
+                  )}
+                  <div className="mt-6">
+                    <FormLabel htmlFor="description">{t('TimesheetManagement:fields.description')}</FormLabel>
+                    <Textarea value={data.description} onChange={e => setData('description', e.target.value)} rows={4} placeholder={t('TimesheetManagement:placeholders.brief_description')} />
+                    {errors?.description && <FormMessage>{errors.description}</FormMessage>}
+                  </div>
+                </div>
+                <div className="flex justify-end space-x-3 mt-8">
+                  <Button asChild variant="outline">
+                    <Link href={route('timesheets.index')}>{t('ui.buttons.cancel')}</Link>
+                  </Button>
+                  <Button type="submit" disabled={processing}>{t('ui.buttons.create')}</Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </AppLayout>
