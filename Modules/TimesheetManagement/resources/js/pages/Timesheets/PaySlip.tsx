@@ -362,7 +362,7 @@ export default function PaySlip({
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <div className="font-medium">Location:</div>
-                  <div>-</div>
+                  <div className="text-right">-</div>
 
                   <div className="font-medium">Project:</div>
                   <div>-</div>
@@ -427,13 +427,13 @@ export default function PaySlip({
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <div className="font-medium">Working Location:</div>
-                  <div>-</div>
+                  <div className="text-right">-</div>
 
                   <div className="font-medium">Advance Money:</div>
-                  <div>{advancePayment > 0 ? `SAR ${advancePayment.toFixed(2)}` : '0'}</div>
+                  <div className="text-right">{advancePayment > 0 ? `SAR ${advancePayment.toFixed(2)}` : '0'}</div>
 
                   <div className="font-medium">Days Worked:</div>
-                  <div>{days_worked}</div>
+                  <div className="text-right">{days_worked}</div>
 
                   <div className="font-medium">Absent Days:</div>
                   <div className="text-right text-red-600">{absent_days}</div>
