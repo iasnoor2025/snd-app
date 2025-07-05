@@ -9,7 +9,6 @@ use Modules\RentalManagement\Http\Controllers\RentalController;
 use Modules\RentalManagement\Http\Controllers\InvoiceController;
 use Modules\RentalManagement\Http\Controllers\QuotationController;
 use Modules\RentalManagement\Http\Controllers\CustomerController;
-use Modules\RentalManagement\Http\Controllers\RentalTimesheetController;
 use Modules\RentalManagement\Http\Controllers\RentalWorkflowController;
 use Modules\RentalManagement\Http\Controllers\RentalHistoryController;
 
@@ -154,19 +153,6 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::post('extensions/{extension}/reject', [RentalExtensionController::class, 'reject'])
         ->name('extensions.reject')
         ->middleware('permission:rentals.approve');
-
-
-    // Routes from rental_timesheets.php
-
-    Route::middleware(['permission:rental-timesheets.view'])->group(function () {
-        Route::get('rental-timesheets', [RentalTimesheetController::class, 'index'])->name('rental-timesheets.index');
-        Route::get('rental-timesheets/{rentalTimesheet}', [RentalTimesheetController::class, 'show'])->name('rental-timesheets.show');
-        Route::get('rentals/{rental}/timesheets', [RentalTimesheetController::class, 'forRental'])->name('timesheets');
-        Route::get('rentals/{rental}/check-missing-timesheets', [RentalTimesheetController::class, 'checkMissingTimesheets'])
-            ->name('rental-timesheets.check-missing');
-        Route::get('rentals/{rental}/check-operator-availability', [RentalTimesheetController::class, 'checkOperatorAvailability'])
-            ->name('rental-timesheets.check-operator-availability');
-    });
 
     // Routes from rentals.php - Basic CRUD handled by resource route above
 

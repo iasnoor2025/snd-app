@@ -21,8 +21,7 @@ class Timesheet extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int;
-    use string>
+     * @var array<int, string> $fillable
      */
     protected $fillable = [
         'employee_id',
@@ -128,109 +127,6 @@ class Timesheet extends Model
     const REJECTION_STAGE_INCHARGE = 'incharge';
     const REJECTION_STAGE_CHECKING = 'checking';
     const REJECTION_STAGE_MANAGER = 'manager';
-
-    /**
-     * Check if timesheet location is within any active geofence
-     */
-    public function checkGeofenceCompliance(): bool
-    {
-        if (!$this->start_latitude || !$this->start_longitude) {
-            return false;
-        }
-
-        $geofenceZones = GeofenceZone::active()
-            ->when($this->project_id, function ($query) {
-                $query->where('project_id', $this->project_id)
-                      ->orWhereNull('project_id');
-            })
-            ->get();
-
-        foreach ($geofenceZones as $zone) {
-            if ($zone->isLocationWithinZone($this->start_latitude, $this->start_longitude)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Get the closest geofence zone and distance
-     */
-    public function getClosestGeofenceInfo(): ?array
-    {
-        if (!$this->start_latitude || !$this->start_longitude) {
-            return null;
-        }
-
-        $geofenceZones = GeofenceZone::active()
-            ->when($this->project_id, function ($query) {
-                $query->where('project_id', $this->project_id)
-                      ->orWhereNull('project_id');
-            })
-            ->get();
-
-        $closestZone = null;
-        $minDistance = PHP_FLOAT_MAX;
-
-        foreach ($geofenceZones as $zone) {
-            $distance = $zone->getDistanceFromZone($this->start_latitude, $this->start_longitude);
-            if ($distance < $minDistance) {
-                $minDistance = $distance;
-                $closestZone = $zone;
-            }
-        }
-
-        return $closestZone ? [
-            'zone' => $closestZone,
-            'distance' => $minDistance,
-            'is_within' => $minDistance <= 0
-        ] : null;
-    }
-
-    /**
-     * Update geofence compliance status
-     */
-    public function updateGeofenceStatus(): void
-    {
-        $this->is_within_geofence = $this->checkGeofenceCompliance();
-
-        $closestInfo = $this->getClosestGeofenceInfo();
-        if ($closestInfo) {
-            $this->distance_from_site = $closestInfo['distance'];
-
-            if (!$closestInfo['is_within']) {
-                $violations = $this->geofence_violations ?? [];
-                $violations[] = [
-                    'timestamp' => now()->toISOString(),
-                    'distance' => $closestInfo['distance'],
-                    'zone_name' => $closestInfo['zone']->name,
-                    'latitude' => $this->start_latitude,
-                    'longitude' => $this->start_longitude
-                ];
-                $this->geofence_violations = $violations;
-            }
-        }
-
-        $this->save();
-    }
-
-    /**
-     * Add location tracking point
-     */
-    public function addLocationPoint(float $latitude, float $longitude, ?int $accuracy = null): void
-    {
-        $locationHistory = $this->location_history ?? [];
-        $locationHistory[] = [
-            'timestamp' => now()->toISOString(),
-            'latitude' => $latitude,
-            'longitude' => $longitude,
-            'accuracy' => $accuracy
-        ];
-
-        $this->location_history = $locationHistory;
-        $this->save();
-    }
 
     /**
      * Get the employee that owns the timesheet

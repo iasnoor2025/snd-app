@@ -64,22 +64,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('time-entries/{timeEntry}/break-start', [TimeEntryController::class, 'startBreak']);
     Route::post('time-entries/{timeEntry}/break-end', [TimeEntryController::class, 'endBreak']);
 
-    // Geofence Management Routes
-    Route::prefix('geofences')->group(function () {
-        Route::get('/', [GeofenceController::class, 'index'])->name('geofences.index');
-        Route::post('/', [GeofenceController::class, 'store'])->name('geofences.store');
-        Route::get('/{geofence}', [GeofenceController::class, 'show'])->name('geofences.show');
-        Route::put('/{geofence}', [GeofenceController::class, 'update'])->name('geofences.update');
-        Route::delete('/{geofence}', [GeofenceController::class, 'destroy'])->name('geofences.destroy');
-        Route::post('/{geofence}/toggle-active', [GeofenceController::class, 'toggleActive'])->name('geofences.toggle-active');
-
-        // Geofence Validation & Analytics
-        Route::post('/validate-location', [GeofenceController::class, 'validateLocation'])->name('geofences.validate-location');
-        Route::get('/statistics', [GeofenceController::class, 'statistics'])->name('geofences.statistics');
-        Route::get('/violations', [GeofenceController::class, 'violations'])->name('geofences.violations');
-        Route::get('/work-area-coverage', [GeofenceController::class, 'workAreaCoverage'])->name('geofences.work-area-coverage');
-    });
-
     // Mobile Time Logging Routes (for mobile app integration)
     Route::prefix('mobile')->group(function () {
         Route::post('/time-entries/location-check', [TimeEntryController::class, 'locationCheck']);

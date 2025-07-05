@@ -168,14 +168,6 @@ class Rental extends Model implements HasMedia
     }
 
     /**
-     * Get employee timesheets linked to this rental.
-     */
-    public function employeeTimesheets(): HasMany
-    {
-        return $this->hasMany(Timesheet::class);
-    }
-
-    /**
      * Get the maintenance records for the rental's equipment.
      */
     public function maintenanceRecords(): HasManyThrough
@@ -455,15 +447,6 @@ class Rental extends Model implements HasMedia
         foreach ($this->rentalItems as $item) {
             $item->equipment->update(['status' => 'rented']);
         }
-
-        // Get the service
-        $timesheetService = app(\App\Services\RentalTimesheetService::class);
-
-        // First create timesheets from start date
-        $timesheetService->createTimesheetsFromStartDate($this);
-
-        // Then double-check for any missing dates
-        $timesheetService->fillMissingTimesheets($this);
 
         return $this;
     }

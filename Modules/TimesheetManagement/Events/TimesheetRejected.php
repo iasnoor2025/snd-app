@@ -3,7 +3,6 @@
 namespace Modules\TimesheetManagement\Events;
 
 use Illuminate\Queue\SerializesModels;
-use Modules\TimesheetManagement\Domain\Models\WeeklyTimesheet;
 
 class TimesheetRejected
 {

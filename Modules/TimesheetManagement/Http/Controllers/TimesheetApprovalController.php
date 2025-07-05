@@ -7,14 +7,12 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-use Modules\TimesheetManagement\Repositories\WeeklyTimesheetRepository;
+use Modules\EmployeeManagement\Repositories\EmployeeRepository;
 use Modules\TimesheetManagement\Actions\ApproveTimesheetAction;
 use Modules\TimesheetManagement\Actions\RejectTimesheetAction;
-use Modules\EmployeeManagement\Repositories\EmployeeRepository;
 
 class TimesheetApprovalController extends Controller
 {
-    protected $weeklyTimesheetRepository;
     protected $employeeRepository;
     protected $approveTimesheetAction;
     protected $rejectTimesheetAction;
@@ -23,12 +21,10 @@ class TimesheetApprovalController extends Controller
      * Constructor
      */
     public function __construct(
-        WeeklyTimesheetRepository $weeklyTimesheetRepository,
         EmployeeRepository $employeeRepository,
         ApproveTimesheetAction $approveTimesheetAction,
         RejectTimesheetAction $rejectTimesheetAction
     ) {
-        $this->weeklyTimesheetRepository = $weeklyTimesheetRepository;
         $this->employeeRepository = $employeeRepository;
         $this->approveTimesheetAction = $approveTimesheetAction;
         $this->rejectTimesheetAction = $rejectTimesheetAction;
@@ -54,9 +50,6 @@ class TimesheetApprovalController extends Controller
             $filters['employee_ids'] = $employeeIds;
         }
 
-        // Get pending timesheets
-        $timesheets = $this->weeklyTimesheetRepository->getPendingTimesheets($filters);
-
         // Get employees for filter dropdown
         $employees = [];
         if ($user->can('view-all-timesheets')) {
@@ -66,7 +59,6 @@ class TimesheetApprovalController extends Controller
         }
 
         return Inertia::render('TimesheetManagement::Approvals/Index', [
-            'timesheets' => $timesheets,
             'employees' => $employees,
             'filters' => $filters,
             'canViewAll' => $user->can('view-all-timesheets'),

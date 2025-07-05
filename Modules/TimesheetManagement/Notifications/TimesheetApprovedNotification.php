@@ -6,28 +6,19 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Modules\TimesheetManagement\Domain\Models\WeeklyTimesheet;
 
 class TimesheetApprovedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
     /**
-     * The timesheet instance.
-     *
-     * @var \Modules\TimesheetManagement\Domain\Models\WeeklyTimesheet
-     */
-    protected $timesheet;
-
-    /**
      * Create a new notification instance.
      *
-     * @param  \Modules\TimesheetManagement\Domain\Models\WeeklyTimesheet  $timesheet
      * @return void
      */
-    public function __construct(WeeklyTimesheet $timesheet)
+    public function __construct()
     {
-        $this->timesheet = $timesheet;
+        // No additional parameters needed
     }
 
     /**

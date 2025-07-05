@@ -6,19 +6,15 @@ use Illuminate\Support\ServiceProvider;
 use Modules\EmployeeManagement\Domain\Models\Employee;
 use Modules\EmployeeManagement\Domain\Models\EmployeeAdvance;
 use Modules\EmployeeManagement\Domain\Models\EmployeeDocument;
-use Modules\EmployeeManagement\Domain\Models\EmployeeTimesheet;
 use Modules\EmployeeManagement\Repositories\EmployeeAdvanceRepository;
 use Modules\EmployeeManagement\Repositories\EmployeeAdvanceRepositoryInterface;
 use Modules\EmployeeManagement\Repositories\EmployeeDocumentRepository;
 use Modules\EmployeeManagement\Repositories\EmployeeDocumentRepositoryInterface;
 use Modules\EmployeeManagement\Repositories\EmployeeRepository;
 use Modules\EmployeeManagement\Repositories\EmployeeRepositoryInterface;
-use Modules\EmployeeManagement\Repositories\EmployeeTimesheetRepository;
-use Modules\EmployeeManagement\Repositories\EmployeeTimesheetRepositoryInterface;
 use Modules\EmployeeManagement\Services\EmployeeAdvanceService;
 use Modules\EmployeeManagement\Services\EmployeeDocumentService;
 use Modules\EmployeeManagement\Services\EmployeeService;
-use Modules\EmployeeManagement\Services\EmployeeTimesheetService;
 
 class EmployeeServiceProvider extends ServiceProvider
 {
@@ -62,10 +58,6 @@ class EmployeeServiceProvider extends ServiceProvider
             return new EmployeeAdvanceRepository(new EmployeeAdvance());
         });
 
-        $this->app->bind(EmployeeTimesheetRepositoryInterface::class, function ($app) {
-            return new EmployeeTimesheetRepository(new EmployeeTimesheet());
-        });
-
         // Register Services
         $this->app->bind(EmployeeService::class, function ($app) {
             return new EmployeeService(
@@ -83,16 +75,6 @@ class EmployeeServiceProvider extends ServiceProvider
         $this->app->bind(EmployeeAdvanceService::class, function ($app) {
             return new EmployeeAdvanceService(
                 $app->make(EmployeeAdvanceRepositoryInterface::class)
-            );
-        });
-
-        $this->app->bind(EmployeeTimesheetService::class, function ($app) {
-            return new EmployeeTimesheetService(
-                $app->make(EmployeeTimesheetRepositoryInterface::class),
-                $app->make(EmployeeRepositoryInterface::class),
-                $app->has('Modules\Project\Repositories\ProjectRepositoryInterface')
-                    ? $app->make('Modules\Project\Repositories\ProjectRepositoryInterface')
-                    : null
             );
         });
     }

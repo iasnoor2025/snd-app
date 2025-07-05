@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('employee_id')->cascadeOnDelete();
             $table->unsignedBigInteger('project_id')->nullable();
+            $table->unsignedBigInteger('rental_id')->nullable();
             $table->text('description')->nullable();
             $table->date('date');
             $table->time('start_time');
@@ -32,6 +33,8 @@ return new class extends Migration
             $table->string('location')->nullable();
             $table->string('project')->nullable();
             $table->string('tasks')->nullable();
+            $table->foreign('project_id')->references('id')->on('projects')->onDelete('set null');
+            $table->foreign('rental_id')->references('id')->on('rentals')->onDelete('set null');
             $table->timestamps();
             $table->softDeletes();
         });

@@ -430,6 +430,34 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
                 )}
               </div>
 
+              {/* Rental Selection - new, just like project */}
+              <div>
+                <label htmlFor="rental_id" className="block text-sm font-medium text-gray-700">
+                  {t('TimesheetManagement:fields.rental', 'Rental')}
+                </label>
+                <Select
+                  onValueChange={value => setData('rental_id', value)}
+                  value={data.rental_id}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('TimesheetManagement:placeholders.select_rental', 'Select rental')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    {rentals && rentals.map((rental) => (
+                      <SelectItem key={rental.id} value={rental.id.toString()}>
+                        {rental.rental_number} - {rental.equipment?.name || t('TimesheetManagement:fields.unknown_equipment', 'Unknown Equipment')}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors?.rental_id && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.rental_id}
+                  </p>
+                )}
+              </div>
+
               {/* Bulk Mode Toggle */}
               <div className="mb-4">
                 <label className="flex items-center space-x-2">

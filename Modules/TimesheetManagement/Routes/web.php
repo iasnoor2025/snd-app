@@ -14,7 +14,6 @@
 use Illuminate\Support\Facades\Route;
 use Modules\TimesheetManagement\Http\Controllers\TimesheetController;
 use Modules\TimesheetManagement\Http\Controllers\TimesheetDashboardController;
-use Modules\TimesheetManagement\Http\Controllers\WeeklyTimesheetController;
 use Modules\TimesheetManagement\Http\Controllers\TimeEntryController;
 use Modules\TimesheetManagement\Http\Controllers\OvertimeController;
 use Modules\TimesheetManagement\Http\Controllers\TimesheetApprovalController;

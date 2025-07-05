@@ -48,9 +48,11 @@ class TimesheetManagementServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->commands([
+            \Modules\TimesheetManagement\Console\Commands\AutoGenerateTimesheets::class,
+        ]);
         $this->app->register(RouteServiceProvider::class);
         $this->app->register(EventServiceProvider::class);
-        $this->app->register(GeofencingServiceProvider::class);
     }
 
     /**
@@ -111,7 +113,7 @@ class TimesheetManagementServiceProvider extends ServiceProvider
      */
     protected function registerObservers()
     {
-        \Modules\TimesheetManagement\Domain\Models\WeeklyTimesheet::observe(\Modules\TimesheetManagement\Observers\WeeklyTimesheetObserver::class);
+        // No observers to register
     }
 
     /**

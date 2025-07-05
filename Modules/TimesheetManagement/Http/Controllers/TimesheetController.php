@@ -11,18 +11,12 @@ use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Carbon\Carbon;
 use Modules\TimesheetManagement\Domain\Models\Timesheet;
-use Modules\TimesheetManagement\Services\GeofencingService;
 use Modules\EmployeeManagement\Domain\Models\Employee;
 use Modules\ProjectManagement\Domain\Models\Project;
 use Modules\RentalManagement\Domain\Models\Rental;
 
 class TimesheetController extends Controller
 {
-    public function __construct(
-        private GeofencingService $geofencingService
-    ) {
-        // Constructor logic if needed
-    }
     /**
      * Display a listing of the resource.
      */
@@ -260,17 +254,6 @@ class TimesheetController extends Controller
             try {
                 $timesheet = Timesheet::create($validated);
 
-                // Process geofencing if location data is provided
-                if ($timesheet->start_latitude && $timesheet->start_longitude) {
-                    $geofenceResult = $this->geofencingService->processTimesheetLocation($timesheet);
-
-                    Log::info('Timesheet geofencing processed', [
-                        'timesheet_id' => $timesheet->id,
-                        'geofence_status' => $geofenceResult['status'],
-                        'employee_id' => $timesheet->employee_id
-                    ]);
-                }
-
                 // Log successful creation
                 Log::info('Timesheet created successfully', [
                     'timesheet_id' => $timesheet->id,
@@ -487,20 +470,6 @@ class TimesheetController extends Controller
             $oldLongitude = $timesheet->start_longitude;
 
             $timesheet->update($validated);
-
-            // Process geofencing if location data has changed
-            $locationChanged = ($oldLatitude !== $timesheet->start_latitude) ||
-                             ($oldLongitude !== $timesheet->start_longitude);
-
-            if ($locationChanged && $timesheet->start_latitude && $timesheet->start_longitude) {
-                $geofenceResult = $this->geofencingService->processTimesheetLocation($timesheet);
-
-                Log::info('Timesheet geofencing reprocessed after update', [
-                    'timesheet_id' => $timesheet->id,
-                    'geofence_status' => $geofenceResult['status'],
-                    'employee_id' => $timesheet->employee_id
-                ]);
-            }
 
             DB::commit();
 

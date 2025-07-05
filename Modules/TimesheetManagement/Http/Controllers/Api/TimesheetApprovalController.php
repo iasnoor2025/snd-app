@@ -5,17 +5,14 @@ namespace Modules\TimesheetManagement\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
-use Modules\TimesheetManagement\Repositories\WeeklyTimesheetRepository;
 use Modules\TimesheetManagement\Actions\ApproveTimesheetAction;
 use Modules\TimesheetManagement\Actions\RejectTimesheetAction;
 use Modules\TimesheetManagement\Http\Requests\TimesheetApprovalRequest;
 use Modules\TimesheetManagement\Http\Requests\TimesheetRejectionRequest;
-use Modules\TimesheetManagement\Http\Resources\WeeklyTimesheetResource;
 use Modules\Core\Http\Controllers\Api\BaseApiController;
 
 class TimesheetApprovalController extends BaseApiController
 {
-    protected $weeklyTimesheetRepository;
     protected $approveTimesheetAction;
     protected $rejectTimesheetAction;
 
@@ -23,11 +20,9 @@ class TimesheetApprovalController extends BaseApiController
      * Constructor
      */
     public function __construct(
-        WeeklyTimesheetRepository $weeklyTimesheetRepository,
         ApproveTimesheetAction $approveTimesheetAction,
         RejectTimesheetAction $rejectTimesheetAction
     ) {
-        $this->weeklyTimesheetRepository = $weeklyTimesheetRepository;
         $this->approveTimesheetAction = $approveTimesheetAction;
         $this->rejectTimesheetAction = $rejectTimesheetAction;
 

@@ -10,7 +10,6 @@ use Modules\RentalManagement\Http\Controllers\InvoiceController;
 use Modules\RentalManagement\Http\Controllers\PaymentController;
 use Modules\RentalManagement\Http\Controllers\CustomerController;
 use Modules\RentalManagement\Http\Controllers\SupplierController;
-use Modules\RentalManagement\Http\Controllers\RentalTimesheetController;
 use Modules\RentalManagement\Http\Controllers\RentalAnalyticsController;
 use Modules\RentalManagement\Http\Controllers\BookingController;
 use Modules\RentalManagement\Http\Controllers\DynamicPricingController;
@@ -118,18 +117,6 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
         ->middleware('permission:suppliers.edit');
     Route::delete('suppliers/{supplier}', [SupplierController::class, 'destroy'])
         ->middleware('permission:suppliers.delete');
-
-    // Rental timesheets
-    Route::get('rental-timesheets', [RentalTimesheetController::class, 'index'])
-        ->middleware('permission:rental-timesheets.view');
-    Route::post('rental-timesheets', [RentalTimesheetController::class, 'store'])
-        ->middleware('permission:rental-timesheets.create');
-    Route::get('rental-timesheets/{rental_timesheet}', [RentalTimesheetController::class, 'show'])
-        ->middleware('permission:rental-timesheets.view');
-    Route::put('rental-timesheets/{rental_timesheet}', [RentalTimesheetController::class, 'update'])
-        ->middleware('permission:rental-timesheets.edit');
-    Route::delete('rental-timesheets/{rental_timesheet}', [RentalTimesheetController::class, 'destroy'])
-        ->middleware('permission:rental-timesheets.delete');
 
     // Analytics
     Route::get('analytics/rentals', [RentalAnalyticsController::class, 'rentalsAnalytics'])

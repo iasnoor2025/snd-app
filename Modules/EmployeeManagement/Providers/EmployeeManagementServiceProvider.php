@@ -50,10 +50,6 @@ class EmployeeManagementServiceProvider extends ServiceProvider
             \Modules\EmployeeManagement\Repositories\EmployeeRepository::class
         );
         $this->app->bind(
-            \Modules\EmployeeManagement\Repositories\EmployeeTimesheetRepositoryInterface::class,
-            \Modules\EmployeeManagement\Repositories\EmployeeTimesheetRepository::class
-        );
-        $this->app->bind(
             \Modules\EmployeeManagement\Repositories\EmployeeAdvanceRepositoryInterface::class,
             \Modules\EmployeeManagement\Repositories\EmployeeAdvanceRepository::class
         );

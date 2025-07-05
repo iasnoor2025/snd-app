@@ -6,7 +6,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Modules\TimesheetManagement\Domain\Models\WeeklyTimesheet;
 
 class TimesheetSubmittedNotification extends Notification implements ShouldQueue
 {

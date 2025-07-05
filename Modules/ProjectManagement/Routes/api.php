@@ -12,7 +12,6 @@ use Modules\ProjectManagement\Http\Controllers\Api\ProjectRiskController;
 use Modules\ProjectManagement\Http\Controllers\Api\ProjectChatController;
 use Modules\ProjectManagement\Http\Controllers\Api\ProjectTaskDependencyController;
 use Modules\ProjectManagement\Http\Controllers\Api\ProjectTemplateController;
-use Modules\ProjectManagement\Http\Controllers\Api\ProjectTimesheetController;
 use Modules\ProjectManagement\Http\Controllers\Api\WidgetController;
 use Modules\ProjectManagement\Http\Controllers\Api\FilesWidgetController;
 use Modules\ProjectManagement\Http\Controllers\Api\KanbanWidgetController;
@@ -96,17 +95,6 @@ Route::prefix('project-templates')->group(function () {
     Route::put('{template}', [ProjectTemplateController::class, 'update']);
     Route::delete('{template}', [ProjectTemplateController::class, 'destroy']);
     Route::post('{template}/apply', [ProjectTemplateController::class, 'apply']);
-});
-
-Route::prefix('project-timesheets')->group(function () {
-    Route::get('/', [ProjectTimesheetController::class, 'index']);
-    Route::post('/', [ProjectTimesheetController::class, 'store']);
-    Route::get('{timesheet}', [ProjectTimesheetController::class, 'show']);
-    Route::put('{timesheet}', [ProjectTimesheetController::class, 'update']);
-    Route::delete('{timesheet}', [ProjectTimesheetController::class, 'destroy']);
-    Route::post('{timesheet}/approve', [ProjectTimesheetController::class, 'approve']);
-    Route::post('{timesheet}/reject', [ProjectTimesheetController::class, 'reject']);
-    Route::get('project/{projectId}/summary', [ProjectTimesheetController::class, 'projectSummary']);
 });
 
 Route::get('/projects', [WidgetController::class, 'all']);
