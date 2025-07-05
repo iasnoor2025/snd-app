@@ -199,6 +199,7 @@ export default function MonthlyTimesheets({ auth, timesheets = [], employees = [
                   <TableHead>{t('lbl_total_hours', 'Total Hours')}</TableHead>
                   <TableHead>{t('lbl_total_overtime', 'Total Overtime')}</TableHead>
                   <TableHead>{t('lbl_projects', 'Projects')}</TableHead>
+                  <TableHead>{t('actions', 'Actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -227,6 +228,25 @@ export default function MonthlyTimesheets({ auth, timesheets = [], employees = [
                         ) : (
                           <span className="text-muted-foreground">{t('no_projects', 'No Projects')}</span>
                         )}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          asChild
+                          variant="default"
+                          size="sm"
+                          className="w-full sm:w-auto"
+                        >
+                          <a
+                            href={(route as any)('timesheets.pay-slip', {
+                              employee: emp.employee.id,
+                              month: format(selectedDate, 'yyyy-MM'),
+                            })}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {t('btn_view_payslip', 'View Payslip')}
+                          </a>
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))

@@ -39,7 +39,7 @@ import {
 import { Input } from "@/Core";
 import { Label } from "@/Core";
 import { ArrowLeft, Edit, Trash2, FileText, Calendar, Check, X, AlertCircle, RefreshCw, ExternalLink, Download, User, Briefcase, CreditCard, FileBox, Upload, Printer, Car, Truck, Award, IdCard, Plus, History, Receipt, XCircle, CheckCircle, Clock, Save, Loader2 } from 'lucide-react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, subMonths } from 'date-fns';
 import { usePermission } from "@/Core";
 import {
   Tooltip,
@@ -413,6 +413,7 @@ export default function Show({
   const [documentUploadKey, setDocumentUploadKey] = useState(0);
   const { hasPermission } = usePermission();
   const queryClient = useQueryClient();
+  const [selectedPayslipDate, setSelectedPayslipDate] = useState(new Date());
 
   // Early return if no valid employee data
   if (!employee || !employee.id) {
@@ -2033,6 +2034,47 @@ export default function Show({
                 <CardDescription>{t('view_and_manage_employee_timesheet_records')}</CardDescription>
               </CardHeader>
               <CardContent>
+                {/* Payslip Button with Month Selector */}
+                <div className="flex flex-wrap gap-2 items-center mb-4">
+                  <Select
+                    value={format(selectedPayslipDate, 'yyyy-MM')}
+                    onValueChange={(value) => {
+                      const [year, month] = value.split('-').map(Number);
+                      setSelectedPayslipDate(new Date(year, month - 1, 1));
+                    }}
+                  >
+                    <SelectTrigger className="w-full sm:w-auto min-w-[140px]">
+                      <SelectValue placeholder={format(selectedPayslipDate, 'MMMM yyyy')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 24 }, (_, i) => {
+                        const date = subMonths(new Date(), i);
+                        return (
+                          <SelectItem key={i} value={format(date, 'yyyy-MM')}>
+                            {format(date, 'MMMM yyyy')}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    asChild
+                    variant="default"
+                    size="sm"
+                    className="w-full sm:w-auto"
+                  >
+                    <a
+                      href={route('timesheets.pay-slip', {
+                        employee: employee.id,
+                        month: format(selectedPayslipDate, 'yyyy-MM'),
+                      })}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {t('btn_view_payslip', 'View Payslip')}
+                    </a>
+                  </Button>
+                </div>
                 {/* Timesheet Summary */}
                 <TimesheetSummary employeeId={employee.id} />
                 {/* Add Timesheet Button and Dialog */}

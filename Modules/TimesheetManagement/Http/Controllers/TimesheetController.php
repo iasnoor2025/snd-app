@@ -687,23 +687,31 @@ class TimesheetController extends Controller
                 return $timesheet->date->format('Y-m-d');
             });
 
-        // Build calendar data
-        $calendarData = [];
-        $daysInMonth = $month->daysInMonth;
-        for ($day = 1; $day <= $daysInMonth; $day++) {
-            $date = \Carbon\Carbon::create($month->year, $month->month, $day);
-            $dateString = $date->format('Y-m-d');
-
-            $calendarData[] = [
-                'date' => $dateString,
-                'day' => $day,
-                'dayOfWeek' => $date->dayOfWeek,
-                'isWeekend' => $date->isWeekend(),
-                'isToday' => $date->isToday(),
-                'timesheet' => $timesheets->get($dateString),
-                'status' => $timesheets->has($dateString)
-                    ? $timesheets->get($dateString)->status
-                    : null,
+        // Create calendar data for the month
+        $calendar = [];
+        // Fill all days in the month with default values
+        $daysInMonth = (int)date('t', strtotime($startDate));
+        for ($d = 1; $d <= $daysInMonth; $d++) {
+            $dateStr = sprintf('%04d-%02d-%02d', $month->year, $month->month, $d);
+            $dayOfWeek = date('w', strtotime($dateStr));
+            $calendar[$dateStr] = [
+                'date' => $dateStr,
+                'day_of_week' => $dayOfWeek,
+                'day_name' => date('l', strtotime($dateStr)),
+                'regular_hours' => 0,
+                'overtime_hours' => 0,
+            ];
+        }
+        // Overwrite with actual timesheet data
+        foreach ($timesheets as $timesheet) {
+            $date = (string)$timesheet->date;
+            $dayOfWeek = date('w', strtotime($date));
+            $calendar[$date] = [
+                'date' => $date,
+                'day_of_week' => $dayOfWeek,
+                'day_name' => date('l', strtotime($date)),
+                'regular_hours' => $timesheet->hours_worked,
+                'overtime_hours' => $timesheet->overtime_hours,
             ];
         }
 
@@ -726,7 +734,7 @@ class TimesheetController extends Controller
         })->values()->all();
 
         return Inertia::render('Timesheets/Monthly', [
-            'calendar' => $calendarData,
+            'calendar' => $calendar,
             'summary' => [
                 'regularHours' => $totalRegularHours,
                 'overtimeHours' => $totalOvertimeHours,
@@ -1315,6 +1323,101 @@ class TimesheetController extends Controller
             $current->addDay();
         }
         return $dates;
+    }
+
+    /**
+     * Generate and display the payslip for an employee for a given month.
+     */
+    public function generatePaySlip($employee, $month)
+    {
+        // Parse employee
+        $employee = \Modules\EmployeeManagement\Domain\Models\Employee::findOrFail($employee);
+        // Parse month
+        [$year, $monthNum] = explode('-', $month);
+        $startDate = "$year-$monthNum-01";
+        $endDate = date('Y-m-t', strtotime($startDate));
+
+        // Get timesheets for the month
+        $timesheets = \Modules\TimesheetManagement\Domain\Models\Timesheet::where('employee_id', $employee->id)
+            ->whereBetween('date', [$startDate, $endDate])
+            ->orderBy('date')
+            ->get();
+
+        // Calculate totals
+        $totalRegularHours = $timesheets->sum('hours_worked');
+        $totalOvertimeHours = $timesheets->sum('overtime_hours');
+        $totalHours = $totalRegularHours + $totalOvertimeHours;
+        $daysWorked = $timesheets->count();
+
+        // Create calendar data for the month
+        $calendar = [];
+        // Fill all days in the month with default values
+        $daysInMonth = (int)date('t', strtotime($startDate));
+        for ($d = 1; $d <= $daysInMonth; $d++) {
+            $dateStr = sprintf('%04d-%02d-%02d', $year, $monthNum, $d);
+            $dayOfWeek = date('w', strtotime($dateStr));
+            $calendar[$dateStr] = [
+                'date' => $dateStr,
+                'day_of_week' => $dayOfWeek,
+                'day_name' => date('l', strtotime($dateStr)),
+                'regular_hours' => 0,
+                'overtime_hours' => 0,
+            ];
+        }
+        // Overwrite with actual timesheet data
+        foreach ($timesheets as $timesheet) {
+            $date = (string)$timesheet->date;
+            $dayOfWeek = date('w', strtotime($date));
+            $calendar[$date] = [
+                'date' => $date,
+                'day_of_week' => $dayOfWeek,
+                'day_name' => date('l', strtotime($date)),
+                'regular_hours' => $timesheet->hours_worked,
+                'overtime_hours' => $timesheet->overtime_hours,
+            ];
+        }
+
+        // Calculate salary details (basic example, adjust as needed)
+        $basicSalary = $employee->basic_salary ?? 0;
+        $totalAllowances = ($employee->food_allowance ?? 0) + ($employee->housing_allowance ?? 0) + ($employee->transport_allowance ?? 0);
+        $absentDeduction = 0; // Implement absent logic if needed
+        $overtimePay = $employee->calculateOvertimePay($totalOvertimeHours);
+        $advancePayment = $employee->advance_payment ?? 0;
+        $netSalary = $basicSalary + $totalAllowances + $overtimePay - $absentDeduction - $advancePayment;
+        $salaryDetails = [
+            'basic_salary' => $basicSalary,
+            'total_allowances' => $totalAllowances,
+            'absent_deduction' => $absentDeduction,
+            'overtime_pay' => $overtimePay,
+            'advance_payment' => $advancePayment,
+            'net_salary' => $netSalary,
+        ];
+
+        return Inertia::render('Timesheets/PaySlip', [
+            'employee' => [
+                'id' => $employee->id,
+                'first_name' => $employee->first_name,
+                'last_name' => $employee->last_name,
+                'employee_id' => $employee->employee_id,
+                'position' => $employee->position->name ?? null,
+                'hourly_rate' => $employee->hourly_rate,
+                'basic_salary' => $employee->basic_salary,
+                'food_allowance' => $employee->food_allowance,
+                'housing_allowance' => $employee->housing_allowance,
+                'transport_allowance' => $employee->transport_allowance,
+                'advance_payment' => $employee->advance_payment,
+            ],
+            'month' => $monthNum,
+            'year' => $year,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+            'total_regular_hours' => $totalRegularHours,
+            'total_overtime_hours' => $totalOvertimeHours,
+            'total_hours' => $totalHours,
+            'days_worked' => $daysWorked,
+            'calendar' => $calendar,
+            'salary_details' => $salaryDetails,
+        ]);
     }
 }
 

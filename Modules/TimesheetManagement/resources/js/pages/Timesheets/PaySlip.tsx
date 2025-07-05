@@ -35,12 +35,6 @@ import {
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 
-const breadcrumbs: BreadcrumbItem[] = [
-  { title: t('dashboard', 'Dashboard'), href: '/dashboard' },
-  { title: 'Employees', href: '/employees' },
-  { title: 'Pay Slip', href: '#' }
-];
-
 interface DayData {
   date: string;
   day_of_week: string;
@@ -188,6 +182,13 @@ export default function PaySlip({
 }: Props) {
   const { t } = useTranslation('TimesheetManagement');
 
+  // Breadcrumbs must be defined after t is available
+  const breadcrumbs: BreadcrumbItem[] = [
+    { title: t('dashboard', 'Dashboard'), href: '/dashboard' },
+    { title: 'Employees', href: '/employees' },
+    { title: 'Pay Slip', href: '#' }
+  ];
+
   const [isLoading, setIsLoading] = useState(false);
 
   // Inject print styles
@@ -210,11 +211,15 @@ export default function PaySlip({
   }, []);
 
   // Calculate pay details if not provided
-  const basicSalary = salary_details?.basic_salary ?? employee.basic_salary ?? 1400;
-  const foodAllowance = employee.food_allowance ?? 0;
-  const housingAllowance = employee.housing_allowance ?? 0;
-  const transportAllowance = employee.transport_allowance ?? 0;
-  const totalAllowances = salary_details?.total_allowances ?? (foodAllowance + housingAllowance + transportAllowance);
+  const basicSalary = Number(employee.basic_salary) || 0;
+  const foodAllowance = Number(employee.food_allowance) || 0;
+  const housingAllowance = Number(employee.housing_allowance) || 0;
+  const transportAllowance = Number(employee.transport_allowance) || 0;
+  const totalAllowances = Number(salary_details?.total_allowances) || 0;
+  const advancePayment = Number(employee.advance_payment) || 0;
+  const absentDeduction = Number(salary_details?.absent_deduction) || 0;
+  const overtimePay = Number(salary_details?.overtime_pay) || 0;
+  const netSalary = Number(salary_details?.net_salary) || 0;
 
   // Set default contract days if not available
   const contractDaysPerMonth = 22;
@@ -222,16 +227,10 @@ export default function PaySlip({
   // Calculate overtime details
   const hourlyRate = employee.hourly_rate ?? (basicSalary / (8 * contractDaysPerMonth));
   const overtimeRate = hourlyRate * 1.5;
-  const overtimePay = salary_details?.overtime_pay ?? ((total_overtime_hours || 0) * overtimeRate);
 
   // Calculate deductions
   const absentDays = Math.max(0, contractDaysPerMonth - days_worked);
   const absentHours = absentDays * 8;
-  const absentDeduction = salary_details?.absent_deduction ?? 0;
-  const advancePayment = salary_details?.advance_payment ?? employee.advance_payment ?? 0;
-
-  // Calculate total pay
-  const netSalary = salary_details?.net_salary ?? (basicSalary + totalAllowances + overtimePay - absentDeduction - advancePayment);
 
   // Format dates
   const formattedStartDate = start_date ? format(parseISO(start_date), 'MM/dd/yyyy') : '';
