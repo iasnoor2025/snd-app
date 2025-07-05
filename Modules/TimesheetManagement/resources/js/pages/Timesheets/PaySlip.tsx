@@ -333,113 +333,71 @@ export default function PaySlip({
           </CardHeader>
 
           <CardContent className="p-6 space-y-6">
-            {/* Employee Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <User className="h-4 w-4 text-muted-foreground" />
-                  <h3 className="font-semibold">{t('employee_details')}</h3>
+            {/* Employee & Pay Summary Section - 5 Equal Columns */}
+            <Card className="mb-6 shadow-none border-none bg-white/90">
+              <CardContent className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+                  {/* Employee Details */}
+                  <div className="flex flex-col gap-2 border-r border-gray-200 pr-0 md:pr-4">
+                    <div className="flex items-center gap-2 mb-1">
+                      <User className="h-5 w-5 text-primary" />
+                      <span className="font-semibold text-gray-800 text-base">{t('employee_details')}</span>
+                    </div>
+                    <div className="space-y-1 text-sm">
+                      <div className="flex justify-between"><span className="text-gray-500 font-medium">File #:</span><span className="font-semibold text-gray-800">{employee.employee_id || '-'}</span></div>
+                      <div className="flex justify-between"><span className="text-gray-500 font-medium">Name:</span><span className="font-semibold text-gray-800">{employee.first_name} {employee.last_name}</span></div>
+                      <div className="flex justify-between"><span className="text-gray-500 font-medium">Position:</span><span className="font-semibold text-gray-800">{employee.position || '-'}</span></div>
+                      <div className="flex justify-between"><span className="text-gray-500 font-medium">ID:</span><span className="font-semibold text-gray-800">{employee.id}</span></div>
+                    </div>
+                  </div>
+                  {/* Work Details */}
+                  <div className="flex flex-col gap-2 border-r border-gray-200 pr-0 md:pr-4">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Building className="h-5 w-5 text-primary" />
+                      <span className="font-semibold text-gray-800 text-base">{t('work_details')}</span>
+                    </div>
+                    <div className="space-y-1 text-sm">
+                      <div className="flex justify-between"><span className="text-gray-500 font-medium">Location:</span><span className="font-semibold text-gray-800">-</span></div>
+                      <div className="flex justify-between"><span className="text-gray-500 font-medium">Project:</span><span className="font-semibold text-gray-800">-</span></div>
+                      <div className="flex justify-between"><span className="text-gray-500 font-medium">Date Range:</span><span className="font-semibold text-gray-800">{formattedStartDate} to {formattedEndDate}</span></div>
+                      <div className="flex justify-between"><span className="text-gray-500 font-medium">Month:</span><span className="font-semibold text-gray-800">{month} {year}</span></div>
+                    </div>
+                  </div>
+                  {/* Salary Details */}
+                  <div className="flex flex-col gap-2 border-r border-gray-200 pr-0 md:pr-4">
+                    <div className="flex items-center gap-1 mb-1">
+                      <DollarSign className="h-4 w-4 text-green-600" />
+                      <span className="font-semibold text-gray-700 text-base">{t('salary_details')}</span>
+                    </div>
+                    <div className="flex justify-between text-xs"><span className="text-gray-500">Basic:</span><span className="font-bold text-green-700">SAR {basicSalary.toFixed(2)}</span></div>
+                    <div className="flex justify-between text-xs"><span className="text-gray-500">Food:</span><span>{foodAllowance > 0 ? `SAR ${foodAllowance.toFixed(2)}` : '-'}</span></div>
+                    <div className="flex justify-between text-xs"><span className="text-gray-500">Housing:</span><span>{housingAllowance > 0 ? `SAR ${housingAllowance.toFixed(2)}` : '-'}</span></div>
+                    <div className="flex justify-between text-xs"><span className="text-gray-500">Transport:</span><span>{transportAllowance > 0 ? `SAR ${transportAllowance.toFixed(2)}` : '-'}</span></div>
+                  </div>
+                  {/* Working Hours */}
+                  <div className="flex flex-col gap-2 border-r border-gray-200 pr-0 md:pr-4">
+                    <div className="flex items-center gap-1 mb-1">
+                      <Clock className="h-4 w-4 text-blue-600" />
+                      <span className="font-semibold text-gray-700 text-base">{t('working_hours')}</span>
+                    </div>
+                    <div className="flex justify-between text-xs"><span className="text-gray-500">Contract:</span><span>{contractDaysPerMonth * 8}</span></div>
+                    <div className="flex justify-between text-xs"><span className="text-gray-500">Total:</span><span>{total_hours}</span></div>
+                    <div className="flex justify-between text-xs"><span className="text-gray-500">Regular:</span><span>{total_regular_hours}</span></div>
+                    <div className="flex justify-between text-xs"><span className="text-gray-500">OT:</span><span>{total_overtime_hours}</span></div>
+                  </div>
+                  {/* Other Details */}
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-1 mb-1">
+                      <MapPin className="h-4 w-4 text-purple-600" />
+                      <span className="font-semibold text-gray-700 text-base">{t('other_details')}</span>
+                    </div>
+                    <div className="flex justify-between text-xs"><span className="text-gray-500">Advance:</span><span className="text-right text-orange-600 font-semibold">{advancePayment > 0 ? `SAR ${advancePayment.toFixed(2)}` : '0'}</span></div>
+                    <div className="flex justify-between text-xs"><span className="text-gray-500">Days Worked:</span><span className="text-right font-semibold text-gray-800">{days_worked}</span></div>
+                    <div className="flex justify-between text-xs"><span className="text-gray-500">Absent Days:</span><span className="text-right font-bold text-red-600">{absent_days}</span></div>
+                  </div>
                 </div>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div className="font-medium">File #:</div>
-                  <div>{employee.employee_id || '-'}</div>
-
-                  <div className="font-medium">Name:</div>
-                  <div>{employee.first_name} {employee.last_name}</div>
-
-                  <div className="font-medium">Position:</div>
-                  <div>{employee.position || '-'}</div>
-
-                  <div className="font-medium">ID:</div>
-                  <div>{employee.id}</div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <Building className="h-4 w-4 text-muted-foreground" />
-                  <h3 className="font-semibold">{t('work_details')}</h3>
-                </div>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div className="font-medium">Location:</div>
-                  <div className="text-right">-</div>
-
-                  <div className="font-medium">Project:</div>
-                  <div>-</div>
-
-                  <div className="font-medium">Date Range:</div>
-                  <div>{formattedStartDate} to {formattedEndDate}</div>
-
-                  <div className="font-medium">Month:</div>
-                  <div>{month} {year}</div>
-                </div>
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Salary Information */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <DollarSign className="h-4 w-4 text-muted-foreground" />
-                  <h3 className="font-semibold">{t('salary_details')}</h3>
-                </div>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div className="font-medium">Basic Salary:</div>
-                  <div className="font-semibold text-green-600">SAR {basicSalary.toFixed(2)}</div>
-
-                  <div className="font-medium">Food Allowance:</div>
-                  <div>{foodAllowance > 0 ? `SAR ${foodAllowance.toFixed(2)}` : '-'}</div>
-
-                  <div className="font-medium">Housing Allowance:</div>
-                  <div>{housingAllowance > 0 ? `SAR ${housingAllowance.toFixed(2)}` : '-'}</div>
-
-                  <div className="font-medium">Transport Allowance:</div>
-                  <div>{transportAllowance > 0 ? `SAR ${transportAllowance.toFixed(2)}` : '-'}</div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                  <h3 className="font-semibold">{t('working_hours')}</h3>
-                </div>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div className="font-medium">Contract Hours:</div>
-                  <div>{contractDaysPerMonth * 8}</div>
-
-                  <div className="font-medium">Total Hours:</div>
-                  <div>{total_hours}</div>
-
-                  <div className="font-medium">Regular Hours:</div>
-                  <div>{total_regular_hours}</div>
-
-                  <div className="font-medium">Overtime Hours:</div>
-                  <div>{total_overtime_hours}</div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-muted-foreground" />
-                  <h3 className="font-semibold">{t('other_details')}</h3>
-                </div>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div className="font-medium">Working Location:</div>
-                  <div className="text-right">-</div>
-
-                  <div className="font-medium">Advance Money:</div>
-                  <div className="text-right">{advancePayment > 0 ? `SAR ${advancePayment.toFixed(2)}` : '0'}</div>
-
-                  <div className="font-medium">Days Worked:</div>
-                  <div className="text-right">{days_worked}</div>
-
-                  <div className="font-medium">Absent Days:</div>
-                  <div className="text-right text-red-600">{absent_days}</div>
-                </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
             <Separator />
 
