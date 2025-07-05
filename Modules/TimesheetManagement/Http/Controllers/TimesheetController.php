@@ -33,7 +33,7 @@ class TimesheetController extends Controller
             'has_admin_hr_role' => $user->hasRole(['admin', 'hr']),
             'user_employee_id' => $user->employee ? $user->employee->id : null,
         ]);
-        $query = Timesheet::with(['employee:id,first_name,last_name', 'project'])
+        $query = Timesheet::with(['employee:id,first_name,last_name', 'project', 'rental.rentalItems.equipment'])
             ->when($request->month, function ($query, $month) {
                 return $query->whereMonth('date', Carbon::parse($month)->month)
                     ->whereYear('date', Carbon::parse($month)->year);
@@ -91,6 +91,18 @@ class TimesheetController extends Controller
         ]);
 
         $timesheets = $query->latest()->paginate($request->per_page ?: 15);
+
+        // Map rental to include equipment.name for each timesheet
+        $timesheets->getCollection()->transform(function ($timesheet) {
+            if ($timesheet->rental) {
+                $equipmentName = null;
+                if ($timesheet->rental->rentalItems && $timesheet->rental->rentalItems->isNotEmpty() && $timesheet->rental->rentalItems->first()->equipment) {
+                    $equipmentName = $timesheet->rental->rentalItems->first()->equipment->name;
+                }
+                $timesheet->rental->equipment = [ 'name' => $equipmentName ];
+            }
+            return $timesheet;
+        });
 
         // Get actual status distribution for debugging
         $statusDistribution = Timesheet::select('status', DB::raw('count(*) as count'))
@@ -909,14 +921,14 @@ class TimesheetController extends Controller
         if (!$user || !$user->hasRole('admin')) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
-        $ids = $request->input('timesheet_ids', []);
+        $ids = $request->input('ids', []);
         if (!is_array($ids) || empty($ids)) {
             return response()->json(['error' => 'No timesheet IDs provided'], 400);
         }
         $deleted = 0;
         foreach ($ids as $id) {
             $timesheet = \Modules\TimesheetManagement\Domain\Models\Timesheet::find($id);
-            if ($timesheet && $timesheet->status === \Modules\TimesheetManagement\Domain\Models\Timesheet::STATUS_DRAFT) {
+            if ($timesheet) {
                 $timesheet->delete();
                 $deleted++;
             }
@@ -1131,7 +1143,9 @@ class TimesheetController extends Controller
                         'overtime_hours' => $block['overtime_hours'] ?? 0,
                         'description' => $block['description'] ?? null,
                         'tasks' => $block['tasks'] ?? null,
-                        'status' => 'draft',
+                        'status' => 'submitted',
+                        'start_time' => $block['start_time'] ?? '08:00',
+                        'end_time' => $block['end_time'] ?? null,
                     ]);
                 }
             }

@@ -175,34 +175,33 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
 
     if (isBulkMode && assignmentBlocks.length > 1) {
       // Validate all blocks
+      const validAssignments = assignmentBlocks.filter(block => block.start_date && block.end_date && (block.project_id || block.rental_id));
+      if (validAssignments.length === 0) {
+        toast.error('Please fill at least one assignment block completely');
+        return;
+      }
       for (const block of assignmentBlocks) {
         if (!block.start_date || !block.end_date || (!block.project_id && !block.rental_id)) {
           toast.error('Please fill all assignment block fields');
           return;
         }
       }
-      // Build timesheet entries for all blocks
-      const allEntries: any[] = [];
-      for (const block of assignmentBlocks) {
-        const start = new Date(block.start_date);
-        const end = new Date(block.end_date);
-        let current = new Date(start);
-        while (current <= end) {
-          allEntries.push({
-            employee_id: data.employee_id,
-            date: format(current, 'yyyy-MM-dd'),
-            project_id: block.project_id || '',
-            rental_id: block.rental_id || '',
-            hours_worked: '8',
-            overtime_hours: '0',
-            description: data.description,
-          });
-          current.setDate(current.getDate() + 1);
-        }
-      }
-      // Submit allEntries as a single bulk payload
-      post(route('timesheets.store-bulk-split'), {
-        data: { assignments: allEntries },
+      // Submit only valid assignments using FormData for Laravel compatibility
+      const formData = new FormData();
+      validAssignments.forEach((block, i) => {
+        formData.append(`assignments[${i}][employee_id]`, data.employee_id);
+        formData.append(`assignments[${i}][project_id]`, block.project_id && block.project_id !== 'none' ? block.project_id : '');
+        formData.append(`assignments[${i}][rental_id]`, block.rental_id && block.rental_id !== 'none' ? block.rental_id : '');
+        formData.append(`assignments[${i}][date_from]`, block.start_date);
+        formData.append(`assignments[${i}][date_to]`, block.end_date);
+        formData.append(`assignments[${i}][hours_worked]`, '8');
+        formData.append(`assignments[${i}][overtime_hours]`, '0');
+        formData.append(`assignments[${i}][description]`, data.description);
+        formData.append(`assignments[${i}][start_time]`, '08:00');
+        formData.append(`assignments[${i}][end_time]`, '');
+      });
+      router.post(route('timesheets.store-bulk-split'), formData, {
+        forceFormData: true,
         onSuccess: () => {
           toast.success('Timesheets created successfully!');
           reset();
@@ -417,6 +416,59 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
     setAssignmentBlocks(blocks => blocks.map(b => b.id === id ? { ...b, [field]: value } : b));
   };
 
+  const getDisabledStartDates = (idx: number) => {
+    const usedDates = assignmentBlocks.map(block => block.start_date);
+    const minDate = Math.min(...usedDates.map(date => new Date(date).getTime()));
+    const maxDate = Math.max(...usedDates.map(date => new Date(date).getTime()));
+    const disabledDates = [];
+    const currentDate = new Date(minDate);
+    while (currentDate <= new Date(maxDate)) {
+      if (!usedDates.includes(currentDate.toISOString().split('T')[0])) {
+        disabledDates.push(currentDate.toISOString().split('T')[0]);
+      }
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return disabledDates.join(',');
+  };
+
+  const getDisabledEndDates = (idx: number) => {
+    const usedDates = assignmentBlocks.map(block => block.end_date);
+    const minDate = Math.min(...usedDates.map(date => new Date(date).getTime()));
+    const maxDate = Math.max(...usedDates.map(date => new Date(date).getTime()));
+    const disabledDates = [];
+    const currentDate = new Date(minDate);
+    while (currentDate <= new Date(maxDate)) {
+      if (!usedDates.includes(currentDate.toISOString().split('T')[0])) {
+        disabledDates.push(currentDate.toISOString().split('T')[0]);
+      }
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return disabledDates.join(',');
+  };
+
+  // Add helper to get all selected date ranges except for the current block
+  const getSelectedDateRanges = (excludeIdx: number) => {
+    return assignmentBlocks
+      .filter((_, idx) => idx !== excludeIdx)
+      .map(block => ({
+        start: block.start_date,
+        end: block.end_date
+      }))
+      .filter(block => block.start && block.end);
+  };
+
+  // Helper to check if a date is within any selected range
+  const isDateInOtherRanges = (date: string, excludeIdx: number) => {
+    const ranges = getSelectedDateRanges(excludeIdx);
+    const d = new Date(date);
+    return ranges.some(({ start, end }) => {
+      if (!start || !end) return false;
+      const s = new Date(start);
+      const e = new Date(end);
+      return d >= s && d <= e;
+    });
+  };
+
   return (
     <AppLayout
       title={t('TimesheetManagement:actions.create_timesheet')}
@@ -624,11 +676,41 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
                         </div>
                         <div>
                           <FormLabel>Start Date</FormLabel>
-                          <Input type="date" value={block.start_date} onChange={e => updateAssignmentBlock(block.id, 'start_date', e.target.value)} />
+                          <Input
+                            type="date"
+                            value={block.start_date}
+                            onChange={e => updateAssignmentBlock(block.id, 'start_date', e.target.value)}
+                            min={format(startDate || new Date(), 'yyyy-MM-01')}
+                            max={format(endDate || new Date(), 'yyyy-MM-dd')}
+                            disabled={false}
+                            style={{ backgroundColor: isDateInOtherRanges(block.start_date, idx) ? '#fca5a5' : undefined }}
+                            onInput={e => {
+                              if (isDateInOtherRanges(e.currentTarget.value, idx)) {
+                                e.currentTarget.setCustomValidity('This date is already assigned in another block.');
+                              } else {
+                                e.currentTarget.setCustomValidity('');
+                              }
+                            }}
+                          />
                         </div>
                         <div>
                           <FormLabel>End Date</FormLabel>
-                          <Input type="date" value={block.end_date} onChange={e => updateAssignmentBlock(block.id, 'end_date', e.target.value)} />
+                          <Input
+                            type="date"
+                            value={block.end_date}
+                            onChange={e => updateAssignmentBlock(block.id, 'end_date', e.target.value)}
+                            min={block.start_date || format(startDate || new Date(), 'yyyy-MM-01')}
+                            max={format(endDate || new Date(), 'yyyy-MM-dd')}
+                            disabled={false}
+                            style={{ backgroundColor: isDateInOtherRanges(block.end_date, idx) ? '#fca5a5' : undefined }}
+                            onInput={e => {
+                              if (isDateInOtherRanges(e.currentTarget.value, idx)) {
+                                e.currentTarget.setCustomValidity('This date is already assigned in another block.');
+                              } else {
+                                e.currentTarget.setCustomValidity('');
+                              }
+                            }}
+                          />
                         </div>
                         {assignmentBlocks.length > 1 && (
                           <Button type="button" variant="destructive" size="sm" className="mt-2" onClick={() => removeAssignmentBlock(block.id)}>Remove</Button>

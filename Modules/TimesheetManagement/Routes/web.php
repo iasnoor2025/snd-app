@@ -77,6 +77,9 @@ Route::prefix('timesheets')->name('timesheets.')->middleware(['auth', 'verified'
     Route::post('/bulk-split', [TimesheetController::class, 'storeBulkSplit'])
         ->middleware('permission:timesheets.create')
         ->name('store-bulk-split');
+    Route::post('/bulk-delete', [TimesheetController::class, 'bulkDelete'])
+        ->middleware('permission:admin')
+        ->name('bulk-delete');
 
     // Daily timesheet entries
     Route::get('/entries', [TimeEntryController::class, 'index'])

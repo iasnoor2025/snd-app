@@ -174,11 +174,17 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
   // Toggle selection of all timesheets
   const toggleSelectAll = (checked: boolean) => {
     if (checked) {
-      // Select all submitted timesheets
-      const submittedTimesheets = timesheetsData
-        .filter(timesheet => timesheet.status === 'submitted')
-        .map(timesheet => timesheet.id);
-      setSelectedTimesheets(submittedTimesheets);
+      if (isAdmin) {
+        // Admin: select all timesheets
+        const allTimesheetIds = timesheetsData.map(timesheet => timesheet.id);
+        setSelectedTimesheets(allTimesheetIds);
+      } else {
+        // Non-admin: select only submitted timesheets
+        const submittedTimesheets = timesheetsData
+          .filter(timesheet => timesheet.status === 'submitted')
+          .map(timesheet => timesheet.id);
+        setSelectedTimesheets(submittedTimesheets);
+      }
     } else {
       // Deselect all
       setSelectedTimesheets([]);
@@ -324,25 +330,22 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
   };
 
   const handleBulkDelete = () => {
-    const draftIds = timesheetsData
-      .filter(t => t.status === 'draft' && selectedTimesheets.includes(t.id))
-      .map(t => t.id);
-    if (draftIds.length === 0) {
-      toast(t('select_draft_to_delete', 'Please select at least one draft timesheet to delete'));
+    if (selectedTimesheets.length === 0) {
+      toast(t('select_to_delete', 'Please select at least one timesheet to delete'));
       return;
     }
-    if (confirm(t('delete_confirm', 'Are you sure you want to delete the selected draft timesheets?'))) {
+    if (confirm(t('delete_confirm', 'Are you sure you want to delete the selected timesheets?'))) {
       setBulkProcessing(true);
-      router.visit(route('hr.api.timesheets.bulk-delete'), {
-        method: 'delete',
-        data: { timesheet_ids: draftIds },
+      router.post(route('timesheets.bulk-delete'), {
+        ids: selectedTimesheets
+      }, {
         onSuccess: () => {
-          toast(t('bulk_delete_success', 'Draft timesheets deleted successfully'));
+          toast(t('bulk_delete_success', 'Timesheets deleted successfully'));
           reloadPage();
           setBulkProcessing(false);
         },
         onError: (errors: any) => {
-          toast(errors.error || t('bulk_delete_failed', 'Failed to delete draft timesheets'));
+          toast(errors.error || t('bulk_delete_failed', 'Failed to delete timesheets'));
           setBulkProcessing(false);
         },
       });
@@ -401,7 +404,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                 </Button>
               )}
 
-              {isAdmin && timesheetsData.some(t => t.status === 'draft' && selectedTimesheets.includes(t.id)) && (
+              {isAdmin && selectedTimesheets.length > 0 && (
                 <Button
                   onClick={handleBulkDelete}
                   disabled={bulkProcessing}
@@ -505,15 +508,19 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
               <Table>
                 <TableHeader>
                   <TableRow>
-                    {canApproveTimesheet && (
+                    {((canApproveTimesheet && !isAdmin) || isAdmin) && (
                       <TableHead className="w-[60px]">
                         <Checkbox
                           onChange={(e) => toggleSelectAll(e.target.checked)}
                           checked={
-                            timesheetsData.filter(t => t.status === 'submitted').length > 0 &&
-                            timesheetsData.filter(t => t.status === 'submitted').every(
-                              timesheet => selectedTimesheets.includes(timesheet.id)
-                            )
+                            isAdmin
+                              ? timesheetsData.length > 0 && timesheetsData.every(
+                                  timesheet => selectedTimesheets.includes(timesheet.id)
+                                )
+                              : timesheetsData.filter(t => t.status === 'submitted').length > 0 &&
+                                timesheetsData.filter(t => t.status === 'submitted').every(
+                                  timesheet => selectedTimesheets.includes(timesheet.id)
+                                )
                           }
                         />
                       </TableHead>
@@ -551,12 +558,12 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                   ) : (
                     timesheetsData.map((timesheet) => (
                       <TableRow key={timesheet.id}>
-                        {canApproveTimesheet && (
+                        {((canApproveTimesheet && !isAdmin) || isAdmin) && (
                           <TableCell>
                             <Checkbox
                               checked={selectedTimesheets.includes(timesheet.id)}
                               onChange={(e) => toggleTimesheetSelection(timesheet.id, e.target.checked)}
-                              disabled={timesheet.status !== 'submitted'}
+                              disabled={isAdmin ? false : timesheet.status !== 'submitted'}
                             />
                           </TableCell>
                         )}
@@ -570,7 +577,14 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                         <TableCell>{timesheet.hours_worked}</TableCell>
                         <TableCell>{timesheet.overtime_hours}</TableCell>
                         <TableCell>
-                          {timesheet.project?.name || 'N/A'}
+                          {(timesheet.project?.name && timesheet.rental?.equipment?.name)
+                            ? `${timesheet.project.name} / ${timesheet.rental.equipment.name}`
+                            : timesheet.project?.name
+                              ? timesheet.project.name
+                              : timesheet.rental?.equipment?.name
+                                ? timesheet.rental.equipment.name
+                                : t('not_assigned')
+                          }
                         </TableCell>
                         <TableCell>{getStatusBadge(timesheet.status)}</TableCell>
                         <TableCell className="text-right">

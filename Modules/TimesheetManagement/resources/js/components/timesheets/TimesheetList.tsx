@@ -42,6 +42,7 @@ import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/
   Loader2,
   Check
 } from 'lucide-react';
+import { usePage } from '@inertiajs/react';
 
 interface TimesheetListProps {
   timesheets: EmployeeTimesheet[];
@@ -63,8 +64,11 @@ const TimesheetList: React.FC<TimesheetListProps> = ({
   const [rejectReason, setRejectReason] = useState('');
   const [timesheetToReject, setTimesheetToReject] = useState<number | null>(null);
   const [processing, setProcessing] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const { t } = useTranslation('TimesheetManagement');
+  const { auth } = usePage().props as any;
+  const isAdmin = auth?.user?.roles?.includes('admin');
 
   const handleToggleSelect = (id: number) => {
     setSelectedTimesheets((prev) =>
@@ -132,6 +136,21 @@ const TimesheetList: React.FC<TimesheetListProps> = ({
     }
   };
 
+  const handleBulkDelete = async () => {
+    if (selectedTimesheets.length === 0) return;
+    setProcessing(true);
+    try {
+      await axios.post(route('timesheets.bulk-delete'), { ids: selectedTimesheets });
+      setSelectedTimesheets([]);
+      setShowDeleteDialog(false);
+      window.location.reload();
+    } catch (error) {
+      console.error('Error bulk deleting timesheets:', error);
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status?.toLowerCase()) {
       case 'approved':
@@ -161,24 +180,38 @@ const TimesheetList: React.FC<TimesheetListProps> = ({
           <span className="text-sm">
             {selectedTimesheets.length} timesheet{selectedTimesheets.length > 1 ? 's' : ''} selected
           </span>
-          <Button
-            size="sm"
-            onClick={handleBulkApprove}
-            disabled={processing}
-            className="flex items-center gap-1"
-          >
-            {processing ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Approve Selected
-              </>
-            ) : (
-              <>
-                <Check className="h-4 w-4" />
-                Approve Selected
-              </>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              onClick={handleBulkApprove}
+              disabled={processing}
+              className="flex items-center gap-1"
+            >
+              {processing ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Approve Selected
+                </>
+              ) : (
+                <>
+                  <Check className="h-4 w-4" />
+                  Approve Selected
+                </>
+              )}
+            </Button>
+            {isAdmin && (
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => setShowDeleteDialog(true)}
+                disabled={processing}
+                className="flex items-center gap-1"
+              >
+                <XCircle className="h-4 w-4" />
+                Delete Selected
+              </Button>
             )}
-          </Button>
+          </div>
         </div>
       )}
 
@@ -239,9 +272,14 @@ const TimesheetList: React.FC<TimesheetListProps> = ({
                     </div>
                   </TableCell>
                   <TableCell>
-                    {(timesheet as any).project?.name || (
-                      <span className="text-gray-400">{t('not_assigned')}</span>
-                    )}
+                    {((timesheet as any).project?.name && (timesheet as any).rental?.equipment?.name)
+                      ? `${(timesheet as any).project.name} / ${(timesheet as any).rental.equipment.name}`
+                      : (timesheet as any).project?.name
+                        ? (timesheet as any).project.name
+                        : (timesheet as any).rental?.equipment?.name
+                          ? (timesheet as any).rental.equipment.name
+                          : <span className="text-gray-400">{t('not_assigned')}</span>
+                    }
                   </TableCell>
                   <TableCell>{getStatusBadge((timesheet as any).status)}</TableCell>
                   <TableCell className="text-right">
@@ -326,6 +364,41 @@ const TimesheetList: React.FC<TimesheetListProps> = ({
                 </>
               ) : (
                 'Reject Timesheet'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Bulk Delete Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('delete_timesheets')}</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete the selected timesheets? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+              disabled={processing}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleBulkDelete}
+              disabled={processing}
+            >
+              {processing ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                'Delete Timesheets'
               )}
             </Button>
           </DialogFooter>
