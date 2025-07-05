@@ -631,6 +631,25 @@ class TimesheetController extends Controller
             $summaryData = [];
             foreach ($employeeTimesheets as $empId => $empTimesheets) {
                 $employee = $empTimesheets->first()->employee;
+                $projects = $empTimesheets->groupBy(function ($item) {
+                    $projectName = $item->project ? $item->project->name : null;
+                    $equipmentName = $item->rental && $item->rental->rentalItems && $item->rental->rentalItems->isNotEmpty() && $item->rental->rentalItems->first()->equipment ? $item->rental->rentalItems->first()->equipment->name : null;
+                    if ($projectName && $equipmentName) {
+                        return $projectName . ' / ' . $equipmentName;
+                    } elseif ($projectName) {
+                        return $projectName;
+                    } elseif ($equipmentName) {
+                        return $equipmentName;
+                    } else {
+                        return 'No Project / No Equipment';
+                    }
+                })->map(function ($items, $assignmentName) {
+                    return [
+                        'name' => $assignmentName,
+                        'hours' => $items->sum('hours_worked'),
+                        'overtime' => $items->sum('overtime_hours'),
+                    ];
+                })->values()->all();
                 $summaryData[] = [
                     'employee' => [
                         'id' => $employee->id ?? null,
@@ -639,15 +658,7 @@ class TimesheetController extends Controller
                     'total_days' => $empTimesheets->count(),
                     'total_hours' => $empTimesheets->sum('hours_worked'),
                     'total_overtime' => $empTimesheets->sum('overtime_hours'),
-                    'projects' => $empTimesheets->groupBy('project_id')->map(function ($items, $projectId) {
-                        $project = $items->first()->project;
-                        return [
-                            'id' => $projectId,
-                            'name' => $project ? $project->name : 'No Project',
-                            'hours' => $items->sum('hours_worked'),
-                            'overtime' => $items->sum('overtime_hours'),
-                        ];
-                    })->values()->all(),
+                    'projects' => $projects,
                 ];
             }
 
@@ -735,105 +746,130 @@ class TimesheetController extends Controller
         $user = Auth::user();
         $employeeId = $user->employee->id ?? null;
 
-        // If admin or HR, show summary for all employees
+        // Use requested month if present, otherwise default to current month
+        $monthParam = request('month');
+        $month = $monthParam ? \Carbon\Carbon::parse($monthParam . '-01') : \Carbon\Carbon::today();
+        $startOfMonth = $month->copy()->startOfMonth();
+        $endOfMonth = $month->copy()->endOfMonth();
+
+        // If admin or HR, show all employees' monthly summary
         if ($user->hasRole(['admin', 'hr'])) {
-            $today = Carbon::today();
-            $thisWeekStart = $today->copy()->startOfWeek();
-            $thisWeekEnd = $today->copy()->endOfWeek();
-            $lastWeekStart = $thisWeekStart->copy()->subWeek();
-            $lastWeekEnd = $thisWeekEnd->copy()->subWeek();
-
-            // Get all timesheets for this week and last week
-            $thisWeekTimesheets = Timesheet::with('employee')
-                ->whereBetween('date', [$thisWeekStart, $thisWeekEnd])
-                ->orderBy('date')
-                ->get();
-            $lastWeekTimesheets = Timesheet::with('employee')
-                ->whereBetween('date', [$lastWeekStart, $lastWeekEnd])
-                ->orderBy('date')
+            $timesheets = Timesheet::with(['employee', 'project'])
+                ->whereBetween('date', [$startOfMonth, $endOfMonth])
                 ->get();
 
-            // Group by employee
-            $groupedThisWeek = $thisWeekTimesheets->groupBy('employee_id');
-            $groupedLastWeek = $lastWeekTimesheets->groupBy('employee_id');
+            $total_hours = $timesheets->sum('hours_worked');
+            $total_overtime = $timesheets->sum('overtime_hours');
+            $total_timesheets = $timesheets->count();
 
-            $summary = [
-                'this_week' => [],
-                'last_week' => [],
-                'has_timesheets' => $thisWeekTimesheets->count() > 0 || $lastWeekTimesheets->count() > 0,
-            ];
-
-            foreach ($groupedThisWeek as $empId => $empTimesheets) {
-                $employee = $empTimesheets->first()->employee;
-                $summary['this_week'][] = [
-                    'employee' => [
-                        'id' => $employee->id ?? null,
-                        'name' => $employee ? ($employee->first_name . ' ' . $employee->last_name) : 'Unknown',
-                    ],
-                    'total_hours' => $empTimesheets->sum('hours_worked'),
-                    'total_overtime' => $empTimesheets->sum('overtime_hours'),
-                    'days_logged' => $empTimesheets->count(),
+            $employee_stats = $timesheets->groupBy('employee_id')->map(function ($items, $employeeId) {
+                $employee = $items->first()->employee;
+                return [
+                    'employee_id' => $employeeId,
+                    'employee' => $employee,
+                    'total_hours' => $items->sum('hours_worked'),
+                    'total_overtime' => $items->sum('overtime_hours'),
+                    'total_timesheets' => $items->count(),
                 ];
-            }
-            foreach ($groupedLastWeek as $empId => $empTimesheets) {
-                $employee = $empTimesheets->first()->employee;
-                $summary['last_week'][] = [
-                    'employee' => [
-                        'id' => $employee->id ?? null,
-                        'name' => $employee ? ($employee->first_name . ' ' . $employee->last_name) : 'Unknown',
-                    ],
-                    'total_hours' => $empTimesheets->sum('hours_worked'),
-                    'total_overtime' => $empTimesheets->sum('overtime_hours'),
-                    'days_logged' => $empTimesheets->count(),
-                ];
-            }
+            })->values()->all();
 
-            return $summary;
+            $project_stats = $timesheets->groupBy('project_id')->map(function ($items, $projectId) use ($total_hours) {
+                $project = $items->first()->project;
+                $hours = $items->sum('hours_worked');
+                $percentage = $total_hours > 0 ? round(($hours / $total_hours) * 100, 1) : 0;
+                return [
+                    'project_id' => $projectId,
+                    'project' => $project,
+                    'total_hours' => $hours,
+                    'percentage' => $percentage,
+                ];
+            })->values()->all();
+
+            $status_stats = $timesheets->groupBy('status')->map(function ($items, $status) use ($total_timesheets) {
+                $count = $items->count();
+                $percentage = $total_timesheets > 0 ? round(($count / $total_timesheets) * 100, 1) : 0;
+                return [
+                    'status' => $status,
+                    'count' => $count,
+                    'percentage' => $percentage,
+                ];
+            })->values()->all();
+
+            return Inertia::render('Timesheets/Summary', [
+                'summary' => [
+                    'month' => $month->format('F'),
+                    'year' => $month->year,
+                    'total_hours' => $total_hours,
+                    'total_overtime' => $total_overtime,
+                    'total_timesheets' => $total_timesheets,
+                    'employee_stats' => $employee_stats,
+                    'project_stats' => $project_stats,
+                    'status_stats' => $status_stats,
+                ],
+                'employees' => \Modules\EmployeeManagement\Domain\Models\Employee::orderBy('first_name')->get(['id', 'first_name', 'last_name']),
+                'projects' => \Modules\ProjectManagement\Domain\Models\Project::orderBy('name')->get(['id', 'name']),
+            ]);
         }
 
         // For non-admins, require employee record
         if (!$employeeId) {
-            return [
-                'this_week' => [],
-                'last_week' => [],
-                'has_timesheets' => false,
-            ];
+            return Inertia::render('Reports/NoEmployeeRecord');
         }
 
-        // Get dates for this week and last week
-        $today = Carbon::today();
-        $thisWeekStart = $today->copy()->startOfWeek();
-        $thisWeekEnd = $today->copy()->endOfWeek();
-        $lastWeekStart = $thisWeekStart->copy()->subWeek();
-        $lastWeekEnd = $thisWeekEnd->copy()->subWeek();
-
-        // Get timesheets for this week
-        $thisWeekTimesheets = Timesheet::where('employee_id', $employeeId)
-            ->whereBetween('date', [$thisWeekStart, $thisWeekEnd])
-            ->orderBy('date')
+        // Get all timesheet entries for this month for the employee
+        $timesheets = Timesheet::where('employee_id', $employeeId)
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->get();
 
-        // Get timesheets for last week
-        $lastWeekTimesheets = Timesheet::where('employee_id', $employeeId)
-            ->whereBetween('date', [$lastWeekStart, $lastWeekEnd])
-            ->orderBy('date')
-            ->get();
+        $total_hours = $timesheets->sum('hours_worked');
+        $total_overtime = $timesheets->sum('overtime_hours');
+        $total_timesheets = $timesheets->count();
 
-        return [
-            'this_week' => [
-                'timesheets' => $thisWeekTimesheets,
-                'total_hours' => $thisWeekTimesheets->sum('hours_worked'),
-                'total_overtime' => $thisWeekTimesheets->sum('overtime_hours'),
-                'days_logged' => $thisWeekTimesheets->count(),
+        $employee = $user->employee;
+        $employee_stats = [[
+            'employee_id' => $employee->id,
+            'employee' => $employee,
+            'total_hours' => $total_hours,
+            'total_overtime' => $total_overtime,
+            'total_timesheets' => $total_timesheets,
+        ]];
+
+        $project_stats = $timesheets->groupBy('project_id')->map(function ($items, $projectId) use ($total_hours) {
+            $project = $items->first()->project;
+            $hours = $items->sum('hours_worked');
+            $percentage = $total_hours > 0 ? round(($hours / $total_hours) * 100, 1) : 0;
+            return [
+                'project_id' => $projectId,
+                'project' => $project,
+                'total_hours' => $hours,
+                'percentage' => $percentage,
+            ];
+        })->values()->all();
+
+        $status_stats = $timesheets->groupBy('status')->map(function ($items, $status) use ($total_timesheets) {
+            $count = $items->count();
+            $percentage = $total_timesheets > 0 ? round(($count / $total_timesheets) * 100, 1) : 0;
+            return [
+                'status' => $status,
+                'count' => $count,
+                'percentage' => $percentage,
+            ];
+        })->values()->all();
+
+        return Inertia::render('Timesheets/Summary', [
+            'summary' => [
+                'month' => $month->format('F'),
+                'year' => $month->year,
+                'total_hours' => $total_hours,
+                'total_overtime' => $total_overtime,
+                'total_timesheets' => $total_timesheets,
+                'employee_stats' => $employee_stats,
+                'project_stats' => $project_stats,
+                'status_stats' => $status_stats,
             ],
-            'last_week' => [
-                'timesheets' => $lastWeekTimesheets,
-                'total_hours' => $lastWeekTimesheets->sum('hours_worked'),
-                'total_overtime' => $lastWeekTimesheets->sum('overtime_hours'),
-                'days_logged' => $lastWeekTimesheets->count(),
-            ],
-            'has_timesheets' => $thisWeekTimesheets->count() > 0 || $lastWeekTimesheets->count() > 0,
-        ];
+            'employees' => [$employee],
+            'projects' => \Modules\ProjectManagement\Domain\Models\Project::orderBy('name')->get(['id', 'name']),
+        ]);
     }
 
     /**

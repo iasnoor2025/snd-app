@@ -384,11 +384,9 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                 text={t('btn_create_timesheet')}
                 href="/hr/timesheets/create"
               />
-
-              {/* Add navigation to summary and monthly summary pages */}
               <Button asChild variant="outline">
                 <a href={route('timesheets.summary')}>
-                  {t('btn_timesheet_summary', 'Timesheet Summary')}
+                  {t('btn_timesheet_summary', 'Summary')}
                 </a>
               </Button>
               <Button asChild variant="outline">

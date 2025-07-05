@@ -149,7 +149,7 @@ export default function MonthlyTimesheets({ auth, timesheets = [], employees = [
             <CalendarIcon className="h-6 w-6 text-primary" />
             <h1 className="text-2xl font-bold">{t('monthly_timesheets')}</h1>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 items-center">
             <Select
               value={format(selectedDate, 'yyyy-MM')}
               onValueChange={(value) => {
@@ -177,6 +177,10 @@ export default function MonthlyTimesheets({ auth, timesheets = [], employees = [
               <DownloadIcon className="mr-2 h-4 w-4" />
               Export
             </Button>
+            <a href={(route as any)('timesheets.index')} className="inline-flex items-center text-sm text-primary hover:underline ml-2">
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              {t('btn_back', 'Back To Timesheets')}
+            </a>
           </div>
         </div>
         <Card>
