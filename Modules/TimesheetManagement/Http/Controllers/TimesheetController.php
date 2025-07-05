@@ -476,6 +476,12 @@ class TimesheetController extends Controller
             'status' => 'required|string|in:draft,submitted,foreman_approved,incharge_approved,checking_approved,manager_approved,rejected',
         ]);
 
+        // Map tasks_completed to tasks field for the model
+        if (isset($validated['tasks_completed'])) {
+            $validated['tasks'] = $validated['tasks_completed'];
+            unset($validated['tasks_completed']);
+        }
+
         try {
             DB::beginTransaction();
 

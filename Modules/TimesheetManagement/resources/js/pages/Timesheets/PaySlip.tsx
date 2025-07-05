@@ -542,12 +542,10 @@ export default function PaySlip({
                 </Table>
               </div>
               <div className="text-xs text-gray-500 mt-1">
-                <span className="text-green-600 font-semibold mr-2">8/2</span>
-                means 8 regular hours and 2 overtime hours.
-                <span className="text-red-600 font-semibold mx-2">A</span>
-                means absent.
-                <span className="font-semibold mx-2">F</span>
-                means Friday (weekend).
+                <span className="text-green-600 font-semibold">8</span> = regular hours,&nbsp;
+                <span className="text-blue-600 font-semibold">More than 8</span> = overtime hours,&nbsp;
+                <span className="text-red-600 font-semibold">A</span> = absent,&nbsp;
+                <span className="font-semibold">F</span> = Friday (weekend)
               </div>
             </div>
 
