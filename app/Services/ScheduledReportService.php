@@ -47,13 +47,13 @@ class ScheduledReportService
     {
         try {
             $report = $this->reportBuilder->buildReport($schedule['config']);
-            
+
             // Export if format is specified
             if (isset($schedule['config']['export_format'])) {
                 $data = collect($report['data']);
                 $filename = $schedule['name'] . '_' . now()->format('Y-m-d_H-i-s');
                 $export = $this->reportExport->export($data, $schedule['config']['export_format'], $filename);
-                
+
                 $report['export'] = [
                     'format' => $schedule['config']['export_format'],
                     'filename' => $filename,
@@ -139,7 +139,7 @@ class ScheduledReportService
     {
         // In a real implementation, this would update the database
         $schedule = $this->getScheduledReports()->firstWhere('id', $scheduleId);
-        
+
         if (!$schedule) {
             throw new \Exception("Scheduled report not found: {$scheduleId}");
         }
@@ -162,7 +162,7 @@ class ScheduledReportService
     {
         // In a real implementation, this would delete from database
         Log::info('Scheduled report deleted', ['schedule_id' => $scheduleId]);
-        
+
         return true;
     }
 
@@ -230,4 +230,40 @@ class ScheduledReportService
             'yearly' => 'Yearly',
         ];
     }
-} 
+
+    /**
+     * Get supported schedule frequencies for report builder
+     */
+    public function getFrequencies(): array
+    {
+        return ['once', 'daily', 'weekly', 'monthly'];
+    }
+
+    /**
+     * Get days of the week for scheduling
+     */
+    public function getDaysOfWeek(): array
+    {
+        return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    }
+
+    /**
+     * Get days of the month for scheduling
+     */
+    public function getDaysOfMonth(): array
+    {
+        return range(1, 31);
+    }
+
+    /**
+     * Get available times for scheduling (hourly, 24-hour format)
+     */
+    public function getTimes(): array
+    {
+        $times = [];
+        for ($h = 0; $h < 24; $h++) {
+            $times[] = str_pad($h, 2, '0', STR_PAD_LEFT) . ':00';
+        }
+        return $times;
+    }
+}

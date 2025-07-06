@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   Layers,
   TrendingUp,
+  Wrench,
 } from 'lucide-react';
 
 const modules = [
@@ -89,6 +90,14 @@ const modules = [
     tKey: 'modules:revenue',
     isCurrency: true,
     icon: <TrendingUp className="h-7 w-7 text-primary" />,
+  },
+  {
+    key: 'builder',
+    name: 'Custom Report Builder',
+    count: '',
+    path: '/reporting/builder',
+    tKey: 'modules:builder',
+    icon: <Wrench className="h-7 w-7 text-primary" />,
   },
 ];
 

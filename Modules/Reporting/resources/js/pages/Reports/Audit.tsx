@@ -1,21 +1,34 @@
-import React from 'react';
-import { AppLayout } from '@/Core';
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/Core';
-import { ShieldCheck } from 'lucide-react';
+import { Head } from '@inertiajs/react';
+import AppLayout from '@/Core/layouts/AppLayout';
+import { ArrowLeft } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Core';
 
 export default function AuditReport() {
   return (
-    <AppLayout title="Audit & Compliance Report">
-      <div className="container mx-auto py-12">
-        <Card className="max-w-xl mx-auto text-center">
-          <CardHeader className="flex flex-col items-center">
-            <ShieldCheck className="h-10 w-10 text-primary mb-2" />
-            <CardTitle>Audit & Compliance Report</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <CardDescription className="mb-4">A detailed audit and compliance analytics dashboard is coming soon.</CardDescription>
-          </CardContent>
-        </Card>
+    <AppLayout>
+      <Head title="Audit Report" />
+      <div className="container mx-auto py-6">
+        <div className="mb-4">
+          <a href="/reporting" className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+            Back to Reports
+          </a>
+        </div>
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold mb-2">Audit Report</h1>
+          <p className="text-muted-foreground mb-4">View and analyze audit logs and compliance events. (Coming soon)</p>
+        </div>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {/* Placeholder for future audit analytics cards */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Audit Log Summary</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">No audit data available yet.</p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </AppLayout>
   );

@@ -20,7 +20,7 @@ class ReportExportService
 
         return new StreamedResponse(function () use ($data) {
             $handle = fopen('php://output', 'w');
-            
+
             // Write CSV header
             if ($data->isNotEmpty()) {
                 $firstRow = $data->first();
@@ -29,12 +29,12 @@ class ReportExportService
                     fputcsv($handle, $headers);
                 }
             }
-            
+
             // Write data rows
             foreach ($data as $row) {
                 fputcsv($handle, (array) $row);
             }
-            
+
             fclose($handle);
         }, 200, $headers);
     }
@@ -46,7 +46,7 @@ class ReportExportService
     {
         // For now, we'll export as CSV since Excel package might not be installed
         // In production, you would use: return Excel::download(new DataExport($data), $filename);
-        
+
         return $this->exportToCsv($data, str_replace('.xlsx', '.csv', $filename));
     }
 
@@ -57,9 +57,9 @@ class ReportExportService
     {
         // This is a placeholder implementation
         // In production, you would use a PDF library like TCPDF, FPDF, or DomPDF
-        
+
         $html = $this->generateHtmlTable($data);
-        
+
         return response($html)
             ->header('Content-Type', 'text/html')
             ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
@@ -71,7 +71,7 @@ class ReportExportService
     public function exportToJson(Collection $data, string $filename = 'export.json'): Response
     {
         $json = $data->toJson(JSON_PRETTY_PRINT);
-        
+
         return response($json)
             ->header('Content-Type', 'application/json')
             ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
@@ -83,14 +83,14 @@ class ReportExportService
     public function exportToXml(Collection $data, string $filename = 'export.xml'): Response
     {
         $xml = new \SimpleXMLElement('<data/>');
-        
+
         foreach ($data as $index => $item) {
             $row = $xml->addChild('row');
             foreach ((array) $item as $key => $value) {
                 $row->addChild($key, htmlspecialchars((string) $value));
             }
         }
-        
+
         return response($xml->asXML())
             ->header('Content-Type', 'application/xml')
             ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
@@ -106,7 +106,7 @@ class ReportExportService
         }
 
         $html = '<table border="1" cellpadding="5" cellspacing="0">';
-        
+
         // Table header
         $firstRow = $data->first();
         if (is_array($firstRow) || is_object($firstRow)) {
@@ -117,7 +117,7 @@ class ReportExportService
             }
             $html .= '</tr></thead>';
         }
-        
+
         // Table body
         $html .= '<tbody>';
         foreach ($data as $row) {
@@ -128,7 +128,7 @@ class ReportExportService
             $html .= '</tr>';
         }
         $html .= '</tbody></table>';
-        
+
         return $html;
     }
 
@@ -180,4 +180,12 @@ class ReportExportService
                 throw new \InvalidArgumentException("Unsupported export format: {$format}");
         }
     }
-} 
+
+    /**
+     * Get supported export formats for report builder
+     */
+    public function getFormats(): array
+    {
+        return ['csv', 'xlsx', 'pdf', 'json'];
+    }
+}

@@ -16,7 +16,7 @@ class ReportBuilderService
     {
         $query = $this->buildQuery($config);
         $data = $query->get();
-        
+
         return [
             'data' => $data,
             'summary' => $this->generateSummary($data, $config),
@@ -194,20 +194,20 @@ class ReportBuilderService
         }
 
         $output = fopen('php://temp', 'r+');
-        
+
         // Write headers
         $headers = array_keys((array) $data['data']->first());
         fputcsv($output, $headers);
-        
+
         // Write data rows
         foreach ($data['data'] as $row) {
             fputcsv($output, (array) $row);
         }
-        
+
         rewind($output);
         $csv = stream_get_contents($output);
         fclose($output);
-        
+
         return $csv;
     }
 
@@ -217,7 +217,7 @@ class ReportBuilderService
     protected function exportToXml(array $data): string
     {
         $xml = new \SimpleXMLElement('<report/>');
-        
+
         // Add metadata
         $metadata = $xml->addChild('metadata');
         foreach ($data['metadata'] as $key => $value) {
@@ -226,13 +226,13 @@ class ReportBuilderService
             }
             $metadata->addChild($key, htmlspecialchars((string) $value));
         }
-        
+
         // Add summary
         $summary = $xml->addChild('summary');
         foreach ($data['summary'] as $key => $value) {
             $summary->addChild($key, htmlspecialchars((string) $value));
         }
-        
+
         // Add data
         $dataNode = $xml->addChild('data');
         foreach ($data['data'] as $row) {
@@ -241,7 +241,7 @@ class ReportBuilderService
                 $rowNode->addChild($key, htmlspecialchars((string) $value));
             }
         }
-        
+
         return $xml->asXML();
     }
 
@@ -285,4 +285,61 @@ class ReportBuilderService
             ],
         ];
     }
-} 
+
+    /**
+     * Get available data sources (Eloquent models) for custom reports
+     */
+    public function getDataSources(): array
+    {
+        // Add your available data sources here
+        return [
+            'App\\Models\\Rental',
+            'App\\Models\\Equipment',
+            'App\\Models\\Customer',
+            'App\\Models\\Invoice',
+            'App\\Models\\Payment',
+            // Add more as needed
+        ];
+    }
+
+    /**
+     * Get available columns for a given data source (Eloquent model)
+     */
+    public function getColumnsForDataSource(string $modelClass): array
+    {
+        if (!class_exists($modelClass)) {
+            return [];
+        }
+        try {
+            $model = new $modelClass;
+            $table = $model->getTable();
+            return \DB::getSchemaBuilder()->getColumnListing($table);
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Get supported aggregation functions for report builder
+     */
+    public function getAggregationFunctions(): array
+    {
+        return ['sum', 'avg', 'min', 'max', 'count', 'unique'];
+    }
+
+    /**
+     * Get supported filter operators for report builder
+     */
+    public function getFilterOperators(): array
+    {
+        return ['=', '!=', '>', '>=', '<', '<=', 'like', 'in', 'between', 'null', 'not_null'];
+    }
+
+    /**
+     * Get supported visualization types for report builder
+     */
+    public function getVisualizationTypes(): array
+    {
+        return ['table', 'bar', 'line', 'pie', 'doughnut', 'area'];
+    }
+}
