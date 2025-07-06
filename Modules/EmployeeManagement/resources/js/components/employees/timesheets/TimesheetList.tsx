@@ -63,12 +63,47 @@ export const TimesheetList: React.FC<TimesheetListProps> = ({
 }) => {
   const [timesheets, setTimesheets] = useState<Timesheet[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [startDate, setStartDate] = useState<Date | undefined>(
-    new Date(new Date().getFullYear(), new Date().getMonth(), 1)
-  );
-  const [endDate, setEndDate] = useState<Date | undefined>(
-    new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
-  );
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+  const initialStart = new Date(currentYear, currentMonth, 1);
+  const initialEnd = new Date(currentYear, currentMonth + 1, 0);
+  const [startDate, setStartDate] = useState(format(initialStart, 'yyyy-MM-dd'));
+  const [endDate, setEndDate] = useState(format(initialEnd, 'yyyy-MM-dd'));
+  const years = Array.from({ length: 5 }, (_, i) => currentYear - 2 + i);
+  const months = [
+    { value: 0, label: 'January' },
+    { value: 1, label: 'February' },
+    { value: 2, label: 'March' },
+    { value: 3, label: 'April' },
+    { value: 4, label: 'May' },
+    { value: 5, label: 'June' },
+    { value: 6, label: 'July' },
+    { value: 7, label: 'August' },
+    { value: 8, label: 'September' },
+    { value: 9, label: 'October' },
+    { value: 10, label: 'November' },
+    { value: 11, label: 'December' },
+  ];
+  const [selectedMonth, setSelectedMonth] = useState(currentMonth);
+  const [selectedYear, setSelectedYear] = useState(currentYear);
+  const { t } = useTranslation();
+
+  const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newMonth = parseInt(e.target.value, 10);
+    setSelectedMonth(newMonth);
+    updateDateRange(newMonth, selectedYear);
+  };
+  const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newYear = parseInt(e.target.value, 10);
+    setSelectedYear(newYear);
+    updateDateRange(selectedMonth, newYear);
+  };
+  function updateDateRange(month: number, year: number) {
+    const start = new Date(year, month, 1);
+    const end = new Date(year, month + 1, 0);
+    setStartDate(format(start, 'yyyy-MM-dd'));
+    setEndDate(format(end, 'yyyy-MM-dd'));
+  }
 
   const fetchTimesheets = async () => {
     if (!startDate || !endDate) return;
@@ -79,9 +114,9 @@ export const TimesheetList: React.FC<TimesheetListProps> = ({
       const formattedEndDate = format(endDate, 'yyyy-MM-dd');
 
       const response = await axios.get(
-        `/employees/${employeeId}/timesheets?start_date=${formattedStartDate}&end_date=${formattedEndDate}`
+        `/api/v1/employees/${employeeId}/timesheets?start_date=${formattedStartDate}&end_date=${formattedEndDate}`
       );
-      setTimesheets(response.data.timesheets);
+      setTimesheets((response.data.timesheets || []).filter((t: any) => (t.regular_hours > 0 || t.overtime_hours > 0 || t.status !== undefined)));
     } catch (error) {
       const err = error as any;
       if (err?.response?.status === 404) {
@@ -115,8 +150,6 @@ export const TimesheetList: React.FC<TimesheetListProps> = ({
   };
 
   const formatDateTime = (dateTimeStr: string) => {
-  const { t } = useTranslation('employee');
-
     if (!dateTimeStr) return '-';
     try {
       return format(parseISO(dateTimeStr), 'MMM d, yyyy h:mm a');
@@ -125,9 +158,11 @@ export const TimesheetList: React.FC<TimesheetListProps> = ({
     }
   };
 
-  const formatHours = (hours: number) => {
-    return hours.toFixed(1);
-  };
+  function formatHours(hours: any) {
+    const num = Number(hours);
+    if (isNaN(num) || hours === undefined || hours === null) return '0.00';
+    return num.toFixed(2);
+  }
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -147,40 +182,17 @@ export const TimesheetList: React.FC<TimesheetListProps> = ({
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Timesheets</CardTitle>
         <div className="flex space-x-2">
-          <div className="flex items-center space-x-2">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="h-10 pl-3 pr-3 text-left font-normal">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {startDate ? format(startDate, 'MMM d, yyyy') : 'Pick a date'}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={startDate}
-                  onSelect={setStartDate}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-            <span>to</span>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="h-10 pl-3 pr-3 text-left font-normal">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {endDate ? format(endDate, 'MMM d, yyyy') : 'Pick a date'}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={endDate}
-                  onSelect={setEndDate}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
+          <div className="flex items-center gap-2">
+            <select value={selectedMonth} onChange={handleMonthChange} className="rounded-md border border-input bg-background px-2 py-1">
+              {months.map((m) => (
+                <option key={m.value} value={m.value}>{m.label}</option>
+              ))}
+            </select>
+            <select value={selectedYear} onChange={handleYearChange} className="rounded-md border border-input bg-background px-2 py-1">
+              {years.map((y) => (
+                <option key={y} value={y}>{y}</option>
+              ))}
+            </select>
           </div>
           {onAddNew && (
             <Button onClick={onAddNew}>

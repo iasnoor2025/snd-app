@@ -52,7 +52,8 @@ class TimesheetController extends Controller
         $start = $request->query('start_date');
         $end = $request->query('end_date');
         $employee = \Modules\EmployeeManagement\Domain\Models\Employee::findOrFail($employeeId);
-        $timesheets = \Modules\TimesheetManagement\Domain\Models\Timesheet::where('employee_id', $employeeId)
+        $timesheets = \Modules\TimesheetManagement\Domain\Models\Timesheet::with('project')
+            ->where('employee_id', $employeeId)
             ->whereBetween('date', [$start, $end])
             ->orderBy('date')
             ->get();
@@ -77,9 +78,24 @@ class TimesheetController extends Controller
                 $calendar[$date]['overtime_hours'] += $t->overtime_hours;
             }
         }
+        // Transform timesheets for frontend
+        $timesheetData = $timesheets->map(function ($t) {
+            return [
+                'id' => $t->id,
+                'date' => $t->date->format('Y-m-d'),
+                'regular_hours' => $t->hours_worked,
+                'overtime_hours' => $t->overtime_hours,
+                'status' => $t->status,
+                'project' => $t->project ? $t->project->name : null,
+                'start_time' => $t->start_time,
+                'end_time' => $t->end_time,
+                'break' => $t->break ?? null,
+                'total' => $t->hours_worked + $t->overtime_hours,
+            ];
+        });
         return response()->json([
             'calendar' => array_values($calendar),
-            'timesheets' => $timesheets,
+            'timesheets' => $timesheetData,
         ]);
     }
 
