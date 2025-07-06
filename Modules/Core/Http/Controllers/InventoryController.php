@@ -52,11 +52,8 @@ class InventoryController extends Controller
 
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('name';
-use 'like';
-use "%{$search}%")
-                  ->orWhere('part_number';
-use 'like', "%{$search}%")
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('part_number', 'like', "%{$search}%")
                   ->orWhere('description', 'like', "%{$search}%");
             });
         }
@@ -64,7 +61,7 @@ use 'like', "%{$search}%")
         $inventoryItems = $query->latest()->paginate(10);
         $categories = InventoryCategory::all();
 
-        return Inertia::render('Inventory/Index', [;
+        return Inertia::render('Inventory/Index', [
             'inventoryItems' => $inventoryItems,
             'categories' => $categories,
             'filters' => [
@@ -83,14 +80,14 @@ use 'like', "%{$search}%")
         // Check if user has permission to create inventory items
         $user = Auth::user();
         if (!$user->isAdmin() && !$user->hasRole('manager') && !$user->hasRole('inventory')) {
-            return redirect()->route('inventory.index');
+            return redirect()->route('inventory.index')
                 ->with('error', 'You do not have permission to create inventory items.');
         }
 
         $categories = InventoryCategory::all();
         $suppliers = Supplier::all();
 
-        return Inertia::render('Inventory/Create', [;
+        return Inertia::render('Inventory/Create', [
             'categories' => $categories,
             'suppliers' => $suppliers,
         ]);
@@ -104,7 +101,7 @@ use 'like', "%{$search}%")
         // Check if user has permission to create inventory items
         $user = Auth::user();
         if (!$user->isAdmin() && !$user->hasRole('manager') && !$user->hasRole('inventory')) {
-            return redirect()->route('inventory.index');
+            return redirect()->route('inventory.index')
                 ->with('error', 'You do not have permission to create inventory items.');
         }
 
@@ -160,12 +157,12 @@ use 'like', "%{$search}%")
 
             DB::commit();
 
-            return redirect()->route('inventory.index');
-                ->with('success', 'Inventory item created successfully.');
+            return redirect()->route('inventory.index')
+                    ->with('success', 'Inventory item created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return redirect()->back();
+            return redirect()->back()
                 ->with('error', 'An error occurred while creating the inventory item: ' . $e->getMessage());
         }
     }
@@ -184,7 +181,7 @@ use 'like', "%{$search}%")
         $totalOut = $inventory->transactions->where('type', 'out')->sum('quantity');
         $totalUsed = $inventory->transactions->where('type', 'use')->sum('quantity');
 
-        return Inertia::render('Inventory/Show', [;
+        return Inertia::render('Inventory/Show', [
             'inventoryItem' => $inventory,
             'statistics' => [
                 'totalIn' => $totalIn,
@@ -202,14 +199,14 @@ use 'like', "%{$search}%")
         // Check if user has permission to edit inventory items
         $user = Auth::user();
         if (!$user->isAdmin() && !$user->hasRole('manager') && !$user->hasRole('inventory')) {
-            return redirect()->route('inventory.index');
+            return redirect()->route('inventory.index')
                 ->with('error', 'You do not have permission to edit inventory items.');
         }
 
         $categories = InventoryCategory::all();
         $suppliers = Supplier::all();
 
-        return Inertia::render('Inventory/Edit', [;
+        return Inertia::render('Inventory/Edit', [
             'inventoryItem' => $inventory,
             'categories' => $categories,
             'suppliers' => $suppliers,
@@ -224,7 +221,7 @@ use 'like', "%{$search}%")
         // Check if user has permission to update inventory items
         $user = Auth::user();
         if (!$user->isAdmin() && !$user->hasRole('manager') && !$user->hasRole('inventory')) {
-            return redirect()->route('inventory.index');
+            return redirect()->route('inventory.index')
                 ->with('error', 'You do not have permission to update inventory items.');
         }
 
@@ -258,7 +255,7 @@ use 'like', "%{$search}%")
             'is_active' => $request->is_active ?? true,
         ]);
 
-        return redirect()->route('inventory.index');
+        return redirect()->route('inventory.index')
             ->with('success', 'Inventory item updated successfully.');
     }
 
@@ -270,19 +267,19 @@ use 'like', "%{$search}%")
         // Check if user has permission to delete inventory items
         $user = Auth::user();
         if (!$user->isAdmin() && !$user->hasRole('manager')) {
-            return redirect()->route('inventory.index');
+            return redirect()->route('inventory.index')
                 ->with('error', 'You do not have permission to delete inventory items.');
         }
 
         // Check if inventory item has transactions
         if ($inventory->transactions()->count() > 0) {
-            return redirect()->route('inventory.index');
+            return redirect()->route('inventory.index')
                 ->with('error', 'Cannot delete inventory item with transaction history. Consider deactivating it instead.');
         }
 
         $inventory->delete();
 
-        return redirect()->route('inventory.index');
+        return redirect()->route('inventory.index')
             ->with('success', 'Inventory item deleted successfully.');
     }
 
@@ -294,7 +291,7 @@ use 'like', "%{$search}%")
         // Check if user has permission to add stock
         $user = Auth::user();
         if (!$user->isAdmin() && !$user->hasRole('manager') && !$user->hasRole('inventory')) {
-            return redirect()->route('inventory.show', $inventory);
+            return redirect()->route('inventory.show', $inventory)
                 ->with('error', 'You do not have permission to add stock.');
         }
 
@@ -328,12 +325,12 @@ use 'like', "%{$search}%")
 
             DB::commit();
 
-            return redirect()->route('inventory.show', $inventory);
+            return redirect()->route('inventory.show', $inventory)
                 ->with('success', 'Stock added successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return redirect()->back();
+            return redirect()->back()
                 ->with('error', 'An error occurred while adding stock: ' . $e->getMessage());
         }
     }
@@ -346,7 +343,7 @@ use 'like', "%{$search}%")
         // Check if user has permission to remove stock
         $user = Auth::user();
         if (!$user->isAdmin() && !$user->hasRole('manager') && !$user->hasRole('inventory')) {
-            return redirect()->route('inventory.show', $inventory);
+            return redirect()->route('inventory.show', $inventory)
                 ->with('error', 'You do not have permission to remove stock.');
         }
 
@@ -378,12 +375,12 @@ use 'like', "%{$search}%")
 
             DB::commit();
 
-            return redirect()->route('inventory.show', $inventory);
+            return redirect()->route('inventory.show', $inventory)
                 ->with('success', 'Stock removed successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return redirect()->back();
+            return redirect()->back()
                 ->with('error', 'An error occurred while removing stock: ' . $e->getMessage());
         }
     }
@@ -419,7 +416,7 @@ use 'like', "%{$search}%")
         $transactions = $query->latest()->paginate(20);
         $inventoryItems = InventoryItem::all();
 
-        return Inertia::render('Inventory/Transactions', [;
+        return Inertia::render('Inventory/Transactions', [
             'transactions' => $transactions,
             'inventoryItems' => $inventoryItems,
             'filters' => [
@@ -440,7 +437,7 @@ use 'like', "%{$search}%")
             ->with(['category', 'supplier'])
             ->get();
 
-        return Inertia::render('Inventory/LowStock', [;
+        return Inertia::render('Inventory/LowStock', [
             'lowStockItems' => $lowStockItems,
         ]);
     }
@@ -484,7 +481,7 @@ use 'like', "%{$search}%")
             ];
         });
 
-        return Inertia::render('Inventory/Report', [;
+        return Inertia::render('Inventory/Report', [
             'inventoryItems' => $inventoryItems,
             'categories' => $categories,
             'filters' => [
@@ -506,7 +503,7 @@ use 'like', "%{$search}%")
             ->latest()
             ->paginate(10);
 
-        return Inertia::render('Inventory/Index', [;
+        return Inertia::render('Inventory/Index', [
             'stockLevels' => $stockLevels,
         ]);
     }
@@ -517,7 +514,7 @@ use 'like', "%{$search}%")
             $query->with('performer')->latest();
         }]);
 
-        return Inertia::render('Inventory/Show', [;
+        return Inertia::render('Inventory/Show', [
             'stockLevel' => $stockLevel,
         ]);
     }
@@ -544,7 +541,7 @@ use 'like', "%{$search}%")
 
         $stockLevel = StockLevel::create($validated);
 
-        return redirect()->route('inventory.show', $stockLevel);
+        return redirect()->route('inventory.show', $stockLevel)
             ->with('success', 'Stock level created successfully.');
     }
 
@@ -564,7 +561,7 @@ use 'like', "%{$search}%")
         $stockLevel->update($validated);
         $stockLevel->checkStockLevel();
 
-        return redirect()->route('inventory.show', $stockLevel);
+        return redirect()->route('inventory.show', $stockLevel)
             ->with('success', 'Stock level updated successfully.');
     }
 
@@ -583,7 +580,7 @@ use 'like', "%{$search}%")
             $validated['notes']
         );
 
-        return redirect()->route('inventory.show', $stockLevel);
+        return redirect()->route('inventory.show', $stockLevel)
             ->with('success', 'Stock added successfully.');
     }
 
@@ -606,7 +603,7 @@ use 'like', "%{$search}%")
             $validated['notes']
         );
 
-        return redirect()->route('inventory.show', $stockLevel);
+        return redirect()->route('inventory.show', $stockLevel)
             ->with('success', 'Stock removed successfully.');
     }
 
@@ -617,7 +614,7 @@ use 'like', "%{$search}%")
             ->latest()
             ->paginate(20);
 
-        return Inertia::render('Inventory/Movements', [;
+        return Inertia::render('Inventory/Movements', [
             'stockLevel' => $stockLevel,
             'movements' => $movements,
         ]);
@@ -706,7 +703,7 @@ use 'like', "%{$search}%")
                 ];
             });
 
-        return response()->json([;
+        return response()->json([
             'stock_trends' => $stockTrends,
             'supplier_metrics' => $supplierMetrics,
             'category_performance' => $categoryPerformance,

@@ -44,7 +44,7 @@ class EagerLoadingDemoController extends Controller
         // Get the query log
         $queryLog = DB::getQueryLog();
 
-        return response()->json([;
+        return response()->json([
             'title' => 'Automatic Eager Loading Demo',
             'description' => 'This demonstrates Laravel 12.8\'s automatic eager loading feature',
             'data' => $rentalData,

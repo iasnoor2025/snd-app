@@ -22,7 +22,7 @@ class InventoryForecastingController extends Controller
     {
         $items = InventoryItem::with('category')->get();
 
-        return Inertia::render('Inventory/Forecasting/Index', [;
+        return Inertia::render('Inventory/Forecasting/Index', [
             'items' => $items
         ]);
     }
@@ -37,7 +37,7 @@ class InventoryForecastingController extends Controller
         $optimalLevels = $this->forecastingService->calculateOptimalStockLevels($item);
         $trendAnalysis = $this->forecastingService->getTrendAnalysis($item);
 
-        return Inertia::render('Inventory/Forecasting/Show', [;
+        return Inertia::render('Inventory/Forecasting/Show', [
             'item' => $item->load('category'),
             'forecast' => $forecast,
             'optimalLevels' => $optimalLevels,
@@ -54,7 +54,7 @@ class InventoryForecastingController extends Controller
         $forecast = $this->forecastingService->calculateDemandForecast($item, 3);
         $optimalLevels = $this->forecastingService->calculateOptimalStockLevels($item);
 
-        return response()->json([;
+        return response()->json([
             'forecast' => $forecast,
             'optimalLevels' => $optimalLevels
         ]);
@@ -94,7 +94,7 @@ class InventoryForecastingController extends Controller
             }
         }
 
-        return response()->json([;
+        return response()->json([
             'items' => $reorderItems
         ]);
     }

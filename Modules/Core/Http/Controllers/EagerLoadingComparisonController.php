@@ -17,7 +17,7 @@ class EagerLoadingComparisonController extends Controller
     public function index()
     {
         // Test scenarios
-        return response()->json([;
+        return response()->json([
             'title' => 'Eager Loading Comparison',
             'description' => 'Comparing different approaches to eager loading in Laravel 12.8',
             'scenarios' => [
@@ -71,7 +71,7 @@ class EagerLoadingComparisonController extends Controller
 
         $queryLog = DB::getQueryLog();
 
-        return response()->json([;
+        return response()->json([
             'title' => 'N+1 Query Problem',
             'description' => 'Each relationship access in the loop causes a separate database query',
             'data' => $rentalData,
@@ -111,7 +111,7 @@ class EagerLoadingComparisonController extends Controller
 
         $queryLog = DB::getQueryLog();
 
-        return response()->json([;
+        return response()->json([
             'title' => 'Traditional Eager Loading',
             'description' => 'Using with() to explicitly load relationships in advance',
             'data' => $rentalData,
@@ -147,7 +147,7 @@ class EagerLoadingComparisonController extends Controller
 
         $queryLog = DB::getQueryLog();
 
-        return response()->json([;
+        return response()->json([
             'title' => 'Automatic Eager Loading',
             'description' => 'Laravel 12.8 automatically detects and eager loads relationships used in loops',
             'data' => $rentalData,

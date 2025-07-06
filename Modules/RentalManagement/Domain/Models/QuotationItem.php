@@ -12,21 +12,21 @@ use Modules\EmployeeManagement\Domain\Models\Employee;
 class QuotationItem extends Model
 {
     use HasFactory;
-use /**
+
+    /**
      * The attributes that are mass assignable.
      *
-     * @var array<int;
-use string>
+     * @var array<int, string>
      */
-    protected $fillable = [;
-        'quotation_id';
-use 'equipment_id',
+    protected $fillable = [
+        'quotation_id',
+        'equipment_id',
         'operator_id',
         'description',
         'quantity',
         'rate',
-        'rate_type',;
-        'total_amount',;
+        'rate_type',
+        'total_amount',
     ];
 
     /**
@@ -35,9 +35,9 @@ use 'equipment_id',
      * @var array<string, string>
      */
     protected $casts = [
-        'quantity' => 'integer',;
-        'rate' => 'decimal:2',;
-        'total_amount' => 'decimal:2',;
+        'quantity' => 'integer',
+        'rate' => 'decimal:2',
+        'total_amount' => 'decimal:2',
     ];
 
     /**
@@ -80,9 +80,3 @@ use 'equipment_id',
         return $this->subtotal * ($this->discount_percentage / 100);
     }
 }
-
-
-
-
-
-

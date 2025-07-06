@@ -10,7 +10,7 @@ class ResourceController extends Controller
 {
     public function index(Project $project)
     {
-        return Inertia::render('Projects/Resources', [;
+        return Inertia::render('Projects/Resources', [
             'project' => $project,
             'manpower' => $project->manpower()
                 ->with(['employee' => function($query) {
