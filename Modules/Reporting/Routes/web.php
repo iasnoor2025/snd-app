@@ -62,10 +62,6 @@ Route::middleware(['web', 'auth', 'verified'])->prefix('reporting')->name('repor
         return inertia('Reports/Modules');
     })->name('modules');
 
-    Route::get('/rentals', function () {
-        return inertia('Reports/Rentals');
-    })->name('rentals');
-
     Route::get('/equipment', function () {
         return inertia('Reports/Equipment');
     })->name('equipment');

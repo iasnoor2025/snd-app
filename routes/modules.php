@@ -65,13 +65,6 @@ Route::middleware(['auth', 'verified'])->prefix('hr/timesheets')->group(function
     });
 });
 
-// Direct routes for rentals
-Route::middleware(['auth', 'verified'])->prefix('rentals')->group(function () {
-    Route::get('/', function () {
-        return Inertia::render('Rentals/Index');
-    });
-});
-
 // Direct routes for payrolls
 Route::middleware(['auth', 'verified'])->prefix('payrolls')->group(function () {
     Route::get('/', function () {

@@ -4,7 +4,7 @@ namespace Modules\RentalManagement\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Modules\RentalManagement\Domain\Models\Customer;
+use Modules\CustomerManagement\Domain\Models\Customer;
 use Modules\RentalManagement\Domain\Models\Rental;
 use Modules\RentalManagement\Domain\Models\LoyaltyTransaction;
 use Modules\RentalManagement\Services\LoyaltyService;

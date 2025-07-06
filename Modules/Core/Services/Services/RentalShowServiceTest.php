@@ -2,7 +2,7 @@
 namespace Modules\Core\Services\Services;
 
 use Modules\RentalManagement\Domain\Models\Rental;
-use Modules\RentalManagement\Domain\Models\Customer;
+use Modules\CustomerManagement\Domain\Models\Customer;
 use Modules\EquipmentManagement\Domain\Models\Equipment;
 use Modules\RentalManagement\Domain\Models\RentalItem;
 use App\Services\RentalShowService;

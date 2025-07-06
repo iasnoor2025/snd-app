@@ -22,7 +22,7 @@ class DocumentController extends Controller
     protected $pdfMergeService;
     protected $documentService;
     protected $modelMap = [
-        'customer' => \Modules\RentalManagement\Domain\Models\Customer::class,
+        'customer' => \Modules\CustomerManagement\Domain\Models\Customer::class,
         'equipment' => \Modules\EquipmentManagement\Domain\Models\Equipment::class,
         'employee' => \Modules\EmployeeManagement\Domain\Models\Employee::class,
         'rental' => \Modules\RentalManagement\Domain\Models\Rental::class,

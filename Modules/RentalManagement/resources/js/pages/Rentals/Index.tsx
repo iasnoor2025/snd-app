@@ -137,9 +137,15 @@ const breadcrumbs = [
 ];
 
 export default function Index({ auth, rentals, filters = {} }: Props) {
+  // Debug: Check what props are being received
+  alert(`Debug: rentals=${JSON.stringify(rentals)}, filters=${JSON.stringify(filters)}`);
+
   const { t } = useTranslation('rental');
 
   // Debug logging
+  console.log('Rentals data:', rentals);
+  console.log('Filters:', filters);
+
   useEffect(() => {
     console.log('Rentals data:', rentals);
     console.log('Filters:', filters);

@@ -2,7 +2,7 @@
 
 namespace Modules\RentalManagement\Services;
 
-use Modules\RentalManagement\Domain\Models\Customer;
+use Modules\CustomerManagement\Domain\Models\Customer;
 use Modules\RentalManagement\Domain\Models\Rental;
 use Modules\RentalManagement\Domain\Models\LoyaltyProgram;
 use Modules\RentalManagement\Domain\Models\LoyaltyTransaction;

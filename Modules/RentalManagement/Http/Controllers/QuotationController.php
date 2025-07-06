@@ -9,7 +9,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use Modules\RentalManagement\Domain\Models\Customer;
+use Modules\CustomerManagement\Domain\Models\Customer;
 use Modules\RentalManagement\Domain\Models\Quotation;
 use Modules\RentalManagement\Domain\Models\Rental;
 use Modules\EquipmentManagement\Domain\Models\Equipment;

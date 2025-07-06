@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
-use Modules\RentalManagement\Domain\Models\Customer;
+use Modules\CustomerManagement\Domain\Models\Customer;
 
 class CustomerController extends Controller
 {

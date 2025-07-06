@@ -2,7 +2,7 @@
 namespace Modules\Core\Services\Services;
 
 use Modules\RentalManagement\Domain\Models\Rental;
-use Modules\RentalManagement\Domain\Models\Customer;
+use Modules\CustomerManagement\Domain\Models\Customer;
 use App\Enums\RentalStatus;
 use App\Services\RentalStatusWorkflow;
 use Illuminate\Foundation\Testing\RefreshDatabase;

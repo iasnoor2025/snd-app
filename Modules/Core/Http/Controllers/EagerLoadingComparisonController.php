@@ -2,7 +2,7 @@
 namespace Modules\Core\Http\Controllers;
 
 use Modules\RentalManagement\Domain\Models\Rental;
-use Modules\RentalManagement\Domain\Models\Customer;
+use Modules\CustomerManagement\Domain\Models\Customer;
 use Modules\EquipmentManagement\Domain\Models\Equipment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

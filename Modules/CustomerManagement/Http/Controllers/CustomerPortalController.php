@@ -1,7 +1,7 @@
 <?php
 namespace Modules\CustomerManagement\Http\Controllers;
 
-use Modules\RentalManagement\Domain\Models\Customer;
+use Modules\CustomerManagement\Domain\Models\Customer;
 use Modules\Core\Domain\Models\User;
 use Modules\RentalManagement\Domain\Models\Rental;
 use Modules\RentalManagement\Domain\Models\Payment;

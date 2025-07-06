@@ -36,123 +36,44 @@ class RentalRepository implements RentalRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function paginateWithFilters(int $perPage = 15, array $filters = []): LengthAwarePaginator
+    public function paginateWithFilters(int $perPage = 15, array $filters = []): \Illuminate\Pagination\LengthAwarePaginator
     {
-        \Log::debug('RentalRepository@paginateWithFilters - Input:', [
-            'perPage' => $perPage,
-            'filters' => $filters
-        ]);
-
-        try {
-            $query = $this->model->newQuery()
-                ->with([
-                    'customer:id,name,email',
-                    'rentalItems.equipment:id,name,model_number,manufacturer',
-                    'rentalItems' => function ($query) {
-                        $query->select([
-                            'id',
-                            'rental_id',
-                            'equipment_id',
-                            'rate',
-                            'rate_type',
-                            'days',
-                            'created_at'
-                        ]);
+        $query = $this->model->newQuery()->with(['customer', 'rentalItems']);
+        $result = $query->orderBy('created_at', 'desc')->paginate($perPage, ['*'], 'page', $filters['page'] ?? 1);
+        // Map to expected structure
+        $result->getCollection()->transform(function ($rental) {
+            return [
+                'id' => $rental->id,
+                'rental_number' => $rental->rental_number,
+                'customer_name' => $rental->customer ? ($rental->customer->company_name ?? $rental->customer->name ?? $rental->customer->contact_person ?? 'Unknown') : 'Unknown',
+                'customer_email' => $rental->customer->email ?? '',
+                'start_date' => $rental->start_date,
+                'expected_end_date' => $rental->expected_end_date,
+                'actual_end_date' => $rental->actual_end_date,
+                'status' => $rental->status,
+                'has_operators' => $rental->has_operators,
+                'total_amount' => $rental->total_amount,
+                'rental_items' => $rental->rentalItems ? $rental->rentalItems->map(function ($item) {
+                    $equipmentName = '';
+                    if ($item->equipment && $item->equipment->name) {
+                        if (is_array($item->equipment->name)) {
+                            $equipmentName = $item->equipment->name['en'] ?? $item->equipment->name[array_key_first($item->equipment->name)] ?? '';
+                        } else {
+                            $equipmentName = $item->equipment->name;
+                        }
                     }
-                ])
-                ->select([
-                    'rentals.*',
-                    'customers.name as customer_name',
-                    'customers.email as customer_email',
-                    DB::raw('COALESCE(rentals.actual_end_date, rentals.expected_end_date) as end_date'),
-                    DB::raw('CASE
-                        WHEN rentals.status = \'completed\' THEN \'completed\'
-                        WHEN rentals.status = \'pending\' THEN \'pending\'
-                        WHEN rentals.status = \'active\' AND rentals.expected_end_date < NOW() AND rentals.actual_end_date IS NULL THEN \'overdue\'
-                        ELSE rentals.status
-                    END as calculated_status')
-                ])
-                ->leftJoin('customers', 'rentals.customer_id', '=', 'customers.id');
-
-            \Log::debug('RentalRepository@paginateWithFilters - Initial query built');
-
-            if (isset($filters['search']) && $filters['search'] !== null) {
-                $search = $filters['search'];
-                $query->where(function ($q) use ($search) {
-                    $q->where('rental_number', 'like', '%' . $search . '%')
-                      ->orWhere('customers.name', 'like', '%' . $search . '%')
-                      ->orWhere('customers.email', 'like', '%' . $search . '%');
-                });
-                \Log::debug('RentalRepository@paginateWithFilters - Search filter applied:', ['search' => $search]);
-            }
-
-            if (isset($filters['status']) && $filters['status'] !== null && $filters['status'] !== 'all') {
-                if ($filters['status'] === 'overdue') {
-                    $query->where('rentals.status', 'active')
-                          ->whereDate('rentals.expected_end_date', '<', now())
-                          ->whereNull('rentals.actual_end_date');
-                } else {
-                    $query->where('rentals.status', $filters['status']);
-                }
-                \Log::debug('RentalRepository@paginateWithFilters - Status filter applied:', ['status' => $filters['status']]);
-            }
-
-            if (isset($filters['start_date']) && $filters['start_date'] !== null) {
-                $query->whereDate('rentals.start_date', '>=', $filters['start_date']);
-                \Log::debug('RentalRepository@paginateWithFilters - Start date filter applied:', ['start_date' => $filters['start_date']]);
-            }
-
-            if (isset($filters['end_date']) && $filters['end_date'] !== null) {
-                $query->whereDate('rentals.expected_end_date', '<=', $filters['end_date']);
-                \Log::debug('RentalRepository@paginateWithFilters - End date filter applied:', ['end_date' => $filters['end_date']]);
-            }
-
-            $result = $query->orderBy('rentals.created_at', 'desc')->paginate($perPage, ['*'], 'page', $filters['page'] ?? 1);
-
-            // Transform the data to match the frontend expectations
-            $result->getCollection()->transform(function ($rental) {
-                $rental->status = $rental->calculated_status;
-                unset($rental->calculated_status);
-
-                // Transform rental items to include equipment name
-                if ($rental->rentalItems) {
-                    $rental->rental_items = $rental->rentalItems->map(function ($item) {
-                        return [
-                            'id' => $item->id,
-                            'equipment_id' => $item->equipment_id,
-                            'equipment_name' => $item->equipment->name ?? 'Unknown Equipment',
-                            'rate' => $item->rate,
-                            'rate_type' => $item->rate_type,
-                            'days' => $item->days
-                        ];
-                    });
-                }
-
-                unset($rental->rentalItems);
-                return $rental;
-            });
-
-            \Log::debug('RentalRepository@paginateWithFilters - Result:', [
-                'count' => $result->count(),
-                'total' => $result->total(),
-                'currentPage' => $result->currentPage(),
-                'lastPage' => $result->lastPage(),
-                'hasMorePages' => $result->hasMorePages(),
-                'firstItem' => $result->firstItem(),
-                'lastItem' => $result->lastItem(),
-                'sql' => $query->toSql(),
-                'bindings' => $query->getBindings(),
-                'first_item' => $result->count() > 0 ? $result->items()[0] : null
-            ]);
-
-            return $result;
-        } catch (\Exception $e) {
-            \Log::error('RentalRepository@paginateWithFilters - Error:', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            throw $e;
-        }
+                    return [
+                        'id' => $item->id,
+                        'equipment_id' => $item->equipment_id,
+                        'equipment_name' => $equipmentName,
+                        'rate' => $item->rate,
+                        'rate_type' => $item->rate_type,
+                        'days' => $item->days,
+                    ];
+                })->toArray() : [],
+            ];
+        });
+        return $result;
     }
 
     /**

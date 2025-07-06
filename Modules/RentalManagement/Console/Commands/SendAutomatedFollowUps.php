@@ -4,7 +4,7 @@ namespace Modules\RentalManagement\Console\Commands;
 
 use Illuminate\Console\Command;
 use Modules\RentalManagement\Domain\Models\Rental;
-use Modules\RentalManagement\Domain\Models\Customer;
+use Modules\CustomerManagement\Domain\Models\Customer;
 use Illuminate\Support\Facades\Notification;
 use Modules\RentalManagement\Notifications\AutomatedFollowUpNotification;
 use Carbon\Carbon;

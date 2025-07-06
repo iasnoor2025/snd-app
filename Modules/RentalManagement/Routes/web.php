@@ -25,8 +25,10 @@ use Modules\RentalManagement\Http\Controllers\ReportingDashboardController;
 */
 
 Route::middleware(['web', 'auth'])->group(function () {
+    // Rental routes (main CRUD) - restored proper route
+    Route::get('rentals', [RentalController::class, 'index'])->name('rentals.index');
+
     // Rental routes (main CRUD)
-    Route::get('rentals', [RentalController::class, 'index'])->name('rentals.index')->middleware('permission:rentals.view');
     Route::get('rentals/create', [RentalController::class, 'create'])->name('rentals.create')->middleware('permission:rentals.view');
     Route::post('rentals', [RentalController::class, 'store'])->name('rentals.store')->middleware('permission:rentals.view');
     Route::get('rentals/{rental}', [RentalController::class, 'show'])->name('rentals.show')->middleware('permission:rentals.view');

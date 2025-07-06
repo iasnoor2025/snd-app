@@ -9,30 +9,34 @@ use Modules\EquipmentManagement\Domain\Models\Equipment;
 use Modules\CustomerManagement\Domain\Models\Customer;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Models\User;
 
 class RentalSeeder extends Seeder
 {
     public function run()
     {
-        // Ensure we have at least one customer
-        $customer = Customer::firstOrCreate(
-            ['email' => 'test@example.com'],
-            [
-                'name' => 'Test Customer',
-                'contact_person' => 'John Doe',
-                'email' => 'test@example.com',
-                'phone' => '1234567890',
-                'address' => 'Test Address',
-                'city' => 'Test City',
-                'state' => 'Test State',
-                'postal_code' => '12345',
-                'country' => 'Test Country',
-                'tax_number' => 'TAX001',
-                'credit_limit' => 10000,
-                'payment_terms' => 'Net 30',
-                'is_active' => true,
-            ]
-        );
+        Rental::truncate(); // Remove all rentals to avoid unique constraint
+        $customer = Customer::first();
+        $user = User::first();
+        if (!$customer || !$user) {
+            echo "Missing customer or user, skipping rental seeding.\n";
+            return;
+        }
+        $rental = Rental::create([
+            'customer_id' => $customer->id,
+            'rental_number' => 'RENT-' . now()->format('YmdHis'),
+            'start_date' => now(),
+            'status' => 'pending',
+            'subtotal' => 1000.00,
+            'tax_amount' => 150.00,
+            'total_amount' => 1150.00,
+            'discount' => 0.00,
+            'tax' => 0.00,
+            'final_amount' => 1150.00,
+            'payment_status' => 'pending',
+            'created_by' => $user->id,
+        ]);
+        echo "Created rental: {$rental->id}\n";
 
         // Ensure we have at least one equipment
         $equipment = Equipment::firstOrCreate(

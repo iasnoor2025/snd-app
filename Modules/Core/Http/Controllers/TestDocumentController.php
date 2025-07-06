@@ -1,7 +1,7 @@
 <?php
 namespace Modules\Core\Http\Controllers;
 
-use Modules\RentalManagement\Domain\Models\Customer;
+use Modules\CustomerManagement\Domain\Models\Customer;
 use Modules\Core\Services\DocumentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

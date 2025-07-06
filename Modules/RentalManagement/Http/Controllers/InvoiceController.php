@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 use Carbon\Carbon;
-use Modules\RentalManagement\Domain\Models\Customer;
+use Modules\CustomerManagement\Domain\Models\Customer;
 use Modules\RentalManagement\Domain\Models\Invoice;
 use Modules\RentalManagement\Domain\Models\InvoiceItem;
 use Modules\RentalManagement\Domain\Models\Rental;
