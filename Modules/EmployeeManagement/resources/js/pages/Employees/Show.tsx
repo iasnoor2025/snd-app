@@ -85,11 +85,46 @@ const DailyTimesheetRecords = ({ employeeId }: { employeeId: number }) => (
 );
 
 // PaymentHistory component placeholder
-const PaymentHistory = () => (
-  <div className="p-4 text-center text-muted-foreground">
-    Payment History component not yet implemented
-  </div>
-);
+const PaymentHistory = ({ employeeId }: { employeeId: number }) => {
+  const [payments, setPayments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    setLoading(true);
+    fetch(`/hr/payroll/employees/${employeeId}/advances/history/api`)
+      .then(res => res.json())
+      .then(data => {
+        // Try to support both {data: []} and {payments: []} API responses
+        setPayments(data?.data || data?.payments || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [employeeId]);
+  if (loading) return <div className="p-4 text-center text-muted-foreground">Loading payment history...</div>;
+  if (!payments.length) return <div className="p-4 text-center text-muted-foreground">No repayments found.</div>;
+  return (
+    <div className="mt-6">
+      <h3 className="text-lg font-semibold mb-2">Repayment History</h3>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Amount</TableHead>
+            <TableHead>Date</TableHead>
+            <TableHead>Notes</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {payments.map((p, i) => (
+            <TableRow key={i}>
+              <TableCell>SAR {Number(p.amount).toFixed(2)}</TableCell>
+              <TableCell>{p.payment_date}</TableCell>
+              <TableCell>{p.notes || '-'}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+};
 
 const getBreadcrumbs = (t: any): BreadcrumbItem[] => [
   {
@@ -107,16 +142,9 @@ const getBreadcrumbs = (t: any): BreadcrumbItem[] => [
 ];
 
 // Extend the Employee interface with additional properties needed in this component
-interface Payment {
-  id: number;
-  amount: number;
-  payment_date: string;
-  notes: string;
-  recorded_by: string;
-  advance_payment_id: number;
-}
-
+type Position = { name: string } | string;
 interface Employee extends Omit<BaseEmployee, 'file_number'> {
+  position?: any;
   emergency_contact_name: any;
   emergency_contact_phone: any;
   file_number?: string;
@@ -229,6 +257,7 @@ interface Props extends PageProps {
   monthlyHistory: any;
   totalRepaid: number;
   pagination: any;
+  current_balance: number;
 }
 
 // This component will be used within the Tabs to load documents with error handling
@@ -384,7 +413,8 @@ export default function Show({
   finalSettlements = { data: [] },
   monthlyHistory: initialMonthlyHistory = { data: [] },
   totalRepaid: initialTotalRepaid = 0,
-  pagination: initialPagination = {}
+  pagination: initialPagination = {},
+  current_balance = 0
 }: Props) {
   const { t } = useTranslation(['EmployeeManagement', 'common']);
   const breadcrumbs = getBreadcrumbs(t);
@@ -499,35 +529,39 @@ export default function Show({
 
     if (!amount || amount <= 0) {
       ToastService.error('Invalid advance amount');
-      return;
+      return false;
     }
 
     if (!monthly_deduction || monthly_deduction <= 0) {
       ToastService.error('Invalid monthly deduction amount');
-      return;
+      return false;
     }
 
     if (!reason) {
       ToastService.error('Advance reason is required');
-      return;
+      return false;
     }
 
     const loadingToastId = ToastService.loading('Processing advance request...');
 
     try {
-      await axios.post(`/api/employees/${employee.id}/advances`, {
+      await axios.post(`/hr/payroll/employees/${employee.id}/advances`, {
         amount,
         monthly_deduction,
         reason,
+        payment_date: new Date().toISOString().slice(0, 10),
+        estimated_months: 1 // Default to 1 month
       });
 
       ToastService.dismiss(loadingToastId);
       ToastService.success(`Advance request of SAR ${amount} created successfully`);
-      router.visit(`/employees/${employee.id}/advances`);
+      router.visit(`/employees/${employee.id}`);
+      return true;
     } catch (error: any) {
       ToastService.dismiss(loadingToastId);
       const errorMessage = error.response?.data?.message || error.message;
       ToastService.error(`Failed to create advance request: ${errorMessage}`);
+      return false;
     }
   };
 
@@ -577,8 +611,10 @@ export default function Show({
     const loadingToastId = ToastService.loading('Recording repayment...');
 
     try {
-      await axios.post(`/api/employees/${employee.id}/advances/${data.advance_id}/repayments`, {
+      await axios.post(`/hr/payroll/employees/${employee.id}/advances/${data.advance_id}/repayment`, {
         amount,
+        payment_date: new Date().toISOString().slice(0, 10),
+        notes: 'Manual repayment',
       });
 
       ToastService.dismiss(loadingToastId);
@@ -591,13 +627,13 @@ export default function Show({
     }
   };
 
-  const handleAdvanceApproval = async (advanceId: number, advanceAmount: number) => {
+  const handleAdvanceApproval = async (advanceId: number) => {
     const loadingToastId = ToastService.loading('Approving advance...');
 
     try {
       await axios.post(`/api/employees/${employee.id}/advances/${advanceId}/approve`);
       ToastService.dismiss(loadingToastId);
-      ToastService.success(`Advance of SAR ${advanceAmount} approved successfully`);
+      ToastService.success(`Advance approved successfully`);
       router.visit(`/employees/${employee.id}/advances`);
     } catch (error: any) {
       ToastService.dismiss(loadingToastId);
@@ -1197,7 +1233,7 @@ export default function Show({
                         </div>
                         <div className="flex justify-between border-b pb-2">
                           <dt className="text-sm font-medium">{t('employees:fields.position')}</dt>
-                          <dd className="text-sm">{typeof employee.position === 'object' && employee.position !== null && Object.prototype.hasOwnProperty.call(employee.position, 'name') ? getTranslation((employee.position as { name: string }).name) : (typeof employee.position === 'string' ? getTranslation(employee.position) : '')}</dd>
+                          <dd className="text-sm">{typeof employee.position === 'object' && employee.position !== null && 'name' in employee.position ? getTranslation((employee.position as { name: string }).name) : (typeof employee.position === 'string' ? getTranslation(employee.position) : '')}</dd>
                         </div>
                         <div className="flex justify-between border-b pb-2">
                           <dt className="text-sm font-medium">{t('employees:fields.department')}</dt>
@@ -2253,9 +2289,10 @@ export default function Show({
                         <Button
                           className="flex items-center gap-2"
                           onClick={() => {
-                            // Get all active advances
-                            const activeAdvances = advances?.data?.filter(advance => advance.status === 'approved' || advance.status === 'partially_repaid');
-
+                            // Get all active advances with valid numeric IDs
+                            const activeAdvances = advances?.data?.filter(advance => (advance.status === 'approved' || advance.status === 'partially_repaid') && typeof advance.id === 'number' && !isNaN(advance.id));
+                            // Debug log
+                            console.log('DEBUG: advances.data', advances?.data);
                             if (activeAdvances && activeAdvances.length > 0) {
                               // Calculate total remaining balance and monthly deduction
                               const totalRemainingBalance = activeAdvances.reduce((total: number, advance: Advance) => {
@@ -2270,13 +2307,16 @@ export default function Show({
                               // Set the initial repayment amount to total monthly deduction
                               setRepaymentAmount(totalMonthlyDeduction.toString());
 
-                              // Store all active advances for repayment
-                              setSelectedAdvance(activeAdvances[0].id); // We'll use the first advance ID as a reference
+                              // Store the first valid advance for repayment
+                              setSelectedAdvance(activeAdvances[0].id);
+                              // Debug log
+                              console.log('DEBUG: selectedAdvance', activeAdvances[0].id);
                             } else {
-                              ToastService.error("No active advances available for repayment");
+                              ToastService.error("No valid advances available for repayment");
                               return;
                             }
                           }}
+                          disabled={!(advances?.data?.some(advance => (advance.status === 'approved' || advance.status === 'partially_repaid') && typeof advance.id === 'number' && !isNaN(advance.id)))}
                         >
                           <CreditCard className="h-4 w-4" />
                           Make Repayment
@@ -2354,35 +2394,24 @@ export default function Show({
                                     </Button>
                                     <Button
                                       onClick={() => {
-                                        if (!repaymentAmount) {
-                                          ToastService.error('Please enter a repayment amount');
+                                        if (!repaymentAmount || Number(repaymentAmount) <= 0) {
+                                          ToastService.error('Please enter a valid repayment amount');
                                           return;
                                         }
-
+                                        if (!selectedAdvance || isNaN(Number(selectedAdvance)) || !advances.data.find(a => a.id === selectedAdvance)) {
+                                          ToastService.error('Invalid or legacy advance selected for repayment. Please select a valid advance.');
+                                          return;
+                                        }
                                         const amount = Number(repaymentAmount);
-                                        if (amount < totalMonthlyDeduction) {
+                                        if (totalMonthlyDeduction > 0 && amount < totalMonthlyDeduction) {
                                           ToastService.error(`Minimum repayment amount is SAR ${totalMonthlyDeduction.toFixed(2)}`);
                                           return;
                                         }
-
                                         if (amount > totalRemainingBalance) {
                                           ToastService.error(`Repayment amount cannot exceed remaining balance of SAR ${totalRemainingBalance.toFixed(2)}`);
                                           return;
                                         }
-
-                                        // Log the data being sent
-                                        console.log('Sending repayment data:', {
-                                          employeeId: employee.id,
-                                          amount: amount,
-                                          totalRemainingBalance,
-                                          totalMonthlyDeduction,
-                                          activeAdvances: activeAdvances.map(advance => ({
-                                            id: advance.id,
-                                            remainingBalance: advance.remaining_balance !== undefined ? Number(advance.remaining_balance) : Number(advance.amount) - Number(advance.repaid_amount || 0)
-                                          }))
-                                        });
-
-                                        handleRepayment(amount, activeAdvances);
+                                        handleRepayment({ amount: Number(repaymentAmount), advance_id: selectedAdvance });
                                       }}
                                     >
                                       {t('ttl_record_repayment')}
@@ -2405,12 +2434,12 @@ export default function Show({
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-sm font-medium text-muted-foreground">{t('current_balance')}</h3>
                       <Badge variant="outline" className="bg-muted/50">
-                        {Number(employee.advance_payment) > 0 ? 'Active' : 'No Balance'}
+                        {Number(current_balance) > 0 ? 'Active' : 'No Balance'}
                       </Badge>
                     </div>
                     <div className="space-y-2">
                       <p className="text-3xl font-bold text-destructive">
-                        SAR {Number(employee.advance_payment).toFixed(2)}
+                        SAR {Number(current_balance).toFixed(2)}
                       </p>
                       <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
                         <div
@@ -2576,7 +2605,7 @@ export default function Show({
                                 </TableCell>
                                 <TableCell className="capitalize">
                                   {advance.type === 'advance' ? t('request') :
-                                   advance.amount < 0 ? t('repayment') : t('payment')}
+                                   Number(advance.amount) < 0 ? t('repayment') : t('payment')}
                                 </TableCell>
                                 <TableCell className="text-right">
                                   <div className="flex justify-end gap-2">
@@ -2589,7 +2618,7 @@ export default function Show({
                                                 variant="outline"
                                                 size="icon"
                                                 className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
-                                                onClick={() => handleApproveAdvance(advance.id, advance.type, advance.status)}
+                                                onClick={() => handleAdvanceApproval(advance.id)}
                                               >
                                                 <Check className="h-4 w-4" />
                                               </Button>
@@ -2606,10 +2635,7 @@ export default function Show({
                                                 variant="outline"
                                                 size="icon"
                                                 className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
-                                                onClick={() => {
-                                                  setSelectedAdvance(advance.id);
-                                                  setIsRejectDialogOpen(true);
-                                                }}
+                                                onClick={() => handleAdvanceRejection(advance.id, advance.reason)}
                                               >
                                                 <X className="h-4 w-4" />
                                               </Button>
@@ -2628,10 +2654,7 @@ export default function Show({
                                             variant="outline"
                                             size="icon"
                                             className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
-                                            onClick={() => {
-                                              setSelectedAdvance(advance.id);
-                                              setIsDeleteDialogOpen(true);
-                                            }}
+                                            onClick={() => handleAdvanceDelete(advance.id)}
                                           >
                                             <Trash2 className="h-4 w-4" />
                                           </Button>
@@ -2658,6 +2681,7 @@ export default function Show({
                       </TableBody>
                     </Table>
                   </div>
+                  <PaymentHistory employeeId={employee.id} />
                 </div>
 
                 {/* Payment History Section */}
@@ -2666,7 +2690,7 @@ export default function Show({
                     <h3 className="text-lg font-semibold">{t('payment_history')}</h3>
                   </div> */}
 
-                  <PaymentHistory />
+                  <PaymentHistory employeeId={employee.id} />
                 </div>
               </CardContent>
             </Card>
@@ -2785,7 +2809,16 @@ export default function Show({
               <Button variant="outline" onClick={() => setIsAdvanceRequestDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleAdvanceRequest}>
+              <Button
+                onClick={async () => {
+                  const success = await handleAdvanceRequest({
+                    amount: parseFloat(advanceAmount),
+                    monthly_deduction: parseFloat(monthlyDeduction),
+                    reason: advanceReason
+                  });
+                  if (success) setIsAdvanceRequestDialogOpen(false);
+                }}
+              >
                 Submit Request
               </Button>
             </DialogFooter>
@@ -2867,21 +2900,3 @@ export default function Show({
     </AppLayout>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

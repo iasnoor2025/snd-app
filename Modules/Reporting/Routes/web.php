@@ -57,12 +57,52 @@ Route::middleware(['web', 'auth', 'verified'])->prefix('reporting')->name('repor
             ->middleware('permission:reports.delete')
             ->name('destroy');
     });
+
+    Route::get('/modules', function () {
+        return inertia('Reports/Modules');
+    })->name('modules');
+
+    Route::get('/rentals', function () {
+        return inertia('Reports/Rentals');
+    })->name('rentals');
+
+    Route::get('/equipment', function () {
+        return inertia('Reports/Equipment');
+    })->name('equipment');
+
+    Route::get('/payroll', function () {
+        return inertia('Reports/Payroll');
+    })->name('payroll');
+
+    Route::get('/timesheets', function () {
+        return inertia('Reports/Timesheets');
+    })->name('timesheets');
+
+    Route::get('/projects', function () {
+        return inertia('Reports/Projects');
+    })->name('projects');
+
+    Route::get('/leaves', function () {
+        return inertia('Reports/Leaves');
+    })->name('leaves');
+
+    Route::get('/customers', function () {
+        return inertia('Reports/Customers');
+    })->name('customers');
+
+    Route::get('/audit', function () {
+        return inertia('Reports/Audit');
+    })->name('audit');
+
+    Route::get('/revenue', function () {
+        return inertia('Reports/Revenue');
+    })->name('revenue');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/reporting', [ReportController::class, 'index'])->name('reporting.index');
-    Route::get('/reporting/export', [ReportController::class, 'export'])->name('reporting.export');
-});
+// Route::middleware(['auth', 'verified'])->group(function () {
+//     Route::get('/reporting', [ReportController::class, 'index'])->name('reporting.index');
+//     Route::get('/reporting/export', [ReportController::class, 'export'])->name('reporting.export');
+// });
 
 
 

@@ -71,7 +71,7 @@ const formSchema = z.object({
   nationality: z.string().min(1, "Nationality is required"),
   file_number: z.string().min(1, "File number is required")
     .regex(/^EMP-\d{4}$/, "File number must be in format EMP-XXXX"),
-  position_id: z.coerce.number().min(1, "Position is required"),
+  position_id: z.string().min(1, "Position is required"),
   hourly_rate: z.coerce.number().min(0, "Hourly rate must be non-negative").optional().default(0),
   basic_salary: z.coerce.number().min(0, "Basic salary must be non-negative").optional().default(0),
   overtime_rate_multiplier: z.coerce.number().min(0, "Overtime rate multiplier must be non-negative").optional().default(0),
@@ -128,6 +128,7 @@ const formSchema = z.object({
   emergency_contact_phone: z.string().optional().default(""),
   date_of_birth: z.string().min(1, "Date of birth is required"),
   department_id: z.coerce.number().min(1, 'Department is required'),
+  user_id: z.string().optional().default(""),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -168,7 +169,9 @@ export default function Create({ users, positions, employee, isEditing = false }
       phone: employee?.phone || '',
       nationality: employee?.nationality || '',
       file_number: employee?.file_number || '',
-      position_id: employee?.position_id ? Number(employee.position_id) : 1,
+      position_id: employee?.position_id ? String(employee.position_id) : '',
+      department_id: employee?.department_id ? parseInt(employee.department_id) : 1,
+      user_id: employee?.user_id || '',
       hourly_rate: employee?.hourly_rate || 0,
       basic_salary: employee?.basic_salary || 0,
       overtime_rate_multiplier: employee?.overtime_rate_multiplier || 1.5,
@@ -180,26 +183,10 @@ export default function Create({ users, positions, employee, isEditing = false }
       iqama_cost: employee?.iqama_cost || 0,
       passport_number: employee?.passport_number || '',
       passport_expiry: employee?.passport_expiry || '',
-      driving_license: {
-        number: employee?.driving_license?.number || '',
-        expiry_date: employee?.driving_license?.expiry_date || '',
-        cost: employee?.driving_license?.cost || 0,
-      },
-      operator_license: {
-        number: employee?.operator_license?.number || '',
-        expiry_date: employee?.operator_license?.expiry_date || '',
-        cost: employee?.operator_license?.cost || 0,
-      },
-      tuv_certification: {
-        number: employee?.tuv_certification?.number || '',
-        expiry_date: employee?.tuv_certification?.expiry_date || '',
-        cost: employee?.tuv_certification?.cost || 0,
-      },
-      spsp_license: {
-        number: employee?.spsp_license?.number || '',
-        expiry_date: employee?.spsp_license?.expiry_date || '',
-        cost: employee?.spsp_license?.cost || 0,
-      },
+      driving_license: employee?.driving_license || { number: '', expiry_date: '', cost: 0 },
+      operator_license: employee?.operator_license || { number: '', expiry_date: '', cost: 0 },
+      tuv_certification: employee?.tuv_certification || { number: '', expiry_date: '', cost: 0 },
+      spsp_license: employee?.spsp_license || { number: '', expiry_date: '', cost: 0 },
       custom_certifications: employee?.custom_certifications || [],
       notes: employee?.notes || '',
       hire_date: employee?.hire_date || '',
@@ -210,13 +197,16 @@ export default function Create({ users, positions, employee, isEditing = false }
       advance_payment: employee?.advance_payment || 0,
       absent_deduction_rate: employee?.absent_deduction_rate || 0,
       role: employee?.role || 'employee',
-      supervisor: employee?.supervisor || '',
+      supervisor: employee?.supervisor
+        ? String(employee.supervisor)
+        : (employee?.supervisor_name && Array.isArray(users)
+            ? (users.find(u => u.name === employee.supervisor_name)?.id?.toString() || '')
+            : ''),
       address: employee?.address || '',
       city: employee?.city || '',
       emergency_contact_name: employee?.emergency_contact_name || '',
       emergency_contact_phone: employee?.emergency_contact_phone || '',
       date_of_birth: employee?.date_of_birth || '',
-      department_id: employee?.department_id ? Number(employee.department_id) : 1,
     },
   });
 
@@ -320,14 +310,9 @@ export default function Create({ users, positions, employee, isEditing = false }
       // Debug log the form data
       console.log('Form data before processing:', data);
 
-      // Ensure position_id is a number
+      // Ensure position_id is a string
       if (data.position_id !== undefined) {
-        const position = positions.find(p => p.id === Number(data.position_id));
-        if (!position) {
-          toast.error('Selected position not found. Please try again.');
-          return;
-        }
-        data.position_id = Number(data.position_id);
+        data.position_id = String(data.position_id);
       }
 
       // Ensure required fields are set
@@ -570,22 +555,3 @@ export default function Create({ users, positions, employee, isEditing = false }
     </AppLayout>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

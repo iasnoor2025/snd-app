@@ -247,13 +247,19 @@ export default function PersonalInfoTab({ form }: PersonalInfoTabProps) {
                 <FormLabel className="flex items-center">
                   {t('nationality')} <span className="text-red-500 ml-1">*</span>
                 </FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value || ''} defaultValue={field.value || ''}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder={t('ph_select_nationality')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
+                    {/* Always show the current value if not in the list */}
+                    {field.value && !countries.some(c => c.value === field.value) && (
+                      <SelectItem key={field.value} value={field.value}>
+                        {field.value}
+                      </SelectItem>
+                    )}
                     {countries.map((country: any) => (
                       <SelectItem key={country.value} value={country.value}>
                         {country.label}

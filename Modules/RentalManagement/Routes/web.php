@@ -11,6 +11,7 @@ use Modules\RentalManagement\Http\Controllers\QuotationController;
 use Modules\RentalManagement\Http\Controllers\CustomerController;
 use Modules\RentalManagement\Http\Controllers\RentalWorkflowController;
 use Modules\RentalManagement\Http\Controllers\RentalHistoryController;
+use Modules\RentalManagement\Http\Controllers\ReportingDashboardController;
 
 /*
 |--------------------------------------------------------------------------

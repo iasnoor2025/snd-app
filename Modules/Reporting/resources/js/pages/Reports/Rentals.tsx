@@ -7,9 +7,9 @@ import { Input } from "@/Core";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
 import { DatePicker } from "@/Core";
 import { useState } from 'react';
-import { useForm } from '@inertiajs/react';
 import { toast } from 'sonner';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import { AppLayout } from '@/Core';
+import { ArrowLeft } from 'lucide-react';
 
 interface RentalData {
   id: number;
@@ -25,18 +25,18 @@ interface RentalData {
 }
 
 interface Props extends PageProps {
-  rentals: {
+  rentals?: {
     data: RentalData[];
     current_page: number;
     last_page: number;
   };
-  summary: {
+  summary?: {
     total_rentals: number;
     active_rentals: number;
     completed_rentals: number;
     total_amount: number;
   };
-  filters: {
+  filters?: {
     search?: string;
     status?: string;
     start_date?: string;
@@ -47,82 +47,86 @@ interface Props extends PageProps {
 }
 
 export default function Rentals({ rentals, summary, filters }: Props) {
-  const [searchQuery, setSearchQuery] = useState(filters.search || '');
-  const { data, setData, get } = useForm({
-    search: filters.search || '',
-    status: filters.status || '',
-    start_date: filters.start_date || '',
-    end_date: filters.end_date || '',
-    sort_field: filters.sort_field || 'created_at',
-    sort_direction: filters.sort_direction || 'desc',
+  const safeRentals = rentals || { data: [], current_page: 1, last_page: 1 };
+  const safeSummary = summary || { total_rentals: 0, active_rentals: 0, completed_rentals: 0, total_amount: 0 };
+  const safeFilters = filters || {};
+
+  const [data, setData] = useState({
+    search: safeFilters.search || '',
+    status: safeFilters.status || '',
+    start_date: safeFilters.start_date || '',
+    end_date: safeFilters.end_date || '',
+    sort_field: safeFilters.sort_field || 'created_at',
+    sort_direction: safeFilters.sort_direction || 'desc',
   });
 
   const handleSearch = () => {
-    get(route('reporting.modules.rentals'), {
-      preserveState: true,
-      preserveScroll: true,
-      onSuccess: () => {
-        toast.success('Filters applied successfully');
-      },
-      onError: () => {
-        toast.error('Failed to apply filters');
-      },
-    });
+    const searchData = { ...data } as any;
+    if (searchData.status === 'all') delete searchData.status;
+    const params = new URLSearchParams(searchData as any).toString();
+    window.location.href = `${route('reporting.modules.rentals')}?${params}`;
   };
 
   const columns = [
     {
-      accessorKey: 'rental_number',
       header: 'Rental Number',
+      accessorKey: 'rental_number' as keyof RentalData,
     },
     {
-      accessorKey: 'customer.name',
       header: 'Customer',
+      accessorKey: 'customer' as keyof RentalData,
+      cell: (row: RentalData) => row.customer?.name || '',
     },
     {
-      accessorKey: 'start_date',
       header: 'Start Date',
+      accessorKey: 'start_date' as keyof RentalData,
     },
     {
-      accessorKey: 'end_date',
       header: 'End Date',
+      accessorKey: 'end_date' as keyof RentalData,
     },
     {
-      accessorKey: 'status',
       header: 'Status',
-      cell: ({ row }) => (
-        <span className={`capitalize ${row.original.status === 'active' ? 'text-green-600' : 'text-gray-600'}`}>
-          {row.original.status}
+      accessorKey: 'status' as keyof RentalData,
+      cell: (row: RentalData) => (
+        <span className={`capitalize ${row.status === 'active' ? 'text-green-600' : 'text-gray-600'}`}>
+          {row.status}
         </span>
       ),
     },
     {
-      accessorKey: 'items_count',
       header: 'Items',
+      accessorKey: 'items_count' as keyof RentalData,
     },
     {
-      accessorKey: 'total_amount',
       header: 'Total Amount',
-      cell: ({ row }) => (
+      accessorKey: 'total_amount' as keyof RentalData,
+      cell: (row: RentalData) => (
         <span>
-          ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(row.original.total_amount) || '0.00'}
+          ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(row.total_amount) || '0.00'}
         </span>
       ),
     },
   ];
 
   return (
-    <>
-      <Head title="Rental Reports" />
-
+    <AppLayout title="Rentals Report">
       <div className="container mx-auto py-6">
+        <div className="mb-4">
+          <a href="/reporting">
+            <Button variant="outline" className="flex items-center gap-2">
+              <ArrowLeft className="w-4 h-4" />
+              Back to Dashboard
+            </Button>
+          </a>
+        </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Rentals</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{summary.total_rentals}</div>
+              <div className="text-2xl font-bold">{safeSummary.total_rentals}</div>
             </CardContent>
           </Card>
           <Card>
@@ -130,7 +134,7 @@ export default function Rentals({ rentals, summary, filters }: Props) {
               <CardTitle className="text-sm font-medium">Active Rentals</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{summary.active_rentals}</div>
+              <div className="text-2xl font-bold text-green-600">{safeSummary.active_rentals}</div>
             </CardContent>
           </Card>
           <Card>
@@ -138,7 +142,7 @@ export default function Rentals({ rentals, summary, filters }: Props) {
               <CardTitle className="text-sm font-medium">Completed Rentals</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{summary.completed_rentals}</div>
+              <div className="text-2xl font-bold text-gray-600">{safeSummary.completed_rentals}</div>
             </CardContent>
           </Card>
           <Card>
@@ -147,7 +151,7 @@ export default function Rentals({ rentals, summary, filters }: Props) {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(summary.total_amount) || '0.00'}
+                ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(safeSummary.total_amount) || '0.00'}
               </div>
             </CardContent>
           </Card>
@@ -164,16 +168,16 @@ export default function Rentals({ rentals, summary, filters }: Props) {
                 <Input
                   placeholder="Search rentals..."
                   value={data.search}
-                  onChange={(e) => setData('search', e.target.value)}
+                  onChange={(e) => setData((prev) => ({ ...prev, search: e.target.value }))}
                 />
               </div>
               <div className="w-full md:w-48">
-                <Select value={data.status} onValueChange={(value) => setData('status', value)}>
+                <Select value={data.status} onValueChange={(value) => setData((prev) => ({ ...prev, status: value }))}>
                   <SelectTrigger>
                     <SelectValue placeholder="Filter by status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Statuses</SelectItem>
+                    <SelectItem value="all">All Statuses</SelectItem>
                     <SelectItem value="active">Active</SelectItem>
                     <SelectItem value="completed">Completed</SelectItem>
                     <SelectItem value="overdue">Overdue</SelectItem>
@@ -182,15 +186,17 @@ export default function Rentals({ rentals, summary, filters }: Props) {
               </div>
               <div className="w-full md:w-48">
                 <DatePicker
-                  value={data.start_date ? new Date(data.start_date) : undefined}
-                  onChange={(date) => setData('start_date', date?.toISOString().split('T')[0] || '')}
+                  // @ts-ignore
+                  selected={data.start_date ? new Date(data.start_date) : undefined}
+                  onChange={(date: Date | null) => setData((prev) => ({ ...prev, start_date: date ? date.toISOString().split('T')[0] : '' }))}
                   placeholder="Start Date"
                 />
               </div>
               <div className="w-full md:w-48">
                 <DatePicker
-                  value={data.end_date ? new Date(data.end_date) : undefined}
-                  onChange={(date) => setData('end_date', date?.toISOString().split('T')[0] || '')}
+                  // @ts-ignore
+                  selected={data.end_date ? new Date(data.end_date) : undefined}
+                  onChange={(date: Date | null) => setData((prev) => ({ ...prev, end_date: date ? date.toISOString().split('T')[0] : '' }))}
                   placeholder="End Date"
                 />
               </div>
@@ -199,24 +205,11 @@ export default function Rentals({ rentals, summary, filters }: Props) {
 
             <DataTable
               columns={columns}
-              data={rentals.data}
-              pagination={{
-                pageIndex: rentals.current_page - 1,
-                pageCount: rentals.last_page,
-              }}
-              sorting={{
-                field: data.sort_field,
-                direction: data.sort_direction as 'asc' | 'desc',
-                onSort: (field, direction) => {
-                  setData('sort_field', field);
-                  setData('sort_direction', direction);
-                  handleSearch();
-                },
-              }}
+              data={safeRentals.data}
             />
           </CardContent>
         </Card>
       </div>
-    </>
+    </AppLayout>
   );
 }

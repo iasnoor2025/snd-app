@@ -172,17 +172,89 @@ class EmployeeController extends Controller
     {
         $this->authorize('update', $employee);
 
-        // Prepare the employee data with only standard relations loaded
-        $employeeData = $employee->load(['position', 'department']);
+        // Eager load all necessary relations
+        $employeeData = $employee->load(['position', 'department', 'user']);
 
-        // Add documents and certificates collections manually
-        $employeeData->setAttribute('media', $employee->media);
+        // Map related IDs and flatten nested fields for frontend compatibility
+        $employeeArray = $employeeData->toArray();
+        $employeeArray['department_id'] = $employeeData->department ? $employeeData->department->id : null;
+        $employeeArray['position_id'] = $employeeData->position ? $employeeData->position->id : null;
+        $employeeArray['user_id'] = $employeeData->user ? $employeeData->user->id : null;
+        $employeeArray['email'] = $employeeData->user ? $employeeData->user->email : $employeeData->email;
+        $employeeArray['nationality'] = $employeeData->nationality ?? '';
+        $employeeArray['date_of_birth'] = $employeeData->date_of_birth ? (is_object($employeeData->date_of_birth) ? $employeeData->date_of_birth->format('Y-m-d') : $employeeData->date_of_birth) : '';
+        $employeeArray['hire_date'] = $employeeData->hire_date ? (is_object($employeeData->hire_date) ? $employeeData->hire_date->format('Y-m-d') : $employeeData->hire_date) : '';
+
+        // Supervisor: handle legacy name or user_id
+        $supervisorId = '';
+        $supervisorName = '';
+        if (is_numeric($employeeData->supervisor) && $employeeData->supervisor > 0) {
+            $supervisorId = (string)$employeeData->supervisor;
+            $supervisorUser = \Modules\Core\Domain\Models\User::find($supervisorId);
+            $supervisorName = $supervisorUser ? $supervisorUser->name : '';
+        } elseif (!empty($employeeData->supervisor)) {
+            $supervisorUser = \Modules\Core\Domain\Models\User::where('name', $employeeData->supervisor)->first();
+            if ($supervisorUser) {
+                $supervisorId = (string)$supervisorUser->id;
+                $supervisorName = $supervisorUser->name;
+            } else {
+                $supervisorName = $employeeData->supervisor;
+            }
+        }
+        $employeeArray['supervisor'] = $supervisorId;
+        $employeeArray['supervisor_name'] = $supervisorName;
+
+        // Position: send both id and object (with name)
+        $employeeArray['position_id'] = $employeeData->position ? (string)$employeeData->position->id : ($employeeData->position_id ? (string)$employeeData->position_id : '');
+        $employeeArray['position'] = $employeeData->position ? [
+            'id' => $employeeData->position->id,
+            'name' => is_array($employeeData->position->name) ? $employeeData->position->name : (string)$employeeData->position->name,
+        ] : null;
+
+        // Map license/certification fields as objects for frontend
+        $employeeArray['driving_license'] = [
+            'number' => $employeeData->driving_license_number ?? '',
+            'expiry_date' => $employeeData->driving_license_expiry ? $employeeData->driving_license_expiry->format('Y-m-d') : '',
+            'cost' => $employeeData->driving_license_cost ?? 0,
+        ];
+        $employeeArray['operator_license'] = [
+            'number' => $employeeData->operator_license_number ?? '',
+            'expiry_date' => $employeeData->operator_license_expiry ? $employeeData->operator_license_expiry->format('Y-m-d') : '',
+            'cost' => $employeeData->operator_license_cost ?? 0,
+        ];
+        $employeeArray['tuv_certification'] = [
+            'number' => $employeeData->tuv_certification_number ?? '',
+            'expiry_date' => $employeeData->tuv_certification_expiry ? $employeeData->tuv_certification_expiry->format('Y-m-d') : '',
+            'cost' => $employeeData->tuv_certification_cost ?? 0,
+        ];
+        $employeeArray['spsp_license'] = [
+            'number' => $employeeData->spsp_license_number ?? '',
+            'expiry_date' => $employeeData->spsp_license_expiry ? $employeeData->spsp_license_expiry->format('Y-m-d') : '',
+            'cost' => $employeeData->spsp_license_cost ?? 0,
+        ];
+
+        // Ensure all nulls are converted to empty strings or 0 for frontend
+        foreach ($employeeArray as $key => $value) {
+            if ($value === null) {
+                $employeeArray[$key] = is_numeric($value) ? 0 : '';
+            }
+        }
+
+        // Get all users for the dropdown
+        $users = User::orderBy('name')->get(['id', 'name']);
+        // Ensure supervisor user is included
+        if ($supervisorId && !$users->pluck('id')->contains($supervisorId)) {
+            if (!empty($supervisorName)) {
+                $users->push((object)['id' => $supervisorId, 'name' => $supervisorName]);
+            }
+        }
+        $users = $users->values()->all();
 
         return Inertia::render('Employees/Create', [
-            'employee' => $employeeData,
+            'employee' => $employeeArray,
             'departments' => Department::orderBy('name')->get(['id', 'name']),
             'positions' => Position::orderBy('name')->get(['id', 'name']),
-            'users' => User::orderBy('name')->get(['id', 'name']),
+            'users' => $users,
             'isEditing' => true
         ]);
     }

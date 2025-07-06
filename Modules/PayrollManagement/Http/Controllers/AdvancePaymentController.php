@@ -105,6 +105,7 @@ class AdvancePaymentController extends Controller
             $advancePayment = $employee->advancePayments()->create([
                 'amount' => $request->amount,
                 'reason' => $request->reason,
+                'purpose' => $request->reason,
                 'payment_date' => $request->payment_date,
                 'monthly_deduction' => $request->monthly_deduction,
                 'estimated_months' => $request->estimated_months,
@@ -140,7 +141,13 @@ class AdvancePaymentController extends Controller
     {
         try {
             // Find the advance payment
-            $advancePayment = AdvancePayment::findOrFail($advance);
+            $advancePayment = AdvancePayment::find($advance);
+            if (!$advancePayment) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'The selected advance does not exist or is no longer available.'
+                ], 404);
+            }
 
             Log::info('Processing repayment request', [
                 'advance_id' => $advancePayment->id,
@@ -190,11 +197,14 @@ class AdvancePaymentController extends Controller
                     'required',
                     'numeric',
                     function ($attribute, $value, $fail) use ($totalRemainingBalance, $totalMonthlyDeduction) {
-                        if ($value < $totalMonthlyDeduction) {
+                        if ($value <= 0) {
+                            $fail("The repayment amount must be greater than zero.");
+                            return;
+                        }
+                        if ($totalMonthlyDeduction > 0 && $value < $totalMonthlyDeduction) {
                             $fail("The repayment amount must be at least the total monthly deduction of SAR {$totalMonthlyDeduction}.");
                             return;
                         }
-
                         if ($value > $totalRemainingBalance) {
                             $fail("The repayment amount cannot exceed the total remaining balance of SAR {$totalRemainingBalance}.");
                             return;
@@ -295,7 +305,14 @@ class AdvancePaymentController extends Controller
             ->orderBy('payment_date', 'desc')
             ->paginate($perPage, ['*'], 'page', $page);
 
-        return $paymentHistory->groupBy(function($item) {;
+        // Filter out records with null payment_date
+        $paymentHistory = $paymentHistory->filter(function($item) {
+            return !is_null($item->payment_date);
+        });
+        // Remove duplicate records by id
+        $paymentHistory = $paymentHistory->unique('id');
+
+        return $paymentHistory->groupBy(function($item) {
             return $item->payment_date->format('Y-m');
         })->map(function($group) {
             return [

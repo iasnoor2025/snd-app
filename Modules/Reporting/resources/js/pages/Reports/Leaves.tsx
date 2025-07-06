@@ -10,6 +10,9 @@ import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { toast } from 'sonner';
 import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import AppLayout from '@/Core/layouts/AppLayout';
+import { Link } from '@inertiajs/react';
+import { ArrowLeft } from 'lucide-react';
 
 interface LeaveData {
   id: number;
@@ -68,19 +71,38 @@ interface Props extends PageProps {
   leaveTypes: LeaveType[];
 }
 
-export default function Leaves({ leaves, summary, filters, departments, leaveTypes }: Props) {
+export default function Leaves({ leaves, summary, filters, departments, leaveTypes, auth }: Props) {
+  return (
+    <AppLayout>
+      <LeavesContent leaves={leaves} summary={summary} filters={filters} departments={departments} leaveTypes={leaveTypes} auth={auth} />
+    </AppLayout>
+  );
+}
+
+function LeavesContent({ leaves, summary, filters, departments, leaveTypes, auth }: Props) {
+  // Provide safe defaults for all props
+  const safeLeaves = leaves || { data: [], current_page: 1, last_page: 1 };
+  const safeSummary = summary || { total_leaves: 0, approved_leaves: 0, pending_leaves: 0, rejected_leaves: 0, total_days: 0 };
+  const safeFilters = filters || {};
+  const safeDepartments = departments || [];
+  const safeLeaveTypes = leaveTypes || [];
+
   const { data, setData, get } = useForm({
-    search: filters.search || '',
-    status: filters.status || '',
-    department: filters.department || '',
-    leave_type: filters.leave_type || '',
-    start_date: filters.start_date || '',
-    end_date: filters.end_date || '',
-    sort_field: filters.sort_field || 'created_at',
-    sort_direction: filters.sort_direction || 'desc',
+    search: safeFilters.search || '',
+    status: safeFilters.status || 'all',
+    department: safeFilters.department || 'all',
+    leave_type: safeFilters.leave_type || 'all',
+    start_date: safeFilters.start_date || '',
+    end_date: safeFilters.end_date || '',
+    sort_field: safeFilters.sort_field || 'created_at',
+    sort_direction: safeFilters.sort_direction || 'desc',
   });
 
   const handleSearch = () => {
+    const searchData = { ...data };
+    if (searchData.department === 'all') delete searchData.department;
+    if (searchData.leave_type === 'all') delete searchData.leave_type;
+    if (searchData.status === 'all') delete searchData.status;
     get(route('reporting.modules.leaves'), {
       preserveState: true,
       preserveScroll: true,
@@ -106,58 +128,32 @@ export default function Leaves({ leaves, summary, filters, departments, leaveTyp
     }
   };
 
-  const columns = [
-    {
-      accessorKey: 'employee.name',
-      header: 'Employee',
-    },
-    {
-      accessorKey: 'employee.employee_id',
-      header: 'Employee ID',
-    },
-    {
-      accessorKey: 'department',
-      header: 'Department',
-    },
-    {
-      accessorKey: 'leaveType.name',
-      header: 'Leave Type',
-    },
-    {
-      accessorKey: 'start_date',
-      header: 'Start Date',
-    },
-    {
-      accessorKey: 'end_date',
-      header: 'End Date',
-    },
-    {
-      accessorKey: 'days',
-      header: 'Days',
-    },
-    {
-      accessorKey: 'status',
-      header: 'Status',
-      cell: ({ row }) => (
-        <span className={`capitalize ${getStatusColor(row.original.status)}`}>
-          {row.original.status}
-        </span>
-      ),
-    },
-  ];
+  const handleSort = (field: any, direction: any) => {
+    setData({ ...data, sort_field: field, sort_direction: direction });
+    handleSearch();
+  };
+
+  // Back button above summary cards
+  const backUrl = '/reporting';
 
   return (
     <>
       <Head title="Leave Reports" />
 
       <div className="container mx-auto py-6">
+        <div className="mb-4">
+          <Link href={backUrl} className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+            Back to Reports
+          </Link>
+        </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5 mb-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Leaves</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{summary.total_leaves}</div>
+              <div className="text-2xl font-bold">{safeSummary.total_leaves}</div>
             </CardContent>
           </Card>
           <Card>
@@ -165,7 +161,7 @@ export default function Leaves({ leaves, summary, filters, departments, leaveTyp
               <CardTitle className="text-sm font-medium">Approved</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">{summary.approved_leaves}</div>
+              <div className="text-2xl font-bold text-green-600">{safeSummary.approved_leaves}</div>
             </CardContent>
           </Card>
           <Card>
@@ -173,7 +169,7 @@ export default function Leaves({ leaves, summary, filters, departments, leaveTyp
               <CardTitle className="text-sm font-medium">Pending</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-yellow-600">{summary.pending_leaves}</div>
+              <div className="text-2xl font-bold text-yellow-600">{safeSummary.pending_leaves}</div>
             </CardContent>
           </Card>
           <Card>
@@ -181,7 +177,7 @@ export default function Leaves({ leaves, summary, filters, departments, leaveTyp
               <CardTitle className="text-sm font-medium">Rejected</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-600">{summary.rejected_leaves}</div>
+              <div className="text-2xl font-bold text-red-600">{safeSummary.rejected_leaves}</div>
             </CardContent>
           </Card>
           <Card>
@@ -189,7 +185,7 @@ export default function Leaves({ leaves, summary, filters, departments, leaveTyp
               <CardTitle className="text-sm font-medium">Total Days</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{summary.total_days}</div>
+              <div className="text-2xl font-bold">{safeSummary.total_days}</div>
             </CardContent>
           </Card>
         </div>
@@ -214,8 +210,8 @@ export default function Leaves({ leaves, summary, filters, departments, leaveTyp
                     <SelectValue placeholder="Department" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Departments</SelectItem>
-                    {departments.map((dept) => (
+                    <SelectItem value="all">All Departments</SelectItem>
+                    {safeDepartments.map((dept) => (
                       <SelectItem key={dept.id} value={dept.name}>
                         {dept.name}
                       </SelectItem>
@@ -229,8 +225,8 @@ export default function Leaves({ leaves, summary, filters, departments, leaveTyp
                     <SelectValue placeholder="Leave Type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Leave Types</SelectItem>
-                    {leaveTypes.map((type) => (
+                    <SelectItem value="all">All Leave Types</SelectItem>
+                    {safeLeaveTypes.map((type) => (
                       <SelectItem key={type.id} value={type.id.toString()}>
                         {type.name}
                       </SelectItem>
@@ -244,7 +240,7 @@ export default function Leaves({ leaves, summary, filters, departments, leaveTyp
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Statuses</SelectItem>
+                    <SelectItem value="all">All Statuses</SelectItem>
                     <SelectItem value="approved">Approved</SelectItem>
                     <SelectItem value="pending">Pending</SelectItem>
                     <SelectItem value="rejected">Rejected</SelectItem>
@@ -253,15 +249,17 @@ export default function Leaves({ leaves, summary, filters, departments, leaveTyp
               </div>
               <div className="w-full md:w-48">
                 <DatePicker
-                  value={data.start_date ? new Date(data.start_date) : undefined}
-                  onChange={(date) => setData('start_date', date?.toISOString().split('T')[0] || '')}
+                  // @ts-ignore
+                  selected={data.start_date ? new Date(data.start_date) : undefined}
+                  onChange={(date: Date | null) => setData('start_date', date ? date.toISOString().split('T')[0] : '')}
                   placeholder="Start Date"
                 />
               </div>
               <div className="w-full md:w-48">
                 <DatePicker
-                  value={data.end_date ? new Date(data.end_date) : undefined}
-                  onChange={(date) => setData('end_date', date?.toISOString().split('T')[0] || '')}
+                  // @ts-ignore
+                  selected={data.end_date ? new Date(data.end_date) : undefined}
+                  onChange={(date: Date | null) => setData('end_date', date ? date.toISOString().split('T')[0] : '')}
                   placeholder="End Date"
                 />
               </div>
@@ -269,9 +267,9 @@ export default function Leaves({ leaves, summary, filters, departments, leaveTyp
               <Button variant="outline" onClick={() => {
                 setData({
                   search: '',
-                  status: '',
-                  department: '',
-                  leave_type: '',
+                  status: 'all',
+                  department: 'all',
+                  leave_type: 'all',
                   start_date: '',
                   end_date: '',
                   sort_field: 'created_at',
@@ -284,26 +282,41 @@ export default function Leaves({ leaves, summary, filters, departments, leaveTyp
               }}>Reset</Button>
             </div>
 
-            <DataTable
-              columns={columns}
-              data={leaves.data}
-              pagination={{
-                pageIndex: leaves.current_page - 1,
-                pageCount: leaves.last_page,
-              }}
-              sorting={{
-                field: data.sort_field,
-                direction: data.sort_direction as 'asc' | 'desc',
-                onSort: (field, direction) => {
-                  setData('sort_field', field);
-                  setData('sort_direction', direction);
-                  handleSearch();
-                },
-              }}
-            />
+            <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead className="bg-gray-50 dark:bg-gray-800">
+                  <tr>
+                    <th className="px-4 py-2 text-left">Employee</th>
+                    <th className="px-4 py-2 text-left">Employee ID</th>
+                    <th className="px-4 py-2 text-left">Department</th>
+                    <th className="px-4 py-2 text-left">Leave Type</th>
+                    <th className="px-4 py-2 text-left">Start Date</th>
+                    <th className="px-4 py-2 text-left">End Date</th>
+                    <th className="px-4 py-2 text-left">Days</th>
+                    <th className="px-4 py-2 text-left">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                  {safeLeaves.data.map((leave: any, idx: number) => (
+                    <tr key={idx}>
+                      <td className="px-4 py-2">{leave.employee?.name}</td>
+                      <td className="px-4 py-2">{leave.employee?.employee_id}</td>
+                      <td className="px-4 py-2">{leave.department}</td>
+                      <td className="px-4 py-2">{leave.leaveType?.name}</td>
+                      <td className="px-4 py-2">{leave.start_date}</td>
+                      <td className="px-4 py-2">{leave.end_date}</td>
+                      <td className="px-4 py-2">{leave.days}</td>
+                      <td className="px-4 py-2">
+                        <span className={`capitalize ${getStatusColor(leave.status)}`}>{leave.status}</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </CardContent>
         </Card>
       </div>
     </>
   );
-} 
+}

@@ -17,151 +17,12 @@ use Modules\LeaveManagement\Domain\Models\Leave;
 class ReportController extends Controller
 {
     /**
-     * Display the reports dashboard.
+     * Display the main reports dashboard (cross-module summary).
      */
     public function index(Request $request)
     {
-        // Get rental statistics
-        $rentalStats = [
-            'total' => Rental::count(),
-            'active' => Rental::where('status', 'active')->count(),
-            'completed' => Rental::where('status', 'completed')->count(),
-            'total_amount' => DB::table('rental_items')->sum('total_amount'),
-        ];
-
-        // Get leave statistics
-        $leaveStats = [
-            'total' => Leave::count(),
-            'approved' => Leave::where('status', 'approved')->count(),
-            'pending' => Leave::where('status', 'pending')->count(),
-            'rejected' => Leave::where('status', 'rejected')->count(),
-        ];
-
-        // Get equipment statistics
-        $equipmentStats = [
-            'total' => Equipment::count(),
-            'available' => Equipment::where('status', 'available')->count(),
-            'rented' => Equipment::where('status', 'rented')->count(),
-            'maintenance' => Equipment::where('status', 'maintenance')->count(),
-        ];
-
-        // Get revenue statistics
-        $revenueStats = [
-            'total' => DB::table('payments')->sum('amount'),
-            'monthly' => DB::table('payments')
-                ->whereMonth('created_at', Carbon::now()->month)
-                ->whereYear('created_at', Carbon::now()->year)
-                ->sum('amount'),
-            'yearly' => DB::table('payments')
-                ->whereYear('created_at', Carbon::now()->year)
-                ->sum('amount'),
-        ];
-
-        // Get monthly revenue data for chart
-        $monthlyRevenue = DB::table('payments')
-            ->selectRaw('TO_CHAR(created_at, \'YYYY-MM\') as month, SUM(amount) as total')
-            ->groupBy('month')
-            ->orderBy('month', 'asc')
-            ->limit(12)
-            ->get();
-
-        // Get leave distribution data for chart - Fixed to use proper join
-        $leaveDistribution = DB::table('leaves')
-            ->join('leave_types', 'leaves.leave_type_id', '=', 'leave_types.id')
-            ->select('leave_types.name as type', DB::raw('COUNT(*) as count'))
-            ->groupBy('leave_types.id', 'leave_types.name')
-            ->get();
-
-        // Get equipment status distribution for chart
-        $equipmentStatus = DB::table('equipment')
-            ->select('status', DB::raw('COUNT(*) as count'))
-            ->groupBy('status')
-            ->get();
-
-        // Get rentals with filters
-        $rentalsQuery = Rental::with(['customer', 'rentalItems'])
-            ->select(
-                'rentals.*',
-                DB::raw('(SELECT COUNT(*) FROM rental_items WHERE rental_items.rental_id = rentals.id) as items_count'),
-                DB::raw('(SELECT SUM(total_amount) FROM rental_items WHERE rental_items.rental_id = rentals.id) as total_amount')
-            );
-
-        if ($request->has('search')) {
-            $search = $request->input('search');
-            $rentalsQuery->where(function ($q) use ($search) {
-                $q->where('rental_number', 'like', "%{$search}%")
-                    ->orWhereHas('customer', function ($q) use ($search) {
-                        $q->where('name', 'like', "%{$search}%");
-                    });
-            });
-        }
-
-        if ($request->has('status')) {
-            $rentalsQuery->where('status', $request->input('status'));
-        }
-
-        if ($request->has('date_from')) {
-            $rentalsQuery->whereDate('start_date', '>=', $request->input('date_from'));
-        }
-
-        if ($request->has('date_to')) {
-            $rentalsQuery->whereDate('end_date', '<=', $request->input('date_to'));
-        }
-
-        $rentals = $rentalsQuery
-            ->orderBy($request->input('sort_field', 'created_at'), $request->input('sort_direction', 'desc'))
-            ->paginate(15);
-
-        // Get leaves with filters - Updated to include leave type relationship
-        $leavesQuery = Leave::with(['employee', 'employee.department', 'leaveType'])
-            ->select('leaves.*');
-
-        if ($request->has('search')) {
-            $search = $request->input('search');
-            $leavesQuery->whereHas('employee', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            });
-        }
-
-        if ($request->has('department')) {
-            $leavesQuery->whereHas('employee.department', function ($q) use ($request) {
-                $q->where('name', $request->input('department'));
-            });
-        }
-
-        if ($request->has('status')) {
-            $leavesQuery->where('status', $request->input('status'));
-        }
-
-        $leaves = $leavesQuery
-            ->orderBy($request->input('sort_field', 'created_at'), $request->input('sort_direction', 'desc'))
-            ->paginate(15);
-
-        return Inertia::render('Reports/Index', [
-            'stats' => [
-                'rentals' => $rentalStats,
-                'leaves' => $leaveStats,
-                'equipment' => $equipmentStats,
-                'revenue' => $revenueStats,
-            ],
-            'rentals' => $rentals,
-            'leaves' => $leaves,
-            'charts' => [
-                'monthlyRevenue' => $monthlyRevenue,
-                'leaveDistribution' => $leaveDistribution,
-                'equipmentStatus' => $equipmentStatus,
-            ],
-            'filters' => $request->only([
-                'report_type',
-                'search',
-                'status',
-                'date_from',
-                'date_to',
-                'department',
-                'sort_field',
-                'sort_direction',
-            ]),
-        ]);
+        // Force Inertia to use the correct dashboard page
+        return Inertia::render('Modules/Reporting/resources/js/pages/Reports/Index', []);
     }
 
     public function dashboard()
@@ -622,7 +483,7 @@ class ReportController extends Controller
     public function revenue()
     {
         $startDate = Carbon::now()->subMonths(6);
-        
+
         $topCustomers = DB::table('payments')
             ->join('customers', 'payments.customer_id', '=', 'customers.id')
             ->select('customers.name', DB::raw('SUM(payments.amount) as total'))
@@ -683,7 +544,7 @@ class ReportController extends Controller
 
         // Generate data based on report type
         $data = $this->generateReportData($type, $dateFrom, $dateTo, $search);
-        
+
         // Export based on format
         switch ($format) {
             case 'pdf':
@@ -729,17 +590,17 @@ class ReportController extends Controller
 
         $callback = function () use ($data) {
             $file = fopen('php://output', 'w');
-            
+
             // Write headers
             if (!empty($data)) {
                 fputcsv($file, array_keys($data[0]));
-                
+
                 // Write data rows
                 foreach ($data as $row) {
                     fputcsv($file, $row);
                 }
             }
-            
+
             fclose($file);
         };
 
@@ -760,17 +621,17 @@ class ReportController extends Controller
 
         $callback = function () use ($data) {
             $file = fopen('php://output', 'w');
-            
+
             // Write headers
             if (!empty($data)) {
                 fputcsv($file, array_keys($data[0]));
-                
+
                 // Write data rows
                 foreach ($data as $row) {
                     fputcsv($file, $row);
                 }
             }
-            
+
             fclose($file);
         };
 
@@ -783,12 +644,12 @@ class ReportController extends Controller
     private function exportToPDF($data, $type)
     {
         $filename = "{$type}_report_" . date('Ymd_His') . '.pdf';
-        
+
         // Create simple HTML for PDF generation
         $html = '<html><head><title>' . ucfirst($type) . ' Report</title></head><body>';
         $html .= '<h1>' . ucfirst($type) . ' Report</h1>';
         $html .= '<p>Generated on: ' . date('Y-m-d H:i:s') . '</p>';
-        
+
         if (!empty($data)) {
             $html .= '<table border="1" cellpadding="5" cellspacing="0">';
             $html .= '<thead><tr>';
@@ -796,7 +657,7 @@ class ReportController extends Controller
                 $html .= '<th>' . ucfirst(str_replace('_', ' ', $header)) . '</th>';
             }
             $html .= '</tr></thead><tbody>';
-            
+
             foreach ($data as $row) {
                 $html .= '<tr>';
                 foreach ($row as $cell) {
@@ -806,7 +667,7 @@ class ReportController extends Controller
             }
             $html .= '</tbody></table>';
         }
-        
+
         $html .= '</body></html>';
 
         return response($html, 200, [
@@ -850,16 +711,16 @@ class ReportController extends Controller
     private function getClientsReportData($dateFrom = null, $dateTo = null, $search = null)
     {
         $query = Customer::query();
-        
+
         if ($search) {
             $query->where('name', 'like', "%{$search}%")
                   ->orWhere('email', 'like', "%{$search}%");
         }
-        
+
         if ($dateFrom) {
             $query->whereDate('created_at', '>=', $dateFrom);
         }
-        
+
         if ($dateTo) {
             $query->whereDate('created_at', '<=', $dateTo);
         }
@@ -883,17 +744,17 @@ class ReportController extends Controller
     private function getRentalsReportData($dateFrom = null, $dateTo = null, $search = null)
     {
         $query = Rental::with(['customer', 'equipment']);
-        
+
         if ($search) {
             $query->whereHas('customer', function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%");
             });
         }
-        
+
         if ($dateFrom) {
             $query->whereDate('start_date', '>=', $dateFrom);
         }
-        
+
         if ($dateTo) {
             $query->whereDate('end_date', '<=', $dateTo);
         }
@@ -918,17 +779,17 @@ class ReportController extends Controller
     private function getEquipmentReportData($dateFrom = null, $dateTo = null, $search = null)
     {
         $query = Equipment::query();
-        
+
         if ($search) {
             $query->where('name', 'like', "%{$search}%")
                   ->orWhere('model', 'like', "%{$search}%")
                   ->orWhere('serial_number', 'like', "%{$search}%");
         }
-        
+
         if ($dateFrom) {
             $query->whereDate('created_at', '>=', $dateFrom);
         }
-        
+
         if ($dateTo) {
             $query->whereDate('created_at', '<=', $dateTo);
         }
@@ -954,17 +815,17 @@ class ReportController extends Controller
     private function getPaymentsReportData($dateFrom = null, $dateTo = null, $search = null)
     {
         $query = Payment::with(['customer']);
-        
+
         if ($search) {
             $query->whereHas('customer', function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%");
             });
         }
-        
+
         if ($dateFrom) {
             $query->whereDate('payment_date', '>=', $dateFrom);
         }
-        
+
         if ($dateTo) {
             $query->whereDate('payment_date', '<=', $dateTo);
         }

@@ -8,5 +8,6 @@
         "Modules\\RentalManagement\\Providers\\RentalManagementServiceProvider",
         "Modules\\RentalManagement\\Providers\\RentalServiceProvider"
     ],
-    "files": []
+    "files": [],
+    "pages": []
 }

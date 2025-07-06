@@ -17,8 +17,7 @@ class AdvancePaymentHistory extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int;
-use string>
+     * @var array
      */
     protected $fillable = [
         'advance_payment_id',

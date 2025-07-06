@@ -14,7 +14,7 @@ class StoreEmployeeAdvanceRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'amount' => 'required|numeric|min:0',
+            'amount' => 'required|numeric|min:0.01',
             'reason' => 'required|string|max:1000',
             'payment_date' => 'nullable|date',
             'deduction_start_date' => 'nullable|date|after:payment_date',

@@ -295,7 +295,7 @@ class Employee extends Model implements HasMedia
      */
     public function advancePayments(): HasMany
     {
-        return $this->hasMany(AdvancePayment::class);
+        return $this->hasMany(\Modules\PayrollManagement\Domain\Models\AdvancePayment::class);
     }
 
     /**

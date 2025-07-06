@@ -188,19 +188,384 @@ const statusColors = {
     rejected: 'bg-red-100 text-red-800',
 };
 
+const renderSummaryReport = (summaryData: SummaryData) => (
+    <div className="space-y-6">
+        {/* Key Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">{t('th_total_requests')}</CardTitle>
+                    <ClockIcon className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold">{summaryData.total_requests}</div>
+                </CardContent>
+            </Card>
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Approved</CardTitle>
+                    <CheckCircleIcon className="h-4 w-4 text-green-600" />
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold text-green-600">{summaryData.approved_requests}</div>
+                </CardContent>
+            </Card>
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Pending</CardTitle>
+                    <AlertCircleIcon className="h-4 w-4 text-yellow-600" />
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold text-yellow-600">{summaryData.pending_requests}</div>
+                </CardContent>
+            </Card>
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Rejected</CardTitle>
+                    <XCircleIcon className="h-4 w-4 text-red-600" />
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold text-red-600">{summaryData.rejected_requests}</div>
+                </CardContent>
+            </Card>
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">{t('th_total_days')}</CardTitle>
+                    <TrendingUpIcon className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold">{summaryData.total_days}</div>
+                </CardContent>
+            </Card>
+        </div>
+
+        {/* Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Leave Type Distribution */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>{t('ttl_leave_type_distribution')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <ResponsiveContainer width="100%" height={300}>
+                        <PieChart>
+                            <Pie
+                                data={summaryData.by_leave_type || []}
+                                cx="50%"
+                                cy="50%"
+                                labelLine={false}
+                                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                                outerRadius={80}
+                                fill="#8884d8"
+                                dataKey="count"
+                                nameKey="leave_type"
+                            >
+                                {summaryData.by_leave_type?.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                ))}
+                            </Pie>
+                            <Tooltip />
+                        </PieChart>
+                    </ResponsiveContainer>
+                </CardContent>
+            </Card>
+
+            {/* Status Distribution */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>{t('ttl_status_distribution')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <ResponsiveContainer width="100%" height={300}>
+                        <BarChart data={summaryData.by_status || []}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="status" />
+                            <YAxis />
+                            <Tooltip />
+                            <Bar dataKey="count" fill="#8884d8" />
+                        </BarChart>
+                    </ResponsiveContainer>
+                </CardContent>
+            </Card>
+        </div>
+
+        {/* Monthly Trend */}
+        <Card>
+            <CardHeader>
+                <CardTitle>{t('ttl_monthly_trend')}</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={summaryData.monthly_trend || []}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="period" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Line type="monotone" dataKey="requests" stroke="#8884d8" name="Requests" />
+                        <Line type="monotone" dataKey="days" stroke="#82ca9d" name="Days" />
+                    </LineChart>
+                </ResponsiveContainer>
+            </CardContent>
+        </Card>
+    </div>
+);
+
+export { renderSummaryReport };
+
+const renderDetailedReport = (detailedData: DetailedData) => (
+    <Card>
+        <CardHeader>
+            <CardTitle>{t('ttl_detailed_leave_requests')}</CardTitle>
+            <CardDescription>
+                Showing {detailedData.pagination?.total || 0} total requests
+            </CardDescription>
+        </CardHeader>
+        <CardContent>
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Employee</TableHead>
+                        <TableHead>Department</TableHead>
+                        <TableHead>{t('lbl_leave_type')}</TableHead>
+                        <TableHead>Duration</TableHead>
+                        <TableHead>Days</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Applied</TableHead>
+                        <TableHead>Approver</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {detailedData.leaves?.data?.map((leave) => (
+                        <TableRow key={leave.id}>
+                            <TableCell>
+                                <div>
+                                    <div className="font-medium">{leave.employee.name}</div>
+                                    <div className="text-sm text-muted-foreground">{leave.employee.employee_id}</div>
+                                </div>
+                            </TableCell>
+                            <TableCell>{leave.employee.department}</TableCell>
+                            <TableCell>
+                                <Badge
+                                    variant="outline"
+                                    style={{ backgroundColor: leave.leave_type.color + '20', borderColor: leave.leave_type.color }}
+                                >
+                                    {leave.leave_type.name}
+                                </Badge>
+                            </TableCell>
+                            <TableCell>
+                                <div className="text-sm">
+                                    <div>{formatDateMedium(leave.start_date)}</div>
+                                    <div className="text-muted-foreground">to {formatDateMedium(leave.end_date)}</div>
+                                </div>
+                            </TableCell>
+                            <TableCell>{leave.total_days}</TableCell>
+                            <TableCell>
+                                <Badge className={statusColors[leave.status as keyof typeof statusColors]}>
+                                    {leave.status}
+                                </Badge>
+                            </TableCell>
+                            <TableCell className="text-sm">{leave.applied_at}</TableCell>
+                            <TableCell>
+                                {leave.approver ? (
+                                    <div className="text-sm">
+                                        <div>{leave.approver.name}</div>
+                                        <div className="text-muted-foreground">{leave.approver.employee_id}</div>
+                                    </div>
+                                ) : (
+                                    <span className="text-muted-foreground">N/A</span>
+                                )}
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </CardContent>
+    </Card>
+);
+
+const renderBalanceReport = (balanceData: BalanceData) => (
+    <Card>
+        <CardHeader>
+            <CardTitle>{t('ttl_leave_balance_report')}</CardTitle>
+            <CardDescription>
+                Current leave balances for all employees
+            </CardDescription>
+        </CardHeader>
+        <CardContent>
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Employee</TableHead>
+                        <TableHead>Department</TableHead>
+                        <TableHead>{t('lbl_leave_type')}</TableHead>
+                        <TableHead>Allocated</TableHead>
+                        <TableHead>Used</TableHead>
+                        <TableHead>Remaining</TableHead>
+                        <TableHead>{t('th_carried_forward')}</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {balanceData.employees?.map((employee) =>
+                        employee.balances?.map((balance, index) => (
+                            <TableRow key={`${employee.id}-${index}`}>
+                                {index === 0 && (
+                                    <TableCell rowSpan={employee.balances.length}>
+                                        <div>
+                                            <div className="font-medium">{employee.name}</div>
+                                            <div className="text-sm text-muted-foreground">{employee.employee_id}</div>
+                                        </div>
+                                    </TableCell>
+                                )}
+                                {index === 0 && (
+                                    <TableCell rowSpan={employee.balances.length}>{employee.department}</TableCell>
+                                )}
+                                <TableCell>{balance.leave_type}</TableCell>
+                                <TableCell>{balance.allocated}</TableCell>
+                                <TableCell>{balance.used}</TableCell>
+                                <TableCell>{balance.remaining}</TableCell>
+                                <TableCell>{balance.carried_forward}</TableCell>
+                            </TableRow>
+                        ))
+                    )}
+                </TableBody>
+            </Table>
+        </CardContent>
+    </Card>
+);
+
+const renderTrendsReport = (trendsData: TrendsData) => (
+    <div className="space-y-6">
+        {/* Yearly Comparison */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card>
+                <CardHeader>
+                    <CardTitle>{trendsData.yearly_comparison.current_year.year} (Current)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-2">
+                        <div className="flex justify-between">
+                            <span>Requests:</span>
+                            <span className="font-bold">{trendsData.yearly_comparison.current_year.requests}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span>Days:</span>
+                            <span className="font-bold">{trendsData.yearly_comparison.current_year.days}</span>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle>{trendsData.yearly_comparison.previous_year.year} (Previous)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-2">
+                        <div className="flex justify-between">
+                            <span>Requests:</span>
+                            <span className="font-bold">{trendsData.yearly_comparison.previous_year.requests}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span>Days:</span>
+                            <span className="font-bold">{trendsData.yearly_comparison.previous_year.days}</span>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+
+        {/* Monthly Trend */}
+        <Card>
+            <CardHeader>
+                <CardTitle>{t('ttl_monthly_trend')}</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={trendsData.monthly_trend}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="period" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Line type="monotone" dataKey="requests" stroke="#8884d8" name="Requests" />
+                        <Line type="monotone" dataKey="days" stroke="#82ca9d" name="Days" />
+                    </LineChart>
+                </ResponsiveContainer>
+            </CardContent>
+        </Card>
+
+        {/* Seasonal Analysis */}
+        <Card>
+            <CardHeader>
+                <CardTitle>{t('ttl_seasonal_analysis')}</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={trendsData.seasonal_analysis}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="season" />
+                        <YAxis />
+                        <Tooltip />
+                        <Bar dataKey="requests" fill="#8884d8" />
+                    </BarChart>
+                </ResponsiveContainer>
+            </CardContent>
+        </Card>
+    </div>
+);
+
+const renderDepartmentReport = (departmentData: DepartmentData) => (
+    <Card>
+        <CardHeader>
+            <CardTitle>{t('ttl_department_report')}</CardTitle>
+            <CardDescription>
+                Leave statistics by department
+            </CardDescription>
+        </CardHeader>
+        <CardContent>
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Department</TableHead>
+                        <TableHead>{t('th_total_requests')}</TableHead>
+                        <TableHead>Approved</TableHead>
+                        <TableHead>{t('th_approval_rate')}</TableHead>
+                        <TableHead>{t('th_total_days')}</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {departmentData.departments?.map((dept) => (
+                        <TableRow key={dept.name}>
+                            <TableCell className="font-medium">{dept.name}</TableCell>
+                            <TableCell>{dept.total_requests}</TableCell>
+                            <TableCell>{dept.approved_requests}</TableCell>
+                            <TableCell>
+                                <Badge variant={dept.approval_rate >= 80 ? 'default' : dept.approval_rate >= 60 ? 'secondary' : 'destructive'}>
+                                    {dept.approval_rate}%
+                                </Badge>
+                            </TableCell>
+                            <TableCell>{dept.total_days}</TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </CardContent>
+    </Card>
+);
+
 export default function ReportsIndex() {
   const { t } = useTranslation('leave');
 
-    const { 
-        filters = { 
-            date_from: '', 
-            date_to: '', 
-            report_type: 'summary' 
-        }, 
-        data = null, 
-        employees = [], 
-        departments = [], 
-        leaveTypes = [] 
+    const {
+        filters = {
+            date_from: '',
+            date_to: '',
+            report_type: 'summary'
+        },
+        data = null,
+        employees = [],
+        departments = [],
+        leaveTypes = []
     } = usePage<PageProps>().props;
     const { can } = usePermission();
 
@@ -272,369 +637,7 @@ export default function ReportsIndex() {
         }
     };
 
-    const renderSummaryReport = (summaryData: SummaryData) => (
-        <div className="space-y-6">
-            {/* Key Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">{t('th_total_requests')}</CardTitle>
-                        <ClockIcon className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{summaryData.total_requests}</div>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Approved</CardTitle>
-                        <CheckCircleIcon className="h-4 w-4 text-green-600" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-green-600">{summaryData.approved_requests}</div>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Pending</CardTitle>
-                        <AlertCircleIcon className="h-4 w-4 text-yellow-600" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-yellow-600">{summaryData.pending_requests}</div>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Rejected</CardTitle>
-                        <XCircleIcon className="h-4 w-4 text-red-600" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-red-600">{summaryData.rejected_requests}</div>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">{t('th_total_days')}</CardTitle>
-                        <TrendingUpIcon className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{summaryData.total_days}</div>
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Charts */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Leave Type Distribution */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle>{t('ttl_leave_type_distribution')}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <ResponsiveContainer width="100%" height={300}>
-                            <PieChart>
-                                <Pie
-                                    data={summaryData.by_leave_type || []}
-                                    cx="50%"
-                                    cy="50%"
-                                    labelLine={false}
-                                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                                    outerRadius={80}
-                                    fill="#8884d8"
-                                    dataKey="count"
-                                    nameKey="leave_type"
-                                >
-                                    {summaryData.by_leave_type?.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip />
-                            </PieChart>
-                        </ResponsiveContainer>
-                    </CardContent>
-                </Card>
-
-                {/* Status Distribution */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle>{t('ttl_status_distribution')}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <ResponsiveContainer width="100%" height={300}>
-                            <BarChart data={summaryData.by_status || []}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="status" />
-                                <YAxis />
-                                <Tooltip />
-                                <Bar dataKey="count" fill="#8884d8" />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Monthly Trend */}
-            <Card>
-                <CardHeader>
-                    <CardTitle>{t('ttl_monthly_trend')}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <ResponsiveContainer width="100%" height={300}>
-                        <LineChart data={summaryData.monthly_trend || []}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="period" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend />
-                            <Line type="monotone" dataKey="requests" stroke="#8884d8" name="Requests" />
-                            <Line type="monotone" dataKey="days" stroke="#82ca9d" name="Days" />
-                        </LineChart>
-                    </ResponsiveContainer>
-                </CardContent>
-            </Card>
-        </div>
-    );
-
-    const renderDetailedReport = (detailedData: DetailedData) => (
-        <Card>
-            <CardHeader>
-                <CardTitle>{t('ttl_detailed_leave_requests')}</CardTitle>
-                <CardDescription>
-                    Showing {detailedData.pagination?.total || 0} total requests
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Employee</TableHead>
-                            <TableHead>Department</TableHead>
-                            <TableHead>{t('lbl_leave_type')}</TableHead>
-                            <TableHead>Duration</TableHead>
-                            <TableHead>Days</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Applied</TableHead>
-                            <TableHead>Approver</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {detailedData.leaves?.data?.map((leave) => (
-                            <TableRow key={leave.id}>
-                                <TableCell>
-                                    <div>
-                                        <div className="font-medium">{leave.employee.name}</div>
-                                        <div className="text-sm text-muted-foreground">{leave.employee.employee_id}</div>
-                                    </div>
-                                </TableCell>
-                                <TableCell>{leave.employee.department}</TableCell>
-                                <TableCell>
-                                    <Badge
-                                        variant="outline"
-                                        style={{ backgroundColor: leave.leave_type.color + '20', borderColor: leave.leave_type.color }}
-                                    >
-                                        {leave.leave_type.name}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="text-sm">
-                                        <div>{formatDateMedium(leave.start_date)}</div>
-                                        <div className="text-muted-foreground">to {formatDateMedium(leave.end_date)}</div>
-                                    </div>
-                                </TableCell>
-                                <TableCell>{leave.total_days}</TableCell>
-                                <TableCell>
-                                    <Badge className={statusColors[leave.status as keyof typeof statusColors]}>
-                                        {leave.status}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell className="text-sm">{leave.applied_at}</TableCell>
-                                <TableCell>
-                                    {leave.approver ? (
-                                        <div className="text-sm">
-                                            <div>{leave.approver.name}</div>
-                                            <div className="text-muted-foreground">{leave.approver.employee_id}</div>
-                                        </div>
-                                    ) : (
-                                        <span className="text-muted-foreground">N/A</span>
-                                    )}
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </CardContent>
-        </Card>
-    );
-
-    const renderBalanceReport = (balanceData: BalanceData) => (
-        <Card>
-            <CardHeader>
-                <CardTitle>{t('ttl_leave_balance_report')}</CardTitle>
-                <CardDescription>
-                    Current leave balances for all employees
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Employee</TableHead>
-                            <TableHead>Department</TableHead>
-                            <TableHead>{t('lbl_leave_type')}</TableHead>
-                            <TableHead>Allocated</TableHead>
-                            <TableHead>Used</TableHead>
-                            <TableHead>Remaining</TableHead>
-                            <TableHead>{t('th_carried_forward')}</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {balanceData.employees?.map((employee) =>
-                            employee.balances?.map((balance, index) => (
-                                <TableRow key={`${employee.id}-${index}`}>
-                                    {index === 0 && (
-                                        <TableCell rowSpan={employee.balances.length}>
-                                            <div>
-                                                <div className="font-medium">{employee.name}</div>
-                                                <div className="text-sm text-muted-foreground">{employee.employee_id}</div>
-                                            </div>
-                                        </TableCell>
-                                    )}
-                                    {index === 0 && (
-                                        <TableCell rowSpan={employee.balances.length}>{employee.department}</TableCell>
-                                    )}
-                                    <TableCell>{balance.leave_type}</TableCell>
-                                    <TableCell>{balance.allocated}</TableCell>
-                                    <TableCell>{balance.used}</TableCell>
-                                    <TableCell>{balance.remaining}</TableCell>
-                                    <TableCell>{balance.carried_forward}</TableCell>
-                                </TableRow>
-                            ))
-                        )}
-                    </TableBody>
-                </Table>
-            </CardContent>
-        </Card>
-    );
-
-    const renderTrendsReport = (trendsData: TrendsData) => (
-        <div className="space-y-6">
-            {/* Yearly Comparison */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>{trendsData.yearly_comparison.current_year.year} (Current)</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
-                                <span>Requests:</span>
-                                <span className="font-bold">{trendsData.yearly_comparison.current_year.requests}</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span>Days:</span>
-                                <span className="font-bold">{trendsData.yearly_comparison.current_year.days}</span>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader>
-                        <CardTitle>{trendsData.yearly_comparison.previous_year.year} (Previous)</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
-                                <span>Requests:</span>
-                                <span className="font-bold">{trendsData.yearly_comparison.previous_year.requests}</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span>Days:</span>
-                                <span className="font-bold">{trendsData.yearly_comparison.previous_year.days}</span>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Monthly Trend */}
-            <Card>
-                <CardHeader>
-                    <CardTitle>{t('ttl_monthly_trend')}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <ResponsiveContainer width="100%" height={300}>
-                        <LineChart data={trendsData.monthly_trend}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="period" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend />
-                            <Line type="monotone" dataKey="requests" stroke="#8884d8" name="Requests" />
-                            <Line type="monotone" dataKey="days" stroke="#82ca9d" name="Days" />
-                        </LineChart>
-                    </ResponsiveContainer>
-                </CardContent>
-            </Card>
-
-            {/* Seasonal Analysis */}
-            <Card>
-                <CardHeader>
-                    <CardTitle>{t('ttl_seasonal_analysis')}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={trendsData.seasonal_analysis}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="season" />
-                            <YAxis />
-                            <Tooltip />
-                            <Bar dataKey="requests" fill="#8884d8" />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </CardContent>
-            </Card>
-        </div>
-    );
-
-    const renderDepartmentReport = (departmentData: DepartmentData) => (
-        <Card>
-            <CardHeader>
-                <CardTitle>{t('ttl_department_report')}</CardTitle>
-                <CardDescription>
-                    Leave statistics by department
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Department</TableHead>
-                            <TableHead>{t('th_total_requests')}</TableHead>
-                            <TableHead>Approved</TableHead>
-                            <TableHead>{t('th_approval_rate')}</TableHead>
-                            <TableHead>{t('th_total_days')}</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {departmentData.departments?.map((dept) => (
-                            <TableRow key={dept.name}>
-                                <TableCell className="font-medium">{dept.name}</TableCell>
-                                <TableCell>{dept.total_requests}</TableCell>
-                                <TableCell>{dept.approved_requests}</TableCell>
-                                <TableCell>
-                                    <Badge variant={dept.approval_rate >= 80 ? 'default' : dept.approval_rate >= 60 ? 'secondary' : 'destructive'}>
-                                        {dept.approval_rate}%
-                                    </Badge>
-                                </TableCell>
-                                <TableCell>{dept.total_days}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </CardContent>
-        </Card>
-    );
-
+    // Moved inside component to access data/filters
     const renderReportContent = () => {
         if (!data) {
             return (

@@ -13,25 +13,24 @@ use Modules\RentalManagement\Domain\Models\Rental;
 
 class EmployeeAssignment extends Model
 {
-    use HasFactory as ;
-use SoftDeletes;
-use /**
+    use HasFactory, SoftDeletes;
+
+    /**
      * The attributes that are mass assignable.
      *
-     * @var array<int;
-use string>
+     * @var array<int, string>
      */
-    protected $fillable = [;
-        'employee_id';
-use 'type',
+    protected $fillable = [
+        'employee_id',
+        'type',
         'status',
         'location',
         'start_date',
         'end_date',
         'notes',
         'assigned_by_id',
-        'project_id',;
-        'rental_id';
+        'project_id',
+        'rental_id',
     ];
 
     /**
@@ -39,9 +38,9 @@ use 'type',
      *
      * @var array<string, string>
      */
-    protected $casts = [;
-        'start_date' => 'datetime',;
-        'end_date' => 'datetime';
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
     ];
 
     /**
@@ -99,7 +98,7 @@ use 'type',
      */
     public function scopeActive($query)
     {
-        return $query->where('status', 'active');
+        return $query->where('status', 'active')
             ->where(function ($query) {
                 $query->whereNull('end_date')
                     ->orWhere('end_date', '>=', now());
@@ -135,8 +134,7 @@ use 'type',
      */
     public function isActive(): bool
     {
-        return $this->status === 'active' &&;
-            (!$this->end_date || $this->end_date >= now());
+        return $this->status === 'active' && (!$this->end_date || $this->end_date >= now());
     }
 
     /**

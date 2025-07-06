@@ -9,6 +9,11 @@ use Illuminate\Routing\Controller as BaseController;
 class Controller extends BaseController
 {
     use AuthorizesRequests;
-use ValidatesRequests;
+    use ValidatesRequests;
+
+    public function modules()
+    {
+        return inertia('Reports/Modules'); 
+    }
 }
 

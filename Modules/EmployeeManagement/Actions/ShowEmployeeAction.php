@@ -6,7 +6,6 @@ use Modules\EmployeeManagement\Domain\Models\Employee;
 use Modules\EmployeeManagement\Domain\Models\EmployeeAssignment;
 use Modules\TimesheetManagement\Domain\Models\Timesheet;
 use Modules\LeaveManagement\Domain\Models\LeaveRequest;
-use Modules\PayrollManagement\Domain\Models\AdvancePayment;
 use Modules\EmployeeManagement\Domain\Models\FinalSettlement;
 use Illuminate\Support\Facades\Log;
 
@@ -62,25 +61,38 @@ class ShowEmployeeAction
             $pagination = [];
 
             if (class_exists('Modules\PayrollManagement\Domain\Models\AdvancePayment')) {
-                $eligibleAdvances = AdvancePayment::where('employee_id', $employee->id)
-                    ->whereIn('status', ['approved', 'partially_repaid'])
-                    ->whereRaw('amount > repaid_amount')
+                // Only real advances from the database are included below
+                $allAdvances = \Modules\PayrollManagement\Domain\Models\AdvancePayment::where('employee_id', $employee->id)
                     ->orderBy('created_at', 'desc')
                     ->get();
 
                 $advances = [
-                    'data' => $eligibleAdvances->toArray()
+                    'data' => $allAdvances->map(function ($advance) {
+                        return [
+                            'id' => $advance->id,
+                            'amount' => $advance->amount,
+                            'reason' => $advance->reason,
+                            'status' => $advance->status,
+                            'created_at' => $advance->created_at,
+                            'rejection_reason' => $advance->rejection_reason,
+                            'repayment_date' => $advance->repayment_date,
+                            'type' => 'advance_payment',
+                            'monthly_deduction' => $advance->monthly_deduction,
+                            'repaid_amount' => $advance->repaid_amount,
+                            'remaining_balance' => $advance->remaining_balance,
+                        ];
+                    })->toArray()
                 ];
 
-                // Calculate current balance from eligible advances
-                $currentBalance = $eligibleAdvances->sum(function ($advance) {
+                // Calculate current balance from all advances
+                $currentBalance = $allAdvances->sum(function ($advance) {
                     return $advance->amount - $advance->repaid_amount;
                 });
 
                 // Calculate total repaid amount (simplified implementation)
-                $totalRepaid = AdvancePayment::where('employee_id', $employee->id)
-                    ->where('type', 'repayment')
-                    ->sum('amount');
+                $totalRepaid = $allAdvances->filter(function ($advance) {
+                    return isset($advance->type) && $advance->type === 'repayment';
+                })->sum('amount');
 
                 // Sample monthly history for now (you can replace with actual logic)
                 $monthlyHistory = [

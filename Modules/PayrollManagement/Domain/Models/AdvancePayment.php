@@ -18,10 +18,9 @@ class AdvancePayment extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int;
-use string>
+     * @var array
      */
-        protected $fillable = [
+    protected $fillable = [
         'employee_id',
         'amount',
         'reason',

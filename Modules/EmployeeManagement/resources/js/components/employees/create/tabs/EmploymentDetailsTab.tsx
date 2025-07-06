@@ -337,8 +337,14 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
+                          {/* Always show the current value if not in the list */}
+                          {field.value && !positionsState.some(p => String(p.id) === String(field.value)) && (
+                            <SelectItem key={field.value} value={field.value}>
+                              {form.getValues('position')?.name || field.value}
+                            </SelectItem>
+                          )}
                           {positionsState.filter(p => p && typeof p.id === 'number').map((position) => (
-                            <SelectItem key={position.id} value={position.id.toString()}>
+                            <SelectItem key={position.id} value={String(position.id)}>
                               {typeof position.name === 'object'
                                 ? (position.name.en || Object.values(position.name)[0])
                                 : position.name}
@@ -454,15 +460,21 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
               render={({ field }: any) => (
                 <FormItem>
                   <FormLabel>{t('supervisor')}</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value || ''} defaultValue={field.value || ''}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder={t('ph_select_supervisor')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
+                      {/* Always show the current value if not in the list */}
+                      {field.value && !users.some(u => String(u.id) === String(field.value)) && (
+                        <SelectItem key={field.value} value={field.value}>
+                          {form.getValues('supervisor_name') || field.value}
+                        </SelectItem>
+                      )}
                       {users.map((user) => (
-                        <SelectItem key={user.id} value={user.id.toString()}>
+                        <SelectItem key={user.id} value={String(user.id)}>
                           {user.name}
                         </SelectItem>
                       ))}
