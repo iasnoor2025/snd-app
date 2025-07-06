@@ -67,6 +67,7 @@ import { TimesheetSummary } from '../../components/employees/timesheets/Timeshee
 import { TimesheetList } from '../../components/employees/timesheets/TimesheetList';
 import { TimesheetForm } from '../../components/employees/timesheets/TimesheetForm';
 import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import { route } from 'ziggy-js';
 
 // MediaLibrary and DailyTimesheetRecords components - implement as needed
 const MediaLibrary = ({ employeeId }: { employeeId: number }) => (
@@ -414,6 +415,7 @@ export default function Show({
   const { hasPermission } = usePermission();
   const queryClient = useQueryClient();
   const [selectedPayslipDate, setSelectedPayslipDate] = useState(new Date());
+  const [isAddTimesheetDialogOpen, setIsAddTimesheetDialogOpen] = useState(false);
 
   // Early return if no valid employee data
   if (!employee || !employee.id) {
@@ -2086,13 +2088,25 @@ export default function Show({
                     <DialogContent>
                       <DialogHeader>
                         <DialogTitle>{t('ttl_add_new_timesheet')}</DialogTitle>
+                        <DialogDescription>{t('desc_add_new_timesheet') || 'Fill in the details to add a new timesheet record for this employee.'}</DialogDescription>
                       </DialogHeader>
                       <TimesheetForm employeeId={employee.id} onSuccess={() => window.location.reload()} />
                     </DialogContent>
                   </Dialog>
                 )}
                 {/* Timesheet List */}
-                <TimesheetList employeeId={employee.id} />
+                <TimesheetList
+                  employeeId={employee.id}
+                  onAddNew={() => setIsAddTimesheetDialogOpen(true)}
+                />
+                <Dialog open={isAddTimesheetDialogOpen} onOpenChange={setIsAddTimesheetDialogOpen}>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>{t('ttl_add_new_timesheet')}</DialogTitle>
+                    </DialogHeader>
+                    <TimesheetForm employeeId={employee.id} onSuccess={() => window.location.reload()} />
+                  </DialogContent>
+                </Dialog>
               </CardContent>
             </Card>
           </TabsContent>

@@ -49,6 +49,7 @@ export const TimesheetForm: React.FC<TimesheetFormProps> = ({
   defaultValues,
   projects = [],
 }) => {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
 
   // Initialize form with default values
@@ -122,8 +123,8 @@ export const TimesheetForm: React.FC<TimesheetFormProps> = ({
       } else {
         // Create new timesheet
         response = await axios.post(
-          `/employees/${employeeId}/timesheets`,
-          formattedData
+          `/api/v1/timesheets`,
+          { ...formattedData, employee_id: employeeId }
         );
         toast({
           title: 'Success',
@@ -158,138 +159,136 @@ export const TimesheetForm: React.FC<TimesheetFormProps> = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{timesheetId ? 'Edit Timesheet' : 'Add New Timesheet'}</CardTitle>
+        <CardTitle>{timesheetId ? t('EmployeeManagement:employee.ttl_edit_timesheet', 'Edit Timesheet') : t('EmployeeManagement:employee.ttl_add_new_timesheet', 'Add New Timesheet')}</CardTitle>
       </CardHeader>
       <CardContent>
-        <Form>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="date"
-                render={({ field }: { field: ControllerRenderProps<TimesheetFormValues, any> }) => (
-                  <FormItem>
-                    <FormLabel>Date</FormLabel>
-                    <FormControl>
-                      <Input type="date" {...field} disabled={isLoading} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {projects.length > 0 && (
-                <FormField
-                  control={form.control}
-                  name="project_id"
-                  render={({ field }: { field: ControllerRenderProps<TimesheetFormValues, any> }) => (
-                    <FormItem>
-                      <FormLabel>Project (Optional)</FormLabel>
-                      <FormControl>
-                        <select
-                          className="w-full rounded-md border border-input bg-background px-3 py-2"
-                          {...field}
-                          disabled={isLoading}
-                        >
-                          <option value="">{t('ph_select_a_project')}</option>
-                          {projects.map((project) => (
-                            <option key={project.id} value={project.id}>
-                              {project.name}
-                            </option>
-                          ))}
-                        </select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="clock_in"
-                render={({ field }: { field: ControllerRenderProps<TimesheetFormValues, any> }) => (
-                  <FormItem>
-                    <FormLabel>{t('lbl_clock_in_time')}</FormLabel>
-                    <FormControl>
-                      <Input type="datetime-local" {...field} disabled={isLoading} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="clock_out"
-                render={({ field }: { field: ControllerRenderProps<TimesheetFormValues, any> }) => (
-                  <FormItem>
-                    <FormLabel>{t('lbl_clock_out_time')}</FormLabel>
-                    <FormControl>
-                      <Input type="datetime-local" {...field} disabled={isLoading} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="break_start"
-                render={({ field }: { field: ControllerRenderProps<TimesheetFormValues, any> }) => (
-                  <FormItem>
-                    <FormLabel>Break Start (Optional)</FormLabel>
-                    <FormControl>
-                      <Input type="datetime-local" {...field} disabled={isLoading} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="break_end"
-                render={({ field }: { field: ControllerRenderProps<TimesheetFormValues, any> }) => (
-                  <FormItem>
-                    <FormLabel>Break End (Optional)</FormLabel>
-                    <FormControl>
-                      <Input type="datetime-local" {...field} disabled={isLoading} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <div className="grid grid-cols-1 gap-4">
             <FormField
               control={form.control}
-              name="notes"
+              name="date"
               render={({ field }: { field: ControllerRenderProps<TimesheetFormValues, any> }) => (
                 <FormItem>
-                  <FormLabel>Notes (Optional)</FormLabel>
+                  <FormLabel>Date</FormLabel>
                   <FormControl>
-                    <Textarea rows={3} {...field} disabled={isLoading} />
+                    <Input type="date" {...field} disabled={isLoading} className="w-full" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <div className="flex justify-end space-x-2">
-              <Button type="button" variant="outline" onClick={() => form.reset()} disabled={isLoading}>
-                Reset
-              </Button>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? 'Saving...' : timesheetId ? 'Update Timesheet' : 'Add Timesheet'}
-              </Button>
-            </div>
-          </form>
-        </Form>
+            {projects.length > 0 && (
+              <FormField
+                control={form.control}
+                name="project_id"
+                render={({ field }: { field: ControllerRenderProps<TimesheetFormValues, any> }) => (
+                  <FormItem>
+                    <FormLabel>{t('EmployeeManagement:employee.ph_select_a_project', 'Select a project')}</FormLabel>
+                    <FormControl>
+                      <select
+                        className="w-full rounded-md border border-input bg-background px-3 py-2"
+                        {...field}
+                        disabled={isLoading}
+                      >
+                        <option value="">{t('EmployeeManagement:employee.ph_select_a_project', 'Select a project')}</option>
+                        {projects.map((project) => (
+                          <option key={project.id} value={project.id}>
+                            {project.name}
+                          </option>
+                        ))}
+                      </select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 gap-4">
+            <FormField
+              control={form.control}
+              name="clock_in"
+              render={({ field }: { field: ControllerRenderProps<TimesheetFormValues, any> }) => (
+                <FormItem>
+                  <FormLabel>{t('EmployeeManagement:employee.lbl_clock_in_time', 'Clock In Time')}</FormLabel>
+                  <FormControl>
+                    <Input type="time" {...field} disabled={isLoading} className="w-full" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="clock_out"
+              render={({ field }: { field: ControllerRenderProps<TimesheetFormValues, any> }) => (
+                <FormItem>
+                  <FormLabel>{t('EmployeeManagement:employee.lbl_clock_out_time', 'Clock Out Time')}</FormLabel>
+                  <FormControl>
+                    <Input type="time" {...field} disabled={isLoading} className="w-full" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 gap-4">
+            <FormField
+              control={form.control}
+              name="break_start"
+              render={({ field }: { field: ControllerRenderProps<TimesheetFormValues, any> }) => (
+                <FormItem>
+                  <FormLabel>{t('EmployeeManagement:employee.lbl_break_start', 'Break Start (Optional)')}</FormLabel>
+                  <FormControl>
+                    <Input type="time" {...field} disabled={isLoading} className="w-full" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="break_end"
+              render={({ field }: { field: ControllerRenderProps<TimesheetFormValues, any> }) => (
+                <FormItem>
+                  <FormLabel>{t('EmployeeManagement:employee.lbl_break_end', 'Break End (Optional)')}</FormLabel>
+                  <FormControl>
+                    <Input type="time" {...field} disabled={isLoading} className="w-full" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <FormField
+            control={form.control}
+            name="notes"
+            render={({ field }: { field: ControllerRenderProps<TimesheetFormValues, any> }) => (
+              <FormItem>
+                <FormLabel>{t('EmployeeManagement:employee.lbl_notes', 'Notes (Optional)')}</FormLabel>
+                <FormControl>
+                  <Textarea rows={3} {...field} disabled={isLoading} className="w-full" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="flex justify-end space-x-2">
+            <Button type="button" variant="outline" onClick={() => form.reset()} disabled={isLoading}>
+              Reset
+            </Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? 'Saving...' : timesheetId ? 'Update Timesheet' : 'Add Timesheet'}
+            </Button>
+          </div>
+        </form>
       </CardContent>
     </Card>
   );
