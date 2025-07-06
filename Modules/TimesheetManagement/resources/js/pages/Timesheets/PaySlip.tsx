@@ -95,6 +95,13 @@ const printStyles = `;
       background-color: white !important;
     }
 
+    .sidebar-wrapper,
+    .app-sidebar,
+    .sidebar,
+    [class*='sidebar'] {
+      display: none !important;
+    }
+
     .print\\:hidden {
       display: none !important;
     }
@@ -244,14 +251,36 @@ export default function PaySlip({
   };
 
   // Handle download as PDF
-  const handleDownload = () => {
+  const handleDownload = async () => {
     setIsLoading(true);
-    // This would typically call an API endpoint to generate a PDF
-    // For now, we'll just simulate a delay
-    setTimeout(() => {
+    try {
+      const params = new URLSearchParams({
+        employee_id: employee.id.toString(),
+        month: month.toString(),
+        year: year.toString(),
+      });
+      const response = await fetch(`/timesheets/payslip/pdf?${params.toString()}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/pdf',
+        },
+      });
+      if (!response.ok) throw new Error('Failed to download PDF');
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `payslip_${employee.id}_${month}_${year}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (e) {
+      alert('Failed to download PDF');
+    } finally {
       setIsLoading(false);
-      alert('PDF download functionality would be implemented here');
-    }, 1000);
+    }
   };
 
   // Create calendar data for the month

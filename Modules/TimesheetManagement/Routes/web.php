@@ -17,7 +17,7 @@ use Modules\TimesheetManagement\Http\Controllers\TimesheetDashboardController;
 use Modules\TimesheetManagement\Http\Controllers\TimeEntryController;
 use Modules\TimesheetManagement\Http\Controllers\OvertimeController;
 use Modules\TimesheetManagement\Http\Controllers\TimesheetApprovalController;
-use Modules\TimesheetManagement\Http\Controllers\TimesheetReportController;
+// use Modules\TimesheetManagement\Http\Controllers\TimesheetReportController;
 use Modules\TimesheetManagement\Http\Controllers\TimesheetProjectController;
 use Modules\TimesheetManagement\Http\Controllers\TimesheetSettingController;
 use Inertia\Inertia;
@@ -126,23 +126,6 @@ Route::prefix('timesheets')->name('timesheets.')->middleware(['auth', 'verified'
         ->middleware('permission:timesheets.edit')
         ->name('approvals.reject');
 
-    // Reports
-    Route::get('/reports', [TimesheetReportController::class, 'index'])
-        ->middleware('permission:timesheets.view')
-        ->name('reports.index');
-    Route::post('/reports/generate', [TimesheetReportController::class, 'generate'])
-        ->middleware('permission:timesheets.view')
-        ->name('reports.generate');
-    Route::get('/reports/export', [TimesheetReportController::class, 'export'])
-        ->middleware('permission:timesheets.view')
-        ->name('reports.export');
-    Route::get('/reports/monthly', [TimesheetReportController::class, 'monthlyReport'])
-        ->middleware('permission:timesheets.view')
-        ->name('reports.monthly');
-    Route::get('/reports/payslip/{employeeId}/{month}', [TimesheetReportController::class, 'generatePaySlip'])
-        ->middleware('permission:timesheets.view')
-        ->name('reports.payslip');
-
     // Projects for timesheet
     Route::get('/projects', [TimesheetProjectController::class, 'index'])
         ->middleware('permission:timesheets.view')
@@ -240,6 +223,11 @@ Route::prefix('timesheets')->name('timesheets.')->middleware(['auth', 'verified'
                 'calendar' => $calendar,
             ]);
         })->name('direct-pay-slip');
+
+        // Payslip PDF download
+        Route::get('/payslip/pdf', [\Modules\TimesheetManagement\Http\Controllers\PaySlipPdfController::class, 'download'])
+            ->middleware('permission:timesheets.view')
+            ->name('payslip.pdf');
     });
 });
 

@@ -27,6 +27,8 @@ Route::prefix('v1')->group(function () {
             ->header('X-Debug-API', 'true')
             ->header('Content-Type', 'application/json');
     });
+    Route::get('employees/{employee}/timesheets', [\Modules\EmployeeManagement\Http\Controllers\Api\TimesheetController::class, 'byEmployee']);
+    Route::get('employees/{employee}/timesheets/total-hours', [\Modules\EmployeeManagement\Http\Controllers\Api\TimesheetController::class, 'totalHours']);
 });
 
 // Public API endpoints - no authentication required
@@ -41,7 +43,6 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
             ->header('Content-Type', 'application/json');
     });
     Route::get('employees/{employee}/documents', [EmployeeController::class, 'documents']);
-    Route::get('employees/{employee}/timesheets', [EmployeeController::class, 'timesheets']);
     Route::get('employees/{employee}/advances', [EmployeeController::class, 'advances']);
 
     // Timesheet routes

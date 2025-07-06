@@ -15,10 +15,14 @@ import { Calendar as CalendarIcon } from 'lucide-react';
 import { DailyTimesheetRecords } from '../../../../../../../Modules/TimesheetManagement/resources/js/components/timesheets/DailyTimesheetRecords';
 import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
+axios.defaults.withCredentials = true;
+
 interface TimesheetSummary {
   total_hours: number;
   regular_hours: number;
   overtime_hours: number;
+  days_worked: number;
+  days_absent: number;
 }
 
 interface TimesheetRecord {
@@ -75,58 +79,48 @@ export const TimesheetSummary: React.FC<TimesheetSummaryProps> = ({
     const fetchData = async () => {
       setIsLoading(true);
       try {
+        await axios.get('/sanctum/csrf-cookie');
         const monthString = format(selectedMonth, 'yyyy-MM');
         const startDate = format(new Date(selectedMonth.getFullYear(), selectedMonth.getMonth(), 1), 'yyyy-MM-dd');
         const endDate = format(new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + 1, 0), 'yyyy-MM-dd');
 
         // Fetch summary data
         const summaryResponse = await axios.get(
-          `/employees/${selectedEmployeeId}/timesheets/total-hours?start_date=${startDate}&end_date=${endDate}`
+          `/api/v1/employees/${selectedEmployeeId}/timesheets/total-hours?start_date=${startDate}&end_date=${endDate}`
         );
         setSummary(summaryResponse.data);
 
         // Fetch timesheets for daily records
         const timesheetsResponse = await axios.get(
-          `/employees/${selectedEmployeeId}/timesheets?start_date=${startDate}&end_date=${endDate}`
+          `/api/v1/employees/${selectedEmployeeId}/timesheets?start_date=${startDate}&end_date=${endDate}`
         );
 
-        // Transform timesheet data for the calendar view
-        const records: TimesheetRecord[] = [];
-        const daysInMonth = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + 1, 0).getDate();
+        // Use the calendar structure from the API (matching payslip)
+        const calendar = timesheetsResponse.data.calendar || [];
+        setDailyRecords((calendar as any[]).map((day: any) => ({
+          date: day.date,
+          day: day.date.split('-')[2],
+          dayName: day.day_name,
+          regularHours: day.regular_hours,
+          overtimeHours: day.overtime_hours,
+          status: (day.regular_hours > 0 || day.overtime_hours > 0) ? 'present' : (day.day_name === 'Fri' ? 'friday' : 'absent'),
+        })));
 
-        // Initialize the days array with empty records
-        for (let day = 1; day <= daysInMonth; day++) {
-          const date = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth(), day);
-          const dateStr = format(date, 'yyyy-MM-dd');
-          const dayOfWeek = date.getDay();
-          const dayName = format(date, 'EEE');
-
-          records.push({
-            date: dateStr,
-            day: String(day),
-            dayName,
-            regularHours: 0,
-            overtimeHours: 0,
-            status: 'absent'
-          })
-        }
-
-        // Update records with actual timesheet data
-        timesheetsResponse.data.timesheets.forEach((timesheet: any) => {
-          const timesheetDate = new Date(timesheet.date);
-          const dayIndex = timesheetDate.getDate() - 1;
-
-          if (dayIndex >= 0 && dayIndex < records.length) {
-            records[dayIndex].regularHours = timesheet.regular_hours;
-            records[dayIndex].overtimeHours = timesheet.overtime_hours;
-            records[dayIndex].status = timesheet.status;
-          }
-        })
-
-        setDailyRecords(records);
-      } catch (error) {
+        // Calculate summary from calendar
+        const totalRegular = (calendar as any[]).reduce((sum: number, d: any) => sum + (d.regular_hours || 0), 0);
+        const totalOvertime = (calendar as any[]).reduce((sum: number, d: any) => sum + (d.overtime_hours || 0), 0);
+        const daysWorked = (calendar as any[]).filter((d: any) => (d.regular_hours || 0) > 0 || (d.overtime_hours || 0) > 0).length;
+        const daysAbsent = (calendar as any[]).filter((d: any) => (d.regular_hours || 0) === 0 && (d.overtime_hours || 0) === 0 && d.day_name !== 'Fri').length;
+        setSummary({
+          total_hours: totalRegular + totalOvertime,
+          regular_hours: totalRegular,
+          overtime_hours: totalOvertime,
+          days_worked: daysWorked,
+          days_absent: daysAbsent,
+        } as any);
+      } catch (error: any) {
         if (error?.response?.status === 404) {
-          setSummary({ total_hours: 0, regular_hours: 0, overtime_hours: 0 });
+          setSummary({ total_hours: 0, regular_hours: 0, overtime_hours: 0, days_worked: 0, days_absent: 0 });
           const daysInMonth = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + 1, 0).getDate();
           const records = [];
           for (let day = 1; day <= daysInMonth; day++) {
@@ -155,6 +149,33 @@ export const TimesheetSummary: React.FC<TimesheetSummaryProps> = ({
     fetchData();
   }, [selectedEmployeeId, selectedMonth]);
 
+  // Month/year selector like payslip
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 5 }, (_, i) => currentYear - 2 + i); // 2 years back, 2 years forward
+  const months = [
+    { value: 0, label: t('January', 'January') },
+    { value: 1, label: t('February', 'February') },
+    { value: 2, label: t('March', 'March') },
+    { value: 3, label: t('April', 'April') },
+    { value: 4, label: t('May', 'May') },
+    { value: 5, label: t('June', 'June') },
+    { value: 6, label: t('July', 'July') },
+    { value: 7, label: t('August', 'August') },
+    { value: 8, label: t('September', 'September') },
+    { value: 9, label: t('October', 'October') },
+    { value: 10, label: t('November', 'November') },
+    { value: 11, label: t('December', 'December') },
+  ];
+
+  const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newMonth = parseInt(e.target.value, 10);
+    setSelectedMonth(new Date(selectedMonth.getFullYear(), newMonth, 1));
+  };
+  const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newYear = parseInt(e.target.value, 10);
+    setSelectedMonth(new Date(newYear, selectedMonth.getMonth(), 1));
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -175,22 +196,27 @@ export const TimesheetSummary: React.FC<TimesheetSummaryProps> = ({
             </select>
           )}
 
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="h-10 pl-3 pr-3">
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {format(selectedMonth, 'MMMM yyyy')}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={selectedMonth}
-                onSelect={(date) => setSelectedMonth(date || new Date())}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
+          {/* Payslip-style month/year selector */}
+          <div className="flex items-center gap-2">
+            <select
+              value={selectedMonth.getMonth()}
+              onChange={handleMonthChange}
+              className="rounded-md border border-input bg-background px-2 py-1"
+            >
+              {months.map((m) => (
+                <option key={m.value} value={m.value}>{m.label}</option>
+              ))}
+            </select>
+            <select
+              value={selectedMonth.getFullYear()}
+              onChange={handleYearChange}
+              className="rounded-md border border-input bg-background px-2 py-1"
+            >
+              {years.map((y) => (
+                <option key={y} value={y}>{y}</option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
