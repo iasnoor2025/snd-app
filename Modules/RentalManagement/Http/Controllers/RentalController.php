@@ -336,6 +336,8 @@ class RentalController extends Controller
 
         $rentalArray = $rental->toArray();
         $rentalArray['rentalItems'] = $rentalItems;
+        $rentalArray['start_date'] = $rental->start_date ? $rental->start_date->format('Y-m-d') : '';
+        $rentalArray['expected_end_date'] = $rental->expected_end_date ? $rental->expected_end_date->format('Y-m-d') : '';
 
         $customers = \Modules\CustomerManagement\Domain\Models\Customer::where('is_active', true)
             ->orderBy('name')
