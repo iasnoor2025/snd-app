@@ -496,6 +496,68 @@ class QuotationController extends Controller
 10. The company reserves the right to substitute equipment of equivalent specification if necessary.
         ";
     }
+
+    /**
+     * Convert an approved quotation to a rental.
+     */
+    public function convertToRental(Request $request, Quotation $quotation)
+    {
+        // Only allow if approved and not already linked
+        if ($quotation->status !== 'approved') {
+            return redirect()->back()->with('error', 'Only approved quotations can be converted to rentals.');
+        }
+        if ($quotation->rental_id) {
+            return redirect()->back()->with('error', 'This quotation is already linked to a rental.');
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Create the rental
+            $rental = new Rental();
+            $rental->customer_id = $quotation->customer_id;
+            $rental->quotation_id = $quotation->id;
+            $rental->rental_number = Rental::generateRentalNumber();
+            $rental->start_date = $quotation->issue_date;
+            $rental->expected_end_date = $quotation->valid_until;
+            $rental->status = 'pending';
+            $rental->total_amount = $quotation->total_amount;
+            $rental->discount_percentage = $quotation->discount_percentage;
+            $rental->tax_percentage = $quotation->tax_percentage;
+            $rental->notes = $quotation->notes;
+            $rental->created_by = Auth::id();
+            $rental->save();
+
+            // Copy quotation items to rental items
+            foreach ($quotation->quotationItems as $item) {
+                $rental->rentalItems()->create([
+                    'equipment_id' => $item->equipment_id,
+                    'operator_id' => $item->operator_id,
+                    'notes' => $item->description,
+                    'quantity' => $item->quantity,
+                    'unit_price' => $item->rate,
+                    'rate_type' => $item->rate_type,
+                    'total_amount' => $item->total_amount,
+                ]);
+            }
+
+            // Link rental to quotation
+            $quotation->update(['rental_id' => $rental->id]);
+
+            DB::commit();
+
+            return redirect()->route('rentals.show', $rental)
+                ->with('success', 'Rental created successfully from quotation.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to convert quotation to rental', [
+                'quotation_id' => $quotation->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return redirect()->back()->with('error', 'Failed to convert quotation to rental: ' . $e->getMessage());
+        }
+    }
 }
 
 
