@@ -46,7 +46,21 @@ class RentalController extends Controller
         // Get active customers
         $customers = \Modules\CustomerManagement\Domain\Models\Customer::where('is_active', true)
             ->orderBy('name')
-            ->get(['id', 'name', 'contact_person', 'email', 'phone']);
+            ->get(['id', 'name', 'company_name', 'contact_person', 'email', 'phone'])
+            ->map(function ($customer) {
+                $name = $customer->name;
+                if (is_array($name)) {
+                    $name = $name['en'] ?? reset($name) ?? '';
+                }
+                return [
+                    'id' => $customer->id,
+                    'name' => $name,
+                    'company_name' => $customer->company_name,
+                    'contact_person' => $customer->contact_person,
+                    'email' => $customer->email,
+                    'phone' => $customer->phone,
+                ];
+            });
 
         // Get available equipment
         $equipment = \Modules\EquipmentManagement\Domain\Models\Equipment::where('is_active', true)
@@ -57,7 +71,14 @@ class RentalController extends Controller
                 'id', 'name', 'description', 'model_number', 'manufacturer',
                 'serial_number', 'door_number', 'daily_rate', 'weekly_rate',
                 'monthly_rate', 'category_id'
-            ]);
+            ])
+            ->map(function ($item) {
+                $name = $item->name;
+                if (is_array($name)) {
+                    $name = $name['en'] ?? reset($name) ?? '';
+                }
+                return array_merge($item->toArray(), ['name' => $name]);
+            });
 
         // Get operators (employees who can operate equipment)
         $employees = \Modules\EmployeeManagement\Domain\Models\Employee::where('is_operator', true)
@@ -168,10 +189,31 @@ class RentalController extends Controller
         // Dropdowns for related entities
         $customers = \Modules\CustomerManagement\Domain\Models\Customer::where('is_active', true)
             ->orderBy('name')
-            ->get(['id', 'name', 'company_name', 'contact_person', 'email', 'phone']);
+            ->get(['id', 'name', 'company_name', 'contact_person', 'email', 'phone'])
+            ->map(function ($customer) {
+                $name = $customer->name;
+                if (is_array($name)) {
+                    $name = $name['en'] ?? reset($name) ?? '';
+                }
+                return [
+                    'id' => $customer->id,
+                    'name' => $name,
+                    'company_name' => $customer->company_name,
+                    'contact_person' => $customer->contact_person,
+                    'email' => $customer->email,
+                    'phone' => $customer->phone,
+                ];
+            });
         $equipment = \Modules\EquipmentManagement\Domain\Models\Equipment::where('is_active', true)
             ->orderBy('name')
-            ->get(['id', 'name', 'model', 'manufacturer', 'serial_number', 'status']);
+            ->get(['id', 'name', 'model', 'manufacturer', 'serial_number', 'status'])
+            ->map(function ($item) {
+                $name = $item->name;
+                if (is_array($name)) {
+                    $name = $name['en'] ?? reset($name) ?? '';
+                }
+                return array_merge($item->toArray(), ['name' => $name]);
+            });
         $employees = \Modules\EmployeeManagement\Domain\Models\Employee::where('is_operator', true)
             ->where('status', 'active')
             ->orderBy('first_name')
@@ -255,7 +297,14 @@ class RentalController extends Controller
             ->get(['id', 'name', 'company_name', 'contact_person', 'email', 'phone']);
         $equipment = \Modules\EquipmentManagement\Domain\Models\Equipment::where('is_active', true)
             ->orderBy('name')
-            ->get(['id', 'name', 'model', 'manufacturer', 'serial_number', 'status']);
+            ->get(['id', 'name', 'model', 'manufacturer', 'serial_number', 'status'])
+            ->map(function ($item) {
+                $name = $item->name;
+                if (is_array($name)) {
+                    $name = $name['en'] ?? reset($name) ?? '';
+                }
+                return array_merge($item->toArray(), ['name' => $name]);
+            });
         $employees = \Modules\EmployeeManagement\Domain\Models\Employee::where('is_operator', true)
             ->where('status', 'active')
             ->orderBy('first_name')
