@@ -235,7 +235,9 @@ export default function MobilizationSection({
           <RentalItemsCard
             rentalId={rental.id}
             items={rentalItems.data}
-            canAddItems={false} // During mobilization, items should be locked
+            canAddItems={permissions.update}
+            equipment={rental.dropdowns?.equipment || []}
+            operators={rental.dropdowns?.employees || []}
           />
         </TabsContent>
 

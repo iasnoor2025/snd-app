@@ -254,9 +254,9 @@ export default function QuotationSection({
           <RentalItemsCard
             rentalId={rental.id}
             items={rentalItems.data}
-            canAddItems={false}
-            equipment={[]}
-            operators={[]}
+            canAddItems={permissions.update}
+            equipment={rental.dropdowns?.equipment || []}
+            operators={rental.dropdowns?.employees || []}
           />
         </TabsContent>
       </Tabs>

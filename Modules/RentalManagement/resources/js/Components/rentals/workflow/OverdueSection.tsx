@@ -251,7 +251,9 @@ export default function OverdueSection({
           <RentalItemsCard
             rentalId={rental.id}
             items={rentalItems.data}
-            canAddItems={false} // In overdue state, items are locked
+            canAddItems={permissions.update}
+            equipment={rental.dropdowns?.equipment || []}
+            operators={rental.dropdowns?.employees || []}
           />
         </TabsContent>
       </Tabs>

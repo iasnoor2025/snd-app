@@ -38,6 +38,7 @@ class RentalItem extends Model
         'notes',
         'start_date',
         'end_date',
+        'price_per_day',
     ];
 
     /**
@@ -129,6 +130,14 @@ class RentalItem extends Model
     public function getDiscountAmountAttribute(): float
     {
         return $this->subtotal * ($this->discount_percentage / 100);
+    }
+
+    /**
+     * Get the price per day for the rental item.
+     */
+    public function getPricePerDayAttribute()
+    {
+        return $this->attributes['price_per_day'] ?? $this->attributes['unit_price'] ?? 0;
     }
 
     /**

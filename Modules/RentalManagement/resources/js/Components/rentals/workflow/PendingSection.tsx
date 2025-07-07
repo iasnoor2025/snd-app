@@ -157,9 +157,12 @@ export default function PendingSection({
 
         <TabsContent value="items">
           <RentalItemsCard
-                      rentalId={rental.id}
-                      items={rentalItems.data}
-                      canAddItems={permissions.update} equipment={[]} operators={[]}          />
+            rentalId={rental.id}
+            items={rentalItems.data}
+            canAddItems={permissions.update}
+            equipment={rental.dropdowns?.equipment || []}
+            operators={rental.dropdowns?.employees || []}
+          />
         </TabsContent>
       </Tabs>
     </div>

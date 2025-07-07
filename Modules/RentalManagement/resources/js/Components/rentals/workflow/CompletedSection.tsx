@@ -290,7 +290,9 @@ export default function CompletedSection({
           <RentalItemsCard
             rentalId={rental.id}
             items={rentalItems.data}
-            canAddItems={false} // In completed state, items are locked
+            canAddItems={permissions.update}
+            equipment={rental.dropdowns?.equipment || []}
+            operators={rental.dropdowns?.employees || []}
           />
         </TabsContent>
 

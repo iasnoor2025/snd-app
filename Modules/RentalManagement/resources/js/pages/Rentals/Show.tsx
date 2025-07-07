@@ -439,8 +439,8 @@ export default function Show({
 
     // Check if auth permissions include this permission
     let authHasPermission = false;
-    if (auth?.permissions) {
-      const authPermissions = auth.permissions as unknown as string[];
+    if (auth && 'permissions' in auth && Array.isArray((auth as any).permissions)) {
+      const authPermissions = (auth as any).permissions as string[];
       authHasPermission = authPermissions.includes(permission as string);
     }
 
@@ -826,7 +826,7 @@ export default function Show({
     }
 
     // Handle different property name variations for customer data using type assertion
-    const customerAny = customer as unknown;
+    const customerAny = customer as any;
     const companyName = customerAny.company_name || customerAny.name || 'Unknown Company';
     const contactPerson = customerAny.contact_person || customerAny.contact_name || '';
     const email = customerAny.email || 'No email';
@@ -901,13 +901,12 @@ export default function Show({
       return;
     }
 
-    axios.delete(route('rentals.destroy', rental.id), {
-      onSuccess: () => {
+    axios.delete(route('rentals.destroy', rental.id))
+      .then(() => {
         toast.success("Rental deleted successfully");
         navigateToPage(route('rentals.index'));
-      },
-      onError: () => toast.error("Failed to delete rental"),
-    });
+      })
+      .catch(() => toast.error("Failed to delete rental"));
   };
 
   // Progress of rental displayed as emoji
@@ -1097,7 +1096,7 @@ export default function Show({
   const renderWorkflowSection = () => {
     // Create shared props for all workflow sections
     const sharedProps = {
-      rental: { ...rental, workflow_history: workflowHistory },
+      rental: { ...rental, workflow_history: workflowHistory, dropdowns },
       rentalItems: rentalItems && Array.isArray(rentalItems.data) ? rentalItems : { data: [], total: 0 },
       invoices: invoices && Array.isArray(invoices.data) ? invoices : { data: [], total: 0 },
       maintenanceRecords: maintenanceRecords && Array.isArray(maintenanceRecords.data) ? maintenanceRecords : { data: [], total: 0 },
@@ -1193,8 +1192,8 @@ export default function Show({
                   rental_number: rental.rental_number,
                   status: rental.status,
                   start_date: rental.start_date,
-                  expected_end_date: rental.expected_end_date,
-                  actual_end_date: rental.actual_end_date || undefined,
+                  expected_end_date: rental.expected_end_date ?? null,
+                  actual_end_date: rental.actual_end_date ?? null,
                   total_amount: rental.total_amount,
                   quotation_id: rental.quotation_id,
                   approved_at: rental.approved_at,
@@ -1240,12 +1239,6 @@ export default function Show({
                 }>
                   {renderWorkflowSection()}
                 </Suspense>
-
-                {/* Status Timeline - Always visible across all statuses */}
-                <StatusTimeline
-                  rental={rental}
-                  className="mt-6"
-                />
               </div>
             </div>
 
@@ -1256,14 +1249,6 @@ export default function Show({
               canDelete={permissions.update}
               className="mt-8"
             />
-
-            <RentalItemsCard
-              rentalId={rental.id}
-              items={rentalItems.data}
-              canAddItems={permissions.update}
-              equipment={dropdowns.equipment || []}
-              operators={dropdowns.employees || []}
-            />
           </div>
         </div>
       )}
@@ -1271,7 +1256,7 @@ export default function Show({
       {/* Extension Request Dialog */}
       <RentalExtensionDialog
         rentalId={rental.id}
-        currentEndDate={rental.expected_end_date}
+        currentEndDate={rental.expected_end_date ?? ''}
         isOpen={isSimpleExtensionModalOpen}
         onClose={() => setIsSimpleExtensionModalOpen(false)}
         onSuccess={handleExtensionSuccess}

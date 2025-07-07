@@ -197,7 +197,9 @@ export default function CancelledSection({
           <RentalItemsCard
             rentalId={rental.id}
             items={rentalItems.data}
-            canAddItems={false} // Cancelled rentals cannot be modified
+            canAddItems={false}
+            equipment={rental.dropdowns?.equipment || []}
+            operators={rental.dropdowns?.employees || []}
           />
         </TabsContent>
 

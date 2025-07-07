@@ -24,6 +24,7 @@ return new class extends Migration
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->text('notes')->nullable();
+            $table->decimal('price_per_day', 10, 2)->nullable()->after('unit_price');
             $table->timestamps();
             $table->softDeletes();
         });

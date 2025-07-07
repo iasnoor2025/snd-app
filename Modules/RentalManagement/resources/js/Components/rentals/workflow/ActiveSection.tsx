@@ -117,6 +117,8 @@ export default function ActiveSection({
             rentalId={rental.id}
             items={rentalItems.data}
             canAddItems={permissions.update}
+            equipment={rental.dropdowns?.equipment || []}
+            operators={rental.dropdowns?.employees || []}
           />
         </TabsContent>
 

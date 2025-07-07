@@ -655,6 +655,16 @@ class QuotationController extends Controller
         $history = $quotation->quotationHistories()->with('user')->orderBy('created_at')->get();
         return response()->json($history);
     }
+
+    /**
+     * Convert a quotation to an invoice.
+     * TODO: Implement conversion logic.
+     */
+    public function convertToInvoice(Request $request, Quotation $quotation)
+    {
+        // TODO: Implement conversion logic
+        return response()->json(['message' => 'Not implemented'], 501);
+    }
 }
 
 
