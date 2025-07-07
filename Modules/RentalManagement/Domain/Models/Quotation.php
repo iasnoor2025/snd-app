@@ -174,6 +174,11 @@ use InteractsWithMedia;
 
         return $prefix . $year . '-' . str_pad($sequence, 5, '0', STR_PAD_LEFT);
     }
+
+    public function quotationHistories()
+    {
+        return $this->hasMany(QuotationHistory::class);
+    }
 }
 
 

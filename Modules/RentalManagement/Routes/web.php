@@ -74,6 +74,9 @@ Route::middleware(['web', 'auth'])->group(function () {
     ]);
     Route::post('quotations/{quotation}/approve', [QuotationController::class, 'approve'])->name('quotations.approve');
     Route::post('quotations/{quotation}/reject', [QuotationController::class, 'reject'])->name('quotations.reject');
+    Route::post('quotations/{quotation}/email', [QuotationController::class, 'sendEmail'])
+        ->name('quotations.email')
+        ->middleware('permission:quotations.view');
 
     // Payment routes (fine-grained permissions)
     Route::get('rentals/{rental}/payments', [PaymentController::class, 'index'])

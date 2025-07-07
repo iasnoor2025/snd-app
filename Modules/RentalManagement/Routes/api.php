@@ -69,6 +69,9 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
         ->middleware('permission:quotations.delete');
     Route::post('quotations/{quotation}/convert', [QuotationController::class, 'convertToRental'])
         ->middleware('permission:quotations.edit');
+    Route::get('quotations/{quotation}/history', [QuotationController::class, 'history'])
+        ->name('quotations.history')
+        ->middleware('permission:quotations.view');
 
     // Invoices
     Route::get('invoices', [InvoiceController::class, 'index'])

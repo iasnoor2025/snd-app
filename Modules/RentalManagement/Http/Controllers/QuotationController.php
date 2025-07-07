@@ -14,6 +14,9 @@ use Modules\RentalManagement\Domain\Models\Quotation;
 use Modules\RentalManagement\Domain\Models\Rental;
 use Modules\EquipmentManagement\Domain\Models\Equipment;
 use Modules\EmployeeManagement\Domain\Models\Employee;
+use Illuminate\Support\Facades\Mail;
+use Modules\RentalManagement\Mail\QuotationMail;
+use Modules\RentalManagement\Domain\Models\QuotationHistory;
 
 class QuotationController extends Controller
 {
@@ -144,6 +147,16 @@ class QuotationController extends Controller
             $quotation->created_by = Auth::id();
             $quotation->is_separate = true;
             $quotation->save();
+
+            // Log creation in history
+            QuotationHistory::create([
+                'quotation_id' => $quotation->id,
+                'user_id' => Auth::id(),
+                'action' => 'created',
+                'from_status' => null,
+                'to_status' => $quotation->status,
+                'notes' => $quotation->notes,
+            ]);
 
             // Create quotation items
             foreach ($validatedData['quotation_items'] as $itemData) {
@@ -293,6 +306,7 @@ class QuotationController extends Controller
             DB::beginTransaction();
 
             // Update the quotation
+            $oldStatus = $quotation->status;
             $quotation->update([
                 'customer_id' => $validatedData['customer_id'],
                 'quotation_number' => $validatedData['quotation_number'],
@@ -353,6 +367,16 @@ class QuotationController extends Controller
                 }
             }
 
+            // Log update in history
+            QuotationHistory::create([
+                'quotation_id' => $quotation->id,
+                'user_id' => Auth::id(),
+                'action' => 'edited',
+                'from_status' => $oldStatus,
+                'to_status' => $quotation->status,
+                'notes' => $quotation->notes,
+            ]);
+
             DB::commit();
 
             return redirect()->route('quotations.show', $quotation)
@@ -391,6 +415,16 @@ class QuotationController extends Controller
             // Delete media items
             $quotation->clearMediaCollection('documents');
 
+            // Log deletion in history
+            QuotationHistory::create([
+                'quotation_id' => $quotation->id,
+                'user_id' => Auth::id(),
+                'action' => 'deleted',
+                'from_status' => $quotation->status,
+                'to_status' => null,
+                'notes' => null,
+            ]);
+
             // Delete the quotation
             $quotation->delete();
 
@@ -426,10 +460,21 @@ class QuotationController extends Controller
             ]);
 
             // Update quotation status
+            $oldStatus = $quotation->status;
             $quotation->update([
                 'status' => 'approved',
                 'approved_by' => Auth::id(),
                 'approved_at' => now(),
+            ]);
+
+            // Log approval in history
+            QuotationHistory::create([
+                'quotation_id' => $quotation->id,
+                'user_id' => Auth::id(),
+                'action' => 'approved',
+                'from_status' => $oldStatus,
+                'to_status' => 'approved',
+                'notes' => $request->notes,
             ]);
 
             return redirect()->route('quotations.show', $quotation)
@@ -460,8 +505,19 @@ class QuotationController extends Controller
             ]);
 
             // Update quotation status
+            $oldStatus = $quotation->status;
             $quotation->update([
                 'status' => 'rejected',
+                'notes' => $request->notes,
+            ]);
+
+            // Log rejection in history
+            QuotationHistory::create([
+                'quotation_id' => $quotation->id,
+                'user_id' => Auth::id(),
+                'action' => 'rejected',
+                'from_status' => $oldStatus,
+                'to_status' => 'rejected',
                 'notes' => $request->notes,
             ]);
 
@@ -557,6 +613,47 @@ class QuotationController extends Controller
             ]);
             return redirect()->back()->with('error', 'Failed to convert quotation to rental: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Send the quotation to the customer by email.
+     */
+    public function sendEmail(Request $request, Quotation $quotation)
+    {
+        $this->authorize('view', $quotation);
+        try {
+            if (!$quotation->customer || !$quotation->customer->email) {
+                return response()->json(['message' => 'Customer does not have an email address.'], 422);
+            }
+            Mail::to($quotation->customer->email)->send(new QuotationMail($quotation));
+
+            // Log email in history
+            QuotationHistory::create([
+                'quotation_id' => $quotation->id,
+                'user_id' => Auth::id(),
+                'action' => 'emailed',
+                'from_status' => $quotation->status,
+                'to_status' => $quotation->status,
+                'notes' => null,
+            ]);
+
+            return response()->json(['message' => 'Quotation sent by email.']);
+        } catch (\Exception $e) {
+            \Log::error('Failed to send quotation email', [
+                'quotation_id' => $quotation->id,
+                'error' => $e->getMessage(),
+            ]);
+            return response()->json(['message' => 'Failed to send email: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Get the status timeline/history for a quotation (API).
+     */
+    public function history(Quotation $quotation)
+    {
+        $history = $quotation->quotationHistories()->with('user')->orderBy('created_at')->get();
+        return response()->json($history);
     }
 }
 
