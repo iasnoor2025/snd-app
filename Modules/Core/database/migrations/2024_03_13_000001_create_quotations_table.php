@@ -15,6 +15,7 @@ return new class extends Migration
         Schema::create('quotations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
+            $table->foreignId('rental_id')->nullable()->constrained('rentals')->nullOnDelete();
             $table->date('issue_date');
             $table->date('valid_until');
             $table->enum('status', ['draft', 'sent', 'approved', 'rejected', 'expired'])->default('draft');

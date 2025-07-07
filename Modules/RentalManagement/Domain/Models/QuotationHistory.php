@@ -23,6 +23,6 @@ class QuotationHistory extends Model
 
     public function user()
     {
-        return $this->belongsTo(\App\Models\User::class);
+        return $this->belongsTo(\Modules\Core\Domain\Models\User::class);
     }
 }

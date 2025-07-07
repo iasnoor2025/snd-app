@@ -861,16 +861,32 @@ class Rental extends Model implements HasMedia
         return $this->statusLogs()->orderBy('created_at')->get()->map(function ($log) {
             return [
                 'id' => $log->id,
-                'from_status' => $log->from_status?->value,
-                'to_status' => $log->to_status?->value ?? $log->status ?? null,
-                'action' => $log->to_status?->getDisplayName() ?? $log->status ?? null,
-                'status' => $log->to_status?->value ?? $log->status ?? null,
+                'from_status' => $this->getStatusValue($log->from_status),
+                'to_status' => $this->getStatusValue($log->to_status) ?? $log->status ?? null,
+                'action' => $this->getStatusDisplayName($log->to_status) ?? $log->status ?? null,
+                'status' => $this->getStatusValue($log->to_status) ?? $log->status ?? null,
                 'changed_by' => $log->changed_by,
                 'user' => $log->changedBy?->name,
                 'date' => $log->created_at?->toDateTimeString(),
                 'description' => $log->notes,
             ];
         });
+    }
+
+    /**
+     * Helper to get enum value or string.
+     */
+    private function getStatusValue($status)
+    {
+        return is_object($status) && property_exists($status, 'value') ? $status->value : $status;
+    }
+
+    /**
+     * Helper to get display name from enum or string.
+     */
+    private function getStatusDisplayName($status)
+    {
+        return is_object($status) && method_exists($status, 'getDisplayName') ? $status->getDisplayName() : (string)$status;
     }
 }
 

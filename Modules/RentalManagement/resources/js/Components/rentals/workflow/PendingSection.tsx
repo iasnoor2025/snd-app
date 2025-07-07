@@ -55,21 +55,10 @@ export default function PendingSection({
       return;
     }
     setIsGeneratingQuotation(true);
-    // Use a form POST to trigger the backend action
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = `/rentals/${rental.id}/generate-quotation`;
-    // Add CSRF token if available
-    const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-    if (csrf) {
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = '_token';
-      input.value = csrf;
-      form.appendChild(input);
-    }
-    document.body.appendChild(form);
-    form.submit();
+    Inertia.post(`/rentals/${rental.id}/generate-quotation`, {}, {
+      onSuccess: () => setIsGeneratingQuotation(false),
+      onError: () => setIsGeneratingQuotation(false),
+    });
   };
 
   return (
@@ -98,7 +87,7 @@ export default function PendingSection({
               <h3 className="text-sm font-medium mb-2">{t('rental_summary')}</h3>
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div>Customer:</div>
-                <div className="font-medium">{rental.customer.company_name}</div>
+                <div className="font-medium">{rental.customer?.company_name || rental.customer?.name || '-'}</div>
 
                 <div>Rental Number:</div>
                 <div className="font-medium">{rental.rental_number}</div>
@@ -116,7 +105,13 @@ export default function PendingSection({
                   {new Intl.NumberFormat('en-US', {
                     style: 'currency',
                     currency: 'SAR'
-                  }).format(rental.total_amount || 0)}
+                  }).format(
+                    rentalItems.data.reduce((sum, item) => {
+                      // Use total_amount if present, fallback to total, parse as float
+                      const amount = parseFloat(item.total_amount ?? item.total ?? 0);
+                      return sum + (isNaN(amount) ? 0 : amount);
+                    }, 0)
+                  )}
                 </div>
               </div>
             </div>
@@ -138,6 +133,12 @@ export default function PendingSection({
                   </>
                 )}
               </Button>
+
+              {rental.quotation_id && (
+                <Button variant="outline" asChild>
+                  <a href={`/quotations/${rental.quotation_id}`}>View Quotation</a>
+                </Button>
+              )}
 
               <Button variant="outline" asChild>
                 <a href={`/rentals/${rental.id}/edit`}>

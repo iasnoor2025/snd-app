@@ -12,6 +12,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Modules\EquipmentManagement\Traits\HandlesDocumentUploads;
 use Modules\Core\Domain\Models\User;
+use Modules\CustomerManagement\Domain\Models\Customer;
 
 class Quotation extends Model implements HasMedia
 {

@@ -6,6 +6,7 @@ use App\Enums\RentalStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Modules\Core\Domain\Models\User;
 
 class RentalStatusLog extends Model
 {
@@ -22,16 +23,6 @@ class RentalStatusLog extends Model
         'to_status',
         'changed_by',
         'notes',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'from_status' => RentalStatus::class,
-        'to_status' => RentalStatus::class,
     ];
 
     /**

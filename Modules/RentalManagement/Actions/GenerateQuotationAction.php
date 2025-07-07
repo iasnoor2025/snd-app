@@ -17,15 +17,18 @@ class GenerateQuotationAction
     public function execute(Rental $rental): Quotation
     {
         return DB::transaction(function () use ($rental) {
-            // Prevent duplicate quotations for the same rental
+            // Always create a new quotation: delete the old one if it exists
             $existing = Quotation::where('rental_id', $rental->id)->first();
             if ($existing) {
-                return $existing;
+                // Optionally, delete related quotation items as well
+                $existing->quotationItems()->delete();
+                $existing->delete();
             }
 
             // Calculate subtotal, tax, and total
             $subtotal = $rental->rentalItems->sum(function ($item) {
-                return $item->total_amount;
+                $amount = $item->total_amount ?? $item->total ?? 0;
+                return is_numeric($amount) ? (float)$amount : 0;
             });
             $taxPercentage = $rental->tax_percentage ?? 0.15;
             $taxAmount = $subtotal * $taxPercentage;
@@ -38,7 +41,7 @@ class GenerateQuotationAction
             $quotation->rental_id = $rental->id;
             $quotation->customer_id = $rental->customer_id;
             $quotation->quotation_number = Quotation::generateQuotationNumber();
-            $quotation->status = 'pending';
+            $quotation->status = 'draft';
             $quotation->total_amount = $total;
             $quotation->subtotal = $subtotal;
             $quotation->tax_percentage = $taxPercentage;
@@ -48,32 +51,56 @@ class GenerateQuotationAction
             $quotation->issue_date = now();
             $quotation->valid_until = now()->addDays(30);
             $quotation->notes = "Quotation generated from rental {$rental->rental_number}";
+            $quotation->created_by = auth()->id() ?? 1;
             $quotation->save();
 
             // Copy rental items to quotation items
             foreach ($rental->rentalItems as $rentalItem) {
+                if (empty($rentalItem->equipment_id)) continue; // skip items with no equipment
+                $quantity = $rentalItem->quantity ?? 1;
+                $unitPrice = is_numeric($rentalItem->unit_price) ? (float)$rentalItem->unit_price : 0;
+                $totalAmount = $rentalItem->total_amount ?? $rentalItem->total ?? ($unitPrice * $quantity);
+                $rateType = $rentalItem->rate_type ?? $rentalItem->rental_rate_period ?? 'daily';
+                // Always set name, fallback to equipment_id if needed
+                $equipmentName = '';
+                if (isset($rentalItem->equipment)) {
+                    if (is_array($rentalItem->equipment)) {
+                        $equipmentName = $rentalItem->equipment['name'] ?? '';
+                    } elseif (is_object($rentalItem->equipment)) {
+                        $equipmentName = $rentalItem->equipment->name ?? '';
+                    }
+                }
+                if (!$equipmentName && isset($rentalItem->equipment_name)) {
+                    $equipmentName = $rentalItem->equipment_name;
+                }
+                if (!$equipmentName) {
+                    $equipmentName = 'Equipment #' . ($rentalItem->equipment_id ?? '');
+                }
                 $quotation->quotationItems()->create([
+                    'name' => $equipmentName,
                     'equipment_id' => $rentalItem->equipment_id,
-                    'operator_id' => $rentalItem->operator_id,
-                    'description' => $rentalItem->notes,
-                    'quantity' => $rentalItem->quantity ?? 1,
-                    'rate' => $rentalItem->unit_price,
-                    'rate_type' => $rentalItem->rate_type ?? $rentalItem->rental_rate_period,
-                    'total_amount' => $rentalItem->total_amount,
+                    'operator_id' => $rentalItem->operator_id ?? null,
+                    'description' => $rentalItem->notes ?? '',
+                    'quantity' => $quantity,
+                    'rate' => $unitPrice,
+                    'rate_type' => $rateType,
+                    'total_amount' => is_numeric($totalAmount) ? (float)$totalAmount : 0,
                 ]);
             }
 
+            // Set the rental's quotation_id to the new quotation
+            $rental->quotation_id = $quotation->id;
+            $rental->save();
+
             // Update rental status to 'quotation' and log status change
-            if ($rental->status !== 'quotation') {
-                $oldStatus = $rental->status;
-                $rental->update(['status' => 'quotation']);
-                $rental->statusLogs()->create([
-                    'from_status' => $oldStatus,
-                    'to_status' => 'quotation',
-                    'changed_by' => auth()->id() ?? null,
-                    'notes' => 'Quotation generated from rental.'
-                ]);
-            }
+            $oldStatus = $rental->status;
+            $rental->update(['status' => 'quotation']);
+            $rental->statusLogs()->create([
+                'from_status' => $oldStatus,
+                'to_status' => 'quotation',
+                'changed_by' => auth()->id() ?? null,
+                'notes' => 'Quotation generated from rental.'
+            ]);
 
             return $quotation;
         });

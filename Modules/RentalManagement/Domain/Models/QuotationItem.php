@@ -19,6 +19,7 @@ class QuotationItem extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'name',
         'quotation_id',
         'equipment_id',
         'operator_id',
