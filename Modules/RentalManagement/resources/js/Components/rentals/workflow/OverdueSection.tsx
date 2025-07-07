@@ -11,6 +11,7 @@ import RentalItemsCard from "../../rentals/RentalItemsCard";
 import InvoicesCard from "../../rentals/InvoicesCard";
 import { formatCurrency } from "@/Core";
 import { Progress } from "@/Core";
+import StatusTimeline from '../StatusTimeline';
 
 // Interface for OverdueSection props
 interface OverdueSectionProps {
@@ -104,6 +105,9 @@ export default function OverdueSection({
 
   return (
     <div className="space-y-4">
+      {/* Workflow history / audit trail */}
+      <StatusTimeline rental={rental} />
+
       {/* Overdue rental alert */}
       <Alert variant="destructive" className="animate-pulse">
         <AlertTriangle className="h-4 w-4" />

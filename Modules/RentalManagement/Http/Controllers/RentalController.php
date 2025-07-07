@@ -269,6 +269,7 @@ class RentalController extends Controller
 
         return Inertia::render('Rentals/Show', [
             'rental' => $rental,
+            'workflowHistory' => $rental->workflow_history,
             'rentalItems' => [
                 'data' => $rentalItems,
                 'total' => $rental->rentalItems->count(),

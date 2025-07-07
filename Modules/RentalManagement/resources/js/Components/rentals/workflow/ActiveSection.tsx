@@ -10,6 +10,7 @@ import RentalAnalytics from "../RentalAnalytics";
 import { Alert, AlertDescription, AlertTitle } from "@/Core";
 import { AlertCircle, Clock } from "lucide-react";
 import { differenceInDays } from "date-fns";
+import StatusTimeline from '../StatusTimeline';
 
 // Document type for attached documents
 interface AttachedDocument {
@@ -86,6 +87,9 @@ export default function ActiveSection({
           This rental is currently active. Equipment is in use and the rental period is ongoing.
         </AlertDescription>
       </Alert>
+
+      {/* Workflow history / audit trail */}
+      <StatusTimeline rental={rental} />
 
       {/* Warning message if rental is nearing completion */}
       {isNearingCompletion() && (

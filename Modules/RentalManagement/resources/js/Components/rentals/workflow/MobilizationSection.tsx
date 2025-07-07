@@ -10,6 +10,7 @@ import RentalItemsCard from "../../rentals/RentalItemsCard";
 import { format } from "date-fns";
 // import { MapView } from "@/Core";
 import { Progress } from "@/Core";
+import StatusTimeline from '../StatusTimeline';
 
 // Interface for MobilizationSection props
 interface MobilizationSectionProps {
@@ -90,6 +91,9 @@ export default function MobilizationSection({
 
   return (
     <div className="space-y-4">
+      {/* Workflow history / audit trail */}
+      <StatusTimeline rental={rental} />
+
       {/* Mobilization alert */}
       <Alert className="bg-orange-50 border-orange-200 text-orange-800">
         <Truck className="h-4 w-4 text-orange-600" />

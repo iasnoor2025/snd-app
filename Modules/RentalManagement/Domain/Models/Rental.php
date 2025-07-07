@@ -852,6 +852,26 @@ class Rental extends Model implements HasMedia
         \Log::info('Called fillMissingTimesheets for rental', ['rental_id' => $this->id]);
         // TODO: Implement missing timesheet fill logic
     }
+
+    /**
+     * Get the workflow history for the rental (for frontend audit trail)
+     */
+    public function getWorkflowHistoryAttribute()
+    {
+        return $this->statusLogs()->orderBy('created_at')->get()->map(function ($log) {
+            return [
+                'id' => $log->id,
+                'from_status' => $log->from_status?->value,
+                'to_status' => $log->to_status?->value ?? $log->status ?? null,
+                'action' => $log->to_status?->getDisplayName() ?? $log->status ?? null,
+                'status' => $log->to_status?->value ?? $log->status ?? null,
+                'changed_by' => $log->changed_by,
+                'user' => $log->changedBy?->name,
+                'date' => $log->created_at?->toDateTimeString(),
+                'description' => $log->notes,
+            ];
+        });
+    }
 }
 
 

@@ -11,6 +11,9 @@ import { format } from "date-fns";
 import { formatCurrency } from "@/Core";
 import { Progress } from "@/Core";
 import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import { Inertia } from '@inertiajs/inertia';
+import { toast } from 'sonner';
+import StatusTimeline from '../StatusTimeline';
 
 // Interface for QuotationSection props
 interface QuotationSectionProps {
@@ -48,44 +51,67 @@ export default function QuotationSection({
   // Function to approve quotation
   const handleApproveQuotation = () => {
     if (!permissions.approve) {
+      toast.error(t('error_no_permission'));
       return;
     }
-
     setIsApproving(true);
-
-    // In a real implementation, call an API endpoint to approve quotation
-    setTimeout(() => {
-      window.location.href = `/rentals/${rental.id}/approve`;
-    }, 1000);
+    Inertia.post(`/quotations/${rental.quotation_id}/approve`, {}, {
+      onSuccess: () => {
+        toast.success(t('msg_quotation_approved'));
+        setIsApproving(false);
+        window.location.reload();
+      },
+      onError: (err: any) => {
+        toast.error(t('error_approve_failed'));
+        setIsApproving(false);
+      }
+    });
   };
 
   // Function to reject quotation
   const handleRejectQuotation = () => {
     if (!permissions.update) {
+      toast.error(t('error_no_permission'));
       return;
     }
-
     setIsRejecting(true);
-
-    // In a real implementation, call an API endpoint to reject quotation
-    setTimeout(() => {
-      window.location.href = `/rentals/${rental.id}/reject`;
-    }, 1000);
+    Inertia.post(`/quotations/${rental.quotation_id}/reject`, { notes: t('msg_rejected_by_user') }, {
+      onSuccess: () => {
+        toast.success(t('msg_quotation_rejected'));
+        setIsRejecting(false);
+        window.location.reload();
+      },
+      onError: (err: any) => {
+        toast.error(t('error_reject_failed'));
+        setIsRejecting(false);
+      }
+    });
   };
 
   // Function to email quotation to customer
   const handleEmailQuotation = () => {
     setIsEmailingSent(true);
-
-    // In a real implementation, call an API endpoint to email quotation
-    setTimeout(() => {
-      setIsEmailingSent(false);
-      alert('Quotation email sent to customer');
-    }, 1500);
+    // Example: POST to /quotations/{id}/email (implement endpoint if needed)
+    fetch(`/quotations/${rental.quotation_id}/email`, { method: 'POST' })
+      .then(res => {
+        if (res.ok) {
+          toast.success(t('msg_quotation_emailed'));
+        } else {
+          toast.error(t('error_email_failed'));
+        }
+        setIsEmailingSent(false);
+      })
+      .catch(() => {
+        toast.error(t('error_email_failed'));
+        setIsEmailingSent(false);
+      });
   };
 
   return (
     <div className="space-y-4">
+      {/* Workflow history / audit trail */}
+      <StatusTimeline rental={rental} />
+
       {/* Quotation rental alert */}
       <Alert>
         <FileText className="h-4 w-4" />
@@ -228,7 +254,9 @@ export default function QuotationSection({
           <RentalItemsCard
             rentalId={rental.id}
             items={rentalItems.data}
-            canAddItems={false} // In quotation state, items are locked
+            canAddItems={false}
+            equipment={[]}
+            operators={[]}
           />
         </TabsContent>
       </Tabs>

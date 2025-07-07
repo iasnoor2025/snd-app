@@ -271,6 +271,58 @@ class RentalWorkflowController extends Controller
             return back()->with('error', 'Failed to check overdue status: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Cancel a rental at any stage.
+     */
+    public function cancelRental(Rental $rental)
+    {
+        try {
+            $rental->update(['status' => 'cancelled']);
+            // Optionally log the action in status logs
+            $rental->statusLogs()->create([
+                'status' => 'cancelled',
+                'changed_by' => auth()->id(),
+                'notes' => 'Rental cancelled by user.'
+            ]);
+            return redirect()->route('rentals.show', $rental)
+                ->with('success', 'Rental cancelled successfully.');
+        } catch (\Exception $e) {
+            \Log::error('Failed to cancel rental', [
+                'rental_id' => $rental->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return back()->with('error', 'Failed to cancel rental: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Reject a rental extension request.
+     */
+    public function rejectExtension(Rental $rental, $extensionId)
+    {
+        try {
+            $extension = $rental->extensionRequests()->findOrFail($extensionId);
+            $extension->update(['status' => 'rejected']);
+            // Optionally log the action in status logs
+            $rental->statusLogs()->create([
+                'status' => 'extension_rejected',
+                'changed_by' => auth()->id(),
+                'notes' => 'Extension request rejected.'
+            ]);
+            return redirect()->route('rentals.show', $rental)
+                ->with('success', 'Extension request rejected successfully.');
+        } catch (\Exception $e) {
+            \Log::error('Failed to reject extension', [
+                'rental_id' => $rental->id,
+                'extension_id' => $extensionId,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return back()->with('error', 'Failed to reject extension: ' . $e->getMessage());
+        }
+    }
 }
 
 

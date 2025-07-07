@@ -9,6 +9,7 @@ import { X, Calendar, FileText, Copy, RotateCcw } from "lucide-react";
 import RentalItemsCard from "../RentalItemsCard";
 import DocumentsCard from "../DocumentsCard";
 import { format } from "date-fns";
+import StatusTimeline from '../StatusTimeline';
 
 // Define interface for document
 interface AttachedDocument {
@@ -70,6 +71,9 @@ export default function CancelledSection({
 
   return (
     <div className="space-y-4">
+      {/* Workflow history / audit trail */}
+      <StatusTimeline rental={rental} />
+
       {/* Cancelled rental alert */}
       <Alert variant="destructive">
         <X className="h-4 w-4" />

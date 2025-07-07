@@ -143,6 +143,8 @@ export default function StatusTimeline({ rental, className = "" }: StatusTimelin
   const timelineEvents = useMemo(() => generateTimelineEvents(), [generateTimelineEvents]);
   const activeEvents = useMemo(() => timelineEvents.filter(event => event.active), [timelineEvents]);
 
+  const auditEvents = rental.audit_trail || rental.workflow_history || [];
+
   return (
     <Card className={className}>
       <CardHeader>
@@ -151,6 +153,33 @@ export default function StatusTimeline({ rental, className = "" }: StatusTimelin
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
+          {auditEvents.length > 0 && (
+            <ol className="relative border-l border-muted mb-8">
+              {auditEvents.map((event: any, index: number) => (
+                <li key={event.id || index} className="mb-6 ml-6">
+                  <span className={cn(
+                    "absolute flex items-center justify-center w-6 h-6 rounded-full -left-3",
+                    event.status === 'cancelled' ? 'bg-red-100 text-red-700 border-red-200' :
+                    event.status === 'rejected' ? 'bg-yellow-100 text-yellow-700 border-yellow-200' :
+                    'bg-slate-100 text-slate-700 border-slate-200')
+                  }>
+                    <AlertCircle className="w-3 h-3" />
+                  </span>
+                  <h3 className="flex items-center mb-1 text-sm font-semibold">
+                    {event.action || event.status}
+                  </h3>
+                  {event.date && (
+                    <time className="block mb-1 text-xs font-normal text-muted-foreground">
+                      {formatDateMedium(event.date)}
+                    </time>
+                  )}
+                  <p className="text-xs text-muted-foreground">
+                    {event.description || event.details || ''}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          )}
           {activeEvents.length === 0 ? (
             <p className="text-sm text-muted-foreground">{t('no_status_events_yet')}</p>
           ) : (

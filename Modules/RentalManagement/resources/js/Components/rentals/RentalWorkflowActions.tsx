@@ -60,6 +60,30 @@ export function RentalWorkflowActions({
         })
     };
 
+    const handleCancel = () => {
+        if (isProcessing) return;
+        setIsProcessing(true);
+        const loadingToast = toast.loading('Cancelling rental...');
+        router.post(`/rentals/${rental.id}/cancel`, {}, {
+            preserveState: true,
+            preserveScroll: true,
+            onSuccess: () => {
+                toast.dismiss(loadingToast);
+                toast.success('Rental cancelled');
+                router.get(window.location.pathname);
+            },
+            onError: () => {
+                toast.dismiss(loadingToast);
+                toast.error('Failed to cancel rental');
+                setIsProcessing(false);
+            },
+            onFinish: () => {
+                toast.dismiss(loadingToast);
+                setIsProcessing(false);
+            }
+        });
+    };
+
     const getAvailableActions = () => {
         const status = rental.status || 'pending';
 
@@ -158,6 +182,16 @@ export function RentalWorkflowActions({
     };
 
     const actions = getAvailableActions();
+
+    // Add Cancel button for allowed statuses
+    if (["active", "mobilization", "quotation", "pending"].includes(rental.status)) {
+        actions.push({
+            label: 'Cancel Rental',
+            action: 'cancel',
+            variant: 'destructive' as const,
+            onClick: handleCancel
+        });
+    }
 
     if (actions.length === 0) {
         return null;

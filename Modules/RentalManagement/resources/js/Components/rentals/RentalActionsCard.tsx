@@ -67,8 +67,8 @@ const RentalActionsCard: React.FC<RentalActionsCardProps> = ({
     setTimeout(() => {
       toast.success("Quotation generated successfully");
       setIsGeneratingQuotation(false);
-      // Redirect to the quotation page
-      window.location.href = `/rentals/${rental.id}/quotations`;
+      // Reload the page to show updated workflow and let backend handle redirect
+      window.location.reload();
     }, 1500);
   };
 

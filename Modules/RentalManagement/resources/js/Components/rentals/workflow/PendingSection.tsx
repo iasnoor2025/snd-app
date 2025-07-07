@@ -9,6 +9,9 @@ import RentalItemsCard from "../../rentals/RentalItemsCard";
 import { format } from "date-fns";
 import { Progress } from "@/Core";
 import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import { Inertia } from '@inertiajs/inertia';
+import { toast } from 'sonner';
+import StatusTimeline from '../StatusTimeline';
 
 // Interface for PendingSection props
 interface PendingSectionProps {
@@ -44,18 +47,36 @@ export default function PendingSection({
   // Function to generate a quotation
   const handleGenerateQuotation = () => {
     if (!permissions.generate_invoice) {
-      // Handle permission error
+      toast.error(t('error_no_permission'));
       return;
     }
-
+    if (!rentalItems.data || rentalItems.data.length === 0) {
+      toast.error(t('Cannot generate quotation: This rental has no items. Please add items first.'));
+      return;
+    }
     setIsGeneratingQuotation(true);
-
-    // Use the correct backend route for direct quotation generation
-    window.location.href = `/rentals/${rental.id}/direct-generate-quotation`;
+    // Use a form POST to trigger the backend action
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `/rentals/${rental.id}/generate-quotation`;
+    // Add CSRF token if available
+    const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    if (csrf) {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = '_token';
+      input.value = csrf;
+      form.appendChild(input);
+    }
+    document.body.appendChild(form);
+    form.submit();
   };
 
   return (
     <div className="space-y-4">
+      {/* Workflow history / audit trail */}
+      <StatusTimeline rental={rental} />
+
       {/* Pending rental alert */}
       <Alert>
         <Clock className="h-4 w-4" />
@@ -103,7 +124,7 @@ export default function PendingSection({
             <div className="flex flex-col gap-2">
               <Button
                 onClick={handleGenerateQuotation}
-                disabled={isGeneratingQuotation || !permissions.generate_invoice}
+                disabled={isGeneratingQuotation || !permissions.generate_invoice || !rentalItems.data || rentalItems.data.length === 0}
               >
                 {isGeneratingQuotation ? (
                   <>
@@ -136,10 +157,9 @@ export default function PendingSection({
 
         <TabsContent value="items">
           <RentalItemsCard
-            rentalId={rental.id}
-            items={rentalItems.data}
-            canAddItems={permissions.update}
-          />
+                      rentalId={rental.id}
+                      items={rentalItems.data}
+                      canAddItems={permissions.update} equipment={[]} operators={[]}          />
         </TabsContent>
       </Tabs>
     </div>

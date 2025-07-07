@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useMemo, lazy, Suspense } from "react";
 import { useTranslation } from 'react-i18next';
-import { Head, Link, router } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import { PageProps } from '@/Core/types';
 import { Rental, RentalItem, PermissionString } from '@/Core/types/models';
 import { AppLayout } from '@/Core';
-import RentalItemsTable from '../../components/rentals/RentalItemsTable';
-import RentalWorkflowStatus from '../../components/rentals/RentalWorkflowStatus';
+import RentalItemsTable from '../../Components/rentals/RentalItemsTable';
+import RentalWorkflowStatus from '../../Components/rentals/RentalWorkflowStatus';
 import { format, differenceInDays, addDays, isAfter, isBefore } from "date-fns";
-import Echo from 'laravel-echo';
-import Pusher from 'pusher-js';
 import { cn } from "@/Core";
 import axios from "axios";
 
@@ -144,21 +142,21 @@ import {
   DollarSign
 } from "lucide-react";
 import { toast } from 'sonner';
-import RentalAnalytics from '../../components/rentals/RentalAnalytics';
+import RentalAnalytics from '../../Components/rentals/RentalAnalytics';
 // import MaintenanceRecordList from '../../components/maintenance/MaintenanceRecordList';
 // import PaymentStatusBadge from '../../components/shared/PaymentStatusBadge';
 // import MapView from '../../components/maps/MapView';
 import { formatCurrency } from "@/Core";
 
 // Other components
-import RentalTimeline from '../../components/rentals/RentalTimeline';
-import RentalExtensionForm from '../../components/rentals/RentalExtensionForm';
+import RentalTimeline from '../../Components/rentals/RentalTimeline';
+import RentalExtensionForm from '../../Components/rentals/RentalExtensionForm';
 // import DocumentsViewer from '../../components/documents/DocumentsViewer';
 
 // Add import for QRCode component
-import { QRCode } from "@/Core";
-import { RentalWorkflowStepper } from '../../components/rentals/RentalWorkflowStepper';
-import { RentalWorkflowActions } from '../../components/rentals/RentalWorkflowActions';
+// import { QRCode } from "@/Core";
+import { RentalWorkflowStepper } from '../../Components/rentals/RentalWorkflowStepper';
+import { RentalWorkflowActions } from '../../Components/rentals/RentalWorkflowActions';
 
 // Add Echo declaration for TypeScript
 declare global {
@@ -167,29 +165,29 @@ declare global {
   }
 }
 
-import RentalNotificationsPanel from '../../components/rentals/RentalNotificationsPanel';
-import RentalExtensionDialog from '../../components/rentals/RentalExtensionDialog';
-import QuotationGenerator from '../../components/rentals/QuotationGenerator';
+import RentalNotificationsPanel from '../../Components/rentals/RentalNotificationsPanel';
+import RentalExtensionDialog from '../../Components/rentals/RentalExtensionDialog';
+import QuotationGenerator from '../../Components/rentals/QuotationGenerator';
 
 // New components
-import StatusTimeline from '../../components/rentals/StatusTimeline';
-import InvoicesCard from '../../components/rentals/InvoicesCard';
-import DocumentsCard from '../../components/rentals/DocumentsCard';
+import StatusTimeline from '../../Components/rentals/StatusTimeline';
+import InvoicesCard from '../../Components/rentals/InvoicesCard';
+import DocumentsCard from '../../Components/rentals/DocumentsCard';
 
 // Our custom components
-import RentalInfoCard from '../../components/rentals/RentalInfoCard';
-import CustomerCard from '../../components/rentals/CustomerCard';
-import RentalItemsCard from '../../components/rentals/RentalItemsCard';
-import RentalActionsCard from '../../components/rentals/RentalActionsCard';
+import RentalInfoCard from '../../Components/rentals/RentalInfoCard';
+import CustomerCard from '../../Components/rentals/CustomerCard';
+import RentalItemsCard from '../../Components/rentals/RentalItemsCard';
+import RentalActionsCard from '../../Components/rentals/RentalActionsCard';
 
 // Lazy load workflow-specific components
-const PendingSection = lazy(() => import("../../components/rentals/workflow/PendingSection"));
-const QuotationSection = lazy(() => import("../../components/rentals/workflow/QuotationSection"));
-const MobilizationSection = lazy(() => import("../../components/rentals/workflow/MobilizationSection"));
-const ActiveSection = lazy(() => import("../../components/rentals/workflow/ActiveSection"));
-const CompletedSection = lazy(() => import("../../components/rentals/workflow/CompletedSection"));
-const CancelledSection = lazy(() => import("../../components/rentals/workflow/CancelledSection"));
-const OverdueSection = lazy(() => import("../../components/rentals/workflow/OverdueSection"));
+const PendingSection = lazy(() => import("../../Components/rentals/workflow/PendingSection"));
+const QuotationSection = lazy(() => import("../../Components/rentals/workflow/QuotationSection"));
+const MobilizationSection = lazy(() => import("../../Components/rentals/workflow/MobilizationSection"));
+const ActiveSection = lazy(() => import("../../Components/rentals/workflow/ActiveSection"));
+const CompletedSection = lazy(() => import("../../Components/rentals/workflow/CompletedSection"));
+const CancelledSection = lazy(() => import("../../Components/rentals/workflow/CancelledSection"));
+const OverdueSection = lazy(() => import("../../Components/rentals/workflow/OverdueSection"));
 
 interface ExtendedRental extends Rental {
   subtotal: number;
@@ -208,7 +206,7 @@ interface ExtendedRental extends Rental {
     latitude?: number;
     longitude?: number;
   };
-  payment_status?: 'unpaid' | 'partial' | 'paid' | 'overdue';
+  payment_status: 'pending' | 'partial' | 'paid' | 'overdue';
   weather_conditions?: string;
   equipment_condition?: 'excellent' | 'good' | 'fair' | 'poor';
   maintenance_history?: any[];
@@ -227,11 +225,12 @@ interface ExtendedRental extends Rental {
   total_paid?: number;
   remaining_balance?: number;
   payment_progress?: number;
+  customer?: any;
 }
 
 interface Props extends PageProps {
   rental: ExtendedRental & {
-    customer: {
+    customer?: {
       id: number;
       company_name: string;
       contact_person: string;
@@ -242,7 +241,7 @@ interface Props extends PageProps {
       state: string;
       zip_code: string;
       country: string;
-    },
+    };
     rentalItems?: any[]
   };
   rentalItems: {
@@ -308,6 +307,7 @@ interface Props extends PageProps {
   updated_at: string;
   deleted_at: string;
   dropdowns: any;
+  workflowHistory: any[];
 }
 
 export default function Show({
@@ -342,6 +342,7 @@ export default function Show({
   updated_at,
   deleted_at,
   dropdowns = {},
+  workflowHistory,
   ...rest
 }: Props) {
   const { t } = useTranslation('rental');
@@ -386,12 +387,7 @@ export default function Show({
 
       // Don't redirect immediately - give more time for debugging and potential data loading
       setTimeout(() => {
-        router.visit('/rentals', {
-          onBefore: () => {
-            toast.info('Returning to rentals list');
-            return true;
-          }
-        });
+        window.location.href = '/rentals';
       }, 3000);
       return;
     }
@@ -593,7 +589,7 @@ export default function Show({
     if (navigator.share) {
       navigator.share({
         title: `Rental #${rental.rental_number}`,
-        text: `Check details for rental #${rental.rental_number} with ${rental.customer.company_name}`,
+        text: `Check details for rental #${rental.rental_number} with ${rental.customer?.company_name}`,
         url: rentalUrl,
       })
       .then(() => {
@@ -890,7 +886,7 @@ export default function Show({
   const navigateToPage = (url: string) => {
     try {
       // First try Inertia router
-      router.visit(url);
+      window.location.href = url;
     } catch (error) {
       // Fallback to window.location
       console.error("Router navigation error:", error);
@@ -905,10 +901,10 @@ export default function Show({
       return;
     }
 
-    router.delete(route("rentals.destroy", rental.id), {
+    axios.delete(route('rentals.destroy', rental.id), {
       onSuccess: () => {
         toast.success("Rental deleted successfully");
-        navigateToPage(route("rentals.index"));
+        navigateToPage(route('rentals.index'));
       },
       onError: () => toast.error("Failed to delete rental"),
     });
@@ -958,11 +954,11 @@ export default function Show({
         window.Echo.private(`rental.${rental.id}`)
           .listen('RentalStatusUpdated', (e: any) => {
             toast.info(`Rental status updated to ${e.status}`);
-            router.reload({ preserveUrl: true });
+            window.location.reload();
           })
           .listen('RentalPaymentReceived', (e: any) => {
             toast.success(`Payment received: ${formatCurrency(e.amount)}`);
-            router.reload({ preserveUrl: true });
+            window.location.reload();
           })
           .listen('RentalMaintenanceRequired', (e: any) => {
             toast.warning(`Maintenance required for ${e.equipment_name}`);
@@ -1043,7 +1039,7 @@ export default function Show({
       .then(response => {
         toast.success("Rental extension requested successfully");
         setIsSimpleExtensionModalOpen(false);
-        router.reload();
+        window.location.reload();
       })
       .catch(error => {
         console.error('Extension error:', error);
@@ -1094,14 +1090,14 @@ export default function Show({
 
   // Add a function to handle rental extension success
   const handleExtensionSuccess = () => {
-    router.reload({ preserveUrl: true });
+    window.location.reload();
   };
 
   // Function to render the correct section based on rental status
   const renderWorkflowSection = () => {
     // Create shared props for all workflow sections
     const sharedProps = {
-      rental,
+      rental: { ...rental, workflow_history: workflowHistory },
       rentalItems: rentalItems && Array.isArray(rentalItems.data) ? rentalItems : { data: [], total: 0 },
       invoices: invoices && Array.isArray(invoices.data) ? invoices : { data: [], total: 0 },
       maintenanceRecords: maintenanceRecords && Array.isArray(maintenanceRecords.data) ? maintenanceRecords : { data: [], total: 0 },
@@ -1160,7 +1156,7 @@ export default function Show({
           <AlertCircle className="h-12 w-12 text-destructive" />
           <h2 className="text-xl font-semibold">{t('unable_to_load_rental_details')}</h2>
           <p className="text-muted-foreground">The rental data could not be loaded properly.</p>
-          <Button onClick={() => router.visit('/rentals')}>
+          <Button onClick={() => window.location.href = '/rentals'}>
             Return to Rentals List
           </Button>
         </div>
@@ -1178,10 +1174,10 @@ export default function Show({
                 </div>
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" asChild>
-                    <Link href={route('rentals.index')}>
+                    <a href={route('rentals.index')} className="flex items-center">
                       <ArrowLeft className="h-4 w-4 mr-2" />
                       Back to Rentals
-                    </Link>
+                    </a>
                   </Button>
                 </div>
               </CardHeader>

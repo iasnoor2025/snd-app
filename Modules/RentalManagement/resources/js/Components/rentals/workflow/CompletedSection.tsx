@@ -13,6 +13,7 @@ import DocumentsCard from "../DocumentsCard";
 import RentalAnalytics from "../RentalAnalytics";
 import { formatCurrency } from "@/Core";
 import { Progress } from "@/Core";
+import StatusTimeline from '../StatusTimeline';
 
 // Define interface for document
 interface AttachedDocument {
@@ -113,6 +114,9 @@ export default function CompletedSection({
 
   return (
     <div className="space-y-4">
+      {/* Workflow history / audit trail */}
+      <StatusTimeline rental={rental} />
+
       {/* Completed rental alert */}
       <Alert className="bg-green-50 border-green-200 text-green-800">
         <CheckCircle className="h-4 w-4 text-green-600" />
@@ -313,7 +317,7 @@ export default function CompletedSection({
         </TabsContent>
 
         <TabsContent value="analytics">
-          <RentalAnalytics 
+          <RentalAnalytics
             rental={rental}
             maintenanceRecords={maintenanceRecords?.data}
             weatherData={weatherData}

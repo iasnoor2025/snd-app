@@ -185,6 +185,8 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::post('rentals/{rental}/request-extension', [RentalWorkflowController::class, 'requestExtension']);
     Route::post('rentals/{rental}/approve-extension', [RentalWorkflowController::class, 'approveExtension']);
     Route::post('rentals/{rental}/reject-extension', [RentalWorkflowController::class, 'rejectExtension']);
+    Route::post('rentals/{rental}/cancel', [RentalWorkflowController::class, 'cancelRental'])->name('rentals.cancel');
+    Route::post('rentals/{rental}/reject-extension/{extensionId}', [RentalWorkflowController::class, 'rejectExtension'])->name('rentals.reject-extension');
 
 });
 
