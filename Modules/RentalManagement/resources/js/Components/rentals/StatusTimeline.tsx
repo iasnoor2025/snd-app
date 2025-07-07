@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { format } from "date-fns";
 import { cn } from "@/Core";
 import { ErrorBoundary } from "@/Core";
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 // ShadCN UI Components
 import {
@@ -15,7 +16,6 @@ import {
 
 // Icons
 import {
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
   CircleDashed,
   FileText,
   CheckCircle,
@@ -167,9 +167,9 @@ export default function StatusTimeline({ rental, className = "" }: StatusTimelin
                     <h3 className="flex items-center mb-1 text-sm font-semibold">
                       {event.name}
                     </h3>
-                    {formatDateMedium(event.date && (
+                    {event.date && (
                       <time className="block mb-1 text-xs font-normal text-muted-foreground">
-                        {event.date)}
+                        {formatDateMedium(event.date)}
                       </time>
                     )}
                     <p className="text-xs text-muted-foreground">

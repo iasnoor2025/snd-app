@@ -56,7 +56,7 @@ export default function PaymentForm({
   isLoading = false
 }: PaymentFormProps) {
   const { t } = useTranslation('payment');
-  
+
   const [formData, setFormData] = useState<PaymentFormData>({
     amount: 0,
     method: '',
@@ -84,7 +84,7 @@ export default function PaymentForm({
     if (!formData.amount || formData.amount <= 0) {
       newErrors.amount = 'Please enter a valid amount';
     }
-    
+
     if (maxAmount && formData.amount > maxAmount) {
       newErrors.amount = `Amount cannot exceed ${maxAmount}`;
     }
@@ -211,8 +211,8 @@ export default function PaymentForm({
                 className={`pl-10 ${errors.date ? 'border-red-500' : ''}`}
               />
             </div>
-            {formatDateMedium(errors.date && (
-              <p className="text-sm text-red-500">{errors.date)}</p>
+            {errors.date && (
+              <p className="text-sm text-red-500">{errors.date}</p>
             )}
           </div>
 
@@ -282,4 +282,4 @@ export default function PaymentForm({
   );
 }
 
-export type { PaymentFormData, PaymentFormProps }; 
+export type { PaymentFormData, PaymentFormProps };

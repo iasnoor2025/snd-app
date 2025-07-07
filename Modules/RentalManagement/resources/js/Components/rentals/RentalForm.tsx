@@ -268,8 +268,8 @@ export const RentalForm: React.FC<RentalFormProps> = ({
           value={formatDateMedium(data.start_date)}
           onChange={(date) => setData('start_date', date)}
         />
-        {formatDateMedium(errors.start_date && (
-          <p className="text-sm text-red-600">{errors.start_date)}</p>
+        {errors.start_date && (
+          <p className="text-sm text-red-600">{errors.start_date}</p>
         )}
       </div>
 

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
-import {
 import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import {
     Smartphone,
     Bell,
     Wifi,
@@ -23,7 +23,7 @@ interface PWAIndexProps {
 
 const PWAIndex: React.FC<PWAIndexProps> = ({ stats }) => {
     const { t } = useTranslation(['mobilebridge', 'common']);
-    
+
     const breadcrumbs = [
         { label: t('common:dashboard'), href: '/dashboard' },
         { label: t('pwa_management'), href: '/pwa' }

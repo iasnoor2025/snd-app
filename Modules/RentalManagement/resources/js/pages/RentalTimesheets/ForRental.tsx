@@ -57,7 +57,6 @@ import { Progress } from "@/Core";
 
 // Icons
 import {
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
   ArrowLeft,
   Calendar,
   Check,
@@ -79,6 +78,8 @@ import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/
   AlertCircle,
   UserX
 } from "lucide-react";
+
+import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Props extends PageProps {
   rental: any;

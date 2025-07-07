@@ -609,11 +609,11 @@ export default function TimesheetForm({ rentals = [], rentalItems = [], operator
     }
 
     // Check for overlapping timesheets
-    const overlappingTimesheet = timesheet && timesheets.find(t => {formatDateMedium(
+    const overlappingTimesheet = timesheet && timesheets.find(t => {
       if (t.operator_id !== values.operator_id) return false;
       if (format(new Date(t.date), 'yyyy-MM-dd') !== format(values.date, 'yyyy-MM-dd')) return false;
 
-      const existingStart = new Date(`${t.date)} ${t.start_time}`);
+      const existingStart = new Date(`${t.date} ${t.start_time}`);
       const existingEnd = new Date(`${formatDateMedium(t.date)} ${t.end_time}`);
       const newStart = new Date(`${format(values.date, 'yyyy-MM-dd')} ${values.start_time}`);
       const newEnd = new Date(`${format(values.date, 'yyyy-MM-dd')} ${values.end_time}`);
@@ -621,7 +621,7 @@ export default function TimesheetForm({ rentals = [], rentalItems = [], operator
       return (newStart >= existingStart && newStart < existingEnd) ||
              (newEnd > existingStart && newEnd <= existingEnd) ||
              (newStart <= existingStart && newEnd >= existingEnd);
-    })
+    });
 
     if (overlappingTimesheet) {
       toast.error("Operator already has a timesheet entry for this time period");
@@ -821,8 +821,8 @@ export default function TimesheetForm({ rentals = [], rentalItems = [], operator
                     </PopoverContent>
                   </Popover>
                 </div>
-                {formatDateMedium(form.errors.date && (
-                  <p className="text-xs text-destructive mt-1">{form.errors.date)}</p>
+                {form.errors.date && (
+                  <p className="text-xs text-destructive mt-1">{form.errors.date}</p>
                 )}
               </div>
 

@@ -19,8 +19,3 @@ export function formatDate(date: string | Date): string {
   return formatDateMedium(dateObj);
 }
 
-export function formatDateTime(date: string | Date): string {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
-  return formatDateTime(dateObj);
-}
-

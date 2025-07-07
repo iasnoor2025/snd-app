@@ -38,8 +38,8 @@ import {
   DialogTrigger,
 } from "@/Core";
 import { AppLayout } from '@/Core';
-import {
 import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import {
   Plus as PlusIcon,
   Eye as EyeIcon,
   Pencil as PencilIcon,
@@ -214,9 +214,9 @@ export default function LeaveRequestsIndex({ auth, leaveRequests, filters = { st
     <TooltipProvider>
       <Head title="Leave Requests" />
 
-      <AppLayout 
-        title="Leave Requests" 
-        requiredPermission="leave-requests.view" 
+      <AppLayout
+        title="Leave Requests"
+        requiredPermission="leave-requests.view"
         breadcrumbs={breadcrumbs}
       >
         <div className="space-y-6">
@@ -306,9 +306,9 @@ export default function LeaveRequestsIndex({ auth, leaveRequests, filters = { st
                               {canViewLeaveRequest && (
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    <Button 
-                                      variant="ghost" 
-                                      size="sm" 
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
                                       onClick={() => router.get(route('leaves.requests.show', request.id))}
                                     >
                                       <EyeIcon className="h-4 w-4" />
@@ -320,9 +320,9 @@ export default function LeaveRequestsIndex({ auth, leaveRequests, filters = { st
                               {canEditLeaveRequest && request.status.toLowerCase() === 'pending' && (
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    <Button 
-                                      variant="ghost" 
-                                      size="sm" 
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
                                       onClick={() => router.get(route('leaves.requests.edit', request.id))}
                                     >
                                       <PencilIcon className="h-4 w-4" />
@@ -335,9 +335,9 @@ export default function LeaveRequestsIndex({ auth, leaveRequests, filters = { st
                                 <>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <Button 
-                                        variant="ghost" 
-                                        size="sm" 
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
                                         onClick={() => handleApprove(request.id)}
                                         disabled={processing === request.id}
                                         className="text-green-600 hover:text-green-700 hover:bg-green-50"
@@ -349,9 +349,9 @@ export default function LeaveRequestsIndex({ auth, leaveRequests, filters = { st
                                   </Tooltip>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <Button 
-                                        variant="ghost" 
-                                        size="sm" 
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
                                         onClick={() => handleReject(request.id)}
                                         disabled={processing === request.id}
                                         className="text-red-600 hover:text-red-700 hover:bg-red-50"
@@ -366,9 +366,9 @@ export default function LeaveRequestsIndex({ auth, leaveRequests, filters = { st
                               {canDeleteLeaveRequest && (
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    <Button 
-                                      variant="ghost" 
-                                      size="sm" 
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
                                       onClick={() => handleDelete(request.id)}
                                       className="text-red-600 hover:text-red-700 hover:bg-red-50"
                                     >

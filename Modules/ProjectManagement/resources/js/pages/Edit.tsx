@@ -216,8 +216,8 @@ export default function Edit({ project, manager = {}, tasks = [], teamMembers = 
                                             />
                                         </PopoverContent>
                                     </Popover>
-                                    {formatDateMedium(errors.start_date && (
-                                        <p className="text-sm text-destructive">{errors.start_date)}</p>
+                                    {errors.start_date && (
+                                        <p className="text-sm text-destructive">{errors.start_date}</p>
                                     )}
                                 </div>
 
@@ -249,8 +249,8 @@ export default function Edit({ project, manager = {}, tasks = [], teamMembers = 
                                             />
                                         </PopoverContent>
                                     </Popover>
-                                    {formatDateMedium(errors.end_date && (
-                                        <p className="text-sm text-destructive">{errors.end_date)}</p>
+                                    {errors.end_date && (
+                                        <p className="text-sm text-destructive">{errors.end_date}</p>
                                     )}
                                 </div>
 

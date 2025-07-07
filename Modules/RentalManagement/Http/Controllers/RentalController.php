@@ -27,36 +27,13 @@ class RentalController extends Controller
         // Get filters from request
         $filters = $request->only(['search', 'status', 'date_from', 'date_to']);
 
-        // Get rentals from service
-        $rentals = $this->rentalService->getAllRentals($filters);
+        // Get paginated rentals from service
+        $rentals = $this->rentalService->getPaginatedRentals(15, $filters);
 
         \Log::info('Rentals data from service:', ['count' => $rentals->count(), 'data' => $rentals->toArray()]);
 
-        // Force hardcoded data for testing
-        $testData = [
-            'data' => [
-                [
-                    'id' => 1,
-                    'rental_number' => 'TEST-001',
-                    'customer_name' => 'Test Customer',
-                    'customer_email' => 'test@example.com',
-                    'start_date' => '2025-01-01',
-                    'end_date' => '2025-01-02',
-                    'status' => 'active',
-                    'total_amount' => 100.00,
-                    'rental_items' => []
-                ]
-            ],
-            'current_page' => 1,
-            'per_page' => 10,
-            'total' => 1,
-            'last_page' => 1
-        ];
-
-        \Log::info('Sending test data to frontend:', $testData);
-
         return Inertia::render('Rentals/Index', [
-            'rentals' => $testData,
+            'rentals' => $rentals,
             'filters' => $filters
         ]);
     }
