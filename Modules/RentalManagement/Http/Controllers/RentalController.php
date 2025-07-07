@@ -244,10 +244,26 @@ class RentalController extends Controller
             'equipmentUtilization' => 75,
         ];
 
+        // Fix rentalItems equipment name to always be a string and convert to array, re-indexed
+        $rentalItems = $rental->rentalItems->map(function ($item) {
+            if ($item->equipment) {
+                $name = $item->equipment->name;
+                if (is_array($name)) {
+                    $name = $name['en'] ?? reset($name) ?? '';
+                }
+                $item->equipment->name = $name;
+            } else {
+                $item->equipment = [
+                    'name' => ''
+                ];
+            }
+            return $item->toArray();
+        })->values();
+
         return Inertia::render('Rentals/Show', [
             'rental' => $rental,
             'rentalItems' => [
-                'data' => $rental->rentalItems,
+                'data' => $rentalItems,
                 'total' => $rental->rentalItems->count(),
             ],
             'invoices' => [
@@ -283,6 +299,9 @@ class RentalController extends Controller
     public function edit($id)
     {
         $rental = $this->rentalService->findById($id);
+        if (!$rental) {
+            return redirect()->route('rentals.index')->with('error', 'Rental not found.');
+        }
         $rental->load([
             'customer',
             'rentalItems.equipment',
@@ -294,7 +313,21 @@ class RentalController extends Controller
         ]);
         $customers = \Modules\CustomerManagement\Domain\Models\Customer::where('is_active', true)
             ->orderBy('name')
-            ->get(['id', 'name', 'company_name', 'contact_person', 'email', 'phone']);
+            ->get(['id', 'name', 'company_name', 'contact_person', 'email', 'phone'])
+            ->map(function ($customer) {
+                $name = $customer->name;
+                if (is_array($name)) {
+                    $name = $name['en'] ?? reset($name) ?? '';
+                }
+                return [
+                    'id' => $customer->id,
+                    'name' => $name,
+                    'company_name' => $customer->company_name,
+                    'contact_person' => $customer->contact_person,
+                    'email' => $customer->email,
+                    'phone' => $customer->phone,
+                ];
+            });
         $equipment = \Modules\EquipmentManagement\Domain\Models\Equipment::where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'name', 'model', 'manufacturer', 'serial_number', 'status'])

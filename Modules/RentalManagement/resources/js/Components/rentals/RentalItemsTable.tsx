@@ -87,7 +87,17 @@ export default function RentalItemsTable({ rentalItems, items = [], readOnly = t
             items.map((item, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium">
-                  {item.equipment?.name || "Unknown Equipment"}
+                  {(() => {
+                    const eqName = item.equipment?.name;
+                    if (!eqName) return "Unknown Equipment";
+                    if (typeof eqName === 'string') return eqName;
+                    if (typeof eqName === 'object' && eqName !== null) {
+                      if ('en' in eqName) return eqName.en;
+                      const firstVal = Object.values(eqName)[0];
+                      if (typeof firstVal === 'string') return firstVal;
+                    }
+                    return String(eqName);
+                  })()}
                 </TableCell>
                 <TableCell>
                   {item.operator_id ? (
