@@ -6,7 +6,7 @@ use Modules\RentalManagement\Domain\Models\Rental;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Enums\RentalStatus;
-use App\Actions\Rental\GenerateQuotationAction;
+use Modules\RentalManagement\Actions\GenerateQuotationAction;
 use App\Actions\Rental\StartRentalAction;
 use App\Actions\Rental\CompleteRentalAction;
 use App\Actions\Rental\ApproveQuotationAction;

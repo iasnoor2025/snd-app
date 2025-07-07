@@ -180,15 +180,45 @@ class RentalController extends Controller
         // Translations (if using Spatie Translatable)
         $translations = method_exists($rental, 'getTranslations') ? $rental->getTranslations('notes') : [];
 
+        // Permissions (dummy for now, replace with real permission logic)
+        $permissions = [
+            'view' => true,
+            'update' => true,
+            'delete' => true,
+            'approve' => true,
+            'complete' => true,
+            'generate_invoice' => true,
+            'view_timesheets' => true,
+            'request_extension' => true,
+        ];
+
+        // Next possible states (dummy, replace with workflow logic if available)
+        $nextPossibleStates = method_exists($rental, 'getNextPossibleStates') ? $rental->getNextPossibleStates() : [];
+
+        // Metrics (dummy, replace with real calculation if available)
+        $metrics = [
+            'rentalEfficiency' => 85,
+            'profitMargin' => 40,
+            'equipmentUtilization' => 75,
+        ];
+
         return Inertia::render('Rentals/Show', [
             'rental' => $rental,
-            'customer' => $rental->customer,
-            'rentalItems' => $rental->rentalItems,
-            'equipment' => $rental->equipment,
-            'invoices' => $rental->invoices,
+            'rentalItems' => [
+                'data' => $rental->rentalItems,
+                'total' => $rental->rentalItems->count(),
+            ],
+            'invoices' => [
+                'data' => $rental->invoices,
+                'total' => $rental->invoices->count(),
+            ],
+            'maintenanceRecords' => [
+                'data' => $rental->maintenanceRecords,
+                'total' => $rental->maintenanceRecords->count(),
+            ],
             'timesheets' => $rental->timesheets,
             'payments' => $rental->payments,
-            'maintenanceRecords' => $rental->maintenanceRecords,
+            'equipment' => $rental->equipment,
             'location' => $rental->location,
             'translations' => $translations,
             'created_at' => $rental->created_at,
@@ -199,6 +229,9 @@ class RentalController extends Controller
                 'equipment' => $equipment,
                 'employees' => $employees,
             ],
+            'permissions' => $permissions,
+            'nextPossibleStates' => $nextPossibleStates,
+            'metrics' => $metrics,
         ]);
     }
 

@@ -50,12 +50,8 @@ export default function PendingSection({
 
     setIsGeneratingQuotation(true);
 
-    // Simulate API call to generate quotation
-    setTimeout(() => {
-      setIsGeneratingQuotation(false);
-      // In a real implementation, call an API endpoint to generate quotation
-      window.location.href = `/rentals/${rental.id}/quotation/generate`;
-    }, 1000);
+    // Use the correct backend route for direct quotation generation
+    window.location.href = `/rentals/${rental.id}/direct-generate-quotation`;
   };
 
   return (

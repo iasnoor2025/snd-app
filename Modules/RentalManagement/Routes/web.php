@@ -171,7 +171,8 @@ Route::middleware(['web', 'auth'])->group(function () {
     // Workflow action routes - using RentalWorkflowController
 
     Route::post('rentals/{rental}/generate-quotation', [RentalWorkflowController::class, 'generateQuotation']);
-    Route::get('rentals/{rental}/direct-generate-quotation', [RentalWorkflowController::class, 'directGenerateQuotation']);
+    Route::get('rentals/{rental}/direct-generate-quotation', [RentalWorkflowController::class, 'directGenerateQuotation'])
+        ->name('rentals.direct-generate-quotation');
     Route::post('rentals/{rental}/approve-quotation', [RentalWorkflowController::class, 'approveQuotation']);
     Route::post('rentals/{rental}/start-mobilization', [RentalWorkflowController::class, 'startMobilization']);
     Route::post('rentals/{rental}/complete-mobilization', [RentalWorkflowController::class, 'completeMobilization']);
