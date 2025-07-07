@@ -115,5 +115,31 @@ class RentalItemController extends Controller
         return redirect()->route('rentals.show', $rentalId)
             ->with('success', 'Rental item added successfully.');
     }
+
+    /**
+     * Mark a rental item as returned.
+     */
+    public function return(Request $request, RentalItem $rentalItem)
+    {
+        $validated = $request->validate([
+            'return_date' => 'required|date',
+            'return_condition' => 'required|string',
+        ]);
+
+        $rentalItem->returned_at = $validated['return_date'];
+        $rentalItem->return_condition = $validated['return_condition'];
+        $rentalItem->save();
+
+        // Optionally, recalculate rental totals
+        if ($rentalItem->rental) {
+            $rentalItem->rental->updateTotalAmount();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Rental item returned successfully',
+            'data' => $rentalItem
+        ]);
+    }
 }
 

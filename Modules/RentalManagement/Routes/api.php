@@ -49,6 +49,8 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
         ->middleware('permission:rentals.items.edit');
     Route::delete('rental-items/{rental_item}', [RentalItemController::class, 'destroy'])
         ->middleware('permission:rentals.items.delete');
+    Route::post('rental-items/{rental_item}/return', [RentalItemController::class, 'return'])
+        ->middleware('permission:rentals.items.edit');
 
     // Rental history
     Route::get('rental-history', [RentalHistoryController::class, 'index'])

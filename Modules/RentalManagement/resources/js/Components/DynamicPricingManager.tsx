@@ -213,7 +213,7 @@ export function DynamicPricingManager({ equipmentId }: DynamicPricingManagerProp
             </CardContent>
 
             <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-                <DialogContent>
+                <DialogContent aria-describedby={undefined}>
                     <DialogHeader>
                         <DialogTitle>Create Pricing Rule</DialogTitle>
                         <DialogDescription>

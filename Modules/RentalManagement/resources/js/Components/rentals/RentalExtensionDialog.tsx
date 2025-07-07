@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from 'react-i18next';
-import { format, addDays } from "date-fns";
+import { format, addDays, isValid as isValidDateFns } from "date-fns";
 import { router } from "@inertiajs/react";
 import { Calendar } from "@/Core";
 import { Textarea } from "@/Core";
@@ -31,6 +31,13 @@ interface RentalExtensionDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
+}
+
+// Helper to safely format dates
+function safeFormat(date: Date | string | undefined, fmt: string) {
+  if (!date) return '';
+  const d = typeof date === 'string' ? new Date(date) : date;
+  return isValidDateFns(d) ? format(d, fmt) : '';
 }
 
 export default function RentalExtensionDialog({
@@ -67,8 +74,8 @@ export default function RentalExtensionDialog({
     e.preventDefault();
 
     // Validate form
-    if (!newEndDate) {
-      ToastManager.error("Please select a new end date");
+    if (!newEndDate || !isValidDateFns(newEndDate)) {
+      ToastManager.error("Please select a valid new end date");
       return;
     }
 
@@ -80,7 +87,7 @@ export default function RentalExtensionDialog({
     setIsSubmitting(true);
 
     const requestData = {
-      new_end_date: format(newEndDate, 'yyyy-MM-dd'),
+      new_end_date: safeFormat(newEndDate, 'yyyy-MM-dd'),
       reason: reason,
       keep_operators: true // Default to keeping operators
     };
@@ -102,7 +109,7 @@ export default function RentalExtensionDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px]" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>{t('ttl_request_rental_extension')}</DialogTitle>
           <DialogDescription>
@@ -128,7 +135,7 @@ export default function RentalExtensionDialog({
                       disabled={isSubmitting}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {newEndDate ? format(newEndDate, "PPP") : <span>{t('pick_a_date')}</span>}
+                      {newEndDate ? safeFormat(newEndDate, "PPP") : <span>{t('pick_a_date')}</span>}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">

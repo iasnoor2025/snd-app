@@ -28,19 +28,18 @@ class DatabaseSeeder extends Seeder
         Permission::query()->delete();
         Schema::enableForeignKeyConstraints();
 
+        // Run AdminUserSeeder first
+        $this->call(AdminUserSeeder::class);
+
         // Run the CoreTableSeeder to create and populate core module tables
         $this->call(CoreTableSeeder::class);
-
         // Run the Core module migrations manually
         $this->call(CoreModuleMigrator::class);
-
         // Run the PermissionSeeder first to create all permissions
         $this->call(PermissionSeeder::class);
-
         // Run the RoleSeeder to create roles and assign permissions
         $this->call(RoleSeeder::class);
-
-        // Run the AdminUserSeeder to create admin users
+        // Run AdminUserSeeder again to ensure admin user is present after roles/permissions
         $this->call(AdminUserSeeder::class);
 
         // Seed all modules
@@ -60,6 +59,9 @@ class DatabaseSeeder extends Seeder
         $this->call(\Modules\Localization\Database\Seeders\LocalizationDatabaseSeeder::class);
         $this->call(\Modules\PayrollManagement\database\seeders\PayrollManagementDatabaseSeeder::class);
         $this->call(\Modules\Analytics\Database\Seeders\AnalyticsDatabaseSeeder::class);
+
+        // Run AdminUserSeeder last to ensure admin user is present after all seeding
+        $this->call(AdminUserSeeder::class);
 
         // Create a test user if needed
         if (app()->environment('local', 'development')) {

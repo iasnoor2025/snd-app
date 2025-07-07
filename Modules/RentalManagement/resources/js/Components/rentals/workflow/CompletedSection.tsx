@@ -14,6 +14,8 @@ import RentalAnalytics from "../RentalAnalytics";
 import { formatCurrency } from "@/Core";
 import { Progress } from "@/Core";
 import StatusTimeline from '../StatusTimeline';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/Core";
+import axios from "axios";
 
 // Define interface for document
 interface AttachedDocument {
@@ -70,6 +72,9 @@ export default function CompletedSection({
 
   const [selectedTab, setSelectedTab] = React.useState("summary");
   const [isGeneratingReport, setIsGeneratingReport] = React.useState(false);
+  const [returnDialogOpen, setReturnDialogOpen] = React.useState(false);
+  const [returnDate, setReturnDate] = React.useState<Date | null>(new Date());
+  const [isReturning, setIsReturning] = React.useState(false);
 
   // Calculate rental duration
   const getRentalDuration = () => {
@@ -110,6 +115,21 @@ export default function CompletedSection({
       setIsGeneratingReport(false);
       window.open(`/rentals/${rental.id}/report`, '_blank');
     }, 1500);
+  };
+
+  const handleReturn = async () => {
+    if (!returnDate) return;
+    setIsReturning(true);
+    try {
+      await axios.post(`/api/rentals/${rental.id}/return`, {
+        return_date: format(returnDate, 'yyyy-MM-dd'),
+        return_condition: 'good', // TODO: Add real input for condition
+      });
+      window.location.reload();
+    } catch (e) {
+      setIsReturning(false);
+      // TODO: Add toast error
+    }
   };
 
   return (
@@ -293,6 +313,32 @@ export default function CompletedSection({
             canAddItems={permissions.update}
             equipment={rental.dropdowns?.equipment || []}
             operators={rental.dropdowns?.employees || []}
+            extraHeaderButton={
+              <Dialog open={returnDialogOpen} onOpenChange={setReturnDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm" className="ml-2">{t('btn_return_rental', 'Return')}</Button>
+                </DialogTrigger>
+                <DialogContent aria-describedby={undefined}>
+                  <DialogHeader>
+                    <DialogTitle>{t('ttl_return_rental', 'Return Rental')}</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <label className="block text-sm font-medium">{t('return_date', 'Return Date')}</label>
+                    <input
+                      type="date"
+                      className="border rounded px-2 py-1"
+                      value={returnDate ? format(returnDate, 'yyyy-MM-dd') : ''}
+                      onChange={e => setReturnDate(e.target.value ? new Date(e.target.value) : null)}
+                    />
+                  </div>
+                  <DialogFooter>
+                    <Button onClick={handleReturn} disabled={isReturning}>
+                      {isReturning ? t('processing', 'Processing...') : t('btn_confirm_return', 'Confirm Return')}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            }
           />
         </TabsContent>
 
@@ -330,17 +376,3 @@ export default function CompletedSection({
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

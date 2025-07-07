@@ -11,6 +11,11 @@ import { Alert, AlertDescription, AlertTitle } from "@/Core";
 import { AlertCircle, Clock } from "lucide-react";
 import { differenceInDays } from "date-fns";
 import StatusTimeline from '../StatusTimeline';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/Core";
+import { Calendar } from "@/Core";
+import { format } from "date-fns";
+import { Button } from "@/Core";
+import axios from "axios";
 
 // Document type for attached documents
 interface AttachedDocument {
@@ -65,6 +70,9 @@ export default function ActiveSection({
   const { t } = useTranslation('rental');
 
   const [selectedTab, setSelectedTab] = React.useState("items");
+  const [returnDialogOpen, setReturnDialogOpen] = React.useState(false);
+  const [returnDate, setReturnDate] = React.useState<Date | null>(new Date());
+  const [isReturning, setIsReturning] = React.useState(false);
 
   // Check if rental is nearing completion (within 3 days of expected end date)
   const isNearingCompletion = () => {
@@ -75,6 +83,21 @@ export default function ActiveSection({
     const daysRemaining = differenceInDays(expectedEndDate, today);
 
     return daysRemaining >= 0 && daysRemaining <= 3;
+  };
+
+  const handleReturn = async () => {
+    if (!returnDate) return;
+    setIsReturning(true);
+    try {
+      await axios.post(`/api/rentals/${rental.id}/return`, {
+        return_date: format(returnDate, 'yyyy-MM-dd'),
+        return_condition: 'good', // TODO: Add real input for condition
+      });
+      window.location.reload();
+    } catch (e) {
+      setIsReturning(false);
+      // TODO: Add toast error
+    }
   };
 
   return (
@@ -113,13 +136,39 @@ export default function ActiveSection({
         </TabsList>
 
         <TabsContent value="items">
-          <RentalItemsCard
-            rentalId={rental.id}
-            items={rentalItems.data}
-            canAddItems={permissions.update}
-            equipment={rental.dropdowns?.equipment || []}
-            operators={rental.dropdowns?.employees || []}
-          />
+          <div className="flex justify-between items-center mb-2">
+            <RentalItemsCard
+              rentalId={rental.id}
+              items={rentalItems.data}
+              canAddItems={permissions.update}
+              equipment={rental.dropdowns?.equipment || []}
+              operators={rental.dropdowns?.employees || []}
+            />
+            <Dialog open={returnDialogOpen} onOpenChange={setReturnDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" className="ml-4">{t('btn_return_rental', 'Return')}</Button>
+              </DialogTrigger>
+              <DialogContent aria-describedby={undefined}>
+                <DialogHeader>
+                  <DialogTitle>{t('ttl_return_rental', 'Return Rental')}</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <label className="block text-sm font-medium">{t('return_date', 'Return Date')}</label>
+                  <input
+                    type="date"
+                    className="border rounded px-2 py-1"
+                    value={returnDate ? format(returnDate, 'yyyy-MM-dd') : ''}
+                    onChange={e => setReturnDate(e.target.value ? new Date(e.target.value) : null)}
+                  />
+                </div>
+                <DialogFooter>
+                  <Button onClick={handleReturn} disabled={isReturning}>
+                    {isReturning ? t('processing', 'Processing...') : t('btn_confirm_return', 'Confirm Return')}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
         </TabsContent>
 
         <TabsContent value="invoices">

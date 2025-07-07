@@ -13,8 +13,10 @@ import {
   Button,
 } from "@/Core";
 import { Badge } from "@/Core";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/Core/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/Core/components/ui/dialog";
 import { DynamicPricingManager } from '../DynamicPricingManager';
+import { format } from "date-fns";
+import axios from "axios";
 
 interface ExtendedRentalItem extends Omit<RentalItem, 'operator'> {
   daily_rate?: number;
@@ -36,6 +38,9 @@ interface Props {
 export default function RentalItemsTable({ rentalItems, items = [], readOnly = true }: Props) {
   const { t } = useTranslation('rental');
   const [openEquipmentId, setOpenEquipmentId] = useState<number | null>(null);
+  const [returnDialogOpenId, setReturnDialogOpenId] = useState<number | null>(null);
+  const [returnDate, setReturnDate] = useState<Date | null>(new Date());
+  const [isReturning, setIsReturning] = useState(false);
 
   // Format currency for display
   const formatCurrency = (amount: number) => {
@@ -138,6 +143,48 @@ export default function RentalItemsTable({ rentalItems, items = [], readOnly = t
                       <DynamicPricingManager equipmentId={item.equipment_id} />
                     </DialogContent>
                   </Dialog>
+                  {!item.returned_at && (
+                    <Dialog open={returnDialogOpenId === item.id} onOpenChange={() => setReturnDialogOpenId(null)}>
+                      <DialogTrigger asChild>
+                        <Button size="sm" variant="outline" className="ml-2">{t('btn_return_item', 'Return')}</Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>{t('ttl_return_item', 'Return Rental Item')}</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <label className="block text-sm font-medium">{t('return_date', 'Return Date')}</label>
+                          <input
+                            type="date"
+                            className="border rounded px-2 py-1"
+                            value={returnDate ? format(returnDate, 'yyyy-MM-dd') : ''}
+                            onChange={e => setReturnDate(e.target.value ? new Date(e.target.value) : null)}
+                          />
+                        </div>
+                        <DialogFooter>
+                          <Button
+                            onClick={async () => {
+                              if (!returnDate) return;
+                              setIsReturning(true);
+                              try {
+                                await axios.post(`/api/rental-items/${item.id}/return`, {
+                                  return_date: format(returnDate, 'yyyy-MM-dd'),
+                                  return_condition: 'good', // TODO: Add real input for condition
+                                });
+                                window.location.reload();
+                              } catch (e) {
+                                setIsReturning(false);
+                                // TODO: Add toast error
+                              }
+                            }}
+                            disabled={isReturning}
+                          >
+                            {isReturning ? t('processing', 'Processing...') : t('btn_confirm_return', 'Confirm Return')}
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  )}
                 </TableCell>
               </TableRow>
             ))

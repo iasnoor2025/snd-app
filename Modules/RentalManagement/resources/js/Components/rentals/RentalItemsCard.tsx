@@ -27,6 +27,7 @@ interface RentalItemsCardProps {
   canAddItems: boolean;
   equipment: any[];
   operators: any[];
+  extraHeaderButton?: React.ReactNode;
 }
 
 const RentalItemsCard: React.FC<RentalItemsCardProps & { equipment?: any[]; operators?: any[] }> = ({
@@ -35,6 +36,7 @@ const RentalItemsCard: React.FC<RentalItemsCardProps & { equipment?: any[]; oper
   canAddItems,
   equipment,
   operators,
+  extraHeaderButton,
 }) => {
   const { t } = useTranslation('rental');
   const [open, setOpen] = React.useState(false);
@@ -48,30 +50,32 @@ const RentalItemsCard: React.FC<RentalItemsCardProps & { equipment?: any[]; oper
           <CardTitle>{t('rental_items')}</CardTitle>
           <CardDescription>{t('equipment_and_operator_details_for_this_rental')}</CardDescription>
         </div>
-        {canAddItems && (
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm">
-                <Plus className="h-4 w-4 mr-2" />
-                {t('btn_add_item')}
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl" aria-describedby="add-item-modal-desc">
-              <DialogDescription id="add-item-modal-desc">
-                {t('equipment_and_operator_details_for_this_rental')}
-              </DialogDescription>
-              <DialogHeader>
-                <DialogTitle>{t('ttl_add_rental_item')}</DialogTitle>
-              </DialogHeader>
-              <CreateRentalItemForm
-                key={`modal-form-${rentalId}-${JSON.stringify(safeEquipment)}-${JSON.stringify(safeOperators)}`}
-                rental={{ id: rentalId }}
-                equipment={safeEquipment}
-                operators={safeOperators}
-              />
-            </DialogContent>
-          </Dialog>
-        )}
+        <div className="flex items-center gap-2">
+          {canAddItems && (
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Plus className="h-4 w-4 mr-2" />
+                  {t('btn_add_item')}
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl" aria-describedby={undefined}>
+                <DialogDescription id="add-item-modal-desc">
+                  {t('equipment_and_operator_details_for_this_rental')}
+                </DialogDescription>
+                <DialogHeader>
+                  <DialogTitle>{t('ttl_add_rental_item')}</DialogTitle>
+                </DialogHeader>
+                <CreateRentalItemForm
+                  key={`modal-form-${rentalId}-${JSON.stringify(safeEquipment)}-${JSON.stringify(safeOperators)}`}
+                  rental={{ id: rentalId }}
+                  equipment={safeEquipment}
+                  operators={safeOperators}
+                />
+              </DialogContent>
+            </Dialog>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         {items && items.length > 0 ? (
@@ -91,7 +95,7 @@ const RentalItemsCard: React.FC<RentalItemsCardProps & { equipment?: any[]; oper
                     Add First Item
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl" aria-describedby="add-item-modal-desc">
+                <DialogContent className="max-w-2xl" aria-describedby={undefined}>
                   <DialogDescription id="add-item-modal-desc">
                     {t('equipment_and_operator_details_for_this_rental')}
                   </DialogDescription>
