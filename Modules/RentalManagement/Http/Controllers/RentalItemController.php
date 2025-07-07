@@ -50,5 +50,68 @@ class RentalItemController extends Controller
 
         return back()->with('success', 'Equipment updated successfully.');
     }
+
+    /**
+     * Show the form for creating a new rental item.
+     */
+    public function create(Request $request, $rentalId)
+    {
+        $rental = \Modules\RentalManagement\Domain\Models\Rental::findOrFail($rentalId);
+        $equipment = \Modules\EquipmentManagement\Domain\Models\Equipment::where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name'])
+            ->map(function ($item) {
+                $name = $item->name;
+                if (is_array($name)) {
+                    $name = $name['en'] ?? reset($name) ?? '';
+                }
+                return [
+                    'id' => $item->id,
+                    'name' => $name,
+                ];
+            });
+        $operators = \Modules\EmployeeManagement\Domain\Models\Employee::where('is_operator', true)
+            ->where('status', 'active')
+            ->orderBy('first_name')
+            ->get(['id', 'first_name', 'last_name'])
+            ->map(function ($op) {
+                return [
+                    'id' => $op->id,
+                    'name' => trim($op->first_name . ' ' . $op->last_name),
+                ];
+            });
+        return inertia('Rentals/Items/Create', [
+            'rental' => [
+                'id' => $rental->id,
+            ],
+            'equipment' => $equipment,
+            'operators' => $operators,
+        ]);
+    }
+
+    /**
+     * Store a newly created rental item in storage.
+     */
+    public function store(Request $request, $rentalId)
+    {
+        $validated = $request->validate([
+            'equipment_id' => 'required|exists:equipment,id',
+            'operator_id' => 'nullable|exists:employees,id',
+            'rate' => 'required|numeric|min:0',
+            'rate_type' => 'required|in:hourly,daily,weekly,monthly',
+            'days' => 'required|integer|min:1',
+            'discount_percentage' => 'nullable|numeric',
+            'notes' => 'nullable|string',
+        ]);
+        $validated['rental_id'] = $rentalId;
+        $rate = $validated['rate'];
+        $days = $validated['days'];
+        $discount = isset($validated['discount_percentage']) ? $validated['discount_percentage'] : 0;
+        $total = $rate * $days * (1 - ($discount / 100));
+        $validated['total_amount'] = $total;
+        \Modules\RentalManagement\Domain\Models\RentalItem::create($validated);
+        return redirect()->route('rentals.show', $rentalId)
+            ->with('success', 'Rental item added successfully.');
+    }
 }
 

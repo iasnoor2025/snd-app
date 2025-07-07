@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, useForm } from '@inertiajs/react';
 import { Button } from "@/Core";
@@ -36,6 +36,15 @@ const Create: FC<Props> = ({ rental, equipment, operators }) => {
         e.preventDefault();
         post(`/rentals/${rental.id}/items`);
     };
+
+    // Live total calculation
+    const total = useMemo(() => {
+        const rate = parseFloat(data.rate) || 0;
+        const days = parseInt(data.days) || 0;
+        const discount = parseFloat(data.discount_percentage) || 0;
+        if (!rate || !days) return 0;
+        return rate * days * (1 - discount / 100);
+    }, [data.rate, data.days, data.discount_percentage]);
 
     return (
         <>
@@ -169,6 +178,12 @@ const Create: FC<Props> = ({ rental, equipment, operators }) => {
                                     {errors.notes && (
                                         <p className="text-sm text-red-500">{errors.notes}</p>
                                     )}
+                                </div>
+
+                                {/* Total Calculation */}
+                                <div className="py-4 text-right">
+                                    <span className="font-semibold">Total: </span>
+                                    <span className="text-lg font-bold">{total.toLocaleString(undefined, { style: 'currency', currency: 'SAR' })}</span>
                                 </div>
 
                                 <div className="flex justify-end space-x-2">
