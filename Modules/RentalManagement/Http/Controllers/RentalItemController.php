@@ -102,6 +102,8 @@ class RentalItemController extends Controller
             'days' => 'required|integer|min:1',
             'discount_percentage' => 'nullable|numeric',
             'notes' => 'nullable|string',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
         ]);
         $validated['rental_id'] = $rentalId;
         $rate = $validated['rate'];

@@ -36,6 +36,8 @@ class RentalItem extends Model
         'discount_percentage',
         'total_amount',
         'notes',
+        'start_date',
+        'end_date',
     ];
 
     /**

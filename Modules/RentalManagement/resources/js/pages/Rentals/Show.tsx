@@ -1260,6 +1260,14 @@ export default function Show({
               canDelete={permissions.update}
               className="mt-8"
             />
+
+            <RentalItemsCard
+              rentalId={rental.id}
+              items={rentalItems.data}
+              canAddItems={permissions.update}
+              equipment={dropdowns.equipment || []}
+              operators={dropdowns.employees || []}
+            />
           </div>
         </div>
       )}

@@ -21,6 +21,8 @@ return new class extends Migration
             $table->enum('rate_type', ['daily', 'weekly', 'monthly'])->default('daily');
             $table->decimal('discount_percentage', 5, 2)->default(0);
             $table->decimal('total_amount', 10, 2);
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();

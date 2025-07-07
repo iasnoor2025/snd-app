@@ -30,6 +30,8 @@ const Create: FC<Props> = ({ rental, equipment, operators }) => {
         days: '',
         discount_percentage: '0',
         notes: '',
+        start_date: '',
+        end_date: '',
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -178,6 +180,33 @@ const Create: FC<Props> = ({ rental, equipment, operators }) => {
                                     {errors.notes && (
                                         <p className="text-sm text-red-500">{errors.notes}</p>
                                     )}
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="start_date">Start Date</Label>
+                                        <Input
+                                            id="start_date"
+                                            type="date"
+                                            value={data.start_date}
+                                            onChange={(e) => setData('start_date', e.target.value)}
+                                        />
+                                        {errors.start_date && (
+                                            <p className="text-sm text-red-500">{errors.start_date}</p>
+                                        )}
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="end_date">End Date</Label>
+                                        <Input
+                                            id="end_date"
+                                            type="date"
+                                            value={data.end_date}
+                                            onChange={(e) => setData('end_date', e.target.value)}
+                                        />
+                                        {errors.end_date && (
+                                            <p className="text-sm text-red-500">{errors.end_date}</p>
+                                        )}
+                                    </div>
                                 </div>
 
                                 {/* Total Calculation */}

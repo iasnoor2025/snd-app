@@ -64,14 +64,8 @@ class RentalController extends Controller
 
         // Get available equipment
         $equipment = \Modules\EquipmentManagement\Domain\Models\Equipment::where('is_active', true)
-            ->where('status', '=', 'available')
-            ->with(['category:id,name'])
             ->orderBy('name')
-            ->get([
-                'id', 'name', 'description', 'model_number', 'manufacturer',
-                'serial_number', 'door_number', 'daily_rate', 'weekly_rate',
-                'monthly_rate', 'category_id'
-            ])
+            ->get(['id', 'name', 'model', 'manufacturer', 'serial_number', 'status'])
             ->map(function ($item) {
                 $name = $item->name;
                 if (is_array($name)) {
@@ -86,10 +80,13 @@ class RentalController extends Controller
             ->orderBy('first_name')
             ->get(['id', 'first_name', 'last_name', 'employee_id'])
             ->map(function ($employee) {
+                $name = $employee->name;
                 return [
                     'id' => $employee->id,
-                    'name' => $employee->full_name,
-                    'employee_id' => $employee->employee_id
+                    'name' => $name,
+                    'employee_id' => $employee->employee_id,
+                    'first_name' => $employee->first_name,
+                    'last_name' => $employee->last_name,
                 ];
             });
 
@@ -217,7 +214,17 @@ class RentalController extends Controller
         $employees = \Modules\EmployeeManagement\Domain\Models\Employee::where('is_operator', true)
             ->where('status', 'active')
             ->orderBy('first_name')
-            ->get(['id', 'first_name', 'last_name', 'employee_id']);
+            ->get(['id', 'first_name', 'last_name', 'employee_id'])
+            ->map(function ($employee) {
+                $name = $employee->name;
+                return [
+                    'id' => $employee->id,
+                    'name' => $name,
+                    'employee_id' => $employee->employee_id,
+                    'first_name' => $employee->first_name,
+                    'last_name' => $employee->last_name,
+                ];
+            });
 
         // Translations (if using Spatie Translatable)
         $translations = method_exists($rental, 'getTranslations') ? $rental->getTranslations('notes') : [];
@@ -341,7 +348,17 @@ class RentalController extends Controller
         $employees = \Modules\EmployeeManagement\Domain\Models\Employee::where('is_operator', true)
             ->where('status', 'active')
             ->orderBy('first_name')
-            ->get(['id', 'first_name', 'last_name', 'employee_id']);
+            ->get(['id', 'first_name', 'last_name', 'employee_id'])
+            ->map(function ($employee) {
+                $name = $employee->name;
+                return [
+                    'id' => $employee->id,
+                    'name' => $name,
+                    'employee_id' => $employee->employee_id,
+                    'first_name' => $employee->first_name,
+                    'last_name' => $employee->last_name,
+                ];
+            });
         $translations = method_exists($rental, 'getTranslations') ? $rental->getTranslations('notes') : [];
         return Inertia::render('Rentals/Edit', [
             'rental' => $rental,
