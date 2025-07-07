@@ -319,6 +319,24 @@ class RentalController extends Controller
             'maintenanceRecords',
             'location',
         ]);
+
+        // Fix rentalItems equipment name to always be a string and convert to array, re-indexed
+        $rentalItems = $rental->rentalItems->map(function ($item) {
+            if ($item->equipment) {
+                $name = $item->equipment->name;
+                if (is_array($name)) {
+                    $name = $name['en'] ?? reset($name) ?? '';
+                }
+                $item->equipment->name = $name;
+            } else {
+                $item->equipment = ['name' => ''];
+            }
+            return $item->toArray();
+        })->values();
+
+        $rentalArray = $rental->toArray();
+        $rentalArray['rentalItems'] = $rentalItems;
+
         $customers = \Modules\CustomerManagement\Domain\Models\Customer::where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'name', 'company_name', 'contact_person', 'email', 'phone'])
@@ -361,25 +379,18 @@ class RentalController extends Controller
                 ];
             });
         $translations = method_exists($rental, 'getTranslations') ? $rental->getTranslations('notes') : [];
+
         return Inertia::render('Rentals/Edit', [
-            'rental' => $rental,
-            'customer' => $rental->customer,
-            'rentalItems' => $rental->rentalItems,
-            'equipment' => $rental->equipment,
-            'invoices' => $rental->invoices,
-            'timesheets' => $rental->timesheets,
-            'payments' => $rental->payments,
-            'maintenanceRecords' => $rental->maintenanceRecords,
-            'location' => $rental->location,
-            'translations' => $translations,
-            'created_at' => $rental->created_at,
-            'updated_at' => $rental->updated_at,
-            'deleted_at' => $rental->deleted_at,
+            'rental' => $rentalArray,
             'dropdowns' => [
                 'customers' => $customers,
                 'equipment' => $equipment,
                 'employees' => $employees,
             ],
+            'translations' => $translations,
+            'created_at' => $rental->created_at,
+            'updated_at' => $rental->updated_at,
+            'deleted_at' => $rental->deleted_at,
         ]);
     }
 

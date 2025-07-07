@@ -53,6 +53,9 @@ export default function Edit({ customers, equipment, rental, employees = [], ren
   // Prepare initial data for RentalForm
   const initialData = {
     ...rental,
+    customer_id: rental.customer_id || (rental.customer ? rental.customer.id : ''),
+    start_date: rental.start_date || '',
+    expected_end_date: rental.expected_end_date || '',
     customer: rental.customer || {},
     rentalItems: rental.rentalItems || [],
     equipment: rental.equipment || [],
