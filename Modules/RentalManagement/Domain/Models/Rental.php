@@ -17,7 +17,6 @@ use Modules\RentalManagement\Domain\Models\QuotationItem;
 use Modules\EquipmentManagement\Domain\Models\MaintenanceRecord;
 use Modules\RentalManagement\Domain\Models\Payment;
 use Modules\RentalManagement\Domain\Models\RentalExtension;
-use Modules\RentalManagement\Domain\Models\RentalTimesheet;
 use Modules\TimesheetManagement\Domain\Models\Timesheet;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -164,7 +163,7 @@ class Rental extends Model implements HasMedia
      */
     public function timesheets(): HasMany
     {
-        return $this->hasMany(RentalTimesheet::class);
+        return $this->hasMany(Timesheet::class);
     }
 
     /**
@@ -612,35 +611,11 @@ class Rental extends Model implements HasMedia
 
         // If rental is active, regenerate timesheets based on new start date
         if ($this->status === 'active') {
-            // Get the service
-            $timesheetService = app(\App\Services\RentalTimesheetService::class);
-
-            // Delete any existing timesheets that might now be invalid
-            // Only if new start date is after the old one
-            if ($oldStartDate && $this->start_date->gt($oldStartDate)) {
-                RentalTimesheet::where('rental_id', $this->id)
-                    ->whereDate('date', '<', $this->start_date)
-                    ->delete();
-
-                \Log::info('Deleted timesheets before new start date', [
-                    'rental_id' => $this->id,
-                    'old_start_date' => $oldStartDate->format('Y-m-d'),
-                    'new_start_date' => $this->start_date->format('Y-m-d')
-                ]);
-            } else if ($oldStartDate && $this->start_date->lt($oldStartDate)) {
-                // If start date was moved earlier, we need to add timesheets for the new period
-                \Log::info('Start date moved earlier, adding timesheets for new period', [
-                    'rental_id' => $this->id,
-                    'old_start_date' => $oldStartDate->format('Y-m-d'),
-                    'new_start_date' => $this->start_date->format('Y-m-d')
-                ]);
-            }
-
             // Generate fresh timesheets from the new start date
-            $timesheetService->createTimesheetsFromStartDate($this);
+            $this->generateTimesheets();
 
             // Double-check for any missing dates
-            $timesheetService->fillMissingTimesheets($this);
+            $this->fillMissingTimesheets();
         }
 
         return $this;
@@ -858,6 +833,24 @@ class Rental extends Model implements HasMedia
     public function getCustomerNameAttribute()
     {
         return $this->customer ? $this->customer->name : null;
+    }
+
+    /**
+     * Stub: Generate timesheets for this rental (to be implemented)
+     */
+    public function generateTimesheets(): void
+    {
+        \Log::info('Called generateTimesheets for rental', ['rental_id' => $this->id]);
+        // TODO: Implement timesheet generation logic
+    }
+
+    /**
+     * Stub: Fill missing timesheets for this rental (to be implemented)
+     */
+    public function fillMissingTimesheets(): void
+    {
+        \Log::info('Called fillMissingTimesheets for rental', ['rental_id' => $this->id]);
+        // TODO: Implement missing timesheet fill logic
     }
 }
 

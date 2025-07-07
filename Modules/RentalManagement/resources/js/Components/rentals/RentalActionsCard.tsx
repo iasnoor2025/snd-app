@@ -34,6 +34,7 @@ const RentalActionsCard: React.FC<RentalActionsCardProps> = ({
   onDelete,
   onShareRental
 }) => {
+  const { t } = useTranslation('rental');
   const [isExtensionDialogOpen, setIsExtensionDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isGeneratingQuotation, setIsGeneratingQuotation] = useState(false);
@@ -46,8 +47,6 @@ const RentalActionsCard: React.FC<RentalActionsCardProps> = ({
 
   // Handle extension dialog
   const openExtensionDialog = () => {
-  const { t } = useTranslation('rental');
-
     if (!canExtend) {
       ToastManager.error(`Cannot extend a ${rental.status} rental`);
       return;

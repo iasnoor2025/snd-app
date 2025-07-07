@@ -20,12 +20,10 @@ interface CustomerCardProps {
 }
 
 const CustomerCard: React.FC<CustomerCardProps> = ({ customer }) => {
+  const { t } = useTranslation('rental');
   // Get customer initials for avatar
   const getCustomerInitials = (customerName: string) => {
-  const { t } = useTranslation('rental');
-
     if (!customerName) return "CU";
-
     return customerName
       .split(" ")
       .map((n) => n[0])

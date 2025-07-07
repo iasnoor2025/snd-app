@@ -38,10 +38,10 @@ interface RentalInfoCardProps {
 }
 
 const RentalInfoCard: React.FC<RentalInfoCardProps> = ({ rental }) => {
-  // Calculate rental duration progress
-  const calculateProgress = () => {
   const { t } = useTranslation('rental');
 
+  // Calculate rental duration progress
+  const calculateProgress = () => {
     if (!rental.start_date || !rental.expected_end_date) return 0;
 
     const startDate = new Date(rental.start_date);

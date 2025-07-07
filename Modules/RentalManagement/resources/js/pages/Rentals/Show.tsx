@@ -1102,9 +1102,9 @@ export default function Show({
     // Create shared props for all workflow sections
     const sharedProps = {
       rental,
-      rentalItems: rentalItems?.data || [],
-      invoices: invoices?.data || [],
-      maintenanceRecords: maintenanceRecords?.data || [],
+      rentalItems: rentalItems && Array.isArray(rentalItems.data) ? rentalItems : { data: [], total: 0 },
+      invoices: invoices && Array.isArray(invoices.data) ? invoices : { data: [], total: 0 },
+      maintenanceRecords: maintenanceRecords && Array.isArray(maintenanceRecords.data) ? maintenanceRecords : { data: [], total: 0 },
       weatherData,
       nextPossibleStates,
       metrics,
