@@ -93,14 +93,14 @@ class GenerateQuotationAction
             $rental->save();
 
             // Update rental status to 'quotation' and log status change
-            $oldStatus = $rental->status;
-            $rental->update(['status' => 'quotation']);
-            $rental->statusLogs()->create([
-                'from_status' => $oldStatus,
-                'to_status' => 'quotation',
-                'changed_by' => auth()->id() ?? null,
-                'notes' => 'Quotation generated from rental.'
-            ]);
+                $oldStatus = $rental->status;
+                $rental->update(['status' => 'quotation']);
+                $rental->statusLogs()->create([
+                    'from_status' => $oldStatus,
+                    'to_status' => 'quotation',
+                    'changed_by' => auth()->id() ?? null,
+                    'notes' => 'Quotation generated from rental.'
+                ]);
 
             return $quotation;
         });

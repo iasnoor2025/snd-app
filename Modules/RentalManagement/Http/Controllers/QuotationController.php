@@ -17,6 +17,7 @@ use Modules\EmployeeManagement\Domain\Models\Employee;
 use Illuminate\Support\Facades\Mail;
 use Modules\RentalManagement\Mail\QuotationMail;
 use Modules\RentalManagement\Domain\Models\QuotationHistory;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class QuotationController extends Controller
 {
@@ -664,6 +665,19 @@ class QuotationController extends Controller
     {
         // TODO: Implement conversion logic
         return response()->json(['message' => 'Not implemented'], 501);
+    }
+
+    /**
+     * Download the quotation as PDF for a rental.
+     */
+    public function downloadByRental($rentalId)
+    {
+        $quotation = \Modules\RentalManagement\Domain\Models\Quotation::where('rental_id', $rentalId)->latest()->first();
+        if (!$quotation) {
+            abort(404, 'Quotation not found for this rental.');
+        }
+        $pdf = Pdf::loadView('quotations.pdf', compact('quotation'));
+        return $pdf->download('quotation-' . $quotation->quotation_number . '.pdf');
     }
 }
 

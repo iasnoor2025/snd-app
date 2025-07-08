@@ -190,6 +190,7 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::post('rentals/{rental}/reject-extension', [RentalWorkflowController::class, 'rejectExtension']);
     Route::post('rentals/{rental}/cancel', [RentalWorkflowController::class, 'cancelRental'])->name('rentals.cancel');
     Route::post('rentals/{rental}/reject-extension/{extensionId}', [RentalWorkflowController::class, 'rejectExtension'])->name('rentals.reject-extension');
+    Route::get('rentals/{rental}/quotation/download', [\Modules\RentalManagement\Http\Controllers\QuotationController::class, 'downloadByRental'])->name('rentals.quotation.download');
 
 });
 
