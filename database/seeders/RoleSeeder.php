@@ -31,6 +31,7 @@ class RoleSeeder extends Seeder
             'employees.view', 'employees.create', 'employees.edit',
             'customers.view', 'customers.create', 'customers.edit',
             'rentals.view', 'rentals.create', 'rentals.edit', 'rentals.approve',
+            'quotations.view', 'quotations.create', 'quotations.edit', 'quotations.approve',
             'reports.view', 'reports.build',
             'timesheets.view', 'timesheets.edit',
             'leave-requests.view', 'leave-requests.approve',
@@ -70,7 +71,7 @@ class RoleSeeder extends Seeder
             'dashboard.view',
             'payments.view', 'payments.create', 'payments.edit',
             'invoices.view', 'invoices.create', 'invoices.edit',
-            'quotations.view', 'quotations.create', 'quotations.edit',
+            'quotations.view', 'quotations.create', 'quotations.edit', 'quotations.approve',
             'payroll.view', 'payroll.create', 'payroll.edit',
             'reports.view', 'reports.build',
         ];

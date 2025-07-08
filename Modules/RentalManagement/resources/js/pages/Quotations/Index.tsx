@@ -1,9 +1,16 @@
 import React from 'react';
-import { usePage, Link } from '@inertiajs/react';
-import { Table, TableHeader, TableHead, TableRow, TableCell, TableBody } from '@/Core/components/ui/table';
-import { Button } from '@/components/ui/button';
+import { DataTable } from '@/Core/components/ui/data-table';
+import { Button } from '@/Core/components/ui/button';
 import { toast } from 'sonner';
 import AppLayout from '@/Core/layouts/AppLayout';
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator
+} from '@/Core/components/ui/breadcrumb';
 
 interface Quotation {
   id: number;
@@ -23,44 +30,58 @@ const QuotationsIndex: React.FC<PageProps> = ({ quotations }) => {
     window.open(`/quotations/${id}/pdf`, '_blank');
   };
 
+  const columns = [
+    {
+      header: 'Quotation #',
+      accessorKey: 'quotation_number',
+    },
+    {
+      header: 'Customer',
+      accessorKey: 'customer',
+      cell: (row: Quotation) => row.customer?.company_name || '',
+    },
+    {
+      header: 'Issue Date',
+      accessorKey: 'issue_date',
+    },
+    {
+      header: 'Status',
+      accessorKey: 'status',
+    },
+    {
+      header: 'Total',
+      accessorKey: 'total_amount',
+    },
+    {
+      header: 'Actions',
+      accessorKey: 'actions',
+      cell: (row: Quotation) => (
+        <div className="flex gap-2">
+          <a href={`/quotations/${row.id}`} className="mr-2">
+            <Button size="sm">View</Button>
+          </a>
+          <Button size="sm" variant="outline" onClick={() => handleDownload(row.id)}>
+            Download
+          </Button>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Quotations</h1>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Quotation #</TableHead>
-            <TableHead>Customer</TableHead>
-            <TableHead>Issue Date</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Total</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {quotations.map(q => (
-            <TableRow key={q.id}>
-              <TableCell>{q.quotation_number}</TableCell>
-              <TableCell>{q.customer?.company_name}</TableCell>
-              <TableCell>{q.issue_date}</TableCell>
-              <TableCell>{q.status}</TableCell>
-              <TableCell>{q.total_amount}</TableCell>
-              <TableCell>
-                <Link href={`/quotations/${q.id}`} className="mr-2">
-                  <Button size="sm">View</Button>
-                </Link>
-                <Button size="sm" variant="outline" onClick={() => handleDownload(q.id)}>
-                  Download
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <DataTable data={quotations} columns={columns as any} />
     </div>
   );
 };
 
-QuotationsIndex.layout = (page: React.ReactNode) => <AppLayout title="Quotations">{page}</AppLayout>;
+(QuotationsIndex as any).layout = (page: React.ReactNode) => (
+  <AppLayout
+    title="Quotations"
+    breadcrumbs={[{ title: 'Home', href: '/' }, { title: 'Quotations' }]}
+  >
+    {page}
+  </AppLayout>
+);
 
 export default QuotationsIndex;
