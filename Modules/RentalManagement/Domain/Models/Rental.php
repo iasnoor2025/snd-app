@@ -7,28 +7,26 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Support\Facades\DB;
-use App\Models\Operator;
-use Modules\EmployeeManagement\Domain\Models\Employee;
-use Modules\RentalManagement\Domain\Models\Quotation;
-use Modules\RentalManagement\Domain\Models\QuotationItem;
-use Modules\EquipmentManagement\Domain\Models\MaintenanceRecord;
-use Modules\RentalManagement\Domain\Models\Payment;
-use Modules\RentalManagement\Domain\Models\RentalExtension;
-use Modules\TimesheetManagement\Domain\Models\Timesheet;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\MediaLibrary\HasMedia;
-use Modules\Core\Traits\HasMediaAttachments;
-use Modules\Core\Traits\AutoLoadsRelations;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use App\Enums\RentalStatus;
-use App\Services\RentalStatusWorkflow;
+use Illuminate\Support\Facades\DB;
 use Modules\CustomerManagement\Domain\Models\Customer;
+use Modules\EquipmentManagement\Domain\Models\Equipment;
+use Modules\EquipmentManagement\Domain\Models\MaintenanceRecord;
+use Modules\EquipmentManagement\Traits\HasMediaAttachments;
+use Modules\RentalManagement\Domain\Models\Enums\RentalStatus;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Modules\EquipmentManagement\Traits\AutoLoadsRelations;
+use Modules\RentalManagement\Domain\Models\Quotation;
+use Modules\RentalManagement\Domain\Models\QuotationItem;
+use Modules\RentalManagement\Domain\Models\RentalExtension;
+use Modules\TimesheetManagement\Domain\Models\Timesheet;
 use Modules\Core\Domain\Models\User;
 use Modules\RentalManagement\Domain\Models\Invoice;
 
@@ -434,8 +432,8 @@ class Rental extends Model implements HasMedia
      */
     public function activate(): self
     {
-        if ($this->status !== 'mobilization') {
-            throw new \Exception('Rental must be in mobilization status before activation');
+        if ($this->status !== 'mobilization' && $this->status !== 'mobilization_completed') {
+            throw new \Exception('Rental must be in mobilization or mobilization_completed status before activation');
         }
 
         $this->update([
@@ -503,12 +501,29 @@ class Rental extends Model implements HasMedia
                 }
             }
 
+            // Generate a unique invoice number
+            $year = now()->format('Y');
+            $lastInvoice = Invoice::whereYear('created_at', $year)
+                ->orderBy('id', 'desc')
+                ->first();
+
+            $sequence = 1;
+            if ($lastInvoice) {
+                // Extract the sequence number from the last invoice number
+                if (preg_match('/INV-' . $year . '-(\d+)/', $lastInvoice->invoice_number, $matches)) {
+                    $sequence = (int)$matches[1] + 1;
+                }
+            }
+
+            $invoiceNumber = 'INV-' . $year . '-' . str_pad($sequence, 5, '0', STR_PAD_LEFT);
+
             // Create the invoice
             $invoice = Invoice::create([
                 'customer_id' => $this->customer_id,
                 'rental_id' => $this->id,
-                'invoice_number' => 'INV-' . now()->format('Y') . '-' . str_pad($this->id, 5, '0', STR_PAD_LEFT),
+                'invoice_number' => $invoiceNumber,
                 'issue_date' => now(),
+                'invoice_date' => now(),
                 'due_date' => now()->addDays($paymentTerms),
                 'subtotal' => $this->rentalItems->sum('total_amount'),
                 'discount_amount' => ($this->rentalItems->sum('total_amount') * ($this->discount_percentage ?? 0)) / 100,
@@ -518,6 +533,7 @@ class Rental extends Model implements HasMedia
                 'balance' => $this->total_amount,
                 'status' => 'draft',
                 'notes' => $this->notes,
+                'created_by' => auth()->id(),
             ]);
 
             // Create invoice items

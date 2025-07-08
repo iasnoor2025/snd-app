@@ -9,13 +9,13 @@ use Modules\RentalManagement\Actions\GenerateQuotationAction;
 use Modules\RentalManagement\Actions\StartRentalAction;
 use Modules\RentalManagement\Actions\CompleteRentalAction;
 use Modules\RentalManagement\Actions\ApproveQuotationAction;
-use App\Actions\Rental\StartMobilizationAction;
-use App\Actions\Rental\CompleteMobilizationAction;
-use App\Actions\Rental\CreateInvoiceAction;
-use App\Actions\Rental\RequestExtensionAction;
+use Modules\RentalManagement\Actions\StartMobilizationAction;
+use Modules\RentalManagement\Actions\CompleteMobilizationAction;
+use Modules\RentalManagement\Actions\CreateInvoiceAction;
+use Modules\RentalManagement\Actions\RequestExtensionAction;
 use Modules\RentalManagement\Actions\RentalStatusUpdateAction;
 use Modules\RentalManagement\Actions\CheckOverdueStatusAction;
-use App\Http\Requests\Rental\RequestExtensionRequest;
+use Modules\RentalManagement\Http\Requests\Rental\RequestExtensionRequest;
 
 class RentalWorkflowController extends Controller
 {
@@ -37,10 +37,14 @@ class RentalWorkflowController extends Controller
     /**
      * Generate a quotation from a rental.
      */
-    public function generateQuotation(Rental $rental, GenerateQuotationAction $action)
+    public function generateQuotation(Request $request, Rental $rental, GenerateQuotationAction $action)
     {
         try {
             $quotation = $action->execute($rental);
+
+            if ($request->wantsJson() || $request->header('X-Inertia')) {
+                return \Inertia\Inertia::location(route('quotations.show', $quotation));
+            }
 
             return redirect()->route('quotations.show', $quotation)
                 ->with('success', 'Quotation generated successfully.');
@@ -58,11 +62,15 @@ class RentalWorkflowController extends Controller
     /**
      * Generate a quotation from a rental with direct response.
      */
-    public function directGenerateQuotation(Rental $rental, GenerateQuotationAction $action)
+    public function directGenerateQuotation(Request $request, Rental $rental, GenerateQuotationAction $action)
     {
         try {
             // Verify that the rental has items
             if ($rental->rentalItems->count() === 0) {
+                if ($request->wantsJson() || $request->header('X-Inertia')) {
+                    return \Inertia\Inertia::location(route('rentals.show', $rental->id));
+                }
+
                 return redirect()->route('rentals.show', $rental->id)
                     ->with('error', 'Cannot generate quotation: Rental has no items. Please add items first.');
             }
@@ -75,6 +83,10 @@ class RentalWorkflowController extends Controller
                 $rental->update(['status' => 'quotation']);
             }
 
+            if ($request->wantsJson() || $request->header('X-Inertia')) {
+                return \Inertia\Inertia::location(route('quotations.show', $quotation));
+            }
+
             return redirect()->route('quotations.show', $quotation)
                 ->with('success', 'Quotation generated successfully.');
         } catch (\Exception $e) {
@@ -84,6 +96,10 @@ class RentalWorkflowController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
 
+            if ($request->wantsJson() || $request->header('X-Inertia')) {
+                return \Inertia\Inertia::location(route('rentals.show', $rental->id));
+            }
+
             return redirect()->route('rentals.show', $rental->id)
                 ->with('error', 'Failed to generate quotation: ' . $e->getMessage());
         }
@@ -92,10 +108,14 @@ class RentalWorkflowController extends Controller
     /**
      * Approve a quotation.
      */
-    public function approveQuotation(Rental $rental, ApproveQuotationAction $action)
+    public function approveQuotation(Request $request, Rental $rental, ApproveQuotationAction $action)
     {
         try {
             $rental = $action->execute($rental, auth()->id());
+
+            if ($request->wantsJson() || $request->header('X-Inertia')) {
+                return \Inertia\Inertia::location(route('rentals.show', $rental));
+            }
 
             return redirect()->route('rentals.show', $rental)
                 ->with('success', 'Quotation approved successfully.');
@@ -189,6 +209,10 @@ class RentalWorkflowController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
 
+            if ($request->wantsJson() || $request->header('X-Inertia')) {
+                return \Inertia\Inertia::location(route('rentals.show', $rental));
+            }
+
             return back()->with('error', 'Failed to start rental: ' . $e->getMessage());
         }
     }
@@ -213,6 +237,10 @@ class RentalWorkflowController extends Controller
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
+
+            if ($request->wantsJson() || $request->header('X-Inertia')) {
+                return \Inertia\Inertia::location(route('rentals.show', $rental));
+            }
 
             return back()->with('error', 'Failed to complete rental: ' . $e->getMessage());
         }
@@ -239,6 +267,10 @@ class RentalWorkflowController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
 
+            if ($request->wantsJson() || $request->header('X-Inertia')) {
+                return \Inertia\Inertia::location(route('rentals.show', $rental));
+            }
+
             return back()->with('error', 'Failed to create invoice: ' . $e->getMessage());
         }
     }
@@ -263,6 +295,10 @@ class RentalWorkflowController extends Controller
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
+
+            if ($request->wantsJson() || $request->header('X-Inertia')) {
+                return \Inertia\Inertia::location(route('rentals.show', $rental));
+            }
 
             return back()->with('error', 'Failed to request extension: ' . $e->getMessage());
         }
@@ -295,6 +331,10 @@ class RentalWorkflowController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
 
+            if ($request->wantsJson() || $request->header('X-Inertia')) {
+                return \Inertia\Inertia::location(route('rentals.show', $rental));
+            }
+
             return back()->with('error', 'Failed to check overdue status: ' . $e->getMessage());
         }
     }
@@ -325,6 +365,11 @@ class RentalWorkflowController extends Controller
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
+
+            if ($request->wantsJson() || $request->header('X-Inertia')) {
+                return \Inertia\Inertia::location(route('rentals.show', $rental));
+            }
+
             return back()->with('error', 'Failed to cancel rental: ' . $e->getMessage());
         }
     }
@@ -332,7 +377,7 @@ class RentalWorkflowController extends Controller
     /**
      * Reject a rental extension request.
      */
-    public function rejectExtension(Rental $rental, $extensionId)
+    public function rejectExtension(Request $request, Rental $rental, $extensionId)
     {
         try {
             $extension = $rental->extensionRequests()->findOrFail($extensionId);
@@ -343,6 +388,11 @@ class RentalWorkflowController extends Controller
                 'changed_by' => auth()->id(),
                 'notes' => 'Extension request rejected.'
             ]);
+
+            if ($request->wantsJson() || $request->header('X-Inertia')) {
+                return \Inertia\Inertia::location(route('rentals.show', $rental));
+            }
+
             return redirect()->route('rentals.show', $rental)
                 ->with('success', 'Extension request rejected successfully.');
         } catch (\Exception $e) {
@@ -352,6 +402,11 @@ class RentalWorkflowController extends Controller
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
+
+            if ($request->wantsJson() || $request->header('X-Inertia')) {
+                return \Inertia\Inertia::location(route('rentals.show', $rental));
+            }
+
             return back()->with('error', 'Failed to reject extension: ' . $e->getMessage());
         }
     }

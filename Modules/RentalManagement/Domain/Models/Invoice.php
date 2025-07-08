@@ -2,6 +2,7 @@
 
 namespace Modules\RentalManagement\Domain\Models;
 
+use Modules\CustomerManagement\Domain\Models\Customer;
 use Modules\EquipmentManagement\Traits\HandlesDocumentUploads;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -28,6 +29,7 @@ class Invoice extends Model implements HasMedia
         'rental_id',
         'invoice_number',
         'issue_date',
+        'invoice_date',
         'due_date',
         'subtotal',
         'discount_amount',
@@ -37,6 +39,7 @@ class Invoice extends Model implements HasMedia
         'balance',
         'status',
         'notes',
+        'created_by',
     ];
 
     /**
@@ -46,6 +49,7 @@ class Invoice extends Model implements HasMedia
      */
     protected $casts = [
         'issue_date' => 'date',
+        'invoice_date' => 'date',
         'due_date' => 'date',
         'subtotal' => 'decimal:2',
         'discount_amount' => 'decimal:2',

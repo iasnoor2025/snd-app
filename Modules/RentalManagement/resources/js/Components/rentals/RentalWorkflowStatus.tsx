@@ -207,7 +207,21 @@ export default function RentalWorkflowStatus({
         confirmText,
         () => {
           // Actually send the POST request to the backend
-          Inertia.post(route(routeName, rental.id));
+          try {
+            Inertia.post(route(routeName, rental.id), {}, {
+              preserveScroll: true,
+              preserveState: true,
+              replace: true,
+              onError: (errors) => {
+                console.error('Workflow action error:', errors);
+              },
+              onSuccess: () => {
+                console.log('Workflow action completed successfully');
+              }
+            });
+          } catch (error) {
+            console.error('Error in workflow action:', error);
+          }
         }
       );
     };

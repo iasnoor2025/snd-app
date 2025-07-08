@@ -150,7 +150,7 @@ const RentalActionsCard: React.FC<RentalActionsCardProps> = ({
             </DropdownMenuItem>
 
             <DropdownMenuItem asChild>
-              <Link href={`/rentals/${rental.id}/invoice/create`}>
+              <Link href={route('rentals.create-invoice', rental.id)} method="post" as="button">
                 <CreditCard className="h-4 w-4 mr-2" />
                 Create Invoice
               </Link>

@@ -9,20 +9,20 @@ use Modules\EquipmentManagement\Traits\AutoLoadsRelations;
 
 class InvoiceItem extends Model
 {
-    use HasFactory as ;
-use AutoLoadsRelations;
-use /**
+    use HasFactory;
+    use AutoLoadsRelations;
+
+    /**
      * The attributes that are mass assignable.
      *
-     * @var array<int;
-use string>
+     * @var array<int, string>
      */
-    protected $fillable = [;
-        'invoice_id';
-use 'description',
+    protected $fillable = [
+        'invoice_id',
+        'description',
         'quantity',
-        'unit_price',;
-        'amount',;
+        'unit_price',
+        'amount',
     ];
 
     /**
@@ -31,9 +31,9 @@ use 'description',
      * @var array<string, string>
      */
     protected $casts = [
-        'quantity' => 'integer',;
-        'unit_price' => 'decimal:2',;
-        'amount' => 'decimal:2',;
+        'quantity' => 'integer',
+        'unit_price' => 'decimal:2',
+        'amount' => 'decimal:2',
     ];
 
     /**
