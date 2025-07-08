@@ -255,16 +255,18 @@ class RentalController extends Controller
         // Translations (if using Spatie Translatable)
         $translations = method_exists($rental, 'getTranslations') ? $rental->getTranslations('notes') : [];
 
-        // Permissions (dummy for now, replace with real permission logic)
+        // Permissions (real, using Spatie Permission)
+        $user = auth()->user();
         $permissions = [
-            'view' => true,
-            'update' => true,
-            'delete' => true,
-            'approve' => true,
-            'complete' => true,
-            'generate_invoice' => true,
-            'view_timesheets' => true,
-            'request_extension' => true,
+            'view' => $user && $user->can('rentals.view'),
+            'update' => $user && $user->can('rentals.edit'),
+            'delete' => $user && $user->can('rentals.delete'),
+            'approve' => $user && $user->can('rentals.approve'),
+            'complete' => $user && $user->can('rentals.complete'),
+            'generate_invoice' => $user && $user->can('invoices.create'),
+            'view_timesheets' => $user && $user->can('timesheets.view'),
+            'request_extension' => $user && $user->can('rentals.request_extension'),
+            'quotations_view' => $user && $user->can('quotations.view'),
         ];
 
         // Next possible states (dummy, replace with workflow logic if available)

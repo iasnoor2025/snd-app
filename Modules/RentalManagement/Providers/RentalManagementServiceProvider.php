@@ -17,6 +17,9 @@ use Modules\Notifications\Services\NotificationService;
 use Illuminate\Support\Facades\Vite;
 use Modules\RentalManagement\Database\Seeders\RentalDatabaseSeeder;
 use Modules\RentalManagement\Console\Commands\SeedRentalDataCommand;
+use Illuminate\Support\Facades\Gate;
+use Modules\RentalManagement\Domain\Models\Quotation;
+use Modules\RentalManagement\Policies\QuotationPolicy;
 
 class RentalManagementServiceProvider extends ServiceProvider
 {
@@ -45,6 +48,9 @@ class RentalManagementServiceProvider extends ServiceProvider
         if (!app()->environment('testing')) {
             $this->app->make('db')->setDefaultConnection('pgsql');
         }
+
+        // Register Quotation policy
+        Gate::policy(Quotation::class, QuotationPolicy::class);
 
         // Register observers
         // \Modules\RentalManagement\Domain\Models\Rental::observe(\Modules\RentalManagement\Observers\RentalObserver::class);

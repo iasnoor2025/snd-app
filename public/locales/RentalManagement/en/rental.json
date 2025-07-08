@@ -575,6 +575,6 @@
     "operators": "Operators",
     "update": "Update",
     "create": "Create",
-    "ttl_create_rental": "Create New Rental"
+    "ttl_create_rental": "Create New Rental",
+    "error_email_failed": "Failed to email the quotation. Please try again later."
 }
-  

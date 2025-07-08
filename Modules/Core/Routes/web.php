@@ -37,6 +37,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['permission:users.edit'])->group(function () {
         Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::put('users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::get('settings/users/{user}/permissions', [UserController::class, 'permissions'])->name('users.permissions');
+        Route::put('settings/users/{user}/permissions', [UserController::class, 'updatePermissions'])->name('users.permissions.update');
     });
 
     Route::middleware(['permission:users.delete'])->group(function () {

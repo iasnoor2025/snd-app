@@ -14,6 +14,7 @@ import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/
 import { Inertia } from '@inertiajs/inertia';
 import { toast } from 'sonner';
 import StatusTimeline from '../StatusTimeline';
+import axios from 'axios';
 
 // Interface for QuotationSection props
 interface QuotationSectionProps {
@@ -90,21 +91,12 @@ export default function QuotationSection({
 
   // Function to email quotation to customer
   const handleEmailQuotation = () => {
-    setIsEmailingSent(true);
-    // Example: POST to /quotations/{id}/email (implement endpoint if needed)
-    fetch(`/quotations/${rental.quotation_id}/email`, { method: 'POST' })
-      .then(res => {
-        if (res.ok) {
-          toast.success(t('msg_quotation_emailed'));
-        } else {
-          toast.error(t('error_email_failed'));
-        }
-        setIsEmailingSent(false);
-      })
-      .catch(() => {
-        toast.error(t('error_email_failed'));
-        setIsEmailingSent(false);
-      });
+    const subject = encodeURIComponent(`Quotation #${rental.quotation_id || ''}`);
+    const body = encodeURIComponent(
+      `Dear ${rental.customer?.contact_person || ''},\n\nPlease find attached the quotation for your rental.\n\nYou can download the PDF here: ${window.location.origin}/rentals/${rental.id}/quotation/download\n\nBest regards,\n${rental.company_name || ''}`
+    );
+    const mailto = `mailto:${rental.customer?.email || ''}?subject=${subject}&body=${body}`;
+    window.location.href = mailto;
   };
 
   return (

@@ -62,9 +62,9 @@ export default function Show({ user }: Props) {
   ];
 
   return (
-    <AppLayout 
-      title={`User: ${user.name}`} 
-      breadcrumbs={breadcrumbs} 
+    <AppLayout
+      title={`User: ${user.name}`}
+      breadcrumbs={breadcrumbs}
       requiredPermission="users.view"
     >
       <Head title={`User: ${user.name}`} />
@@ -141,7 +141,7 @@ export default function Show({ user }: Props) {
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold">Roles</h3>
                   <Button variant="outline" size="sm" asChild>
-                    <Link href={`/settings/users/${user.id}/roles`}>
+                    <Link href={`/settings/user-roles#user-${user.id}`}>
                       <Shield className="h-4 w-4 mr-2" />
                       Manage Roles
                     </Link>
@@ -231,4 +231,4 @@ export default function Show({ user }: Props) {
       </div>
     </AppLayout>
   );
-} 
+}

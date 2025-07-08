@@ -623,7 +623,12 @@ class QuotationController extends Controller
     {
         $this->authorize('view', $quotation);
         try {
-            if (!$quotation->customer || !$quotation->customer->email) {
+            if (!$quotation->customer) {
+                \Log::error('Quotation email failed: No customer on quotation', ['quotation_id' => $quotation->id]);
+                return response()->json(['message' => 'No customer found for this quotation.'], 422);
+            }
+            if (!$quotation->customer->email) {
+                \Log::error('Quotation email failed: Customer has no email', ['quotation_id' => $quotation->id, 'customer_id' => $quotation->customer->id]);
                 return response()->json(['message' => 'Customer does not have an email address.'], 422);
             }
             Mail::to($quotation->customer->email)->send(new QuotationMail($quotation));
@@ -643,8 +648,10 @@ class QuotationController extends Controller
             \Log::error('Failed to send quotation email', [
                 'quotation_id' => $quotation->id,
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
-            return response()->json(['message' => 'Failed to send email: ' . $e->getMessage()], 500);
+            $msg = app()->hasDebugModeEnabled() ? $e->getMessage() : 'Failed to send email. Please contact support.';
+            return response()->json(['message' => $msg], 500);
         }
     }
 

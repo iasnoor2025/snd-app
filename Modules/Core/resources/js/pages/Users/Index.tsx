@@ -204,7 +204,7 @@ export default function Index({ users, roles, can }: Props) {
                                                         </Badge>
                                                     </TableCell>
                                                     <TableCell>
-                                                        {new Date(user.created_at)}
+                                                        {formatDateMedium(new Date(user.created_at))}
                                                     </TableCell>
                                                     <TableCell className="text-right">
                                                         <DropdownMenu>

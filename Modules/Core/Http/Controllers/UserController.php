@@ -202,6 +202,39 @@ class UserController extends Controller
         return redirect()->route('users.index')
             ->with('success', count($ids) . ' users deleted successfully.');
     }
+
+    /**
+     * Show the form for managing direct permissions for the specified user.
+     */
+    public function permissions(User $user)
+    {
+        $user->load('roles', 'permissions');
+        $directPermissions = $user->getDirectPermissions();
+        $allPermissions = \Spatie\Permission\Models\Permission::all();
+
+        return Inertia::render('Users/Permissions', [
+            'user' => $user,
+            'directPermissions' => $directPermissions,
+            'allPermissions' => $allPermissions,
+        ]);
+    }
+
+    /**
+     * Update the direct permissions for the specified user.
+     */
+    public function updatePermissions(Request $request, User $user)
+    {
+        $request->validate([
+            'permissions' => 'required|array',
+            'permissions.*' => 'integer|exists:permissions,id',
+        ]);
+
+        $permissions = \Spatie\Permission\Models\Permission::whereIn('id', $request->permissions)->get();
+        $user->syncPermissions($permissions);
+
+        return redirect()->route('users.permissions', $user)
+            ->with('success', 'Permissions updated successfully.');
+    }
 }
 
 
