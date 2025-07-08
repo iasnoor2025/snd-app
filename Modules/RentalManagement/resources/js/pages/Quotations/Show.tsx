@@ -40,22 +40,23 @@ const QuotationShow: React.FC<QuotationShowProps> = ({ quotation, quotationItems
   const [emailLoading, setEmailLoading] = React.useState(false);
   const [history, setHistory] = React.useState<any[]>([]);
 
-  React.useEffect(() => {
-    const fetchHistory = async () => {
-      try {
-        await axios.get('/sanctum/csrf-cookie');
-        const res = await axios.get(`/api/v1/quotations/${quotation.id}/history`);
-        setHistory(res.data);
-      } catch (e: any) {
-        if ([401, 403, 404].includes(e?.response?.status)) {
-          toast.error(getTranslationString(t('history_access_denied'), 'Session expired or you do not have access to view quotation history.'));
-          return;
-        }
-        toast.error(getTranslationString(t('error_loading_history'), 'Error loading quotation history.'));
-      }
-    };
-    fetchHistory();
-  }, [quotation.id]);
+  // REMOVE: Quotation history fetch and error display
+  // React.useEffect(() => {
+  //   const fetchHistory = async () => {
+  //     try {
+  //       await axios.get('/sanctum/csrf-cookie');
+  //       const res = await axios.get(`/api/v1/quotations/${quotation.id}/history`);
+  //       setHistory(res.data);
+  //     } catch (e: any) {
+  //       if ([401, 403, 404].includes(e?.response?.status)) {
+  //         toast.error(getTranslationString(t('history_access_denied'), 'Session expired or you do not have access to view quotation history.'));
+  //         return;
+  //       }
+  //       toast.error(getTranslationString(t('error_loading_history'), 'Error loading quotation history.'));
+  //     }
+  //   };
+  //   fetchHistory();
+  // }, [quotation.id]);
 
   const showErrorToast = debounce((msg) => toast.error(msg), 500, { leading: true, trailing: false });
 
@@ -304,7 +305,8 @@ const QuotationShow: React.FC<QuotationShowProps> = ({ quotation, quotationItems
           )}
         </CardContent>
       </Card>
-      <Card className="mt-6">
+      {/* REMOVE: Quotation history timeline section */}
+      {/* <Card className="mt-6">
         <CardHeader>
           <CardTitle>{getTranslationString(t('status_timeline'), 'Status Timeline')}</CardTitle>
         </CardHeader>
@@ -323,7 +325,7 @@ const QuotationShow: React.FC<QuotationShowProps> = ({ quotation, quotationItems
             ))}
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 };
