@@ -72,6 +72,12 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::resource('quotations', QuotationController::class)->middleware([
         'permission:quotations.view',
     ]);
+    Route::get('quotations/{quotation}/print', [QuotationController::class, 'print'])
+        ->name('quotations.print')
+        ->middleware('permission:quotations.view');
+    Route::get('quotations/{quotation}/pdf', [QuotationController::class, 'pdf'])
+        ->name('quotations.pdf')
+        ->middleware('permission:quotations.view');
     Route::post('quotations/{quotation}/approve', [QuotationController::class, 'approve'])->name('quotations.approve');
     Route::post('quotations/{quotation}/reject', [QuotationController::class, 'reject'])->name('quotations.reject');
     Route::post('quotations/{quotation}/email', [QuotationController::class, 'sendEmail'])

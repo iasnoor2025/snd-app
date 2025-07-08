@@ -61,7 +61,7 @@ class QuotationController extends Controller
                 ->withQueryString();
 
             return Inertia::render('Quotations/Index', [
-                'quotations' => $quotations,
+                'quotations' => $quotations->items(),
                 'filters' => $request->only(['search', 'status', 'start_date', 'end_date'])
             ]);
         } catch (\Exception $e) {
@@ -229,6 +229,35 @@ class QuotationController extends Controller
             'canEdit' => Auth::user()->can('update', $quotation),
             'canDelete' => Auth::user()->can('delete', $quotation),
         ]);
+    }
+
+    /**
+     * Print the specified quotation (browser view, not PDF download).
+     */
+    public function print(Quotation $quotation)
+    {
+        // Load related data as in show()
+        $quotation->load([
+            'customer',
+            'quotationItems.equipment',
+            'quotationItems.operator'
+        ]);
+        return view('quotations.pdf', compact('quotation'));
+    }
+
+    /**
+     * Download the specified quotation as a PDF.
+     */
+    public function pdf(Quotation $quotation)
+    {
+        // Load related data as in print()
+        $quotation->load([
+            'customer',
+            'quotationItems.equipment',
+            'quotationItems.operator'
+        ]);
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('quotations.pdf', compact('quotation'));
+        return $pdf->download('quotation-' . $quotation->quotation_number . '.pdf');
     }
 
     /**

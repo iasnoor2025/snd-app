@@ -1,8 +1,9 @@
 import React from 'react';
 import { usePage, Link } from '@inertiajs/react';
-import { Table, TableHead, TableRow, TableCell, TableBody } from '@/Core/components/ui/table';
+import { Table, TableHeader, TableHead, TableRow, TableCell, TableBody } from '@/Core/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import AppLayout from '@/Core/layouts/AppLayout';
 
 interface Quotation {
   id: number;
@@ -19,24 +20,23 @@ interface PageProps {
 
 const QuotationsIndex: React.FC<PageProps> = ({ quotations }) => {
   const handleDownload = (id: number) => {
-    // TODO: Implement download logic
-    toast.info('Download not implemented yet');
+    window.open(`/quotations/${id}/pdf`, '_blank');
   };
 
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Quotations</h1>
       <Table>
-        <TableHead>
+        <TableHeader>
           <TableRow>
-            <TableCell>Quotation #</TableCell>
-            <TableCell>Customer</TableCell>
-            <TableCell>Issue Date</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>Total</TableCell>
-            <TableCell>Actions</TableCell>
+            <TableHead>Quotation #</TableHead>
+            <TableHead>Customer</TableHead>
+            <TableHead>Issue Date</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Total</TableHead>
+            <TableHead>Actions</TableHead>
           </TableRow>
-        </TableHead>
+        </TableHeader>
         <TableBody>
           {quotations.map(q => (
             <TableRow key={q.id}>
@@ -60,5 +60,7 @@ const QuotationsIndex: React.FC<PageProps> = ({ quotations }) => {
     </div>
   );
 };
+
+QuotationsIndex.layout = (page: React.ReactNode) => <AppLayout title="Quotations">{page}</AppLayout>;
 
 export default QuotationsIndex;
