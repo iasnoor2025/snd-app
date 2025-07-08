@@ -50,23 +50,39 @@ export default function QuotationSection({
   const [isEmailingSent, setIsEmailingSent] = React.useState(false);
 
   // Function to approve quotation
-  const handleApproveQuotation = () => {
+  const handleApproveQuotation = async () => {
     if (!permissions.approve) {
       toast.error(t('error_no_permission'));
       return;
     }
     setIsApproving(true);
-    Inertia.post(`/quotations/${rental.quotation_id}/approve`, {}, {
-      onSuccess: () => {
-        toast.success(t('msg_quotation_approved'));
-        setIsApproving(false);
-        window.location.reload();
-      },
-      onError: (err: any) => {
-        toast.error(t('error_approve_failed'));
-        setIsApproving(false);
-      }
-    });
+    try {
+      await axios.get('/sanctum/csrf-cookie');
+      Inertia.post(`/quotations/${rental.quotation_id}/approve`, {}, {
+        onSuccess: () => {
+          toast.success(t('msg_quotation_approved'));
+          setIsApproving(false);
+          Inertia.reload();
+        },
+        onError: (err: any) => {
+          if (err?.response?.status === 401) {
+            toast.error(t('error_no_access') || 'You do not have access to approve this quotation');
+            setIsApproving(false);
+            return;
+          }
+          if (err?.response?.status === 419) {
+            toast.error(t('session_expired') || 'Your session has expired. Please log in again.');
+            setIsApproving(false);
+            return;
+          }
+          toast.error(t('error_approve_failed'));
+          setIsApproving(false);
+        }
+      });
+    } catch (err) {
+      toast.error(t('error_approve_failed'));
+      setIsApproving(false);
+    }
   };
 
   // Function to reject quotation
@@ -80,7 +96,7 @@ export default function QuotationSection({
       onSuccess: () => {
         toast.success(t('msg_quotation_rejected'));
         setIsRejecting(false);
-        window.location.reload();
+        Inertia.reload();
       },
       onError: (err: any) => {
         toast.error(t('error_reject_failed'));

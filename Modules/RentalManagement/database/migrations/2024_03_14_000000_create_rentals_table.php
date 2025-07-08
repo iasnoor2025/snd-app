@@ -33,7 +33,9 @@ return new class extends Migration
                 $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
                 $table->string('equipment_name')->nullable();
                 $table->text('description')->nullable();
-                $table->foreignId('quotation_id')->nullable()->constrained('quotations')->nullOnDelete();
+                // Removed foreign key to quotations to break circular dependency
+                $table->unsignedBigInteger('quotation_id')->nullable();
+                // $table->foreignId('quotation_id')->nullable()->constrained('quotations')->nullOnDelete();
                 $table->timestamp('mobilization_date')->nullable();
                 $table->timestamp('invoice_date')->nullable();
                 $table->decimal('deposit_amount', 10, 2)->default(0);

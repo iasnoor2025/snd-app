@@ -1,5 +1,5 @@
 import React from 'react';
-import { usePage } from '@inertiajs/inertia-react';
+import { usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 

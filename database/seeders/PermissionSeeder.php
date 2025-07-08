@@ -54,7 +54,7 @@ class PermissionSeeder extends Seeder
             // Invoices
             'invoices.view', 'invoices.create', 'invoices.edit', 'invoices.delete',
             // Quotations
-            'quotations.view', 'quotations.create', 'quotations.edit', 'quotations.delete',
+            'quotations.view', 'quotations.create', 'quotations.edit', 'quotations.delete', 'quotations.approve',
             // Customers
             'customers.view', 'customers.create', 'customers.edit', 'customers.delete',
             // Suppliers
@@ -62,11 +62,7 @@ class PermissionSeeder extends Seeder
             // Timesheets
             'timesheets.view', 'timesheets.create', 'timesheets.edit', 'timesheets.delete',
             // Timesheet Approvals
-            'timesheets.approve',
-            'timesheets.approve.foreman',
-            'timesheets.approve.incharge',
-            'timesheets.approve.checking',
-            'timesheets.approve.manager',
+            'timesheets.approve', 'timesheets.approve.foreman', 'timesheets.approve.incharge', 'timesheets.approve.checking', 'timesheets.approve.manager',
             // Tasks
             'tasks.view', 'tasks.create', 'tasks.edit', 'tasks.delete',
             // Manpower

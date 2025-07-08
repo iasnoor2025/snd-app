@@ -451,10 +451,10 @@ class QuotationController extends Controller
      */
     public function approve(Request $request, Quotation $quotation)
     {
-        // Authorize the action
-        $this->authorize('approve', $quotation);
-
         try {
+            // Authorize the action
+            $this->authorize('approve', $quotation);
+
             // Validate request if needed
             $request->validate([
                 'notes' => 'nullable|string'
@@ -478,13 +478,27 @@ class QuotationController extends Controller
                 'notes' => $request->notes,
             ]);
 
+            // If the request expects JSON (Inertia XHR), return Inertia location
+            if ($request->wantsJson() || $request->header('X-Inertia')) {
+                return \Inertia\Inertia::location(route('quotations.show', $quotation));
+            }
+
             return redirect()->route('quotations.show', $quotation)
                 ->with('success', 'Quotation approved successfully.');
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            if ($request->wantsJson() || $request->header('X-Inertia')) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+            return redirect()->route('dashboard')->with('error', 'Unauthorized');
         } catch (\Exception $e) {
-            Log::error('Failed to approve quotation', [
+            \Log::error('Failed to approve quotation', [
                 'quotation_id' => $quotation->id,
                 'error' => $e->getMessage(),
             ]);
+
+            if ($request->wantsJson() || $request->header('X-Inertia')) {
+                return response()->json(['error' => 'Failed to approve quotation: ' . $e->getMessage()], 500);
+            }
 
             return redirect()->back()
                 ->with('error', 'Failed to approve quotation: ' . $e->getMessage());
@@ -660,8 +674,16 @@ class QuotationController extends Controller
      */
     public function history(Quotation $quotation)
     {
-        $history = $quotation->quotationHistories()->with('user')->orderBy('created_at')->get();
-        return response()->json($history);
+        try {
+            $this->authorize('view', $quotation);
+            $history = $quotation->quotationHistories()->with('user')->orderBy('created_at')->get();
+            return response()->json($history);
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            if (request()->wantsJson() || request()->header('X-Inertia')) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+            return redirect()->route('dashboard')->with('error', 'Unauthorized');
+        }
     }
 
     /**

@@ -1,6 +1,6 @@
 import React from 'react';
-import { usePage, Link } from '@inertiajs/inertia-react';
-import { Table, TableHead, TableRow, TableCell, TableBody } from '@/components/ui/table';
+import { usePage, Link } from '@inertiajs/react';
+import { Table, TableHead, TableRow, TableCell, TableBody } from '@/Core/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 

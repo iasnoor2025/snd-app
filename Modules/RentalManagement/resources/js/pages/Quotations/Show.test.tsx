@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import QuotationShow from './Show';
 import { I18nextProvider } from 'react-i18next';
-import i18n from '@/test-utils/i18n';
+// import i18n from '@/test-utils/i18n'; // Removed: file does not exist and breaks build
 
 describe('QuotationShow', () => {
   const baseProps = {
