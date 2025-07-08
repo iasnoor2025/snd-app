@@ -179,23 +179,23 @@ Route::middleware(['web', 'auth'])->group(function () {
 
     // Workflow action routes - using RentalWorkflowController
 
-    Route::post('rentals/{rental}/generate-quotation', [RentalWorkflowController::class, 'generateQuotation']);
+    Route::post('rentals/{rental}/generate-quotation', [RentalWorkflowController::class, 'generateQuotation'])->name('rentals.generate-quotation');
     Route::get('rentals/{rental}/direct-generate-quotation', [RentalWorkflowController::class, 'directGenerateQuotation'])
         ->name('rentals.direct-generate-quotation');
-    Route::post('rentals/{rental}/approve-quotation', [RentalWorkflowController::class, 'approveQuotation']);
-    Route::post('rentals/{rental}/start-mobilization', [RentalWorkflowController::class, 'startMobilization']);
-    Route::post('rentals/{rental}/complete-mobilization', [RentalWorkflowController::class, 'completeMobilization']);
-    Route::post('rentals/{rental}/start', [RentalWorkflowController::class, 'start']);
-    Route::post('rentals/{rental}/complete', [RentalWorkflowController::class, 'complete']);
-    Route::post('rentals/{rental}/create-invoice', [RentalWorkflowController::class, 'createInvoice']);
-    Route::post('rentals/{rental}/mark-payment-pending', [RentalWorkflowController::class, 'markPaymentPending']);
-    Route::post('rentals/{rental}/mark-closed', [RentalWorkflowController::class, 'markClosed']);
-    Route::post('rentals/{rental}/check-overdue', [RentalWorkflowController::class, 'checkOverdue']);
-    Route::post('rentals/{rental}/request-extension', [RentalWorkflowController::class, 'requestExtension']);
-    Route::post('rentals/{rental}/approve-extension', [RentalWorkflowController::class, 'approveExtension']);
-    Route::post('rentals/{rental}/reject-extension', [RentalWorkflowController::class, 'rejectExtension']);
+    Route::post('rentals/{rental}/approve-quotation', [RentalWorkflowController::class, 'approveQuotation'])->name('rentals.approve-quotation');
+    Route::post('rentals/{rental}/start-mobilization', [RentalWorkflowController::class, 'startMobilization'])->name('rentals.start-mobilization');
+    Route::post('rentals/{rental}/complete-mobilization', [RentalWorkflowController::class, 'completeMobilization'])->name('rentals.complete-mobilization');
+    Route::post('rentals/{rental}/start', [RentalWorkflowController::class, 'startRental'])->name('rentals.start');
+    Route::post('rentals/{rental}/complete', [RentalWorkflowController::class, 'completeRental'])->name('rentals.complete');
+    Route::post('rentals/{rental}/create-invoice', [RentalWorkflowController::class, 'createInvoice'])->name('rentals.create-invoice');
+    Route::post('rentals/{rental}/mark-payment-pending', [RentalWorkflowController::class, 'markPaymentPending'])->name('rentals.mark-payment-pending');
+    Route::post('rentals/{rental}/mark-closed', [RentalWorkflowController::class, 'markClosed'])->name('rentals.mark-closed');
+    Route::post('rentals/{rental}/check-overdue', [RentalWorkflowController::class, 'checkOverdue'])->name('rentals.check-overdue');
+    Route::post('rentals/{rental}/request-extension', [RentalWorkflowController::class, 'requestExtension'])->name('rentals.request-extension');
+    Route::post('rentals/{rental}/approve-extension', [RentalWorkflowController::class, 'approveExtension'])->name('rentals.approve-extension');
+    Route::post('rentals/{rental}/reject-extension', [RentalWorkflowController::class, 'rejectExtension'])->name('rentals.reject-extension');
     Route::post('rentals/{rental}/cancel', [RentalWorkflowController::class, 'cancelRental'])->name('rentals.cancel');
-    Route::post('rentals/{rental}/reject-extension/{extensionId}', [RentalWorkflowController::class, 'rejectExtension'])->name('rentals.reject-extension');
+    Route::post('rentals/{rental}/reject-extension/{extensionId}', [RentalWorkflowController::class, 'rejectExtension'])->name('rentals.reject-extension.with-id');
     Route::get('rentals/{rental}/quotation/download', [\Modules\RentalManagement\Http\Controllers\QuotationController::class, 'downloadByRental'])->name('rentals.quotation.download');
 
 });

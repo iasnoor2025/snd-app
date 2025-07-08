@@ -5,11 +5,10 @@ namespace Modules\RentalManagement\Http\Controllers;
 use Modules\RentalManagement\Domain\Models\Rental;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use App\Enums\RentalStatus;
 use Modules\RentalManagement\Actions\GenerateQuotationAction;
-use App\Actions\Rental\StartRentalAction;
-use App\Actions\Rental\CompleteRentalAction;
-use App\Actions\Rental\ApproveQuotationAction;
+use Modules\RentalManagement\Actions\StartRentalAction;
+use Modules\RentalManagement\Actions\CompleteRentalAction;
+use Modules\RentalManagement\Actions\ApproveQuotationAction;
 use App\Actions\Rental\StartMobilizationAction;
 use App\Actions\Rental\CompleteMobilizationAction;
 use App\Actions\Rental\CreateInvoiceAction;
@@ -72,8 +71,8 @@ class RentalWorkflowController extends Controller
             $quotation = $action->execute($rental);
 
             // Update rental status if needed
-            if ($rental->status === RentalStatus::PENDING) {
-                $rental->update(['status' => RentalStatus::QUOTATION->value]);
+            if ($rental->status === 'pending') {
+                $rental->update(['status' => 'quotation']);
             }
 
             return redirect()->route('quotations.show', $quotation)
@@ -114,19 +113,23 @@ class RentalWorkflowController extends Controller
     /**
      * Start mobilization for a rental.
      */
-    public function startMobilization(Rental $rental)
+    public function startMobilization(Request $request, Rental $rental)
     {
         try {
             $rental = $this->statusUpdateAction->execute(
                 $rental,
-                RentalStatus::MOBILIZATION,
-                auth()->id()
+                'mobilization',
+                []
             );
+
+            if ($request->wantsJson() || $request->header('X-Inertia')) {
+                return \Inertia\Inertia::location(route('rentals.show', $rental));
+            }
 
             return redirect()->route('rentals.show', $rental)
                 ->with('success', 'Mobilization started successfully.');
         } catch (\Exception $e) {
-            Log::error('Failed to start mobilization', [
+            \Log::error('Failed to start mobilization', [
                 'rental_id' => $rental->id,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
@@ -139,19 +142,23 @@ class RentalWorkflowController extends Controller
     /**
      * Complete mobilization for a rental.
      */
-    public function completeMobilization(Rental $rental)
+    public function completeMobilization(Request $request, Rental $rental)
     {
         try {
             $rental = $this->statusUpdateAction->execute(
                 $rental,
-                RentalStatus::MOBILIZATION_COMPLETED,
-                auth()->id()
+                'mobilization_completed',
+                []
             );
+
+            if ($request->wantsJson() || $request->header('X-Inertia')) {
+                return \Inertia\Inertia::location(route('rentals.show', $rental));
+            }
 
             return redirect()->route('rentals.show', $rental)
                 ->with('success', 'Mobilization completed successfully.');
         } catch (\Exception $e) {
-            Log::error('Failed to complete mobilization', [
+            \Log::error('Failed to complete mobilization', [
                 'rental_id' => $rental->id,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
@@ -164,15 +171,19 @@ class RentalWorkflowController extends Controller
     /**
      * Start a rental.
      */
-    public function startRental(Rental $rental, StartRentalAction $action)
+    public function startRental(Request $request, Rental $rental, StartRentalAction $action)
     {
         try {
             $rental = $action->execute($rental, auth()->id());
 
+            if ($request->wantsJson() || $request->header('X-Inertia')) {
+                return \Inertia\Inertia::location(route('rentals.show', $rental));
+            }
+
             return redirect()->route('rentals.show', $rental)
                 ->with('success', 'Rental started successfully.');
         } catch (\Exception $e) {
-            Log::error('Failed to start rental', [
+            \Log::error('Failed to start rental', [
                 'rental_id' => $rental->id,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
@@ -185,15 +196,19 @@ class RentalWorkflowController extends Controller
     /**
      * Complete a rental.
      */
-    public function completeRental(Rental $rental, CompleteRentalAction $action)
+    public function completeRental(Request $request, Rental $rental, CompleteRentalAction $action)
     {
         try {
             $rental = $action->execute($rental, auth()->id());
 
+            if ($request->wantsJson() || $request->header('X-Inertia')) {
+                return \Inertia\Inertia::location(route('rentals.show', $rental));
+            }
+
             return redirect()->route('rentals.show', $rental)
                 ->with('success', 'Rental completed successfully.');
         } catch (\Exception $e) {
-            Log::error('Failed to complete rental', [
+            \Log::error('Failed to complete rental', [
                 'rental_id' => $rental->id,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
@@ -206,15 +221,19 @@ class RentalWorkflowController extends Controller
     /**
      * Create an invoice for a rental.
      */
-    public function createInvoice(Rental $rental, CreateInvoiceAction $action)
+    public function createInvoice(Request $request, Rental $rental, CreateInvoiceAction $action)
     {
         try {
             $invoice = $action->execute($rental);
 
+            if ($request->wantsJson() || $request->header('X-Inertia')) {
+                return \Inertia\Inertia::location(route('invoices.show', $invoice));
+            }
+
             return redirect()->route('invoices.show', $invoice)
                 ->with('success', 'Invoice created successfully.');
         } catch (\Exception $e) {
-            Log::error('Failed to create invoice', [
+            \Log::error('Failed to create invoice', [
                 'rental_id' => $rental->id,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
@@ -232,10 +251,14 @@ class RentalWorkflowController extends Controller
         try {
             $extensionRequest = $action->execute($rental, $request->validated(), auth()->id());
 
+            if ($request->wantsJson() || $request->header('X-Inertia')) {
+                return \Inertia\Inertia::location(route('rentals.show', $rental));
+            }
+
             return redirect()->route('rentals.show', $rental)
                 ->with('success', 'Extension request submitted successfully.');
         } catch (\Exception $e) {
-            Log::error('Failed to request extension', [
+            \Log::error('Failed to request extension', [
                 'rental_id' => $rental->id,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
@@ -248,7 +271,7 @@ class RentalWorkflowController extends Controller
     /**
      * Manually check and update the rental's overdue status.
      */
-    public function checkOverdueStatus(Rental $rental)
+    public function checkOverdueStatus(Request $request, Rental $rental)
     {
         try {
             $result = $this->checkOverdueAction->execute($rental);
@@ -259,10 +282,14 @@ class RentalWorkflowController extends Controller
                 default => 'Overdue status is unchanged.',
             };
 
+            if ($request->wantsJson() || $request->header('X-Inertia')) {
+                return \Inertia\Inertia::location(route('rentals.show', $rental));
+            }
+
             return redirect()->route('rentals.show', $rental)
                 ->with('success', $message);
         } catch (\Exception $e) {
-            Log::error('Failed to check overdue status', [
+            \Log::error('Failed to check overdue status', [
                 'rental_id' => $rental->id,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
@@ -275,7 +302,7 @@ class RentalWorkflowController extends Controller
     /**
      * Cancel a rental at any stage.
      */
-    public function cancelRental(Rental $rental)
+    public function cancelRental(Request $request, Rental $rental)
     {
         try {
             $rental->update(['status' => 'cancelled']);
@@ -285,6 +312,11 @@ class RentalWorkflowController extends Controller
                 'changed_by' => auth()->id(),
                 'notes' => 'Rental cancelled by user.'
             ]);
+
+            if ($request->wantsJson() || $request->header('X-Inertia')) {
+                return \Inertia\Inertia::location(route('rentals.show', $rental));
+            }
+
             return redirect()->route('rentals.show', $rental)
                 ->with('success', 'Rental cancelled successfully.');
         } catch (\Exception $e) {

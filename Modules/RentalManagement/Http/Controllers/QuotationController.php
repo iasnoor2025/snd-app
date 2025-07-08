@@ -497,6 +497,18 @@ class QuotationController extends Controller
                 'approved_at' => now(),
             ]);
 
+            // If quotation is linked to a rental, update rental status as well
+            if ($quotation->rental_id) {
+                $rental = Rental::find($quotation->rental_id);
+                if ($rental) {
+                    $rental->update([
+                        'status' => 'quotation_approved',
+                        'approved_by' => Auth::id(),
+                        'approved_at' => now(),
+                    ]);
+                }
+            }
+
             // Log approval in history
             QuotationHistory::create([
                 'quotation_id' => $quotation->id,

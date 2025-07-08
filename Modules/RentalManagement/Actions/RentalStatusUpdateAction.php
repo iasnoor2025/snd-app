@@ -2,7 +2,7 @@
 
 namespace Modules\RentalManagement\Actions;
 
-use Modules\RentalManagement\Domain\Entities\Rental;
+use Modules\RentalManagement\Domain\Models\Rental;
 
 class RentalStatusUpdateAction
 {

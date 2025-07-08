@@ -1,11 +1,11 @@
 import React from "react";
 import { useTranslation } from 'react-i18next';
-import { router, useForm } from "@inertiajs/react";
 import { Rental } from "@/Core/types/models";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { usePermission } from "@/Core";
 import { cn } from "@/Core";
+import { Inertia } from '@inertiajs/inertia';
 
 // ShadCN UI Components
 import { Button } from "@/Core";
@@ -142,6 +142,10 @@ export default function RentalWorkflowStatus({
   const { hasPermission } = usePermission();
   const canEditRentals = hasPermission('rentals.edit');
 
+  // Add permission check for showing status action button
+  const isAdmin = hasPermission('admin');
+  const canEdit = isAdmin || hasPermission('rentals.edit');
+
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const [dialogAction, setDialogAction] = React.useState<{
     title: string;
@@ -202,7 +206,8 @@ export default function RentalWorkflowStatus({
         description,
         confirmText,
         () => {
-          router.post(route(routeName, rental.id));
+          // Actually send the POST request to the backend
+          Inertia.post(route(routeName, rental.id));
         }
       );
     };
@@ -397,26 +402,30 @@ export default function RentalWorkflowStatus({
                             <h3
                               className={cn(
                                 "text-sm font-medium",
-                                isCompleted && "text-primary",
-                                isCurrent && "text-primary font-bold",
-                                isUpcoming && "text-gray-500"
+                                isCurrent && "text-primary"
                               )}
                             >
                               {step.name}
                               {isCurrent && (
-                                <span className="ml-2 inline-block bg-primary text-white text-xs px-2 py-0.5 rounded-full">
-                                  Current
-                                </span>
+                                <span className="ml-2 inline-block align-middle text-xs font-semibold bg-gray-200 text-gray-700 px-2 py-0.5 rounded">Current</span>
                               )}
                             </h3>
-                            <p
-                              className={cn(
-                                "text-sm",
-                                isCurrent ? "text-gray-700" : "text-gray-500"
-                              )}
-                            >
-                              {step.description}
-                            </p>
+                            <p className="text-xs text-muted-foreground">{step.description}</p>
+                            {/* Render action button for current step if allowed */}
+                            {isCurrent && statusActions[step.id] && canEdit && (() => {
+                              const Icon = statusActions[step.id].icon;
+                              return (
+                                <Button
+                                  className="mt-2"
+                                  size="sm"
+                                  variant="default"
+                                  onClick={statusActions[step.id].handler}
+                                >
+                                  {Icon && <Icon className="w-4 h-4 mr-2 inline-block align-text-bottom" />}
+                                  {statusActions[step.id].buttonText}
+                                </Button>
+                              );
+                            })()}
                           </div>
                         </div>
                       </TooltipTrigger>
@@ -446,12 +455,12 @@ export default function RentalWorkflowStatus({
                 <span>{format(new Date(rental.actual_end_date), 'MMM d, yyyy')}</span>
               </div>
             )}
-            {rental.duration_days !== undefined && (
+            {/* {rental.duration_days !== undefined && (
               <div className="flex justify-between mt-1">
                 <span className="font-medium">Duration:</span>
                 <span>{rental.duration_days} days</span>
               </div>
-            )}
+            )} */}
           </div>
 
           {/* Action buttons */}

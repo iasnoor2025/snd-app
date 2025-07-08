@@ -67,7 +67,12 @@ const QuotationShow: React.FC<QuotationShowProps> = ({ quotation, quotationItems
       await axios.get('/sanctum/csrf-cookie');
       await axios.post(route('quotations.approve', quotation.id));
       toast.success(getTranslationString(t('quotation_approved'), 'Quotation Approved'));
-      window.location.reload();
+      // Redirect to rental show page if rental_id exists, else reload
+      if (quotation.rental_id) {
+        window.location.href = route('rentals.show', quotation.rental_id);
+      } else {
+        window.location.reload();
+      }
     } catch (e: any) {
       // Handle HTML/redirect response
       if (typeof e?.response?.data === 'string' && e.response.data.includes('<html')) {
