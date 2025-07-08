@@ -153,7 +153,7 @@ export default function StatusTimeline({ rental, className = "" }: StatusTimelin
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          {auditEvents.length > 0 && (
+          {auditEvents.length > 0 ? (
             <ol className="relative border-l border-muted mb-8">
               {auditEvents.map((event: any, index: number) => (
                 <li key={event.id || index} className="mb-6 ml-6">
@@ -179,35 +179,36 @@ export default function StatusTimeline({ rental, className = "" }: StatusTimelin
                 </li>
               ))}
             </ol>
-          )}
-          {activeEvents.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t('no_status_events_yet')}</p>
           ) : (
-            <ErrorBoundary>
-              <ol className="relative border-l border-muted">
-                {activeEvents.map((event, index) => (
-                  <li key={event.id} className="mb-6 ml-6">
-                    <span className={cn(
-                      "absolute flex items-center justify-center w-6 h-6 rounded-full -left-3",
-                      event.color
-                    )}>
-                      <event.icon className="w-3 h-3" />
-                    </span>
-                    <h3 className="flex items-center mb-1 text-sm font-semibold">
-                      {event.name}
-                    </h3>
-                    {event.date && (
-                      <time className="block mb-1 text-xs font-normal text-muted-foreground">
-                        {formatDateMedium(event.date)}
-                      </time>
-                    )}
-                    <p className="text-xs text-muted-foreground">
-                      {event.description}
-                    </p>
-                  </li>
-                ))}
-              </ol>
-            </ErrorBoundary>
+            activeEvents.length === 0 ? (
+              <p className="text-sm text-muted-foreground">{t('no_status_events_yet')}</p>
+            ) : (
+              <ErrorBoundary>
+                <ol className="relative border-l border-muted">
+                  {activeEvents.map((event, index) => (
+                    <li key={event.id} className="mb-6 ml-6">
+                      <span className={cn(
+                        "absolute flex items-center justify-center w-6 h-6 rounded-full -left-3",
+                        event.color
+                      )}>
+                        <event.icon className="w-3 h-3" />
+                      </span>
+                      <h3 className="flex items-center mb-1 text-sm font-semibold">
+                        {event.name}
+                      </h3>
+                      {event.date && (
+                        <time className="block mb-1 text-xs font-normal text-muted-foreground">
+                          {formatDateMedium(event.date)}
+                        </time>
+                      )}
+                      <p className="text-xs text-muted-foreground">
+                        {event.description}
+                      </p>
+                    </li>
+                  ))}
+                </ol>
+              </ErrorBoundary>
+            )
           )}
         </div>
       </CardContent>

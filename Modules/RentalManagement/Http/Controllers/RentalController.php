@@ -181,7 +181,33 @@ class RentalController extends Controller
             'payments',
             'maintenanceRecords',
             'location',
+            'quotation',
         ]);
+
+        // Merge latest quotation data into rental array if available
+        $rentalArray = $rental->toArray();
+        if ($rental->quotation) {
+            $quotation = $rental->quotation;
+            $rentalArray['quotation_id'] = $quotation->id;
+            $rentalArray['quotation_created_at'] = $quotation->created_at;
+            $rentalArray['subtotal'] = $quotation->subtotal;
+            $rentalArray['tax_rate'] = $quotation->tax_percentage;
+            $rentalArray['tax_amount'] = $quotation->tax_amount;
+            $rentalArray['discount'] = $quotation->discount_amount;
+            $rentalArray['total_amount'] = $quotation->total_amount;
+        }
+
+        // Ensure customer details always include both company_name and name
+        if (isset($rentalArray['customer'])) {
+            $customer = $rentalArray['customer'];
+            if (!isset($customer['company_name']) && isset($customer['name'])) {
+                $customer['company_name'] = $customer['name'];
+            }
+            if (!isset($customer['name']) && isset($customer['company_name'])) {
+                $customer['name'] = $customer['company_name'];
+            }
+            $rentalArray['customer'] = $customer;
+        }
 
         // Dropdowns for related entities
         $customers = \Modules\CustomerManagement\Domain\Models\Customer::where('is_active', true)
@@ -268,7 +294,7 @@ class RentalController extends Controller
         })->values();
 
         return Inertia::render('Rentals/Show', [
-            'rental' => $rental,
+            'rental' => $rentalArray,
             'workflowHistory' => $rental->workflow_history,
             'rentalItems' => [
                 'data' => $rentalItems,

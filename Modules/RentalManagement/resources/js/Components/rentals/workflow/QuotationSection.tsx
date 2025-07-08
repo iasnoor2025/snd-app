@@ -198,6 +198,16 @@ export default function QuotationSection({
                   </div>
                 </div>
 
+                {/* Rental Terms Section */}
+                <div className="mt-6">
+                  <h3 className="font-semibold text-sm mb-2">Rental Terms:</h3>
+                  <ol className="list-decimal pl-6 space-y-1 text-sm">
+                    <li>Equipments Works 10 Hours a day for 26 days In a month.</li>
+                    <li>{rental.customer.company_name} to provide Fuel(diesel) for the Equipments.</li>
+                    <li>{rental.customer.company_name} shall provide a accommodation, Food and transportation for the Drives.</li>
+                  </ol>
+                </div>
+
                 {/* Download and email actions */}
                 <div className="flex space-x-2">
                   <Button variant="outline" className="flex-1" asChild>

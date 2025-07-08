@@ -273,8 +273,16 @@
       <div class="terms">
         <strong>Terms and Conditions</strong>
         <ol>
-          <li>Please pay within 15 days from the date of invoice, overdue interest @ 14% will be charged on delayed payments.</li>
-          <li>Please quote invoice number when remitting funds.</li>
+          <li>Prices are valid for 30 days from the date of this quotation.</li>
+          <li>All prices are in Saudi Riyals and exclude VAT.</li>
+          <li>Payment terms: 50% advance payment and balance before delivery.</li>
+          <li>Delivery time: Within 7-14 days after receipt of purchase order.</li>
+          <li>Equipment remains the property of the company until payment is received in full.</li>
+          <li>Mobilization and demobilization costs are not included unless specifically stated.</li>
+          <li>Operator charges are separate and not included in the equipment rental rates.</li>
+          <li>The client is responsible for the equipment during the rental period.</li>
+          <li>Cancellation fees may apply for orders canceled within 48 hours of scheduled delivery.</li>
+          <li>The company reserves the right to substitute equipment of equivalent specification if necessary.</li>
         </ol>
       </div>
       {{-- <div class="notes">
