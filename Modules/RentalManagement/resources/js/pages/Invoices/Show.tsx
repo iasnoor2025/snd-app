@@ -24,6 +24,7 @@ import { Badge } from '@/Core/components/ui/badge';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { Download, Printer, Send } from 'lucide-react';
+import { route } from 'ziggy-js';
 
 interface InvoiceItem {
   id: number;
@@ -111,6 +112,19 @@ export default function Show({ invoice, documents, erpInvoice }: ShowProps) {
 
       <div className="container mx-auto py-8">
         <div className="flex justify-between items-center mb-6">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => {
+              if (invoice.rental_id) {
+                Inertia.visit(route('rentals.show', invoice.rental_id));
+              }
+            }}
+            className="mr-4"
+            disabled={!invoice.rental_id}
+          >
+            {t('back')}
+          </Button>
           <h1 className="text-2xl font-bold">{t('invoice')} #{invoice.invoice_number}</h1>
           <div className="flex gap-2">
             <Button
@@ -213,23 +227,23 @@ export default function Show({ invoice, documents, erpInvoice }: ShowProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <p className="font-semibold">{t('customer')}:</p>
-                <p>{invoice.customer.company_name}</p>
+                <p>{invoice.customer?.company_name || '-'}</p>
               </div>
               <div>
                 <p className="font-semibold">{t('contact_person')}:</p>
-                <p>{invoice.customer.contact_name}</p>
+                <p>{invoice.customer?.contact_name || '-'}</p>
               </div>
               <div>
                 <p className="font-semibold">{t('email')}:</p>
-                <p>{invoice.customer.email}</p>
+                <p>{invoice.customer?.email || '-'}</p>
               </div>
               <div>
                 <p className="font-semibold">{t('phone')}:</p>
-                <p>{invoice.customer.phone}</p>
+                <p>{invoice.customer?.phone || '-'}</p>
               </div>
               <div>
                 <p className="font-semibold">{t('address')}:</p>
-                <p>{invoice.customer.address}</p>
+                <p>{invoice.customer?.address || '-'}</p>
               </div>
             </div>
 
@@ -285,14 +299,14 @@ export default function Show({ invoice, documents, erpInvoice }: ShowProps) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {invoice.items.map((item) => (
+                {Array.isArray(invoice.items) ? invoice.items.map((item) => (
                   <TableRow key={item.id}>
                     <TableCell>{item.description}</TableCell>
                     <TableCell>{item.quantity}</TableCell>
                     <TableCell>{formatCurrency(item.unit_price)}</TableCell>
                     <TableCell>{formatCurrency(item.amount)}</TableCell>
                   </TableRow>
-                ))}
+                )) : null}
               </TableBody>
             </Table>
           </CardContent>
