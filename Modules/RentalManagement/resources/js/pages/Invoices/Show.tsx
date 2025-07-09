@@ -159,11 +159,11 @@ export default function Show({ invoice, documents }: ShowProps) {
               </div>
               <div>
                 <p className="font-semibold">{t('issue_date')}:</p>
-                <p>{format(new Date(invoice.issue_date), 'MM/dd/yyyy')}</p>
+                <p>{invoice.issue_date && !isNaN(Date.parse(invoice.issue_date)) ? format(new Date(invoice.issue_date), 'MM/dd/yyyy') : '-'}</p>
               </div>
               <div>
                 <p className="font-semibold">{t('due_date')}:</p>
-                <p>{format(new Date(invoice.due_date), 'MM/dd/yyyy')}</p>
+                <p>{invoice.due_date && !isNaN(Date.parse(invoice.due_date)) ? format(new Date(invoice.due_date), 'MM/dd/yyyy') : '-'}</p>
               </div>
               <div>
                 <p className="font-semibold">{t('status')}:</p>

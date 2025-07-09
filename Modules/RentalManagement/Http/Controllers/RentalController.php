@@ -166,6 +166,7 @@ class RentalController extends Controller
      */
     public function show($id)
     {
+        \Log::info('RentalController: show() start', ['rental_id' => $id]);
         $rental = $this->rentalService->findById((int)$id);
 
         if (!$rental) {

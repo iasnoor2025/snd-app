@@ -73,6 +73,7 @@ class Rental extends Model implements HasMedia
         'has_operators',
         'equipment_id',
         'end_date',
+        'invoice_id', // ERPNext invoice reference
     ];
 
     /**
@@ -481,6 +482,12 @@ class Rental extends Model implements HasMedia
             throw new \Exception('Rental must be completed or active to create an invoice');
         }
 
+        // Prevent duplicate invoices
+        $existingInvoice = $this->invoices()->first();
+        if ($existingInvoice) {
+            throw new \Exception('Invoice already exists for this rental', 409);
+        }
+
         // Begin database transaction
         DB::beginTransaction();
 
@@ -500,6 +507,12 @@ class Rental extends Model implements HasMedia
                     $paymentTerms = 30;
                 }
             }
+
+            // Use query-based sum to avoid loading all items into memory
+            $subtotal = $this->rentalItems()->sum('total_amount');
+            $discountAmount = ($subtotal * ($this->discount_percentage ?? 0)) / 100;
+            $taxAmount = ($subtotal * ($this->tax_percentage ?? 15)) / 100;
+            $totalAmount = $subtotal - $discountAmount + $taxAmount;
 
             // Generate a unique invoice number
             $year = now()->format('Y');
@@ -522,19 +535,14 @@ class Rental extends Model implements HasMedia
                 'customer_id' => $this->customer_id,
                 'rental_id' => $this->id,
                 'invoice_number' => $invoiceNumber,
-                'issue_date' => now(),
                 'invoice_date' => now(),
                 'due_date' => now()->addDays($paymentTerms),
-                'subtotal' => $this->rentalItems->sum('total_amount'),
-                'discount_amount' => ($this->rentalItems->sum('total_amount') * ($this->discount_percentage ?? 0)) / 100,
-                'tax_amount' => ($this->rentalItems->sum('total_amount') * ($this->tax_percentage ?? 15)) / 100,
-                'total_amount' => $this->rentalItems->sum('total_amount')
-                    - (($this->rentalItems->sum('total_amount') * ($this->discount_percentage ?? 0)) / 100)
-                    + (($this->rentalItems->sum('total_amount') * ($this->tax_percentage ?? 15)) / 100),
+                'subtotal' => $subtotal,
+                'discount_amount' => $discountAmount,
+                'tax_amount' => $taxAmount,
+                'total_amount' => $totalAmount,
                 'paid_amount' => 0,
-                'balance' => $this->rentalItems->sum('total_amount')
-                    - (($this->rentalItems->sum('total_amount') * ($this->discount_percentage ?? 0)) / 100)
-                    + (($this->rentalItems->sum('total_amount') * ($this->tax_percentage ?? 15)) / 100),
+                'balance' => $totalAmount,
                 'status' => 'draft',
                 'notes' => $this->status === 'completed' ? 'Completed rental' : null,
                 'created_by' => (function () {
@@ -546,8 +554,8 @@ class Rental extends Model implements HasMedia
                 })(),
             ]);
 
-            // Create invoice items
-            foreach ($this->rentalItems as $rentalItem) {
+            // Only process up to 5 rental items to debug memory issues
+            foreach ($this->rentalItems()->limit(5)->get() as $rentalItem) {
                 $days = $this->getDurationDaysAttribute();
 
                 // Adjust rate based on rate_type

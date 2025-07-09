@@ -71,6 +71,9 @@ Route::middleware(['web', 'auth'])->group(function () {
         Modules\RentalManagement\Http\Controllers\InvoiceController::class,
         'pdf',
     ])->name('invoices.pdf');
+    Route::get('invoices/{invoice}/download', [
+        \Modules\RentalManagement\Http\Controllers\InvoiceController::class, 'downloadPdf'
+    ])->name('invoices.download')->middleware(['web', 'auth']);
 
     // Quotation routes
     Route::resource('quotations', QuotationController::class)->middleware([

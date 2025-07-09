@@ -20,6 +20,8 @@ use Modules\RentalManagement\Console\Commands\SeedRentalDataCommand;
 use Illuminate\Support\Facades\Gate;
 use Modules\RentalManagement\Domain\Models\Quotation;
 use Modules\RentalManagement\Policies\QuotationPolicy;
+use Modules\RentalManagement\Domain\Models\Rental;
+use Modules\RentalManagement\Observers\RentalObserver;
 
 class RentalManagementServiceProvider extends ServiceProvider
 {
@@ -40,30 +42,22 @@ class RentalManagementServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Rental::observe(RentalObserver::class);
         $this->loadViewsFrom(__DIR__ . '/../../Resources/views', 'RentalManagement');
         $this->registerTranslations();
         $this->registerConfig();
-        $this->registerViews();
-        $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
         // Only set pgsql as default if not running tests
         if (!app()->environment('testing')) {
             $this->app->make('db')->setDefaultConnection('pgsql');
         }
-
         // Register Quotation policy
         Gate::policy(Quotation::class, QuotationPolicy::class);
-
-        // Register observers
-        // \Modules\RentalManagement\Domain\Models\Rental::observe(\Modules\RentalManagement\Observers\RentalObserver::class);
-        // \Modules\RentalManagement\Domain\Models\RentalItem::observe(\Modules\RentalManagement\Observers\RentalItemObserver::class);
-
         // Register Vite assets
         Vite::useHotFile(public_path('hot'))
             ->useBuildDirectory('build-rental')
             ->withEntryPoints([
                 'Modules/RentalManagement/resources/js/app.tsx',
             ]);
-
         if ($this->app->runningInConsole()) {
             $this->commands([
                 SeedRentalDataCommand::class,

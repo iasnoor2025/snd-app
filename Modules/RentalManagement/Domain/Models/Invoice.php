@@ -28,7 +28,6 @@ class Invoice extends Model implements HasMedia
         'customer_id',
         'rental_id',
         'invoice_number',
-        'issue_date',
         'invoice_date',
         'due_date',
         'subtotal',
@@ -48,7 +47,6 @@ class Invoice extends Model implements HasMedia
      * @var array<string, string>
      */
     protected $casts = [
-        'issue_date' => 'date',
         'invoice_date' => 'date',
         'due_date' => 'date',
         'subtotal' => 'decimal:2',

@@ -1139,7 +1139,18 @@ export default function Show({
 
   return (
     <AppLayout>
-      <Head title={`Rental ${rental?.rental_number || '#' + rental?.id || ''}`} />
+      <Head title={`Rental #${rental.rental_number}`} />
+      {/* ERPNext Invoice Link */}
+      {rental.invoice_id && (
+        <a
+          href={`https://erp.snd-ksa.online/app/sales-invoice/${rental.invoice_id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+        >
+          View ERPNext Invoice
+        </a>
+      )}
 
       {isLoading && (
         <div className="flex h-[50vh] w-full items-center justify-center">

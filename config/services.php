@@ -59,4 +59,10 @@ return [
         'redirect' => env('LINKEDIN_REDIRECT_URI'),
     ],
 
+    'erpnext' => [
+        'url' => env('ERPNEXT_URL'),
+        'api_key' => env('ERPNEXT_API_KEY'),
+        'api_secret' => env('ERPNEXT_API_SECRET'),
+    ],
+
 ];

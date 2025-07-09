@@ -267,6 +267,10 @@ class RentalWorkflowController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
 
+            if ($e->getCode() === 409) {
+                return response()->json(['error' => $e->getMessage()], 409);
+            }
+
             if ($request->wantsJson() || $request->header('X-Inertia')) {
                 return \Inertia\Inertia::location(route('rentals.show', $rental));
             }

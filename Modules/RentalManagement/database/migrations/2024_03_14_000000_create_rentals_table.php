@@ -51,6 +51,7 @@ return new class extends Migration
                 $table->date('deposit_paid_date')->nullable();
                 $table->boolean('deposit_refunded')->default(false);
                 $table->date('deposit_refund_date')->nullable();
+                $table->string('invoice_id')->nullable();
                 $table->timestamps();
                 $table->softDeletes();
             });

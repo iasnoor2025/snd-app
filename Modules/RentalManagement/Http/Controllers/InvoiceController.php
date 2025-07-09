@@ -165,9 +165,12 @@ class InvoiceController extends Controller
         $this->authorize('invoices.view');
 
         $invoice->load(['customer', 'items']);
-
+        $invoiceArray = $invoice->toArray();
+        // Ensure dates are sent as strings
+        $invoiceArray['issue_date'] = $invoice->invoice_date ? $invoice->invoice_date->format('Y-m-d') : null;
+        $invoiceArray['due_date'] = $invoice->due_date ? $invoice->due_date->format('Y-m-d') : null;
         return Inertia::render('Invoices/Show', [
-            'invoice' => $invoice,
+            'invoice' => $invoiceArray,
             'documents' => $invoice->getMedia($this->documentCollection),
         ]);
     }
