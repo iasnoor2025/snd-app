@@ -298,11 +298,23 @@ class RentalController extends Controller
 
         // Prepare invoices data for InvoicesCard
         $invoicesData = $rental->invoices->map(function ($invoice) {
+            // Fetch ERPNext status if invoice_number is set
+            $erpStatus = null;
+            if ($invoice->invoice_number) {
+                try {
+                    $erp = app(\Modules\RentalManagement\Services\ERPNextClient::class);
+                    $erpInvoice = $erp->getInvoice($invoice->invoice_number);
+                    $erpStatus = $erpInvoice['status'] ?? null;
+                } catch (\Exception $e) {
+                    $erpStatus = null;
+                }
+            }
             return [
                 'id' => $invoice->id,
                 'invoice_number' => $invoice->invoice_number,
                 'amount' => $invoice->total_amount ?? 0,
                 'status' => $invoice->status,
+                'erp_status' => $erpStatus,
                 'due_date' => $invoice->due_date ? $invoice->due_date->format('Y-m-d') : null,
                 'is_overdue' => method_exists($invoice, 'getIsOverdueAttribute') ? $invoice->is_overdue : false,
                 'is_paid' => ($invoice->paid_amount ?? 0) >= ($invoice->total_amount ?? 0),

@@ -77,29 +77,28 @@ export default function InvoicesCard({
     }).format(amount);
   };
 
-  const getStatusBadge = (invoice: Invoice) => {
-    if (invoice.is_paid) {
+  const getStatusBadge = (invoice: Invoice & { erp_status?: string }) => {
+    const status = invoice.erp_status || invoice.status;
+    if (invoice.is_paid || status === 'Paid') {
       return (
         <Badge variant="outline" className="bg-green-100 text-green-700 border-green-200">
           <CheckCircle className="mr-1 h-3 w-3" />
-          Paid
+          {status}
         </Badge>
       );
     }
-
-    if (invoice.is_overdue) {
+    if (invoice.is_overdue || status === 'Overdue') {
       return (
         <Badge variant="outline" className="bg-red-100 text-red-700 border-red-200">
           <AlertCircle className="mr-1 h-3 w-3" />
-          Overdue
+          {status}
         </Badge>
       );
     }
-
     return (
       <Badge variant="outline" className="bg-amber-100 text-amber-700 border-amber-200">
         <Clock className="mr-1 h-3 w-3" />
-        Pending
+        {status}
       </Badge>
     );
   };
