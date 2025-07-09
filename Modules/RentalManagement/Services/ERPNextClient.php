@@ -75,6 +75,23 @@ class ERPNextClient
         return $data['data'] ?? $data;
     }
 
+    public function findInvoiceByAmendedFrom($oldInvoiceId): ?array
+    {
+        $filters = urlencode(json_encode([["amended_from", "=", $oldInvoiceId]]));
+        $url = "/api/resource/Sales Invoice?filters=$filters";
+        try {
+            $response = $this->client->get($url);
+            $data = json_decode($response->getBody()->getContents(), true);
+            if (!empty($data['data'])) {
+                // Return the latest amended invoice
+                return $data['data'][0];
+            }
+        } catch (\Exception $e) {
+            Log::warning('ERPNext find amended invoice failed: ' . $e->getMessage());
+        }
+        return null;
+    }
+
     public function getOrCreateItem(array $itemData): array
     {
         $itemCode = $itemData['item_code'];
