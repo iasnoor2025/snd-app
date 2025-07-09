@@ -485,7 +485,11 @@ class Rental extends Model implements HasMedia
         // Prevent duplicate invoices
         $existingInvoice = $this->invoices()->first();
         if ($existingInvoice) {
-            throw new \Exception('Invoice already exists for this rental', 409);
+            // Update status if not already set
+            if ($this->status !== 'invoice_prepared') {
+                $this->update(['status' => 'invoice_prepared']);
+            }
+            return $existingInvoice;
         }
 
         // Begin database transaction

@@ -121,6 +121,19 @@ class InvoiceController extends Controller
 
         DB::beginTransaction();
         try {
+            // Check if rental already has an invoice
+            $rental = null;
+            if (!empty($validatedData['rental_id'])) {
+                $rental = \Modules\RentalManagement\Domain\Models\Rental::find($validatedData['rental_id']);
+            }
+            $existingInvoice = $rental && $rental->invoices()->exists();
+            if ($existingInvoice) {
+                // Just update status, do not create another invoice
+                $rental->update(['status' => 'invoice_prepared']);
+                DB::commit();
+                return redirect()->route('rentals.show', $rental->id)
+                    ->with('success', 'Rental status updated to Invoice Prepared.');
+            }
             // Create the invoice
             $invoice = Invoice::create($validatedData);
 
@@ -132,6 +145,11 @@ class InvoiceController extends Controller
                     'unit_price' => $item['unit_price'],
                     'amount' => $item['amount']
                 ]);
+            }
+
+            // Update rental status if rental_id is present
+            if ($rental) {
+                $rental->update(['status' => 'invoice_prepared']);
             }
 
             // Handle documents if any
