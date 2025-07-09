@@ -296,6 +296,23 @@ class RentalController extends Controller
             return $item->toArray();
         })->values();
 
+        // Prepare invoices data for InvoicesCard
+        $invoicesData = $rental->invoices->map(function ($invoice) {
+            return [
+                'id' => $invoice->id,
+                'invoice_number' => $invoice->invoice_number,
+                'amount' => $invoice->total_amount ?? 0,
+                'status' => $invoice->status,
+                'due_date' => $invoice->due_date ? $invoice->due_date->format('Y-m-d') : null,
+                'is_overdue' => method_exists($invoice, 'getIsOverdueAttribute') ? $invoice->is_overdue : false,
+                'is_paid' => ($invoice->paid_amount ?? 0) >= ($invoice->total_amount ?? 0),
+                'created_at' => $invoice->created_at ? $invoice->created_at->format('Y-m-d') : null,
+            ];
+        });
+        $totalAmount = $rental->invoices->sum('total_amount');
+        $totalPaid = $rental->invoices->sum('paid_amount');
+        $totalOutstanding = $totalAmount - $totalPaid;
+
         return Inertia::render('Rentals/Show', [
             'rental' => $rentalArray,
             'workflowHistory' => $rental->workflow_history,
@@ -304,8 +321,12 @@ class RentalController extends Controller
                 'total' => $rental->rentalItems->count(),
             ],
             'invoices' => [
-                'data' => $rental->invoices,
-                'total' => $rental->invoices->count(),
+                'data' => $invoicesData,
+                'total' => $invoicesData->count(),
+                'total_amount' => $totalAmount,
+                'total_paid' => $totalPaid,
+                'total_outstanding' => $totalOutstanding,
+                'has_overdue' => $invoicesData->contains(fn($inv) => $inv['is_overdue']),
             ],
             'maintenanceRecords' => [
                 'data' => $rental->maintenanceRecords,
