@@ -174,3 +174,6 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     Route::get('/rentals/analytics', [WidgetController::class, 'analytics']);
 });
 
+// Add authenticated API endpoint for updating rental status
+Route::middleware(['auth:sanctum'])->post('rentals/{rental}/status', [\Modules\RentalManagement\Http\Controllers\RentalStatusApiController::class, 'update']);
+

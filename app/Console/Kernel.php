@@ -22,6 +22,7 @@ class Kernel extends ConsoleKernel
         Commands\TestTimesheetRoutes::class,
         Commands\TestAllModuleRoutes::class,
         Commands\PublishModuleTranslations::class,
+        Commands\SyncERPNextInvoiceStatus::class, // Register the sync command
     ];
 
     /**
@@ -35,6 +36,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire:inspire')->hourly();
+        $schedule->command('erpnext:sync-invoice-status')->everyFiveMinutes();
     }
 
     /**
@@ -48,4 +50,4 @@ class Kernel extends ConsoleKernel
 
         require base_path('routes/console.php');
     }
-} 
+}

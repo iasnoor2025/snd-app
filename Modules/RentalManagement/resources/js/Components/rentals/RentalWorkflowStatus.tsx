@@ -47,7 +47,7 @@ import {
 } from "lucide-react";
 
 interface RentalWorkflowStatusProps {
-  rental: Rental;
+  rental: Rental & { erp_invoice_status?: string };
   nextPossibleStates?: string[];
   className?: string;
 }
@@ -161,12 +161,18 @@ export default function RentalWorkflowStatus({
 
   // Ensure rental.status is a valid string if not set properly
   const safeStatus = React.useMemo(() => {
+    // Only use ERPNext invoice status if an invoice exists
+    const hasInvoices = Array.isArray(rental.invoices) && rental.invoices.length > 0;
+    const erpStatus = rental.erp_invoice_status;
+    if (hasInvoices && erpStatus && typeof erpStatus === 'string') {
+      return erpStatus.toLowerCase().replace(/ /g, '_');
+    }
     if (!rental.status || typeof rental.status !== 'string') {
       console.warn(`Invalid rental status: ${rental.status}, defaulting to 'pending'`);
       return 'pending';
     }
     return rental.status;
-  }, [rental.status]);
+  }, [rental.status, rental.erp_invoice_status, rental.invoices]);
 
   // Find the current step in the workflow
   const currentStep = workflowSteps.find(step => step.id === safeStatus) || workflowSteps[0];
