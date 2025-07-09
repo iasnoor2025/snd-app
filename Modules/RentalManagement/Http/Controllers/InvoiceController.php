@@ -187,8 +187,25 @@ class InvoiceController extends Controller
         // Ensure dates are sent as strings
         $invoiceArray['issue_date'] = $invoice->invoice_date ? $invoice->invoice_date->format('Y-m-d') : null;
         $invoiceArray['due_date'] = $invoice->due_date ? $invoice->due_date->format('Y-m-d') : null;
+        // Fetch ERPNext invoice data if available
+        $erpInvoice = null;
+        if ($invoice->rental && $invoice->rental->invoice_id) {
+            $erp = app(\Modules\RentalManagement\Services\ERPNextClient::class);
+            try {
+                $erpInvoice = $erp->getInvoice($invoice->rental->invoice_id);
+            } catch (\Exception $e) {
+                $erpInvoice = null;
+            }
+        }
+        if ($erpInvoice) {
+            $invoice->syncFromERPNext($erpInvoice);
+            $invoiceArray = $invoice->fresh()->toArray();
+            $invoiceArray['issue_date'] = $invoice->invoice_date ? $invoice->invoice_date->format('Y-m-d') : null;
+            $invoiceArray['due_date'] = $invoice->due_date ? $invoice->due_date->format('Y-m-d') : null;
+        }
         return Inertia::render('Invoices/Show', [
             'invoice' => $invoiceArray,
+            'erpInvoice' => $erpInvoice,
             'documents' => $invoice->getMedia($this->documentCollection),
         ]);
     }

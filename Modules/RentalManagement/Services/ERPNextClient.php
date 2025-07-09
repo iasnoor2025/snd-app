@@ -68,6 +68,13 @@ class ERPNextClient
         return $data['data'] ?? $data;
     }
 
+    public function getInvoice($invoiceId): array
+    {
+        $response = $this->client->get('/api/resource/Sales Invoice/' . $invoiceId);
+        $data = json_decode($response->getBody()->getContents(), true);
+        return $data['data'] ?? $data;
+    }
+
     public function getOrCreateItem(array $itemData): array
     {
         $itemCode = $itemData['item_code'];

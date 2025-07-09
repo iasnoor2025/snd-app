@@ -22,21 +22,6 @@ class RentalSeeder extends Seeder
             echo "Missing customer or user, skipping rental seeding.\n";
             return;
         }
-        $rental = Rental::create([
-            'customer_id' => $customer->id,
-            'rental_number' => 'RENT-' . now()->format('YmdHis'),
-            'start_date' => now(),
-            'status' => 'pending',
-            'subtotal' => 1000.00,
-            'tax_amount' => 150.00,
-            'total_amount' => 1150.00,
-            'discount' => 0.00,
-            'tax' => 0.00,
-            'final_amount' => 1150.00,
-            'payment_status' => 'pending',
-            'created_by' => $user->id,
-        ]);
-        echo "Created rental: {$rental->id}\n";
 
         // Ensure we have at least one equipment
         $equipment = Equipment::firstOrCreate(
@@ -99,7 +84,7 @@ class RentalSeeder extends Seeder
                 'rental_number' => 'RNT-' . $now->format('Ymd') . '-002-' . $unique,
             ], [
                 'customer_id' => $customer->id,
-                'status' => 'completed',
+                'status' => 'pending', // initially pending
                 'start_date' => $now->copy()->subMonths(2),
                 'expected_end_date' => $now->copy()->subMonth(),
                 'actual_end_date' => $now->copy()->subMonth(),
@@ -127,6 +112,9 @@ class RentalSeeder extends Seeder
                 'total_amount' => 3000,
                 'notes' => 'Weekly rental',
             ]);
+
+            // Now update status to completed (triggers observer)
+            $rental2->update(['status' => 'completed']);
 
             // Pending rental
             $rental3 = Rental::firstOrCreate([

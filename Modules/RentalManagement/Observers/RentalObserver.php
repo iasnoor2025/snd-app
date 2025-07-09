@@ -55,9 +55,14 @@ class RentalObserver
                 \Log::info('RentalObserver: after ERPNext item sync', ['erp_item' => $erpItem]);
                 $erpItems[] = [
                     'item_code' => $itemCode,
-                    'qty' => $item->quantity,
-                    'rate' => $item->rate,
+                    'qty' => $item->quantity ?? 1,
+                    'rate' => $item->rate ?? 0,
+                    'amount' => (($item->quantity ?? 1) * ($item->rate ?? 0)),
                 ];
+            }
+            if (empty($erpItems)) {
+                \Log::error('RentalObserver: No items found for ERPNext invoice payload', ['rental_id' => $rental->id]);
+                throw new \Exception('Cannot create ERPNext invoice: No items found for this rental.');
             }
             $payload = [
                 'customer' => $erpCustomer['name'],
@@ -76,6 +81,7 @@ class RentalObserver
                 ],
             ];
             \Log::info('RentalObserver: before ERPNext invoice sync', ['payload' => $payload]);
+            \Log::info('RentalObserver: ERPNext invoice payload', ['payload' => $payload]);
             $invoice = $erp->createSalesInvoice($payload);
             \Log::info('RentalObserver: after ERPNext invoice sync', ['invoice' => $invoice]);
             if (!empty($invoice['name']) && $rental->invoice_id !== $invoice['name']) {

@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('invoices', function (Blueprint $table) {
-            $table->decimal('discount_amount', 10, 2)->default(0);
-            $table->decimal('paid_amount', 10, 2)->default(0);
-            $table->decimal('balance', 10, 2)->default(0);
+            // $table->decimal('discount_amount', 10, 2)->default(0);
+            // $table->decimal('paid_amount', 10, 2)->default(0);
+            // $table->decimal('balance', 10, 2)->default(0);
         });
     }
 

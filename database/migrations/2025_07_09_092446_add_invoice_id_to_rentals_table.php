@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('rentals', function (Blueprint $table) {
-            $table->string('invoice_id')->nullable()->after('end_date');
+            // $table->string('invoice_id')->nullable()->after('end_date');
         });
     }
 

@@ -177,6 +177,18 @@ class Invoice extends Model implements HasMedia
 
         return $query;
     }
+
+    public function syncFromERPNext(array $erpInvoice): void
+    {
+        $this->invoice_number = $erpInvoice['name'] ?? $this->invoice_number;
+        $this->status = $erpInvoice['status'] ?? $this->status;
+        $this->invoice_date = $erpInvoice['posting_date'] ?? $this->invoice_date;
+        $this->due_date = $erpInvoice['due_date'] ?? $this->due_date;
+        $this->total_amount = $erpInvoice['grand_total'] ?? $this->total_amount;
+        $this->paid_amount = $erpInvoice['paid_amount'] ?? $this->paid_amount;
+        $this->balance = $erpInvoice['outstanding_amount'] ?? $this->balance;
+        $this->save();
+    }
 }
 
 

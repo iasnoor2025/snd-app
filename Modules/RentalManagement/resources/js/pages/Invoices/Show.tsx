@@ -73,9 +73,10 @@ interface Document {
 interface ShowProps {
   invoice: Invoice;
   documents: Document[];
+  erpInvoice?: any;
 }
 
-export default function Show({ invoice, documents }: ShowProps) {
+export default function Show({ invoice, documents, erpInvoice }: ShowProps) {
   const { t } = useTranslation();
 
   const getStatusColor = (status: string) => {
@@ -145,6 +146,44 @@ export default function Show({ invoice, documents }: ShowProps) {
             </Button>
           </div>
         </div>
+
+        {/* ERPNext Invoice Info */}
+        {erpInvoice && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>ERPNext Invoice</CardTitle>
+              <CardDescription>ERPNext invoice details synced for this rental</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <p className="font-semibold">ERPNext Invoice #:</p>
+                  <p>{erpInvoice.name}</p>
+                </div>
+                <div>
+                  <p className="font-semibold">Status:</p>
+                  <p>{erpInvoice.status || '-'}</p>
+                </div>
+                <div>
+                  <p className="font-semibold">Posting Date:</p>
+                  <p>{erpInvoice.posting_date || '-'}</p>
+                </div>
+                <div>
+                  <p className="font-semibold">Due Date:</p>
+                  <p>{erpInvoice.due_date || '-'}</p>
+                </div>
+                <div>
+                  <p className="font-semibold">Grand Total:</p>
+                  <p>{erpInvoice.grand_total || '-'}</p>
+                </div>
+                <div>
+                  <p className="font-semibold">Outstanding Amount:</p>
+                  <p>{erpInvoice.outstanding_amount || '-'}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <Card>
           <CardHeader>
