@@ -528,12 +528,22 @@ class Rental extends Model implements HasMedia
                 'subtotal' => $this->rentalItems->sum('total_amount'),
                 'discount_amount' => ($this->rentalItems->sum('total_amount') * ($this->discount_percentage ?? 0)) / 100,
                 'tax_amount' => ($this->rentalItems->sum('total_amount') * ($this->tax_percentage ?? 15)) / 100,
-                'total_amount' => $this->total_amount,
+                'total_amount' => $this->rentalItems->sum('total_amount')
+                    - (($this->rentalItems->sum('total_amount') * ($this->discount_percentage ?? 0)) / 100)
+                    + (($this->rentalItems->sum('total_amount') * ($this->tax_percentage ?? 15)) / 100),
                 'paid_amount' => 0,
-                'balance' => $this->total_amount,
+                'balance' => $this->rentalItems->sum('total_amount')
+                    - (($this->rentalItems->sum('total_amount') * ($this->discount_percentage ?? 0)) / 100)
+                    + (($this->rentalItems->sum('total_amount') * ($this->tax_percentage ?? 15)) / 100),
                 'status' => 'draft',
-                'notes' => $this->notes,
-                'created_by' => auth()->id(),
+                'notes' => $this->status === 'completed' ? 'Completed rental' : null,
+                'created_by' => (function () {
+                    try {
+                        return auth()->id() ?: 1;
+                    } catch (\Throwable $e) {
+                        return 1;
+                    }
+                })(),
             ]);
 
             // Create invoice items

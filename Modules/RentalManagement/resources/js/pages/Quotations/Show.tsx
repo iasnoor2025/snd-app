@@ -71,7 +71,7 @@ const QuotationShow: React.FC<QuotationShowProps> = ({ quotation, quotationItems
       if (quotation.rental_id) {
         window.location.href = route('rentals.show', quotation.rental_id);
       } else {
-        window.location.reload();
+      window.location.reload();
       }
     } catch (e: any) {
       // Handle HTML/redirect response

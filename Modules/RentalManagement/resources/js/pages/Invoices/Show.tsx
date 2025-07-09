@@ -1,8 +1,8 @@
 import React from 'react';
-import { Head } from '@inertiajs/inertia-react';
+import { Head } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
-import MainLayout from '@/Layouts/MainLayout';
-import { Button } from '@/Components/ui/button';
+import AppLayout from '@/Core/layouts/AppLayout';
+import { Button } from '@/Core/components/ui/button';
 import {
   Card,
   CardContent,
@@ -10,7 +10,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/Components/ui/card';
+} from '@/Core/components/ui/card';
 import {
   Table,
   TableBody,
@@ -19,8 +19,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/Components/ui/table';
-import { Badge } from '@/Components/ui/badge';
+} from '@/Core/components/ui/table';
+import { Badge } from '@/Core/components/ui/badge';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { Download, Printer, Send } from 'lucide-react';
@@ -105,7 +105,7 @@ export default function Show({ invoice, documents }: ShowProps) {
   };
 
   return (
-    <MainLayout>
+    <AppLayout>
       <Head title={`${t('invoice')} ${invoice.invoice_number}`} />
 
       <div className="container mx-auto py-8">
@@ -146,163 +146,158 @@ export default function Show({ invoice, documents }: ShowProps) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Invoice Details */}
-          <Card className="col-span-2">
-            <CardHeader>
-              <CardTitle>{t('invoice_details')}</CardTitle>
-              <CardDescription>{t('invoice_information')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">{t('invoice_number')}</p>
-                  <p>{invoice.invoice_number}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">{t('status')}</p>
-                  <Badge className={getStatusColor(invoice.status)}>
-                    {t(invoice.status)}
-                  </Badge>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">{t('issue_date')}</p>
-                  <p>{format(new Date(invoice.issue_date), 'MMM d, yyyy')}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">{t('due_date')}</p>
-                  <p>{format(new Date(invoice.due_date), 'MMM d, yyyy')}</p>
-                </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('invoice_details')}</CardTitle>
+            <CardDescription>{t('invoice_description')}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <p className="font-semibold">{t('invoice_number')}:</p>
+                <p>{invoice.invoice_number}</p>
               </div>
-            </CardContent>
-          </Card>
+              <div>
+                <p className="font-semibold">{t('issue_date')}:</p>
+                <p>{format(new Date(invoice.issue_date), 'MM/dd/yyyy')}</p>
+              </div>
+              <div>
+                <p className="font-semibold">{t('due_date')}:</p>
+                <p>{format(new Date(invoice.due_date), 'MM/dd/yyyy')}</p>
+              </div>
+              <div>
+                <p className="font-semibold">{t('status')}:</p>
+                <Badge className={getStatusColor(invoice.status)}>{t(invoice.status)}</Badge>
+              </div>
+            </div>
 
-          {/* Customer Info */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('customer')}</CardTitle>
-              <CardDescription>{t('customer_information')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="font-medium">{invoice.customer.company_name}</p>
-              <p>{invoice.customer.contact_name}</p>
-              <p>{invoice.customer.email}</p>
-              <p>{invoice.customer.phone}</p>
-              <p className="whitespace-pre-line">{invoice.customer.address}</p>
-            </CardContent>
-          </Card>
-        </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <p className="font-semibold">{t('customer')}:</p>
+                <p>{invoice.customer.company_name}</p>
+              </div>
+              <div>
+                <p className="font-semibold">{t('contact_person')}:</p>
+                <p>{invoice.customer.contact_name}</p>
+              </div>
+              <div>
+                <p className="font-semibold">{t('email')}:</p>
+                <p>{invoice.customer.email}</p>
+              </div>
+              <div>
+                <p className="font-semibold">{t('phone')}:</p>
+                <p>{invoice.customer.phone}</p>
+              </div>
+              <div>
+                <p className="font-semibold">{t('address')}:</p>
+                <p>{invoice.customer.address}</p>
+              </div>
+            </div>
 
-        {/* Invoice Items */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <p className="font-semibold">{t('subtotal')}:</p>
+                <p>{formatCurrency(invoice.subtotal)}</p>
+              </div>
+              <div>
+                <p className="font-semibold">{t('discount_amount')}:</p>
+                <p>{formatCurrency(invoice.discount_amount)}</p>
+              </div>
+              <div>
+                <p className="font-semibold">{t('tax_amount')}:</p>
+                <p>{formatCurrency(invoice.tax_amount)}</p>
+              </div>
+              <div>
+                <p className="font-semibold">{t('total_amount')}:</p>
+                <p>{formatCurrency(invoice.total_amount)}</p>
+              </div>
+              <div>
+                <p className="font-semibold">{t('paid_amount')}:</p>
+                <p>{formatCurrency(invoice.paid_amount)}</p>
+              </div>
+              <div>
+                <p className="font-semibold">{t('balance')}:</p>
+                <p>{formatCurrency(invoice.balance)}</p>
+              </div>
+            </div>
+
+            {invoice.notes && (
+              <div className="mt-4">
+                <p className="font-semibold">{t('notes')}:</p>
+                <p>{invoice.notes}</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         <Card className="mt-6">
           <CardHeader>
             <CardTitle>{t('invoice_items')}</CardTitle>
+            <CardDescription>{t('invoice_items_description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('description')}</TableHead>
-                  <TableHead className="text-right">{t('quantity')}</TableHead>
-                  <TableHead className="text-right">{t('unit_price')}</TableHead>
-                  <TableHead className="text-right">{t('amount')}</TableHead>
+                  <TableHead>{t('quantity')}</TableHead>
+                  <TableHead>{t('unit_price')}</TableHead>
+                  <TableHead>{t('amount')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {invoice.items.map((item) => (
                   <TableRow key={item.id}>
                     <TableCell>{item.description}</TableCell>
-                    <TableCell className="text-right">{item.quantity}</TableCell>
-                    <TableCell className="text-right">{formatCurrency(item.unit_price)}</TableCell>
-                    <TableCell className="text-right">{formatCurrency(item.amount)}</TableCell>
+                    <TableCell>{item.quantity}</TableCell>
+                    <TableCell>{formatCurrency(item.unit_price)}</TableCell>
+                    <TableCell>{formatCurrency(item.amount)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TableCell colSpan={3} className="text-right font-medium">{t('subtotal')}</TableCell>
-                  <TableCell className="text-right">{formatCurrency(invoice.subtotal)}</TableCell>
-                </TableRow>
-                {invoice.discount_amount > 0 && (
-                  <TableRow>
-                    <TableCell colSpan={3} className="text-right font-medium">{t('discount')}</TableCell>
-                    <TableCell className="text-right">-{formatCurrency(invoice.discount_amount)}</TableCell>
-                  </TableRow>
-                )}
-                {invoice.tax_amount > 0 && (
-                  <TableRow>
-                    <TableCell colSpan={3} className="text-right font-medium">{t('tax')}</TableCell>
-                    <TableCell className="text-right">{formatCurrency(invoice.tax_amount)}</TableCell>
-                  </TableRow>
-                )}
-                <TableRow>
-                  <TableCell colSpan={3} className="text-right font-medium">{t('total')}</TableCell>
-                  <TableCell className="text-right">{formatCurrency(invoice.total_amount)}</TableCell>
-                </TableRow>
-                {invoice.paid_amount > 0 && (
-                  <>
-                    <TableRow>
-                      <TableCell colSpan={3} className="text-right font-medium">{t('paid_amount')}</TableCell>
-                      <TableCell className="text-right">{formatCurrency(invoice.paid_amount)}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell colSpan={3} className="text-right font-medium">{t('balance')}</TableCell>
-                      <TableCell className="text-right">{formatCurrency(invoice.balance)}</TableCell>
-                    </TableRow>
-                  </>
-                )}
-              </TableFooter>
             </Table>
           </CardContent>
         </Card>
 
-        {/* Notes */}
-        {invoice.notes && (
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle>{t('notes')}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="whitespace-pre-line">{invoice.notes}</p>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Documents */}
         {documents.length > 0 && (
           <Card className="mt-6">
             <CardHeader>
               <CardTitle>{t('documents')}</CardTitle>
+              <CardDescription>{t('documents_description')}</CardDescription>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-2">
-                {documents.map((doc) => (
-                  <li key={doc.id} className="flex items-center justify-between">
-                    <span>{doc.name}</span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => window.open(doc.url, '_blank')}
-                    >
-                      <Download className="w-4 h-4 mr-2" />
-                      {t('download')}
-                    </Button>
-                  </li>
-                ))}
-              </ul>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t('name')}</TableHead>
+                    <TableHead>{t('file_name')}</TableHead>
+                    <TableHead>{t('size')}</TableHead>
+                    <TableHead>{t('actions')}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {documents.map((doc) => (
+                    <TableRow key={doc.id}>
+                      <TableCell>{doc.name}</TableCell>
+                      <TableCell>{doc.file_name}</TableCell>
+                      <TableCell>{doc.size}</TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => window.open(doc.url, '_blank')}
+                        >
+                          {t('view')}
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         )}
-
-        <div className="mt-6 flex justify-end">
-          <Button
-            variant="outline"
-            onClick={() => Inertia.visit('/invoices')}
-          >
-            {t('back_to_invoices')}
-          </Button>
-        </div>
       </div>
-    </MainLayout>
+    </AppLayout>
   );
 }

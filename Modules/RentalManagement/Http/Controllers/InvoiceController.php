@@ -384,6 +384,14 @@ class InvoiceController extends Controller
     }
 
     /**
+     * Alias for downloadPdf to support /pdf route.
+     */
+    public function pdf(Invoice $invoice)
+    {
+        return $this->downloadPdf($invoice);
+    }
+
+    /**
      * Send invoice by email.
      */
     public function sendByEmail(Invoice $invoice): JsonResponse

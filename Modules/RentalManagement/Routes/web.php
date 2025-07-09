@@ -67,6 +67,10 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::delete('invoices/{invoice}/documents/{documentId}', [InvoiceController::class, 'removeDocument'])
         ->middleware('permission:invoices.edit')
         ->name('invoices.documents.remove');
+    Route::get('invoices/{invoice}/pdf', [
+        Modules\RentalManagement\Http\Controllers\InvoiceController::class,
+        'pdf',
+    ])->name('invoices.pdf');
 
     // Quotation routes
     Route::resource('quotations', QuotationController::class)->middleware([

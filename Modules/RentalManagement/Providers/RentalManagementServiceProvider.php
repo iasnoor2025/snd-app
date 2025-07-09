@@ -40,6 +40,7 @@ class RentalManagementServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->loadViewsFrom(__DIR__ . '/../../Resources/views', 'RentalManagement');
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();

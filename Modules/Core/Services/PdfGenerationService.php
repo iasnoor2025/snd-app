@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Modules\RentalManagement\Domain\Models\Invoice;
 
 class PdfGenerationService
 {
@@ -32,7 +33,7 @@ class PdfGenerationService
         ];
 
         $options = array_merge($defaultOptions, $options);
-        
+
         // Generate view HTML
         $html = View::make($template, array_merge($data, [
             'watermark' => $options['watermark'],
@@ -62,7 +63,7 @@ class PdfGenerationService
 
         // Generate filename if not provided
         $fileName = $options['fileName'] ?? $this->generateFileName();
-        
+
         // Save to storage
         $path = 'pdfs/' . $fileName;
         Storage::put($path, $pdf->output());
@@ -236,7 +237,7 @@ class PdfGenerationService
 
         $outputFileName = $outputFileName ?? 'merged_' . $this->generateFileName();
         $outputPath = 'pdfs/' . $outputFileName;
-        
+
         $merger->merge();
         $merger->save(Storage::path($outputPath));
 
@@ -253,18 +254,18 @@ class PdfGenerationService
     public function addDigitalSignature(string $pdfPath, array $signatureData): string
     {
         $signatureHtml = View::make('core::pdfs.signature', $signatureData)->render();
-        
+
         $pdf = PDF::loadFile(Storage::path($pdfPath));
         $currentHtml = $pdf->output();
-        
+
         // Add signature to the last page
         $updatedHtml = str_replace('</body>', $signatureHtml . '</body>', $currentHtml);
-        
+
         $pdf = PDF::loadHTML($updatedHtml);
         $signedPdfPath = 'pdfs/signed_' . basename($pdfPath);
-        
+
         Storage::put($signedPdfPath, $pdf->output());
-        
+
         return $signedPdfPath;
     }
 
@@ -278,7 +279,7 @@ class PdfGenerationService
     {
         $pdf = PDF::loadFile(Storage::path($pdfPath));
         $currentHtml = $pdf->output();
-        
+
         $pageNumberStyle = "
             .page-number:before {
                 content: counter(page);
@@ -291,18 +292,18 @@ class PdfGenerationService
                 counter-increment: page;
             }
         ";
-        
+
         $updatedHtml = str_replace(
             '</head>',
             "<style>{$pageNumberStyle}</style></head>",
             str_replace('</body>', '<div class="page-number"></div></body>', $currentHtml)
         );
-        
+
         $pdf = PDF::loadHTML($updatedHtml);
         $numberedPdfPath = 'pdfs/numbered_' . basename($pdfPath);
-        
+
         Storage::put($numberedPdfPath, $pdf->output());
-        
+
         return $numberedPdfPath;
     }
 
@@ -317,10 +318,10 @@ class PdfGenerationService
     {
         $pdf = PDF::loadFile(Storage::path($pdfPath));
         $pdf->setEncryption($password);
-        
+
         $protectedPdfPath = 'pdfs/protected_' . basename($pdfPath);
         Storage::put($protectedPdfPath, $pdf->output());
-        
+
         return $protectedPdfPath;
     }
 
@@ -334,10 +335,18 @@ class PdfGenerationService
     {
         $pdf = PDF::loadFile(Storage::path($pdfPath));
         $pdf->setOptions(['dpi' => 72]); // Lower resolution for preview
-        
+
         $previewPath = 'pdfs/preview_' . basename($pdfPath);
         Storage::put($previewPath, $pdf->output());
-        
+
         return $previewPath;
     }
-} 
+
+    public function generateInvoicePdf(Invoice $invoice)
+    {
+        $pdf = Pdf::loadView('RentalManagement::invoices.pdf', ['invoice' => $invoice]);
+        $path = storage_path('app/public/invoices/invoice_' . $invoice->id . '.pdf');
+        $pdf->save($path);
+        return $path;
+    }
+}

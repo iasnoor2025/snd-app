@@ -1,20 +1,20 @@
 import React, { useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/Core";
+import { Card, CardHeader, CardTitle, CardContent } from "@/Core";
 import { Button } from "@/Core";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/Core";
 import { Loader2, ChevronDown, CalendarPlus, FileText, Trash, Printer, Clock, CreditCard, Pencil, Share2, Zap } from "lucide-react";
-import { Link } from "@inertiajs/react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/Core";
 import { toast } from "sonner";
 import RentalExtensionDialog from "./RentalExtensionDialog";
+import { Inertia } from '@inertiajs/inertia';
 
 interface RentalActionsCardProps {
   rental: {
     id: number;
     rental_number: string;
     status: string;
-    expected_end_date?: string;
+    expected_end_date?: string | null;
   };
   permissions: {
     update: boolean;
@@ -48,7 +48,7 @@ const RentalActionsCard: React.FC<RentalActionsCardProps> = ({
   // Handle extension dialog
   const openExtensionDialog = () => {
     if (!canExtend) {
-      ToastManager.error(`Cannot extend a ${rental.status} rental`);
+      toast.error(`Cannot extend a ${rental.status} rental`);
       return;
     }
     setIsExtensionDialogOpen(true);
@@ -90,10 +90,10 @@ const RentalActionsCard: React.FC<RentalActionsCardProps> = ({
         <div className="grid grid-cols-2 gap-2">
           {permissions.update && (
             <Button variant="outline" size="sm" asChild>
-              <Link href={`/rentals/${rental.id}/edit`}>
+              <a href={`/rentals/${rental.id}/edit`}>
                 <Pencil className="h-4 w-4 mr-2" />
                 {t('ttl_edit_rental')}
-              </Link>
+              </a>
             </Button>
           )}
 
@@ -121,10 +121,10 @@ const RentalActionsCard: React.FC<RentalActionsCardProps> = ({
           )}
 
           <Button variant="outline" size="sm" asChild>
-            <Link href={`/rentals/${rental.id}/print`}>
+            <a href={`/rentals/${rental.id}/print`}>
               <Printer className="h-4 w-4 mr-2" />
               Print Details
-            </Link>
+            </a>
           </Button>
         </div>
 
@@ -143,17 +143,20 @@ const RentalActionsCard: React.FC<RentalActionsCardProps> = ({
             </DropdownMenuItem>
 
             <DropdownMenuItem asChild>
-              <Link href={`/rentals/${rental.id}/timesheets`}>
+              <a href={`/rentals/${rental.id}/timesheets`}>
                 <Clock className="h-4 w-4 mr-2" />
                 {t('employee:btn_view_timesheets')}
-              </Link>
+              </a>
             </DropdownMenuItem>
 
-            <DropdownMenuItem asChild>
-              <Link href={route('rentals.create-invoice', rental.id)} method="post" as="button">
-                <CreditCard className="h-4 w-4 mr-2" />
-                Create Invoice
-              </Link>
+            <DropdownMenuItem
+              onSelect={e => {
+                e.preventDefault();
+                Inertia.post(route('rentals.create-invoice', rental.id));
+              }}
+            >
+              <CreditCard className="h-4 w-4 mr-2" />
+              Create Invoice
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />
@@ -190,7 +193,7 @@ const RentalActionsCard: React.FC<RentalActionsCardProps> = ({
       {/* Extension Dialog */}
       <RentalExtensionDialog
         rentalId={rental.id}
-        currentEndDate={rental.expected_end_date}
+        currentEndDate={rental.expected_end_date || new Date()}
         isOpen={isExtensionDialogOpen}
         onClose={() => setIsExtensionDialogOpen(false)}
         onSuccess={() => {
@@ -202,17 +205,3 @@ const RentalActionsCard: React.FC<RentalActionsCardProps> = ({
 };
 
 export default RentalActionsCard;
-
-
-
-
-
-
-
-
-
-
-
-
-
-

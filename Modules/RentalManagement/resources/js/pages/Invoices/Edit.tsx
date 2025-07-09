@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Head } from '@inertiajs/inertia-react';
+import { Head } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
-import MainLayout from '@/Layouts/MainLayout';
+import AppLayout from '@/Core/layouts/AppLayout';
 import { Button } from '@/Components/ui/button';
 import {
   Card,
@@ -137,7 +137,7 @@ export default function Edit({ invoice, customers, rentals, documents }: EditPro
   };
 
   return (
-    <MainLayout>
+    <AppLayout>
       <Head title={`${t('edit_invoice')} ${invoice.invoice_number}`} />
 
       <div className="container mx-auto py-8">
@@ -332,6 +332,6 @@ export default function Edit({ invoice, customers, rentals, documents }: EditPro
           </div>
         </form>
       </div>
-    </MainLayout>
+    </AppLayout>
   );
 }

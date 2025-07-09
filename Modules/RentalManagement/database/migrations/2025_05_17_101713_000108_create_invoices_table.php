@@ -26,6 +26,7 @@ return new class extends Migration
             $table->unsignedBigInteger('created_by');
             $table->timestamps();
             $table->string('invoice_number')->unique();
+            $table->softDeletes();
         });
     }
 
