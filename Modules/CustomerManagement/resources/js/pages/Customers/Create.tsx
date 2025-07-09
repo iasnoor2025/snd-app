@@ -24,6 +24,17 @@ export default function Create() {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [notes, setNotes] = useState('');
+  const [companyName, setCompanyName] = useState('');
+  const [contactPerson, setContactPerson] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+  const [country, setCountry] = useState('');
+  const [website, setWebsite] = useState('');
+  const [taxNumber, setTaxNumber] = useState('');
+  const [creditLimit, setCreditLimit] = useState('');
+  const [paymentTerms, setPaymentTerms] = useState('');
+  const [isActive, setIsActive] = useState(true);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [document, setDocument] = useState<File | null>(null);
@@ -36,6 +47,17 @@ export default function Create() {
     formData.append('phone', phone);
     formData.append('address', address);
     formData.append('notes', notes);
+    formData.append('company_name', companyName);
+    formData.append('contact_person', contactPerson);
+    formData.append('city', city);
+    formData.append('state', state);
+    formData.append('postal_code', postalCode);
+    formData.append('country', country);
+    formData.append('website', website);
+    formData.append('tax_number', taxNumber);
+    formData.append('credit_limit', creditLimit);
+    formData.append('payment_terms', paymentTerms);
+    formData.append('is_active', isActive ? '1' : '0');
     if (document) {
       formData.append('document', document);
     }
@@ -159,6 +181,147 @@ export default function Create() {
                   {errors.notes && (
                     <p className="text-sm text-red-500 mt-1">{errors.notes}</p>
                   )}
+                </div>
+
+                <div>
+                  <Label htmlFor="company_name">Company Name</Label>
+                  <Input
+                    id="company_name"
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    placeholder="Enter company name"
+                    className={errors.company_name ? 'border-red-500' : ''}
+                  />
+                  {errors.company_name && (
+                    <p className="text-sm text-red-500 mt-1">{errors.company_name}</p>
+                  )}
+                </div>
+                <div>
+                  <Label htmlFor="contact_person">Contact Person</Label>
+                  <Input
+                    id="contact_person"
+                    value={contactPerson}
+                    onChange={(e) => setContactPerson(e.target.value)}
+                    placeholder="Enter contact person"
+                    className={errors.contact_person ? 'border-red-500' : ''}
+                  />
+                  {errors.contact_person && (
+                    <p className="text-sm text-red-500 mt-1">{errors.contact_person}</p>
+                  )}
+                </div>
+                <div>
+                  <Label htmlFor="city">City</Label>
+                  <Input
+                    id="city"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder="Enter city"
+                    className={errors.city ? 'border-red-500' : ''}
+                  />
+                  {errors.city && (
+                    <p className="text-sm text-red-500 mt-1">{errors.city}</p>
+                  )}
+                </div>
+                <div>
+                  <Label htmlFor="state">State</Label>
+                  <Input
+                    id="state"
+                    value={state}
+                    onChange={(e) => setState(e.target.value)}
+                    placeholder="Enter state"
+                    className={errors.state ? 'border-red-500' : ''}
+                  />
+                  {errors.state && (
+                    <p className="text-sm text-red-500 mt-1">{errors.state}</p>
+                  )}
+                </div>
+                <div>
+                  <Label htmlFor="postal_code">Postal Code</Label>
+                  <Input
+                    id="postal_code"
+                    value={postalCode}
+                    onChange={(e) => setPostalCode(e.target.value)}
+                    placeholder="Enter postal code"
+                    className={errors.postal_code ? 'border-red-500' : ''}
+                  />
+                  {errors.postal_code && (
+                    <p className="text-sm text-red-500 mt-1">{errors.postal_code}</p>
+                  )}
+                </div>
+                <div>
+                  <Label htmlFor="country">Country</Label>
+                  <Input
+                    id="country"
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
+                    placeholder="Enter country"
+                    className={errors.country ? 'border-red-500' : ''}
+                  />
+                  {errors.country && (
+                    <p className="text-sm text-red-500 mt-1">{errors.country}</p>
+                  )}
+                </div>
+                <div>
+                  <Label htmlFor="website">Website</Label>
+                  <Input
+                    id="website"
+                    value={website}
+                    onChange={(e) => setWebsite(e.target.value)}
+                    placeholder="Enter website"
+                    className={errors.website ? 'border-red-500' : ''}
+                  />
+                  {errors.website && (
+                    <p className="text-sm text-red-500 mt-1">{errors.website}</p>
+                  )}
+                </div>
+                <div>
+                  <Label htmlFor="tax_number">VAT / Tax Number</Label>
+                  <Input
+                    id="tax_number"
+                    value={taxNumber}
+                    onChange={(e) => setTaxNumber(e.target.value)}
+                    placeholder="Enter VAT or tax number"
+                    className={errors.tax_number ? 'border-red-500' : ''}
+                  />
+                  {errors.tax_number && (
+                    <p className="text-sm text-red-500 mt-1">{errors.tax_number}</p>
+                  )}
+                </div>
+                <div>
+                  <Label htmlFor="credit_limit">Credit Limit</Label>
+                  <Input
+                    id="credit_limit"
+                    type="number"
+                    value={creditLimit}
+                    onChange={(e) => setCreditLimit(e.target.value)}
+                    placeholder="Enter credit limit"
+                    className={errors.credit_limit ? 'border-red-500' : ''}
+                  />
+                  {errors.credit_limit && (
+                    <p className="text-sm text-red-500 mt-1">{errors.credit_limit}</p>
+                  )}
+                </div>
+                <div>
+                  <Label htmlFor="payment_terms">Payment Terms</Label>
+                  <Input
+                    id="payment_terms"
+                    value={paymentTerms}
+                    onChange={(e) => setPaymentTerms(e.target.value)}
+                    placeholder="Enter payment terms (e.g. 30)"
+                    className={errors.payment_terms ? 'border-red-500' : ''}
+                  />
+                  {errors.payment_terms && (
+                    <p className="text-sm text-red-500 mt-1">{errors.payment_terms}</p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    id="is_active"
+                    type="checkbox"
+                    checked={isActive}
+                    onChange={e => setIsActive(e.target.checked)}
+                  />
+                  <Label htmlFor="is_active">Active</Label>
                 </div>
 
                 <div>

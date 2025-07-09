@@ -6,6 +6,7 @@ use Modules\CustomerManagement\Domain\Models\Customer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\UploadedFile;
 use Spatie\Activitylog\Facades\LogBatch;
+use Modules\CustomerManagement\Services\ERPNextClient;
 
 class UpdateCustomerAction
 {
@@ -47,6 +48,11 @@ class UpdateCustomerAction
                 'notes' => $data['notes'] ?? null,
                 'is_active' => $data['is_active'] ?? true
             ]);
+
+            // Sync to ERPNext
+            $erp = app(ERPNextClient::class);
+            $erpResponse = $erp->createOrUpdateCustomerInERPNext($customer->toArray());
+            \Log::info('ERPNext update customer response', ['response' => $erpResponse]);
 
             // Add documents if provided
             if ($documents && count($documents) > 0) {

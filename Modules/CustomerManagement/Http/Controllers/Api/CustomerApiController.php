@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\CustomerManagement\Domain\Models\Customer;
 use Illuminate\Http\JsonResponse;
+use Modules\CustomerManagement\Actions\SyncCustomersFromERPNextAction;
 
 class CustomerApiController extends Controller
 {
@@ -186,6 +187,18 @@ class CustomerApiController extends Controller
         return response()->json([
             'data' => [],
             'message' => 'Customer payments endpoint - implement based on payment relationships'
+        ]);
+    }
+
+    /**
+     * Sync customers from ERPNext.
+     */
+    public function syncErpnext(): JsonResponse
+    {
+        $count = (new SyncCustomersFromERPNextAction())->execute();
+        return response()->json([
+            'message' => "ERPNext Customer Sync complete. {$count} customers processed.",
+            'count' => $count
         ]);
     }
 }

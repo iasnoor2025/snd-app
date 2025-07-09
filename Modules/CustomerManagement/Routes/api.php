@@ -38,3 +38,5 @@ use Modules\CustomerManagement\Http\Controllers\Api\DashboardApiController;
 //     });
 // });
 
+Route::post('customers/sync-erpnext', [CustomerApiController::class, 'syncErpnext']);
+

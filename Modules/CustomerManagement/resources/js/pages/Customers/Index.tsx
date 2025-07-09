@@ -9,6 +9,7 @@ import { Input } from "@/Core";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/Core";
 import { Badge } from "@/Core";
 import { route } from 'ziggy-js';
+import { toast } from 'sonner';
 // Placeholder for permission and reusable button components
 // import { Permission } from "@/Core";
 // import { CreateButton } from "@/Core";
@@ -58,6 +59,21 @@ const Index: React.FC<Props> = ({ customers }) => {
     return <Badge variant={variants[status] || 'outline'}>{t(`status_${status}`)}</Badge>;
   };
 
+  const handleSync = async () => {
+    try {
+      const res = await fetch('/api/customers/sync-erpnext', { method: 'POST' });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(data.message || 'Customers synced from ERPNext successfully');
+        window.location.reload();
+      } else {
+        toast.error(data.message || 'Failed to sync customers from ERPNext');
+      }
+    } catch (e) {
+      toast.error('Failed to sync customers from ERPNext');
+    }
+  };
+
   return (
     <AppLayout title={t('ttl_customers')} breadcrumbs={breadcrumbs}>
       <Head title={t('ttl_customers')} />
@@ -65,12 +81,17 @@ const Index: React.FC<Props> = ({ customers }) => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-2xl font-bold">{t('ttl_customers')}</CardTitle>
-            {/* <Permission permission="customers.create"> */}
-              {/* <CreateButton resourceType="customers" text="Add Customer" /> */}
-              <Button asChild>
-                <Link href={route('customers.create')}>{t('ttl_create_customer')}</Link>
+            <div className="flex gap-2">
+              <Button onClick={handleSync} variant="outline">
+                {t('Sync from ERPNext')}
               </Button>
-            {/* </Permission> */}
+              {/* <Permission permission="customers.create"> */}
+                {/* <CreateButton resourceType="customers" text="Add Customer" /> */}
+                <Button asChild>
+                  <Link href={route('customers.create')}>{t('ttl_create_customer')}</Link>
+                </Button>
+              {/* </Permission> */}
+            </div>
           </CardHeader>
           <CardContent>
             <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">

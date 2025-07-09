@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Modules\CustomerManagement\Domain\Models\Customer;
 use Modules\CustomerManagement\Policies\CustomerPolicy;
+use Illuminate\Console\Scheduling\Schedule;
 
 class CustomerManagementServiceProvider extends ServiceProvider
 {
@@ -39,6 +40,14 @@ class CustomerManagementServiceProvider extends ServiceProvider
 
         // Register observers
         $this->registerObservers();
+
+        // Schedule ERPNext customer sync every hour
+        if ($this->app->runningInConsole()) {
+            $this->app->booted(function () {
+                $schedule = $this->app->make(Schedule::class);
+                $schedule->command('erpnext:sync-customers')->hourly();
+            });
+        }
     }
 
     /**
@@ -52,6 +61,12 @@ class CustomerManagementServiceProvider extends ServiceProvider
 
         if (file_exists(module_path($this->moduleName, 'Providers/EventServiceProvider.php'))) {
             $this->app->register(EventServiceProvider::class);
+        }
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                \Modules\CustomerManagement\Console\SyncCustomersFromERPNext::class,
+            ]);
         }
     }
 

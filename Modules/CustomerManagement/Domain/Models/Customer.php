@@ -52,7 +52,8 @@ class Customer extends Model implements HasMedia
         'credit_limit',
         'payment_terms',
         'notes',
-        'is_active'
+        'is_active',
+        'erpnext_id',
     ];
 
     /**
