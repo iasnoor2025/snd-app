@@ -113,6 +113,9 @@ return new class extends Migration
             if (!Schema::hasColumn('equipment', 'asset_condition')) {
                 $table->string('asset_condition')->nullable();
             }
+            if (!Schema::hasColumn('equipment', 'erpnext_id')) {
+                $table->string('erpnext_id')->nullable()->unique();
+            }
         });
     }
 

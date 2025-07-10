@@ -76,6 +76,7 @@ class Equipment extends Model implements HasMedia
         'current_value',
         'quantity',
         'low_stock_threshold',
+        'erpnext_id',
     ];
 
     /**
@@ -122,6 +123,7 @@ class Equipment extends Model implements HasMedia
         'current_value' => 'float',
         'quantity' => 'integer',
         'low_stock_threshold' => 'integer',
+        'erpnext_id' => 'string',
     ];
 
     /**

@@ -46,6 +46,20 @@ class EquipmentManagementServiceProvider extends ServiceProvider
         if (file_exists(module_path($this->moduleName, 'Providers/EventServiceProvider.php'))) {
             $this->app->register(EventServiceProvider::class);
         }
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                \Modules\EquipmentManagement\Console\Commands\SyncEquipmentFromERPNext::class,
+            ]);
+        }
+
+        // Schedule ERPNext equipment sync every hour
+        if ($this->app->runningInConsole()) {
+            $this->app->booted(function () {
+                $schedule = $this->app->make(\Illuminate\Console\Scheduling\Schedule::class);
+                $schedule->command('erpnext:sync-equipment')->hourly();
+            });
+        }
     }
 
     /**

@@ -37,6 +37,7 @@ return new class extends Migration
             $table->decimal('daily_rate', 12, 2)->nullable();
             $table->decimal('weekly_rate', 12, 2)->nullable();
             $table->decimal('monthly_rate', 12, 2)->nullable();
+            $table->string('erpnext_id')->nullable()->unique()->after('id');
             $table->timestamps();
             $table->softDeletes();
 

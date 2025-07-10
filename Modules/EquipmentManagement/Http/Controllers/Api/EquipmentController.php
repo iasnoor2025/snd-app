@@ -287,4 +287,16 @@ class EquipmentController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    /**
+     * Sync equipment from ERPNext.
+     */
+    public function syncErpnext(): JsonResponse
+    {
+        $count = (new \Modules\EquipmentManagement\Actions\SyncEquipmentFromERPNextAction())->execute();
+        return response()->json([
+            'message' => "ERPNext Equipment Sync complete. {$count} equipment items processed.",
+            'count' => $count
+        ]);
+    }
 }

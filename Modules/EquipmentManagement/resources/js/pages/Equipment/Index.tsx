@@ -25,6 +25,7 @@ import { Loader } from '@/Core/components/ui/loader';
 import { ConfirmDialog } from '@/Core/components/ui/confirm-dialog';
 import CrudButtons from '@/Core/components/shared/CrudButtons';
 import CreateButton from '@/Core/components/shared/CreateButton';
+import { toast } from 'sonner';
 
 interface Props extends PageProps {
   equipment: PaginatedData<Equipment>;
@@ -76,6 +77,26 @@ export default function Index({ equipment, categories = [], statuses = {}, filte
       replace: true,
       onFinish: () => setIsLoading(false),
     });
+  };
+
+  const handleSync = async () => {
+    try {
+      const xsrfToken = document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN='))?.split('=')[1];
+      const res = await fetch('/api/v1/equipment/sync-erpnext', {
+        method: 'POST',
+        headers: xsrfToken ? { 'X-XSRF-TOKEN': decodeURIComponent(xsrfToken) } : {},
+        credentials: 'same-origin',
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(data.message || 'Equipment synced from ERPNext successfully');
+        window.location.reload();
+      } else {
+        toast.error(data.message || 'Failed to sync equipment from ERPNext');
+      }
+    } catch (e) {
+      toast.error('Failed to sync equipment from ERPNext');
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -166,7 +187,12 @@ export default function Index({ equipment, categories = [], statuses = {}, filte
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-2xl font-bold">{forceString(t('equipment'), 'equipment')}</CardTitle>
-            <CreateButton resourceType="equipment" permission="equipment.create" text={forceString(t('add_equipment'), 'Add Equipment')} />
+            <div className="flex gap-2">
+              <CreateButton resourceType="equipment" permission="equipment.create" text={forceString(t('add_equipment'), 'Add Equipment')} />
+              <Button onClick={handleSync} type="button" variant="default">
+                {forceString(t('sync_erpnext'), 'Sync ERPNext')}
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSearch} className="mb-6">

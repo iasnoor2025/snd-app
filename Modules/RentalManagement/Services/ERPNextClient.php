@@ -124,4 +124,53 @@ class ERPNextClient
         Log::info('ERPNext: Item created', ['item_code' => $itemCode, 'response' => $data]);
         return $data['data'] ?? $data;
     }
+
+    /**
+     * Fetch all equipment items from ERPNext (item_group = 'Equipment').
+     */
+    public function fetchAllEquipmentItems(): array
+    {
+        $filters = urlencode(json_encode([["item_group", "=", "Equipment"]]));
+        $url = "/api/resource/Item?filters=$filters&limit_page_length=1000";
+        $response = $this->client->get($url);
+        $body = $response->getBody()->getContents();
+        Log::info('ERPNext raw equipment response', ['body' => $body]);
+        $data = json_decode($body, true);
+        $items = [];
+        if (isset($data['data']) && is_array($data['data'])) {
+            foreach ($data['data'] as $item) {
+                if (isset($item['name'])) {
+                    $full = $this->getItemByName($item['name']);
+                    if ($full) {
+                        $items[] = $full;
+                    }
+                }
+            }
+            return $items;
+        }
+        if (is_array($data)) {
+            foreach ($data as $item) {
+                if (isset($item['name'])) {
+                    $full = $this->getItemByName($item['name']);
+                    if ($full) {
+                        $items[] = $full;
+                    }
+                }
+            }
+            return $items;
+        }
+        return [];
+    }
+
+    /**
+     * Fetch a single item by name from ERPNext.
+     */
+    public function getItemByName(string $name): ?array
+    {
+        $filters = urlencode(json_encode([["name", "=", $name]]));
+        $url = "/api/resource/Item?filters=$filters";
+        $response = $this->client->get($url);
+        $data = json_decode($response->getBody()->getContents(), true);
+        return $data['data'][0] ?? null;
+    }
 }
