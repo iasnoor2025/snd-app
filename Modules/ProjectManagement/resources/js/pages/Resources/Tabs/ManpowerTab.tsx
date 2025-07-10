@@ -8,7 +8,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from "@/Core";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/Core";
 import { Pencil, Trash2 } from 'lucide-react';
 import { ResourceFormModal } from '../../../components/project/resources/ResourceModal';
 import { useResourceFormModal } from '../../../hooks/useResourceFormModal';
@@ -16,6 +15,7 @@ import { useResourceSubmit } from '../../../hooks/useResourceSubmit';
 import type { ManpowerResource } from '../../../types/projectResources';
 import { router } from '@inertiajs/react';
 import { format } from 'date-fns';
+import { ResourceTable } from '../../../Components/project/resources/ResourceTable';
 
 /**
  * Props interface for ManpowerTab component
@@ -60,7 +60,6 @@ export function ManpowerTab({ project, manpowers }: ManpowerTabProps) {
         projectId: Number(project.id),
         type: 'manpower',
         onSuccess: () => {
-            // Refresh the data using Inertia
             router.reload({ only: ['manpowers'] });
         }
     });
@@ -71,7 +70,6 @@ export function ManpowerTab({ project, manpowers }: ManpowerTabProps) {
         onSuccess: () => {
             closeCreateModal();
             closeEditModal();
-            // Refresh the data using Inertia
             router.reload({ only: ['manpowers'] });
         }
     });
@@ -93,84 +91,75 @@ export function ManpowerTab({ project, manpowers }: ManpowerTabProps) {
         try {
             return format(new Date(dateString), 'yyyy-MM-dd');
         } catch (error) {
-            console.error('Error formatting date:', error);
             return dateString;
         }
     };
 
-    const handleCreateSuccess = () => {
-        // Refresh the data using Inertia
-        router.reload({ only: ['manpowers'] });
-    };
-
-    const handleUpdateSuccess = () => {
-        // Refresh the data using Inertia
-        router.reload({ only: ['manpowers'] });
-    };
+    const columns = [
+        {
+            key: 'worker_name',
+            header: 'Worker',
+            accessor: (row: ManpowerResource) => row.worker_name,
+            className: 'text-center',
+        },
+        {
+            key: 'job_title',
+            header: 'Job Title',
+            accessor: (row: ManpowerResource) => row.job_title,
+            className: 'text-center',
+        },
+        {
+            key: 'start_date',
+            header: t('lbl_start_date'),
+            accessor: (row: ManpowerResource) => formatDate(row.start_date),
+            className: 'text-center',
+        },
+        {
+            key: 'end_date',
+            header: t('end_date'),
+            accessor: (row: ManpowerResource) => formatDate(row.end_date),
+            className: 'text-center',
+        },
+        {
+            key: 'daily_rate',
+            header: t('lbl_daily_rate'),
+            accessor: (row: ManpowerResource) => row.daily_rate,
+            className: '!text-right',
+        },
+        {
+            key: 'total_days',
+            header: t('lbl_total_days'),
+            accessor: (row: ManpowerResource) => row.total_days,
+            className: '!text-right',
+        },
+        {
+            key: 'total_cost',
+            header: t('th_total_cost'),
+            accessor: (row: ManpowerResource) => calculateTotalCost(row),
+            className: '!text-right',
+        },
+    ];
 
     return (
         <div className="space-y-4">
             <div className="flex justify-end">
                 <Button onClick={openCreateModal}>{t('ttl_add_manpower')}</Button>
             </div>
-
-            <div className="rounded-md border">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Position</TableHead>
-                            <TableHead>{t('lbl_start_date')}</TableHead>
-                            <TableHead>{t('end_date')}</TableHead>
-                            <TableHead>{t('lbl_daily_rate')}</TableHead>
-                            <TableHead>{t('lbl_total_days')}</TableHead>
-                            <TableHead>{t('th_total_cost')}</TableHead>
-                            <TableHead>Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {manpowers.map((manpower) => (
-                            <TableRow key={manpower.id}>
-                                <TableCell>{manpower.worker_name}</TableCell>
-                                <TableCell>{manpower.job_title}</TableCell>
-                                <TableCell>{formatDate(manpower.start_date)}</TableCell>
-                                <TableCell>{formatDate(manpower.end_date)}</TableCell>
-                                <TableCell>{manpower.daily_rate}</TableCell>
-                                <TableCell>{manpower.total_days}</TableCell>
-                                <TableCell>{calculateTotalCost(manpower)}</TableCell>
-                                <TableCell>
-                                    <div className="flex space-x-2">
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() => openEditModal(manpower)}
-                                        >
-                                            <Pencil className="h-4 w-4" />
-                                        </Button>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() => handleDeleteClick(manpower)}
-                                        >
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </div>
-
+            <ResourceTable
+                data={manpowers}
+                columns={columns}
+                onEdit={openEditModal}
+                onDelete={handleDeleteClick}
+                isLoading={isLoading}
+            />
             <ResourceFormModal
                 isOpen={isCreateModalOpen}
                 onClose={closeCreateModal}
                 title={t('ttl_add_manpower')}
                 type="manpower"
                 projectId={Number(project.id)}
-                onSuccess={handleCreateSuccess}
+                onSuccess={() => router.reload({ only: ['manpowers'] })}
             />
-
             <ResourceFormModal
                 isOpen={isEditModalOpen}
                 onClose={closeEditModal}
@@ -178,7 +167,7 @@ export function ManpowerTab({ project, manpowers }: ManpowerTabProps) {
                 type="manpower"
                 projectId={Number(project.id)}
                 initialData={selectedResource}
-                onSuccess={handleUpdateSuccess}
+                onSuccess={() => router.reload({ only: ['manpowers'] })}
             />
         </div>
     );

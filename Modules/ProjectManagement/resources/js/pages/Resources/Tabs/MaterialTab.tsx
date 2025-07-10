@@ -1,13 +1,13 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from "@/Core";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/Core";
 import { Pencil, Trash2 } from 'lucide-react';
 import { ResourceFormModal } from '../../../components/project/resources/ResourceModal';
 import { useResourceFormModal } from '../../../hooks/useResourceFormModal';
 import { useResourceSubmit } from '../../../hooks/useResourceSubmit';
 import { formatCurrency } from '../../../lib/utils';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import { formatDateMedium } from '@/Core/utils/dateFormatter';
+import { ResourceTable } from '../../../Components/project/resources/ResourceTable';
 
 interface MaterialTabProps {
     project: {
@@ -33,7 +33,6 @@ export function MaterialTab({ project, projectMaterials }: MaterialTabProps) {
         projectId: Number(project.id),
         type: 'material',
         onSuccess: () => {
-            // Refresh the list of materials
             window.location.reload();
         }
     });
@@ -54,75 +53,65 @@ export function MaterialTab({ project, projectMaterials }: MaterialTabProps) {
         }
     };
 
-    const handleCreateSuccess = () => {
-        // The form data is handled by the ResourceForm component
-        window.location.reload();
-    };
-
-    const handleUpdateSuccess = () => {
-        // The form data is handled by the ResourceForm component
-        window.location.reload();
-    };
+    const columns = [
+        {
+            key: 'name',
+            header: 'Name',
+            accessor: (row: any) => row.name,
+            className: 'text-left',
+        },
+        {
+            key: 'unit',
+            header: 'Unit',
+            accessor: (row: any) => row.unit,
+            className: 'text-left',
+        },
+        {
+            key: 'quantity',
+            header: 'Quantity',
+            accessor: (row: any) => row.quantity,
+            className: 'text-right',
+        },
+        {
+            key: 'unit_price',
+            header: t('lbl_unit_price'),
+            accessor: (row: any) => formatCurrency(row.unit_price),
+            className: 'text-right',
+        },
+        {
+            key: 'total_cost',
+            header: t('th_total_cost'),
+            accessor: (row: any) => formatCurrency(row.quantity * row.unit_price),
+            className: 'text-right',
+        },
+        {
+            key: 'date_used',
+            header: t('lbl_date_used'),
+            accessor: (row: any) => formatDateMedium(row.date_used),
+            className: 'text-center',
+        },
+    ];
 
     return (
         <div className="space-y-4">
             <div className="flex justify-end">
                 <Button onClick={openCreateModal}>{t('ttl_add_material')}</Button>
             </div>
-
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Unit</TableHead>
-                        <TableHead>Quantity</TableHead>
-                        <TableHead>{t('lbl_unit_price')}</TableHead>
-                        <TableHead>{t('th_total_cost')}</TableHead>
-                        <TableHead>{t('lbl_date_used')}</TableHead>
-                        <TableHead>Actions</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {projectMaterials.map((material) => (
-                        <TableRow key={material.id}>
-                            <TableCell>{material.name}</TableCell>
-                            <TableCell>{material.unit}</TableCell>
-                            <TableCell>{material.quantity}</TableCell>
-                            <TableCell>{formatCurrency(material.unit_price)}</TableCell>
-                            <TableCell>{formatCurrency(material.quantity * material.unit_price)}</TableCell>
-                            <TableCell>{formatDateMedium(material.date_used)}</TableCell>
-                            <TableCell>
-                                <div className="flex space-x-2">
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => openEditModal(material)}
-                                    >
-                                        <Pencil className="h-4 w-4" />
-                                    </Button>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => handleDeleteClick(material)}
-                                    >
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                </div>
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-
+            <ResourceTable
+                data={projectMaterials}
+                columns={columns}
+                onEdit={openEditModal}
+                onDelete={handleDeleteClick}
+                isLoading={isLoading}
+            />
             <ResourceFormModal
                 isOpen={isCreateModalOpen}
                 onClose={closeCreateModal}
                 title={t('ttl_add_material')}
                 type="material"
                 projectId={Number(project.id)}
-                onSuccess={handleCreateSuccess}
+                onSuccess={window.location.reload}
             />
-
             <ResourceFormModal
                 isOpen={isEditModalOpen}
                 onClose={closeEditModal}
@@ -130,7 +119,7 @@ export function MaterialTab({ project, projectMaterials }: MaterialTabProps) {
                 type="material"
                 projectId={Number(project.id)}
                 initialData={selectedResource}
-                onSuccess={handleUpdateSuccess}
+                onSuccess={window.location.reload}
             />
         </div>
     );

@@ -195,7 +195,7 @@ const TableComponent = forwardRef<HTMLDivElement, TableProps<any>>(
                       onClick={() => column.sortable && handleSort(column.key)}
                       title={column.tooltip}
                     >
-                      <div className="flex items-center gap-2">
+                      <div className={cn("flex items-center gap-2", column.className)}>
                         {column.header}
                         {column.sortable && sortKey === column.key && (
                           <span className="inline-flex">
