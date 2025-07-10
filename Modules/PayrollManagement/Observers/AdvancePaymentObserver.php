@@ -32,12 +32,6 @@ class AdvancePaymentObserver
             'status' => $advancePayment->status,
             'repaid_amount' => $advancePayment->repaid_amount
         ]);
-
-        // Update the employee's advance_payment field for backward compatibility
-        if ($advancePayment->employee) {
-            $advancePayment->employee->advance_payment = $advancePayment->employee->total_advance_balance;
-            $advancePayment->employee->save();
-        }
     }
 
     /**
@@ -50,12 +44,6 @@ class AdvancePaymentObserver
             'employee_id' => $advancePayment->employee_id,
             'amount' => $advancePayment->amount
         ]);
-
-        // Update the employee's advance_payment field for backward compatibility
-        if ($advancePayment->employee) {
-            $advancePayment->employee->advance_payment = $advancePayment->employee->total_advance_balance;
-            $advancePayment->employee->save();
-        }
     }
 
     /**
@@ -68,12 +56,6 @@ class AdvancePaymentObserver
             'employee_id' => $advancePayment->employee_id,
             'amount' => $advancePayment->amount
         ]);
-
-        // Update the employee's advance_payment field for backward compatibility
-        if ($advancePayment->employee) {
-            $advancePayment->employee->advance_payment = $advancePayment->employee->total_advance_balance;
-            $advancePayment->employee->save();
-        }
     }
 
     /**

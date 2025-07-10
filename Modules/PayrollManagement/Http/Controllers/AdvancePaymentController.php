@@ -113,10 +113,6 @@ class AdvancePaymentController extends Controller
                 'repaid_amount' => 0,
             ]);
 
-            // Update the employee's advance_payment field for backward compatibility
-            $employee->advance_payment = $employee->total_advance_balance;
-            $employee->save();
-
             // Return JSON if AJAX, else redirect
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json(['success' => true, 'data' => $advancePayment, 'message' => 'Advance payment recorded successfully.'], 201);
@@ -277,7 +273,7 @@ class AdvancePaymentController extends Controller
             abort(404, 'Invalid ID provided');
         }
         $employee = Employee::find($employeeId);
-            $employee->advance_payment = $employee->total_advance_balance;
+            $employee->total_advance_balance = $employee->total_advance_balance;
             $employee->save();
 
             DB::commit();
@@ -463,7 +459,7 @@ class AdvancePaymentController extends Controller
             $advance->delete();
 
             // Update employee balance
-            $employee->advance_payment = $employee->total_advance_balance;
+            $employee->total_advance_balance = $employee->total_advance_balance;
             $employee->save();
 
             DB::commit();
@@ -632,7 +628,7 @@ class AdvancePaymentController extends Controller
             $payment->delete();
 
             // Update employee balance
-            $employee->advance_payment = $employee->total_advance_balance;
+            $employee->total_advance_balance = $employee->total_advance_balance;
             $employee->save();
 
             DB::commit();

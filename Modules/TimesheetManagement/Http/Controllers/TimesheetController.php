@@ -1404,7 +1404,7 @@ class TimesheetController extends Controller
         $basicSalary = $employee->basic_salary ?? 0;
         $totalAllowances = ($employee->food_allowance ?? 0) + ($employee->housing_allowance ?? 0) + ($employee->transport_allowance ?? 0);
         $overtimePay = $employee->calculateOvertimePay($totalOvertimeHours);
-        $advancePayment = $employee->advance_payment ?? 0;
+        $advancePayment = $employee->total_advance_balance ?? 0;
         $netSalary = $basicSalary + $totalAllowances + $overtimePay - $absentDeduction - $advancePayment;
 
         return Inertia::render('Timesheets/PaySlip', [
@@ -1419,7 +1419,7 @@ class TimesheetController extends Controller
                 'food_allowance' => $employee->food_allowance,
                 'housing_allowance' => $employee->housing_allowance,
                 'transport_allowance' => $employee->transport_allowance,
-                'advance_payment' => $employee->advance_payment,
+                'advance_payment' => $employee->total_advance_balance,
             ],
             'month' => str_pad($monthNum, 2, '0', STR_PAD_LEFT),
             'year' => $year,
