@@ -148,8 +148,8 @@ class AdvancePaymentController extends Controller
     public function recordRepayment(Request $request, $advance)
     {
         try {
-            // Find the advance payment
-            $advancePayment = AdvancePayment::find($advance);
+            // Find the advance payment (include soft-deleted in case it's visible in UI)
+            $advancePayment = AdvancePayment::withTrashed()->find($advance);
             if (!$advancePayment) {
                 return response()->json([
                     'success' => false,
@@ -168,6 +168,7 @@ class AdvancePaymentController extends Controller
 
             // Get all active advances for this employee, ordered by remaining balance (lowest first)
             $activeAdvances = AdvancePayment::where('employee_id', $advancePayment->employee_id)
+                ->whereNull('deleted_at')
                 ->whereIn('status', ['approved', 'partially_repaid'])
                 ->orderByRaw('(amount - repaid_amount) asc')
                 ->get();

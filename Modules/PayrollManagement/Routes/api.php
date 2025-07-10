@@ -142,5 +142,10 @@ Route::delete('/employees/{employee}/advances/{advance}', [AdvancePaymentControl
     ->middleware(['auth:sanctum', 'permission:advances.delete'])
     ->name('employees.advances.api.destroy');
 
+// Add repayment API route for advances
+Route::post('/employees/{employee}/advances/{advance}/repayment', [AdvancePaymentController::class, 'recordRepayment'])
+    ->middleware(['auth:sanctum', 'permission:advances.edit'])
+    ->name('employees.advances.api.repayment');
+
 
 

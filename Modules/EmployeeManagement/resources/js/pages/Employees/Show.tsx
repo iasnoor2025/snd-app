@@ -456,6 +456,7 @@ export default function Show({
   const queryClient = useQueryClient();
   const [selectedPayslipDate, setSelectedPayslipDate] = useState(new Date());
   const [isAddTimesheetDialogOpen, setIsAddTimesheetDialogOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Early return if no valid employee data
   if (!employee || !employee.id) {
@@ -625,11 +626,16 @@ export default function Show({
     const loadingToastId = ToastService.loading('Recording repayment...');
 
     try {
-      await axios.post(`/hr/payroll/employees/${employee.id}/advances/${data.advance_id}/repayment`, {
-        amount,
-        payment_date: new Date().toISOString().slice(0, 10),
-        notes: 'Manual repayment',
-      });
+      await ensureSanctumCsrf();
+      await axios.post(
+        `/api/employees/${employee.id}/advances/${data.advance_id}/repayment`,
+        {
+          amount,
+          payment_date: new Date().toISOString().slice(0, 10),
+          notes: 'Manual repayment',
+        },
+        { withCredentials: true }
+      );
 
       ToastService.dismiss(loadingToastId);
       ToastService.success(`Repayment of SAR ${amount} recorded successfully`);
@@ -2287,6 +2293,12 @@ export default function Show({
           </TabsContent>
 
           <TabsContent value="advances" className="mt-6 space-y-6">
+            {error && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertCircle className="h-5 w-5 mr-2" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
             <Card>
               <CardHeader>
                 <div className="flex justify-between items-center">
