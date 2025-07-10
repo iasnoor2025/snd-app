@@ -49,7 +49,6 @@
             <strong>Allowances:</strong> SAR {{ number_format($salary_details['total_allowances'], 2) }}<br>
             <strong>Absent Deduction:</strong> SAR {{ number_format($salary_details['absent_deduction'], 2) }}<br>
             <strong>Overtime Pay:</strong> SAR {{ number_format($salary_details['overtime_pay'], 2) }}<br>
-            <strong>Advance:</strong> SAR {{ number_format($salary_details['advance_payment'], 2) }}<br>
             <strong>Net Salary:</strong> SAR {{ number_format($salary_details['net_salary'], 2) }}
         </div>
     </div>
@@ -110,8 +109,7 @@
             <strong>Overtime Hours:</strong> {{ $total_overtime_hours }}
         </div>
         <div class="col">
-            <strong>Net Salary:</strong> SAR {{ number_format($salary_details['net_salary'], 2) }}<br>
-            <strong>Advance:</strong> SAR {{ number_format($salary_details['advance_payment'], 2) }}
+            <strong>Net Salary:</strong> SAR {{ number_format($salary_details['net_salary'], 2) }}
         </div>
     </div>
     <div class="footer">

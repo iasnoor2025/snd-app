@@ -83,8 +83,7 @@ class PaySlipPdfController extends Controller
         $basicSalary = $employee->basic_salary ?? 0;
         $totalAllowances = ($employee->food_allowance ?? 0) + ($employee->housing_allowance ?? 0) + ($employee->transport_allowance ?? 0);
         $overtimePay = method_exists($employee, 'calculateOvertimePay') ? $employee->calculateOvertimePay($totalOvertimeHours) : 0;
-        $advancePayment = $employee->advance_payment ?? 0;
-        $netSalary = $basicSalary + $totalAllowances + $overtimePay - $absentDeduction - $advancePayment;
+        $netSalary = $basicSalary + $totalAllowances + $overtimePay - $absentDeduction;
 
         $pdf = Pdf::loadView('TimesheetManagement::payslip', [
             'employee' => $employee,
@@ -98,7 +97,6 @@ class PaySlipPdfController extends Controller
                 'total_allowances' => $totalAllowances,
                 'absent_deduction' => $absentDeduction,
                 'overtime_pay' => $overtimePay,
-                'advance_payment' => $advancePayment,
                 'net_salary' => $netSalary,
             ],
             'absent_days' => $absentDays,
