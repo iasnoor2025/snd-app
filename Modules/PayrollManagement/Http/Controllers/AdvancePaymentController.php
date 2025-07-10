@@ -363,13 +363,19 @@ class AdvancePaymentController extends Controller
                 \Log::warning('User missing advances.approve permission', ['user_id' => auth()->id()]);
                 return response()->json(['success' => false, 'message' => 'You do not have permission to approve advances.'], 403);
             }
-            return back()->withErrors(['error' => 'You do not have permission to approve advances.']);
+            return Inertia::render('Payroll/Advances/Index', [
+                'employee' => $employee,
+                'error' => 'You do not have permission to approve advances.',
+            ]);
         }
         if ($advance->status !== 'pending') {
             if (request()->expectsJson() || request()->ajax()) {
                 return response()->json(['success' => false, 'message' => 'This advance payment request cannot be approved.'], 400);
             }
-            return back()->withErrors(['error' => 'This advance payment request cannot be approved.']);
+            return Inertia::render('Payroll/Advances/Index', [
+                'employee' => $employee,
+                'error' => 'This advance payment request cannot be approved.',
+            ]);
         }
         $advance->status = 'approved';
         $advance->approved_by = auth()->id();
@@ -387,7 +393,10 @@ class AdvancePaymentController extends Controller
     public function reject(Request $request, AdvancePayment $advancePayment)
     {
         if ($advancePayment->status !== 'pending') {
-            return back()->withErrors(['error' => 'This advance payment request cannot be rejected.']);
+            return Inertia::render('Payroll/Advances/Index', [
+                'employee' => $advancePayment->employee,
+                'error' => 'This advance payment request cannot be rejected.',
+            ]);
         }
 
         $validated = $request->validate([
@@ -420,7 +429,10 @@ class AdvancePaymentController extends Controller
     public function update(Request $request, Employee $employee, AdvancePayment $advance)
     {
         if ($advance->status !== 'pending' && !Auth::user()->hasRole('admin')) {
-            return back()->withErrors(['error' => 'This advance payment request cannot be updated.']);
+            return Inertia::render('Payroll/Advances/Index', [
+                'employee' => $employee,
+                'error' => 'This advance payment request cannot be updated.',
+            ]);
         }
 
         $validated = $request->validate([
@@ -443,11 +455,17 @@ class AdvancePaymentController extends Controller
     public function destroy(Employee $employee, AdvancePayment $advance)
     {
         if ($advance->status !== 'pending' && !Auth::user()->hasRole('admin')) {
-            return back()->withErrors(['error' => 'This advance payment request cannot be deleted.']);
+            return Inertia::render('Payroll/Advances/Index', [
+                'employee' => $employee,
+                'error' => 'This advance payment request cannot be deleted.',
+            ]);
         }
 
         if ($advance->repaid_amount > 0) {
-            return back()->withErrors(['error' => 'This advance payment has repayments recorded against it and cannot be deleted.']);
+            return Inertia::render('Payroll/Advances/Index', [
+                'employee' => $employee,
+                'error' => 'This advance payment has repayments recorded against it and cannot be deleted.',
+            ]);
         }
 
         DB::beginTransaction();

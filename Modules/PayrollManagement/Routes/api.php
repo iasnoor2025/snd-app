@@ -134,5 +134,13 @@ Route::post('/employees/{employee}/advances/{advance}/approve', [AdvancePaymentC
     ->middleware(['auth:sanctum', 'permission:advances.approve'])
     ->name('employees.advances.api.approve');
 
+Route::post('/employees/{employee}/advances/{advance}/reject', [AdvancePaymentController::class, 'reject'])
+    ->middleware(['auth:sanctum', 'permission:advances.approve'])
+    ->name('employees.advances.api.reject');
+
+Route::delete('/employees/{employee}/advances/{advance}', [AdvancePaymentController::class, 'destroy'])
+    ->middleware(['auth:sanctum', 'permission:advances.delete'])
+    ->name('employees.advances.api.destroy');
+
 
 
