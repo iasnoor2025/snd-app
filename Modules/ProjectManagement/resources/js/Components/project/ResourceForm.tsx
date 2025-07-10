@@ -480,7 +480,40 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                 }
             }
 
-            // Use the router.post/put methods directly with proper error handling
+            // Use the correct API endpoint for fuel
+            if (type === 'fuel') {
+                const apiUrl = `/api/projects/${projectId}/fuel`;
+                // Ensure required fields are present
+                const quantity = data.quantity ? Number(data.quantity) : 0;
+                const unit_price = data.unit_price ? Number(data.unit_price) : 0;
+                const total_cost = quantity * unit_price;
+                const payload = {
+                    ...data,
+                    type: 'fuel',
+                    total_cost,
+                    date: data.date_used || '',
+                };
+                try {
+                    const response = await axios.post(apiUrl, payload, {
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    if (response.data && response.data.resource) {
+                        if (onSuccess) onSuccess();
+                        setIsLoading(false);
+                        return;
+                    }
+                } catch (error: any) {
+                    if (error.response && error.response.data && error.response.data.errors) {
+                        setErrors(error.response.data.errors);
+                    } else {
+                        setErrors({ general: 'Failed to save fuel resource.' });
+                    }
+                    setIsLoading(false);
+                    return;
+                }
+            }
+
+            // Use the router.post/put methods directly with proper error handling for other types
             const routeName = `projects.resources.${type}.${initialData?.id ? 'update' : 'store'}`;
             const routeParams = {
                 project: projectId,
