@@ -682,40 +682,36 @@ export default function Show({ project, manager = [], tasks = [], teamMembers = 
                         <CardContent className="p-4">
                             <h3 className="flex items-center text-base font-medium mb-3">
                                 <DollarSign className="h-4 w-4 mr-2 text-green-600" />
-                                Project Financial Summary
+                                {t('financial_summary')}
                             </h3>
                             <div className="space-y-3">
                                 <div>
                                     <div className="flex justify-between">
                                         <span className="text-sm text-gray-500">{t('th_total_cost')}</span>
-                                        <span className="text-sm font-medium">SAR {0}</span>
+                                        <span className="text-sm font-medium">SAR {grandTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span className="text-sm text-gray-500">Budget</span>
-                                        <span className="text-sm font-medium">SAR {Number(project.budget)}</span>
+                                        <span className="text-sm text-gray-500">{t('budget')}</span>
+                                        <span className="text-sm font-medium">SAR {Number(project.budget).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                     </div>
 
                                     {(() => {
-                                        const totalCost = 0;
-                                        const balance = Number(project.budget) - totalCost;
+                                        const balance = Number(project.budget) - grandTotal;
                                         const isProfitable = balance >= 0;
                                         return (
                                             <div className="flex justify-between mt-1">
-                                                <span className="text-sm text-gray-500">Balance</span>
-                                                <span className={`text-sm font-medium ${isProfitable ? 'text-green-600' : 'text-red-600'}`}>
-                                                    SAR {balance}
-                                                </span>
+                                                <span className="text-sm text-gray-500">{t('balance')}</span>
+                                                <span className={`text-sm font-medium ${isProfitable ? 'text-green-600' : 'text-red-600'}`}>SAR {balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                             </div>
                                         );
                                     })()}
                                 </div>
 
                                 {(() => {
-                                    const totalCost = 0;
-                                    const balance = Number(project.budget) - totalCost;
-                                    const isProfitable = balance >= 0;
-                                    const budgetPercentage = Math.min(Math.round((totalCost / Math.max(Number(project.budget), 1)) * 100), 100);
-                                    const profitPercentage = Number(project.budget) > 0 ? Math.round((Math.abs(balance) / Number(project.budget)) * 100) : 0;
+                                    const budget = Number(project.budget) || 1;
+                                    const budgetPercentage = Math.min(Math.round((grandTotal / budget) * 100), 100);
+                                    const profitPercentage = Number(project.budget) > 0 ? Math.round((Math.abs(Number(project.budget) - grandTotal) / Number(project.budget)) * 100) : 0;
+                                    const isProfitable = Number(project.budget) - grandTotal >= 0;
                                     return (
                                         <>
                                             <div className="space-y-1">
@@ -733,7 +729,7 @@ export default function Show({ project, manager = [], tasks = [], teamMembers = 
 
                                             <div className="flex items-center justify-center">
                                                 <Badge className={isProfitable ? 'bg-green-100 text-green-800 border-green-200' : 'bg-red-100 text-red-800 border-red-200'}>
-                                                {isProfitable ? 'Profit' : 'Loss'}: {profitPercentage}%
+                                                {isProfitable ? t('profit') : t('loss')}: {profitPercentage}%
                                             </Badge>
                                             </div>
                                         </>
@@ -1054,7 +1050,7 @@ export default function Show({ project, manager = [], tasks = [], teamMembers = 
                         ]} />
                     </div>
                     <div className="col-span-1">
-                        <CostAnalysisCard budget={project.budget} spent={0} />
+                        <CostAnalysisCard budget={project.budget} spent={grandTotal} />
                     </div>
                     <div className="col-span-1">
                         <RiskAssessmentCard risks={[
