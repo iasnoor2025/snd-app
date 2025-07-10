@@ -65,12 +65,24 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        $project->load(['manager', 'tasks', 'teamMembers']);
+        $project->load(['manager', 'tasks', 'teamMembers', 'manpower', 'equipment', 'materials', 'fuel', 'expenses']);
+        // Ensure manager is always an array for frontend compatibility
+        $manager = $project->manager ? [$project->manager] : [];
+        // Pass client and location if available
+        $client = $project->client ?? null;
+        $location = $project->location ?? null;
         return Inertia::render('Modules/ProjectManagement/resources/js/pages/Show', [
             'project' => $project,
-            'manager' => $project->manager,
+            'manager' => $manager,
             'tasks' => $project->tasks,
             'teamMembers' => $project->teamMembers,
+            'manpower' => $project->manpower,
+            'equipment' => $project->equipment,
+            'materials' => $project->materials,
+            'fuel' => $project->fuel,
+            'expenses' => $project->expenses,
+            'client' => $client,
+            'location' => $location,
             'created_at' => $project->created_at,
             'updated_at' => $project->updated_at,
             'deleted_at' => $project->deleted_at,

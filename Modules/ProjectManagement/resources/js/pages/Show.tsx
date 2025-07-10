@@ -222,7 +222,7 @@ function TaskDialogWrapper({
     );
 }
 
-export default function Show({ project, manager = [], tasks = [], teamMembers = [], client = {}, location = {}, created_at, updated_at, deleted_at }: Props) {
+export default function Show({ project, manager = [], tasks = [], teamMembers = [], manpower = [], equipment = [], materials = [], fuel = [], expenses = [], client = {}, location = {}, created_at, updated_at, deleted_at }: Props) {
     const { t } = useTranslation(['projects', 'common']);
     const [editingResource, setEditingResource] = useState<Resource | null>(null);
     const [editingResourceType, setEditingResourceType] = useState<ResourceType | null>(null);
@@ -319,13 +319,21 @@ export default function Show({ project, manager = [], tasks = [], teamMembers = 
 
     // Calculate resource statistics
     const resourceStats = {
-        totalCount: manager.length,
-        manpowerCount: manager.length,
-        equipmentCount: 0,
-        materialsCount: 0,
-        fuelCount: 0,
-        expensesCount: 0
+        totalCount: manpower.length + equipment.length + materials.length + fuel.length + expenses.length,
+        manpowerCount: manpower.length,
+        equipmentCount: equipment.length,
+        materialsCount: materials.length,
+        fuelCount: fuel.length,
+        expensesCount: expenses.length
     };
+
+    // Calculate resource costs
+    const manpowerCost = manpower.reduce((sum, m) => sum + (parseFloat(m.total_cost) || 0), 0);
+    const equipmentCost = equipment.reduce((sum, e) => sum + (parseFloat(e.total_cost) || 0), 0);
+    const materialsCost = materials.reduce((sum, m) => sum + (parseFloat(m.total_cost) || 0), 0);
+    const fuelCost = fuel.reduce((sum, f) => sum + (parseFloat(f.total_cost) || 0), 0);
+    const expensesCost = expenses.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
+    const grandTotal = manpowerCost + equipmentCost + materialsCost + fuelCost + expensesCost;
 
     // Update the handler for delete button click
     const handleDeleteProject = () => {
@@ -740,19 +748,22 @@ export default function Show({ project, manager = [], tasks = [], teamMembers = 
                         <CardContent className="p-4">
                             <h3 className="flex items-center text-base font-medium mb-3">
                                 <PieChart className="h-4 w-4 mr-2 text-blue-600" />
-                                Cost Distribution
+                                {t('cost_distribution')}
                             </h3>
                             <div className="space-y-4">
                                 {[
-                                    { name: 'Manpower', color: 'bg-blue-500', total: 0 },
-                                ].map((category, index) => {
-                                    const grandTotal = 0;
-                                    const percentage = grandTotal ? Math.round((category.total / grandTotal) * 100) : 0;
+                                    { name: t('manpower'), color: 'bg-blue-500', cost: manpowerCost },
+                                    { name: t('equipment'), color: 'bg-green-500', cost: equipmentCost },
+                                    { name: t('materials'), color: 'bg-amber-500', cost: materialsCost },
+                                    { name: t('fuel'), color: 'bg-purple-500', cost: fuelCost },
+                                    { name: t('expenses'), color: 'bg-red-500', cost: expensesCost },
+                                ].map((category, index, arr) => {
+                                    const percentage = grandTotal ? Math.round((category.cost / grandTotal) * 100) : 0;
                                     return (
                                         <div key={index} className="space-y-1">
                                             <div className="flex justify-between text-sm">
                                                 <span className="text-muted-foreground">{category.name}</span>
-                                                <span>SAR {category.total} ({percentage}%)</span>
+                                                <span>SAR {category.cost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({percentage}%)</span>
                                             </div>
                                             <div className="relative w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
                                                 <div
@@ -772,12 +783,28 @@ export default function Show({ project, manager = [], tasks = [], teamMembers = 
                         <CardContent className="p-4">
                             <h3 className="flex items-center text-base font-medium mb-3">
                                 <BarChart2 className="h-4 w-4 mr-2 text-indigo-600" />
-                                Resource Count
+                                {t('resource_count')}
                             </h3>
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="bg-gray-50 rounded-md p-3 text-center flex flex-col items-center justify-center">
-                                    <div className="text-2xl font-semibold text-blue-600">{manager.length}</div>
-                                    <p className="text-xs text-muted-foreground mt-1">Manpower</p>
+                                    <div className="text-2xl font-semibold text-blue-600">{manpower.length}</div>
+                                    <p className="text-xs text-muted-foreground mt-1">{t('manpower')}</p>
+                                </div>
+                                <div className="bg-gray-50 rounded-md p-3 text-center flex flex-col items-center justify-center">
+                                    <div className="text-2xl font-semibold text-green-600">{equipment.length}</div>
+                                    <p className="text-xs text-muted-foreground mt-1">{t('equipment')}</p>
+                                </div>
+                                <div className="bg-gray-50 rounded-md p-3 text-center flex flex-col items-center justify-center">
+                                    <div className="text-2xl font-semibold text-amber-600">{materials.length}</div>
+                                    <p className="text-xs text-muted-foreground mt-1">{t('materials')}</p>
+                                </div>
+                                <div className="bg-gray-50 rounded-md p-3 text-center flex flex-col items-center justify-center">
+                                    <div className="text-2xl font-semibold text-purple-600">{fuel.length}</div>
+                                    <p className="text-xs text-muted-foreground mt-1">{t('fuel')}</p>
+                                </div>
+                                <div className="bg-gray-50 rounded-md p-3 text-center flex flex-col items-center justify-center">
+                                    <div className="text-2xl font-semibold text-red-600">{expenses.length}</div>
+                                    <p className="text-xs text-muted-foreground mt-1">{t('expenses')}</p>
                                 </div>
                             </div>
                         </CardContent>
