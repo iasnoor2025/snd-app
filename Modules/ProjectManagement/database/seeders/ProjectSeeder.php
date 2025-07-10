@@ -4,6 +4,8 @@ namespace Modules\ProjectManagement\database\seeders;
 
 use Illuminate\Database\Seeder;
 use Modules\ProjectManagement\Domain\Models\Project;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class ProjectSeeder extends Seeder
 {
@@ -54,6 +56,21 @@ class ProjectSeeder extends Seeder
             Project::updateOrCreate([
                 'name' => $data['name'],
             ], $data);
+        }
+
+        // Ensure the permission exists
+        $permission = Permission::firstOrCreate([
+            'name' => 'manpower.create',
+            'guard_name' => 'web',
+        ]);
+
+        // Assign to project_manager role
+        $role = Role::firstOrCreate([
+            'name' => 'project_manager',
+            'guard_name' => 'web',
+        ]);
+        if (!$role->hasPermissionTo($permission)) {
+            $role->givePermissionTo($permission);
         }
     }
 }

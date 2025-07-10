@@ -56,5 +56,10 @@ interface EmployeeRepositoryInterface extends BaseRepositoryInterface
      * Get top N employees (by recent creation)
      */
     public function getTopEmployees(int $limit = 3): array;
+
+    /**
+     * Get all employees
+     */
+    public function all(): array;
 }
 

@@ -333,6 +333,14 @@ class EmployeeService extends BaseService
             }, $topEmployees),
         ];
     }
+
+    /**
+     * Return all employees (for /employees/all endpoint)
+     */
+    public function getAllEmployees(): array
+    {
+        return $this->employeeRepository->all();
+    }
 }
 
 

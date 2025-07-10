@@ -324,4 +324,13 @@ class WidgetController extends Controller
             'message' => 'Available widgets retrieved successfully'
         ]);
     }
+
+    /**
+     * Return all employees (for /employees/all endpoint)
+     */
+    public function all(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $employees = $this->employeeService->getAllEmployees();
+        return response()->json($employees);
+    }
 }

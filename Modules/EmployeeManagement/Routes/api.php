@@ -136,14 +136,5 @@ Route::prefix('trainings')->group(function () {
 });
 Route::get('employees/{employee}/trainings', [TrainingController::class, 'employeeTrainings']);
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('employees/all', function () {
-        $repo = app(\Modules\EmployeeManagement\Repositories\EmployeeRepositoryInterface::class);
-        return response()->json($repo->all())
-            ->header('X-Debug-API', 'true')
-            ->header('Content-Type', 'application/json');
-    });
-});
-
 Route::get('/employees/all', [\Modules\EmployeeManagement\Http\Controllers\Api\WidgetController::class, 'all']);
 

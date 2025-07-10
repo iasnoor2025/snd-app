@@ -80,6 +80,14 @@ class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInt
     {
         return $this->model->orderByDesc('created_at')->limit($limit)->get()->all();
     }
+
+    /**
+     * Get all employees
+     */
+    public function all(): array
+    {
+        return $this->model->all()->toArray();
+    }
 }
 
 
