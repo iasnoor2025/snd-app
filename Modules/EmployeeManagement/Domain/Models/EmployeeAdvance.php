@@ -27,14 +27,12 @@ class EmployeeAdvance extends BaseModel
         'deduction_end_date',
         'deduction_amount',
         'deduction_frequency',
-        'remaining_amount',
         'notes',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
         'deduction_amount' => 'decimal:2',
-        'remaining_amount' => 'decimal:2',
         'approved_at' => 'datetime',
         'rejected_at' => 'datetime',
         'payment_date' => 'date',
@@ -74,12 +72,12 @@ class EmployeeAdvance extends BaseModel
 
     public function getIsPaidAttribute(): bool
     {
-        return $this->remaining_amount <= 0;
+        return $this->amount - $this->repaid_amount <= 0;
     }
 
     public function getTotalDeductionsAttribute(): float
     {
-        return $this->amount - $this->remaining_amount;
+        return $this->amount - $this->repaid_amount;
     }
 
     public function getRemainingDeductionsAttribute(): int
@@ -88,7 +86,7 @@ class EmployeeAdvance extends BaseModel
             return 0;
         }
 
-        return ceil($this->remaining_amount / $this->deduction_amount);
+        return ceil(($this->amount - $this->repaid_amount) / $this->deduction_amount);
     }
 
     public function getNextDeductionDateAttribute(): ?string

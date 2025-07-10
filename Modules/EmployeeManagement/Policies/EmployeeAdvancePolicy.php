@@ -54,7 +54,7 @@ class EmployeeAdvancePolicy
     {
         return $user->hasPermissionTo('process employee advances') &&
             $advance->status === 'approved' &&
-            $advance->remaining_amount > 0;
+            ($advance->amount - $advance->repaid_amount) > 0;
     }
 
     public function viewPending(User $user): bool

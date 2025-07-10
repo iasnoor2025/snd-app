@@ -235,6 +235,16 @@ interface Advance {
   remaining_balance?: number;
 }
 
+// Add Payment type for MonthlyHistoryItem
+interface Payment {
+  id: number;
+  amount: number;
+  payment_date: string;
+  notes?: string;
+  recorded_by?: string;
+  advance_payment_id?: number;
+}
+
 interface MonthlyHistoryItem {
   month: string;
   total_amount: number;
@@ -559,8 +569,12 @@ export default function Show({
       return true;
     } catch (error: any) {
       ToastService.dismiss(loadingToastId);
+      // Show backend error message and raw error for debugging
       const errorMessage = error.response?.data?.message || error.message;
       ToastService.error(`Failed to create advance request: ${errorMessage}`);
+      if (error.response?.data) {
+        ToastService.error(`Debug: ${JSON.stringify(error.response.data)}`);
+      }
       return false;
     }
   };
@@ -629,7 +643,7 @@ export default function Show({
 
   const handleAdvanceApproval = async (advanceId: number) => {
     const loadingToastId = ToastService.loading('Approving advance...');
-
+    console.log('DEBUG: Approve advance POST', `/api/employees/${employee.id}/advances/${advanceId}/approve`);
     try {
       await axios.post(`/api/employees/${employee.id}/advances/${advanceId}/approve`);
       ToastService.dismiss(loadingToastId);
@@ -1395,11 +1409,16 @@ export default function Show({
                       </div>
                     </div>
 
-                    {Number(employee.advance_payment) > 0 && (
+                    {Number(current_balance) >= 0 && (
                       <div className="mt-4 p-3 bg-destructive/10 rounded-md border border-destructive/20">
                         <div className="flex justify-between items-center">
                           <p className="text-sm font-medium text-destructive">{t('advance_payment_balance')}</p>
-                          <p className="text-base font-semibold text-destructive">SAR {Number(employee.advance_payment).toFixed(2)}</p>
+                          <p className="text-base font-semibold text-destructive">SAR {Number(current_balance).toFixed(2)}</p>
+                        </div>
+                        <div className="flex justify-end">
+                          <span className="text-xs px-2 py-1 rounded bg-muted-foreground/10 text-muted-foreground">
+                            {Number(current_balance) > 0 ? t('active') : t('no_balance')}
+                          </span>
                         </div>
                       </div>
                     )}
@@ -2544,7 +2563,7 @@ export default function Show({
                       <div className="flex items-center gap-2">
                         <Calendar className="h-5 w-5 text-muted-foreground" />
                         <p className="text-2xl font-bold text-primary">
-                          {monthlyDeduction ? Math.ceil(Number(employee.advance_payment) / Number(monthlyDeduction)) : 0}
+                          {monthlyDeduction ? Math.ceil(Number(current_balance) / Number(monthlyDeduction)) : 0}
                           <span className="text-sm font-normal text-muted-foreground ml-1">months</span>
                         </p>
                       </div>
@@ -2681,7 +2700,7 @@ export default function Show({
                       </TableBody>
                     </Table>
                   </div>
-                  <PaymentHistory employeeId={employee.id} />
+                  <PaymentHistory employeeId={Number(employee.id) || 0} />
                 </div>
 
                 {/* Payment History Section */}
@@ -2690,14 +2709,20 @@ export default function Show({
                     <h3 className="text-lg font-semibold">{t('payment_history')}</h3>
                   </div> */}
 
-                  <PaymentHistory employeeId={employee.id} />
+                  <PaymentHistory employeeId={Number(employee.id) || 0} />
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
 
           <TabsContent value="final-settlements" className="mt-6 space-y-6">
-            <FinalSettlementTab employee={employee} settlements={finalSettlements.data || []} />
+            <FinalSettlementTab employee={{
+              id: Number(employee.id) || 0,
+              employee_id: String(employee.employee_id ?? ''),
+              first_name: String(employee.first_name ?? ''),
+              last_name: String(employee.last_name ?? ''),
+              status: String(employee.status ?? '')
+            }} settlements={finalSettlements.data || []} />
           </TabsContent>
 
           <TabsContent value="resignations" className="mt-6 space-y-6">
@@ -2836,7 +2861,7 @@ export default function Show({
             </DialogHeader>
             <form onSubmit={(e) => {
               e.preventDefault();
-              selectedAdvance && handleRejectAdvance(selectedAdvance, rejectionReason);
+              selectedAdvance && handleAdvanceRejection(selectedAdvance, rejectionReason);
             }}>
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
@@ -2885,7 +2910,7 @@ export default function Show({
                 variant="destructive"
                 onClick={() => {
                   if (selectedAdvance) {
-                    handleDeleteAdvance(selectedAdvance);
+                    handleAdvanceDelete(selectedAdvance);
                   } else {
                     ToastService.error('No advance selected for deletion');
                   }

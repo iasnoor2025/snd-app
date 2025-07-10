@@ -42,7 +42,6 @@ class UpdateEmployeeRequest extends FormRequest
             'housing_allowance' => 'nullable|numeric|min:0',
             'transport_allowance' => 'nullable|numeric|min:0',
             'absent_deduction_rate' => 'nullable|numeric|min:0',
-            'advance_payment' => 'nullable|numeric|min:0',
             'overtime_rate_multiplier' => 'nullable|numeric|min:0',
             'overtime_fixed_rate' => 'nullable|numeric|min:0',
             'bank_name' => 'nullable|string|max:255',

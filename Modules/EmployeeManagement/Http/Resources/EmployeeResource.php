@@ -38,7 +38,6 @@ class EmployeeResource extends JsonResource
             'transport_allowance' => $this->transport_allowance,
             'total_allowances' => $this->total_allowances,
             'absent_deduction_rate' => $this->absent_deduction_rate,
-            'advance_payment' => $this->advance_payment,
             'overtime_rate_multiplier' => $this->overtime_rate_multiplier,
             'overtime_fixed_rate' => $this->overtime_fixed_rate,
             'bank_details' => $this->bank_details,

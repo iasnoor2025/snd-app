@@ -24,6 +24,7 @@ class AdvancePayment extends Model
         'employee_id',
         'amount',
         'reason',
+        'purpose',
         'status',
         'payment_date',
         'repaid_amount',

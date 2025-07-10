@@ -39,7 +39,6 @@ return new class extends Migration
             $table->decimal('housing_allowance', 10, 2)->default(0);
             $table->decimal('transport_allowance', 10, 2)->default(0);
             $table->decimal('absent_deduction_rate', 10, 2)->default(0);
-            $table->decimal('advance_payment', 10, 2)->default(0);
             $table->decimal('overtime_rate_multiplier', 10, 2)->default(1.5);
             $table->decimal('overtime_fixed_rate', 10, 2)->nullable();
             $table->string('bank_name')->nullable();

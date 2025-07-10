@@ -78,6 +78,20 @@ class EmployeeController extends Controller
         $employees = $query->paginate($request->per_page ?? 15)
             ->withQueryString();
 
+        // Add current_balance to each employee (force model for accessor)
+        $employeesWithBalance = collect($employees->items())->map(function ($employee) {
+            if (is_array($employee)) {
+                $model = Employee::find($employee['id']);
+                $employee['current_balance'] = $model ? $model->total_advance_balance : 0;
+                return $employee;
+            } elseif ($employee instanceof Employee) {
+                $employee->current_balance = $employee->total_advance_balance;
+                return $employee;
+            } else {
+                return $employee;
+            }
+        });
+
         // Debug logging for pagination
         // Log::info('Employee pagination debug', [
         //     'total_count' => $query->count(),
@@ -91,7 +105,7 @@ class EmployeeController extends Controller
 
         return Inertia::render('Employees/Index', [
             'employees' => [
-                'data' => $employees->items(),
+                'data' => $employeesWithBalance->values()->all(),
                 'meta' => [
                     'current_page' => $employees->currentPage(),
                     'from' => $employees->firstItem(),

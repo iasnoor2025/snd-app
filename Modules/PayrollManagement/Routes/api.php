@@ -129,5 +129,10 @@ Route::get('/employees/{employee}/advance-payments', [AdvancePaymentController::
     ->middleware(['auth:sanctum', 'permission:advances.view'])
     ->name('employees.advance-payments');
 
+// Add approve advance API route
+Route::post('/employees/{employee}/advances/{advance}/approve', [AdvancePaymentController::class, 'approve'])
+    ->middleware(['auth:sanctum', 'permission:advances.approve'])
+    ->name('employees.advances.api.approve');
+
 
 

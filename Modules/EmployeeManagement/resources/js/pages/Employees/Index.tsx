@@ -366,11 +366,9 @@ export default function Index({ auth, employees, filters, departments, positions
                           <div className="text-xs text-muted-foreground">
                             Hourly: {formatCurrency(employee.hourly_rate)}
                           </div>
-                          {employee.advance_payment && employee.advance_payment > 0 && (
-                            <Badge variant="destructive" className="w-fit text-xs mt-1">
-                              Advance: {formatCurrency(employee.advance_payment)}
-                            </Badge>
-                          )}
+                          <Badge variant={Number(employee.current_balance) > 0 ? "destructive" : "outline"} className="w-fit text-xs mt-1">
+                            Advance: {formatCurrency(Number(employee.current_balance) || 0)}
+                          </Badge>
                         </div>
                       </TableCell>
                       <TableCell className="min-w-[150px]">

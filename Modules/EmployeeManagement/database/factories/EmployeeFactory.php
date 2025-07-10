@@ -31,7 +31,6 @@ class EmployeeFactory extends Factory
             'housing_allowance' => $this->faker->randomFloat(2, 500, 2000),
             'transport_allowance' => $this->faker->randomFloat(2, 200, 1000),
             'absent_deduction_rate' => $this->faker->randomFloat(2, 0, 100),
-            'advance_payment' => $this->faker->randomFloat(2, 0, 1000),
             'overtime_rate_multiplier' => $this->faker->randomFloat(2, 1, 2),
             'overtime_fixed_rate' => $this->faker->randomFloat(2, 0, 100),
             'bank_name' => $this->faker->company(),

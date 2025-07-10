@@ -63,7 +63,6 @@ class Employee extends Model implements HasMedia
         'housing_allowance',
         'transport_allowance',
         'absent_deduction_rate',
-        'advance_payment',
         'overtime_rate_multiplier',
         'overtime_fixed_rate',
         'bank_name',
@@ -156,7 +155,6 @@ class Employee extends Model implements HasMedia
         'housing_allowance' => 'decimal:2',
         'transport_allowance' => 'decimal:2',
         'absent_deduction_rate' => 'decimal:2',
-        'advance_payment' => 'decimal:2',
         'overtime_rate_multiplier' => 'decimal:2',
         'overtime_fixed_rate' => 'decimal:2',
         'contract_hours_per_day' => 'integer',
@@ -319,9 +317,13 @@ class Employee extends Model implements HasMedia
      */
     public function getTotalAdvanceBalanceAttribute(): float
     {
+        // Sum the remaining balance for all active advances
         return (float) $this->advancePayments()
             ->where('status', 'active')
-            ->sum('remaining_amount');
+            ->get()
+            ->sum(function ($advance) {
+                return $advance->amount - $advance->repaid_amount;
+            });
     }
 
     /**
@@ -783,10 +785,13 @@ class Employee extends Model implements HasMedia
      */
     public function getPendingAdvancesAttribute()
     {
+        // Replace 'remaining_amount' with (amount - repaid_amount)
         return $this->advancePayments()
             ->where('status', 'active')
-            ->where('remaining_amount', '>', 0)
-            ->get();
+            ->get()
+            ->filter(function ($advance) {
+                return ($advance->amount - $advance->repaid_amount) > 0;
+            });
     }
 
     /**

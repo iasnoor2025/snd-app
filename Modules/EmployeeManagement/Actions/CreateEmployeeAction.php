@@ -102,7 +102,6 @@ class CreateEmployeeAction
                         'housing_allowance' => $data['housing_allowance'] ?? 0,
                         'transport_allowance' => $data['transport_allowance'] ?? 0,
                         'absent_deduction_rate' => $data['absent_deduction_rate'] ?? 0,
-                        'advance_payment' => $data['advance_payment'] ?? 0,
                         'overtime_rate_multiplier' => $data['overtime_rate_multiplier'] ?? 1.5,
                         'bank_name' => $data['bank_name'] ?? '',
                         'bank_account_number' => $data['bank_account_number'] ?? '',

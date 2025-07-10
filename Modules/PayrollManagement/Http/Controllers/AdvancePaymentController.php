@@ -105,7 +105,7 @@ class AdvancePaymentController extends Controller
             $advancePayment = $employee->advancePayments()->create([
                 'amount' => $request->amount,
                 'reason' => $request->reason,
-                'purpose' => $request->reason,
+                'purpose' => $request->reason, // Ensure purpose is set
                 'payment_date' => $request->payment_date,
                 'monthly_deduction' => $request->monthly_deduction,
                 'estimated_months' => $request->estimated_months,
@@ -117,8 +117,20 @@ class AdvancePaymentController extends Controller
             $employee->advance_payment = $employee->total_advance_balance;
             $employee->save();
 
+            // Return JSON if AJAX, else redirect
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json(['success' => true, 'data' => $advancePayment, 'message' => 'Advance payment recorded successfully.'], 201);
+            }
             return redirect()->back()->with('success', 'Advance payment recorded successfully.');
         } catch (\Exception $e) {
+            \Log::error('Failed to process advance request', [
+                'error' => $e->getMessage(),
+                'request' => $request->all(),
+                'employee_id' => $employee->id,
+            ]);
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Failed to process advance request: ' . $e->getMessage()], 500);
+            }
             return redirect()->back()->withErrors(['error' => 'Failed to process advance request: ' . $e->getMessage()]);
         }
     }
@@ -349,15 +361,27 @@ class AdvancePaymentController extends Controller
      */
     public function approve(Employee $employee, AdvancePayment $advance)
     {
+        // Use Spatie permission check for all users
+        if (!auth()->user() || !auth()->user()->can('advances.approve')) {
+            if (request()->expectsJson() || request()->ajax()) {
+                \Log::warning('User missing advances.approve permission', ['user_id' => auth()->id()]);
+                return response()->json(['success' => false, 'message' => 'You do not have permission to approve advances.'], 403);
+            }
+            return back()->withErrors(['error' => 'You do not have permission to approve advances.']);
+        }
         if ($advance->status !== 'pending') {
+            if (request()->expectsJson() || request()->ajax()) {
+                return response()->json(['success' => false, 'message' => 'This advance payment request cannot be approved.'], 400);
+            }
             return back()->withErrors(['error' => 'This advance payment request cannot be approved.']);
         }
-
         $advance->status = 'approved';
-        $advance->approved_by = Auth::id();
+        $advance->approved_by = auth()->id();
         $advance->approved_at = now();
         $advance->save();
-
+        if (request()->expectsJson() || request()->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Advance payment request approved successfully.', 'data' => $advance], 200);
+        }
         return back()->with('success', 'Advance payment request approved successfully.');
     }
 
