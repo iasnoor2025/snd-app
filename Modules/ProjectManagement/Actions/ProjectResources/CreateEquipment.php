@@ -23,6 +23,7 @@ class CreateEquipment
 
             // Create the equipment resource
             $equipment = $project->equipment()->create([
+                'project_id' => $project->id,
                 'equipment_id' => $data['equipment_id'],
                 'start_date' => $data['start_date'],
                 'end_date' => $data['end_date'],
@@ -30,7 +31,20 @@ class CreateEquipment
                 'hourly_rate' => $data['hourly_rate'],
                 'maintenance_cost' => $data['maintenance_cost'] ?? 0,
                 'total_cost' => $totalCost,
-                'notes' => $data['notes'] ?? null,
+                'notes' => $data['notes'] ?? '',
+                'date_used' => $data['start_date'],
+                'name' => !empty($data['name']) ? $data['name'] : 'Equipment',
+                'unit' => 'hours',
+                'quantity' => $data['usage_hours'] ?? 0,
+                'unit_price' => $data['hourly_rate'] ?? 0,
+                'type' => 'equipment',
+                'category' => 'equipment',
+                'amount' => $totalCost,
+                'description' => $data['description'] ?? '',
+                'equipment_cost' => $totalCost,
+                'unit_cost' => $data['hourly_rate'] ?? 0,
+                'status' => 'active',
+                'worker_name' => $data['operator_name'] ?? '',
             ]);
 
             Log::info('Equipment resource created successfully', [

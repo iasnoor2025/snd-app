@@ -139,3 +139,12 @@ require __DIR__.'/profile.php';
 Route::get('/rtl-test', function () {
     return Inertia::render('rtl-test');
 })->middleware(['auth']);
+
+// Public equipment dropdown for frontend (bypasses Sanctum and API middleware)
+Route::get('/api/v1/equipment', function () {
+    $equipment = \Modules\EquipmentManagement\Domain\Models\Equipment::where('status', 'available')
+        ->select('id', 'name', 'model', 'door_number', 'daily_rate')
+        ->orderBy('name')
+        ->get();
+    return response()->json($equipment);
+});

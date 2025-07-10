@@ -33,9 +33,22 @@ use Modules\EquipmentManagement\Http\Controllers\Api\WidgetController;
 
 // API routes uncommented
 
+// Public equipment dropdown (closure, top-level, no prefix group)
+Route::get('equipment', function () {
+    $equipment = \Modules\EquipmentManagement\Domain\Models\Equipment::where('status', 'available')
+        ->select('id', 'name', 'model', 'door_number', 'daily_rate')
+        ->orderBy('name')
+        ->get()
+        ->map(function ($item) {
+            $item->name = is_array($item->name) ? ($item->name['en'] ?? reset($item->name)) : $item->name;
+            return $item;
+        });
+    return response()->json($equipment);
+});
+
 Route::middleware(['auth:sanctum'])->group(function () {
     // Equipment management
-    Route::apiResource('equipment', EquipmentApiController::class, [
+    Route::apiResource('equipment', \Modules\EquipmentManagement\Http\Controllers\EquipmentApiController::class, [
         'names' => [
             'index' => 'api.equipment.index',
             'store' => 'api.equipment.store',
@@ -43,7 +56,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             'update' => 'api.equipment.update',
             'destroy' => 'api.equipment.destroy',
         ]
-    ]);
+    ])->except(['index']);
     Route::get('equipment/{equipment}/history', [EquipmentApiController::class, 'history']);
     Route::get('equipment/{equipment}/documents', [EquipmentApiController::class, 'documents']);
     Route::post('equipment/{equipment}/documents', [EquipmentApiController::class, 'storeDocument']);
@@ -72,7 +85,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             'destroy' => 'api.maintenance.destroy',
         ]
     ]);
-    Route::apiResource('maintenance-schedules', MaintenanceScheduleApiController::class, [
+    Route::apiResource('maintenance-schedules', MaintenanceScheduleController::class, [
         'names' => [
             'index' => 'api.maintenance-schedules.index',
             'store' => 'api.maintenance-schedules.store',

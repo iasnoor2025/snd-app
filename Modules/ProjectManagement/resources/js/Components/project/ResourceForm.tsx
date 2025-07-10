@@ -169,15 +169,6 @@ const expenseSchema = z.object({
     description: z.string().optional()
 });
 
-// Dummy data for employees to avoid API call
-const dummyEmployees: Employee[] = [
-    { id: 1, first_name: 'John', last_name: 'Doe', full_name: 'John Doe', hourly_rate: 15, position: 'Operator' },
-    { id: 2, first_name: 'Jane', last_name: 'Smith', full_name: 'Jane Smith', hourly_rate: 18, position: 'Manager' },
-    { id: 3, first_name: 'Mike', last_name: 'Johnson', full_name: 'Mike Johnson', hourly_rate: 12, position: 'Worker' },
-    { id: 4, first_name: 'Sarah', last_name: 'Williams', full_name: 'Sarah Williams', hourly_rate: 20, position: 'Supervisor' },
-    { id: 5, first_name: 'David', last_name: 'Brown', full_name: 'David Brown', hourly_rate: 14, position: 'Assistant' }
-];
-
 // Create a wrapped component to handle errors
 function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initialData }: ResourceFormProps): React.ReactElement {
     const { t } = useTranslation(['projects', 'common']);
@@ -240,18 +231,20 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
             try {
                 if (type === 'manpower') {
                     // Use the authenticated employees endpoint
-                    // const response = await axios.get('/api/v1/employees/all');
                     const response = await axios.get('/api/employees/all');
                     if (mounted.current) {
                         setEmployees(response.data);
                     }
                 } else if (type === 'equipment' || type === 'fuel') {
-                    const response = await axios.get('/api/equipment');
+                    // Use the authenticated equipment endpoint, match manpower logic
+                    const response = await axios.get('/api/v1/equipment');
                     if (mounted.current) {
-                        setEquipment(response.data);
+                        // If response.data is paginated (has .data), use .data, else use response.data directly
+                        const equipmentList = Array.isArray(response.data) ? response.data : (response.data.data || []);
+                        setEquipment(equipmentList);
                         // If we have initial data, set the hourly rate based on the equipment
                         if (initialData?.equipment_id) {
-                            const selectedEquipment = response.data.find((e: Equipment) => e.id === initialData.equipment_id);
+                            const selectedEquipment = equipmentList.find((e: Equipment) => e.id === initialData.equipment_id);
                             if (selectedEquipment) {
                                 const hourlyRate = selectedEquipment.daily_rate ? (selectedEquipment.daily_rate / 8) : 0;
                                 setData(prev => ({
@@ -530,8 +523,16 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
             } else if (type === 'equipment') {
                 if (dataForValidation.equipment_id && dataForValidation.equipment_id !== '') {
                     dataForValidation.equipment_id = parseInt(dataForValidation.equipment_id);
+                    // Set name to selected equipment's name
+                    const selectedEquipment = equipment.find(e => e.id === dataForValidation.equipment_id);
+                    dataForValidation.name = (selectedEquipment && typeof selectedEquipment.name === 'string') ? selectedEquipment.name : 'Equipment';
                 } else {
                     delete dataForValidation.equipment_id;
+                    dataForValidation.name = 'Equipment';
+                }
+                // Fallback: always set name to 'Equipment' if still missing
+                if (!dataForValidation.name) {
+                    dataForValidation.name = 'Equipment';
                 }
                 if (dataForValidation.usage_hours && dataForValidation.usage_hours !== '') {
                     dataForValidation.usage_hours = parseFloat(dataForValidation.usage_hours);
@@ -548,6 +549,11 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                 } else {
                     delete dataForValidation.maintenance_cost;
                 }
+                // Ensure start_date and end_date are always strings (even if empty)
+                dataForValidation.start_date = dataForValidation.start_date || '';
+                dataForValidation.end_date = dataForValidation.end_date || '';
+                // Always set date_used to start_date for equipment
+                dataForValidation.date_used = dataForValidation.start_date || '';
             } else if (type === 'fuel') {
                 if (dataForValidation.quantity && dataForValidation.quantity !== '') {
                     dataForValidation.quantity = parseFloat(dataForValidation.quantity);
@@ -755,22 +761,28 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">{t('lbl_start_date')}</label>
-                                <DatePicker
-                                    date={data.start_date ? new Date(data.start_date) : undefined}
-                                    setDate={(date: Date | undefined) => handleInputChange('start_date', date?.toISOString().split('T')[0])}
-                                    placeholder={t('ph_select_start_date')}
+                                <Label htmlFor="start_date">{t('lbl_start_date')}</Label>
+                                <Input
+                                    id="start_date"
+                                    type="date"
+                                    value={data.start_date || ''}
+                                    onChange={(e) => handleInputChange('start_date', e.target.value)}
+                                    required
+                                    className={errors.start_date ? 'border-red-500' : ''}
                                 />
                                 {errors.start_date && (
                                     <p className="text-sm text-red-500">{errors.start_date}</p>
                                 )}
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">End Date (Optional)</label>
-                                <DatePicker
-                                    date={data.end_date ? new Date(data.end_date) : undefined}
-                                    setDate={(date: Date | undefined) => handleInputChange('end_date', date?.toISOString().split('T')[0])}
-                                    placeholder={t('ph_select_end_date')}
+                                <Label htmlFor="end_date">{t('lbl_end_date')}</Label>
+                                <Input
+                                    id="end_date"
+                                    type="date"
+                                    value={data.end_date || ''}
+                                    onChange={(e) => handleInputChange('end_date', e.target.value)}
+                                    required
+                                    className={errors.end_date ? 'border-red-500' : ''}
                                 />
                                 {errors.end_date && (
                                     <p className="text-sm text-red-500">{errors.end_date}</p>
@@ -828,58 +840,87 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                     <div className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <Label htmlFor="equipment_id" className="text-sm font-medium">Equipment</Label>
-                                <Select
-                                    value={data.equipment_id?.toString() || ''}
-                                    onValueChange={(value) => {
-                                        const selectedEquipment = equipment.find(e => e.id === parseInt(value));
-                                        handleInputChange('equipment_id', parseInt(value));
-                                        if (selectedEquipment) {
-                                            // Set hourly rate from equipment's daily rate (assuming 8-hour workday)
-                                            const hourlyRate = selectedEquipment.daily_rate ? (selectedEquipment.daily_rate / 8) : 0;
-                                            handleInputChange('hourly_rate', hourlyRate);
-                                        }
-                                    }}
-                                    disabled={isLoading}
-                                >
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder={t('ph_select_equipment')} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {equipment && equipment.length > 0 ? (
-                                            equipment.map((item) => (
-                                                <SelectItem key={item.id} value={item.id.toString()}>
-                                                    {item.name}
-                                                </SelectItem>
-                                            ))
-                                        ) : (
-                                            <SelectItem value="no-equipment" disabled>{t('opt_no_equipment_available')}</SelectItem>
-                                        )}
-                                    </SelectContent>
-                                </Select>
-                                {errors.equipment_id && (
-                                    <p className="text-sm text-red-500">{errors.equipment_id}</p>
-                                )}
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="usage_hours">{t('lbl_usage_hours')}</Label>
+                                <Label htmlFor="start_date">{t('lbl_start_date')}</Label>
                                 <Input
-                                    id="usage_hours"
-                                    type="number"
-                                    min="1"
-                                    value={data.usage_hours || ''}
-                                    onChange={(e) => handleInputChange('usage_hours', Number(e.target.value))}
-                                    placeholder={t('ph_enter_usage_hours')}
-                                    className={errors.usage_hours ? 'border-red-500' : ''}
+                                    id="start_date"
+                                    type="date"
+                                    value={data.start_date || ''}
+                                    onChange={(e) => handleInputChange('start_date', e.target.value)}
+                                    required
+                                    className={errors.start_date ? 'border-red-500' : ''}
                                 />
-                                {errors.usage_hours && (
-                                    <p className="text-sm text-red-500">{errors.usage_hours}</p>
+                                {errors.start_date && (
+                                    <p className="text-sm text-red-500">{errors.start_date}</p>
                                 )}
                             </div>
-
                             <div className="space-y-2">
-                                <Label htmlFor="hourly_rate">Hourly Rate (SAR)</Label>
+                                <Label htmlFor="end_date">{t('lbl_end_date')}</Label>
+                                <Input
+                                    id="end_date"
+                                    type="date"
+                                    value={data.end_date || ''}
+                                    onChange={(e) => handleInputChange('end_date', e.target.value)}
+                                    required
+                                    className={errors.end_date ? 'border-red-500' : ''}
+                                />
+                                {errors.end_date && (
+                                    <p className="text-sm text-red-500">{errors.end_date}</p>
+                                )}
+                            </div>
+                        </div>
+                        {/* Equipment selection dropdown */}
+                        <div className="space-y-2">
+                            <Label htmlFor="equipment_id" className="text-sm font-medium">{t('lbl_select_equipment')}</Label>
+                            <Select
+                                value={data.equipment_id?.toString() || ''}
+                                onValueChange={(value) => {
+                                    const selectedEquipment = equipment.find(e => e.id === parseInt(value));
+                                    handleInputChange('equipment_id', parseInt(value));
+                                    if (selectedEquipment) {
+                                        // Set hourly rate from equipment's daily rate (assuming 8-hour workday)
+                                        const hourlyRate = selectedEquipment.daily_rate ? (selectedEquipment.daily_rate / 8) : 0;
+                                        handleInputChange('hourly_rate', hourlyRate);
+                                    }
+                                }}
+                                disabled={isLoading}
+                            >
+                                <SelectTrigger className={cn("w-full", errors.equipment_id && "border-red-500")}>
+                                    <SelectValue placeholder={t('ph_select_equipment')} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {(Array.isArray(equipment) && equipment.length > 0) ? (
+                                        equipment.map((item) => (
+                                            <SelectItem key={item.id} value={item.id.toString()}>
+                                                {typeof item.name === 'object' && item.name !== null ? (item.name.en || Object.values(item.name)[0] || '') : item.name}
+                                            </SelectItem>
+                                        ))
+                                    ) : (
+                                        <SelectItem value="no-equipment" disabled>{t('opt_no_equipment_available')}</SelectItem>
+                                    )}
+                                </SelectContent>
+                            </Select>
+                            {errors.equipment_id && (
+                                <p className="text-sm text-red-500">{errors.equipment_id}</p>
+                            )}
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="usage_hours">{t('lbl_usage_hours')}</Label>
+                            <Input
+                                id="usage_hours"
+                                type="number"
+                                min="1"
+                                value={data.usage_hours || ''}
+                                onChange={(e) => handleInputChange('usage_hours', Number(e.target.value))}
+                                placeholder={t('ph_enter_usage_hours')}
+                                className={errors.usage_hours ? 'border-red-500' : ''}
+                            />
+                            {errors.usage_hours && (
+                                <p className="text-sm text-red-500">{errors.usage_hours}</p>
+                            )}
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="hourly_rate">{t('lbl_hourly_rate')}</Label>
                                 <Input
                                     id="hourly_rate"
                                     type="number"
@@ -894,11 +935,8 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                     <p className="text-sm text-red-500">{errors.hourly_rate}</p>
                                 )}
                             </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <Label htmlFor="total_cost">Total Cost (SAR)</Label>
+                                <Label htmlFor="total_cost">{t('lbl_total_cost')}</Label>
                                 <Input
                                     id="total_cost"
                                     type="number"
@@ -909,9 +947,8 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                 />
                             </div>
                         </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="notes">Notes (Optional)</Label>
+                        <div className="space-y-2 md:col-span-2">
+                            <Label htmlFor="notes">{t('lbl_notes_optional')}</Label>
                             <Textarea
                                 id="notes"
                                 value={data.notes || ''}
@@ -923,6 +960,9 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                 <p className="text-sm text-red-500">{errors.notes}</p>
                             )}
                         </div>
+                        {type === 'equipment' && (
+                            <input type="hidden" name="date_used" value={data.start_date || ''} />
+                        )}
                     </div>
                 );
 

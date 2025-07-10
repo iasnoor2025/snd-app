@@ -198,21 +198,40 @@ class ProjectResourceController extends Controller
             // Create the equipment resource
             $equipment = $project->equipment()->create([
                 'equipment_id' => $validated['equipment_id'],
+                'project_id' => $project->id,
                 'start_date' => $validated['start_date'],
                 'end_date' => $validated['end_date'],
                 'usage_hours' => $validated['usage_hours'],
                 'hourly_rate' => $validated['hourly_rate'],
                 'maintenance_cost' => $validated['maintenance_cost'] ?? 0,
                 'total_cost' => $totalCost,
+                'notes' => $request->input('notes', ''),
+                'date_used' => $validated['start_date'],
+                'name' => $request->input('name') ?: 'Equipment',
+                'unit' => 'hours',
+                'quantity' => $validated['usage_hours'] ?? 0,
+                'unit_price' => $validated['hourly_rate'] ?? 0,
+                'type' => 'equipment',
+                'category' => 'equipment',
+                'amount' => $totalCost,
+                'description' => $request->input('description', ''),
+                'equipment_cost' => $totalCost,
+                'unit_cost' => $validated['hourly_rate'] ?? 0,
+                'status' => 'active',
+                'worker_name' => $request->input('operator_name', ''),
             ]);
 
-            // Clear cache without using tags
             Cache::forget('project_' . $project->id . '_equipment');
 
-            return response()->json([
-                'message' => 'Equipment resource created successfully',
-                'data' => $equipment
-            ], 201);
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Equipment resource created successfully',
+                    'data' => $equipment
+                ], 201);
+            }
+
+            return redirect()->route('projects.resources', $project)
+                ->with('success', 'Equipment resource created successfully.');
         } catch (\Exception $e) {
             \Log::error('Failed to save equipment resource: ' . $e->getMessage());
             return response()->json([
