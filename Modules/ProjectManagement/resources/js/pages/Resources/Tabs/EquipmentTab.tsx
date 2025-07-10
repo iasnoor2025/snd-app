@@ -1,8 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from "@/Core";
-import { ResourceFormModal } from '../../../components/project/resources/ResourceModal';
-import { ResourceTable } from '../../../components/project/resources/ResourceTable';
+import { Badge } from "@/Core";
+import { ResourceFormModal } from '../../../Components/project/resources/ResourceModal';
+import { ResourceTable } from '../../../Components/project/resources/ResourceTable';
 import { useResourceFormModal } from '../../../hooks/useResourceFormModal';
 import { useResourceSubmit } from '../../../hooks/useResourceSubmit';
 import type { EquipmentResource } from '../../../types/projectResources';
@@ -12,7 +13,7 @@ interface EquipmentTabProps {
     project: {
         id: number;
     };
-    equipments: EquipmentResource[];
+    equipments: { data: EquipmentResource[] };
     availableEquipment: EquipmentResource[];
 }
 
@@ -54,36 +55,42 @@ export function EquipmentTab({ project, equipments, availableEquipment }: Equipm
     };
 
     const columns = [
-        { key: 'name' as keyof EquipmentResource, header: 'Equipment Name' },
-        { key: 'model' as keyof EquipmentResource, header: 'Model' },
-        { key: 'door_number' as keyof EquipmentResource, header: 'Door Number' },
-        { key: 'start_date' as keyof EquipmentResource, header: 'Start Date' },
-        { key: 'end_date' as keyof EquipmentResource, header: 'End Date' },
         {
-            key: 'base_daily_rate' as keyof EquipmentResource,
+            accessorKey: 'equipment_name',
+            header: 'Equipment Name',
+            cell: ({ row }: any) => (
+                <span>
+                    {row.original.equipment_name}
+                    {row.original.is_orphaned_equipment && (
+                        <Badge variant="destructive" className="ml-2">Orphaned</Badge>
+                    )}
+                </span>
+            ),
+        },
+        { accessorKey: 'model', header: 'Model' },
+        { accessorKey: 'door_number', header: 'Door Number' },
+        { accessorKey: 'start_date', header: 'Start Date' },
+        { accessorKey: 'end_date', header: 'End Date' },
+        {
+            accessorKey: 'base_daily_rate',
             header: 'Base Daily Rate',
-            render: (value: number) => formatCurrency(value),
+            cell: ({ row }: any) => formatCurrency(row.original.base_daily_rate),
         },
         {
-            key: 'daily_rate' as keyof EquipmentResource,
+            accessorKey: 'daily_rate',
             header: 'Daily Rate',
-            render: (value: number) => formatCurrency(value),
+            cell: ({ row }: any) => formatCurrency(row.original.daily_rate),
         },
-        { key: 'total_days' as keyof EquipmentResource, header: 'Total Days' },
+        { accessorKey: 'total_days', header: 'Total Days' },
         {
-            key: 'maintenance_cost' as keyof EquipmentResource,
+            accessorKey: 'maintenance_cost',
             header: 'Maintenance Cost',
-            render: (value: number) => formatCurrency(value),
+            cell: ({ row }: any) => formatCurrency(row.original.maintenance_cost),
         },
         {
-            key: 'total_cost' as keyof EquipmentResource,
+            accessorKey: 'total_cost',
             header: 'Total Cost',
-            render: (_: unknown, resource: EquipmentResource) => {
-                const dailyRate = resource.daily_rate || 0;
-                const totalDays = resource.total_days || 0;
-                const maintenanceCost = resource.maintenance_cost || 0;
-                return formatCurrency((dailyRate * totalDays) + maintenanceCost);
-            },
+            cell: ({ row }: any) => formatCurrency(row.original.total_cost),
         },
     ];
 
@@ -104,13 +111,12 @@ export function EquipmentTab({ project, equipments, availableEquipment }: Equipm
             </div>
 
             <ResourceTable
-                resources={equipments}
+                data={equipments.data}
                 columns={columns}
                 onEdit={(resource) => {
                     openEditModal(resource);
                 }}
                 onDelete={handleDeleteClick}
-                type="equipment"
             />
 
             <ResourceFormModal
