@@ -57,7 +57,14 @@ class ProjectResourceController extends Controller
         $page = $request->input('page', 1);
 
         // Get the paginated data for each resource type
-        $manpower = $project->manpower()->paginate(10, ['*'], 'manpower_page', $page);
+        $manpower = $project->manpower()->with('employee')->paginate(10, ['*'], 'manpower_page', $page);
+        // Fix worker_name for each manpower entry
+        $manpower->getCollection()->transform(function ($item) {
+            if ($item->employee_id && $item->employee) {
+                $item->worker_name = $item->employee->full_name;
+            }
+            return $item;
+        });
         $equipment = $project->equipment()->paginate(10, ['*'], 'equipment_page', $page);
         $materials = $project->materials()->paginate(10, ['*'], 'materials_page', $page);
         $fuel = $project->fuel()->paginate(10, ['*'], 'fuel_page', $page);
