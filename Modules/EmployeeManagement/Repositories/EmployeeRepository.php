@@ -82,11 +82,17 @@ class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInt
     }
 
     /**
-     * Get all employees
+     * Get all employees (only active and truly unassigned: not in any project or rental)
      */
     public function all(): array
     {
-        return $this->model->all()->toArray();
+        return $this->model
+            ->where('status', 'active')
+            ->whereDoesntHave('projectManpower')
+            ->whereDoesntHave('rentalAssignments')
+            ->whereDoesntHave('rentalItems')
+            ->get()
+            ->toArray();
     }
 }
 
