@@ -62,6 +62,8 @@ Route::get('/projects/{project}/tasks', [ProjectTaskController::class, 'tasks'])
 Route::get('/projects/{project}/resources', [ProjectResourceController::class, 'index']);
 Route::post('/projects/{project}/resources', [ProjectResourceController::class, 'store']);
 
+Route::post('/projects/{project}/fuel', [\Modules\ProjectManagement\Http\Controllers\ProjectResourceController::class, 'storeFuel']);
+
 Route::get('/projects/{project}/milestones', [MilestoneController::class, 'index']);
 Route::post('/projects/{project}/milestones', [MilestoneController::class, 'store']);
 Route::patch('/projects/{project}/milestones/{milestone}', [MilestoneController::class, 'update']);

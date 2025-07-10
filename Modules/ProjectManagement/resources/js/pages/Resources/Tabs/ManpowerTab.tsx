@@ -99,7 +99,14 @@ export function ManpowerTab({ project, manpowers }: ManpowerTabProps) {
         {
             key: 'worker_name',
             header: 'Worker',
-            accessor: (row: ManpowerResource) => row.worker_name,
+            accessor: (row: ManpowerResource) => {
+                const name = row.worker_name;
+                if (!name) return '';
+                if (typeof name === 'string') return name;
+                if (typeof name === 'object' && name.en) return name.en;
+                if (typeof name === 'object') return Object.values(name)[0];
+                return '';
+            },
             className: 'text-center',
         },
         {

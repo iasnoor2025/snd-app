@@ -179,37 +179,84 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
     const formRef = useRef<HTMLFormElement>(null!);
     const mounted = useRef(false);
 
+    // Utility to safely extract a string from a translation object or value
+    function safeString(val: any): string {
+        if (!val) return '';
+        if (typeof val === 'string') return val;
+        if (typeof val === 'object' && val !== null) {
+            if ('en' in val && typeof val.en === 'string') return val.en;
+            const first = Object.values(val)[0];
+            if (typeof first === 'string') return first;
+            return '';
+        }
+        return '';
+    }
+
     // Memoize the initial form data
-    const initialFormData = useMemo(() => ({
-        project_id: projectId,
-        employee_id: initialData?.employee_id || '',
-        worker_name: initialData?.worker_name || '',
-        daily_rate: initialData?.daily_rate || '',
-        base_daily_rate: initialData?.base_daily_rate || '',
-        total_days: initialData?.total_days || '',
-        quantity: initialData?.quantity || '',
-        unit_price: initialData?.unit_price || '',
-        unit_cost: initialData?.unit_cost || '',
-        hourly_rate: initialData?.hourly_rate || '',
-        usage_hours: initialData?.usage_hours || '',
-        maintenance_cost: initialData?.maintenance_cost || '',
-        amount: initialData?.amount || '',
-        description: initialData?.description || '',
-        job_title: initialData?.job_title || '',
-        start_date: initialData?.start_date ? new Date(initialData.start_date).toISOString().split('T')[0] : '',
-        end_date: initialData?.end_date ? new Date(initialData.end_date).toISOString().split('T')[0] : '',
-        notes: initialData?.notes || '',
-        equipment_id: initialData?.equipment_id || '',
-        name: initialData?.name || '',
-        unit: initialData?.unit || '',
-        date_used: initialData?.date_used || '',
-        fuel_type: initialData?.fuel_type || '',
-        date: initialData?.date || '',
-        category: initialData?.category || '',
-        total_cost: initialData?.total_cost || '',
-        material_id: initialData?.material_id || '',
-        status: initialData?.status || 'pending'
-    }), [projectId, initialData]);
+    const initialFormData = useMemo(() => {
+        if (!initialData) {
+            return {
+                project_id: projectId,
+                employee_id: '',
+                worker_name: '',
+                daily_rate: '',
+                base_daily_rate: '',
+                total_days: '',
+                quantity: '',
+                unit_price: '',
+                unit_cost: '',
+                hourly_rate: '',
+                usage_hours: '',
+                maintenance_cost: '',
+                amount: '',
+                description: '',
+                job_title: '',
+                start_date: '',
+                end_date: '',
+                notes: '',
+                equipment_id: '',
+                name: '',
+                unit: '',
+                date_used: '',
+                fuel_type: '',
+                date: '',
+                category: '',
+                total_cost: '',
+                material_id: '',
+                status: 'pending',
+            };
+        }
+        return {
+            project_id: projectId,
+            employee_id: initialData.employee_id || '',
+            worker_name: safeString(initialData.worker_name),
+            daily_rate: initialData.daily_rate || '',
+            base_daily_rate: initialData.base_daily_rate || '',
+            total_days: initialData.total_days || '',
+            quantity: initialData.quantity || '',
+            unit_price: initialData.unit_price || '',
+            unit_cost: initialData.unit_cost || '',
+            hourly_rate: initialData.hourly_rate || '',
+            usage_hours: initialData.usage_hours || '',
+            maintenance_cost: initialData.maintenance_cost || '',
+            amount: initialData.amount || '',
+            description: safeString(initialData.description),
+            job_title: safeString(initialData.job_title),
+            start_date: initialData.start_date ? new Date(initialData.start_date).toISOString().split('T')[0] : '',
+            end_date: initialData.end_date ? new Date(initialData.end_date).toISOString().split('T')[0] : '',
+            notes: safeString(initialData.notes),
+            equipment_id: initialData.equipment_id || '',
+            name: safeString(initialData.name),
+            unit: safeString(initialData.unit),
+            date_used: initialData.date_used || '',
+            fuel_type: safeString(initialData.fuel_type),
+            date: initialData.date || '',
+            category: safeString(initialData.category),
+            total_cost: initialData.total_cost || '',
+            material_id: initialData.material_id || '',
+            status: initialData.status || 'pending',
+        };
+    }, [projectId, initialData]);
 
     const { data, setData, post, put, processing, errors: formErrors, reset } = useForm(initialFormData);
     const [errors, setErrors] = useState<Record<string, string>>({})
@@ -478,7 +525,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
             // Prepare data for validation by converting string numbers to actual numbers
             const dataForValidation = { ...formData };
 
-            // Convert numeric fields from strings to numbers for validation
+            // --- Ensure all required fields are set for each resource type ---
             if (type === 'material') {
                 // Ensure material_id is a number or undefined for validation
                 if (dataForValidation.material_id && dataForValidation.material_id !== '') {
@@ -555,32 +602,24 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                 // Always set date_used to start_date for equipment
                 dataForValidation.date_used = dataForValidation.start_date || '';
             } else if (type === 'fuel') {
-                if (dataForValidation.quantity && dataForValidation.quantity !== '') {
-                    dataForValidation.quantity = parseFloat(dataForValidation.quantity);
-                } else {
-                    delete dataForValidation.quantity;
-                }
-                if (dataForValidation.unit_price && dataForValidation.unit_price !== '') {
-                    dataForValidation.unit_price = parseFloat(dataForValidation.unit_price);
-                } else {
-                    delete dataForValidation.unit_price;
-                }
-                if (dataForValidation.total_cost && dataForValidation.total_cost !== '') {
-                    dataForValidation.total_cost = parseFloat(dataForValidation.total_cost);
-                } else {
-                    delete dataForValidation.total_cost;
-                }
+                // Ensure total_cost is always set for fuel
+                const quantity = dataForValidation.quantity && dataForValidation.quantity !== ''
+                    ? parseFloat(dataForValidation.quantity)
+                    : 0;
+                const unitPrice = dataForValidation.unit_price && dataForValidation.unit_price !== ''
+                    ? parseFloat(dataForValidation.unit_price)
+                    : 0;
+                dataForValidation.total_cost = quantity * unitPrice;
+                // Zod expects 'date', form uses 'date_used'
+                dataForValidation.date = dataForValidation.date_used || '';
             } else if (type === 'expense') {
-                if (dataForValidation.amount && dataForValidation.amount !== '') {
-                    dataForValidation.amount = parseFloat(dataForValidation.amount);
-                    // For expenses, total_cost should equal amount
-                    dataForValidation.total_cost = dataForValidation.amount;
-                } else {
-                    delete dataForValidation.amount;
-                    delete dataForValidation.total_cost;
-                }
-                // Ensure category and date are strings
-                dataForValidation.category = dataForValidation.category || '';
+                // Ensure amount and total_cost are numbers and always set
+                const amount = dataForValidation.amount && dataForValidation.amount !== ''
+                    ? parseFloat(dataForValidation.amount)
+                    : 0;
+                dataForValidation.amount = amount;
+                dataForValidation.total_cost = amount;
+                // Ensure date is a string (or empty string)
                 dataForValidation.date = dataForValidation.date || '';
             } else if (type === 'manpower') {
                 if (dataForValidation.employee_id && dataForValidation.employee_id !== '') {
@@ -599,6 +638,9 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                     delete dataForValidation.total_days;
                 }
             }
+
+            // Log for debugging
+            console.log('Final dataForValidation:', dataForValidation);
 
             // Validate form data before submission
             let finalSubmissionData: { status: any; resource_type: "manpower" | "equipment" | "material" | "fuel" | "expense"; job_title: string; start_date: string; daily_rate: number; total_days: number; employee_id: any; worker_name: any; end_date: string | null; notes: any; project_id: number; base_daily_rate: any; quantity: any; unit_price: any; unit_cost: any; hourly_rate: any; usage_hours: any; maintenance_cost: any; amount: any; description: any; equipment_id: any; name: any; unit: any; date_used: any; fuel_type: any; date: any; category: any; total_cost: any; material_id: any; } | { status: any; resource_type: "manpower" | "equipment" | "material" | "fuel" | "expense"; material_id: number; name: string; unit: string; quantity: number; unit_price: number; total_cost: number; date_used: string; notes: any; description: any; project_id: number; employee_id: any; worker_name: any; daily_rate: any; base_daily_rate: any; total_days: any; unit_cost: any; hourly_rate: any; usage_hours: any; maintenance_cost: any; amount: any; job_title: any; start_date: string; end_date: string; equipment_id: any; fuel_type: any; date: any; category: any; } | { status: any; resource_type: "manpower" | "equipment" | "material" | "fuel" | "expense"; start_date: string; equipment_id: number; hourly_rate: number; usage_hours: number; end_date: string; description: any; maintenance_cost: any; project_id: number; employee_id: any; worker_name: any; daily_rate: any; base_daily_rate: any; total_days: any; quantity: any; unit_price: any; unit_cost: any; amount: any; job_title: any; notes: any; name: any; unit: any; date_used: any; fuel_type: any; date: any; category: any; total_cost: any; material_id: any; } | { status: any; resource_type: "manpower" | "equipment" | "material" | "fuel" | "expense"; quantity: number; unit_price: number; total_cost: number; date: string; fuel_type: string; description: any; project_id: number; employee_id: any; worker_name: any; daily_rate: any; base_daily_rate: any; total_days: any; unit_cost: any; hourly_rate: any; usage_hours: any; maintenance_cost: any; amount: any; job_title: any; start_date: string; end_date: string; notes: any; equipment_id: any; name: any; unit: any; date_used: any; category: any; material_id: any; } | { status: any; resource_type: "manpower" | "equipment" | "material" | "fuel" | "expense"; total_cost: number; date: string; category: string; amount: number; description: any; project_id: number; employee_id: any; worker_name: any; daily_rate: any; base_daily_rate: any; total_days: any; quantity: any; unit_price: any; unit_cost: any; hourly_rate: any; usage_hours: any; maintenance_cost: any; job_title: any; start_date: string; end_date: string; notes: any; equipment_id: any; name: any; unit: any; date_used: any; fuel_type: any; material_id: any; };
@@ -1112,7 +1154,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                         {equipment && equipment.length > 0 ? (
                                             equipment.map((item) => (
                                                 <SelectItem key={item.id} value={item.id.toString()}>
-                                                    {item.name}
+                                                    {safeString(item.name)}
                                                 </SelectItem>
                                             ))
                                         ) : (

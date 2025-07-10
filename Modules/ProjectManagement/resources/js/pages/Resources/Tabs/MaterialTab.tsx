@@ -57,7 +57,14 @@ export function MaterialTab({ project, projectMaterials }: MaterialTabProps) {
         {
             key: 'name',
             header: 'Name',
-            accessor: (row: any) => row.name,
+            accessor: (row: any) => {
+                const name = row.name;
+                if (!name) return '';
+                if (typeof name === 'string') return name;
+                if (typeof name === 'object' && name.en) return name.en;
+                if (typeof name === 'object') return Object.values(name)[0];
+                return '';
+            },
             className: 'text-left',
         },
         {
