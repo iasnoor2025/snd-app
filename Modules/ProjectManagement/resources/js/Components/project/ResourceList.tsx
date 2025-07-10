@@ -212,7 +212,7 @@ export default function ResourceList({
 
                 return (
                     <>
-                        <TableCell className="max-w-[25%] truncate">
+                        <TableCell>
                             <div className="flex items-center">
                                 <span>{employeeName}</span>
                                 <Badge
@@ -227,11 +227,29 @@ export default function ResourceList({
                                 </Badge>
                             </div>
                         </TableCell>
-                        <TableCell className="max-w-[20%] truncate">{resource.job_title || 'N/A'}</TableCell>
-                        <TableCell className="max-w-[15%]">{resource.start_date ? format(new Date(resource.start_date), 'PPP') : 'N/A'}</TableCell>
-                        <TableCell className="max-w-[12%] text-right">SAR {formatCurrency(resource.daily_rate)}</TableCell>
-                        <TableCell className="max-w-[12%] text-right">{resource.total_days || '0'}</TableCell>
-                        <TableCell className="max-w-[12%] text-right">SAR {formatCurrency(resource.total_cost)}</TableCell>
+                        <TableCell>{resource.job_title || 'N/A'}</TableCell>
+                        <TableCell>{resource.start_date ? format(new Date(resource.start_date), 'PPP') : 'N/A'}</TableCell>
+                        <TableCell className="text-right">SAR {formatCurrency(resource.daily_rate)}</TableCell>
+                        <TableCell className="text-right">{resource.total_days || '0'}</TableCell>
+                        <TableCell className="text-right">SAR {formatCurrency(resource.total_cost)}</TableCell>
+                        <TableCell className="w-[100px]">
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => onEdit?.(resource)}
+                                >
+                                    <Pencil className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => onDelete?.(resource)}
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        </TableCell>
                     </>
                 );
 
@@ -319,24 +337,6 @@ export default function ResourceList({
                         safeResources.map((resource) => (
                             <TableRow key={resource.id}>
                                 {renderTableRow(resource)}
-                                <TableCell className="w-[100px]">
-                                    <div className="flex items-center gap-2">
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() => onEdit?.(resource)}
-                                        >
-                                            <Pencil className="h-4 w-4" />
-                                        </Button>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() => onDelete?.(resource)}
-                                        >
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                </TableCell>
                             </TableRow>
                         ))
                     )}

@@ -22,18 +22,19 @@ class CreateManpower
             // Calculate total cost
             $totalCost = $data['daily_rate'] * $data['total_days'];
 
-            // Set worker_name to employee full_name if employee_id is present
-            $workerName = null;
+            // Enforce internal/external logic
             if (!empty($data['employee_id'])) {
                 $employee = Employee::find($data['employee_id']);
                 $workerName = $employee ? $employee->full_name : null;
+                $employeeId = $employee ? $employee->id : null;
             } else {
                 $workerName = $data['worker_name'] ?? null;
+                $employeeId = null;
             }
 
             // Create the manpower resource
             $manpower = $project->manpower()->create([
-                'employee_id' => $data['employee_id'] ?? null,
+                'employee_id' => $employeeId,
                 'worker_name' => $workerName,
                 'job_title' => $data['job_title'],
                 'start_date' => $data['start_date'],
