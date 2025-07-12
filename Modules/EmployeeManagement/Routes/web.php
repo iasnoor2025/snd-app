@@ -237,5 +237,7 @@ Route::middleware(['auth', 'permission:employees.edit'])->group(function () {
         ->name('employees.assignments.edit');
     Route::delete('/employees/{employee}/assignments/{assignment}', [EmployeeController::class, 'destroyAssignment'])
         ->name('employees.assignments.destroy');
+    Route::post('/employees/{employee}/assignments/{assignment}/update', [EmployeeController::class, 'updateAssignment'])
+        ->name('employees.assignments.update');
 });
 

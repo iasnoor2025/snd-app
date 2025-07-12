@@ -943,7 +943,8 @@ export default function Show({
       });
       setIsManualAssignmentDialogOpen(false);
       setManualAssignment({ name: '', location: '', start_date: '', end_date: '', notes: '' });
-      window.location.reload();
+      ToastService.success('Manual assignment created successfully.');
+      router.reload();
     } catch (e) {
       ToastService.error('Failed to add manual assignment');
     } finally {
@@ -2117,6 +2118,7 @@ export default function Show({
                             setIsManualAssignmentDialogOpen(false);
                             setManualAssignment({ name: '', location: '', start_date: '', end_date: '', notes: '' });
                             ToastService.success('Manual assignment created successfully.');
+                            router.reload();
                           },
                           onError: (errors) => {
                             ToastService.error('Failed to create manual assignment.');
@@ -3158,35 +3160,20 @@ export default function Show({
                 onSubmit={async (e) => {
                   e.preventDefault();
                   setIsSubmittingEdit(true);
-                  try {
-                    await router.post(
-                      route('employees.assignManualAssignment', { employee: employee.id }),
-                      {
-                        name: editAssignment.name,
-                        type: editAssignment.type || 'manual',
-                        status: editAssignment.status || 'active',
-                        start_date: editAssignment.start_date,
-                        end_date: editAssignment.end_date,
-                        location: editAssignment.location,
-                        notes: editAssignment.notes,
-                        assignment_id: editAssignment.id,
-                        _method: 'PUT',
+                  router.post(
+                    route('employees.assignments.update', { employee: employee.id, assignment: editAssignment.id }),
+                    editAssignment,
+                    {
+                      onSuccess: () => {
+                        setIsEditAssignmentDialogOpen(false);
+                        setEditAssignment(null);
+                        ToastService.success('Assignment updated successfully.');
+                        router.reload();
                       },
-                      {
-                        onSuccess: () => {
-                          setIsEditAssignmentDialogOpen(false);
-                          setEditAssignment(null);
-                          ToastService.success('Assignment updated successfully.');
-                        },
-                        onError: (errors) => {
-                          ToastService.error('Failed to update assignment.');
-                        },
-                        preserveScroll: true,
-                      }
-                    );
-                  } finally {
-                    setIsSubmittingEdit(false);
-                  }
+                      onError: () => setIsSubmittingEdit(false),
+                      preserveScroll: true,
+                    }
+                  );
                 }}
                 className="space-y-4"
               >
@@ -3255,6 +3242,7 @@ export default function Show({
                         setIsDeletingAssignment(false);
                         setDeleteAssignmentId(null);
                         ToastService.success('Assignment deleted successfully.');
+                        router.reload();
                       },
                       onError: () => {
                         ToastService.error('Failed to delete assignment.');

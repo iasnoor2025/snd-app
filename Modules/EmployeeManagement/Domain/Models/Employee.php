@@ -575,8 +575,30 @@ class Employee extends Model implements HasMedia
     /**
      * Get the current assignment of the employee
      */
-    public function getCurrentAssignmentAttribute(): ?array
+    public function getCurrentAssignmentAttribute()
     {
+        // 1. Check for active manual assignment
+        $manualAssignment = $this->assignments()
+            ->where('type', 'manual')
+            ->where('status', 'active')
+            ->where(function($query) {
+                $query->whereNull('end_date')
+                    ->orWhere('end_date', '>=', now()->toDateString());
+            })
+            ->orderBy('start_date', 'desc')
+            ->first();
+
+        if ($manualAssignment) {
+            return [
+                'type' => 'manual',
+                'id' => $manualAssignment->id,
+                'name' => $manualAssignment->name,
+                'location' => $manualAssignment->location,
+                'date' => $manualAssignment->start_date,
+                'role' => $manualAssignment->notes ?? 'Manual Assignment',
+            ];
+        }
+
         // Try to find active project assignment
         $projectAssignment = $this->projectManpower()
             ->where(function($query) {

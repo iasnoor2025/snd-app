@@ -174,6 +174,8 @@ class EmployeeController extends Controller
     {
         $this->authorize('view', $employee);
 
+        $employee->refresh(); // Always reload from DB to get latest assignments
+
         $data = $showEmployeeAction->execute($employee, $request->input('month'));
 
         return Inertia::render('Employees/Show', $data);
@@ -490,7 +492,7 @@ class EmployeeController extends Controller
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'location' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
-            'assigned_by_id' => 'nullable|integer|exists:users,id',
+            'assigned_by' => 'nullable|integer|exists:users,id',
             'project_id' => 'nullable|integer|exists:projects,id',
             'rental_id' => 'nullable|integer|exists:rentals,id',
         ]);
@@ -526,6 +528,32 @@ class EmployeeController extends Controller
             return response()->json(['success' => true, 'message' => 'Assignment deleted successfully.']);
         }
         return redirect()->back()->with('success', 'Assignment deleted successfully.');
+    }
+
+    /**
+     * Update an assignment for an employee.
+     */
+    public function updateAssignment(Request $request, Employee $employee, $assignmentId)
+    {
+        $assignment = $employee->assignments()->findOrFail($assignmentId);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'type' => 'required|string|max:50',
+            'status' => 'required|string|max:50',
+            'start_date' => 'required|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'location' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
+            'assigned_by' => 'nullable|integer|exists:users,id',
+            'project_id' => 'nullable|integer|exists:projects,id',
+            'rental_id' => 'nullable|integer|exists:rentals,id',
+        ]);
+
+        $assignment->update($validated);
+
+        // Always return a redirect (Inertia expects this)
+        return redirect()->back()->with('success', 'Assignment updated successfully.');
     }
 }
 
