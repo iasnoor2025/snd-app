@@ -389,15 +389,21 @@ class Timesheet extends Model
     }
 
     /**
-     * Check if an employee has overlapping timesheets for a specific date
+     * Check if an employee has overlapping timesheets for a specific date, project, and rental
      */
-    public static function hasOverlap(int $employeeId, string $date, ?int $excludeId = null): bool
+    public static function hasOverlap(int $employeeId, string $date, ?int $excludeId = null, ?int $projectId = null, ?int $rentalId = null): bool
     {
         $query = self::where('employee_id', $employeeId)
             ->whereDate('date', $date);
 
         if ($excludeId) {
             $query->where('id', '!=', $excludeId);
+        }
+        if ($projectId !== null) {
+            $query->where('project_id', $projectId);
+        }
+        if ($rentalId !== null) {
+            $query->where('rental_id', $rentalId);
         }
 
         return $query->exists();

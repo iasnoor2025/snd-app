@@ -1,0 +1,42 @@
+import React, { useEffect, useState } from 'react';
+import { Card } from '@/components/ui/card';
+import { useTranslation } from 'react-i18next';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import axios from 'axios';
+
+const DashboardIndex: React.FC = () => {
+  const { t } = useTranslation();
+  const [kpis, setKpis] = useState<any>({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    axios.get('/api/safety/kpis').then(res => {
+      setKpis(res.data);
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) return <div>{t('safety:dashboard.loading')}</div>;
+
+  const data = [
+    { name: t('safety:dashboard.incident_rate'), value: kpis.incident_rate },
+    { name: t('safety:dashboard.overdue_actions'), value: kpis.overdue_actions },
+    { name: t('safety:dashboard.training_compliance'), value: kpis.training_compliance },
+  ];
+
+  return (
+    <Card className="p-6">
+      <h1 className="text-2xl font-bold mb-4">{t('safety:dashboard.title')}</h1>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Bar dataKey="value" fill="#2563eb" />
+        </BarChart>
+      </ResponsiveContainer>
+    </Card>
+  );
+};
+
+export default DashboardIndex;

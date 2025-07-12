@@ -45,8 +45,14 @@ class AutoGenerateTimesheets extends Command
                 // Ignore soft-deleted timesheets when checking for overlap
                 $overlap = \Modules\TimesheetManagement\Domain\Models\Timesheet::withTrashed()
                     ->where('employee_id', $employeeId)
-                    ->whereDate('date', $dateStr)
-                    ->exists();
+                    ->whereDate('date', $dateStr);
+                if (isset($data['project_id'])) {
+                    $overlap->where('project_id', $data['project_id']);
+                }
+                if (isset($data['rental_id'])) {
+                    $overlap->where('rental_id', $data['rental_id']);
+                }
+                $overlap = $overlap->exists();
                 if ($overlap) {
                     Log::info('Timesheet skipped: already exists (including trashed)', [
                         'employee_id' => $employeeId,

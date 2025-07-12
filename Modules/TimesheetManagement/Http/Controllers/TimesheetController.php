@@ -1483,7 +1483,7 @@ class TimesheetController extends Controller
                 if ($assignment->type === 'rental' && $assignment->rental_id) {
                     $data['rental_id'] = $assignment->rental_id;
                 }
-                if (!\Modules\TimesheetManagement\Domain\Models\Timesheet::hasOverlap($employeeId, $dateStr)) {
+                if (!\Modules\TimesheetManagement\Domain\Models\Timesheet::hasOverlap($employeeId, $dateStr, null, $data['project_id'] ?? null, $data['rental_id'] ?? null)) {
                     \Modules\TimesheetManagement\Domain\Models\Timesheet::create($data);
                     $created++;
                 }
