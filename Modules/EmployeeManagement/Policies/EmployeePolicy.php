@@ -16,8 +16,7 @@ class EmployeePolicy
      */
     public function view(User $user, Employee $employee): bool
     {
-        return true;
-        // return $user->hasPermissionTo('employees.view');
+        return $user->hasPermissionTo('employees.view');
     }
 
 

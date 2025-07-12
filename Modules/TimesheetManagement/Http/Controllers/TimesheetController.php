@@ -1266,6 +1266,32 @@ class TimesheetController extends Controller
     }
 
     /**
+     * Bulk submit draft/rejected timesheets (web route version).
+     */
+    public function bulkSubmitWeb(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user || !$user->hasRole('admin')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        $ids = $request->input('timesheet_ids', []);
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['error' => 'No timesheet IDs provided'], 400);
+        }
+        $submitted = 0;
+        foreach ($ids as $id) {
+            $timesheet = \Modules\TimesheetManagement\Domain\Models\Timesheet::find($id);
+            if ($timesheet && in_array($timesheet->status, ['draft', 'rejected'])) {
+                $timesheet->status = 'submitted';
+                $timesheet->submitted_at = now();
+                $timesheet->save();
+                $submitted++;
+            }
+        }
+        return response()->json(['success' => true, 'submitted' => $submitted]);
+    }
+
+    /**
      * Store multiple split assignment timesheets in bulk.
      */
     public function storeBulkSplit(Request $request)

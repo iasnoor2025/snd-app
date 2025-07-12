@@ -33,7 +33,8 @@ const moduleMap: Record<string, { icon: string; route: string; permission: strin
     Localization: { icon: 'globe', route: '/localization', permission: 'localization.view' },
     CustomerManagement: { icon: 'users', route: '/customers', permission: 'customers.view' },
     AuditCompliance: { icon: 'folder-check', route: '/audit', permission: 'audit.view' },
-    API: { icon: 'file-digit', route: '/api', permission: 'api.view' }
+    API: { icon: 'file-digit', route: '/api', permission: 'api.view' },
+    SafetyManagement: { icon: 'alert-triangle', route: '/safety/incidents', permission: 'incidents.view' }
 };
 
 // Map module keys to human-friendly display names
@@ -57,6 +58,7 @@ const moduleDisplayNames: Record<string, string> = {
     AuditCompliance: 'Audit & Compliance',
     API: 'API',
     PayrollManagenent: 'Payroll Managenent',
+    SafetyManagement: 'Safety Management',
 };
 
 export function AppSidebar() {

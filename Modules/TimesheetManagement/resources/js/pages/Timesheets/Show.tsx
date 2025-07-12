@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import { PageProps, BreadcrumbItem } from '@/Core/types';
 import { AppLayout } from '@/Core';
 import { Button } from "@/Core";
@@ -101,37 +101,73 @@ export default function TimesheetShow({ timesheet, employee = {}, project = {}, 
 
   const handleDelete = () => {
     if (confirm(t('delete_confirm', 'Are you sure you want to delete this timesheet?'))) {
-      router.delete(route('timesheets.destroy', timesheet.id), {
-        onSuccess: () => {
-          toast(t('success', 'Success'));
-          router.visit(route('timesheets.index'));
+      fetch(route('timesheets.destroy', timesheet.id), {
+        method: 'DELETE',
+        headers: {
+          'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
         },
-        onError: (errors) => {
-          toast(errors.error || t('delete_failed', 'Failed to delete timesheet'));
-        },
+        body: JSON.stringify({ _method: 'DELETE' }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          toast({ description: t('success', 'Success') });
+          window.location.href = route('timesheets.index');
+        } else {
+          toast({ description: data.error || t('delete_failed', 'Failed to delete timesheet') });
+        }
+      })
+      .catch(error => {
+        toast({ description: error.message || t('delete_failed', 'Failed to delete timesheet') });
       });
     }
   };
 
   const handleApprove = () => {
-    router.put(route('timesheets.approve', timesheet.id), {}, {
-      onSuccess: () => {
-        toast(t('success', 'Timesheet approved successfully'));
+    fetch(route('timesheets.approve', timesheet.id), {
+      method: 'PUT',
+      headers: {
+        'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '',
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
       },
-      onError: (errors: any) => {
-        toast(errors.error || t('approve_failed', 'Failed to approve timesheet'));
-      },
+      body: JSON.stringify({}),
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        toast({ description: t('success', 'Timesheet approved successfully') });
+      } else {
+        toast({ description: data.error || t('approve_failed', 'Failed to approve timesheet') });
+      }
+    })
+    .catch(error => {
+      toast({ description: error.message || t('approve_failed', 'Failed to approve timesheet') });
     });
   };
 
   const handleReject = () => {
-    router.put(route('timesheets.reject', timesheet.id), {}, {
-      onSuccess: () => {
-        toast(t('success', 'Success'));
+    fetch(route('timesheets.reject', timesheet.id), {
+      method: 'PUT',
+      headers: {
+        'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '',
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
       },
-      onError: (errors) => {
-        toast(errors.error || t('reject_failed', 'Failed to reject timesheet'));
-      },
+      body: JSON.stringify({}),
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        toast({ description: t('success', 'Success') });
+      } else {
+        toast({ description: data.error || t('reject_failed', 'Failed to reject timesheet') });
+      }
+    })
+    .catch(error => {
+      toast({ description: error.message || t('reject_failed', 'Failed to reject timesheet') });
     });
   };
 
@@ -158,9 +194,9 @@ export default function TimesheetShow({ timesheet, employee = {}, project = {}, 
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="outline" size="icon" asChild>
-                    <Link href={route('timesheets.index')}>
+                    <a href={route('timesheets.index')}>
                       <ArrowLeftIcon className="h-4 w-4" />
-                    </Link>
+                    </a>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -174,9 +210,9 @@ export default function TimesheetShow({ timesheet, employee = {}, project = {}, 
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button variant="outline" size="icon" asChild>
-                      <Link href={route('timesheets.edit', timesheet.id)}>
+                      <a href={route('timesheets.edit', timesheet.id)}>
                         <EditIcon className="h-4 w-4" />
-                      </Link>
+                      </a>
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -284,6 +320,48 @@ export default function TimesheetShow({ timesheet, employee = {}, project = {}, 
                   }
                 />
               </CardFooter>
+            )}
+            {/* Submit button for draft/rejected timesheets for admin/HR */}
+            {['draft', 'rejected'].includes(timesheet.status) && hasPermission('timesheets.edit') && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="default"
+                      className="bg-blue-600 hover:bg-blue-700"
+                      onClick={() => {
+                        fetch(route('timesheets.submit', timesheet.id), {
+                          method: 'POST',
+                          headers: {
+                            'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '',
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({}),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                          if (data.success) {
+                            toast({ description: t('success', 'Timesheet submitted for approval') });
+                            window.location.reload();
+                          } else {
+                            toast({ description: data.error || t('submit_failed', 'Failed to submit timesheet') });
+                          }
+                        })
+                        .catch(error => {
+                          toast({ description: error.message || t('submit_failed', 'Failed to submit timesheet') });
+                        });
+                      }}
+                    >
+                      <CheckIcon className="mr-2 h-4 w-4" />
+                      {t('submit', 'Submit')}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{t('submit_timesheet', 'Submit Timesheet for Approval')}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             )}
           </Card>
 

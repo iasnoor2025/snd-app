@@ -85,6 +85,11 @@ interface Timesheet {
   overtime_hours: number;
   project_id?: number;
   project?: Project;
+  rental?: {
+    equipment?: {
+      name?: string;
+    };
+  };
   description?: string;
   tasks_completed?: string;
   status: string;
@@ -115,7 +120,8 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
     { title: 'Timesheets', href: '/timesheets' }
   ];
 
-  const { hasPermission } = usePermission();
+  const { hasPermission, hasRole } = usePermission();
+  const canBulkSubmit = hasPermission('timesheets.submit') || ['admin', 'hr', 'foreman', 'timesheet_incharge', 'manager'].some(role => hasRole(role));
   const [processing, setProcessing] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState(filters.search || '');
   const [selectedStatus, setSelectedStatus] = useState(filters.status || 'all');
@@ -149,55 +155,31 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
   const canDeleteTimesheet = hasPermission('timesheets.delete');
   const canApproveTimesheet = hasPermission('timesheets.approve');
 
-  // Toggle selection of a single timesheet
-  const toggleTimesheetSelection = (id: number, checked?: boolean | 'indeterminate') => {
-    if (checked === undefined || checked === 'indeterminate') {
-      // Toggle behavior (for backward compatibility)
-      setSelectedTimesheets(prev =>
-        prev.includes(id)
-          ? prev.filter(timesheetId => timesheetId !== id)
-          : [...prev, id]
-      );
-    } else if (checked) {
-      // Add to selection if not already included
-      setSelectedTimesheets(prev =>
-        prev.includes(id) ? prev : [...prev, id]
-      );
-    } else {
-      // Remove from selection
-      setSelectedTimesheets(prev =>
-        prev.filter(timesheetId => timesheetId !== id)
-      );
-    }
+  // Determine if user is admin
+  // const isAdmin = auth?.user?.roles?.includes('admin');
+
+  // Accept page as argument for reloadPage
+  const reloadPage = (page = timesheets.current_page) => {
+    router.get(route('timesheets.index'), {
+      page,
+      search: searchTerm,
+      status: selectedStatus,
+      date_from: startDate ? format(startDate, 'yyyy-MM-dd') : undefined,
+      date_to: endDate ? format(endDate, 'yyyy-MM-dd') : undefined,
+      per_page: perPage,
+    }, {
+      preserveState: true,
+      replace: true,
+      onSuccess: () => setSelectedTimesheets([]),
+    });
   };
 
-  // Toggle selection of all timesheets
-  const toggleSelectAll = (checked: boolean) => {
-    if (checked) {
-      if (isAdmin) {
-        // Admin: select all timesheets
-        const allTimesheetIds = timesheetsData.map(timesheet => timesheet.id);
-        setSelectedTimesheets(allTimesheetIds);
-      } else {
-        // Non-admin: select only submitted timesheets
-        const submittedTimesheets = timesheetsData
-          .filter(timesheet => timesheet.status === 'submitted')
-          .map(timesheet => timesheet.id);
-        setSelectedTimesheets(submittedTimesheets);
-      }
-    } else {
-      // Deselect all
-      setSelectedTimesheets([]);
-    }
-  };
-
-  // Handle bulk approval of selected timesheets
+  // Restore missing functions and logic, using canBulkSubmit instead of isAdmin
   const handleBulkApprove = () => {
     if (selectedTimesheets.length === 0) {
       toast("Please select at least one timesheet to approve");
       return;
     }
-
     if (confirm(`Are you sure you want to approve ${selectedTimesheets.length} selected timesheets?`)) {
       setBulkProcessing(true);
       router.post(route('timesheets.bulk-approve'), {
@@ -215,7 +197,11 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
       });
     }
   };
-
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
   const handleSearch = () => {
     router.get(route('timesheets.index'), {
       search: searchTerm,
@@ -228,13 +214,6 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
       replace: true,
     });
   };
-
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
-  };
-
   const resetFilters = () => {
     setSearchTerm('');
     setSelectedStatus('all');
@@ -246,87 +225,20 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
       replace: true,
     });
   };
-
-  const getStatusBadge = (status: string) => {
-    switch (status?.toLowerCase()) {
-      case 'approved':
-      case 'manager_approved':
-        return <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">Approved</Badge>;
-      case 'foreman_approved':
-        return <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-200">Foreman Approved</Badge>;
-      case 'incharge_approved':
-        return <Badge variant="outline" className="bg-orange-100 text-orange-800 border-orange-200">Incharge Approved</Badge>;
-      case 'checking_approved':
-        return <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-200">Checking Approved</Badge>;
-      case 'submitted':
-        return <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200">Submitted</Badge>;
-      case 'rejected':
-        return <Badge variant="outline" className="bg-red-100 text-red-800 border-red-200">Rejected</Badge>;
-      case 'draft':
-        return <Badge variant="outline" className="bg-gray-100 text-gray-800 border-gray-200">Draft</Badge>;
-      default:
-        return <Badge variant="outline">{status || 'Unknown'}</Badge>;
+  const toggleSelectAll = (checked: boolean) => {
+    if (checked) {
+      if (canBulkSubmit) {
+        // Bulk submitter: select all eligible timesheets
+        const eligible = timesheetsData.filter(ts => ['draft', 'rejected', 'submitted'].includes(ts.status)).map(ts => ts.id);
+        setSelectedTimesheets(eligible);
+      } else {
+        // Non-bulk: select only submitted timesheets
+        const submitted = timesheetsData.filter(ts => ts.status === 'submitted').map(ts => ts.id);
+        setSelectedTimesheets(submitted);
+      }
+    } else {
+      setSelectedTimesheets([]);
     }
-  };
-
-  const handleDelete = (id: number) => {
-    if (confirm(t('delete_confirm', 'Are you sure you want to delete this timesheet?'))) {
-      router.delete(route('hr.api.timesheets.destroy', id), {
-        onSuccess: () => {
-          toast("Timesheet deleted successfully");
-        },
-        onError: (errors: any) => {
-          toast(errors.error || t('delete_failed', 'Failed to delete timesheet'));
-        },
-      });
-    }
-  };
-
-  const handleApprove = (id: number) => {
-    setProcessing(id);
-    router.put(route('timesheets.approve', id), {}, {
-      onSuccess: () => {
-        toast("Timesheet approved successfully");
-        setProcessing(null);
-      },
-      onError: (errors: any) => {
-        toast(errors.error || t('approve_failed', 'Failed to approve timesheet'));
-        setProcessing(null);
-      },
-    });
-  };
-
-  const handleReject = (id: number) => {
-    setProcessing(id);
-    router.put(route('timesheets.reject', id), {}, {
-      onSuccess: () => {
-        toast("Timesheet rejected successfully");
-        setProcessing(null);
-      },
-      onError: (errors: any) => {
-        toast(errors.error || t('reject_failed', 'Failed to reject timesheet'));
-        setProcessing(null);
-      },
-    });
-  };
-
-  // Determine if user is admin
-  const isAdmin = auth?.user?.roles?.includes('admin');
-
-  // Accept page as argument for reloadPage
-  const reloadPage = (page = timesheets.current_page) => {
-    router.get(route('timesheets.index'), {
-      page,
-      search: searchTerm,
-      status: selectedStatus,
-      date_from: startDate ? format(startDate, 'yyyy-MM-dd') : undefined,
-      date_to: endDate ? format(endDate, 'yyyy-MM-dd') : undefined,
-      per_page: perPage,
-    }, {
-      preserveState: true,
-      replace: true,
-      onSuccess: () => setSelectedTimesheets([]),
-    });
   };
 
   const handleBulkDelete = () => {
@@ -363,6 +275,47 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
       preserveState: true,
       replace: true,
     });
+  };
+
+  // Restore toggleTimesheetSelection
+  const toggleTimesheetSelection = (id: number, checked?: boolean | 'indeterminate') => {
+    if (checked === undefined || checked === 'indeterminate') {
+      setSelectedTimesheets(prev =>
+        prev.includes(id)
+          ? prev.filter(timesheetId => timesheetId !== id)
+          : [...prev, id]
+      );
+    } else if (checked) {
+      setSelectedTimesheets(prev =>
+        prev.includes(id) ? prev : [...prev, id]
+      );
+    } else {
+      setSelectedTimesheets(prev =>
+        prev.filter(timesheetId => timesheetId !== id)
+      );
+    }
+  };
+  // Restore getStatusBadge
+  const getStatusBadge = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case 'approved':
+      case 'manager_approved':
+        return <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">Approved</Badge>;
+      case 'foreman_approved':
+        return <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-200">Foreman Approved</Badge>;
+      case 'incharge_approved':
+        return <Badge variant="outline" className="bg-orange-100 text-orange-800 border-orange-200">Incharge Approved</Badge>;
+      case 'checking_approved':
+        return <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-200">Checking Approved</Badge>;
+      case 'submitted':
+        return <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200">Submitted</Badge>;
+      case 'rejected':
+        return <Badge variant="outline" className="bg-red-100 text-red-800 border-red-200">Rejected</Badge>;
+      case 'draft':
+        return <Badge variant="outline" className="bg-gray-100 text-gray-800 border-gray-200">Draft</Badge>;
+      default:
+        return <Badge variant="outline">{status || 'Unknown'}</Badge>;
+    }
   };
 
   return (
@@ -432,7 +385,45 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                 </Button>
               )}
 
-              {isAdmin && selectedTimesheets.length > 0 && (
+              {canBulkSubmit && selectedTimesheets.length > 0 && (
+                <Button
+                  onClick={async () => {
+                    if (!confirm(`Are you sure you want to submit ${selectedTimesheets.length} selected timesheets?`)) return;
+                    setBulkProcessing(true);
+                    try {
+                      const res = await fetch(route('timesheets.bulk-submit'), {
+                        method: 'POST',
+                        headers: {
+                          'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '',
+                          'Accept': 'application/json',
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ timesheet_ids: selectedTimesheets }),
+                      });
+                      const data = await res.json();
+                      if (res.ok && data.success) {
+                        toast.success(`${selectedTimesheets.length} timesheets submitted successfully`);
+                        setSelectedTimesheets([]);
+                        reloadPage();
+                      } else {
+                        toast.error(data.error || 'Failed to submit timesheets');
+                      }
+                    } catch (e: any) {
+                      toast.error(e.message || 'Failed to submit timesheets');
+                    } finally {
+                      setBulkProcessing(false);
+                    }
+                  }}
+                  disabled={bulkProcessing}
+                  variant="default"
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  <CheckIcon className="mr-2 h-4 w-4" />
+                  Submit Selected
+                </Button>
+              )}
+
+              {canBulkSubmit && selectedTimesheets.length > 0 && (
                 <Button
                   onClick={handleBulkDelete}
                   disabled={bulkProcessing}
@@ -536,12 +527,12 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
               <Table>
                 <TableHeader>
                   <TableRow>
-                    {((canApproveTimesheet && !isAdmin) || isAdmin) && (
+                    {((canApproveTimesheet && !canBulkSubmit) || canBulkSubmit) && (
                       <TableHead className="w-[60px]">
                         <Checkbox
                           onChange={(e) => toggleSelectAll(e.target.checked)}
                           checked={
-                            isAdmin
+                            canBulkSubmit
                               ? timesheetsData.length > 0 && timesheetsData.every(
                                   timesheet => selectedTimesheets.includes(timesheet.id)
                                 )
@@ -586,12 +577,12 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                   ) : (
                     timesheetsData.map((timesheet) => (
                       <TableRow key={timesheet.id}>
-                        {((canApproveTimesheet && !isAdmin) || isAdmin) && (
+                        {((canApproveTimesheet && !canBulkSubmit) || canBulkSubmit) && (
                           <TableCell>
                             <Checkbox
                               checked={selectedTimesheets.includes(timesheet.id)}
                               onChange={(e) => toggleTimesheetSelection(timesheet.id, e.target.checked)}
-                              disabled={isAdmin ? false : timesheet.status !== 'submitted'}
+                              disabled={canBulkSubmit ? !['draft', 'rejected', 'submitted'].includes(timesheet.status) : timesheet.status !== 'submitted'}
                             />
                           </TableCell>
                         )}
