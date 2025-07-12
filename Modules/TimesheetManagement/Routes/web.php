@@ -82,7 +82,7 @@ Route::prefix('timesheets')->name('timesheets.')->middleware(['auth', 'verified'
         ->name('bulk-delete');
     Route::post('/create-missing', [TimesheetController::class, 'createMissingTimesheets'])->name('timesheets.create-missing')->middleware('permission:timesheets.create');
     Route::post('/bulk-submit', [TimesheetController::class, 'bulkSubmitWeb'])
-        ->middleware('permission:admin')
+        ->middleware('permission:timesheets.submit')
         ->name('bulk-submit');
 
     // Daily timesheet entries

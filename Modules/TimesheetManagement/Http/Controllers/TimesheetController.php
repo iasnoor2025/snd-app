@@ -1271,7 +1271,7 @@ class TimesheetController extends Controller
     public function bulkSubmitWeb(Request $request)
     {
         $user = auth()->user();
-        if (!$user || !$user->hasRole('admin')) {
+        if (!$user || !$user->hasRole(['admin', 'hr', 'foreman', 'timesheet_incharge', 'manager'])) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
         $ids = $request->input('timesheet_ids', []);

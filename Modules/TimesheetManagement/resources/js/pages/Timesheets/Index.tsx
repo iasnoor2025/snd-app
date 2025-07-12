@@ -63,6 +63,17 @@ import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
 import { ApprovalDialog } from '../../components/ApprovalDialog';
 import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from '@/Core/components/ui/alert-dialog';
 
 // Define the Timesheet interface here to ensure it has all required properties
 interface Project {
@@ -134,6 +145,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
   const [perPage, setPerPage] = useState<number>(filters.per_page || 15);
   const [selectedTimesheets, setSelectedTimesheets] = useState<number[]>([]);
   const [bulkProcessing, setBulkProcessing] = useState(false);
+  const [showBulkSubmitDialog, setShowBulkSubmitDialog] = useState(false);
   const isFirstMount = useRef(true);
 
   useEffect(() => {
@@ -386,41 +398,78 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
               )}
 
               {canBulkSubmit && selectedTimesheets.length > 0 && (
-                <Button
-                  onClick={async () => {
-                    if (!confirm(`Are you sure you want to submit ${selectedTimesheets.length} selected timesheets?`)) return;
-                    setBulkProcessing(true);
-                    try {
-                      const res = await fetch(route('timesheets.bulk-submit'), {
-                        method: 'POST',
-                        headers: {
-                          'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '',
-                          'Accept': 'application/json',
-                          'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ timesheet_ids: selectedTimesheets }),
-                      });
-                      const data = await res.json();
-                      if (res.ok && data.success) {
-                        toast.success(`${selectedTimesheets.length} timesheets submitted successfully`);
-                        setSelectedTimesheets([]);
-                        reloadPage();
-                      } else {
-                        toast.error(data.error || 'Failed to submit timesheets');
-                      }
-                    } catch (e: any) {
-                      toast.error(e.message || 'Failed to submit timesheets');
-                    } finally {
-                      setBulkProcessing(false);
-                    }
-                  }}
-                  disabled={bulkProcessing}
-                  variant="default"
-                  className="bg-blue-600 hover:bg-blue-700"
-                >
-                  <CheckIcon className="mr-2 h-4 w-4" />
-                  Submit Selected
-                </Button>
+                <AlertDialog open={showBulkSubmitDialog} onOpenChange={setShowBulkSubmitDialog}>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      disabled={bulkProcessing}
+                      variant="default"
+                      className="bg-blue-600 hover:bg-blue-700"
+                    >
+                      <CheckIcon className="mr-2 h-4 w-4" />
+                      Submit Selected
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Submit Timesheets</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to submit {selectedTimesheets.length} selected timesheets?
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel disabled={bulkProcessing}>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        asChild
+                      >
+                        <Button
+                          onClick={async () => {
+                            setBulkProcessing(true);
+                            try {
+                              const res = await fetch(route('timesheets.bulk-submit'), {
+                                method: 'POST',
+                                headers: {
+                                  'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '',
+                                  'Accept': 'application/json',
+                                  'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ timesheet_ids: selectedTimesheets }),
+                              });
+                              const data = await res.json();
+                              if (res.ok && data.success) {
+                                toast.success(`${data.submitted ?? selectedTimesheets.length} timesheets submitted successfully`);
+                                setSelectedTimesheets([]);
+                                reloadPage();
+                              } else if (res.ok && data.submitted === 0) {
+                                toast.error(data.error || 'No timesheets were submitted. Please check the status of selected timesheets.');
+                              } else {
+                                toast.error((data && data.error) ? data.error : `Failed to submit timesheets. Response: ${JSON.stringify(data)}`);
+                              }
+                            } catch (e: any) {
+                              toast.error(e.message || 'Failed to submit timesheets');
+                            } finally {
+                              setBulkProcessing(false);
+                              setShowBulkSubmitDialog(false);
+                            }
+                          }}
+                          disabled={bulkProcessing}
+                          className="bg-blue-600 hover:bg-blue-700"
+                        >
+                          {bulkProcessing ? (
+                            <>
+                              <ArrowPathIcon className="mr-2 h-4 w-4 animate-spin" />
+                              {t('btn_processing')}
+                            </>
+                          ) : (
+                            <>
+                              <CheckIcon className="mr-2 h-4 w-4" />
+                              Submit
+                            </>
+                          )}
+                        </Button>
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               )}
 
               {canBulkSubmit && selectedTimesheets.length > 0 && (
