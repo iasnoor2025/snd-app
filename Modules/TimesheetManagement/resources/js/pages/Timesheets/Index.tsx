@@ -364,7 +364,10 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                 variant="outline"
                 onClick={async () => {
                   try {
-                    const res = await fetch(route('timesheets.create-missing'), { method: 'POST' });
+                    const res = await fetch('/api/timesheets/create-missing', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                    });
                     if (res.ok) {
                       toast.success(t('Created missing timesheets'));
                       reloadPage();

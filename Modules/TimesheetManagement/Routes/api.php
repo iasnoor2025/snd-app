@@ -52,6 +52,10 @@ Route::middleware('auth:sanctum')->group(function () {
         \Modules\TimesheetManagement\Http\Controllers\TimesheetController::class,
         'autoGenerate'
     ]);
+    Route::post('timesheets/create-missing', [
+        \Modules\TimesheetManagement\Http\Controllers\TimesheetController::class,
+        'createMissingTimesheets'
+    ]);
 
     // Time Entry Routes
     Route::apiResource('time-entries', TimeEntryController::class)->names([
