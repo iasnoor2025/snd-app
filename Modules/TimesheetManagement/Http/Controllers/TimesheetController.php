@@ -1476,7 +1476,9 @@ class TimesheetController extends Controller
     {
         $user = auth()->user();
         $isAdmin = $user->hasRole(['admin', 'hr']);
-        $query = \Modules\EmployeeManagement\Domain\Models\EmployeeAssignment::query()->active();
+        // Fetch both active and completed assignments
+        $query = \Modules\EmployeeManagement\Domain\Models\EmployeeAssignment::query();
+        // Remove ->active() to include all assignments
         if (!$isAdmin) {
             if (!$user->employee) {
                 return response()->json(['error' => 'No employee record found'], 400);
@@ -1489,9 +1491,11 @@ class TimesheetController extends Controller
             $employeeId = $assignment->employee_id;
             $start = $assignment->start_date ? $assignment->start_date->toDateString() : now()->toDateString();
             $end = $assignment->end_date ? $assignment->end_date->toDateString() : $start;
+            // Always use the full assignment range, not just from today
+            $from = $start;
             $today = now()->toDateString();
-            $from = $start < $today ? $today : $start;
-            $to = $end;
+            // Only create up to today, not in the future
+            $to = min($end, $today);
             $period = new \DatePeriod(new \DateTime($from), new \DateInterval('P1D'), (new \DateTime($to))->modify('+1 day'));
             foreach ($period as $date) {
                 $dateStr = $date->format('Y-m-d');

@@ -148,6 +148,8 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
   const [showBulkSubmitDialog, setShowBulkSubmitDialog] = useState(false);
   const [showBulkApproveDialog, setShowBulkApproveDialog] = useState(false);
   const isFirstMount = useRef(true);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortField, setSortField] = useState<'date' | null>('date');
 
   useEffect(() => {
     if (isFirstMount.current) {
@@ -162,6 +164,25 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
 
   // Ensure timesheets.data is always an array
   const timesheetsData = timesheets?.data || [];
+
+  // Sort timesheetsData by date
+  const sortedTimesheetsData = [...timesheetsData].sort((a, b) => {
+    if (sortField === 'date') {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+      return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+    }
+    return 0;
+  });
+
+  const handleSort = (field: 'date') => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortOrder('asc');
+    }
+  };
 
   const canCreateTimesheet = hasPermission('timesheets.create');
   const canEditTimesheet = hasPermission('timesheets.edit');
@@ -659,7 +680,12 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                       </TableHead>
                     )}
                     <TableHead>{t('lbl_employee_column')}</TableHead>
-                    <TableHead>{t('lbl_date_column')}</TableHead>
+                    <TableHead onClick={() => handleSort('date')} className="cursor-pointer select-none">
+                      {t('lbl_date_column')}
+                      {sortField === 'date' && (
+                        <span className="ml-1">{sortOrder === 'asc' ? '▲' : '▼'}</span>
+                      )}
+                    </TableHead>
                     <TableHead>{t('lbl_hours_column')}</TableHead>
                     <TableHead>{t('lbl_overtime_column')}</TableHead>
                     <TableHead>{t('lbl_project_column')}</TableHead>
@@ -668,7 +694,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {timesheetsData.length === 0 ? (
+                  {sortedTimesheetsData.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={canApproveTimesheet ? 8 : 7} className="h-24 text-center">
                         <div className="flex flex-col items-center justify-center space-y-2">
@@ -689,7 +715,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                       </TableCell>
                     </TableRow>
                   ) : (
-                    timesheetsData.map((timesheet) => (
+                    sortedTimesheetsData.map((timesheet) => (
                       <TableRow key={timesheet.id}>
                         {((canApproveTimesheet && !canBulkSubmit) || canBulkSubmit) && (
                           <TableCell>

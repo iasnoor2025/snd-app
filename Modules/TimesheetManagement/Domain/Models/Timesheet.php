@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\DB;
 class Timesheet extends Model
 {
     use HasFactory;
-    use SoftDeletes;
     /**
      * The attributes that are mass assignable.
      *
@@ -399,13 +398,7 @@ class Timesheet extends Model
         if ($excludeId) {
             $query->where('id', '!=', $excludeId);
         }
-        if ($projectId !== null) {
-            $query->where('project_id', $projectId);
-        }
-        if ($rentalId !== null) {
-            $query->where('rental_id', $rentalId);
-        }
-
+        // Ignore project_id and rental_id for overlap check
         return $query->exists();
     }
 
