@@ -2063,8 +2063,8 @@ export default function Show({
           </TabsContent>
 
           <TabsContent value="assignments" className="mt-6 space-y-6">
-            {/* Add Manual Assignment Button */}
-            {hasPermission('employees.edit') && (
+            {/* Add Manual Assignment Button: only if no current assignment */}
+            {hasPermission('employees.edit') && !assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id) && (
               <div className="mb-4 flex justify-end">
                 <Button onClick={() => setIsManualAssignmentDialogOpen(true)} variant="outline">
                   Add Manual Assignment
@@ -2116,79 +2116,99 @@ export default function Show({
             </Dialog>
             {/* Show only the current assignment as a card */}
             {assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id) && (
-              <Card className="mb-6 shadow-sm border border-gray-200">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-xl font-semibold">
-                    {(() => {
-                      const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
-                      return current?.name || current?.title || '-';
-                    })()}
-                  </CardTitle>
-                  <div className="flex flex-wrap items-center gap-3 mt-2">
-                    {/* Type badge */}
-                    <Badge className="bg-blue-500 text-white capitalize">{(() => {
-                      const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
-                      return current?.type || 'assignment';
-                    })()}</Badge>
-                    {/* Project or Rental # */}
-                    <span className="text-xs text-muted-foreground">
+              <div className="relative">
+                <Card className="mb-6 shadow-sm border border-gray-200">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-xl font-semibold">
                       {(() => {
                         const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
-                        if (!current) return '-';
-                        if (current.type === 'project') {
-                          return `Project: ${current.project?.name || '-'}`;
-                        }
-                        if (current.type === 'rental' || current.type === 'rental_item') {
-                          return `Rental #: ${current.rental?.rental_number || current.rental_number || '-'}`;
-                        }
-                        return '-';
+                        return current?.name || current?.title || '-';
                       })()}
-                    </span>
-                    {/* Status badge */}
-                    <Badge className={(() => {
-                      const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
-                      return current?.status === 'active' ? 'bg-green-500 text-white' : 'bg-gray-400 text-white';
-                    })()}>
+                    </CardTitle>
+                    <div className="flex flex-wrap items-center gap-3 mt-2">
+                      {/* Type badge */}
+                      <Badge className="bg-blue-500 text-white capitalize">{(() => {
+                        const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
+                        return current?.type || 'assignment';
+                      })()}</Badge>
+                      {/* Project or Rental # */}
+                      <span className="text-xs text-muted-foreground">
+                        {(() => {
+                          const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
+                          if (!current) return '-';
+                          if (current.type === 'project') {
+                            return `Project: ${current.project?.name || '-'}`;
+                          }
+                          if (current.type === 'rental' || current.type === 'rental_item') {
+                            return `Rental #: ${current.rental?.rental_number || current.rental_number || '-'}`;
+                          }
+                          return '-';
+                        })()}
+                      </span>
+                      {/* Status badge */}
+                      <Badge className={(() => {
+                        const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
+                        return current?.status === 'active' ? 'bg-green-500 text-white' : 'bg-gray-400 text-white';
+                      })()}>
+                        {(() => {
+                          const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
+                          return current?.status || 'active';
+                        })()}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="flex flex-col gap-1 mt-2">
+                      {/* Location */}
+                      <span className="text-sm text-muted-foreground">
+                        <strong>Location:</strong> {(() => {
+                          const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
+                          return current?.location || '-';
+                        })()}
+                      </span>
+                      {/* Date range */}
+                      <span className="text-sm text-muted-foreground">
+                        <strong>From:</strong> {(() => {
+                          const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
+                          const start = current?.start_date ? format(new Date(current.start_date), 'MMM d, yyyy') : '-';
+                          const end = current?.end_date ? format(new Date(current.end_date), 'MMM d, yyyy') : '';
+                          return end ? `${start} - ${end}` : start;
+                        })()}
+                      </span>
+                      {/* Today's date */}
+                      <span className="text-sm text-muted-foreground">
+                        <strong>To:</strong> {format(new Date(), 'MMM d, yyyy')}
+                      </span>
+                      {/* Equipment (if available) */}
                       {(() => {
                         const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
-                        return current?.status || 'active';
+                        if (current?.equipment) {
+                          return <span className="text-sm text-muted-foreground"><strong>Equipment:</strong> {current.equipment}</span>;
+                        }
+                        return null;
                       })()}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="flex flex-col gap-1 mt-2">
-                    {/* Location */}
-                    <span className="text-sm text-muted-foreground">
-                      <strong>Location:</strong> {(() => {
-                        const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
-                        return current?.location || '-';
-                      })()}
-                    </span>
-                    {/* Date range */}
-                    <span className="text-sm text-muted-foreground">
-                      <strong>From:</strong> {(() => {
-                        const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
-                        const start = current?.start_date ? format(new Date(current.start_date), 'MMM d, yyyy') : '-';
-                        const end = current?.end_date ? format(new Date(current.end_date), 'MMM d, yyyy') : '';
-                        return end ? `${start} - ${end}` : start;
-                      })()}
-                    </span>
-                    {/* Today's date */}
-                    <span className="text-sm text-muted-foreground">
-                      <strong>To:</strong> {format(new Date(), 'MMM d, yyyy')}
-                    </span>
-                    {/* Equipment (if available) */}
-                    {(() => {
-                      const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
-                      if (current?.equipment) {
-                        return <span className="text-sm text-muted-foreground"><strong>Equipment:</strong> {current.equipment}</span>;
-                      }
-                      return null;
-                    })()}
-                  </div>
-                </CardContent>
-              </Card>
+                    </div>
+                  </CardContent>
+                </Card>
+                {/* Admin Manage Assignment Button */}
+                {hasPermission('admin') && (() => {
+                  const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
+                  if (!current) return null;
+                  let url = '';
+                  if (current.type === 'project' && current.project_id) {
+                    url = `/projects/${current.project_id}/resources`;
+                  } else if ((current.type === 'rental' || current.type === 'rental_item') && current.rental_id) {
+                    url = `https://snd-app.test/rentals/${current.rental_id}`;
+                  }
+                  return url ? (
+                    <div className="absolute top-2 right-2">
+                      <Button asChild size="sm" variant="outline">
+                        <a href={url} target="_blank" rel="noopener noreferrer">Manage Assignment</a>
+                      </Button>
+                    </div>
+                  ) : null;
+                })()}
+              </div>
             )}
             {/* Assignment History Section */}
             <div>
