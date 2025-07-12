@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import { PageProps, BreadcrumbItem } from "@/Core/types";
 import { AppLayout } from '@/Core';
 import { Button } from "@/Core";
@@ -90,6 +90,15 @@ const formSchema = z.object({
   status: z.string().optional(),
 });
 
+interface AssignmentBlock {
+  id: number;
+  project_id: string;
+  rental_id: string;
+  start_date: string;
+  end_date: string;
+  description?: string;
+}
+
 export default function TimesheetEdit({ timesheet, employee = {}, project = {}, rental = {}, user = {}, created_at, updated_at, deleted_at, employees = [], projects = [] }: Props) {
   const { t } = useTranslation('TimesheetManagement');
 
@@ -103,13 +112,14 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
   const [endDate, setEndDate] = useState<Date | undefined>(new Date(now.getFullYear(), now.getMonth() + 1, 0));
   const [dailyOvertimeHours, setDailyOvertimeHours] = useState<Record<string, string>>({});
   const [dailyNormalHours, setDailyNormalHours] = useState<Record<string, string>>({});
-  const [assignmentBlocks, setAssignmentBlocks] = useState([
+  const [assignmentBlocks, setAssignmentBlocks] = useState<AssignmentBlock[]>([
     {
       id: 1,
       project_id: timesheet.project_id?.toString() || '',
       rental_id: timesheet.rental_id?.toString() || '',
       start_date: timesheet.date,
       end_date: timesheet.date,
+      description: timesheet.description || '',
     },
   ]);
 
@@ -138,32 +148,33 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
 
   // Ensure daily grid is generated when Bulk Mode is enabled or date range changes
   useEffect(() => {
-    if (isBulkMode && startDate && endDate) {
-      generateDailyOvertimeHours(startDate, endDate);
-    }
-    // eslint-disable-next-line
-  }, [isBulkMode, startDate, endDate]);
-
-  // Fetch and pre-fill daily hours with original data in Bulk Mode
-  useEffect(() => {
-    const fetchAndFill = async () => {
-      if (isBulkMode && startDate && endDate && timesheet.employee_id) {
+    if (isBulkMode && startDate && endDate && timesheet.employee_id) {
+      const fetchAndFill = async () => {
         const start = format(startDate, 'yyyy-MM-dd');
         const end = format(endDate, 'yyyy-MM-dd');
         try {
           const res = await fetch(`/api/timesheets?employee_id=${timesheet.employee_id}&start_date=${start}&end_date=${end}`);
           const data = await res.json();
-          const timesheetMap = {};
-          (data.timesheets || []).forEach(ts => {
+          const timesheetMap: Record<string, { hours_worked?: number; overtime_hours?: number }> = {};
+          (data.timesheets || []).forEach((ts: { date: string; hours_worked?: number; overtime_hours?: number }) => {
             timesheetMap[ts.date] = ts;
           });
-          const newDailyNormalHours = {};
-          const newDailyOvertimeHours = {};
+          const newDailyNormalHours: Record<string, string> = {};
+          const newDailyOvertimeHours: Record<string, string> = {};
           let currentDate = new Date(startDate);
           while (currentDate <= endDate) {
             const dateStr = format(currentDate, 'yyyy-MM-dd');
-            newDailyNormalHours[dateStr] = timesheetMap[dateStr]?.hours_worked?.toString() || '';
-            newDailyOvertimeHours[dateStr] = timesheetMap[dateStr]?.overtime_hours?.toString() || '0';
+            if (timesheetMap[dateStr]) {
+              // Regular hours: if < 0 or not present, show empty (A)
+              const rh = timesheetMap[dateStr].hours_worked;
+              newDailyNormalHours[dateStr] = (rh === undefined || rh === null || rh < 0) ? '' : rh.toString();
+              // Overtime: if < 0 or not present, show 0; else show value
+              const ot = timesheetMap[dateStr].overtime_hours;
+              newDailyOvertimeHours[dateStr] = (ot === undefined || ot === null || ot < 0) ? '0' : ot.toString();
+            } else {
+              newDailyNormalHours[dateStr] = '';
+              newDailyOvertimeHours[dateStr] = '0';
+            }
             currentDate.setDate(currentDate.getDate() + 1);
           }
           setDailyNormalHours(newDailyNormalHours);
@@ -171,9 +182,11 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
         } catch (e) {
           generateDailyOvertimeHours(startDate, endDate);
         }
-      }
-    };
-    fetchAndFill();
+      };
+      fetchAndFill();
+    } else if (isBulkMode && startDate && endDate) {
+      generateDailyOvertimeHours(startDate, endDate);
+    }
     // eslint-disable-next-line
   }, [isBulkMode, startDate, endDate, timesheet.employee_id]);
 
@@ -214,24 +227,35 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
 
     setProcessing(true);
 
-    router.put(route('timesheets.update', timesheet.id), formData, {
-      onSuccess: () => {
-        toast.success(t('success', 'Success'));
-        setProcessing(false);
-      },
-      onError: (errors) => {
-        toast.error(errors.error || t('update_failed', 'Failed to update timesheet'));
-        setProcessing(false);
-
-        // Map errors to form
-        Object.keys(errors).forEach(key => {
-          form.setError(key as any, {
-            type: 'manual',
-            message: errors[key]
+    fetch(route('timesheets.update', timesheet.id), {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '' },
+      body: JSON.stringify(formData),
+    })
+      .then(async res => {
+        if (res.ok) {
+          toast.success(t('success', 'Success'));
+          setProcessing(false);
+          window.location.href = route('timesheets.index');
+        } else {
+          let errors: any = {};
+          try {
+            errors = await res.json();
+          } catch (e) {
+            toast.error(t('update_failed', 'Failed to update timesheet'));
+            setProcessing(false);
+            return;
+          }
+          toast.error(errors.error || t('update_failed', 'Failed to update timesheet'));
+          setProcessing(false);
+          Object.keys(errors).forEach(key => {
+            form.setError(key as any, {
+              type: 'manual',
+              message: errors[key]
+            });
           });
-        });
-      }
-    });
+        }
+      });
   };
 
   // Bulk Mode helpers (copied from Create page)
@@ -324,7 +348,7 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
       if (res.ok && data.success) {
         toast.success('Timesheets updated successfully');
         setProcessing(false);
-        router.visit(route('timesheets.index'));
+        window.location.href = route('timesheets.index');
       } else {
         toast.error(data.error || 'Failed to update timesheets');
         setProcessing(false);
@@ -348,10 +372,10 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
               </CardDescription>
             </div>
             <Button variant="outline" asChild>
-              <Link href={route('timesheets.index')}>
+              <a href={route('timesheets.index')}>
                 <ArrowLeftIcon className="mr-2 h-4 w-4" />
                 {t('back_to_timesheets')}
-              </Link>
+              </a>
             </Button>
           </CardHeader>
           <CardContent>
@@ -369,7 +393,7 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
                   generateDailyOvertimeHours(firstDay, lastDay);
                 }
               }} id="bulk_mode" />
-              <FormLabel htmlFor="bulk_mode">{t('TimesheetManagement:fields.bulk_mode', 'Bulk Mode')}</FormLabel>
+              <FormLabel>{t('TimesheetManagement:fields.bulk_mode', 'Bulk Mode')}</FormLabel>
             </div>
             {isBulkMode ? (
               <form onSubmit={handleBulkUpdate} className="space-y-8">
@@ -379,7 +403,7 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Employee Selection */}
                     <div>
-                      <FormLabel htmlFor="employee_id">Employee</FormLabel>
+                      <FormLabel>Employee</FormLabel>
                       <Select value={String(timesheet.employee_id)} disabled>
                         <SelectTrigger><SelectValue placeholder="Select employee" /></SelectTrigger>
                         <SelectContent>
@@ -389,7 +413,7 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
                     </div>
                     {/* Project Selection */}
                     <div>
-                      <FormLabel htmlFor="project_id">Project</FormLabel>
+                      <FormLabel>Project</FormLabel>
                       <Select value={assignmentBlocks[0].project_id} onValueChange={v => updateAssignmentBlock(assignmentBlocks[0].id, 'project_id', v)}>
                         <SelectTrigger><SelectValue placeholder="Select project" /></SelectTrigger>
                         <SelectContent>
@@ -402,12 +426,12 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
                     </div>
                     {/* Rental Selection */}
                     <div className="md:col-span-2">
-                      <FormLabel htmlFor="rental_id">Rental</FormLabel>
+                      <FormLabel>Rental</FormLabel>
                       <Select value={assignmentBlocks[0].rental_id} onValueChange={v => updateAssignmentBlock(assignmentBlocks[0].id, 'rental_id', v)}>
                         <SelectTrigger><SelectValue placeholder="Select rental" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="none">None</SelectItem>
-                          {rental && rental.map(r => <SelectItem key={r.id} value={r.id.toString()}>{r.rental_number} - {r.equipment?.name || 'Unknown Equipment'}</SelectItem>)}
+                          {rental && rental.map((r: any) => <SelectItem key={r.id} value={r.id.toString()}>{r.rental_number} - {r.equipment?.name || 'Unknown Equipment'}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
@@ -425,7 +449,7 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
                   </div>
                 </div>
                 {/* Daily Overtime Table */}
-                <FormLabel>Daily Overtime</FormLabel>
+                <FormLabel>Timesheet Details</FormLabel>
                 <div className="mb-4">
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm table-fixed rounded-lg border border-gray-200 shadow-sm" style={{ tableLayout: 'fixed' }}>
@@ -492,6 +516,8 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
                           {Object.entries(dailyOvertimeHours).map(([date, value]) => {
                             const day = new Date(date).getDay();
                             const isFriday = day === 5;
+                            // For overtime, if value is empty or 0, show 0
+                            const showValue = isFriday ? '' : (value && parseFloat(value) !== 0 ? value : '0');
                             return (
                               <td
                                 key={date}
@@ -503,10 +529,11 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
                                   min="0"
                                   max="24"
                                   step="0.5"
-                                  value={value}
+                                  value={showValue}
                                   onChange={e => handleDailyOvertimeChange(date, e.target.value)}
-                                  className="border rounded text-xs text-center w-full px-0 py-0 bg-gray-50 focus:bg-white"
+                                  className={`border rounded text-xs text-center w-full px-0 py-0 bg-gray-50 focus:bg-white ${isFriday ? 'text-blue-600 font-bold' : ''}`}
                                   style={{ width: '38px', minWidth: '38px', maxWidth: '38px', padding: 0, textAlign: 'center' }}
+                                  placeholder={isFriday ? 'F' : ''}
                                 />
                               </td>
                             );
@@ -535,7 +562,7 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
                         <SelectTrigger><SelectValue placeholder="Select rental" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="none">None</SelectItem>
-                          {rental && rental.map(r => <SelectItem key={r.id} value={r.id.toString()}>{r.rental_number} - {r.equipment?.name || 'Unknown Equipment'}</SelectItem>)}
+                          {rental && rental.map((r: any) => <SelectItem key={r.id} value={r.id.toString()}>{r.rental_number} - {r.equipment?.name || 'Unknown Equipment'}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
@@ -587,13 +614,13 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
                 <div>
                   <h2 className="text-lg font-semibold mb-4 border-b pb-2">Timesheet Details</h2>
                   <div className="mt-6">
-                    <FormLabel htmlFor="description">Description</FormLabel>
+                    <FormLabel>Description</FormLabel>
                     <Textarea value={assignmentBlocks[0].description || ''} onChange={e => updateAssignmentBlock(assignmentBlocks[0].id, 'description', e.target.value)} rows={4} placeholder="Brief description" />
                   </div>
                 </div>
                 <div className="flex justify-end space-x-3 mt-8">
                   <Button asChild variant="outline">
-                    <Link href={route('timesheets.index')}>Cancel</Link>
+                    <a href={route('timesheets.index')}>Cancel</a>
                   </Button>
                   <Button type="submit" disabled={processing}>Update</Button>
                 </div>
@@ -795,7 +822,7 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
 
                 <div className="flex justify-end space-x-2">
                   <Button variant="outline" asChild>
-                    <Link href={route('timesheets.index')}>Cancel</Link>
+                    <a href={route('timesheets.index')}>Cancel</a>
                   </Button>
                   <Button type="submit" disabled={processing}>
                     <SaveIcon className="mr-2 h-4 w-4" />
