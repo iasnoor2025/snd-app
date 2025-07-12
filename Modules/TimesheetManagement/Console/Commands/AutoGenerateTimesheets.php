@@ -9,6 +9,7 @@ use Modules\EmployeeManagement\Domain\Models\Employee;
 use Modules\ProjectManagement\Domain\Models\Project;
 use Modules\RentalManagement\Domain\Models\Rental;
 use Modules\TimesheetManagement\Domain\Models\Timesheet;
+use Modules\EmployeeManagement\Domain\Models\EmployeeAssignment;
 
 class AutoGenerateTimesheets extends Command
 {
@@ -24,33 +25,39 @@ class AutoGenerateTimesheets extends Command
             return 0;
         }
 
-        // Rentals
-        $rentals = Rental::where('status', 'active')
-            ->whereDate('start_date', '<=', $today)
-            ->whereDate('expected_end_date', '>=', $today)
-            ->get();
-        foreach ($rentals as $rental) {
-            $employees = $rental->rentalItems->flatMap(function ($item) {
-                return $item->operators ?? [];
-            })->unique('id');
-            foreach ($employees as $employee) {
-                $this->createTimesheet($employee, $today, $rental->id, null);
+        // Use EmployeeAssignment for all assignment types
+        $assignments = EmployeeAssignment::active()->get();
+        $created = 0;
+        foreach ($assignments as $assignment) {
+            $employeeId = $assignment->employee_id;
+            $dateStr = $today->toDateString();
+            $data = [
+                'employee_id' => $employeeId,
+                'date' => $dateStr,
+                'status' => \Modules\TimesheetManagement\Domain\Models\Timesheet::STATUS_DRAFT,
+                'hours_worked' => 0,
+                'overtime_hours' => 0,
+                'start_time' => '08:00',
+                'end_time' => null,
+            ];
+            if ($assignment->type === 'project' && $assignment->project_id) {
+                $data['project_id'] = $assignment->project_id;
+            }
+            if ($assignment->type === 'rental' && $assignment->rental_id) {
+                $data['rental_id'] = $assignment->rental_id;
+            }
+            // For other types, you may want to add a 'description' or 'location' field
+            if (!\Modules\TimesheetManagement\Domain\Models\Timesheet::hasOverlap($employeeId, $dateStr)) {
+                \Modules\TimesheetManagement\Domain\Models\Timesheet::create($data);
+                $created++;
+                Log::info('Auto-generated timesheet', [
+                    'employee_id' => $employeeId,
+                    'date' => $dateStr,
+                    'assignment_id' => $assignment->id,
+                ]);
             }
         }
-
-        // Projects
-        $projects = Project::where('status', 'active')
-            ->whereDate('start_date', '<=', $today)
-            ->whereDate('end_date', '>=', $today)
-            ->get();
-        foreach ($projects as $project) {
-            $employees = $project->employees ?? [];
-            foreach ($employees as $employee) {
-                $this->createTimesheet($employee, $today, null, $project->id);
-            }
-        }
-
-        $this->info('Auto-generation of timesheets completed.');
+        $this->info("Auto-generation of timesheets completed. Created: {$created}");
         return 0;
     }
 

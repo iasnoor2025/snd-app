@@ -436,6 +436,9 @@ export default function Show({
   console.log('Timesheets data:', timesheets);
   console.log('Leave requests data:', leaveRequests);
 
+  // Debug log for assignments
+  console.log('Assignments prop:', assignments);
+
   const [isDeleting, setIsDeleting] = useState(false);
   const [advanceAmount, setAdvanceAmount] = useState('');
   const [monthlyDeduction, setMonthlyDeduction] = useState(
@@ -2034,60 +2037,126 @@ export default function Show({
           </TabsContent>
 
           <TabsContent value="assignments" className="mt-6 space-y-6">
-            <Card>
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <CardTitle>Assignments</CardTitle>
-                    <CardDescription>{t('view_and_manage_employee_assignments')}</CardDescription>
+            {/* Show only the current assignment as a card */}
+            {assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id) && (
+              <Card className="mb-6 shadow-sm border border-gray-200">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-xl font-semibold">
+                    {(() => {
+                      const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
+                      return current?.name || current?.title || '-';
+                    })()}
+                  </CardTitle>
+                  <div className="flex flex-wrap items-center gap-3 mt-2">
+                    {/* Type badge */}
+                    <Badge className="bg-blue-500 text-white capitalize">{(() => {
+                      const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
+                      return current?.type || 'assignment';
+                    })()}</Badge>
+                    {/* Project or Rental # */}
+                    <span className="text-xs text-muted-foreground">
+                      {(() => {
+                        const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
+                        if (!current) return '-';
+                        if (current.type === 'project') {
+                          return `Project: ${current.project?.name || '-'}`;
+                        }
+                        if (current.type === 'rental' || current.type === 'rental_item') {
+                          return `Rental #: ${current.rental?.rental_number || current.rental_number || '-'}`;
+                        }
+                        return '-';
+                      })()}
+                    </span>
+                    {/* Status badge */}
+                    <Badge className={(() => {
+                      const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
+                      return current?.status === 'active' ? 'bg-green-500 text-white' : 'bg-gray-400 text-white';
+                    })()}>
+                      {(() => {
+                        const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
+                        return current?.status || 'active';
+                      })()}
+                    </Badge>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="text"
-                      placeholder={t('ph_search_assignments')}
-                      className="w-64"
-                    />
-                    <Button variant="outline" size="sm">
-                      Filter
-                    </Button>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="flex flex-col gap-1 mt-2">
+                    {/* Location */}
+                    <span className="text-sm text-muted-foreground">
+                      <strong>Location:</strong> {(() => {
+                        const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
+                        return current?.location || '-';
+                      })()}
+                    </span>
+                    {/* Date range */}
+                    <span className="text-sm text-muted-foreground">
+                      <strong>From:</strong> {(() => {
+                        const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
+                        const start = current?.start_date ? format(new Date(current.start_date), 'MMM d, yyyy') : '-';
+                        const end = current?.end_date ? format(new Date(current.end_date), 'MMM d, yyyy') : '';
+                        return end ? `${start} - ${end}` : start;
+                      })()}
+                    </span>
+                    {/* Today's date */}
+                    <span className="text-sm text-muted-foreground">
+                      <strong>To:</strong> {format(new Date(), 'MMM d, yyyy')}
+                    </span>
+                    {/* Equipment (if available) */}
+                    {(() => {
+                      const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
+                      if (current?.equipment) {
+                        return <span className="text-sm text-muted-foreground"><strong>Equipment:</strong> {current.equipment}</span>;
+                      }
+                      return null;
+                    })()}
                   </div>
+                </CardContent>
+              </Card>
+            )}
+            {/* Assignment History Section */}
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Assignment History</h3>
+              {assignments?.data?.filter((a: any) => !employee.current_assignment || a.id !== employee.current_assignment.id)?.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="min-w-full bg-white border border-gray-200 rounded-md">
+                    <thead>
+                      <tr>
+                        <th className="px-4 py-2 text-left">Assignment Name</th>
+                        <th className="px-4 py-2 text-left">Type</th>
+                        <th className="px-4 py-2 text-left">Location</th>
+                        <th className="px-4 py-2 text-left">Project</th>
+                        <th className="px-4 py-2 text-left">Rental Number</th>
+                        <th className="px-4 py-2 text-left">Start Date</th>
+                        <th className="px-4 py-2 text-left">End Date</th>
+                        <th className="px-4 py-2 text-left">Status</th>
+                        <th className="px-4 py-2 text-left">Equipment</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {assignments?.data?.filter((a: any) => !employee.current_assignment || a.id !== employee.current_assignment.id).map((assignment: any) => (
+                        <tr key={assignment.id} className="border-t border-gray-100">
+                          <td className="px-4 py-2 font-medium">{assignment.name || assignment.title}</td>
+                          <td className="px-4 py-2">{assignment.type}</td>
+                          <td className="px-4 py-2">{assignment.location}</td>
+                          <td className="px-4 py-2">{assignment.project?.name || '-'}</td>
+                          <td className="px-4 py-2">{assignment.rental?.rental_number || assignment.rental_number || '-'}</td>
+                          <td className="px-4 py-2">{assignment.start_date ? format(new Date(assignment.start_date), 'MMM d, yyyy') : '-'}</td>
+                          <td className="px-4 py-2">{assignment.end_date ? format(new Date(assignment.end_date), 'MMM d, yyyy') : '-'}</td>
+                          <td className="px-4 py-2">
+                            <Badge className={assignment.status === 'active' ? 'bg-blue-500 text-white' : 'bg-gray-400 text-white'}>
+                              {assignment.status || 'past'}
+                            </Badge>
+                          </td>
+                          <td className="px-4 py-2">{assignment.equipment || '-'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  {/* Assignment List */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {assignments?.data?.map((assignment: any) => (
-                      <Card key={assignment.id}>
-                        <CardHeader>
-                          <CardTitle>{assignment.title}</CardTitle>
-                          <CardDescription>{assignment.description}</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                              <Badge className="bg-blue-500 text-white">{assignment.status}</Badge>
-                              <span className="text-sm">{assignment.type}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                asChild
-                              >
-                                <a href={route('assignments.show', { assignment: assignment.id })}>
-                                  {t('ttl_view_details')}
-                                </a>
-                              </Button>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+              ) : (
+                <span className="text-muted-foreground text-sm">No assignment history found.</span>
+              )}
+            </div>
           </TabsContent>
 
           <TabsContent value="timesheets" className="mt-6">

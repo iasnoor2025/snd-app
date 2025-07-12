@@ -394,6 +394,24 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                   {t('btn_monthly_summary', 'Monthly Summary')}
                 </a>
               </Button>
+              <Button
+                variant="outline"
+                onClick={async () => {
+                  try {
+                    const res = await fetch(route('timesheets.create-missing'), { method: 'POST' });
+                    if (res.ok) {
+                      toast.success(t('Created missing timesheets'));
+                      reloadPage();
+                    } else {
+                      toast.error(t('Failed to create missing timesheets'));
+                    }
+                  } catch (e) {
+                    toast.error(t('Failed to create missing timesheets'));
+                  }
+                }}
+              >
+                {t('btn_create_missing_timesheets', 'Create Missing Timesheets')}
+              </Button>
 
               {canApproveTimesheet && selectedTimesheets.length > 0 && (
                 <Button

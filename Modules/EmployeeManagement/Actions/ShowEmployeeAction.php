@@ -30,6 +30,8 @@ class ShowEmployeeAction
 
             // Employee details
             $employeeData = $employee->load(['position', 'department', 'user'])->toArray();
+            // Add current_assignment to employee data for show page
+            $employeeData['current_assignment'] = $employee->current_assignment;
 
             // Get timesheets
             $timesheets = ['data' => []];
@@ -115,16 +117,188 @@ class ShowEmployeeAction
                 $currentBalance = 0;
             }
 
-            // Get assignments
+            // Get assignments (EmployeeAssignment + project manpower + rental assignments)
             $assignments = ['data' => []];
-            if (class_exists('Modules\EmployeeManagement\Domain\Models\EmployeeAssignment')) {
-                $assignments = [
-                    'data' => EmployeeAssignment::where('employee_id', $employee->id)
-                        ->orderBy('created_at', 'desc')
-                        ->get()
-                        ->toArray()
-                ];
+            $assignmentList = [];
+
+            // 1. EmployeeAssignment records
+            if (class_exists('Modules\\EmployeeManagement\\Domain\\Models\\EmployeeAssignment')) {
+                $assignmentList = array_merge($assignmentList, EmployeeAssignment::withTrashed()->with(['project', 'rental', 'assignedBy'])
+                    ->where('employee_id', $employee->id)
+                    ->orderBy('created_at', 'desc')
+                    ->get()
+                    ->map(function ($assignment) {
+                        return [
+                            'id' => $assignment->id,
+                            'type' => $assignment->type,
+                            'status' => $assignment->status,
+                            'location' => $assignment->location,
+                            'location_name' => $assignment->location_name,
+                            'start_date' => $assignment->start_date ? $assignment->start_date->toDateString() : null,
+                            'end_date' => $assignment->end_date ? $assignment->end_date->toDateString() : null,
+                            'notes' => $assignment->notes,
+                            'assigned_by_id' => $assignment->assigned_by_id,
+                            'project_id' => $assignment->project_id,
+                            'rental_id' => $assignment->rental_id,
+                            'deleted_at' => $assignment->deleted_at,
+                            'title' => $assignment->project ? $assignment->project->name : ($assignment->rental ? $assignment->rental->project_name : ucfirst($assignment->type)),
+                            'description' => $assignment->notes ?? ($assignment->project ? $assignment->project->description : ($assignment->rental ? $assignment->rental->description : '')),
+                            'project' => $assignment->project ? [
+                                'id' => $assignment->project->id,
+                                'name' => $assignment->project->name,
+                            ] : null,
+                            'rental' => $assignment->rental ? [
+                                'id' => $assignment->rental->id,
+                                'project_name' => $assignment->rental->project_name,
+                                'rental_number' => $assignment->rental->rental_number ?? null,
+                            ] : null,
+                            'rental_number' => $assignment->rental ? $assignment->rental->rental_number ?? null : null,
+                            'assigned_by' => $assignment->assignedBy ? [
+                                'id' => $assignment->assignedBy->id,
+                                'name' => $assignment->assignedBy->name,
+                            ] : null,
+                        ];
+                    })->toArray());
             }
+
+            // 2. Project manpower assignments
+            if (method_exists($employee, 'projectManpower')) {
+                $assignmentList = array_merge($assignmentList, $employee->projectManpower()
+                    ->with(['project:id,name'])
+                    ->where(function($query) {
+                        $query->whereNull('end_date')
+                            ->orWhere('end_date', '>=', now()->toDateString());
+                    })
+                    ->orderBy('start_date', 'desc')
+                    ->get()
+                    ->map(function ($pm) {
+                        return [
+                            'id' => $pm->id,
+                            'type' => 'project',
+                            'status' => 'active',
+                            'location' => 'Project Location',
+                            'location_name' => null,
+                            'start_date' => $pm->start_date ? $pm->start_date->toDateString() : null,
+                            'end_date' => $pm->end_date ? $pm->end_date->toDateString() : null,
+                            'notes' => $pm->notes ?? null,
+                            'assigned_by_id' => null,
+                            'project_id' => $pm->project_id,
+                            'rental_id' => null,
+                            'deleted_at' => null,
+                            'title' => $pm->project ? $pm->project->name : 'Project',
+                            'description' => $pm->job_title ?? '',
+                            'project' => $pm->project ? [
+                                'id' => $pm->project->id,
+                                'name' => $pm->project->name,
+                            ] : null,
+                            'rental' => null,
+                            'rental_number' => null,
+                            'assigned_by' => null,
+                        ];
+                    })->toArray());
+            }
+
+            // 3. Rental assignments
+            if (method_exists($employee, 'rentalAssignments')) {
+                $assignmentList = array_merge($assignmentList, $employee->rentalAssignments()
+                    ->with(['rental:id,customer_id,location_id,rental_number', 'rental.customer:id,name', 'rental.location:id,name'])
+                    // Remove ->where('status', 'active') to include all statuses
+                    ->orderBy('assignment_date', 'desc')
+                    ->get()
+                    ->map(function ($ra) {
+                        return [
+                            'id' => $ra->id,
+                            'type' => 'rental',
+                            'status' => $ra->status,
+                            'location' => $ra->rental && $ra->rental->location ? $ra->rental->location->name : 'Unknown Location',
+                            'location_name' => null,
+                            'start_date' => $ra->assignment_date ? $ra->assignment_date->toDateString() : null,
+                            'end_date' => $ra->end_date ? $ra->end_date->toDateString() : null,
+                            'notes' => $ra->notes,
+                            'assigned_by_id' => $ra->assigned_by_id,
+                            'project_id' => null,
+                            'rental_id' => $ra->rental_id,
+                            'deleted_at' => $ra->deleted_at,
+                            'title' => $ra->rental && $ra->rental->customer ? $ra->rental->customer->name : 'Rental',
+                            'description' => $ra->notes ?? '',
+                            'project' => null,
+                            'rental' => $ra->rental ? [
+                                'id' => $ra->rental->id,
+                                'project_name' => $ra->rental->customer->name ?? '',
+                                'rental_number' => $ra->rental->rental_number ?? null,
+                            ] : null,
+                            'rental_number' => $ra->rental ? $ra->rental->rental_number ?? null : null,
+                            'assigned_by' => $ra->assignedBy ? [
+                                'id' => $ra->assignedBy->id,
+                                'name' => $ra->assignedBy->name,
+                            ] : null,
+                        ];
+                    })->toArray());
+            }
+
+            // 4. Rental items where employee is operator
+            if (method_exists($employee, 'rentalItems')) {
+                $assignmentList = array_merge($assignmentList, $employee->rentalItems()
+                    ->with(['rental:id,customer_id,location_id,rental_number', 'rental.customer:id,name', 'rental.location:id,name', 'equipment:id,name'])
+                    ->orderBy('start_date', 'desc')
+                    ->get()
+                    ->map(function ($ri) {
+                        $startDate = $ri->start_date;
+                        if ($startDate instanceof \DateTimeInterface) {
+                            $startDate = $startDate->toDateString();
+                        }
+                        $endDate = $ri->end_date;
+                        if ($endDate instanceof \DateTimeInterface) {
+                            $endDate = $endDate->toDateString();
+                        }
+                        return [
+                            'id' => $ri->id,
+                            'type' => 'rental_item',
+                            'status' => $ri->rental && $ri->rental->status ? $ri->rental->status : 'unknown',
+                            'location' => $ri->rental && $ri->rental->location ? $ri->rental->location->name : 'Unknown Location',
+                            'location_name' => null,
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                            'notes' => $ri->notes,
+                            'assigned_by_id' => null,
+                            'project_id' => null,
+                            'rental_id' => $ri->rental_id,
+                            'deleted_at' => $ri->deleted_at,
+                            'title' => $ri->rental && $ri->rental->customer ? $ri->rental->customer->name : 'Rental',
+                            'description' => $ri->notes ?? '',
+                            'project' => null,
+                            'rental' => $ri->rental ? [
+                                'id' => $ri->rental->id,
+                                'project_name' => $ri->rental->customer->name ?? '',
+                                'rental_number' => $ri->rental->rental_number ?? null,
+                            ] : null,
+                            'rental_number' => $ri->rental ? $ri->rental->rental_number ?? null : null,
+                            'assigned_by' => null,
+                            'equipment' => $ri->equipment ? $ri->equipment->name : null,
+                        ];
+                    })->toArray());
+            }
+
+            // Remove duplicates by id + type
+            $assignments['data'] = collect($assignmentList)
+                ->unique(function ($item) {
+                    return $item['id'] . '-' . $item['type'];
+                })
+                ->sortByDesc('start_date')
+                ->values()
+                ->all();
+
+            // Find the current assignment from the assignments list by matching type and id
+            $currentAssignment = null;
+            if (!empty($assignments['data'])) {
+                $current = $employee->current_assignment;
+                if ($current && isset($current['type'], $current['id'])) {
+                    $currentAssignment = collect($assignments['data'])->first(function ($a) use ($current) {
+                        return $a['type'] === $current['type'] && $a['project_id'] == $current['id'];
+                    });
+                }
+            }
+            $employeeData['current_assignment'] = $currentAssignment ?: $employee->current_assignment;
 
             // Get final settlements
             $finalSettlements = ['data' => []];

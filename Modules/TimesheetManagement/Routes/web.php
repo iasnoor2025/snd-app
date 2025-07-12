@@ -80,6 +80,7 @@ Route::prefix('timesheets')->name('timesheets.')->middleware(['auth', 'verified'
     Route::post('/bulk-delete', [TimesheetController::class, 'bulkDelete'])
         ->middleware('permission:admin')
         ->name('bulk-delete');
+    Route::post('/create-missing', [TimesheetController::class, 'createMissingTimesheets'])->name('timesheets.create-missing')->middleware('permission:timesheets.create');
 
     // Daily timesheet entries
     Route::get('/entries', [TimeEntryController::class, 'index'])

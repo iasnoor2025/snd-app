@@ -37,6 +37,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire:inspire')->hourly();
         $schedule->command('erpnext:sync-invoice-status')->everyFiveMinutes();
+        $schedule->command('timesheets:auto-generate')->dailyAt('04:10');
     }
 
     /**
