@@ -1517,6 +1517,57 @@ class TimesheetController extends Controller
         }
         return response()->json(['success' => true, 'created' => $created]);
     }
+
+    /**
+     * Bulk update timesheets (web route version, for Edit page Bulk Mode).
+     */
+    public function updateBulk(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user || !$user->can('timesheets.edit')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        $updates = $request->input('updates', []);
+        if (!is_array($updates) || empty($updates)) {
+            return response()->json(['error' => 'No updates provided'], 400);
+        }
+        $updated = 0;
+        $errors = [];
+        foreach ($updates as $update) {
+            $id = $update['id'] ?? null;
+            $date = $update['date'] ?? null;
+            if (!$id || !$date) continue;
+            $timesheet = \Modules\TimesheetManagement\Domain\Models\Timesheet::where('employee_id', $update['employee_id'])->where('date', $date)->first();
+            if (!$timesheet) {
+                $errors[$date] = 'Timesheet not found for date ' . $date;
+                continue;
+            }
+            // Validate fields (reuse update validation)
+            $validator = \Validator::make($update, [
+                'hours_worked' => 'required|numeric|min:0|max:24',
+                'overtime_hours' => 'nullable|numeric|min:0|max:24',
+                'project_id' => 'nullable|exists:projects,id',
+                'rental_id' => 'nullable|exists:rentals,id',
+                'description' => 'nullable|string|max:1000',
+            ]);
+            if ($validator->fails()) {
+                $errors["hours_worked_{$date}"] = $validator->errors()->first('hours_worked');
+                $errors["overtime_hours_{$date}"] = $validator->errors()->first('overtime_hours');
+                continue;
+            }
+            $timesheet->hours_worked = $update['hours_worked'];
+            $timesheet->overtime_hours = $update['overtime_hours'] ?? 0;
+            $timesheet->project_id = $update['project_id'] ?? null;
+            $timesheet->rental_id = $update['rental_id'] ?? null;
+            $timesheet->description = $update['description'] ?? null;
+            $timesheet->save();
+            $updated++;
+        }
+        if (!empty($errors)) {
+            return response()->json(['success' => false, 'error' => 'Some timesheets failed to update', 'errors' => $errors, 'updated' => $updated]);
+        }
+        return response()->json(['success' => true, 'updated' => $updated]);
+    }
 }
 
 

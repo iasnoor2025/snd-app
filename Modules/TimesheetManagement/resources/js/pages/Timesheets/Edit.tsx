@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head, Link, router } from '@inertiajs/react';
 import { PageProps, BreadcrumbItem } from "@/Core/types";
@@ -94,9 +94,88 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
   const { t } = useTranslation('TimesheetManagement');
 
   const [processing, setProcessing] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-    timesheet.date ? new Date(timesheet.date) : new Date()
-  );
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(timesheet.date ? new Date(timesheet.date) : new Date());
+
+  // Bulk Mode state
+  const [isBulkMode, setIsBulkMode] = useState(false);
+  const now = new Date();
+  const [startDate, setStartDate] = useState<Date | undefined>(new Date(now.getFullYear(), now.getMonth(), 1));
+  const [endDate, setEndDate] = useState<Date | undefined>(new Date(now.getFullYear(), now.getMonth() + 1, 0));
+  const [dailyOvertimeHours, setDailyOvertimeHours] = useState<Record<string, string>>({});
+  const [dailyNormalHours, setDailyNormalHours] = useState<Record<string, string>>({});
+  const [assignmentBlocks, setAssignmentBlocks] = useState([
+    {
+      id: 1,
+      project_id: timesheet.project_id?.toString() || '',
+      rental_id: timesheet.rental_id?.toString() || '',
+      start_date: timesheet.date,
+      end_date: timesheet.date,
+    },
+  ]);
+
+  // Add helper to get all selected date ranges except for the current block
+  const getSelectedDateRanges = (excludeIdx: number) => {
+    return assignmentBlocks
+      .filter((_, idx) => idx !== excludeIdx)
+      .map(block => ({
+        start: block.start_date,
+        end: block.end_date
+      }))
+      .filter(block => block.start && block.end);
+  };
+
+  // Helper to check if a date is within any selected range
+  const isDateInOtherRanges = (date: string, excludeIdx: number) => {
+    const ranges = getSelectedDateRanges(excludeIdx);
+    const d = new Date(date);
+    return ranges.some(({ start, end }) => {
+      if (!start || !end) return false;
+      const s = new Date(start);
+      const e = new Date(end);
+      return d >= s && d <= e;
+    });
+  };
+
+  // Ensure daily grid is generated when Bulk Mode is enabled or date range changes
+  useEffect(() => {
+    if (isBulkMode && startDate && endDate) {
+      generateDailyOvertimeHours(startDate, endDate);
+    }
+    // eslint-disable-next-line
+  }, [isBulkMode, startDate, endDate]);
+
+  // Fetch and pre-fill daily hours with original data in Bulk Mode
+  useEffect(() => {
+    const fetchAndFill = async () => {
+      if (isBulkMode && startDate && endDate && timesheet.employee_id) {
+        const start = format(startDate, 'yyyy-MM-dd');
+        const end = format(endDate, 'yyyy-MM-dd');
+        try {
+          const res = await fetch(`/api/timesheets?employee_id=${timesheet.employee_id}&start_date=${start}&end_date=${end}`);
+          const data = await res.json();
+          const timesheetMap = {};
+          (data.timesheets || []).forEach(ts => {
+            timesheetMap[ts.date] = ts;
+          });
+          const newDailyNormalHours = {};
+          const newDailyOvertimeHours = {};
+          let currentDate = new Date(startDate);
+          while (currentDate <= endDate) {
+            const dateStr = format(currentDate, 'yyyy-MM-dd');
+            newDailyNormalHours[dateStr] = timesheetMap[dateStr]?.hours_worked?.toString() || '';
+            newDailyOvertimeHours[dateStr] = timesheetMap[dateStr]?.overtime_hours?.toString() || '0';
+            currentDate.setDate(currentDate.getDate() + 1);
+          }
+          setDailyNormalHours(newDailyNormalHours);
+          setDailyOvertimeHours(newDailyOvertimeHours);
+        } catch (e) {
+          generateDailyOvertimeHours(startDate, endDate);
+        }
+      }
+    };
+    fetchAndFill();
+    // eslint-disable-next-line
+  }, [isBulkMode, startDate, endDate, timesheet.employee_id]);
 
   const breadcrumbs: BreadcrumbItem[] = [
     { title: t('dashboard', 'Dashboard'), href: '/dashboard' },
@@ -155,13 +234,110 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
     });
   };
 
-  return (
-    <AppLayout
-      title={t('edit_timesheet')}
-      breadcrumbs={breadcrumbs}
-    >
-      <Head title={t('edit_timesheet')} />
+  // Bulk Mode helpers (copied from Create page)
+  const generateDailyOvertimeHours = (start: Date, end: Date) => {
+    const newDailyOvertimeHours: Record<string, string> = {};
+    const newDailyNormalHours: Record<string, string> = {};
+    let currentDate = new Date(Date.UTC(start.getFullYear(), start.getMonth(), start.getDate()));
+    const endDateValue = new Date(Date.UTC(end.getFullYear(), end.getMonth(), end.getDate()));
+    while (currentDate <= endDateValue) {
+      const dateString = currentDate.toISOString().split('T')[0];
+      newDailyOvertimeHours[dateString] = '0';
+      newDailyNormalHours[dateString] = '8';
+      currentDate.setUTCDate(currentDate.getUTCDate() + 1);
+    }
+    setDailyOvertimeHours(newDailyOvertimeHours);
+    setDailyNormalHours(newDailyNormalHours);
+  };
 
+  const onStartDateSelect = (date: Date | undefined) => {
+    setStartDate(date);
+    if (date) {
+      const formattedDate = format(date, 'yyyy-MM-dd');
+      if (isBulkMode) {
+        const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+        setEndDate(lastDay);
+        generateDailyOvertimeHours(new Date(date.getFullYear(), date.getMonth(), date.getDate()), new Date(lastDay.getFullYear(), lastDay.getMonth(), lastDay.getDate()));
+      }
+    }
+  };
+
+  const onEndDateSelect = (date: Date | undefined) => {
+    setEndDate(date);
+    if (date && startDate && isBulkMode) {
+      generateDailyOvertimeHours(startDate, date);
+    }
+  };
+
+  const handleDailyOvertimeChange = (date: string, value: string) => {
+    setDailyOvertimeHours(prev => ({ ...prev, [date]: value }));
+  };
+  const handleDailyNormalChange = (date: string, value: string) => {
+    setDailyNormalHours(prev => ({ ...prev, [date]: value }));
+  };
+  const addAssignmentBlock = () => {
+    setAssignmentBlocks(blocks => [
+      ...blocks,
+      { id: Date.now(), project_id: '', rental_id: '', start_date: '', end_date: '' },
+    ]);
+  };
+  const removeAssignmentBlock = (id: number) => {
+    setAssignmentBlocks(blocks => blocks.filter(b => b.id !== id));
+  };
+  const updateAssignmentBlock = (id: number, field: string, value: string) => {
+    setAssignmentBlocks(blocks => blocks.map(b => b.id === id ? { ...b, [field]: value } : b));
+  };
+
+  // Bulk Mode submit handler
+  const handleBulkUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    // Validate and submit bulk update
+    // (You may want to add more validation as in Create page)
+    setProcessing(true);
+    try {
+      const updates = [];
+      for (const block of assignmentBlocks) {
+        if (!block.start_date || !block.end_date || (!block.project_id && !block.rental_id)) continue;
+        let current = new Date(block.start_date);
+        const end = new Date(block.end_date);
+        while (current <= end) {
+          const dateStr = format(current, 'yyyy-MM-dd');
+          updates.push({
+            id: timesheet.id, // or find by date/employee if needed
+            employee_id: timesheet.employee_id,
+            date: dateStr,
+            hours_worked: dailyNormalHours[dateStr] || '8',
+            overtime_hours: dailyOvertimeHours[dateStr] || '0',
+            project_id: block.project_id !== 'none' ? block.project_id : '',
+            rental_id: block.rental_id !== 'none' ? block.rental_id : '',
+            description: '',
+          });
+          current.setDate(current.getDate() + 1);
+        }
+      }
+      const res = await fetch(route('timesheets.update-bulk'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '' },
+        body: JSON.stringify({ updates }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        toast.success('Timesheets updated successfully');
+        setProcessing(false);
+        router.visit(route('timesheets.index'));
+      } else {
+        toast.error(data.error || 'Failed to update timesheets');
+        setProcessing(false);
+      }
+    } catch (e) {
+      toast.error('Failed to update timesheets');
+      setProcessing(false);
+    }
+  };
+
+  return (
+    <AppLayout title={t('edit_timesheet')} breadcrumbs={breadcrumbs}>
+      <Head title={t('edit_timesheet')} />
       <div className="flex h-full flex-1 flex-col gap-4 p-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -179,7 +355,251 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
             </Button>
           </CardHeader>
           <CardContent>
-            <Form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+            {/* Bulk Mode Toggle */}
+            <div className="flex items-center gap-2 mb-4">
+              <input type="checkbox" checked={isBulkMode} onChange={e => {
+                const checked = e.target.checked;
+                setIsBulkMode(checked);
+                if (checked) {
+                  const now = new Date();
+                  const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+                  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                  setStartDate(firstDay);
+                  setEndDate(lastDay);
+                  generateDailyOvertimeHours(firstDay, lastDay);
+                }
+              }} id="bulk_mode" />
+              <FormLabel htmlFor="bulk_mode">{t('TimesheetManagement:fields.bulk_mode', 'Bulk Mode')}</FormLabel>
+            </div>
+            {isBulkMode ? (
+              <form onSubmit={handleBulkUpdate} className="space-y-8">
+                {/* Assignment Details Section */}
+                <div>
+                  <h2 className="text-lg font-semibold mb-4 border-b pb-2">Assignment Details</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Employee Selection */}
+                    <div>
+                      <FormLabel htmlFor="employee_id">Employee</FormLabel>
+                      <Select value={String(timesheet.employee_id)} disabled>
+                        <SelectTrigger><SelectValue placeholder="Select employee" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value={String(timesheet.employee_id)}>{employee?.first_name} {employee?.last_name}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    {/* Project Selection */}
+                    <div>
+                      <FormLabel htmlFor="project_id">Project</FormLabel>
+                      <Select value={assignmentBlocks[0].project_id} onValueChange={v => updateAssignmentBlock(assignmentBlocks[0].id, 'project_id', v)}>
+                        <SelectTrigger><SelectValue placeholder="Select project" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">None</SelectItem>
+                          {projects.map((project) => (
+                            <SelectItem key={project.id} value={project.id.toString()}>{project.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    {/* Rental Selection */}
+                    <div className="md:col-span-2">
+                      <FormLabel htmlFor="rental_id">Rental</FormLabel>
+                      <Select value={assignmentBlocks[0].rental_id} onValueChange={v => updateAssignmentBlock(assignmentBlocks[0].id, 'rental_id', v)}>
+                        <SelectTrigger><SelectValue placeholder="Select rental" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">None</SelectItem>
+                          {rental && rental.map(r => <SelectItem key={r.id} value={r.id.toString()}>{r.rental_number} - {r.equipment?.name || 'Unknown Equipment'}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+                {/* Bulk Date Range */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <FormLabel>Start Date</FormLabel>
+                    <input type="month" value={startDate ? format(startDate, 'yyyy-MM') : ''} onChange={e => { if (e.target.value) { const [year, month] = e.target.value.split('-').map(Number); const firstDay = new Date(year, month - 1, 1); const lastDay = new Date(year, month, 0); setStartDate(firstDay); setEndDate(lastDay); generateDailyOvertimeHours(firstDay, lastDay); } }} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                  </div>
+                  <div>
+                    <FormLabel>End Date</FormLabel>
+                    <input type="date" value={endDate ? format(endDate, 'yyyy-MM-dd') : ''} disabled className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+                  </div>
+                </div>
+                {/* Daily Overtime Table */}
+                <FormLabel>Daily Overtime</FormLabel>
+                <div className="mb-4">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm table-fixed rounded-lg border border-gray-200 shadow-sm" style={{ tableLayout: 'fixed' }}>
+                      <thead className="bg-white">
+                        <tr>
+                          {Object.keys(dailyNormalHours).map((date) => {
+                            const day = new Date(date).getDay();
+                            const isFriday = day === 5;
+                            return (
+                              <th
+                                key={date}
+                                className={`text-center align-middle sticky top-0 z-10 font-semibold border-b border-gray-200 ${isFriday ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-900'}`}
+                                style={{ width: '40px', minWidth: '40px', maxWidth: '40px', padding: '6px 0' }}
+                              >
+                                {new Date(date).getDate()}
+                              </th>
+                            );
+                          })}
+                        </tr>
+                        <tr>
+                          {Object.keys(dailyOvertimeHours).map((date) => {
+                            const day = new Date(date).getDay();
+                            const isFriday = day === 5;
+                            return (
+                              <th
+                                key={date}
+                                className={`text-center align-middle sticky top-8 z-10 font-semibold border-b border-gray-200 ${isFriday ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-900'}`}
+                                style={{ width: '40px', minWidth: '40px', maxWidth: '40px', padding: '4px 0' }}
+                              >
+                                {format(new Date(date), 'EEE')}
+                              </th>
+                            );
+                          })}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          {Object.entries(dailyNormalHours).map(([date, value]) => {
+                            const day = new Date(date).getDay();
+                            const isFriday = day === 5;
+                            const isAbsent = !value || parseFloat(value) === 0;
+                            return (
+                              <td
+                                key={date}
+                                className={`text-center align-middle border-b border-gray-100 ${isFriday ? 'bg-blue-50' : 'bg-white'}`}
+                                style={{ width: '40px', minWidth: '40px', maxWidth: '40px', padding: '2px 0' }}
+                              >
+                                <input
+                                  type="number"
+                                  min="0"
+                                  max="24"
+                                  step="0.5"
+                                  value={isFriday ? '' : (isAbsent ? '' : value)}
+                                  onChange={e => handleDailyNormalChange(date, e.target.value)}
+                                  className={`border rounded text-xs text-center w-full px-0 py-0 bg-gray-50 focus:bg-white ${isFriday ? 'text-blue-600 font-bold' : (isAbsent ? 'text-red-600 font-bold' : '')}`}
+                                  style={{ width: '38px', minWidth: '38px', maxWidth: '38px', padding: 0, textAlign: 'center' }}
+                                  placeholder={isFriday ? 'F' : (isAbsent ? 'A' : '')}
+                                />
+                              </td>
+                            );
+                          })}
+                        </tr>
+                        <tr>
+                          {Object.entries(dailyOvertimeHours).map(([date, value]) => {
+                            const day = new Date(date).getDay();
+                            const isFriday = day === 5;
+                            return (
+                              <td
+                                key={date}
+                                className={`text-center align-middle border-b border-gray-100 ${isFriday ? 'bg-blue-50' : 'bg-white'}`}
+                                style={{ width: '40px', minWidth: '40px', maxWidth: '40px', padding: '2px 0' }}
+                              >
+                                <input
+                                  type="number"
+                                  min="0"
+                                  max="24"
+                                  step="0.5"
+                                  value={value}
+                                  onChange={e => handleDailyOvertimeChange(date, e.target.value)}
+                                  className="border rounded text-xs text-center w-full px-0 py-0 bg-gray-50 focus:bg-white"
+                                  style={{ width: '38px', minWidth: '38px', maxWidth: '38px', padding: 0, textAlign: 'center' }}
+                                />
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <h2 className="text-lg font-semibold mb-2">Split Assignments</h2>
+                {assignmentBlocks.map((block, idx) => (
+                  <div key={block.id} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end border p-4 rounded mb-2 bg-gray-50">
+                    <div>
+                      <FormLabel>Project</FormLabel>
+                      <Select value={block.project_id} onValueChange={v => updateAssignmentBlock(block.id, 'project_id', v)}>
+                        <SelectTrigger><SelectValue placeholder="Select project" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">None</SelectItem>
+                          {projects.map(p => <SelectItem key={p.id} value={p.id.toString()}>{p.name}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <FormLabel>Rental</FormLabel>
+                      <Select value={block.rental_id} onValueChange={v => updateAssignmentBlock(block.id, 'rental_id', v)}>
+                        <SelectTrigger><SelectValue placeholder="Select rental" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">None</SelectItem>
+                          {rental && rental.map(r => <SelectItem key={r.id} value={r.id.toString()}>{r.rental_number} - {r.equipment?.name || 'Unknown Equipment'}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <FormLabel>Start Date</FormLabel>
+                      <Input
+                        type="date"
+                        value={block.start_date}
+                        onChange={e => updateAssignmentBlock(block.id, 'start_date', e.target.value)}
+                        min={format(startDate || new Date(), 'yyyy-MM-01')}
+                        max={format(endDate || new Date(), 'yyyy-MM-dd')}
+                        disabled={false}
+                        style={{ backgroundColor: isDateInOtherRanges(block.start_date, idx) ? '#fca5a5' : undefined }}
+                        onInput={e => {
+                          if (isDateInOtherRanges(e.currentTarget.value, idx)) {
+                            e.currentTarget.setCustomValidity('This date is already assigned in another block.');
+                          } else {
+                            e.currentTarget.setCustomValidity('');
+                          }
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <FormLabel>End Date</FormLabel>
+                      <Input
+                        type="date"
+                        value={block.end_date}
+                        onChange={e => updateAssignmentBlock(block.id, 'end_date', e.target.value)}
+                        min={block.start_date || format(startDate || new Date(), 'yyyy-MM-01')}
+                        max={format(endDate || new Date(), 'yyyy-MM-dd')}
+                        disabled={false}
+                        style={{ backgroundColor: isDateInOtherRanges(block.end_date, idx) ? '#fca5a5' : undefined }}
+                        onInput={e => {
+                          if (isDateInOtherRanges(e.currentTarget.value, idx)) {
+                            e.currentTarget.setCustomValidity('This date is already assigned in another block.');
+                          } else {
+                            e.currentTarget.setCustomValidity('');
+                          }
+                        }}
+                      />
+                    </div>
+                    {assignmentBlocks.length > 1 && (
+                      <Button type="button" variant="destructive" size="sm" className="mt-2" onClick={() => removeAssignmentBlock(block.id)}>Remove</Button>
+                    )}
+                  </div>
+                ))}
+                <Button type="button" variant="secondary" onClick={addAssignmentBlock}>Add Assignment Block</Button>
+                {/* Timesheet Details Section */}
+                <div>
+                  <h2 className="text-lg font-semibold mb-4 border-b pb-2">Timesheet Details</h2>
+                  <div className="mt-6">
+                    <FormLabel htmlFor="description">Description</FormLabel>
+                    <Textarea value={assignmentBlocks[0].description || ''} onChange={e => updateAssignmentBlock(assignmentBlocks[0].id, 'description', e.target.value)} rows={4} placeholder="Brief description" />
+                  </div>
+                </div>
+                <div className="flex justify-end space-x-3 mt-8">
+                  <Button asChild variant="outline">
+                    <Link href={route('timesheets.index')}>Cancel</Link>
+                  </Button>
+                  <Button type="submit" disabled={processing}>Update</Button>
+                </div>
+              </form>
+            ) : (
+              <Form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
                 <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''} />
 
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -382,7 +802,8 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
                     {t('update', 'Update')}
                   </Button>
                 </div>
-            </Form>
+              </Form>
+            )}
           </CardContent>
         </Card>
       </div>
