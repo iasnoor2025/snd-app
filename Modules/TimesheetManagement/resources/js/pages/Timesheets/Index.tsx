@@ -345,61 +345,65 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
               </CardDescription>
             </div>
             <div className="flex items-center space-x-2">
-              <CreateButton
-                resourceType="timesheets"
-                text={t('btn_create_timesheet')}
-                href="/hr/timesheets/create"
-              />
-              <Button asChild variant="outline">
-                <a href={route('timesheets.summary')}>
-                  {t('btn_timesheet_summary', 'Summary')}
-                </a>
-              </Button>
-              <Button asChild variant="outline">
-                <a href={route('timesheets.monthly')}>
-                  {t('btn_monthly_summary', 'Monthly Summary')}
-                </a>
-              </Button>
-              <Button
-                variant="outline"
-                onClick={async () => {
-                  try {
-                    const res = await fetch('/api/timesheets/create-missing', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                    });
-                    if (res.ok) {
-                      toast.success(t('Created missing timesheets'));
-                      reloadPage();
-                    } else {
-                      toast.error(t('Failed to create missing timesheets'));
-                    }
-                  } catch (e) {
-                    toast.error(t('Failed to create missing timesheets'));
-                  }
-                }}
-              >
-                {t('btn_create_missing_timesheets', 'Create Missing Timesheets')}
-              </Button>
-              <Button
-                variant="default"
-                onClick={async () => {
-                  try {
-                    const res = await fetch('/api/timesheets/auto-generate', { method: 'POST' });
-                    if (res.ok) {
-                      toast.success('Auto-generated timesheets successfully');
-                      reloadPage();
-                    } else {
-                      toast.error('Failed to auto-generate timesheets');
-                    }
-                  } catch (e) {
-                    toast.error('Failed to auto-generate timesheets');
-                  }
-                }}
-              >
-                Auto Generate Timesheets
-              </Button>
-
+              {selectedTimesheets.length === 0 && (
+                <>
+                  <CreateButton
+                    resourceType="timesheets"
+                    text={t('btn_create_timesheet')}
+                    href="/hr/timesheets/create"
+                  />
+                  <Button asChild variant="outline">
+                    <a href={route('timesheets.summary')}>
+                      {t('btn_timesheet_summary', 'Summary')}
+                    </a>
+                  </Button>
+                  <Button asChild variant="outline">
+                    <a href={route('timesheets.monthly')}>
+                      {t('btn_monthly_summary', 'Monthly Summary')}
+                    </a>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={async () => {
+                      try {
+                        const res = await fetch('/api/timesheets/create-missing', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                        });
+                        if (res.ok) {
+                          toast.success(t('Created missing timesheets'));
+                          reloadPage();
+                        } else {
+                          toast.error(t('Failed to create missing timesheets'));
+                        }
+                      } catch (e) {
+                        toast.error(t('Failed to create missing timesheets'));
+                      }
+                    }}
+                  >
+                    {t('btn_create_missing_timesheets', 'Create Missing Timesheets')}
+                  </Button>
+                  <Button
+                    variant="default"
+                    onClick={async () => {
+                      try {
+                        const res = await fetch('/api/timesheets/auto-generate', { method: 'POST' });
+                        if (res.ok) {
+                          toast.success('Auto-generated timesheets successfully');
+                          reloadPage();
+                        } else {
+                          toast.error('Failed to auto-generate timesheets');
+                        }
+                      } catch (e) {
+                        toast.error('Failed to auto-generate timesheets');
+                      }
+                    }}
+                  >
+                    Auto Generate Timesheets
+                  </Button>
+                </>
+              )}
+              {/* Bulk action buttons only when selection is active */}
               {canApproveTimesheet && selectedTimesheets.length > 0 && (
                 <AlertDialog open={showBulkApproveDialog} onOpenChange={setShowBulkApproveDialog}>
                   <AlertDialogTrigger asChild>
@@ -459,7 +463,6 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                   </AlertDialogContent>
                 </AlertDialog>
               )}
-
               {canBulkSubmit && selectedTimesheets.length > 0 && (
                 <AlertDialog open={showBulkSubmitDialog} onOpenChange={setShowBulkSubmitDialog}>
                   <AlertDialogTrigger asChild>
@@ -534,7 +537,6 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                   </AlertDialogContent>
                 </AlertDialog>
               )}
-
               {canBulkSubmit && selectedTimesheets.length > 0 && (
                 <Button
                   onClick={handleBulkDelete}
