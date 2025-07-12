@@ -43,11 +43,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('timesheets/bulk-delete', [
         \Modules\TimesheetManagement\Http\Controllers\TimesheetController::class,
         'bulkDelete'
-    ])->middleware(['auth:sanctum', 'role:admin'])->name('hr.api.timesheets.bulk-delete');
+    ])->middleware(['auth:sanctum', 'adminOrPermission:admin'])->name('hr.api.timesheets.bulk-delete');
     Route::post('timesheets/bulk-approve', [
         \Modules\TimesheetManagement\Http\Controllers\TimesheetController::class,
         'bulkApprove'
-    ])->middleware(['auth:sanctum', 'role:admin'])->name('hr.api.timesheets.bulk-approve');
+    ])->middleware(['auth:sanctum', 'adminOrPermission:admin'])->name('hr.api.timesheets.bulk-approve');
     Route::post('timesheets/auto-generate', [
         \Modules\TimesheetManagement\Http\Controllers\TimesheetController::class,
         'autoGenerate'

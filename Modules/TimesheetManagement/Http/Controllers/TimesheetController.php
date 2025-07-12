@@ -1074,11 +1074,26 @@ class TimesheetController extends Controller
     public function bulkDelete(Request $request)
     {
         $user = auth()->user();
-        if (!$user || !$user->hasRole('admin')) {
+        \Log::debug('Bulk delete request', [
+            'user_id' => $user ? $user->id : null,
+            'user_roles' => $user ? $user->getRoleNames() : null,
+            'user_permissions' => $user ? $user->getAllPermissions()->pluck('name') : null,
+            'request_ids' => $request->input('ids'),
+        ]);
+        if (!$user || (!$user->hasRole('admin') && !$user->can('admin'))) {
+            \Log::warning('Bulk delete unauthorized', [
+                'user_id' => $user ? $user->id : null,
+                'user_roles' => $user ? $user->getRoleNames() : null,
+                'user_permissions' => $user ? $user->getAllPermissions()->pluck('name') : null,
+            ]);
             return response()->json(['error' => 'Unauthorized'], 403);
         }
         $ids = $request->input('ids', []);
         if (!is_array($ids) || empty($ids)) {
+            \Log::warning('Bulk delete: No timesheet IDs provided', [
+                'user_id' => $user ? $user->id : null,
+                'request_ids' => $ids,
+            ]);
             return response()->json(['error' => 'No timesheet IDs provided'], 400);
         }
         $deleted = 0;
@@ -1089,6 +1104,11 @@ class TimesheetController extends Controller
                 $deleted++;
             }
         }
+        \Log::info('Bulk delete completed', [
+            'user_id' => $user->id,
+            'deleted_count' => $deleted,
+            'ids' => $ids,
+        ]);
         return response()->json(['success' => true, 'deleted' => $deleted]);
     }
 

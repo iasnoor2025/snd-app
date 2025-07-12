@@ -150,6 +150,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
   const isFirstMount = useRef(true);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [sortField, setSortField] = useState<'date' | null>('date');
+  const [showBulkDeleteDialog, setShowBulkDeleteDialog] = useState(false);
 
   useEffect(() => {
     if (isFirstMount.current) {
@@ -280,22 +281,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
       toast(t('select_to_delete', 'Please select at least one timesheet to delete'));
       return;
     }
-    if (confirm(t('delete_confirm', 'Are you sure you want to delete the selected timesheets?'))) {
-      setBulkProcessing(true);
-      router.post(route('timesheets.bulk-delete'), {
-        ids: selectedTimesheets
-      }, {
-        onSuccess: () => {
-          toast(t('bulk_delete_success', 'Timesheets deleted successfully'));
-          reloadPage();
-          setBulkProcessing(false);
-        },
-        onError: (errors: any) => {
-          toast(errors.error || t('bulk_delete_failed', 'Failed to delete timesheets'));
-          setBulkProcessing(false);
-        },
-      });
-    }
+    setShowBulkDeleteDialog(true);
   };
 
   const handleSearchWithStatus = (status: string) => {
@@ -558,24 +544,71 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                   </AlertDialogContent>
                 </AlertDialog>
               )}
-              {canBulkSubmit && selectedTimesheets.length > 0 && (
-                <Button
-                  onClick={handleBulkDelete}
-                  disabled={bulkProcessing}
-                  variant="destructive"
-                >
-                  {bulkProcessing ? (
-                    <>
-                      <ArrowPathIcon className="mr-2 h-4 w-4 animate-spin" />
-                      {t('btn_processing')}
-                    </>
-                  ) : (
-                    <>
-                      <TrashIcon className="mr-2 h-4 w-4" />
-                      {t('btn_delete_selected', 'Delete Selected')}
-                    </>
-                  )}
-                </Button>
+              {canDeleteTimesheet && selectedTimesheets.length > 0 && (
+                <>
+                  <Button
+                    variant="destructive"
+                    disabled={bulkProcessing}
+                    onClick={handleBulkDelete}
+                  >
+                    <TrashIcon className="mr-2 h-4 w-4" />
+                    {t('btn_delete_selected')}
+                  </Button>
+                  <AlertDialog open={showBulkDeleteDialog} onOpenChange={setShowBulkDeleteDialog}>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>{t('delete_confirm', 'Are you sure you want to delete the selected timesheets?')}</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          {t('delete_warning', 'This action cannot be undone.')}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel disabled={bulkProcessing}>{t('btn_cancel', 'Cancel')}</AlertDialogCancel>
+                        <AlertDialogAction asChild>
+                          <Button
+                            variant="destructive"
+                            onClick={async () => {
+                              setBulkProcessing(true);
+                              try {
+                                const res = await fetch('/api/timesheets/bulk-delete', {
+                                  method: 'DELETE',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ ids: selectedTimesheets }),
+                                });
+                                if (res.ok) {
+                                  toast.success(t('bulk_delete_success', 'Timesheets deleted successfully'));
+                                  reloadPage();
+                                  setSelectedTimesheets([]);
+                                } else {
+                                  const data = await res.json();
+                                  toast.error(data.error || t('bulk_delete_failed', 'Failed to delete timesheets'));
+                                }
+                              } catch (e) {
+                                toast.error(t('bulk_delete_failed', 'Failed to delete timesheets'));
+                              } finally {
+                                setBulkProcessing(false);
+                                setShowBulkDeleteDialog(false);
+                              }
+                            }}
+                            disabled={bulkProcessing}
+                          >
+                            {bulkProcessing ? (
+                              <>
+                                <ArrowPathIcon className="mr-2 h-4 w-4 animate-spin" />
+                                {t('btn_processing')}
+                              </>
+                            ) : (
+                              <>
+                                <TrashIcon className="mr-2 h-4 w-4" />
+                                {t('btn_delete_selected', 'Delete Selected')}
+                              </>
+                            )}
+                          </Button>
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </>
               )}
             </div>
           </CardHeader>

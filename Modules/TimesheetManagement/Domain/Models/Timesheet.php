@@ -394,11 +394,15 @@ class Timesheet extends Model
     {
         $query = self::where('employee_id', $employeeId)
             ->whereDate('date', $date);
-
         if ($excludeId) {
             $query->where('id', '!=', $excludeId);
         }
-        // Ignore project_id and rental_id for overlap check
+        if ($projectId !== null) {
+            $query->where('project_id', $projectId);
+        }
+        if ($rentalId !== null) {
+            $query->where('rental_id', $rentalId);
+        }
         return $query->exists();
     }
 
