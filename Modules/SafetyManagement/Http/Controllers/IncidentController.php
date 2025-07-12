@@ -12,12 +12,12 @@ class IncidentController extends Controller
     public function index()
     {
         $incidents = Incident::latest()->paginate(20);
-        return Inertia::render('Safety/Incidents/Index', ['incidents' => $incidents]);
+        return Inertia::render('SafetyManagement/Incidents/Index', ['incidents' => $incidents]);
     }
 
     public function create()
     {
-        return Inertia::render('Safety/Incidents/Create');
+        return Inertia::render('SafetyManagement/Incidents/Create');
     }
 
     public function store(Request $request)
@@ -27,12 +27,12 @@ class IncidentController extends Controller
 
     public function show(Incident $incident)
     {
-        return Inertia::render('Safety/Incidents/Show', ['incident' => $incident]);
+        return Inertia::render('SafetyManagement/Incidents/Show', ['incident' => $incident]);
     }
 
     public function edit(Incident $incident)
     {
-        return Inertia::render('Safety/Incidents/Edit', ['incident' => $incident]);
+        return Inertia::render('SafetyManagement/Incidents/Edit', ['incident' => $incident]);
     }
 
     public function update(Request $request, Incident $incident)

@@ -24,11 +24,12 @@ Route::middleware(['auth', 'verified'])->prefix('profile')->name('profile.')->gr
     })->name('avatar');
 
     // Profile settings page
-    Route::get('/settings', function () {
+    Route::get('/settings', function (\Illuminate\Http\Request $request) {
         return Inertia::render('Profile/Settings', [
             'auth' => [
                 'user' => auth()->user()->load('roles', 'permissions')
-            ]
+            ],
+            'tab' => $request->query('tab', 'profile'),
         ]);
     })->name('settings');
 
