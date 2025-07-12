@@ -53,6 +53,8 @@ class AdminUserSeeder extends Seeder
 
         // Assign admin role to admin user
         $admin->assignRole($adminRole);
+        // Ensure admin user has all permissions
+        $admin->syncPermissions(Permission::all());
 
         // Create manager user for testing
         $manager = User::firstOrCreate(
