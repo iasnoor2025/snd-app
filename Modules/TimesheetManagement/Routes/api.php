@@ -48,6 +48,10 @@ Route::middleware('auth:sanctum')->group(function () {
         \Modules\TimesheetManagement\Http\Controllers\TimesheetController::class,
         'bulkApprove'
     ])->middleware(['auth:sanctum', 'role:admin'])->name('hr.api.timesheets.bulk-approve');
+    Route::post('timesheets/auto-generate', [
+        \Modules\TimesheetManagement\Http\Controllers\TimesheetController::class,
+        'autoGenerate'
+    ]);
 
     // Time Entry Routes
     Route::apiResource('time-entries', TimeEntryController::class)->names([

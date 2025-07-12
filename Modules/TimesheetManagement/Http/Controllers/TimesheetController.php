@@ -14,6 +14,7 @@ use Modules\TimesheetManagement\Domain\Models\Timesheet;
 use Modules\EmployeeManagement\Domain\Models\Employee;
 use Modules\ProjectManagement\Domain\Models\Project;
 use Modules\RentalManagement\Domain\Models\Rental;
+use Illuminate\Support\Facades\Artisan;
 
 class TimesheetController extends Controller
 {
@@ -1567,6 +1568,19 @@ class TimesheetController extends Controller
             return response()->json(['success' => false, 'error' => 'Some timesheets failed to update', 'errors' => $errors, 'updated' => $updated]);
         }
         return response()->json(['success' => true, 'updated' => $updated]);
+    }
+
+    /**
+     * Trigger the auto-generation of timesheets via API.
+     */
+    public function autoGenerate(Request $request)
+    {
+        try {
+            Artisan::call('timesheets:auto-generate');
+            return response()->json(['success' => true, 'message' => 'Auto-generated timesheets successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to auto-generate timesheets: ' . $e->getMessage()], 500);
+        }
     }
 }
 
