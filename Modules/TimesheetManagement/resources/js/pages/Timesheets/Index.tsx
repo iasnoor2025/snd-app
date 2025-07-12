@@ -378,6 +378,24 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
               >
                 {t('btn_create_missing_timesheets', 'Create Missing Timesheets')}
               </Button>
+              <Button
+                variant="default"
+                onClick={async () => {
+                  try {
+                    const res = await fetch('/api/timesheets/auto-generate', { method: 'POST' });
+                    if (res.ok) {
+                      toast.success('Auto-generated timesheets successfully');
+                      reloadPage();
+                    } else {
+                      toast.error('Failed to auto-generate timesheets');
+                    }
+                  } catch (e) {
+                    toast.error('Failed to auto-generate timesheets');
+                  }
+                }}
+              >
+                Auto Generate Timesheets
+              </Button>
 
               {canApproveTimesheet && selectedTimesheets.length > 0 && (
                 <AlertDialog open={showBulkApproveDialog} onOpenChange={setShowBulkApproveDialog}>
