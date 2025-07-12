@@ -10,6 +10,6 @@ class EquipmentManagementDatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(EquipmentSeeder::class);
+        // $this->call(EquipmentSeeder::class);
     }
 }

@@ -8,7 +8,9 @@ return new class extends Migration {
     public function up()
     {
         Schema::table('equipment', function (Blueprint $table) {
-            $table->string('erpnext_id')->nullable()->unique()->after('id');
+            if (!Schema::hasColumn('equipment', 'erpnext_id')) {
+                $table->string('erpnext_id')->nullable()->unique()->after('id');
+            }
         });
     }
 

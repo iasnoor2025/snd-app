@@ -8,7 +8,9 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('employees', function (Blueprint $table) {
-            $table->dropColumn('advance_payment');
+            if (Schema::hasColumn('employees', 'advance_payment')) {
+                $table->dropColumn('advance_payment');
+            }
         });
     }
 

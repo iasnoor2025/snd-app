@@ -11,12 +11,16 @@ class PayrollDeductionSeeder extends Seeder
 {
     public function run(): void
     {
-        // Create a payroll and a deduction rule first
-        $payroll = Payroll::factory()->create();
-        $rule = DeductionRule::factory()->create();
+        // Only create payroll if there is at least one employee
+        $employee = \Modules\EmployeeManagement\Domain\Models\Employee::first();
+        if (!$employee) {
+            return; // No employees, skip seeding
+        }
+        $payroll = \Modules\PayrollManagement\Domain\Models\Payroll::factory()->create(['employee_id' => $employee->id]);
+        $rule = \Modules\PayrollManagement\Models\DeductionRule::factory()->create();
 
         // Create PayrollDeductions linked to the created payroll and rule
-        PayrollDeduction::factory()
+        \Modules\PayrollManagement\Models\PayrollDeduction::factory()
             ->count(3)
             ->create([
                 'payroll_id' => $payroll->id,

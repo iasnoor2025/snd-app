@@ -81,7 +81,6 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call([
-            RentalDataSeeder::class,
         ]);
     }
 }

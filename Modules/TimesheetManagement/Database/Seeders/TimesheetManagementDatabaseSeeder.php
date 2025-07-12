@@ -11,6 +11,6 @@ class TimesheetManagementDatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(TimesheetSeeder::class);
+        // $this->call(TimesheetSeeder::class);
     }
 }

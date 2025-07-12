@@ -583,6 +583,7 @@ class TimesheetController extends Controller
                 'employee' => [
                     'id' => $employee->id,
                     'name' => $employee->first_name . ' ' . $employee->last_name,
+                    'file_number' => $employee->file_number,
                 ],
                 'total_days' => $empTimesheets->count(),
                 'total_hours' => $empTimesheets->sum('hours_worked'),
@@ -662,6 +663,7 @@ class TimesheetController extends Controller
                     'employee' => [
                         'id' => $employee->id ?? null,
                         'name' => $employee ? ($employee->first_name . ' ' . $employee->last_name) : 'Unknown',
+                        'file_number' => $employee->file_number ?? null,
                     ],
                     'total_days' => $empTimesheets->count(),
                     'total_hours' => $empTimesheets->sum('hours_worked'),

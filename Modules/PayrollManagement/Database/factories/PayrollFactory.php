@@ -12,7 +12,7 @@ class PayrollFactory extends Factory
     public function definition(): array
     {
         return [
-            'employee_id' => 1, // Should be set in the seeder for real relationships
+            'employee_id' => null, // No default employee, prevents FK violation
             'month' => $this->faker->numberBetween(1, 12),
             'year' => $this->faker->year(),
             'base_salary' => $this->faker->randomFloat(2, 1000, 5000),
