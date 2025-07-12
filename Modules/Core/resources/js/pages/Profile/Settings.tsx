@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import React from 'react';
-import { Head, useForm } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import { AppLayout } from '@/Core';
 import { ProfileNav } from '../../components/profile-nav';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
@@ -31,17 +31,30 @@ import ActivityFeed from '../../components/dashboard/ActivityFeed';
 import { SmartAvatar } from '../../components/ui/smart-avatar';
 import AvatarUploader from '../../components/Avatar/AvatarUploader';
 import { Badge } from '../../components/ui/badge';
+import { Progress } from '../../components/ui/progress';
+import DeleteUser from '../../components/delete-user';
+import { Alert, AlertTitle, AlertDescription } from '../../components/ui/alert';
+import MfaSettings from '../../components/settings/MfaSettings';
+import { SiGoogle } from 'react-icons/si';
+
+// Fix ProfileSettingsProps user type
+type UserType = {
+    name: string;
+    email: string;
+    phone?: string;
+    department?: string;
+    email_verified_at: string | null;
+    roles?: { id: number; name: string }[];
+    avatar?: string;
+    address?: string;
+    birthday?: string;
+    timezone?: string;
+    locale?: string;
+};
 
 interface ProfileSettingsProps {
     auth: {
-        user: {
-            name: string;
-            email: string;
-            phone?: string;
-            department?: string;
-            email_verified_at: string | null;
-            roles?: { id: number; name: string }[];
-        };
+        user: UserType;
     };
     mustVerifyEmail?: boolean;
     status?: string;
@@ -68,7 +81,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     // Profile Information Form
-    const profileForm = useForm<ProfileForm>({
+    const [profileForm, setProfileForm] = useState<ProfileForm>({
         name: user.name || '',
         email: user.email || '',
         phone: user.phone || '',
@@ -76,7 +89,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
     });
 
     // Password Update Form
-    const passwordForm = useForm<PasswordForm>({
+    const [passwordForm, setPasswordForm] = useState<PasswordForm>({
         current_password: '',
         password: '',
         password_confirmation: '',
@@ -89,12 +102,29 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
 
     const handlePasswordSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        passwordForm.reset();
+        setPasswordForm({ current_password: '', password: '', password_confirmation: '' });
         toast.success('Password updated successfully!');
     };
 
     const renderProfileSection = () => {
         const [avatarUrl, setAvatarUrl] = useState(user.avatar || '');
+        const [address, setAddress] = useState(user.address || '');
+        const [birthday, setBirthday] = useState(user.birthday || '');
+        const [timezone, setTimezone] = useState(user.timezone || '');
+        const [locale, setLocale] = useState(user.locale || '');
+        const totalFields = 8;
+        const completedFields = [
+            profileForm.name,
+            profileForm.email,
+            profileForm.phone,
+            profileForm.department,
+            avatarUrl,
+            address,
+            birthday,
+            timezone,
+            locale
+        ].filter(Boolean).length;
+        const progressValue = Math.round((completedFields / totalFields) * 100);
         return (
             <Card>
                 <CardHeader>
@@ -127,6 +157,29 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                     <div className="mb-6">
                         <AvatarUploader user={{...user, avatar: avatarUrl}} onAvatarUpdate={setAvatarUrl} />
                     </div>
+                    <Card className="mb-6">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Shield className="h-5 w-5" />
+                                Social Accounts
+                            </CardTitle>
+                            <CardDescription>
+                                Link your account with social providers for easier login.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex gap-4">
+                                <Button variant="outline" className="flex items-center gap-2">
+                                    <SiGoogle className="h-5 w-5" />
+                                    Link Google
+                                </Button>
+                                <Button variant="outline" className="flex items-center gap-2">
+                                    <Shield className="h-5 w-5" />
+                                    Link Microsoft
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
                     <form onSubmit={handleProfileSubmit} className="space-y-6">
                         <div className="grid grid-cols-1 gap-4">
                             <div className="space-y-2">
@@ -134,8 +187,8 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                                 <Input
                                     id="name"
                                     type="text"
-                                    value={profileForm.data.name}
-                                    onChange={(e) => profileForm.setData('name', e.target.value)}
+                                    value={profileForm.name}
+                                    onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
                                     required
                                 />
                             </div>
@@ -145,8 +198,8 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                                 <Input
                                     id="email"
                                     type="email"
-                                    value={profileForm.data.email}
-                                    onChange={(e) => profileForm.setData('email', e.target.value)}
+                                    value={profileForm.email}
+                                    onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
                                     required
                                 />
                             </div>
@@ -156,8 +209,8 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                                 <Input
                                     id="phone"
                                     type="tel"
-                                    value={profileForm.data.phone}
-                                    onChange={(e) => profileForm.setData('phone', e.target.value)}
+                                    value={profileForm.phone}
+                                    onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
                                 />
                             </div>
 
@@ -166,9 +219,57 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                                 <Input
                                     id="department"
                                     type="text"
-                                    value={profileForm.data.department}
-                                    onChange={(e) => profileForm.setData('department', e.target.value)}
+                                    value={profileForm.department}
+                                    onChange={(e) => setProfileForm({ ...profileForm, department: e.target.value })}
                                 />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="address">Address</Label>
+                                <Input
+                                    id="address"
+                                    type="text"
+                                    value={address}
+                                    onChange={(e) => setAddress(e.target.value)}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="birthday">Birthday</Label>
+                                <Input
+                                    id="birthday"
+                                    type="date"
+                                    value={birthday}
+                                    onChange={(e) => setBirthday(e.target.value)}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="timezone">Timezone</Label>
+                                <select
+                                    id="timezone"
+                                    className="input"
+                                    value={timezone}
+                                    onChange={(e) => setTimezone(e.target.value)}
+                                >
+                                    <option value="">Select timezone</option>
+                                    <option value="UTC">UTC</option>
+                                    <option value="America/New_York">America/New_York</option>
+                                    <option value="Europe/London">Europe/London</option>
+                                    <option value="Asia/Dubai">Asia/Dubai</option>
+                                    <option value="Asia/Tokyo">Asia/Tokyo</option>
+                                </select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="locale">Locale</Label>
+                                <select
+                                    id="locale"
+                                    className="input"
+                                    value={locale}
+                                    onChange={(e) => setLocale(e.target.value)}
+                                >
+                                    <option value="">Select locale</option>
+                                    <option value="en">English</option>
+                                    <option value="ar">Arabic</option>
+                                    <option value="he">Hebrew</option>
+                                </select>
                             </div>
                         </div>
 
@@ -193,14 +294,30 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                         <div className="flex justify-end">
                             <Button
                                 type="submit"
-                                disabled={profileForm.processing}
+                                disabled={false} // No processing state for now
                                 className="flex items-center gap-2"
                             >
                                 <Save className="h-4 w-4" />
-                                {profileForm.processing ? 'Saving...' : 'Save Changes'}
+                                Save Changes
                             </Button>
                         </div>
                     </form>
+                    <Card className="mt-6">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <AlertTriangle className="h-5 w-5 text-destructive" />
+                                Deactivate Account
+                            </CardTitle>
+                            <CardDescription>
+                                Temporarily deactivate your account. You can reactivate by logging in again.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Button variant="destructive" onClick={() => toast('Account deactivation requested (not implemented)')}>
+                                Deactivate Account
+                            </Button>
+                        </CardContent>
+                    </Card>
                 </CardContent>
             </Card>
         );
@@ -208,6 +325,47 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
 
     const renderSecuritySection = () => (
         <div className="space-y-6">
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <AlertTriangle className="h-5 w-5 text-warning" />
+                        Security Alerts
+                    </CardTitle>
+                    <CardDescription>
+                        Recent security events and alerts for your account.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-4">
+                        <Alert variant="default">
+                            <AlertTitle>New device login detected</AlertTitle>
+                            <AlertDescription>
+                                Your account was accessed from a new device on 2024-06-01 14:23 UTC (IP: 192.168.1.10).
+                            </AlertDescription>
+                        </Alert>
+                        <Alert variant="destructive">
+                            <AlertTitle>Password changed</AlertTitle>
+                            <AlertDescription>
+                                Your password was changed on 2024-05-30 09:12 UTC. If this wasn't you, please contact support immediately.
+                            </AlertDescription>
+                        </Alert>
+                    </div>
+                </CardContent>
+            </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Shield className="h-5 w-5" />
+                        Multi-Factor Authentication (MFA)
+                    </CardTitle>
+                    <CardDescription>
+                        Add an extra layer of security to your account by enabling MFA.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <MfaSettings isEnabled={false} />
+                </CardContent>
+            </Card>
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -227,8 +385,8 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                                     <Input
                                         id="current_password"
                                         type={showCurrentPassword ? "text" : "password"}
-                                        value={passwordForm.data.current_password}
-                                        onChange={(e) => passwordForm.setData('current_password', e.target.value)}
+                                        value={passwordForm.current_password}
+                                        onChange={(e) => setPasswordForm({ ...passwordForm, current_password: e.target.value })}
                                         required
                                     />
                                     <button
@@ -251,8 +409,8 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                                     <Input
                                         id="password"
                                         type={showNewPassword ? "text" : "password"}
-                                        value={passwordForm.data.password}
-                                        onChange={(e) => passwordForm.setData('password', e.target.value)}
+                                        value={passwordForm.password}
+                                        onChange={(e) => setPasswordForm({ ...passwordForm, password: e.target.value })}
                                         required
                                     />
                                     <button
@@ -275,8 +433,8 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                                     <Input
                                         id="password_confirmation"
                                         type={showConfirmPassword ? "text" : "password"}
-                                        value={passwordForm.data.password_confirmation}
-                                        onChange={(e) => passwordForm.setData('password_confirmation', e.target.value)}
+                                        value={passwordForm.password_confirmation}
+                                        onChange={(e) => setPasswordForm({ ...passwordForm, password_confirmation: e.target.value })}
                                         required
                                     />
                                     <button
@@ -297,11 +455,11 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                         <div className="flex justify-end">
                             <Button
                                 type="submit"
-                                disabled={passwordForm.processing}
+                                disabled={false} // No processing state for now
                                 className="flex items-center gap-2"
                             >
                                 <Save className="h-4 w-4" />
-                                {passwordForm.processing ? 'Saving...' : 'Save Changes'}
+                                Save Changes
                             </Button>
                         </div>
                     </form>
@@ -309,6 +467,45 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
             </Card>
             <ApiKeySettings initialKeys={[]} />
             <DeviceSessions />
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Activity className="h-5 w-5" />
+                        Login History
+                    </CardTitle>
+                    <CardDescription>
+                        View your recent login activity, including device and location information.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full text-sm">
+                            <thead>
+                                <tr>
+                                    <th className="px-2 py-1 text-left">Date</th>
+                                    <th className="px-2 py-1 text-left">Device</th>
+                                    <th className="px-2 py-1 text-left">Location</th>
+                                    <th className="px-2 py-1 text-left">IP Address</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td className="px-2 py-1">2024-06-01 14:23 UTC</td>
+                                    <td className="px-2 py-1">Chrome on Windows</td>
+                                    <td className="px-2 py-1">New York, USA</td>
+                                    <td className="px-2 py-1">192.168.1.10</td>
+                                </tr>
+                                <tr>
+                                    <td className="px-2 py-1">2024-05-30 09:12 UTC</td>
+                                    <td className="px-2 py-1">Safari on iPhone</td>
+                                    <td className="px-2 py-1">San Francisco, USA</td>
+                                    <td className="px-2 py-1">192.168.1.11</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     );
 
@@ -378,15 +575,15 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                     <div className="space-y-4">
                         <div className="flex items-center justify-between">
                             <Label>Email Notifications</Label>
-                            <Switch checked={!!settings?.email_notifications} onCheckedChange={v => setSettings(s => ({...s, email_notifications: v}))} />
+                            <Switch checked={!!settings?.email_notifications} onCheckedChange={v => setSettings((s: typeof settings) => ({...s, email_notifications: v}))} />
                         </div>
                         <div className="flex items-center justify-between">
                             <Label>SMS Notifications</Label>
-                            <Switch checked={!!settings?.sms_notifications} onCheckedChange={v => setSettings(s => ({...s, sms_notifications: v}))} />
+                            <Switch checked={!!settings?.sms_notifications} onCheckedChange={v => setSettings((s: typeof settings) => ({...s, sms_notifications: v}))} />
                         </div>
                         <div className="flex items-center justify-between">
                             <Label>Push Notifications</Label>
-                            <Switch checked={!!settings?.push_notifications} onCheckedChange={v => setSettings(s => ({...s, push_notifications: v}))} />
+                            <Switch checked={!!settings?.push_notifications} onCheckedChange={v => setSettings((s: typeof settings) => ({...s, push_notifications: v}))} />
                         </div>
                         <div className="flex justify-end">
                             <Button onClick={handleSave} disabled={saving}>{saving ? 'Saving...' : 'Save Preferences'}</Button>
@@ -418,10 +615,24 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                         <Label>Export my data</Label>
                         <Button variant="outline" onClick={() => toast.success('Data export started!')}>Export</Button>
                     </div>
+                    <Card className="mb-4">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <AlertTriangle className="h-5 w-5 text-warning" />
+                                GDPR Data Export
+                            </CardTitle>
+                            <CardDescription>
+                                Download a copy of your personal data for GDPR compliance.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Button variant="secondary" onClick={() => toast.success('GDPR data export requested!')}>Request Data Export</Button>
+                        </CardContent>
+                    </Card>
                     <Separator />
                     <div className="flex items-center justify-between">
                         <Label className="text-red-600">Delete Account</Label>
-                        <Button variant="destructive" onClick={() => toast('Account deletion requested (not implemented)', {description: 'This is a placeholder.'})}>Delete</Button>
+                        <DeleteUser />
                     </div>
                 </div>
             </CardContent>
@@ -503,6 +714,8 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
 
     const renderContent = () => {
         switch (tab) {
+            case 'profile':
+                return renderProfileSection();
             case 'security':
                 return renderSecuritySection();
             case 'appearance':
@@ -520,6 +733,25 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
         }
     };
 
+    // Profile completion calculation
+    const [avatarUrl, setAvatarUrl] = useState(user.avatar || '');
+    const [address, setAddress] = useState(user.address || '');
+    const [birthday, setBirthday] = useState(user.birthday || '');
+    const [timezone, setTimezone] = useState(user.timezone || '');
+    const [locale, setLocale] = useState(user.locale || '');
+    const totalFields = 8;
+    const completedFields = [
+        user.name,
+        user.email,
+        user.phone,
+        user.department,
+        avatarUrl,
+        address,
+        birthday,
+        timezone,
+        locale
+    ].filter(Boolean).length;
+    const progressValue = Math.round((completedFields / totalFields) * 100);
     return (
         <AppLayout
             title="Profile Settings"
@@ -529,7 +761,39 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
             ]}
         >
             <div className="py-6">
-                <div className="flex flex-col gap-8 md:flex-row">
+                <div className="mb-6">
+                    <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-medium text-muted-foreground">Profile Completion</span>
+                        <span className="text-xs font-medium text-muted-foreground">{progressValue}%</span>
+                    </div>
+                    <Progress value={progressValue} max={100} />
+                </div>
+                <Card className="mb-6">
+                    <CardHeader>
+                        <CardTitle className="text-sm">Completion Checklist</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <ul className="space-y-1">
+                            {[
+                                { label: 'Full Name', value: user.name },
+                                { label: 'Email', value: user.email },
+                                { label: 'Phone', value: user.phone },
+                                { label: 'Department', value: user.department },
+                                { label: 'Avatar', value: avatarUrl },
+                                { label: 'Address', value: address },
+                                { label: 'Birthday', value: birthday },
+                                { label: 'Timezone', value: timezone },
+                                { label: 'Locale', value: locale },
+                            ].map((item) => (
+                                <li key={item.label} className="flex items-center gap-2">
+                                    <Check className={`h-4 w-4 ${item.value ? 'text-green-600' : 'text-gray-300'}`} />
+                                    <span className={item.value ? '' : 'text-muted-foreground'}>{item.label}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </CardContent>
+                </Card>
+                <div className="flex flex-col md:flex-row gap-8">
                     <aside className="md:w-1/4">
                         <ProfileNav />
                     </aside>
