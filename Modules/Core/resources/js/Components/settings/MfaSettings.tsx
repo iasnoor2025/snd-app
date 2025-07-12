@@ -23,6 +23,8 @@ export default function MfaSettings({ isEnabled: initialEnabled }: MfaSettingsPr
     } | null>(null);
     const [verificationCode, setVerificationCode] = useState('');
 
+    const getCsrfToken = () => document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
     const handleToggle = async () => {
         if (isEnabled) {
             // Disable MFA
@@ -32,6 +34,7 @@ export default function MfaSettings({ isEnabled: initialEnabled }: MfaSettingsPr
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': getCsrfToken(),
                     },
                 });
                 const data = await response.json();
@@ -52,6 +55,7 @@ export default function MfaSettings({ isEnabled: initialEnabled }: MfaSettingsPr
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': getCsrfToken(),
                     },
                 });
                 const data = await response.json();
@@ -74,6 +78,7 @@ export default function MfaSettings({ isEnabled: initialEnabled }: MfaSettingsPr
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': getCsrfToken(),
                 },
                 body: JSON.stringify({ code: verificationCode }),
             });

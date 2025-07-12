@@ -35,7 +35,9 @@ import { Progress } from '../../components/ui/progress';
 import DeleteUser from '../../components/delete-user';
 import { Alert, AlertTitle, AlertDescription } from '../../components/ui/alert';
 import MfaSettings from '../../components/settings/MfaSettings';
-import { SiGoogle } from 'react-icons/si';
+import { SiGoogle, SiWhatsapp } from 'react-icons/si';
+import { FaMicrosoft } from 'react-icons/fa';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../../components/ui/dialog';
 
 // Fix ProfileSettingsProps user type
 type UserType = {
@@ -79,6 +81,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
     const [showCurrentPassword, setShowCurrentPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [showWhatsappWizard, setShowWhatsappWizard] = useState(false);
 
     // Profile Information Form
     const [profileForm, setProfileForm] = useState<ProfileForm>({
@@ -95,9 +98,47 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
         password_confirmation: '',
     });
 
-    const handleProfileSubmit = (e: React.FormEvent) => {
+    const [profileSaving, setProfileSaving] = useState(false);
+    const [profileError, setProfileError] = useState<string|null>(null);
+    const [profileSuccess, setProfileSuccess] = useState(false);
+
+    const handleProfileSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        toast.success('Profile updated successfully!');
+        setProfileSaving(true);
+        setProfileError(null);
+        setProfileSuccess(false);
+        try {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+            const res = await fetch('/profile', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+                body: JSON.stringify({
+                    name: profileForm.name,
+                    email: profileForm.email,
+                    phone: profileForm.phone,
+                    department: profileForm.department,
+                    address,
+                    birthday,
+                    timezone,
+                    locale,
+                }),
+            });
+            const data = await res.json();
+            if (data.success || res.ok) {
+                setProfileSuccess(true);
+                toast.success('Profile updated successfully!');
+            } else {
+                setProfileError(data.message || 'Failed to update profile.');
+            }
+        } catch (err) {
+            setProfileError('Failed to update profile.');
+        } finally {
+            setProfileSaving(false);
+        }
     };
 
     const handlePasswordSubmit = (e: React.FormEvent) => {
@@ -169,15 +210,35 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                         </CardHeader>
                         <CardContent>
                             <div className="flex gap-4">
-                                <Button variant="outline" className="flex items-center gap-2">
+                                <Button variant="outline" className="flex items-center gap-2" onClick={() => window.location.href = '/auth/redirect/google'}>
                                     <SiGoogle className="h-5 w-5" />
                                     Link Google
                                 </Button>
-                                <Button variant="outline" className="flex items-center gap-2">
-                                    <Shield className="h-5 w-5" />
+                                <Button variant="outline" className="flex items-center gap-2" onClick={() => window.location.href = '/auth/redirect/microsoft'}>
+                                    <FaMicrosoft className="h-5 w-5" />
                                     Link Microsoft
                                 </Button>
+                                <Button variant="outline" className="flex items-center gap-2" onClick={() => setShowWhatsappWizard(true)}>
+                                    <SiWhatsapp className="h-5 w-5 text-green-600" />
+                                    Link WhatsApp
+                                </Button>
                             </div>
+                            <Dialog open={showWhatsappWizard} onOpenChange={setShowWhatsappWizard}>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>Link WhatsApp</DialogTitle>
+                                        <DialogDescription>
+                                            Connect your WhatsApp account for notifications and login. (Setup wizard coming soon)
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="py-4">
+                                        <p className="text-sm text-muted-foreground">WhatsApp integration setup wizard will be implemented here.</p>
+                                    </div>
+                                    <DialogFooter>
+                                        <Button onClick={() => setShowWhatsappWizard(false)}>Close</Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
                         </CardContent>
                     </Card>
                     <form onSubmit={handleProfileSubmit} className="space-y-6">
@@ -294,13 +355,31 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                         <div className="flex justify-end">
                             <Button
                                 type="submit"
-                                disabled={false} // No processing state for now
+                                disabled={profileSaving}
                                 className="flex items-center gap-2"
                             >
-                                <Save className="h-4 w-4" />
-                                Save Changes
+                                {profileSaving ? (
+                                    <>
+                                        <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Saving...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Save className="h-4 w-4" />
+                                        Save Changes
+                                    </>
+                                )}
                             </Button>
                         </div>
+                        {profileError && (
+                            <div className="text-center text-destructive text-sm mt-2">{profileError}</div>
+                        )}
+                        {profileSuccess && (
+                            <div className="text-center text-green-600 text-sm mt-2">Profile updated successfully!</div>
+                        )}
                     </form>
                     <Card className="mt-6">
                         <CardHeader>
@@ -538,30 +617,72 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
         const [settings, setSettings] = useState<any>(null);
         const [loading, setLoading] = useState(true);
         const [saving, setSaving] = useState(false);
+        const [error, setError] = useState<string | null>(null);
+        const [success, setSuccess] = useState(false);
+
+        const defaultNotificationSettings = {
+            email_notifications: true,
+            sms_notifications: false,
+            push_notifications: true,
+            notification_frequency: 'immediate',
+            notification_types: [
+                'rental_reminders',
+                'payment_due',
+                'equipment_maintenance',
+                'project_updates',
+                'employee_updates',
+            ],
+        };
 
         useEffect(() => {
-            fetch('/api/settings/notifications')
+            setLoading(true);
+            setError(null);
+            fetch('/api/settings/notifications', {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                },
+            })
                 .then(res => res.json())
                 .then(data => {
-                    setSettings(data.data);
+                    setSettings(data.data && Object.keys(data.data).length > 0 ? data.data : defaultNotificationSettings);
+                    setLoading(false);
+                })
+                .catch(() => {
+                    setSettings(defaultNotificationSettings);
+                    setError('Failed to load notification settings.');
                     setLoading(false);
                 });
         }, []);
 
         const handleSave = async () => {
             setSaving(true);
-            await fetch('/api/settings/notifications', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(settings),
-            });
-            setSaving(false);
-            toast.success('Notification preferences saved!');
+            setError(null);
+            setSuccess(false);
+            try {
+                await fetch('/api/settings/notifications', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                    },
+                    body: JSON.stringify(settings),
+                });
+                setSuccess(true);
+                toast.success('Notification preferences saved!');
+            } catch {
+                setError('Failed to save notification settings.');
+            } finally {
+                setSaving(false);
+            }
         };
 
-        if (loading) return <div>Loading...</div>;
+        if (loading) return <div role="status" aria-live="polite" className="py-8 text-center text-muted-foreground">Loading notification settings...</div>;
+        if (error) return <div role="alert" className="py-8 text-center text-destructive">{error}</div>;
+        if (!settings) return <div className="py-8 text-center text-muted-foreground">No notification settings found.</div>;
         return (
-            <Card>
+            <Card aria-label="Notification Preferences">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Bell className="h-5 w-5" />
@@ -585,7 +706,9 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                             <Label>Push Notifications</Label>
                             <Switch checked={!!settings?.push_notifications} onCheckedChange={v => setSettings((s: typeof settings) => ({...s, push_notifications: v}))} />
                         </div>
-                        <div className="flex justify-end">
+                        <div className="flex justify-end gap-2">
+                            {error && <span className="text-destructive text-xs">{error}</span>}
+                            {success && <span className="text-green-600 text-xs">Saved!</span>}
                             <Button onClick={handleSave} disabled={saving}>{saving ? 'Saving...' : 'Save Preferences'}</Button>
                         </div>
                     </div>
@@ -639,63 +762,32 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
         </Card>
     );
 
-    const renderBillingSection = () => {
-        const [invoices, setInvoices] = useState<any[]>([]);
-        const [loading, setLoading] = useState(true);
-        useEffect(() => {
-            fetch('/api/invoices')
-                .then(res => res.json())
-                .then(data => {
-                    setInvoices(data.data || []);
-                    setLoading(false);
-                });
-        }, []);
-        return (
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <CreditCard className="h-5 w-5" />
-                        Billing
-                    </CardTitle>
-                    <CardDescription>
-                        Manage your billing information, payment methods, and invoices.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    {loading ? <div>Loading...</div> : (
-                        <div className="space-y-4">
-                            {invoices.length === 0 ? <div>No invoices found.</div> : (
-                                <ul className="space-y-2">
-                                    {invoices.map(inv => (
-                                        <li key={inv.id} className="flex justify-between border-b pb-2">
-                                            <span>#{inv.invoice_number} - {inv.status}</span>
-                                            <Button variant="outline" size="sm" asChild>
-                                                <a href={`/invoices/${inv.id}`}>View</a>
-                                            </Button>
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
-        );
-    };
-
     const renderActivitySection = () => {
         const [activities, setActivities] = useState<any[]>([]);
         const [loading, setLoading] = useState(true);
+        const [error, setError] = useState<string | null>(null);
+        const [success, setSuccess] = useState(false);
+
         useEffect(() => {
+            setLoading(true);
+            setError(null);
             fetch('/api/activity-log')
                 .then(res => res.json())
                 .then(data => {
                     setActivities(data.data || []);
                     setLoading(false);
+                })
+                .catch(() => {
+                    setError('Failed to load activity log.');
+                    setLoading(false);
                 });
         }, []);
+
+        if (loading) return <div role="status" aria-live="polite" className="py-8 text-center text-muted-foreground">Loading activity log...</div>;
+        if (error) return <div role="alert" className="py-8 text-center text-destructive">{error}</div>;
+        if (activities.length === 0) return <div className="py-8 text-center text-muted-foreground">No activity log found.</div>;
         return (
-            <Card>
+            <Card aria-label="Activity Log">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Activity className="h-5 w-5" />
@@ -724,8 +816,6 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                 return renderNotificationsSection();
             case 'privacy':
                 return renderPrivacySection();
-            case 'billing':
-                return renderBillingSection();
             case 'activity':
                 return renderActivitySection();
             default:
