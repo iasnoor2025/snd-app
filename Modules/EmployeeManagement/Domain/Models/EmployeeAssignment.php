@@ -23,6 +23,7 @@ class EmployeeAssignment extends Model
     protected $fillable = [
         'employee_id',
         'type',
+        'name',
         'status',
         'location',
         'start_date',

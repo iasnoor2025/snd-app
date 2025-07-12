@@ -86,6 +86,9 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
 
     // New employee summary API endpoint
     Route::get('employees/summary', [EmployeeController::class, 'employeeSummary']);
+
+    // Manual assignment creation
+    Route::post('employees/{employee}/assignments', [\Modules\EmployeeManagement\Http\Controllers\Api\EmployeeAssignmentController::class, 'store']);
 });
 
 // Public API endpoints - no authentication required

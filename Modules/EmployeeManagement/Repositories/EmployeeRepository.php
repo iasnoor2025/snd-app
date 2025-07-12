@@ -94,6 +94,15 @@ class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInt
             ->get()
             ->toArray();
     }
+
+    public function findWith(array $relations, $id)
+    {
+        // Validate ID is numeric before querying
+        if (!is_numeric($id)) {
+            return null;
+        }
+        return $this->model->with($relations)->find($id);
+    }
 }
 
 

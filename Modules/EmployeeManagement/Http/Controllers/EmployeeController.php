@@ -476,6 +476,57 @@ class EmployeeController extends Controller
 
         return redirect()->back()->with('success', 'Employee access restrictions updated successfully.');
     }
+
+    /**
+     * Directly assign a manual assignment to an employee (no API, for admin use)
+     */
+    public function assignManualAssignment(Request $request, Employee $employee)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'type' => 'required|string|max:50',
+            'status' => 'required|string|max:50',
+            'start_date' => 'required|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'location' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
+            'assigned_by_id' => 'nullable|integer|exists:users,id',
+            'project_id' => 'nullable|integer|exists:projects,id',
+            'rental_id' => 'nullable|integer|exists:rentals,id',
+        ]);
+
+        $assignment = new \Modules\EmployeeManagement\Domain\Models\EmployeeAssignment($validated);
+        $assignment->employee_id = $employee->id;
+        $assignment->save();
+
+        return redirect()->back()->with('success', 'Manual assignment created successfully.');
+    }
+
+    /**
+     * Show the form for editing an assignment for an employee.
+     */
+    public function editAssignment(Employee $employee, $assignmentId)
+    {
+        $assignment = $employee->assignments()->findOrFail($assignmentId);
+        // For now, just return a stub Inertia page with assignment and employee
+        return inertia('Employees/EditAssignment', [
+            'employee' => $employee,
+            'assignment' => $assignment,
+        ]);
+    }
+
+    /**
+     * Delete an assignment for an employee.
+     */
+    public function destroyAssignment(Employee $employee, $assignmentId)
+    {
+        $assignment = $employee->assignments()->findOrFail($assignmentId);
+        $assignment->delete();
+        if (request()->wantsJson() || request()->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Assignment deleted successfully.']);
+        }
+        return redirect()->back()->with('success', 'Assignment deleted successfully.');
+    }
 }
 
 

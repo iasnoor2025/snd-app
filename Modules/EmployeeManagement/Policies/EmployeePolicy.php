@@ -16,9 +16,8 @@ class EmployeePolicy
      */
     public function view(User $user, Employee $employee): bool
     {
-        // Allow all authenticated users to view any employee
-        // return true;
-        return $user->hasPermissionTo('employees.view');
+        return true;
+        // return $user->hasPermissionTo('employees.view');
     }
 
 

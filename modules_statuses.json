@@ -14,5 +14,6 @@
     "CustomerManagement": true,
     "Core": true,
     "AuditCompliance": true,
-    "API": true
+    "API": true,
+    "SafetyManagement": true
 }

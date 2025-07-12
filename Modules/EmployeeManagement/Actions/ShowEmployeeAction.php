@@ -124,40 +124,40 @@ class ShowEmployeeAction
             // 1. EmployeeAssignment records
             if (class_exists('Modules\\EmployeeManagement\\Domain\\Models\\EmployeeAssignment')) {
                 $assignmentList = array_merge($assignmentList, EmployeeAssignment::withTrashed()->with(['project', 'rental', 'assignedBy'])
-                    ->where('employee_id', $employee->id)
-                    ->orderBy('created_at', 'desc')
-                    ->get()
-                    ->map(function ($assignment) {
-                        return [
-                            'id' => $assignment->id,
-                            'type' => $assignment->type,
-                            'status' => $assignment->status,
-                            'location' => $assignment->location,
-                            'location_name' => $assignment->location_name,
-                            'start_date' => $assignment->start_date ? $assignment->start_date->toDateString() : null,
-                            'end_date' => $assignment->end_date ? $assignment->end_date->toDateString() : null,
-                            'notes' => $assignment->notes,
-                            'assigned_by_id' => $assignment->assigned_by_id,
-                            'project_id' => $assignment->project_id,
-                            'rental_id' => $assignment->rental_id,
-                            'deleted_at' => $assignment->deleted_at,
-                            'title' => $assignment->project ? $assignment->project->name : ($assignment->rental ? $assignment->rental->project_name : ucfirst($assignment->type)),
-                            'description' => $assignment->notes ?? ($assignment->project ? $assignment->project->description : ($assignment->rental ? $assignment->rental->description : '')),
-                            'project' => $assignment->project ? [
-                                'id' => $assignment->project->id,
-                                'name' => $assignment->project->name,
-                            ] : null,
-                            'rental' => $assignment->rental ? [
-                                'id' => $assignment->rental->id,
-                                'project_name' => $assignment->rental->project_name,
+                        ->where('employee_id', $employee->id)
+                        ->orderBy('created_at', 'desc')
+                        ->get()
+                        ->map(function ($assignment) {
+                            return [
+                                'id' => $assignment->id,
+                                'type' => $assignment->type,
+                                'status' => $assignment->status,
+                                'location' => $assignment->location,
+                                'location_name' => $assignment->location_name,
+                                'start_date' => $assignment->start_date ? $assignment->start_date->toDateString() : null,
+                                'end_date' => $assignment->end_date ? $assignment->end_date->toDateString() : null,
+                                'notes' => $assignment->notes,
+                                'assigned_by_id' => $assignment->assigned_by_id,
+                                'project_id' => $assignment->project_id,
+                                'rental_id' => $assignment->rental_id,
+                                'deleted_at' => $assignment->deleted_at,
+                                'title' => $assignment->project ? $assignment->project->name : ($assignment->rental ? $assignment->rental->project_name : ucfirst($assignment->type)),
+                                'description' => $assignment->notes ?? ($assignment->project ? $assignment->project->description : ($assignment->rental ? $assignment->rental->description : '')),
+                                'project' => $assignment->project ? [
+                                    'id' => $assignment->project->id,
+                                    'name' => $assignment->project->name,
+                                ] : null,
+                                'rental' => $assignment->rental ? [
+                                    'id' => $assignment->rental->id,
+                                    'project_name' => $assignment->rental->project_name,
                                 'rental_number' => $assignment->rental->rental_number ?? null,
-                            ] : null,
+                                ] : null,
                             'rental_number' => $assignment->rental ? $assignment->rental->rental_number ?? null : null,
-                            'assigned_by' => $assignment->assignedBy ? [
-                                'id' => $assignment->assignedBy->id,
-                                'name' => $assignment->assignedBy->name,
-                            ] : null,
-                        ];
+                                'assigned_by' => $assignment->assignedBy ? [
+                                    'id' => $assignment->assignedBy->id,
+                                    'name' => $assignment->assignedBy->name,
+                                ] : null,
+                            ];
                     })->toArray());
             }
 
@@ -232,7 +232,7 @@ class ShowEmployeeAction
                                 'id' => $ra->assignedBy->id,
                                 'name' => $ra->assignedBy->name,
                             ] : null,
-                        ];
+                ];
                     })->toArray());
             }
 

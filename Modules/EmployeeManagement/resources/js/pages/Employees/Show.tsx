@@ -469,6 +469,13 @@ export default function Show({
     notes: ''
   });
   const [isSubmittingManual, setIsSubmittingManual] = useState(false);
+  // Add state for editing assignment
+  const [isEditAssignmentDialogOpen, setIsEditAssignmentDialogOpen] = useState(false);
+  const [editAssignment, setEditAssignment] = useState<any>(null);
+  const [isSubmittingEdit, setIsSubmittingEdit] = useState(false);
+  // Add state for deleting assignment
+  const [isDeletingAssignment, setIsDeletingAssignment] = useState(false);
+  const [deleteAssignmentId, setDeleteAssignmentId] = useState<number|null>(null);
 
   // Early return if no valid employee data
   if (!employee || !employee.id) {
@@ -929,7 +936,8 @@ export default function Show({
   const handleManualAssignmentSubmit = async () => {
     setIsSubmittingManual(true);
     try {
-      await axios.post(`/employees/${employee.id}/assignments/manual`, {
+      await ensureSanctumCsrf();
+      await axios.post(`/api/v1/employees/${employee.id}/assignments`, {
         ...manualAssignment,
         type: 'manual'
       });
@@ -942,6 +950,17 @@ export default function Show({
       setIsSubmittingManual(false);
     }
   };
+
+  // Compute current assignment and history from assignments.data
+  const sortedAssignments = Array.isArray(assignments?.data)
+    ? [...assignments.data].sort((a, b) => {
+        const aDate = a.start_date ? new Date(a.start_date) : (a.created_at ? new Date(a.created_at) : new Date(0));
+        const bDate = b.start_date ? new Date(b.start_date) : (b.created_at ? new Date(b.created_at) : new Date(0));
+        return bDate.getTime() - aDate.getTime();
+      })
+    : [];
+  const currentAssignment = sortedAssignments.find(a => a.status === 'active');
+  const assignmentHistory = sortedAssignments.filter(a => !currentAssignment || a.id !== currentAssignment.id);
 
   return (
     <AppLayout title={employee ? `${employee.first_name || ''} ${employee.last_name || ''}` : 'Employee Details'} breadcrumbs={currentBreadcrumbs} requiredPermission="employees.view">
@@ -2064,7 +2083,7 @@ export default function Show({
 
           <TabsContent value="assignments" className="mt-6 space-y-6">
             {/* Add Manual Assignment Button: only if no current assignment */}
-            {hasPermission('employees.edit') && !assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id) && (
+            {hasPermission('employees.edit') && !currentAssignment && (
               <div className="mb-4 flex justify-end">
                 <Button onClick={() => setIsManualAssignmentDialogOpen(true)} variant="outline">
                   Add Manual Assignment
@@ -2076,16 +2095,53 @@ export default function Show({
                 <DialogHeader>
                   <DialogTitle>Add Manual Assignment</DialogTitle>
                 </DialogHeader>
-                <div className="space-y-4">
+                <form
+                  method="POST"
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    setIsSubmittingManual(true);
+                    try {
+                      await router.post(
+                        route('employees.assignManualAssignment', { employee: employee.id }),
+                        {
+                          name: manualAssignment.name,
+                          type: 'manual',
+                          status: 'active',
+                          start_date: manualAssignment.start_date,
+                          end_date: manualAssignment.end_date,
+                          location: manualAssignment.location,
+                          notes: manualAssignment.notes,
+                        },
+                        {
+                          onSuccess: () => {
+                            setIsManualAssignmentDialogOpen(false);
+                            setManualAssignment({ name: '', location: '', start_date: '', end_date: '', notes: '' });
+                            ToastService.success('Manual assignment created successfully.');
+                          },
+                          onError: (errors) => {
+                            ToastService.error('Failed to create manual assignment.');
+                          },
+                          preserveScroll: true,
+                        }
+                      );
+                    } finally {
+                      setIsSubmittingManual(false);
+                    }
+                  }}
+                  className="space-y-4"
+                >
                   <Input
                     placeholder="Assignment Name"
                     value={manualAssignment.name}
                     onChange={e => setManualAssignment({ ...manualAssignment, name: e.target.value })}
+                    name="name"
+                    required
                   />
                   <Input
                     placeholder="Location"
                     value={manualAssignment.location}
                     onChange={e => setManualAssignment({ ...manualAssignment, location: e.target.value })}
+                    name="location"
                   />
                   <div className="flex gap-2">
                     <Input
@@ -2093,67 +2149,61 @@ export default function Show({
                       placeholder="Start Date"
                       value={manualAssignment.start_date}
                       onChange={e => setManualAssignment({ ...manualAssignment, start_date: e.target.value })}
+                      name="start_date"
+                      required
                     />
                     <Input
                       type="date"
                       placeholder="End Date"
                       value={manualAssignment.end_date}
                       onChange={e => setManualAssignment({ ...manualAssignment, end_date: e.target.value })}
+                      name="end_date"
                     />
                   </div>
                   <Textarea
                     placeholder="Notes (optional)"
                     value={manualAssignment.notes}
                     onChange={e => setManualAssignment({ ...manualAssignment, notes: e.target.value })}
+                    name="notes"
                   />
-                </div>
-                <DialogFooter>
-                  <Button onClick={handleManualAssignmentSubmit} disabled={isSubmittingManual}>
-                    {isSubmittingManual ? 'Saving...' : 'Save Assignment'}
-                  </Button>
-                </DialogFooter>
+                  <DialogFooter>
+                    <Button type="submit" disabled={isSubmittingManual}>
+                      {isSubmittingManual ? 'Saving...' : 'Save Assignment'}
+                    </Button>
+                  </DialogFooter>
+                </form>
               </DialogContent>
             </Dialog>
             {/* Show only the current assignment as a card */}
-            {assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id) && (
+            {currentAssignment && (
               <div className="relative">
                 <Card className="mb-6 shadow-sm border border-gray-200">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-xl font-semibold">
-                      {(() => {
-                        const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
-                        return current?.name || current?.title || '-';
-                      })()}
+                      {currentAssignment.name || currentAssignment.title || '-'}
+                      {hasPermission('employees.edit') && (
+                        <Button size="sm" variant="outline" className="ml-2" onClick={() => { setEditAssignment(currentAssignment); setIsEditAssignmentDialogOpen(true); }}>
+                          <Edit className="h-4 w-4 mr-1 inline" /> Edit
+                        </Button>
+                      )}
+                      {hasPermission('admin') && (
+                        <Button size="sm" variant="destructive" className="ml-2" onClick={() => { setDeleteAssignmentId(currentAssignment.id); setIsDeletingAssignment(true); }}>
+                          <Trash2 className="h-4 w-4 mr-1 inline" /> Delete
+                        </Button>
+                      )}
                     </CardTitle>
                     <div className="flex flex-wrap items-center gap-3 mt-2">
                       {/* Type badge */}
-                      <Badge className="bg-blue-500 text-white capitalize">{(() => {
-                        const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
-                        return current?.type || 'assignment';
-                      })()}</Badge>
+                      <Badge className="bg-blue-500 text-white capitalize">{currentAssignment.type || 'assignment'}</Badge>
                       {/* Project or Rental # */}
                       <span className="text-xs text-muted-foreground">
-                        {(() => {
-                          const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
-                          if (!current) return '-';
-                          if (current.type === 'project') {
-                            return `Project: ${current.project?.name || '-'}`;
-                          }
-                          if (current.type === 'rental' || current.type === 'rental_item') {
-                            return `Rental #: ${current.rental?.rental_number || current.rental_number || '-'}`;
-                          }
-                          return '-';
-                        })()}
+                        {currentAssignment.type === 'project' && currentAssignment.project?.name ? `Project: ${currentAssignment.project.name}` :
+                          (currentAssignment.type === 'rental' || currentAssignment.type === 'rental_item') && (currentAssignment.rental?.rental_number || currentAssignment.rental_number) ? `Rental #: ${currentAssignment.rental?.rental_number || currentAssignment.rental_number}` :
+                          '-'}
                       </span>
                       {/* Status badge */}
-                      <Badge className={(() => {
-                        const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
-                        return current?.status === 'active' ? 'bg-green-500 text-white' : 'bg-gray-400 text-white';
-                      })()}>
-                        {(() => {
-                          const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
-                          return current?.status || 'active';
-                        })()}
+                      <Badge className={currentAssignment.status === 'active' ? 'bg-green-500 text-white' : 'bg-gray-400 text-white'}>
+                        {currentAssignment.status || 'active'}
                       </Badge>
                     </div>
                   </CardHeader>
@@ -2161,97 +2211,93 @@ export default function Show({
                     <div className="flex flex-col gap-1 mt-2">
                       {/* Location */}
                       <span className="text-sm text-muted-foreground">
-                        <strong>Location:</strong> {(() => {
-                          const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
-                          return current?.location || '-';
-                        })()}
+                        <strong>Location:</strong> {currentAssignment.location || '-'}
                       </span>
                       {/* Date range */}
                       <span className="text-sm text-muted-foreground">
-                        <strong>From:</strong> {(() => {
-                          const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
-                          const start = current?.start_date ? format(new Date(current.start_date), 'MMM d, yyyy') : '-';
-                          const end = current?.end_date ? format(new Date(current.end_date), 'MMM d, yyyy') : '';
-                          return end ? `${start} - ${end}` : start;
-                        })()}
+                        <strong>From:</strong> {currentAssignment.start_date ? format(new Date(currentAssignment.start_date), 'MMM d, yyyy') : '-'}
+                        {currentAssignment.end_date ? ` - ${format(new Date(currentAssignment.end_date), 'MMM d, yyyy')}` : ''}
                       </span>
                       {/* Today's date */}
                       <span className="text-sm text-muted-foreground">
                         <strong>To:</strong> {format(new Date(), 'MMM d, yyyy')}
                       </span>
                       {/* Equipment (if available) */}
-                      {(() => {
-                        const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
-                        if (current?.equipment) {
-                          return <span className="text-sm text-muted-foreground"><strong>Equipment:</strong> {current.equipment}</span>;
-                        }
-                        return null;
-                      })()}
+                      {currentAssignment.equipment && (
+                        <span className="text-sm text-muted-foreground"><strong>Equipment:</strong> {currentAssignment.equipment}</span>
+                      )}
                     </div>
                   </CardContent>
+                  {/* Admin Manage Assignment Button */}
+                  {hasPermission('admin') && (() => {
+                    let url = '';
+                    if (currentAssignment.type === 'project' && currentAssignment.project_id) {
+                      url = `/projects/${currentAssignment.project_id}/resources`;
+                    } else if ((currentAssignment.type === 'rental' || currentAssignment.type === 'rental_item') && currentAssignment.rental_id) {
+                      url = `https://snd-app.test/rentals/${currentAssignment.rental_id}`;
+                    }
+                    return url ? (
+                      <div className="absolute top-2 right-2">
+                        <Button asChild size="sm" variant="outline">
+                          <a href={url} target="_blank" rel="noopener noreferrer">Manage Assignment</a>
+                        </Button>
+                      </div>
+                    ) : null;
+                  })()}
                 </Card>
-                {/* Admin Manage Assignment Button */}
-                {hasPermission('admin') && (() => {
-                  const current = assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id);
-                  if (!current) return null;
-                  let url = '';
-                  if (current.type === 'project' && current.project_id) {
-                    url = `/projects/${current.project_id}/resources`;
-                  } else if ((current.type === 'rental' || current.type === 'rental_item') && current.rental_id) {
-                    url = `https://snd-app.test/rentals/${current.rental_id}`;
-                  }
-                  return url ? (
-                    <div className="absolute top-2 right-2">
-                      <Button asChild size="sm" variant="outline">
-                        <a href={url} target="_blank" rel="noopener noreferrer">Manage Assignment</a>
-                      </Button>
-                    </div>
-                  ) : null;
-                })()}
               </div>
             )}
             {/* Assignment History Section */}
             <div>
               <h3 className="text-lg font-semibold mb-2">Assignment History</h3>
-              {assignments?.data?.filter((a: any) => !employee.current_assignment || a.id !== employee.current_assignment.id)?.length > 0 ? (
-                <div className="overflow-x-auto">
-                  <table className="min-w-full bg-white border border-gray-200 rounded-md">
-                    <thead>
-                      <tr>
-                        <th className="px-4 py-2 text-left">Assignment Name</th>
-                        <th className="px-4 py-2 text-left">Type</th>
-                        <th className="px-4 py-2 text-left">Location</th>
-                        <th className="px-4 py-2 text-left">Project</th>
-                        <th className="px-4 py-2 text-left">Rental Number</th>
-                        <th className="px-4 py-2 text-left">Start Date</th>
-                        <th className="px-4 py-2 text-left">End Date</th>
-                        <th className="px-4 py-2 text-left">Status</th>
-                        <th className="px-4 py-2 text-left">Equipment</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {assignments?.data?.filter((a: any) => !employee.current_assignment || a.id !== employee.current_assignment.id).map((assignment: any) => (
-                        <tr key={assignment.id} className="border-t border-gray-100">
-                          <td className="px-4 py-2 font-medium">{assignment.name || assignment.title}</td>
-                          <td className="px-4 py-2">{assignment.type}</td>
-                          <td className="px-4 py-2">{assignment.location}</td>
-                          <td className="px-4 py-2">{assignment.project?.name || '-'}</td>
-                          <td className="px-4 py-2">{assignment.rental?.rental_number || assignment.rental_number || '-'}</td>
-                          <td className="px-4 py-2">{assignment.start_date ? format(new Date(assignment.start_date), 'MMM d, yyyy') : '-'}</td>
-                          <td className="px-4 py-2">{assignment.end_date ? format(new Date(assignment.end_date), 'MMM d, yyyy') : '-'}</td>
-                          <td className="px-4 py-2">
-                            <Badge className={assignment.status === 'active' ? 'bg-blue-500 text-white' : 'bg-gray-400 text-white'}>
-                              {assignment.status || 'past'}
-                            </Badge>
-                          </td>
-                          <td className="px-4 py-2">{assignment.equipment || '-'}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+              {assignmentHistory.length === 0 ? (
+                <div className="text-muted-foreground">No previous assignments found.</div>
               ) : (
-                <span className="text-muted-foreground text-sm">No assignment history found.</span>
+                <div className="space-y-2">
+                  {assignmentHistory.map((a) => (
+                    <Card key={a.id} className="border border-gray-200">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-base font-semibold">{a.name || a.title || '-'}
+                          {hasPermission('employees.edit') && (
+                            <Button size="sm" variant="outline" className="ml-2" onClick={() => { setEditAssignment(a); setIsEditAssignmentDialogOpen(true); }}>
+                              <Edit className="h-4 w-4 mr-1 inline" /> Edit
+                            </Button>
+                          )}
+                          {hasPermission('admin') && (
+                            <Button size="sm" variant="destructive" className="ml-2" onClick={() => { setDeleteAssignmentId(a.id); setIsDeletingAssignment(true); }}>
+                              <Trash2 className="h-4 w-4 mr-1 inline" /> Delete
+                            </Button>
+                          )}
+                        </CardTitle>
+                        <div className="flex flex-wrap items-center gap-3 mt-2">
+                          <Badge className="bg-blue-500 text-white capitalize">{a.type || 'assignment'}</Badge>
+                          <span className="text-xs text-muted-foreground">
+                            {a.type === 'project' && a.project?.name ? `Project: ${a.project.name}` :
+                              (a.type === 'rental' || a.type === 'rental_item') && (a.rental?.rental_number || a.rental_number) ? `Rental #: ${a.rental?.rental_number || a.rental_number}` :
+                              '-'}
+                          </span>
+                          <Badge className={a.status === 'active' ? 'bg-green-500 text-white' : 'bg-gray-400 text-white'}>
+                            {a.status || 'active'}
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <div className="flex flex-col gap-1 mt-2">
+                          <span className="text-sm text-muted-foreground">
+                            <strong>Location:</strong> {a.location || '-'}
+                          </span>
+                          <span className="text-sm text-muted-foreground">
+                            <strong>From:</strong> {a.start_date ? format(new Date(a.start_date), 'MMM d, yyyy') : '-'}
+                            {a.end_date ? ` - ${format(new Date(a.end_date), 'MMM d, yyyy')}` : ''}
+                          </span>
+                          {a.equipment && (
+                            <span className="text-sm text-muted-foreground"><strong>Equipment:</strong> {a.equipment}</span>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
               )}
             </div>
           </TabsContent>
@@ -3091,6 +3137,132 @@ export default function Show({
                     handleAdvanceDelete(selectedAdvance);
                   } else {
                     ToastService.error('No advance selected for deletion');
+                  }
+                }}
+              >
+                Delete
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Edit Assignment Dialog */}
+        <Dialog open={isEditAssignmentDialogOpen} onOpenChange={open => { setIsEditAssignmentDialogOpen(open); if (!open) setEditAssignment(null); }}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Assignment</DialogTitle>
+            </DialogHeader>
+            {editAssignment && (
+              <form
+                method="POST"
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  setIsSubmittingEdit(true);
+                  try {
+                    await router.post(
+                      route('employees.assignManualAssignment', { employee: employee.id }),
+                      {
+                        name: editAssignment.name,
+                        type: editAssignment.type || 'manual',
+                        status: editAssignment.status || 'active',
+                        start_date: editAssignment.start_date,
+                        end_date: editAssignment.end_date,
+                        location: editAssignment.location,
+                        notes: editAssignment.notes,
+                        assignment_id: editAssignment.id,
+                        _method: 'PUT',
+                      },
+                      {
+                        onSuccess: () => {
+                          setIsEditAssignmentDialogOpen(false);
+                          setEditAssignment(null);
+                          ToastService.success('Assignment updated successfully.');
+                        },
+                        onError: (errors) => {
+                          ToastService.error('Failed to update assignment.');
+                        },
+                        preserveScroll: true,
+                      }
+                    );
+                  } finally {
+                    setIsSubmittingEdit(false);
+                  }
+                }}
+                className="space-y-4"
+              >
+                <Input
+                  placeholder="Assignment Name"
+                  value={editAssignment.name}
+                  onChange={e => setEditAssignment({ ...editAssignment, name: e.target.value })}
+                  name="name"
+                  required
+                />
+                <Input
+                  placeholder="Location"
+                  value={editAssignment.location}
+                  onChange={e => setEditAssignment({ ...editAssignment, location: e.target.value })}
+                  name="location"
+                />
+                <div className="flex gap-2">
+                  <Input
+                    type="date"
+                    placeholder="Start Date"
+                    value={editAssignment.start_date}
+                    onChange={e => setEditAssignment({ ...editAssignment, start_date: e.target.value })}
+                    name="start_date"
+                    required
+                  />
+                  <Input
+                    type="date"
+                    placeholder="End Date"
+                    value={editAssignment.end_date}
+                    onChange={e => setEditAssignment({ ...editAssignment, end_date: e.target.value })}
+                    name="end_date"
+                  />
+                </div>
+                <Textarea
+                  placeholder="Notes (optional)"
+                  value={editAssignment.notes}
+                  onChange={e => setEditAssignment({ ...editAssignment, notes: e.target.value })}
+                  name="notes"
+                />
+                <DialogFooter>
+                  <Button type="submit" disabled={isSubmittingEdit}>
+                    {isSubmittingEdit ? 'Saving...' : 'Save Changes'}
+                  </Button>
+                </DialogFooter>
+              </form>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Delete Assignment Dialog */}
+        <Dialog open={isDeletingAssignment} onOpenChange={open => { setIsDeletingAssignment(open); if (!open) setDeleteAssignmentId(null); }}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Delete Assignment</DialogTitle>
+            </DialogHeader>
+            <div className="mb-4">Are you sure you want to delete this assignment?</div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsDeletingAssignment(false)}>Cancel</Button>
+              <Button
+                variant="destructive"
+                onClick={async () => {
+                  if (!deleteAssignmentId) return;
+                  try {
+                    await router.delete(route('employees.assignments.destroy', { employee: employee.id, assignment: deleteAssignmentId }), {
+                      onSuccess: () => {
+                        setIsDeletingAssignment(false);
+                        setDeleteAssignmentId(null);
+                        ToastService.success('Assignment deleted successfully.');
+                      },
+                      onError: () => {
+                        ToastService.error('Failed to delete assignment.');
+                      },
+                      preserveScroll: true,
+                    });
+                  } catch {
+                    ToastService.error('Failed to delete assignment.');
                   }
                 }}
               >

@@ -14,7 +14,7 @@ use Inertia\Inertia;
 // Public routes
 Route::get('/api/employees/simple-file-number', [EmployeeNumberController::class, 'generateUniqueFileNumber'])
     ->name('api.employees.simple-file-number');
-    
+
 // Public route for positions
 Route::get('/api/positions/public', [PositionController::class, 'publicIndex'])
     ->name('api.positions.public');
@@ -229,4 +229,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::post('/employees/{employee}/access-restrictions', [EmployeeController::class, 'updateAccessRestrictions'])
     ->name('employees.update-access-restrictions')
     ->middleware(['permission:employees.edit']);
+
+Route::middleware(['auth', 'permission:employees.edit'])->group(function () {
+    Route::post('/employees/{employee}/assign-manual-assignment', [EmployeeController::class, 'assignManualAssignment'])
+        ->name('employees.assignManualAssignment');
+    Route::get('/employees/{employee}/assignments/{assignment}/edit', [EmployeeController::class, 'editAssignment'])
+        ->name('employees.assignments.edit');
+    Route::delete('/employees/{employee}/assignments/{assignment}', [EmployeeController::class, 'destroyAssignment'])
+        ->name('employees.assignments.destroy');
+});
 
