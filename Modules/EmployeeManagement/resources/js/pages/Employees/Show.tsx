@@ -460,6 +460,15 @@ export default function Show({
   const [selectedPayslipDate, setSelectedPayslipDate] = useState(new Date());
   const [isAddTimesheetDialogOpen, setIsAddTimesheetDialogOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isManualAssignmentDialogOpen, setIsManualAssignmentDialogOpen] = useState(false);
+  const [manualAssignment, setManualAssignment] = useState({
+    name: '',
+    location: '',
+    start_date: '',
+    end_date: '',
+    notes: ''
+  });
+  const [isSubmittingManual, setIsSubmittingManual] = useState(false);
 
   // Early return if no valid employee data
   if (!employee || !employee.id) {
@@ -914,6 +923,23 @@ export default function Show({
       ToastService.dismiss(loadingToastId);
       const errorMessage = error.response?.data?.message || error.message;
       ToastService.error(`Failed to reject settlement: ${errorMessage}`);
+    }
+  };
+
+  const handleManualAssignmentSubmit = async () => {
+    setIsSubmittingManual(true);
+    try {
+      await axios.post(`/employees/${employee.id}/assignments/manual`, {
+        ...manualAssignment,
+        type: 'manual'
+      });
+      setIsManualAssignmentDialogOpen(false);
+      setManualAssignment({ name: '', location: '', start_date: '', end_date: '', notes: '' });
+      window.location.reload();
+    } catch (e) {
+      ToastService.error('Failed to add manual assignment');
+    } finally {
+      setIsSubmittingManual(false);
     }
   };
 
@@ -2037,6 +2063,57 @@ export default function Show({
           </TabsContent>
 
           <TabsContent value="assignments" className="mt-6 space-y-6">
+            {/* Add Manual Assignment Button */}
+            {hasPermission('employees.edit') && (
+              <div className="mb-4 flex justify-end">
+                <Button onClick={() => setIsManualAssignmentDialogOpen(true)} variant="outline">
+                  Add Manual Assignment
+                </Button>
+              </div>
+            )}
+            <Dialog open={isManualAssignmentDialogOpen} onOpenChange={setIsManualAssignmentDialogOpen}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add Manual Assignment</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <Input
+                    placeholder="Assignment Name"
+                    value={manualAssignment.name}
+                    onChange={e => setManualAssignment({ ...manualAssignment, name: e.target.value })}
+                  />
+                  <Input
+                    placeholder="Location"
+                    value={manualAssignment.location}
+                    onChange={e => setManualAssignment({ ...manualAssignment, location: e.target.value })}
+                  />
+                  <div className="flex gap-2">
+                    <Input
+                      type="date"
+                      placeholder="Start Date"
+                      value={manualAssignment.start_date}
+                      onChange={e => setManualAssignment({ ...manualAssignment, start_date: e.target.value })}
+                    />
+                    <Input
+                      type="date"
+                      placeholder="End Date"
+                      value={manualAssignment.end_date}
+                      onChange={e => setManualAssignment({ ...manualAssignment, end_date: e.target.value })}
+                    />
+                  </div>
+                  <Textarea
+                    placeholder="Notes (optional)"
+                    value={manualAssignment.notes}
+                    onChange={e => setManualAssignment({ ...manualAssignment, notes: e.target.value })}
+                  />
+                </div>
+                <DialogFooter>
+                  <Button onClick={handleManualAssignmentSubmit} disabled={isSubmittingManual}>
+                    {isSubmittingManual ? 'Saving...' : 'Save Assignment'}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
             {/* Show only the current assignment as a card */}
             {assignments?.data?.find((a: any) => employee.current_assignment && a.id === employee.current_assignment.id) && (
               <Card className="mb-6 shadow-sm border border-gray-200">
