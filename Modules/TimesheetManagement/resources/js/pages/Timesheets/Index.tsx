@@ -146,6 +146,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
   const [selectedTimesheets, setSelectedTimesheets] = useState<number[]>([]);
   const [bulkProcessing, setBulkProcessing] = useState(false);
   const [showBulkSubmitDialog, setShowBulkSubmitDialog] = useState(false);
+  const [showBulkApproveDialog, setShowBulkApproveDialog] = useState(false);
   const isFirstMount = useRef(true);
 
   useEffect(() => {
@@ -379,22 +380,63 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
               </Button>
 
               {canApproveTimesheet && selectedTimesheets.length > 0 && (
-                <Button
-                  onClick={handleBulkApprove}
-                  disabled={bulkProcessing}
-                >
-                  {bulkProcessing ? (
-                    <>
-                      <ArrowPathIcon className="mr-2 h-4 w-4 animate-spin" />
-                      {t('btn_processing')}
-                    </>
-                  ) : (
-                    <>
+                <AlertDialog open={showBulkApproveDialog} onOpenChange={setShowBulkApproveDialog}>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      disabled={bulkProcessing}
+                      variant="default"
+                    >
                       <CheckIcon className="mr-2 h-4 w-4" />
                       {t('btn_approve_selected')}
-                    </>
-                  )}
-                </Button>
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Approve Timesheets</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to approve {selectedTimesheets.length} selected timesheets?
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel disabled={bulkProcessing}>Cancel</AlertDialogCancel>
+                      <AlertDialogAction asChild>
+                        <Button
+                          onClick={() => {
+                            setBulkProcessing(true);
+                            router.post(route('timesheets.bulk-approve'), {
+                              timesheet_ids: selectedTimesheets
+                            }, {
+                              onSuccess: () => {
+                                toast(`${selectedTimesheets.length} timesheets approved successfully`);
+                                setSelectedTimesheets([]);
+                                setBulkProcessing(false);
+                                setShowBulkApproveDialog(false);
+                              },
+                              onError: (errors: any) => {
+                                toast(errors.error || 'Failed to approve timesheets');
+                                setBulkProcessing(false);
+                                setShowBulkApproveDialog(false);
+                              },
+                            });
+                          }}
+                          disabled={bulkProcessing}
+                        >
+                          {bulkProcessing ? (
+                            <>
+                              <ArrowPathIcon className="mr-2 h-4 w-4 animate-spin" />
+                              {t('btn_processing')}
+                            </>
+                          ) : (
+                            <>
+                              <CheckIcon className="mr-2 h-4 w-4" />
+                              Approve
+                            </>
+                          )}
+                        </Button>
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               )}
 
               {canBulkSubmit && selectedTimesheets.length > 0 && (
