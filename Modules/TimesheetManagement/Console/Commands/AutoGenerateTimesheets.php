@@ -43,14 +43,16 @@ class AutoGenerateTimesheets extends Command
                     continue;
                 }
                 // Ignore soft-deleted timesheets when checking for overlap
+                $projectId = $assignment->type === 'project' ? $assignment->project_id : null;
+                $rentalId = $assignment->type === 'rental' ? $assignment->rental_id : null;
                 $overlap = \Modules\TimesheetManagement\Domain\Models\Timesheet::withTrashed()
                     ->where('employee_id', $employeeId)
                     ->whereDate('date', $dateStr);
-                if (isset($data['project_id'])) {
-                    $overlap->where('project_id', $data['project_id']);
+                if ($projectId !== null) {
+                    $overlap->where('project_id', $projectId);
                 }
-                if (isset($data['rental_id'])) {
-                    $overlap->where('rental_id', $data['rental_id']);
+                if ($rentalId !== null) {
+                    $overlap->where('rental_id', $rentalId);
                 }
                 $overlap = $overlap->exists();
                 if ($overlap) {
@@ -58,6 +60,8 @@ class AutoGenerateTimesheets extends Command
                         'employee_id' => $employeeId,
                         'date' => $dateStr,
                         'assignment_id' => $assignment->id,
+                        'project_id' => $projectId,
+                        'rental_id' => $rentalId,
                     ]);
                     continue;
                 }

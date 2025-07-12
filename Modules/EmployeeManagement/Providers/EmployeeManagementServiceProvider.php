@@ -86,7 +86,9 @@ class EmployeeManagementServiceProvider extends ServiceProvider
      */
     protected function registerCommands(): void
     {
-        // $this->commands([]);
+        $this->commands([
+            \Modules\EmployeeManagement\Console\Commands\SyncEmployeeAssignments::class,
+        ]);
     }
 
     /**

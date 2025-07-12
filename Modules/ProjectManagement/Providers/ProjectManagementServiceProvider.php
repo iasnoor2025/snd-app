@@ -7,6 +7,8 @@ use Illuminate\Support\ServiceProvider;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use Modules\ProjectManagement\Domain\Models\ProjectManpower;
+use Modules\ProjectManagement\Observers\ProjectManpowerObserver;
 
 class ProjectManagementServiceProvider extends ServiceProvider
 {
@@ -20,6 +22,7 @@ class ProjectManagementServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        ProjectManpower::observe(ProjectManpowerObserver::class);
         $this->registerCommands();
         $this->registerCommandSchedules();
         $this->registerTranslations();

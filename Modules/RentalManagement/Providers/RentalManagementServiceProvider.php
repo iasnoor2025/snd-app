@@ -22,6 +22,10 @@ use Modules\RentalManagement\Domain\Models\Quotation;
 use Modules\RentalManagement\Policies\QuotationPolicy;
 use Modules\RentalManagement\Domain\Models\Rental;
 use Modules\RentalManagement\Observers\RentalObserver;
+use Modules\RentalManagement\Domain\Models\RentalOperatorAssignment;
+use Modules\RentalManagement\Observers\RentalOperatorAssignmentObserver;
+use Modules\RentalManagement\Domain\Models\RentalItem;
+use Modules\RentalManagement\Observers\RentalItemObserver;
 
 class RentalManagementServiceProvider extends ServiceProvider
 {
@@ -42,7 +46,9 @@ class RentalManagementServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        RentalOperatorAssignment::observe(RentalOperatorAssignmentObserver::class);
         Rental::observe(RentalObserver::class);
+        RentalItem::observe(RentalItemObserver::class);
         $this->loadViewsFrom(__DIR__ . '/../../Resources/views', 'RentalManagement');
         $this->registerTranslations();
         $this->registerConfig();

@@ -524,9 +524,6 @@ class EmployeeController extends Controller
     {
         $assignment = $employee->assignments()->findOrFail($assignmentId);
         $assignment->delete();
-        if (request()->wantsJson() || request()->ajax()) {
-            return response()->json(['success' => true, 'message' => 'Assignment deleted successfully.']);
-        }
         return redirect()->back()->with('success', 'Assignment deleted successfully.');
     }
 

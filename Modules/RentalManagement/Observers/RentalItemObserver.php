@@ -3,41 +3,66 @@
 namespace Modules\RentalManagement\Observers;
 
 use Modules\RentalManagement\Domain\Models\RentalItem;
+use Modules\EmployeeManagement\Domain\Models\EmployeeAssignment;
 
 class RentalItemObserver
 {
-    /**
-     * Handle the RentalItem "created" event.
-     */
-    public function created(RentalItem $rentalItem): void
+    public function saved(RentalItem $item)
     {
-        $this->calculateTotal($rentalItem);
-    }
-
-    /**
-     * Handle the RentalItem "updated" event.
-     */
-    public function updated(RentalItem $rentalItem): void
-    {
-        $this->calculateTotal($rentalItem);
-    }
-
-    /**
-     * Calculate rental item total
-     */
-    private function calculateTotal(RentalItem $rentalItem): void
-    {
-        $total = $rentalItem->unit_price * $rentalItem->quantity * $rentalItem->days;
-        $discountAmount = ($total * $rentalItem->discount_percentage) / 100;
-        $finalTotal = $total - $discountAmount;
-
-        $rentalItem->update([
-            'total_amount' => $finalTotal,
-        ]);
-
-        // Update parent rental totals
-        if ($rentalItem->rental) {
-            $rentalItem->rental->touch();
+        // Single operator_id
+        if ($item->operator_id) {
+            EmployeeAssignment::updateOrCreate(
+                [
+                    'employee_id' => $item->operator_id,
+                    'rental_id' => $item->rental_id,
+                    'type' => 'rental_item',
+                ],
+                [
+                    'name' => $item->rental->customer->name ?? 'Rental Item Assignment',
+                    'status' => $item->rental->status ?? 'active',
+                    'location' => $item->rental->location->name ?? 'Unknown Location',
+                    'start_date' => $item->start_date,
+                    'end_date' => $item->end_date,
+                    'notes' => $item->notes,
+                ]
+            );
+        }
+        // Many-to-many operators
+        if (method_exists($item, 'operators')) {
+            foreach ($item->operators as $operator) {
+                EmployeeAssignment::updateOrCreate(
+                    [
+                        'employee_id' => $operator->id,
+                        'rental_id' => $item->rental_id,
+                        'type' => 'rental_item',
+                    ],
+                    [
+                        'name' => $item->rental->customer->name ?? 'Rental Item Assignment',
+                        'status' => $item->rental->status ?? 'active',
+                        'location' => $item->rental->location->name ?? 'Unknown Location',
+                        'start_date' => $item->start_date,
+                        'end_date' => $item->end_date,
+                        'notes' => $item->notes,
+                    ]
+                );
+            }
         }
     }
-} 
+
+    public function deleted(RentalItem $item)
+    {
+        // Remove all related assignments
+        EmployeeAssignment::where('rental_id', $item->rental_id)
+            ->where('type', 'rental_item')
+            ->where(function($q) use ($item) {
+                if ($item->operator_id) {
+                    $q->orWhere('employee_id', $item->operator_id);
+                }
+                if (method_exists($item, 'operators')) {
+                    foreach ($item->operators as $operator) {
+                        $q->orWhere('employee_id', $operator->id);
+                    }
+                }
+            })->delete();
+    }
+}
