@@ -241,3 +241,6 @@ Route::middleware(['auth', 'permission:employees.edit'])->group(function () {
         ->name('employees.assignments.update');
 });
 
+// Employee ERPNext sync (admin only)
+Route::post('/employees/sync-from-erpnext', [\Modules\EmployeeManagement\Http\Controllers\EmployeeController::class, 'syncFromERPNext'])->middleware('auth');
+

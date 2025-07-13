@@ -43,6 +43,11 @@ import { getTranslation } from "@/Core";
 // Import router from Inertia
 import { router } from '@inertiajs/core';
 
+function getCsrfToken() {
+  const meta = document.querySelector('meta[name="csrf-token"]');
+  return meta ? meta.getAttribute('content') : '';
+}
+
 const breadcrumbs = [
   { title: 'Dashboard', href: '/dashboard' },
   { title: 'Employees', href: '/employees' },
@@ -89,9 +94,10 @@ export default function Index({ auth, employees, filters, departments, positions
   const [perPage, setPerPage] = useState(employees.meta?.per_page || 15);
 
   const handleSearch = debounce((value: string) => {
-    setSearch(value);
+    const normalizedValue = !value || value === 'all' ? '' : value;
+    setSearch(normalizedValue);
     router.get('/employees', {
-      search: value === 'all' ? '' : value,
+      search: normalizedValue,
       status: status === 'all' ? '' : status,
       department: department === 'all' ? '' : department,
       position: position === 'all' ? '' : position,
@@ -226,14 +232,20 @@ export default function Index({ auth, employees, filters, departments, positions
                   onClick={async () => {
                     try {
                       setIsLoading(true);
-                      const response = await fetch('/employees/sync-erpnext', { method: 'POST' });
+                      const response = await fetch('/employees/sync-from-erpnext', {
+                        method: 'POST',
+                        headers: {
+                          'X-CSRF-TOKEN': getCsrfToken() || '',
+                          'Content-Type': 'application/json',
+                        },
+                      });
                       if (response.ok) {
-                        toast.success('Employee data synced to ERPNext successfully');
+                        toast.success('Employee data synced from ERPNext successfully');
                       } else {
-                        toast.error('Failed to sync employee data to ERPNext');
+                        toast.error('Failed to sync employee data from ERPNext');
                       }
                     } catch (error) {
-                      toast.error('Error syncing to ERPNext');
+                      toast.error('Error syncing from ERPNext');
                     } finally {
                       setIsLoading(false);
                     }
@@ -241,7 +253,7 @@ export default function Index({ auth, employees, filters, departments, positions
                   disabled={isLoading}
                 >
                   {isLoading ? <LoaderCircle className="animate-spin mr-2 h-4 w-4" /> : null}
-                  Sync to ERPNext
+                  Sync from ERPNext
                 </Button>
               )}
             </div>
@@ -399,7 +411,7 @@ export default function Index({ auth, employees, filters, departments, positions
                             </span>
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            Hourly: {formatCurrency(employee.hourly_rate)}
+                            Hourly: {employee.hourly_rate && employee.hourly_rate > 0 ? formatCurrency(employee.hourly_rate) : '-'}
                           </div>
                           {/* Remove current_balance badge to fix linter error */}
                           {/* <Badge variant={Number(employee.current_balance) > 0 ? "destructive" : "outline"} className="w-fit text-xs mt-1">
@@ -577,6 +589,14 @@ export default function Index({ auth, employees, filters, departments, positions
     </AppLayout>
   );
 }
+
+
+
+
+
+
+
+
 
 
 

@@ -193,7 +193,16 @@ class ERPNextClient
             'exit' => 'Left',
         ];
         $localStatus = strtolower($employee->status);
-        $erpStatus = $statusMap[$localStatus] ?? $employee->status;
+        $erpStatus = $statusMap[$localStatus] ?? 'Active';
+        $allowedStatuses = ['Active', 'Inactive', 'Suspended', 'Left'];
+        if (!in_array($erpStatus, $allowedStatuses)) {
+            $erpStatus = 'Active';
+        }
+        Log::info('ERPNext sync: mapped status', [
+            'employee_id' => $employee->id,
+            'local_status' => $employee->status,
+            'mapped_status' => $erpStatus
+        ]);
         $data = [
             'first_name' => $employee->first_name,
             'middle_name' => $employee->middle_name,

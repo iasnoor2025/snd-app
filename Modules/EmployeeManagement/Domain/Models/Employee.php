@@ -217,11 +217,17 @@ class Employee extends Model implements HasMedia
         });
 
         static::saving(function ($employee) {
+            // Always recalculate hourly_rate before saving
+            $days = $employee->contract_days_per_month ?: 30;
+            $hours = $employee->contract_hours_per_day ?: 8;
+            $salary = $employee->basic_salary ?: 0;
+            $employee->hourly_rate = ($days > 0 && $hours > 0) ? round($salary / ($days * $hours), 2) : 0;
             \Log::info('Employee saving event', [
                 'id' => $employee->id,
                 'file_number' => $employee->file_number,
                 'name' => $employee->first_name . ' ' . $employee->last_name,
-                'timestamp' => now()->toDateTimeString()
+                'timestamp' => now()->toDateTimeString(),
+                'hourly_rate' => $employee->hourly_rate,
             ]);
             return true; // Allow the save to proceed
         });

@@ -571,6 +571,30 @@ class EmployeeController extends Controller
             return response()->json(['error' => 'Failed to sync employees: ' . $e->getMessage()], 500);
         }
     }
+
+    /**
+     * Sync all employees from ERPNext (admin only)
+     */
+    public function syncFromERPNext(Request $request)
+    {
+        \Log::info('syncFromERPNext called', [
+            'user_id' => auth()->id(),
+            'user_roles' => auth()->user() ? auth()->user()->roles : null
+        ]);
+        if (!auth()->user() || !auth()->user()->roles || !in_array('admin', auth()->user()->roles)) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        try {
+            \Artisan::call('erpnext:sync-employees');
+            return response()->json(['success' => true, 'message' => 'Synced employees from ERPNext.']);
+        } catch (\Exception $e) {
+            \Log::error('Error syncing employees from ERPNext', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => 'Failed to sync from ERPNext: ' . $e->getMessage()], 500);
+        }
+    }
 }
 
 
