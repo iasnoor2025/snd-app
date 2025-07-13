@@ -12,6 +12,7 @@ use Modules\Core\Http\Controllers\AuthController;
 use Modules\Core\Http\Controllers\Api\CalendarWidgetController;
 use Modules\Core\Http\Controllers\Api\TimelineWidgetController;
 use Modules\Core\Http\Controllers\DebugController;
+use Modules\Core\Http\Controllers\ActivityLogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -90,6 +91,7 @@ Route::middleware(['auth:sanctum'])->prefix('sessions')->group(function () {
 
 Route::get('/calendar/events', [CalendarWidgetController::class, 'events']);
 Route::get('/timeline', [TimelineWidgetController::class, 'index']);
+Route::middleware(['auth:sanctum'])->get('/activity-log', [ActivityLogController::class, 'index']);
 
 // Debug endpoints for session/cookie/csrf debugging
 Route::get('/debug/csrf-debug', [DebugController::class, 'csrfDebug']);

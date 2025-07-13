@@ -43,6 +43,7 @@ class Employee extends Model implements HasMedia
      * @var array<int, string>
      */
     protected $fillable = [
+        'erpnext_id',
         'user_id',
         'employee_id',
         'file_number',

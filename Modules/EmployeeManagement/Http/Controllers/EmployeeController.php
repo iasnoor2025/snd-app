@@ -72,8 +72,7 @@ class EmployeeController extends Controller
             ->when($request->position && $request->position !== 'all' && is_numeric($request->position), function ($query) use ($request) {
                 $query->where('position_id', (int) $request->position);
             })
-            ->orderBy('first_name')
-            ->orderBy('last_name');
+            ->orderByRaw("LPAD(REGEXP_REPLACE(file_number, '\\D', '', 'g'), 10, '0') ASC");
 
         $employees = $query->paginate($request->per_page ?? 15)
             ->withQueryString();

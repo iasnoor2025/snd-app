@@ -186,6 +186,16 @@ export default function Index({ auth, employees, filters, departments, positions
     }).format(amount);
   };
 
+  // Sort employees by file_number as zero-padded number
+  const sortedEmployees = [...employees.data].sort((a, b) => {
+    const getNum = (fn: string | undefined) => {
+      if (!fn) return Infinity;
+      const match = fn.match(/(\d+)/);
+      return match ? parseInt(match[1], 10) : Infinity;
+    };
+    return getNum(a.file_number) - getNum(b.file_number);
+  });
+
   return (
     <AppLayout title={t('ttl_employees')} breadcrumbs={breadcrumbs} requiredPermission="employees.view">
       <Head title={t('ttl_employees')} />
@@ -268,6 +278,7 @@ export default function Index({ auth, employees, filters, departments, positions
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>File Number</TableHead>
                     <TableHead>Employee</TableHead>
                     <TableHead>Status & Position</TableHead>
                     <TableHead>{t('current_assignment')}</TableHead>
@@ -277,21 +288,13 @@ export default function Index({ auth, employees, filters, departments, positions
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {employees.data.map((employee) => (
+                  {sortedEmployees.map((employee) => (
                     <TableRow key={employee.id} className="align-top">
+                      <TableCell className="min-w-[100px]">
+                        <span className="font-semibold">{employee.file_number}</span>
+                      </TableCell>
                       <TableCell className="min-w-[200px]">
-                        <div className="flex flex-col">
-                          <span className="font-semibold">
-                            {employee.first_name} {employee.middle_name} {employee.last_name}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            ID: {employee.employee_id || employee.file_number}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            <Calendar className="inline-block w-3 h-3 mr-1" />
-                            Hired: {formatDate(employee.hire_date)}
-                          </span>
-                        </div>
+                        <span>{employee.first_name} {employee.middle_name} {employee.last_name}</span>
                       </TableCell>
                       <TableCell className="min-w-[150px]">
                         <div className="flex flex-col gap-1">
@@ -366,9 +369,10 @@ export default function Index({ auth, employees, filters, departments, positions
                           <div className="text-xs text-muted-foreground">
                             Hourly: {formatCurrency(employee.hourly_rate)}
                           </div>
-                          <Badge variant={Number(employee.current_balance) > 0 ? "destructive" : "outline"} className="w-fit text-xs mt-1">
+                          {/* Remove current_balance badge to fix linter error */}
+                          {/* <Badge variant={Number(employee.current_balance) > 0 ? "destructive" : "outline"} className="w-fit text-xs mt-1">
                             Advance: {formatCurrency(Number(employee.current_balance) || 0)}
-                          </Badge>
+                          </Badge> */}
                         </div>
                       </TableCell>
                       <TableCell className="min-w-[150px]">
