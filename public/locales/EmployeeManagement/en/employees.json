@@ -166,7 +166,7 @@
   "fields": {
     "phone": "Phone",
     "nationality": "Nationality",
-    "position": "Position",
+    "designation": "Designation",
     "department": "Department",
     "supervisor": "Supervisor",
     "status": "Status",

@@ -286,7 +286,7 @@ class DeductionRuleService
                 return $payroll->basic_salary;
             case 'department':
                 return $employee->department;
-            case 'position':
+            case 'designation':
                 return $employee->designation;
             case 'employment_type':
                 return $employee->employment_type;

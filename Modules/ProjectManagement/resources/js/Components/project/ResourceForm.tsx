@@ -32,7 +32,7 @@ interface Employee {
     last_name: string;
     full_name?: string;
     hourly_rate?: number;
-    position?: string;
+    designation?: string;
 }
 
 interface Equipment {
@@ -376,8 +376,8 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                         newData.worker_name = '';
                         const selectedEmployee = employees.find(emp => emp.id === employeeId);
                         if (selectedEmployee) {
-                            if (selectedEmployee.position) {
-                                newData.job_title = selectedEmployee.position;
+                            if (selectedEmployee.designation) {
+                                newData.job_title = selectedEmployee.designation;
                             }
                             let calculatedDailyRate = '';
                             if (selectedEmployee.hourly_rate) {

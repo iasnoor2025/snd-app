@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-export interface Position {
+export interface Designation {
   id: number;
   name: string;
   department_id?: number;
@@ -21,8 +21,8 @@ export interface Employee {
   nationality: string;
   file_number: string;
   employee_id?: string;
-  position_id: number;
-  position?: Position | string;
+  designation_id: number;
+  designation?: Designation | string;
   department?: {
     id: number;
     name: string;

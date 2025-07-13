@@ -165,7 +165,7 @@ Route::prefix('timesheets')->name('timesheets.')->middleware(['auth', 'verified'
         Route::get('/direct-pay-slip/{employee}/{month}', function($employee, $month) {
             // Get the employee
             $employee = \Modules\EmployeeManagement\Domain\Models\Employee::select([
-                'id', 'first_name', 'last_name', 'employee_id', 'position'
+                'id', 'first_name', 'last_name', 'employee_id', 'designation'
             ])->findOrFail($employee);
 
             // Parse the month

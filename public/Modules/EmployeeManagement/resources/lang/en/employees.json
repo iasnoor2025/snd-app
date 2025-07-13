@@ -11,7 +11,7 @@
     "email": "Email",
     "phone": "Phone",
     "department": "Department",
-    "position": "Position",
+    "designation": "Designation",
     "status": "Status",
     "hire_date": "Hire Date",
     "employee_id": "Employee ID"
@@ -27,4 +27,4 @@
     "delete_success": "Employee deleted successfully",
     "delete_confirm": "Are you sure you want to delete this employee?"
   }
-} 
+}

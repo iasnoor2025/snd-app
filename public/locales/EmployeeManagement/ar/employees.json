@@ -109,7 +109,7 @@
     "fields": {
         "phone": "رقم الهاتف",
         "nationality": "الجنسية",
-        "position": "المسمى الوظيفي",
+        "designation": "المسمى الوظيفي",
         "department": "القسم",
         "supervisor": "المشرف",
         "status": "الحالة"

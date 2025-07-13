@@ -689,7 +689,7 @@
   "lbl_bank_iban": "Bank IBAN",
   "employment_details": "Employment Details",
   "employment_optional_info": "These fields are optional. You can update them later after creating the employee.",
-  "position": "Position",
+  "designation": "Designation",
   "hire_date": "Hire Date",
   "status": "Status",
   "role": "Role",

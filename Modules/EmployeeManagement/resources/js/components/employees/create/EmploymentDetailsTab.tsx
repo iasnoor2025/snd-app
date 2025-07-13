@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
 import { Input } from "@/Core";
 import { Label } from "@/Core";
-import PositionSelector from './PositionSelector';
+import DesignationSelector from './DesignationSelector';
 import { Designation } from '../../../types/employee';
 
 interface EmploymentDetailsData {
@@ -39,10 +39,10 @@ export function EmploymentDetailsTab({ data, designations, onSaveDraft, isSubmit
             <CardContent className="space-y-4">
                 <div className="space-y-2">
                     <Label htmlFor="designation_id">Designation</Label>
-                    <PositionSelector
+                    <DesignationSelector
                         value={data.designation_id}
                         onChange={(value) => handleChange('designation_id', value)}
-                        initialPositions={designations}
+                        initialDesignations={designations}
                     />
                 </div>
 

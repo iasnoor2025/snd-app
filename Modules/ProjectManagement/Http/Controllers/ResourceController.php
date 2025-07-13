@@ -23,7 +23,7 @@ class ResourceController extends Controller
             'project' => $project,
             'manpower' => $project->manpower()
                 ->with(['employee' => function($query) {
-                    $query->select('id', 'first_name', 'last_name', 'position', 'employee_id');
+                    $query->select('id', 'first_name', 'last_name', 'designation', 'employee_id');
                 }])
                 ->select('project_manpower.*')
                 ->paginate(10),

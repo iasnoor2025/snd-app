@@ -48,7 +48,7 @@ interface Employee {
   first_name: string;
   last_name: string;
   employee_id?: string;
-  position?: string;
+  designation?: string;
   hourly_rate?: number;
   basic_salary?: number;
   food_allowance?: number;
@@ -375,7 +375,7 @@ export default function PaySlip({
                     <div className="space-y-1 text-sm">
                       <div className="flex justify-between"><span className="text-gray-500 font-medium">File #:</span><span className="font-semibold text-gray-800">{employee.employee_id || '-'}</span></div>
                       <div className="flex justify-between"><span className="text-gray-500 font-medium">Name:</span><span className="font-semibold text-gray-800">{employee.first_name} {employee.last_name}</span></div>
-                      <div className="flex justify-between"><span className="text-gray-500 font-medium">Position:</span><span className="font-semibold text-gray-800">{employee.position || '-'}</span></div>
+                      <div className="flex justify-between"><span className="text-gray-500 font-medium">Designation:</span><span className="font-semibold text-gray-800">{employee.designation || '-'}</span></div>
                       <div className="flex justify-between"><span className="text-gray-500 font-medium">ID:</span><span className="font-semibold text-gray-800">{employee.id}</span></div>
                     </div>
                   </div>

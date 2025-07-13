@@ -36,9 +36,9 @@ class CoreTableSeeder extends Seeder
             ]);
         }
 
-        // Create positions table if it doesn't exist
-        if (!Schema::hasTable('positions')) {
-            Schema::create('positions', function ($table) {
+        // Create designations table if it doesn't exist
+        if (!Schema::hasTable('designations')) {
+            Schema::create('designations', function ($table) {
                 $table->id();
                 $table->string('name');
                 $table->text('description')->nullable();
@@ -49,8 +49,8 @@ class CoreTableSeeder extends Seeder
                 $table->foreign('department_id')->references('id')->on('departments');
             });
 
-            // Seed positions
-            DB::table('positions')->insert([
+            // Seed designations
+            DB::table('designations')->insert([
                 ['name' => 'Manager', 'department_id' => 1, 'created_at' => now(), 'updated_at' => now()],
                 ['name' => 'Engineer', 'department_id' => 2, 'created_at' => now(), 'updated_at' => now()],
                 ['name' => 'Technician', 'department_id' => 3, 'created_at' => now(), 'updated_at' => now()],

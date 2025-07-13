@@ -132,7 +132,7 @@
         </div>
         <div class="info-row">
             <span class="info-label">Designation:</span>
-            <span>{{ $employee['position'] }}</span>
+            <span>{{ $employee['designation'] }}</span>
         </div>
         <div class="info-row">
             <span class="info-label">Pay Period:</span>

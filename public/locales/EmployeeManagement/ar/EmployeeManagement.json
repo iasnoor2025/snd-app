@@ -1,7 +1,7 @@
 {
     "employeeDetails": "employeeDetails",
     "name": "name",
-    "position": "position",
+    "designation": "designation",
     "advances": "advances",
     "assignments": "assignments",
     "timesheets": "timesheets",

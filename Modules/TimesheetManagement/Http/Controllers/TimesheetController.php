@@ -1462,7 +1462,7 @@ class TimesheetController extends Controller
                 'first_name' => $employee->first_name,
                 'last_name' => $employee->last_name,
                 'employee_id' => $employee->employee_id,
-                'position' => $employee->designation->name ?? null,
+                'designation' => $employee->designation->name ?? null,
                 'hourly_rate' => $employee->hourly_rate,
                 'basic_salary' => $employee->basic_salary,
                 'food_allowance' => $employee->food_allowance,

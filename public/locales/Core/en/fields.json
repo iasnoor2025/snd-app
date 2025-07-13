@@ -64,7 +64,7 @@
     "weight": "Weight",
     "volume": "Volume",
     "area": "Area",
-    "position": "Position",
+    "designation": "Designation",
     "order": "Order",
     "priority": "Priority",
     "rating": "Rating",
@@ -253,4 +253,4 @@
     "area_code": "Area Code",
     "postal_code": "Postal Code",
     "zip_code": "ZIP Code"
-} 
+}

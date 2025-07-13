@@ -7,7 +7,7 @@
   "email": "Email",
   "phone": "Phone",
   "department": "Department",
-  "position": "Position",
+  "designation": "Designation",
   "status": "Status",
   "hire_date": "Hire Date",
   "actions": {
@@ -15,4 +15,4 @@
     "edit": "Edit",
     "delete": "Delete"
   }
-} 
+}

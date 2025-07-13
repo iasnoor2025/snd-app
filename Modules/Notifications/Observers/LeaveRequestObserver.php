@@ -112,13 +112,13 @@ class LeaveRequestObserver
 
         // If no direct manager, try to get department head
         if ($employee->department_id) {
-            return Employee::where('department_id', $employee->department_id);
+            return Employee::where('department_id', $employee->department_id)
                 ->where('is_department_head', true)
                 ->first();
         }
 
         // If no department head, get HR personnel (this would need to be configured)
-        return Employee::whereHas('position', function($query) {;
+        return Employee::whereHas('designation', function($query) {
             $query->where('name', 'like', '%HR%')->orWhere('name', 'like', '%Human Resource%');
         })->first();
     }
