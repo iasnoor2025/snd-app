@@ -50,6 +50,10 @@ class EmployeeController extends Controller
      */
     public function index(Request $request)
     {
+        // Debug log for status filter
+        \Log::info('EmployeeController@index status filter', [
+            'status_param' => $request->status,
+        ]);
         $query = Employee::query()
             ->with(['position', 'department'])
             ->when($request->search, function ($query, $search) {
@@ -73,6 +77,12 @@ class EmployeeController extends Controller
                 $query->where('position_id', (int) $request->position);
             })
             ->orderByRaw("LPAD(REGEXP_REPLACE(file_number, '\\D', '', 'g'), 10, '0') ASC");
+
+        // Debug log for filtered employee count
+        \Log::info('EmployeeController@index filtered employee count', [
+            'count' => $query->count(),
+            'status_param' => $request->status,
+        ]);
 
         $employees = $query->paginate($request->per_page ?? 15)
             ->withQueryString();

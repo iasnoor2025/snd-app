@@ -122,7 +122,7 @@ class ERPNextClient
             'marital_status' => $maritalStatus,
             'iqama' => $iqama,
             'iqama_expiry' => $iqamaExpiry,
-            'status' => $status,
+            'status' => strtolower($status),
             'date_of_joining' => $dateOfJoining,
             'contract_end_date' => $contractEndDate,
             'company' => $company,
