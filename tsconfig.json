@@ -110,6 +110,8 @@
         "baseUrl": ".",
         "paths": {
             "@/*": ["resources/js/*"],
+            "@/components/ui": ["Modules/Core/resources/js/components/ui"],
+            "@/components/ui/*": ["Modules/Core/resources/js/components/ui/*"],
             "@/Core": ["Modules/Core/resources/js"],
             "@/Core/*": ["Modules/Core/resources/js/*"],
             "@/Core/components": ["Modules/Core/resources/js/components"],

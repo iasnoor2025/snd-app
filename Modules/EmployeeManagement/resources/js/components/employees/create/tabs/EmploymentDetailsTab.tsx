@@ -9,7 +9,7 @@ import { Plus, Pencil, Trash } from 'lucide-react';
 import { UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import PositionSelector from '../../create/PositionSelector';
+import DesignationSelector from '../../create/DesignationSelector';
 import { Alert, AlertTitle, AlertDescription } from "@/Core";
 import { Info } from 'lucide-react';
 import axios from 'axios';
@@ -129,7 +129,7 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
     try {
       if (editingPosition) {
         // Edit logic - use public API
-        const response = await axios.put(`/api/designations/${editingPosition.id}`, {
+        const response = await axios.put(`/api/v1/designations/${editingPosition.id}`, {
           name: newPosition.name,
           description: newPosition.description,
           is_active: true
@@ -158,7 +158,7 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
         }
       } else {
         // Add logic - use public API
-        const response = await axios.post('/api/designations', {
+        const response = await axios.post('/api/v1/designations', {
           name: newPosition.name,
           description: newPosition.description,
           is_active: true
@@ -190,7 +190,7 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
 
       // Fetch updated positions list
       try {
-        const response = await axios.get('/api/designations');
+        const response = await axios.get('/api/v1/designations');
         if (response.data && Array.isArray(response.data)) {
           setPositionsState(response.data);
         }
@@ -239,7 +239,7 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
     try {
       if (deletingPosition) {
         // Delete via public API
-        await axios.delete(`/api/designations/${deletingPosition.id}`);
+        await axios.delete(`/api/v1/designations/${deletingPosition.id}`);
 
         // Remove from local state
         setPositionsState(prev => prev.filter((p: any) => p.id !== deletingPosition.id));
@@ -252,7 +252,7 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
 
         // Fetch updated positions list
         try {
-          const response = await axios.get('/api/designations');
+          const response = await axios.get('/api/v1/designations');
           if (response.data && Array.isArray(response.data)) {
             setPositionsState(response.data);
           }
