@@ -1,12 +1,12 @@
 <?php
 
-namespace Modules\EmployeeManagement\Database\Seeders;
+namespace Modules\EmployeeManagement\database\seeders;
 
 use Illuminate\Database\Seeder;
 use Modules\EmployeeManagement\Domain\Models\Designation;
 use Modules\EmployeeManagement\Domain\Models\Department;
 
-class DesignationSeeder extends Seeder
+class PositionSeeder extends Seeder
 {
     public function run()
     {

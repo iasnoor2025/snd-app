@@ -18,9 +18,9 @@ class EmployeeManagementDatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            \Modules\EmployeeManagement\Database\Seeders\DepartmentSeeder::class,
-            \Modules\EmployeeManagement\Database\Seeders\DesignationSeeder::class,
-            \Modules\EmployeeManagement\Database\Seeders\SalaryIncrementSeeder::class,
+            \Modules\EmployeeManagement\database\seeders\DepartmentSeeder::class,
+            \Modules\EmployeeManagement\database\seeders\DesignationSeeder::class, 
+            \Modules\EmployeeManagement\database\seeders\SalaryIncrementSeeder::class,
         ]);
     }
 }
