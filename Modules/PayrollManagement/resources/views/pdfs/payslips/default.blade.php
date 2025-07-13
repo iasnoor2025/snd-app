@@ -131,7 +131,7 @@
             <span>{{ $employee['department'] }}</span>
         </div>
         <div class="info-row">
-            <span class="info-label">Position:</span>
+            <span class="info-label">Designation:</span>
             <span>{{ $employee['position'] }}</span>
         </div>
         <div class="info-row">
@@ -224,4 +224,4 @@
         <p>For any queries regarding this payslip, please contact the HR department.</p>
     </div>
 </body>
-</html> 
+</html>

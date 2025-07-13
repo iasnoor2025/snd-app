@@ -49,7 +49,7 @@ class MobileAuthApiController extends Controller
                 'permissions' => $user->getAllPermissions()->pluck('name'),
                 'profile' => [
                     'department' => $user->department ?? null,
-                    'position' => $user->position ?? null,
+                    'position' => $user->designation ?? null,
                     'employee_id' => $user->employee_id ?? null,
                     'manager_id' => $user->manager_id ?? null,
                     'hire_date' => $user->hire_date?->toDateString(),

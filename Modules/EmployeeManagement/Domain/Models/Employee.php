@@ -23,7 +23,7 @@ use Modules\RentalManagement\Domain\Models\RentalOperatorAssignment;
 use Modules\RentalManagement\Domain\Models\RentalItem;
 use Modules\Core\Domain\Models\User;
 use Modules\Core\Domain\Models\Location;
-use Modules\EmployeeManagement\Domain\Models\Position;
+use Modules\EmployeeManagement\Domain\Models\Designation;
 use Modules\EmployeeManagement\Domain\Models\Department;
 
 // Add SalaryIncrement import
@@ -55,7 +55,7 @@ class Employee extends Model implements HasMedia
         'address',
         'city',
         'nationality',
-        'position_id',
+        'designation_id',
         'department_id',
         'supervisor',
         'hourly_rate',
@@ -671,11 +671,11 @@ class Employee extends Model implements HasMedia
     }
 
     /**
-     * Get the position of the employee
+     * Get the designation of the employee
      */
-    public function position(): BelongsTo
+    public function designation(): BelongsTo
     {
-        return $this->belongsTo(Position::class);
+        return $this->belongsTo(Designation::class);
     }
 
     /**

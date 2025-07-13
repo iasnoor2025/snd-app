@@ -33,11 +33,11 @@ export const columns: ColumnDef<Employee>[] = [
         header: 'Email',
     },
     {
-        accessorKey: 'position',
-        header: 'Position',
+        accessorKey: 'designation',
+        header: 'Designation',
         cell: ({ row }) => {
-            const position = row.original.position;
-            return typeof position === 'string' ? position : position?.name || 'Unknown';
+            const designation = row.original.designation;
+            return typeof designation === 'string' ? designation : designation?.name || 'Unknown';
         },
     },
     {

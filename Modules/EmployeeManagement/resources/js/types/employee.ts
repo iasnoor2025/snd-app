@@ -12,7 +12,7 @@ export interface Employee {
   address?: string;
   city?: string;
   nationality?: string;
-  position_id?: number;
+  designation_id?: number;
   department_id?: number;
   supervisor?: string;
   hire_date?: string;
@@ -58,7 +58,7 @@ export interface Employee {
   spsp_license_expiry?: string;
 
   // Relationships
-  position?: Position;
+  designation?: Designation;
   department?: Department;
   user_id?: number;
   user?: User;
@@ -74,7 +74,7 @@ export interface Employee {
   has_approved_resignation?: boolean;
 }
 
-export interface Position {
+export interface Designation {
   id: number;
   name: string;
   description?: string;

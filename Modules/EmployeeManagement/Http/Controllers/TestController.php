@@ -18,46 +18,42 @@ class TestController extends Controller
 
             // Try direct DB insertion with error handling
             try {
-                // Check if the positions table exists
-                if (!Schema::hasTable('positions')) {
-                    Log::error('Positions table does not exist');
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Positions table does not exist',
-                        'error' => 'Table not found'
-                    ], 500);
+                // Check if the designations table exists
+                if (!Schema::hasTable('designations')) {
+                    Log::error('Designations table does not exist');
+                    return response()->json(['message' => 'Designations table does not exist'], 500);
                 }
-                
+
                 // Get table structure
-                $columns = Schema::getColumnListing('positions');
-                Log::info('Positions table columns:', $columns);
-                
+                $columns = Schema::getColumnListing('designations');
+                Log::info('Designations table columns:', $columns);
+
                 // Prepare data based on available columns
                 $data = [
-                    'name' => $request->input('name', 'Test Position'),
+                    'name' => $request->input('name', 'Test Designation'),
                     'created_at' => now(),
                     'updated_at' => now()
                 ];
-                
+
                 if (in_array('description', $columns)) {
                     $data['description'] = $request->input('description');
                 }
-                
+
                 if (in_array('is_active', $columns)) {
                     $data['is_active'] = true;
                 } elseif (in_array('active', $columns)) {
                     $data['active'] = true;
                 }
-                
-                $id = DB::table('positions')->insertGetId($data);
-                
-                Log::info('Position created with ID: ' . $id);
+
+                $id = DB::table('designations')->insertGetId($data);
+
+                Log::info('Designation created with ID: ' . $id);
             } catch (\Exception $dbException) {
                 Log::error('Database error in position creation', [
                     'error' => $dbException->getMessage(),
                     'trace' => $dbException->getTraceAsString()
                 ]);
-                
+
                 return response()->json([
                     'success' => false,
                     'message' => 'Database error in position creation',
@@ -83,4 +79,4 @@ class TestController extends Controller
             ], 500);
         }
     }
-} 
+}

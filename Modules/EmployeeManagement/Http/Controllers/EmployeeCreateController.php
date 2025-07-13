@@ -8,7 +8,7 @@ use Modules\EmployeeManagement\Domain\Models\Employee;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
-use Modules\EmployeeManagement\Domain\Models\Position;
+use Modules\EmployeeManagement\Domain\Models\Designation;
 use Illuminate\Support\Facades\DB;
 
 class EmployeeCreateController extends Controller
@@ -19,14 +19,14 @@ class EmployeeCreateController extends Controller
     public function create()
     {
         $users = \Modules\Core\Domain\Models\User::all();
-        $positions = Position::where('is_active', true)
+        $designations = Designation::where('is_active', true)
             ->select('id', 'name', 'description', 'is_active')
             ->orderBy('name')
             ->get();
 
         return Inertia::render('Employees/Create', [
             'users' => $users,
-            'positions' => $positions,
+            'designations' => $designations,
         ]);
     }
 
@@ -59,7 +59,7 @@ class EmployeeCreateController extends Controller
                 'address' => 'nullable|string|max:255',
                 'city' => 'nullable|string|max:255',
                 'nationality' => 'required|string|max:100',
-                'position_id' => 'required|exists:positions,id',
+                'designation_id' => 'required|exists:designations,id',
                 'hourly_rate' => 'required|numeric|min:0',
                 'basic_salary' => 'required|numeric|min:0',
                 'food_allowance' => 'nullable|numeric|min:0',
@@ -140,7 +140,7 @@ class EmployeeCreateController extends Controller
                 'address' => $request->address ?? '',
                 'city' => $request->city ?? '',
                 'nationality' => $request->nationality,
-                'position_id' => $request->position_id,
+                'designation_id' => $request->designation_id,
                 'hourly_rate' => $request->hourly_rate,
                 'basic_salary' => $request->basic_salary,
                 'food_allowance' => $request->food_allowance ?? 0,
@@ -196,7 +196,7 @@ class EmployeeCreateController extends Controller
 
                         // Ensure all required columns have values
                         $requiredColumns = ['user_id', 'first_name', 'last_name', 'email', 'file_number',
-                                           'nationality', 'position_id', 'date_of_birth'];
+                                           'nationality', 'designation_id', 'date_of_birth'];
 
                         foreach ($requiredColumns as $column) {
                             if (empty($employeeData[$column])) {
@@ -316,7 +316,7 @@ class EmployeeCreateController extends Controller
         $employee->load('user');
 
         $users = \Modules\Core\Domain\Models\User::all();
-        $positions = Position::where('is_active', true)->get(['id', 'name']);
+        $designations = Designation::where('is_active', true)->get(['id', 'name']);
 
         // Build a flat array for the employee, including user.email and formatted dates
         $employeeArray = $employee->toArray();
@@ -327,7 +327,7 @@ class EmployeeCreateController extends Controller
         return Inertia::render('Employees/Edit', [
             'employee' => $employeeArray,
             'users' => $users,
-            'positions' => $positions,
+            'designations' => $designations,
         ]);
     }
 
@@ -370,7 +370,7 @@ class EmployeeCreateController extends Controller
                 'address' => 'nullable|string|max:255',
                 'city' => 'nullable|string|max:255',
                 'nationality' => 'required|string|max:100',
-                'position_id' => 'required|exists:positions,id',
+                'designation_id' => 'required|exists:designations,id',
                 'hourly_rate' => 'required|numeric|min:0',
                 'basic_salary' => 'required|numeric|min:0',
                 'food_allowance' => 'nullable|numeric|min:0',
@@ -433,7 +433,7 @@ class EmployeeCreateController extends Controller
                 'address' => $validated['address'] ?? '',
                 'city' => $validated['city'] ?? '',
                 'nationality' => $validated['nationality'],
-                'position_id' => $validated['position_id'],
+                'designation_id' => $validated['designation_id'],
                 'hourly_rate' => $validated['hourly_rate'],
                 'basic_salary' => $validated['basic_salary'],
                 'food_allowance' => $validated['food_allowance'] ?? 0,

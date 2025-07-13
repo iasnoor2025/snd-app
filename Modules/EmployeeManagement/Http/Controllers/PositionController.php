@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 
-class PositionController extends Controller
+class DesignationController extends Controller
 {
     // Ensure no auth middleware is applied
     public function __construct()
@@ -146,7 +146,7 @@ class PositionController extends Controller
                 'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString()
             ]);
-            
+
             if (request()->wantsJson()) {
                 return response()->json([
                     'message' => 'Failed to create position',
@@ -390,20 +390,20 @@ class PositionController extends Controller
                 ->select('id', 'name', 'description', 'active')
                 ->orderBy('name')
                 ->get();
-            
+
             // Convert translatable fields to simple strings
             $positions = $dbPositions->map(function ($position) {
-                $name = is_array($position->name) || is_object($position->name) 
-                    ? (isset($position->name['en']) ? $position->name['en'] : reset($position->name)) 
+                $name = is_array($position->name) || is_object($position->name)
+                    ? (isset($position->name['en']) ? $position->name['en'] : reset($position->name))
                     : $position->name;
-                
+
                 $description = null;
                 if (!empty($position->description)) {
                     $description = is_array($position->description) || is_object($position->description)
                         ? (isset($position->description['en']) ? $position->description['en'] : reset($position->description))
                         : $position->description;
                 }
-                
+
                 return [
                     'id' => $position->id,
                     'name' => $name,
@@ -411,14 +411,14 @@ class PositionController extends Controller
                     'active' => (bool) $position->active
                 ];
             });
-            
+
             return response()->json($positions);
         } catch (\Exception $e) {
             \Log::error('Error fetching simple positions: ' . $e->getMessage(), [
                 'file' => $e->getFile(),
                 'line' => $e->getLine()
             ]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch positions',

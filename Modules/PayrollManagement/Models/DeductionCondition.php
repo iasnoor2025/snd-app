@@ -52,7 +52,7 @@ class DeductionCondition extends Model
     {
         return [
             'deduction_rule_id' => 'required|exists:payroll_deduction_rules,id',
-            'field' => 'required|string|in:gross_amount,basic_salary,department,position,employment_type,years_of_service',
+            'field' => 'required|string|in:gross_amount,basic_salary,department,designation,employment_type,years_of_service',
             'operator' => 'required|string|in:=,>,<,>=,<=,in,not_in',
             'value' => 'required',
             'amount' => 'required_without:percentage|nullable|numeric|min:0',
@@ -70,7 +70,7 @@ class DeductionCondition extends Model
             'gross_amount' => 'Gross Amount',
             'basic_salary' => 'Basic Salary',
             'department' => 'Department',
-            'position' => 'Position',
+            'designation' => 'Designation',
             'employment_type' => 'Employment Type',
             'years_of_service' => 'Years of Service',
         ];
@@ -124,4 +124,4 @@ class DeductionCondition extends Model
     {
         return \Modules\PayrollManagement\database\factories\DeductionConditionFactory::new();
     }
-} 
+}

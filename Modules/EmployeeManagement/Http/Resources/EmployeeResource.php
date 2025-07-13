@@ -22,9 +22,9 @@ class EmployeeResource extends JsonResource
             'address' => $this->address,
             'city' => $this->city,
             'nationality' => $this->nationality,
-            'position' => [
-                'id' => $this->position->id,
-                'name' => $this->position->name,
+            'designation' => [
+                'id' => $this->designation->id,
+                'name' => $this->designation->name,
             ],
             'department' => [
                 'id' => $this->department->id,

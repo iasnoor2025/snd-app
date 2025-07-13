@@ -29,7 +29,7 @@ return new class extends Migration
             $table->string('nationality')->nullable();
             $table->date('date_of_birth')->nullable();
             $table->date('hire_date')->nullable();
-            $table->foreignId('position_id')->nullable()->constrained('positions')->nullOnDelete();
+            $table->foreignId('designation_id')->nullable()->constrained('designations')->nullOnDelete();
             $table->foreignId('department_id')->nullable()->constrained('departments')->nullOnDelete();
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('supervisor')->nullable();

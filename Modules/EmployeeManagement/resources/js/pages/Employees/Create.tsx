@@ -40,7 +40,7 @@ import { toast } from 'sonner';
 
 interface Props {
   users: any[];
-  positions: any[];
+  designations: any[];
   employee?: any;
   isEditing?: boolean;
 }
@@ -71,7 +71,7 @@ const formSchema = z.object({
   nationality: z.string().min(1, "Nationality is required"),
   file_number: z.string().min(1, "File number is required")
     .regex(/^EMP-\d{4}$/, "File number must be in format EMP-XXXX"),
-  position_id: z.string().min(1, "Position is required"),
+  designation_id: z.string().min(1, "Designation is required"),
   hourly_rate: z.coerce.number().min(0, "Hourly rate must be non-negative").optional().default(0),
   basic_salary: z.coerce.number().min(0, "Basic salary must be non-negative").optional().default(0),
   overtime_rate_multiplier: z.coerce.number().min(0, "Overtime rate multiplier must be non-negative").optional().default(0),
@@ -135,7 +135,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 type FileRecord = Record<string, File | null>;
 
-export default function Create({ users, positions, employee, isEditing = false }: Props) {
+export default function Create({ users, designations, employee, isEditing = false }: Props) {
   const { t } = useTranslation('employee');
 
   const [activeTab, setActiveTab] = useState('personal');
@@ -169,7 +169,7 @@ export default function Create({ users, positions, employee, isEditing = false }
       phone: employee?.phone || '',
       nationality: employee?.nationality || '',
       file_number: employee?.file_number || '',
-      position_id: employee?.position_id ? String(employee.position_id) : '',
+      designation_id: employee?.designation_id ? String(employee.designation_id) : '',
       department_id: employee?.department_id ? parseInt(employee.department_id) : 1,
       user_id: employee?.user_id || '',
       hourly_rate: employee?.hourly_rate || 0,
@@ -310,9 +310,9 @@ export default function Create({ users, positions, employee, isEditing = false }
       // Debug log the form data
       console.log('Form data before processing:', data);
 
-      // Ensure position_id is a string
-      if (data.position_id !== undefined) {
-        data.position_id = String(data.position_id);
+      // Ensure designation_id is a string
+      if (data.designation_id !== undefined) {
+        data.designation_id = String(data.designation_id);
       }
 
       // Ensure required fields are set
@@ -323,7 +323,7 @@ export default function Create({ users, positions, employee, isEditing = false }
         phone: 'Phone',
         nationality: 'Nationality',
         file_number: 'File Number',
-        position_id: 'Position',
+        designation_id: 'Designation',
         hire_date: 'Hire Date',
         date_of_birth: 'Date of Birth',
         basic_salary: 'Basic Salary',
@@ -521,7 +521,7 @@ export default function Create({ users, positions, employee, isEditing = false }
                 </TabsContent>
 
                 <TabsContent value="employment">
-                  <EmploymentDetailsTab form={form} positions={positions} users={users} />
+                  <EmploymentDetailsTab form={form} designations={designations} users={users} />
                 </TabsContent>
 
                 <TabsContent value="salary">

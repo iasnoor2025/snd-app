@@ -23,7 +23,7 @@
         <strong>Employee:</strong> {{ $employee->full_name ?? $employee->name }}<br>
         <strong>Employee ID:</strong> {{ $employee->employee_id ?? $employee->id }}<br>
         <strong>Department:</strong> {{ $employee->department->name ?? 'N/A' }}<br>
-        <strong>Position:</strong> {{ $employee->position->title ?? 'N/A' }}<br>
+        <strong>Designation:</strong> {{ $employee->designation->title ?? 'N/A' }}<br>
     </div>
     <div class="section">
         <table class="table">

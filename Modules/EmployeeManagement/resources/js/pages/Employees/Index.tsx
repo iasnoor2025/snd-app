@@ -75,20 +75,20 @@ interface Props extends PageProps {
     search: string;
     status: string;
     department: string;
-    position: string;
+    designation: string;
   };
   departments: Array<{ id: number; name: string }>;
-  positions: Array<{ id: number; name: string }>;
+  designations: Array<{ id: number; name: string }>;
   auth: any;
 }
 
-export default function Index({ auth, employees, filters, departments, positions }: Props) {
+export default function Index({ auth, employees, filters, departments, designations }: Props) {
   const { t } = useTranslation('employees');
 
   const [search, setSearch] = useState(filters.search || '');
   const [status, setStatus] = useState(filters.status || 'all');
   const [department, setDepartment] = useState(filters.department || 'all');
-  const [position, setPosition] = useState(filters.position || 'all');
+  const [designation, setDesignation] = useState(filters.designation || 'all');
   const [isLoading, setIsLoading] = useState(false);
   const { hasPermission } = usePermission();
   const [perPage, setPerPage] = useState(employees.meta?.per_page || 15);
@@ -100,7 +100,7 @@ export default function Index({ auth, employees, filters, departments, positions
       search: normalizedValue,
       status: status === 'all' ? '' : status,
       department: department === 'all' ? '' : department,
-      position: position === 'all' ? '' : position,
+      designation: designation === 'all' ? '' : designation,
       per_page: perPage
     }, { preserveState: true, preserveScroll: true });
   }, 300);
@@ -109,7 +109,7 @@ export default function Index({ auth, employees, filters, departments, positions
     const normalizedValue = value === 'all' ? '' : value;
     let newStatus = status;
     let newDepartment = department;
-    let newPosition = position;
+    let newDesignation = designation;
 
     switch (type) {
       case 'status':
@@ -120,9 +120,9 @@ export default function Index({ auth, employees, filters, departments, positions
         setDepartment(value);
         newDepartment = value;
         break;
-      case 'position':
-        setPosition(value);
-        newPosition = value;
+      case 'designation':
+        setDesignation(value);
+        newDesignation = value;
         break;
     }
 
@@ -130,7 +130,7 @@ export default function Index({ auth, employees, filters, departments, positions
       search: search === 'all' ? '' : search,
       status: newStatus === 'all' ? '' : newStatus,
       department: newDepartment === 'all' ? '' : newDepartment,
-      position: newPosition === 'all' ? '' : newPosition,
+      designation: newDesignation === 'all' ? '' : newDesignation,
       per_page: perPage,
     }, { preserveState: true, preserveScroll: true });
   };
@@ -141,7 +141,7 @@ export default function Index({ auth, employees, filters, departments, positions
       search: search === 'all' ? '' : search,
       status: status === 'all' ? '' : status,
       department: department === 'all' ? '' : department,
-      position: position === 'all' ? '' : position,
+      designation: designation === 'all' ? '' : designation,
       per_page: Number(value)
     }, { preserveState: true, preserveScroll: true });
   };
@@ -301,17 +301,17 @@ export default function Index({ auth, employees, filters, departments, positions
                 </SelectContent>
               </Select>
               <Select
-                value={position}
-                onValueChange={(value) => handleFilter('position', value)}
+                value={designation}
+                onValueChange={(value) => handleFilter('designation', value)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={t('ph_filter_by_position')} />
+                  <SelectValue placeholder={t('ph_filter_by_designation')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">{t('opt_all_positions')}</SelectItem>
-                  {positions?.map((pos) => pos && (
-                    <SelectItem key={pos.id} value={pos.id.toString()}>
-                      {typeof pos.name === 'string' ? pos.name : JSON.stringify(pos.name)}
+                  <SelectItem value="all">{t('opt_all_designations')}</SelectItem>
+                  {designations?.map((designation) => (
+                    <SelectItem key={designation.id} value={designation.id.toString()}>
+                      {typeof designation.name === 'string' ? designation.name : JSON.stringify(designation.name)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -324,7 +324,7 @@ export default function Index({ auth, employees, filters, departments, positions
                   <TableRow>
                     <TableHead>File Number</TableHead>
                     <TableHead>Employee</TableHead>
-                    <TableHead>Status & Position</TableHead>
+                    <TableHead>Status & Designation</TableHead>
                     <TableHead>{t('current_assignment')}</TableHead>
                     <TableHead>{t('th_salary_info')}</TableHead>
                     <TableHead>{t('th_contact_details')}</TableHead>
@@ -347,10 +347,10 @@ export default function Index({ auth, employees, filters, departments, positions
                           </div>
                           <div className="text-sm">
                             <BriefcaseBusiness className="inline-block w-3 h-3 mr-1" />
-                            {typeof employee.position === 'string'
-                              ? employee.position
-                              : employee.position
-                                ? getTranslation(employee.position?.name)
+                            {typeof employee.designation === 'string'
+                              ? employee.designation
+                              : employee.designation
+                                ? getTranslation(employee.designation?.name)
                                 : 'N/A'}
                           </div>
                           <div className="text-xs text-muted-foreground">
@@ -497,7 +497,7 @@ export default function Index({ auth, employees, filters, departments, positions
                               search: search === 'all' ? '' : search,
                               status: status === 'all' ? '' : status,
                               department: department === 'all' ? '' : department,
-                              position: position === 'all' ? '' : position
+                              designation: designation === 'all' ? '' : designation
                                                         }, { preserveState: true, preserveScroll: true });
                           }
                         }}
@@ -539,7 +539,7 @@ export default function Index({ auth, employees, filters, departments, positions
                                     search: search === 'all' ? '' : search,
                                     status: status === 'all' ? '' : status,
                                     department: department === 'all' ? '' : department,
-                                    position: position === 'all' ? '' : position
+                                    designation: designation === 'all' ? '' : designation
                                                                      }, { preserveState: true, preserveScroll: true });
                                 }}
                               >
@@ -564,7 +564,7 @@ export default function Index({ auth, employees, filters, departments, positions
                               search: search === 'all' ? '' : search,
                               status: status === 'all' ? '' : status,
                               department: department === 'all' ? '' : department,
-                              position: position === 'all' ? '' : position
+                              designation: designation === 'all' ? '' : designation
                                                         }, { preserveState: true, preserveScroll: true });
                           }
                         }}

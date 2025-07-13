@@ -341,7 +341,7 @@ use SoftDeletes;
                 'last_working_day' => $this->last_working_day->format('Y-m-d'),
                 'status' => ucfirst($this->status),
                 'department' => $this->employee->department ?? 'N/A',
-                'position' => $this->employee->position ?? 'N/A',
+                'position' => $this->employee->designation ?? 'N/A',
             ]
         ];
 

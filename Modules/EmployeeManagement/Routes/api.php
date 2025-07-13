@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Modules\EmployeeManagement\Http\Controllers\Api\EmployeeController;
 use Modules\EmployeeManagement\Http\Controllers\Api\TimesheetController;
 use Modules\EmployeeManagement\Http\Controllers\DepartmentController;
-use Modules\EmployeeManagement\Http\Controllers\PositionController;
+use Modules\EmployeeManagement\Http\Controllers\DesignationController;
 use Modules\EmployeeManagement\Http\Controllers\EmployeeDocumentController;
 use Modules\EmployeeManagement\Http\Controllers\EmployeeAdvanceController;
 use Modules\EmployeeManagement\Http\Controllers\ResignationController;
@@ -20,7 +20,7 @@ use Modules\EmployeeManagement\Http\Controllers\Api\WidgetController;
 // Public route for last-file-number (no auth middleware)
 Route::prefix('v1')->group(function () {
     Route::get('employees/last-file-number', [EmployeeController::class, 'getNextFileNumber']);
-    Route::apiResource('positions', PositionController::class);
+    Route::apiResource('designations', DesignationController::class);
     Route::get('employees/all', function () {
         $repo = app(\Modules\EmployeeManagement\Repositories\EmployeeRepositoryInterface::class);
         return response()->json($repo->all())
@@ -53,8 +53,8 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     // Department routes
     Route::apiResource('departments', DepartmentController::class)->only(['index', 'show']);
 
-    // Position routes
-    Route::apiResource('positions', PositionController::class)->only(['index', 'show']);
+    // Designation routes
+    Route::apiResource('designations', DesignationController::class)->only(['index', 'show']);
 
     // Document management
     Route::prefix('employees/{employee}/documents')->group(function () {
@@ -92,12 +92,12 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
 });
 
 // Public API endpoints - no authentication required
-Route::prefix('v1/positions')->group(function() {
-    Route::get('/', [PositionController::class, 'publicIndex']);
-    Route::get('/simple', [PositionController::class, 'simplePositions']);
-    Route::post('/', [PositionController::class, 'store']);
-    Route::put('/{position}', [PositionController::class, 'update']);
-    Route::delete('/{position}', [PositionController::class, 'destroy']);
+Route::prefix('v1/designations')->group(function() {
+    Route::get('/', [DesignationController::class, 'publicIndex']);
+    Route::get('/simple', [DesignationController::class, 'simpleDesignations']);
+    Route::post('/', [DesignationController::class, 'store']);
+    Route::put('/{designation}', [DesignationController::class, 'update']);
+    Route::delete('/{designation}', [DesignationController::class, 'destroy']);
 });
 
 // Other public API endpoints

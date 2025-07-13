@@ -15,30 +15,30 @@ class EmployeeSearchService
     public function search(array $filters, array $options = []): Collection
     {
         $query = Employee::query();
-        
+
         // Apply basic filters
         $this->applyBasicFilters($query, $filters);
-        
+
         // Apply document filters
         if (isset($filters['documents'])) {
             $this->applyDocumentFilters($query, $filters['documents']);
         }
-        
+
         // Apply date range filters
         if (isset($filters['date_ranges'])) {
             $this->applyDateRangeFilters($query, $filters['date_ranges']);
         }
-        
+
         // Apply relationship filters
         if (isset($filters['relationships'])) {
             $this->applyRelationshipFilters($query, $filters['relationships']);
         }
-        
+
         // Apply sorting
         if (isset($options['sort'])) {
             $this->applySorting($query, $options['sort']);
         }
-        
+
         // Cache results if enabled
         if (isset($options['cache']) && $options['cache']) {
             $cacheKey = $this->generateCacheKey($filters, $options);
@@ -46,7 +46,7 @@ class EmployeeSearchService
                 return $query->get();
             });
         }
-        
+
         return $query->get();
     }
 
@@ -62,32 +62,32 @@ class EmployeeSearchService
                     ->orWhere('last_name', 'like', "%{$filters['name']}%");
             });
         }
-        
+
         // Employee ID search
         if (isset($filters['employee_id'])) {
             $query->where('employee_id', 'like', "%{$filters['employee_id']}%");
         }
-        
+
         // Department filter
         if (isset($filters['department'])) {
             $query->where('department', $filters['department']);
         }
-        
-        // Position filter
-        if (isset($filters['position'])) {
-            $query->where('position', $filters['position']);
+
+        // Designation filter
+        if (isset($filters['designation'])) {
+            $query->where('designation', $filters['designation']);
         }
-        
+
         // Status filter
         if (isset($filters['status'])) {
             $query->where('status', $filters['status']);
         }
-        
+
         // Employment type filter
         if (isset($filters['employment_type'])) {
             $query->where('employment_type', $filters['employment_type']);
         }
-        
+
         // Location filter
         if (isset($filters['location'])) {
             $query->where('location', $filters['location']);
@@ -102,11 +102,11 @@ class EmployeeSearchService
         foreach ($documentFilters as $type => $filter) {
             $query->whereHas('documents', function ($q) use ($type, $filter) {
                 $q->where('type', $type);
-                
+
                 if (isset($filter['status'])) {
                     $q->where('status', $filter['status']);
                 }
-                
+
                 if (isset($filter['expiry'])) {
                     if ($filter['expiry'] === 'expired') {
                         $q->where('expiry_date', '<', now());
@@ -128,7 +128,7 @@ class EmployeeSearchService
             if (isset($range['from'])) {
                 $query->where($field, '>=', $range['from']);
             }
-            
+
             if (isset($range['to'])) {
                 $query->where($field, '<=', $range['to']);
             }
@@ -146,14 +146,14 @@ class EmployeeSearchService
                 $q->where('name', $relationships['department']);
             });
         }
-        
-        // Position relationship
-        if (isset($relationships['position'])) {
-            $query->whereHas('position', function ($q) use ($relationships) {
-                $q->where('name', $relationships['position']);
+
+        // Designation relationship
+        if (isset($relationships['designation'])) {
+            $query->whereHas('designation', function ($q) use ($relationships) {
+                $q->where('name', $relationships['designation']);
             });
         }
-        
+
         // Manager relationship
         if (isset($relationships['manager'])) {
             $query->whereHas('manager', function ($q) use ($relationships) {
@@ -169,7 +169,7 @@ class EmployeeSearchService
     {
         $field = $sort['field'] ?? 'created_at';
         $direction = $sort['direction'] ?? 'desc';
-        
+
         $query->orderBy($field, $direction);
     }
 
@@ -198,14 +198,14 @@ class EmployeeSearchService
     public function saveSearch(int $userId, string $name, array $filters, array $options = []): void
     {
         $savedSearches = $this->getSavedSearches($userId);
-        
+
         $savedSearches->push([
             'name' => $name,
             'filters' => $filters,
             'options' => $options,
             'created_at' => now(),
         ]);
-        
+
         Cache::put("user:{$userId}:saved_searches", $savedSearches, now()->addMonths(6));
     }
 
@@ -215,11 +215,11 @@ class EmployeeSearchService
     public function deleteSavedSearch(int $userId, string $name): void
     {
         $savedSearches = $this->getSavedSearches($userId);
-        
+
         $savedSearches = $savedSearches->reject(function ($search) use ($name) {
             return $search['name'] === $name;
         });
-        
+
         Cache::put("user:{$userId}:saved_searches", $savedSearches, now()->addMonths(6));
     }
 
@@ -229,7 +229,7 @@ class EmployeeSearchService
     public function exportSearchResults(array $filters, array $options = [], string $format = 'csv'): string
     {
         $results = $this->search($filters, $options);
-        
+
         switch ($format) {
             case 'csv':
                 return $this->exportToCsv($results);
@@ -252,38 +252,38 @@ class EmployeeSearchService
             'First Name',
             'Last Name',
             'Department',
-            'Position',
+            'Designation',
             'Status',
             'Employment Type',
             'Location',
             'Join Date',
         ];
-        
+
         $rows = $results->map(function ($employee) {
             return [
                 $employee->employee_id,
                 $employee->first_name,
                 $employee->last_name,
                 $employee->department,
-                $employee->position,
+                $employee->designation,
                 $employee->status,
                 $employee->employment_type,
                 $employee->location,
                 $employee->join_date->format('Y-m-d'),
             ];
         });
-        
+
         $csv = fopen('php://temp', 'r+');
         fputcsv($csv, $headers);
-        
+
         foreach ($rows as $row) {
             fputcsv($csv, $row);
         }
-        
+
         rewind($csv);
         $content = stream_get_contents($csv);
         fclose($csv);
-        
+
         return $content;
     }
 

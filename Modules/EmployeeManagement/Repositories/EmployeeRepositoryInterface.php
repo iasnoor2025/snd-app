@@ -18,9 +18,9 @@ interface EmployeeRepositoryInterface extends BaseRepositoryInterface
     public function findByEmail(string $email): ?Employee;
 
     /**
-     * Find employees by their position
+     * Find employees by their designation
      */
-    public function findByPosition(int $positionId): array;
+    public function findByDesignation(int $designationId): array;
 
     /**
      * Find active employees

@@ -35,7 +35,7 @@
         <div class="col">
             <strong>Employee:</strong> {{ $employee->first_name }} {{ $employee->last_name }}<br>
             <strong>File #:</strong> {{ $employee->employee_id ?? '-' }}<br>
-            <strong>Position:</strong> {{ $employee->position ?? '-' }}<br>
+            <strong>Designation:</strong> {{ $employee->designation ?? '-' }}<br>
             <strong>ID:</strong> {{ $employee->id }}
         </div>
         <div class="col">

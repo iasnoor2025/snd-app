@@ -86,9 +86,9 @@ class EmployeeController extends Controller
         return response()->json(null, 204);
     }
 
-    public function getByPosition(int $positionId): JsonResponse
+    public function getByDesignation(int $designationId): JsonResponse
     {
-        $employees = $this->employeeService->getEmployeesByPosition($positionId);
+        $employees = $this->employeeService->getEmployeesByDesignation($designationId);
         return response()->json($employees);
     }
 

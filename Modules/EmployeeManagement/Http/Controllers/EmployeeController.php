@@ -9,7 +9,7 @@ use Inertia\Inertia;
 use Carbon\Carbon;
 use Modules\EmployeeManagement\Services\EmployeeService;
 use Modules\Core\Services\DocumentService;
-use Modules\EmployeeManagement\Domain\Models\Position;
+use Modules\EmployeeManagement\Domain\Models\Designation;
 use Modules\EmployeeManagement\Domain\Models\Department;
 use Modules\EmployeeManagement\Actions\CreateEmployeeAction;
 use Modules\EmployeeManagement\Actions\UpdateEmployeeAction;
@@ -55,7 +55,7 @@ class EmployeeController extends Controller
             'status_param' => $request->status,
         ]);
         $query = Employee::query()
-            ->with(['position', 'department'])
+            ->with(['designation', 'department'])
             ->when($request->search, function ($query, $search) {
                 $query->where(function ($query) use ($search) {
                     $query->where('first_name', 'like', "%{$search}%")
@@ -73,8 +73,8 @@ class EmployeeController extends Controller
             ->when($request->department && $request->department !== 'all' && is_numeric($request->department), function ($query) use ($request) {
                 $query->where('department_id', (int) $request->department);
             })
-            ->when($request->position && $request->position !== 'all' && is_numeric($request->position), function ($query) use ($request) {
-                $query->where('position_id', (int) $request->position);
+            ->when($request->designation && $request->designation !== 'all' && is_numeric($request->designation), function ($query) use ($request) {
+                $query->where('designation_id', (int) $request->designation);
             })
             ->orderByRaw("LPAD(REGEXP_REPLACE(file_number, '\\D', '', 'g'), 10, '0') ASC");
 
@@ -130,9 +130,9 @@ class EmployeeController extends Controller
                     'next' => $employees->nextPageUrl(),
                 ]
             ],
-            'filters' => $request->only(['search', 'status', 'department', 'position']),
+            'filters' => $request->only(['search', 'status', 'department', 'designation']),
             'departments' => Department::orderBy('name')->get(['id', 'name']),
-            'positions' => Position::orderBy('name')->get(['id', 'name']),
+            'designations' => Designation::orderBy('name')->get(['id', 'name']),
             'auth' => [
                 'user' => auth()->user() ? [
                     'id' => auth()->id(),
@@ -152,7 +152,7 @@ class EmployeeController extends Controller
     {
         return Inertia::render('Employees/Create', [
             'departments' => Department::orderBy('name')->get(['id', 'name']),
-            'positions' => Position::orderBy('name')->get(['id', 'name']),
+            'designations' => Designation::orderBy('name')->get(['id', 'name']),
             'users' => \Modules\Core\Domain\Models\User::orderBy('name')->get(['id', 'name'])
         ]);
     }
@@ -198,12 +198,12 @@ class EmployeeController extends Controller
         $this->authorize('update', $employee);
 
         // Eager load all necessary relations
-        $employeeData = $employee->load(['position', 'department', 'user']);
+        $employeeData = $employee->load(['designation', 'department', 'user']);
 
         // Map related IDs and flatten nested fields for frontend compatibility
         $employeeArray = $employeeData->toArray();
         $employeeArray['department_id'] = $employeeData->department ? $employeeData->department->id : null;
-        $employeeArray['position_id'] = $employeeData->position ? $employeeData->position->id : null;
+        $employeeArray['designation_id'] = $employeeData->designation ? $employeeData->designation->id : null;
         $employeeArray['user_id'] = $employeeData->user ? $employeeData->user->id : null;
         $employeeArray['email'] = $employeeData->user ? $employeeData->user->email : $employeeData->email;
         $employeeArray['nationality'] = $employeeData->nationality ?? '';
@@ -230,10 +230,10 @@ class EmployeeController extends Controller
         $employeeArray['supervisor_name'] = $supervisorName;
 
         // Position: send both id and object (with name)
-        $employeeArray['position_id'] = $employeeData->position ? (string)$employeeData->position->id : ($employeeData->position_id ? (string)$employeeData->position_id : '');
-        $employeeArray['position'] = $employeeData->position ? [
-            'id' => $employeeData->position->id,
-            'name' => is_array($employeeData->position->name) ? $employeeData->position->name : (string)$employeeData->position->name,
+        $employeeArray['designation_id'] = $employeeData->designation ? (string)$employeeData->designation->id : ($employeeData->designation_id ? (string)$employeeData->designation_id : '');
+        $employeeArray['designation'] = $employeeData->designation ? [
+            'id' => $employeeData->designation->id,
+            'name' => is_array($employeeData->designation->name) ? $employeeData->designation->name : (string)$employeeData->designation->name,
         ] : null;
 
         // Map license/certification fields as objects for frontend
@@ -278,7 +278,7 @@ class EmployeeController extends Controller
         return Inertia::render('Employees/Create', [
             'employee' => $employeeArray,
             'departments' => Department::orderBy('name')->get(['id', 'name']),
-            'positions' => Position::orderBy('name')->get(['id', 'name']),
+            'designations' => Designation::orderBy('name')->get(['id', 'name']),
             'users' => $users,
             'isEditing' => true
         ]);

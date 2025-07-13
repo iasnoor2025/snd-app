@@ -274,8 +274,8 @@ class FinalSettlementController extends Controller
             <tr>
                 <td class="label">Department:</td>
                 <td>' . ($employee->department ?? 'N/A') . '</td>
-                <td class="label">Position:</td>
-                <td>' . ($employee->position->name ?? 'N/A') . '</td>
+                <td class="label">Designation:</td>
+                <td>' . ($employee->designation->name ?? 'N/A') . '</td>
             </tr>
             <tr>
                 <td class="label">Hire Date:</td>

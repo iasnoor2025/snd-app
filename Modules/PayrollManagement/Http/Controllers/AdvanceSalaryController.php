@@ -205,13 +205,13 @@ class AdvanceSalaryController extends Controller
     {
         $employees = Employee::where('advance_salary_eligible', true)
             ->where('status', 'active')
-            ->with(['position', 'user'])
+            ->with(['designation', 'user'])
             ->get()
             ->map(function ($employee) {
                 return [
                     'id' => $employee->id,
                     'name' => $employee->full_name,
-                    'position' => $employee->position->name ?? 'N/A',
+                    'position' => $employee->designation->name ?? 'N/A',
                     'basic_salary' => $employee->basic_salary,
                     'total_allowances' => $employee->total_allowances,
                     'advance_approved' => $employee->advance_salary_approved_this_month

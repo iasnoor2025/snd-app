@@ -198,9 +198,9 @@ class EmployeeService extends BaseService
         return $this->employeeRepository->findActive();
     }
 
-    public function getEmployeesByPosition(int $positionId): array
+    public function getEmployeesByDesignation(int $designationId): array
     {
-        return $this->employeeRepository->findByPosition($positionId);
+        return $this->employeeRepository->findByDesignation($designationId);
     }
 
     public function getEmployeesWithCurrentSalary(): array

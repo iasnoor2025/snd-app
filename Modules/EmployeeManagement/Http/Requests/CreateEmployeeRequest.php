@@ -19,7 +19,7 @@ class CreateEmployeeRequest extends BaseFormRequest
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:employees,email'],
             'phone' => ['required', 'string', 'max:20'],
-            'position_id' => ['required', 'exists:positions,id'],
+            'designation_id' => ['required', 'exists:designations,id'],
             'department_id' => ['required', 'exists:departments,id'],
             'date_of_birth' => ['required', 'date'],
             'iqama_number' => ['required', 'string', 'max:50'],
@@ -47,7 +47,7 @@ class CreateEmployeeRequest extends BaseFormRequest
     public function messages(): array
     {
         return [
-            'position_id.exists' => 'The selected position is invalid.',
+            'designation_id.exists' => 'The selected designation is invalid.',
             'department_id.exists' => 'The selected department is invalid.',
             'user_role.exists' => 'The selected role is invalid.',
             'user_role.required_if' => 'The role field is required when creating a user account.',

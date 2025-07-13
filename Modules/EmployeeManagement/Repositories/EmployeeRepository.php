@@ -23,9 +23,9 @@ class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInt
         return $this->model->where('email', $email)->first();
     }
 
-    public function findByPosition(int $positionId): array
+    public function findByDesignation(int $designationId): array
     {
-        return $this->model->where('position_id', $positionId)->get()->all();
+        return $this->model->where('designation_id', $designationId)->get()->all();
     }
 
     public function findActive(): array

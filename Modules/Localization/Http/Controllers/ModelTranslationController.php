@@ -251,7 +251,7 @@ class ModelTranslationController extends Controller
         $models = [
             'Category' => 'Modules\\Core\\Domain\\Models\\Category',
             'Department' => 'Modules\\EmployeeManagement\\Domain\\Models\\Department',
-            'Position' => 'Modules\\EmployeeManagement\\Domain\\Models\\Position',
+            'Designation' => 'Modules\\EmployeeManagement\\Domain\\Models\\Designation',
             'Equipment' => 'Modules\\EquipmentManagement\\Domain\\Models\\Equipment',
         ];
 

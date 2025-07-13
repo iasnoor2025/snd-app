@@ -46,7 +46,7 @@ class SalaryEmployeeApiController extends Controller
                     'last_name' => $employee->last_name,
                     'full_name' => $employee->full_name,
                     'hourly_rate' => $hourlyRate,
-                    'position' => $employee->position,
+                    'position' => $employee->designation,
                 ];
             });
 

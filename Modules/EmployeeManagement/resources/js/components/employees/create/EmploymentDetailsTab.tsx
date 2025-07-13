@@ -4,16 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
 import { Input } from "@/Core";
 import { Label } from "@/Core";
 import PositionSelector from './PositionSelector';
-
-interface Position {
-    id: number;
-    name: string;
-    description: string | null;
-    is_active: boolean;
-}
+import { Designation } from '../../../types/employee';
 
 interface EmploymentDetailsData {
-    position_id: number | null;
+    designation_id: number | null;
     department: string;
     employment_status: string;
     hire_date: string;
@@ -22,12 +16,12 @@ interface EmploymentDetailsData {
 
 interface EmploymentDetailsTabProps {
     data: EmploymentDetailsData;
-    positions: Position[];
+    designations: Designation[];
     onSaveDraft: (data: EmploymentDetailsData) => void;
     isSubmitting: boolean;
 }
 
-export function EmploymentDetailsTab({ data, positions, onSaveDraft, isSubmitting }: EmploymentDetailsTabProps) {
+export function EmploymentDetailsTab({ data, designations, onSaveDraft, isSubmitting }: EmploymentDetailsTabProps) {
   const { t } = useTranslation('employee');
 
     const handleChange = (field: keyof EmploymentDetailsData, value: any) => {
@@ -44,11 +38,11 @@ export function EmploymentDetailsTab({ data, positions, onSaveDraft, isSubmittin
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="space-y-2">
-                    <Label htmlFor="position">Position</Label>
+                    <Label htmlFor="designation_id">Designation</Label>
                     <PositionSelector
-                        value={data.position_id}
-                        onChange={(value) => handleChange('position_id', value)}
-                        initialPositions={positions}
+                        value={data.designation_id}
+                        onChange={(value) => handleChange('designation_id', value)}
+                        initialPositions={designations}
                     />
                 </div>
 

@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 class DeductionRuleService
 {
     protected NotificationService $notificationService;
-    
+
     public function __construct(NotificationService $notificationService)
     {
         $this->notificationService = $notificationService;
@@ -120,13 +120,13 @@ class DeductionRuleService
     {
         $employee = $payroll->employee;
         $rules = $this->getApplicableRules($employee);
-        
+
         $deductions = [];
         $totalDeduction = 0;
-        
+
         foreach ($rules as $rule) {
             $amount = $this->calculateDeductionAmount($payroll, $rule);
-            
+
             if ($amount > 0) {
                 $deduction = [
                     'rule_id' => $rule->id,
@@ -135,12 +135,12 @@ class DeductionRuleService
                     'type' => $rule->type,
                     'requires_approval' => $rule->requires_approval,
                 ];
-                
+
                 $deductions[] = $deduction;
                 $totalDeduction += $amount;
             }
         }
-        
+
         return [
             'deductions' => $deductions,
             'total_deduction' => $totalDeduction,
@@ -171,20 +171,20 @@ class DeductionRuleService
     protected function calculateDeductionAmount(Payroll $payroll, DeductionRule $rule): float
     {
         $baseAmount = $this->getBaseAmount($payroll, $rule);
-        
+
         switch ($rule->calculation_method) {
             case 'fixed':
                 return $rule->amount;
-                
+
             case 'percentage':
                 return $baseAmount * ($rule->percentage / 100);
-                
+
             case 'tiered':
                 return $this->calculateTieredDeduction($baseAmount, $rule);
-                
+
             case 'conditional':
                 return $this->calculateConditionalDeduction($payroll, $rule);
-                
+
             default:
                 throw new \InvalidArgumentException("Unsupported calculation method: {$rule->calculation_method}");
         }
@@ -198,13 +198,13 @@ class DeductionRuleService
         switch ($rule->base_amount_type) {
             case 'gross':
                 return $payroll->gross_amount;
-                
+
             case 'basic':
                 return $payroll->basic_salary;
-                
+
             case 'net':
                 return $payroll->net_amount;
-                
+
             default:
                 return $payroll->gross_amount;
         }
@@ -217,14 +217,14 @@ class DeductionRuleService
     {
         $tiers = collect($rule->metadata['tiers'] ?? [])
             ->sortBy('amount_from');
-            
+
         foreach ($tiers as $tier) {
-            if ($amount >= $tier['amount_from'] && 
+            if ($amount >= $tier['amount_from'] &&
                 (!isset($tier['amount_to']) || $amount <= $tier['amount_to'])) {
                 return $tier['fixed_amount'] ?? ($amount * ($tier['percentage'] / 100));
             }
         }
-        
+
         return 0;
     }
 
@@ -235,13 +235,13 @@ class DeductionRuleService
     {
         $conditions = $rule->conditions;
         $amount = 0;
-        
+
         foreach ($conditions as $condition) {
             if ($this->evaluateCondition($payroll, $condition)) {
                 $amount += $condition['amount'] ?? ($payroll->gross_amount * ($condition['percentage'] / 100));
             }
         }
-        
+
         return $amount;
     }
 
@@ -251,7 +251,7 @@ class DeductionRuleService
     protected function evaluateCondition(Payroll $payroll, array $condition): bool
     {
         $value = $this->getConditionValue($payroll, $condition['field']);
-        
+
         switch ($condition['operator']) {
             case '=':
                 return $value == $condition['value'];
@@ -278,7 +278,7 @@ class DeductionRuleService
     protected function getConditionValue(Payroll $payroll, string $field)
     {
         $employee = $payroll->employee;
-        
+
         switch ($field) {
             case 'gross_amount':
                 return $payroll->gross_amount;
@@ -287,7 +287,7 @@ class DeductionRuleService
             case 'department':
                 return $employee->department;
             case 'position':
-                return $employee->position;
+                return $employee->designation;
             case 'employment_type':
                 return $employee->employment_type;
             case 'years_of_service':
@@ -307,11 +307,11 @@ class DeductionRuleService
             'failed' => 0,
             'details' => [],
         ];
-        
+
         foreach ($payrolls as $payroll) {
             try {
                 $deductions = $this->calculateDeductions($payroll);
-                
+
                 foreach ($deductions['deductions'] as $deduction) {
                     PayrollDeduction::create([
                         'payroll_id' => $payroll->id,
@@ -320,7 +320,7 @@ class DeductionRuleService
                         'status' => $deduction['requires_approval'] ? 'pending' : 'approved',
                     ]);
                 }
-                
+
                 $results['processed']++;
                 $results['details'][] = [
                     'payroll_id' => $payroll->id,
@@ -336,7 +336,7 @@ class DeductionRuleService
                 ];
             }
         }
-        
+
         return $results;
     }
 
@@ -351,7 +351,7 @@ class DeductionRuleService
                 'approved_by' => $approverId,
                 'approved_at' => now(),
             ]);
-            
+
             $this->notificationService->sendNotification(
                 $deduction->payroll->employee->user,
                 'Deduction Approved',
@@ -363,7 +363,7 @@ class DeductionRuleService
                 'approved_by' => $approverId,
                 'approved_at' => now(),
             ]);
-            
+
             $this->notificationService->sendNotification(
                 $deduction->payroll->employee->user,
                 'Deduction Rejected',
@@ -371,4 +371,4 @@ class DeductionRuleService
             );
         }
     }
-} 
+}

@@ -703,7 +703,7 @@ class AdvancePaymentController extends Controller
             'employee' => [
                 'id' => $employee->id,
                 'name' => $employee->first_name . ' ' . $employee->last_name,
-                'position' => $employee->position,
+                'position' => $employee->designation,
                 'employee_id' => $employee->employee_id,
             ],
             'company' => [

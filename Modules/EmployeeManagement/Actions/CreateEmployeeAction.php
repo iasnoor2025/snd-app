@@ -95,7 +95,7 @@ class CreateEmployeeAction
                         'last_name' => $data['last_name'],
                         'phone' => $data['phone'],
                         'nationality' => $data['nationality'],
-                        'position_id' => $data['position_id'],
+                        'designation_id' => $data['designation_id'],
                         'hourly_rate' => $data['hourly_rate'] ?? 0,
                         'basic_salary' => $data['basic_salary'] ?? 0,
                         'food_allowance' => $data['food_allowance'] ?? 0,

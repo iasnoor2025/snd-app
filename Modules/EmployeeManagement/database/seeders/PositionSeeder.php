@@ -3,10 +3,10 @@
 namespace Modules\EmployeeManagement\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Modules\EmployeeManagement\Domain\Models\Position;
+use Modules\EmployeeManagement\Domain\Models\Designation;
 use Modules\EmployeeManagement\Domain\Models\Department;
 
-class PositionSeeder extends Seeder
+class DesignationSeeder extends Seeder
 {
     public function run()
     {
@@ -16,7 +16,7 @@ class PositionSeeder extends Seeder
         if (!$department) {
             throw new \Exception('Department "General" not found.');
         }
-        $positions = [
+        $designations = [
             ['name' => ['en' => 'Manager'], 'description' => ['en' => 'Manages the team'], 'is_active' => true, 'department_id' => $department->id],
             ['name' => ['en' => 'Engineer'], 'description' => ['en' => 'Handles engineering tasks'], 'is_active' => true, 'department_id' => $department->id],
             ['name' => ['en' => 'Technician'], 'description' => ['en' => 'Technical support'], 'is_active' => true, 'department_id' => $department->id],
@@ -24,8 +24,8 @@ class PositionSeeder extends Seeder
             ['name' => ['en' => 'Accountant'], 'description' => ['en' => 'Handles accounts'], 'is_active' => true, 'department_id' => $department->id],
         ];
 
-        foreach ($positions as $position) {
-            Position::updateOrCreate(['name' => $position['name']], $position);
+        foreach ($designations as $designation) {
+            Designation::updateOrCreate(['name' => $designation['name']], $designation);
         }
     }
 }

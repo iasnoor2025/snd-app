@@ -20,7 +20,7 @@ class SpatieTranslatableService
         return [
             'Modules\\Core\\Domain\\Models\\Category',
             'Modules\\EmployeeManagement\\Domain\\Models\\Department',
-            'Modules\\EmployeeManagement\\Domain\\Models\\Position',
+            'Modules\\EmployeeManagement\\Domain\\Models\\Designation',
             'Modules\\EquipmentManagement\\Domain\\Models\\Equipment',
         ];
     }

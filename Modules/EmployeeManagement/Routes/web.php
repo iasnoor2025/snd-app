@@ -4,11 +4,11 @@ use Illuminate\Support\Facades\Route;
 use Modules\EmployeeManagement\Http\Controllers\EmployeeManagementController;
 use Modules\EmployeeManagement\Http\Controllers\EmployeeController;
 use Modules\EmployeeManagement\Http\Controllers\DepartmentController;
-use Modules\EmployeeManagement\Http\Controllers\PositionController;
+use Modules\EmployeeManagement\Http\Controllers\DesignationController;
 use Modules\EmployeeManagement\Http\Controllers\ResignationController;
 use Modules\EmployeeManagement\Http\Controllers\SalaryIncrementController;
 use Modules\EmployeeManagement\Http\Controllers\EmployeeNumberController;
-use Modules\EmployeeManagement\Http\Controllers\PublicPositionController;
+use Modules\EmployeeManagement\Http\Controllers\PublicDesignationController;
 use Inertia\Inertia;
 
 // Public routes
@@ -16,15 +16,15 @@ Route::get('/api/employees/simple-file-number', [EmployeeNumberController::class
     ->name('api.employees.simple-file-number');
 
 // Public route for positions
-Route::get('/api/positions/public', [PositionController::class, 'publicIndex'])
-    ->name('api.positions.public');
+Route::get('/api/designations/public', [DesignationController::class, 'publicIndex'])
+    ->name('api.designations.public');
 
 // Public API for positions - no authentication required
-Route::group(['prefix' => 'public-api/positions', 'middleware' => ['api'], 'excluded_middleware' => ['web', 'csrf']], function() {
-    Route::get('/', [PublicPositionController::class, 'index']);
-    Route::post('/', [PublicPositionController::class, 'store']);
-    Route::put('/{id}', [PublicPositionController::class, 'update']);
-    Route::delete('/{id}', [PublicPositionController::class, 'destroy']);
+Route::group(['prefix' => 'public-api/designations', 'middleware' => ['api'], 'excluded_middleware' => ['web', 'csrf']], function() {
+    Route::get('/', [PublicDesignationController::class, 'index']);
+    Route::post('/', [PublicDesignationController::class, 'store']);
+    Route::put('/{id}', [PublicDesignationController::class, 'update']);
+    Route::delete('/{id}', [PublicDesignationController::class, 'destroy']);
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -82,28 +82,28 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('permission:departments.delete')
         ->name('departments.destroy');
 
-    // Position routes
-    Route::get('/positions', [PositionController::class, 'index'])
-        ->middleware('permission:positions.view')
-        ->name('positions.index');
-    Route::get('/positions/create', [PositionController::class, 'create'])
-        ->middleware('permission:positions.create')
-        ->name('positions.create');
-    Route::post('/positions', [PositionController::class, 'store'])
-        ->middleware('permission:positions.create')
-        ->name('positions.store');
-    Route::get('/positions/{position}', [PositionController::class, 'show'])
-        ->middleware('permission:positions.view')
-        ->name('positions.show');
-    Route::get('/positions/{position}/edit', [PositionController::class, 'edit'])
-        ->middleware('permission:positions.edit')
-        ->name('positions.edit');
-    Route::put('/positions/{position}', [PositionController::class, 'update'])
-        ->middleware('permission:positions.edit')
-        ->name('positions.update');
-    Route::delete('/positions/{position}', [PositionController::class, 'destroy'])
-        ->middleware('permission:positions.delete')
-        ->name('positions.destroy');
+    // Designation routes
+    Route::get('/designations', [DesignationController::class, 'index'])
+        ->middleware('permission:designations.view')
+        ->name('designations.index');
+    Route::get('/designations/create', [DesignationController::class, 'create'])
+        ->middleware('permission:designations.create')
+        ->name('designations.create');
+    Route::post('/designations', [DesignationController::class, 'store'])
+        ->middleware('permission:designations.create')
+        ->name('designations.store');
+    Route::get('/designations/{designation}', [DesignationController::class, 'show'])
+        ->middleware('permission:designations.view')
+        ->name('designations.show');
+    Route::get('/designations/{designation}/edit', [DesignationController::class, 'edit'])
+        ->middleware('permission:designations.edit')
+        ->name('designations.edit');
+    Route::put('/designations/{designation}', [DesignationController::class, 'update'])
+        ->middleware('permission:designations.edit')
+        ->name('designations.update');
+    Route::delete('/designations/{designation}', [DesignationController::class, 'destroy'])
+        ->middleware('permission:designations.delete')
+        ->name('designations.destroy');
 
     // Employee document management
     Route::get('/employees/{employee}/documents', function ($employee) {

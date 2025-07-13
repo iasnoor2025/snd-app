@@ -124,7 +124,7 @@
                 <span class="value">{{ $employee['department'] }}</span>
             </div>
             <div class="info-item">
-                <span class="label">Position:</span>
+                <span class="label">Designation:</span>
                 <span class="value">{{ $employee['position'] }}</span>
             </div>
             <div class="info-item">
@@ -221,4 +221,4 @@
         <p>Generated on: {{ $generated_by['date'] }}</p>
     </div>
 </body>
-</html> 
+</html>

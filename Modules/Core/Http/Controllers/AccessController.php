@@ -59,7 +59,7 @@ class AccessController extends Controller
             ] : null,
             'employee' => $employee ? [
                 'name' => $employee->full_name,
-                'position' => $employee->position ? $employee->position->name : null,
+                'position' => $employee->designation ? $employee->designation->name : null,
                 'department' => $employee->department ? $employee->department->name : null,
             ] : null,
         ]);

@@ -17,7 +17,7 @@ import { format } from 'date-fns';
 import { DatePicker } from '../../@/Core/components/ui/date-picker';
 import { AlertCircle, Loader2, Save, Plus, Trash } from 'lucide-react';
 import DocumentManager from '../../@/Core/components/DocumentManager';
-import { Employee, Department, Position } from '../types/employee';
+import { Employee, Department, Designation } from '../types/employee';
 import { getTranslation } from "@/Core";
 import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
@@ -39,7 +39,7 @@ const employeeSchema = z.object({
   address: z.string().optional(),
   city: z.string().optional(),
   nationality: z.string().optional(),
-  position_id: z.coerce.number().optional(),
+  designation_id: z.coerce.number().optional(),
   department_id: z.coerce.number().optional(),
   supervisor: z.string().optional(),
   hire_date: z.date().optional(),
@@ -84,7 +84,7 @@ type EmployeeFormValues = z.infer<typeof employeeSchema>;
 
 const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onSave, onCancel }) => {
   const [departments, setDepartments] = useState<Department[]>([]);
-  const [positions, setPositions] = useState<Position[]>([]);
+  const [designations, setDesignations] = useState<Designation[]>([]);
   const { isLoading, error, withLoading } = useLoadingState('employeeForm');
   const { t } = useTranslation('employees');
 
@@ -116,22 +116,22 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onSave, onCancel 
       passport_expiry: employee.passport_expiry ? new Date(employee.passport_expiry) : undefined,
       driving_license_expiry: employee.driving_license_expiry ? new Date(employee.driving_license_expiry) : undefined,
       operator_license_expiry: employee.operator_license_expiry ? new Date(employee.operator_license_expiry) : undefined,
-      position_id: employee.position_id || undefined,
+      designation_id: employee.designation_id || undefined,
       department_id: employee.department_id || undefined,
     };
   }
 
-  // Fetch departments and positions on component mount
+  // Fetch departments and designations on component mount
   useEffect(() => {
     const fetchData = async () => {
       await withLoading(async () => {
-        const [departmentsResponse, positionsResponse] = await Promise.all([
+        const [departmentsResponse, designationsResponse] = await Promise.all([
           axios.get('/api/departments?is_active=true'),
-          axios.get('/api/positions?is_active=true')
+          axios.get('/api/designations?is_active=true')
         ]);
 
         setDepartments(departmentsResponse.data.data);
-        setPositions(positionsResponse.data.data);
+        setDesignations(designationsResponse.data.data);
       });
     };
 
@@ -350,19 +350,19 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onSave, onCancel 
             <TabsContent value="employment" className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="position_id">Position</Label>
+                  <Label htmlFor="designation_id">Designation</Label>
                   <Select
-                    value={watch('position_id')?.toString() || ''}
-                    onValueChange={(value) => setValue('position_id', parseInt(value))}
+                    value={watch('designation_id')?.toString() || ''}
+                    onValueChange={(value) => setValue('designation_id', parseInt(value))}
                   >
-                    <SelectTrigger id="position_id">
-                      <SelectValue placeholder={t('ph_select_position')} />
+                    <SelectTrigger id="designation_id">
+                      <SelectValue placeholder={t('ph_select_designation')} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="">None</SelectItem>
-                      {positions.map((position) => (
-                        <SelectItem key={position.id} value={position.id.toString()}>
-                          {getTranslation(position.name)}
+                      {designations.map((designation) => (
+                        <SelectItem key={designation.id} value={designation.id.toString()}>
+                          {getTranslation(designation.name)}
                         </SelectItem>
                       ))}
                     </SelectContent>

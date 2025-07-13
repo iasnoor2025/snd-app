@@ -22,7 +22,7 @@ class EmployeeFactory extends Factory
             'address' => $this->faker->address(),
             'city' => $this->faker->city(),
             'nationality' => $this->faker->country(),
-            'position_id' => 1, // to be set in seeder
+            'designation_id' => 1, // to be set in seeder
             'department_id' => 1, // to be set in seeder
             'supervisor' => $this->faker->optional()->name(),
             'hourly_rate' => $this->faker->randomFloat(2, 20, 100),

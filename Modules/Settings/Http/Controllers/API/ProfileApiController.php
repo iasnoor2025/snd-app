@@ -20,7 +20,7 @@ class ProfileApiController extends Controller
     {
         try {
             $user = Auth::user();
-            
+
             if (!$user) {
                 return response()->json([
                     'success' => false,
@@ -36,7 +36,7 @@ class ProfileApiController extends Controller
                     'email' => $user->email,
                     'avatar' => $user->avatar ?? null,
                     'phone' => $user->phone ?? null,
-                    'position' => $user->position ?? null,
+                    'position' => $user->designation ?? null,
                     'department' => $user->department ?? null,
                     'bio' => $user->bio ?? null,
                     'preferences' => $user->preferences ?? [],
@@ -46,7 +46,7 @@ class ProfileApiController extends Controller
             ]);
         } catch (Exception $e) {
             Log::error('Failed to get user profile', ['error' => $e->getMessage()]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to retrieve profile',
@@ -72,7 +72,7 @@ class ProfileApiController extends Controller
 
         try {
             $user = Auth::user();
-            
+
             if (!$user) {
                 return response()->json([
                     'success' => false,
@@ -100,7 +100,7 @@ class ProfileApiController extends Controller
             ]);
         } catch (Exception $e) {
             Log::error('Failed to update user profile', ['error' => $e->getMessage()]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update profile',
@@ -120,7 +120,7 @@ class ProfileApiController extends Controller
 
         try {
             $user = Auth::user();
-            
+
             if (!$user) {
                 return response()->json([
                     'success' => false,
@@ -129,7 +129,7 @@ class ProfileApiController extends Controller
             }
 
             $avatarFile = $request->file('avatar');
-            
+
             // Store the avatar
             $avatarPath = $avatarFile->store('avatars', 'public');
 
@@ -156,7 +156,7 @@ class ProfileApiController extends Controller
             ]);
         } catch (Exception $e) {
             Log::error('Failed to update user avatar', ['error' => $e->getMessage()]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update avatar',
@@ -164,4 +164,4 @@ class ProfileApiController extends Controller
             ], 500);
         }
     }
-} 
+}

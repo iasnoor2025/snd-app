@@ -447,7 +447,7 @@ class FinalSettlementService
                 'name' => $employee->full_name,
                 'employee_id' => $employee->employee_id,
                 'department' => $employee->department?->name,
-                'position' => $employee->position?->title,
+                'position' => $employee->designation?->title,
                 'joining_date' => $employee->joining_date,
                 'last_working_date' => $settlement->last_working_date,
             ],

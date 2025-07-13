@@ -101,7 +101,7 @@ class SettlementDocumentService
                 'name' => $employee->full_name,
                 'id' => $employee->employee_id,
                 'department' => $employee->department->name,
-                'position' => $employee->position->name,
+                'position' => $employee->designation->name,
                 'join_date' => $employee->join_date->format('Y-m-d'),
                 'end_date' => $settlement->end_date->format('Y-m-d')
             ],
@@ -124,7 +124,7 @@ class SettlementDocumentService
             ],
             'generated_by' => [
                 'name' => Auth::user()->name,
-                'position' => Auth::user()->position,
+                'position' => Auth::user()->designation,
                 'date' => Carbon::now()->format('Y-m-d H:i:s')
             ]
         ];
@@ -177,4 +177,4 @@ class SettlementDocumentService
     {
         return $this->pdfService->mergePdfs($documentPaths, $outputFileName);
     }
-} 
+}

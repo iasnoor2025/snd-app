@@ -4,7 +4,7 @@ namespace Modules\EmployeeManagement\Services;
 
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
-use Modules\EmployeeManagement\Domain\Models\Position;
+use Modules\EmployeeManagement\Domain\Models\Designation;
 use Modules\EmployeeManagement\Domain\Models\Department;
 
 class ERPNextClient
@@ -89,13 +89,14 @@ class ERPNextClient
         $userId = is_numeric($erpEmployee['user_id'] ?? null) ? $erpEmployee['user_id'] : null;
         $bio = $erpEmployee['bio'] ?? null;
         // Map position_id and department_id using local models if needed
-        $positionId = null;
+        $designationId = null;
         $departmentId = null;
         if ($designationName) {
-            $position = \Modules\EmployeeManagement\Domain\Models\Position::where('name', $designationName)->first();
-            if ($position) {
-                $positionId = $position->id;
-            }
+            $designation = \Modules\EmployeeManagement\Domain\Models\Designation::firstOrCreate(
+                ['name' => $designationName],
+                ['description' => $designationName, 'is_active' => true]
+            );
+            $designationId = $designation->id;
         }
         if ($departmentName) {
             $department = \Modules\EmployeeManagement\Domain\Models\Department::where('name', $departmentName)->first();
@@ -116,7 +117,7 @@ class ERPNextClient
             'email' => $email,
             'company_email' => $companyEmail,
             'department_id' => $departmentId,
-            'position_id' => $positionId,
+            'designation_id' => $designationId,
             'date_of_birth' => $dateOfBirth,
             'gender' => $gender,
             'marital_status' => $maritalStatus,
@@ -148,7 +149,7 @@ class ERPNextClient
                 'company_email' => $employee->company_email,
                 'personal_email' => $employee->email,
                 'department' => optional($employee->department)->name,
-                'designation' => optional($employee->position)->name,
+                'designation' => optional($employee->designation)->name,
                 'date_of_birth' => $employee->date_of_birth,
                 'gender' => $employee->gender,
                 'marital_status' => $employee->marital_status,
@@ -214,7 +215,7 @@ class ERPNextClient
             'company_email' => $employee->company_email,
             'personal_email' => $employee->email,
             'department' => optional($employee->department)->name,
-            'designation' => optional($employee->position)->name,
+            'designation' => optional($employee->designation)->name,
             'date_of_birth' => $employee->date_of_birth,
             'gender' => $employee->gender,
             'marital_status' => $employee->marital_status,

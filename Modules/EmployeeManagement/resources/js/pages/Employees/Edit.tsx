@@ -64,7 +64,7 @@ const formSchema = z.object({
   nationality: z.string().optional(),
   emergency_contact_name: z.string().optional(),
   emergency_contact_phone: z.string().optional(),
-  position_id: z.string().optional(),
+  designation_id: z.string().optional(),
   department: z.string().optional(),
   join_date: z.string().optional(),
   status: z.string().optional(),
@@ -86,7 +86,7 @@ const formSchema = z.object({
   bank_iban: z.string().optional(),
 });
 
-interface Position {
+interface Designation {
   id: number;
   name: string;
 }
@@ -94,14 +94,14 @@ interface Position {
 interface Props extends PageProps {
   employee: Employee;
   users: User[];
-  positions: Position[];
+  designations: Designation[];
 }
 
 async function ensureSanctumCsrf() {
   await axios.get('/sanctum/csrf-cookie');
 }
 
-export default function Edit({ auth, employee, users, positions }: Props) {
+export default function Edit({ auth, employee, users, designations }: Props) {
   console.log('employee', employee);
   const { t } = useTranslation('employees');
 
@@ -136,7 +136,7 @@ export default function Edit({ auth, employee, users, positions }: Props) {
       nationality: employee.nationality || '',
       emergency_contact_name: employee.emergency_contact_name || '',
       emergency_contact_phone: employee.emergency_contact_phone || '',
-      position_id: employee.position_id ? employee.position_id.toString() : '',
+      designation_id: employee.designation_id ? employee.designation_id.toString() : '',
       department: employee.department || '',
       join_date: formatDate(employee.join_date),
       status: employee.status || 'active',
@@ -186,7 +186,7 @@ export default function Edit({ auth, employee, users, positions }: Props) {
       };
       const formattedData = {
         ...data,
-        position_id: data.position_id ? parseInt(data.position_id) : null,
+        designation_id: data.designation_id ? parseInt(data.designation_id) : null,
         basic_salary: data.basic_salary || 0,
         hourly_rate: data.hourly_rate || 0,
         food_allowance: data.food_allowance || 0,
@@ -545,23 +545,23 @@ export default function Edit({ auth, employee, users, positions }: Props) {
                     <div className="grid gap-4 md:grid-cols-2">
                       <FormField
                         control={form.control}
-                        name="position_id"
+                        name="designation_id"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Position</FormLabel>
+                            <FormLabel>Designation</FormLabel>
                             <Select
                               onValueChange={field.onChange}
                               defaultValue={field.value}
                             >
                               <FormControl>
                                 <SelectTrigger>
-                                  <SelectValue placeholder={t('ph_select_position')} />
+                                  <SelectValue placeholder={t('ph_select_designation')} />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {positions.map((position) => (
-                                  <SelectItem key={position.id} value={position.id.toString()}>
-                                    {getTranslation(position.name)}
+                                {designations.map((designation) => (
+                                  <SelectItem key={designation.id} value={designation.id.toString()}>
+                                    {getTranslation(designation.name)}
                                   </SelectItem>
                                 ))}
                               </SelectContent>

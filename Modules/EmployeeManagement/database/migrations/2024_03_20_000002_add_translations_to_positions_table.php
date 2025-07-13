@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('positions', function (Blueprint $table) {
+        Schema::table('designations', function (Blueprint $table) {
             // Add JSON columns for translatable fields
             $table->json('name_translations')->nullable();
             $table->json('description_translations')->nullable();
@@ -23,7 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('positions', function (Blueprint $table) {
+        Schema::table('designations', function (Blueprint $table) {
             // Drop the JSON columns
             $table->dropColumn(['name_translations', 'description_translations']);
         });
