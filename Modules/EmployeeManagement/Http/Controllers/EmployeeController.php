@@ -591,18 +591,18 @@ class EmployeeController extends Controller
             'user_id' => auth()->id(),
             'user_roles' => auth()->user() ? auth()->user()->roles : null
         ]);
-        if (!auth()->user() || !auth()->user()->roles || !in_array('admin', auth()->user()->roles)) {
+        if (!auth()->user() || !auth()->user()->roles || !in_array('admin', auth()->user()->roles->pluck('name')->toArray())) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
         try {
-            \Artisan::call('erpnext:sync-employees');
-            return response()->json(['success' => true, 'message' => 'Synced employees from ERPNext.']);
+            \Modules\EmployeeManagement\Jobs\SyncEmployeesFromERPNextJob::dispatch();
+            return response()->json(['success' => true, 'message' => 'Employee sync from ERPNext has started and will run in the background.']);
         } catch (\Exception $e) {
-            \Log::error('Error syncing employees from ERPNext', [
+            \Log::error('Error dispatching ERPNext employee sync job', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            return response()->json(['error' => 'Failed to sync from ERPNext: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Failed to start sync from ERPNext: ' . $e->getMessage()], 500);
         }
     }
 }
