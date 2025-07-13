@@ -555,7 +555,7 @@ export default function Edit({ auth, employee, users, designations }: Props) {
                             >
                               <FormControl>
                                 <SelectTrigger>
-                                  <SelectValue placeholder={t('ph_select_designation')} />
+                                  <SelectValue placeholder="Select designation" />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>

@@ -93,9 +93,6 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
     setShowAddModal(true);
     setEditingPosition(null);
     setNewPosition({ name: '', description: '' });
-
-    // Show toast message for user feedback
-    toast.info('Adding position locally. This will not be saved to the database in this demo.');
   };
   const handleCloseModal = () => {
     setShowAddModal(false);

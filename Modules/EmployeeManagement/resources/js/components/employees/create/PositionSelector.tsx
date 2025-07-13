@@ -45,8 +45,8 @@ const PositionSelector = ({ value, onChange, initialPositions = [], onPositionCr
     setLoading(true);
     try {
       // Try to fetch positions from the public API
-      const response = await axios.get('/public-api/positions');
-      
+      const response = await axios.get('/api/designations');
+
       if (response.data && Array.isArray(response.data) && response.data.length > 0) {
         console.log('Fetched positions from API:', response.data);
         setPositions(response.data);
@@ -124,14 +124,14 @@ const PositionSelector = ({ value, onChange, initialPositions = [], onPositionCr
     setLoading(true);
     try {
       // Try to create position via public API
-      const response = await axios.post('/public-api/positions', {
+      const response = await axios.post('/api/designations', {
         name: newPositionName,
         description: newPositionDescription,
         is_active: true
       });
-      
+
       console.log('Position creation response:', response.data);
-      
+
       let newPositionObj;
       if (response.data && response.data.id) {
         // Use the returned position from API
@@ -148,28 +148,28 @@ const PositionSelector = ({ value, onChange, initialPositions = [], onPositionCr
             active: true
           };
       }
-      
+
       // Add to local state
       setPositions(prev => [...prev, newPositionObj]);
-      
+
       // Reset form
       setAddingNew(false);
       setNewPositionName('');
       setNewPositionDescription('');
       setEditingPositionId(null);
-      
+
       // Call callback if provided
       if (onPositionCreated) {
         onPositionCreated(newPositionObj);
       }
-      
+
       toast.success(t('employees:position_created_success'));
-      
+
       // Refresh positions list
       fetchPositions();
     } catch (error: any) {
       console.error('Error creating position:', error);
-      
+
       if (error.response?.data?.message) {
         toast.error(error.response.data.message);
       } else if (error.response?.data?.errors) {
@@ -196,14 +196,14 @@ const PositionSelector = ({ value, onChange, initialPositions = [], onPositionCr
     setLoading(true);
     try {
       // Try to update position via public API
-      const response = await axios.put(`/public-api/positions/${editingPositionId}`, {
+      const response = await axios.put(`/api/designations/${editingPositionId}`, {
         name: newPositionName,
         description: newPositionDescription,
         is_active: true
       });
-      
+
       console.log('Position update response:', response.data);
-      
+
       let updatedPosition;
       if (response.data) {
         // Use the returned position from API
@@ -217,25 +217,25 @@ const PositionSelector = ({ value, onChange, initialPositions = [], onPositionCr
           is_active: true
         };
       }
-      
+
       // Update in local state
       setPositions(prev => prev.map(p =>
         p.id === editingPositionId ? updatedPosition : p
       ));
-      
+
       toast.success(t('employees:position_updated_success'));
-      
+
       // Reset form
       setNewPositionName('');
       setNewPositionDescription('');
       setEditingPositionId(null);
       setAddingNew(false);
-      
+
       // Refresh positions list
       fetchPositions();
     } catch (error: any) {
       console.error('Error updating position:', error);
-      
+
       if (error.response?.data?.message) {
         toast.error(error.response.data.message);
       } else if (error.response?.data?.errors) {
@@ -259,23 +259,23 @@ const PositionSelector = ({ value, onChange, initialPositions = [], onPositionCr
     setLoading(true);
     try {
       // Try to delete position via public API
-      await axios.delete(`/public-api/positions/${value}`);
-      
+      await axios.delete(`/api/designations/${value}`);
+
       // Remove from local state
       setPositions(prev => prev.filter(p => p.id !== value));
-      
+
       toast.success(t('employees:position_deleted_success'));
       onChange(null);
-      
+
       // Refresh positions list
       fetchPositions();
     } catch (error: any) {
       console.error('Error deleting position:', error);
-      
+
       // Even if API call fails, remove from local state to provide better UX
       setPositions(prev => prev.filter(p => p.id !== value));
       onChange(null);
-      
+
       if (error.response?.data?.message) {
         toast.error(error.response.data.message);
       } else {

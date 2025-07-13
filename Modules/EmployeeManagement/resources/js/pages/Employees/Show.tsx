@@ -142,9 +142,9 @@ const getBreadcrumbs = (t: any): BreadcrumbItem[] => [
 ];
 
 // Extend the Employee interface with additional properties needed in this component
-type Position = { name: string } | string;
+type Designation = { name: string } | string;
 interface Employee extends Omit<BaseEmployee, 'file_number'> {
-  position?: any;
+  designation?: any;
   emergency_contact_name: any;
   emergency_contact_phone: any;
   file_number?: string;
@@ -980,7 +980,7 @@ export default function Show({
                 {employee?.first_name || ''} {employee?.middle_name ? `${employee.middle_name} ` : ''}{employee?.last_name || ''}
               </h1>
               <div className="flex items-center gap-2 text-muted-foreground">
-                <span>{getTranslation(employee.position?.name ?? employee.position)}</span>
+                <span>{getTranslation(employee.designation?.name ?? employee.designation)}</span>
                 <span className="text-xs">•</span>
                 <span>ID: {employee?.employee_id || 'N/A'}</span>
                 {employee?.status && getStatusBadge(employee.status)}
@@ -1301,8 +1301,8 @@ export default function Show({
                           <dd className="text-sm">{employee.file_number || "Not assigned"}</dd>
                         </div>
                         <div className="flex justify-between border-b pb-2">
-                          <dt className="text-sm font-medium">{t('employees:fields.position')}</dt>
-                          <dd className="text-sm">{typeof employee.position === 'object' && employee.position !== null && 'name' in employee.position ? getTranslation((employee.position as { name: string }).name) : (typeof employee.position === 'string' ? getTranslation(employee.position) : '')}</dd>
+                          <dt className="text-sm font-medium">{t('employees:fields.designation')}</dt>
+                          <dd className="text-sm">{typeof employee.designation === 'object' && employee.designation !== null && 'name' in employee.designation ? getTranslation((employee.designation as { name: string }).name) : (typeof employee.designation === 'string' ? getTranslation(employee.designation) : '')}</dd>
                         </div>
                         <div className="flex justify-between border-b pb-2">
                           <dt className="text-sm font-medium">{t('employees:fields.department')}</dt>

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Head } from '@inertiajs/react';
 import { PageProps, BreadcrumbItem } from '../../types/index';
 import { AppLayout } from '@/Core';
-import { Employee, Position } from '../../types/models';
+import { Employee, Designation } from '../../types/models';
 import {
   Card,
   CardContent,
