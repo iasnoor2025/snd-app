@@ -132,4 +132,140 @@ class ERPNextClient
             'bio' => $bio,
         ];
     }
+
+    public function updateEmployee($employee)
+    {
+        // If erpnext_id is missing, create the employee in ERPNext first
+        if (empty($employee->erpnext_id)) {
+            $data = [
+                'first_name' => $employee->first_name,
+                'middle_name' => $employee->middle_name,
+                'last_name' => $employee->last_name,
+                'employee_name' => $employee->first_name . ' ' . $employee->middle_name . ' ' . $employee->last_name,
+                'employee_number' => $employee->file_number,
+                'ctc' => $employee->basic_salary,
+                'cell_number' => $employee->phone,
+                'company_email' => $employee->company_email,
+                'personal_email' => $employee->email,
+                'department' => optional($employee->department)->name,
+                'designation' => optional($employee->position)->name,
+                'date_of_birth' => $employee->date_of_birth,
+                'gender' => $employee->gender,
+                'marital_status' => $employee->marital_status,
+                'custom_iqama' => $employee->iqama,
+                'iqama_expiry_date_en' => $employee->iqama_expiry,
+                'status' => $employee->status,
+                'date_of_joining' => $employee->date_of_joining,
+                'contract_end_date' => $employee->contract_end_date,
+                'company' => $employee->company,
+                'branch' => $employee->branch,
+                'custom_الاسم_الكامل' => $employee->employee_arabic_name,
+                'bio' => $employee->bio,
+            ];
+            try {
+                $response = $this->client->post("/api/resource/Employee", [
+                    'json' => $data,
+                ]);
+                $result = json_decode($response->getBody()->getContents(), true);
+                if (!empty($result['data']['name'])) {
+                    $employee->erpnext_id = $result['data']['name'];
+                    $employee->save();
+                    Log::info('ERPNext employee created and erpnext_id set', ['erpnext_id' => $employee->erpnext_id, 'employee_id' => $employee->id]);
+                } else {
+                    Log::error('Failed to create ERPNext employee: no name returned', ['employee_id' => $employee->id]);
+                    return false;
+                }
+            } catch (\Exception $e) {
+                Log::error('Failed to create ERPNext employee', [
+                    'employee_id' => $employee->id,
+                    'error' => $e->getMessage(),
+                ]);
+                return false;
+            }
+        }
+        // Now update as before
+        // Map local status to ERPNext expected values
+        $statusMap = [
+            'active' => 'Active',
+            'inactive' => 'Inactive',
+            'on_leave' => 'Suspended',
+            'terminated' => 'Left',
+            'exit' => 'Left',
+        ];
+        $localStatus = strtolower($employee->status);
+        $erpStatus = $statusMap[$localStatus] ?? $employee->status;
+        $data = [
+            'first_name' => $employee->first_name,
+            'middle_name' => $employee->middle_name,
+            'last_name' => $employee->last_name,
+            'employee_name' => trim($employee->first_name . ' ' . $employee->middle_name . ' ' . $employee->last_name),
+            'employee_number' => $employee->file_number,
+            'ctc' => $employee->basic_salary,
+            'cell_number' => $employee->phone,
+            'company_email' => $employee->company_email,
+            'personal_email' => $employee->email,
+            'department' => optional($employee->department)->name,
+            'designation' => optional($employee->position)->name,
+            'date_of_birth' => $employee->date_of_birth,
+            'gender' => $employee->gender,
+            'marital_status' => $employee->marital_status,
+            'custom_iqama' => $employee->iqama,
+            'iqama_expiry_date_en' => $employee->iqama_expiry,
+            'status' => $erpStatus,
+            'date_of_joining' => $employee->date_of_joining,
+            'contract_end_date' => $employee->contract_end_date,
+            'company' => $employee->company,
+            'branch' => $employee->branch,
+            'custom_الاسم_الكامل' => $employee->employee_arabic_name,
+            'bio' => $employee->bio,
+            // Additional fields
+            'address' => $employee->address,
+            'city' => $employee->city,
+            'food_allowance' => $employee->food_allowance,
+            'housing_allowance' => $employee->housing_allowance,
+            'transport_allowance' => $employee->transport_allowance,
+            'absent_deduction_rate' => $employee->absent_deduction_rate,
+            'overtime_rate_multiplier' => $employee->overtime_rate_multiplier,
+            'overtime_fixed_rate' => $employee->overtime_fixed_rate,
+            'bank_name' => $employee->bank_name,
+            'bank_account_number' => $employee->bank_account_number,
+            'bank_iban' => $employee->bank_iban,
+            'contract_hours_per_day' => $employee->contract_hours_per_day,
+            'contract_days_per_month' => $employee->contract_days_per_month,
+            'emergency_contact_name' => $employee->emergency_contact_name,
+            'emergency_contact_phone' => $employee->emergency_contact_phone,
+            'notes' => $employee->notes,
+            // Legal Documents
+            'passport_number' => $employee->passport_number,
+            'passport_expiry' => $employee->passport_expiry,
+            'iqama_number' => $employee->iqama_number,
+            // Licenses and certifications
+            'driving_license_number' => $employee->driving_license_number,
+            'driving_license_expiry' => $employee->driving_license_expiry,
+            'driving_license_cost' => $employee->driving_license_cost,
+            'operator_license_number' => $employee->operator_license_number,
+            'operator_license_expiry' => $employee->operator_license_expiry,
+            'operator_license_cost' => $employee->operator_license_cost,
+            'tuv_certification_number' => $employee->tuv_certification_number,
+            'tuv_certification_expiry' => $employee->tuv_certification_expiry,
+            'tuv_certification_cost' => $employee->tuv_certification_cost,
+            'spsp_license_number' => $employee->spsp_license_number,
+            'spsp_license_expiry' => $employee->spsp_license_expiry,
+            'spsp_license_cost' => $employee->spsp_license_cost,
+        ];
+        try {
+            $this->client->put("/api/resource/Employee/{$employee->erpnext_id}", [
+                'json' => $data,
+            ]);
+            Log::info('ERPNext employee updated', ['erpnext_id' => $employee->erpnext_id, 'employee_id' => $employee->id]);
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Failed to update ERPNext employee', [
+                'erpnext_id' => $employee->erpnext_id,
+                'employee_id' => $employee->id,
+                'error' => $e->getMessage(),
+            ]);
+            return false;
+        }
+    }
 }

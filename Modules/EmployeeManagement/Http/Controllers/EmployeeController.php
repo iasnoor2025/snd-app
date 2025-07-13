@@ -551,6 +551,26 @@ class EmployeeController extends Controller
         // Always return a redirect (Inertia expects this)
         return redirect()->back()->with('success', 'Assignment updated successfully.');
     }
+
+    /**
+     * Sync all employees to ERPNext (admin only)
+     */
+    public function syncToERPNext(Request $request)
+    {
+        if (!auth()->user() || auth()->user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        try {
+            $count = $this->employeeService->syncAllToERPNext();
+            return response()->json(['success' => true, 'message' => "Synced $count employees to ERPNext."]);
+        } catch (\Exception $e) {
+            \Log::error('Error syncing employees to ERPNext', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => 'Failed to sync employees: ' . $e->getMessage()], 500);
+        }
+    }
 }
 
 

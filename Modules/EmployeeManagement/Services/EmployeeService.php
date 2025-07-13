@@ -91,6 +91,26 @@ class EmployeeService extends BaseService
 
             DB::commit();
             \Log::info('EmployeeService::createEmployee - Success', ['employee_id' => $employee->id]);
+
+            // Create in ERPNext after local commit
+            try {
+                $erpnextClient = app(\Modules\EmployeeManagement\Services\ERPNextClient::class);
+                $erpnextId = $erpnextClient->createEmployee($employee);
+                if ($erpnextId) {
+                    $employee->erpnext_id = $erpnextId;
+                    $employee->save();
+                    \Log::info('EmployeeService::createEmployee - Synced to ERPNext', [
+                        'employee_id' => $employee->id,
+                        'erpnext_id' => $erpnextId
+                    ]);
+                }
+            } catch (\Exception $e) {
+                \Log::error('EmployeeService::createEmployee - Failed to sync to ERPNext', [
+                    'employee_id' => $employee->id,
+                    'error' => $e->getMessage()
+                ]);
+            }
+
             return $employee;
         } catch (\Exception $e) {
             DB::rollBack();
@@ -113,6 +133,19 @@ class EmployeeService extends BaseService
             // Update associated user if needed
             if (isset($data['update_user']) && $data['update_user'] && $employee->user_id) {
                 $this->updateUserForEmployee($employee, $data);
+            }
+
+            // Push update to ERPNext if erpnext_id is set
+            if (!empty($employee->erpnext_id)) {
+                try {
+                    app(\Modules\EmployeeManagement\Services\ERPNextClient::class)->updateEmployee($employee);
+                } catch (\Exception $e) {
+                    \Log::error('Failed to update employee in ERPNext', [
+                        'employee_id' => $employee->id,
+                        'erpnext_id' => $employee->erpnext_id,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
             }
 
             DB::commit();
@@ -340,6 +373,28 @@ class EmployeeService extends BaseService
     public function getAllEmployees(): array
     {
         return $this->employeeRepository->all();
+    }
+
+    /**
+     * Sync all employees to ERPNext
+     */
+    public function syncAllToERPNext(): int
+    {
+        $employees = Employee::all();
+        $erpnextClient = app(\Modules\EmployeeManagement\Services\ERPNextClient::class);
+        $count = 0;
+        foreach ($employees as $employee) {
+            try {
+                $erpnextClient->updateEmployee($employee);
+                $count++;
+            } catch (\Exception $e) {
+                \Log::error('Failed to sync employee to ERPNext', [
+                    'employee_id' => $employee->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+        return $count;
     }
 }
 

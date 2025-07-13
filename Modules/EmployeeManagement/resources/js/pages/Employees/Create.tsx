@@ -331,14 +331,16 @@ export default function Create({ users, positions, employee, isEditing = false }
       } as const;
 
       // Debug log each required field
-      Object.entries(requiredFields).forEach(([key, label]) => {
-        console.log(`${key} (${label}): ${data[key as keyof typeof data]}`);
-      });
+      if (data && typeof data === 'object') {
+        Object.entries(requiredFields).forEach(([key, label]) => {
+          console.log(`${key} (${label}): ${data[key as keyof typeof data]}`);
+        });
+      }
 
       // Check for missing required fields
-      const missingFields = Object.entries(requiredFields)
+      const missingFields = data && typeof data === 'object' ? Object.entries(requiredFields)
         .filter(([key]) => !data[key as keyof typeof data])
-        .map(([_, label]) => label);
+        .map(([_, label]) => label) : [];
 
       if (missingFields.length > 0) {
         toast.error(`Please fill in the following required fields: ${missingFields.join(', ')}`);
@@ -356,35 +358,39 @@ export default function Create({ users, positions, employee, isEditing = false }
       // Add more date fields here if needed
 
       // Add all form data to the FormData object
-      for (const [key, value] of Object.entries(data)) {
-        if (value !== null && value !== undefined) {
-          if (Array.isArray(value)) {
-            // Handle arrays properly for Laravel
-            if (value.length === 0) {
-              formData.append(`${key}[]`, '');
+      if (data && typeof data === 'object') {
+        for (const [key, value] of Object.entries(data)) {
+          if (value !== null && value !== undefined) {
+            if (Array.isArray(value)) {
+              // Handle arrays properly for Laravel
+              if (value.length === 0) {
+                formData.append(`${key}[]`, '');
+              } else {
+                value.forEach((item, index) => {
+                  if (typeof item === 'object' && item !== null) {
+                    Object.entries(item).forEach(([subKey, subValue]) => {
+                      formData.append(`${key}[${index}][${subKey}]`, subValue as string);
+                    });
+                  } else {
+                    formData.append(`${key}[]`, item);
+                  }
+                });
+              }
+            } else if (typeof value === 'object') {
+              formData.append(key, JSON.stringify(value));
             } else {
-              value.forEach((item, index) => {
-                if (typeof item === 'object') {
-                  Object.entries(item).forEach(([subKey, subValue]) => {
-                    formData.append(`${key}[${index}][${subKey}]`, subValue as string);
-                  });
-                } else {
-                  formData.append(`${key}[]`, item);
-                }
-              });
+              formData.append(key, value.toString());
             }
-          } else if (typeof value === 'object') {
-            formData.append(key, JSON.stringify(value));
-          } else {
-            formData.append(key, value.toString());
           }
         }
       }
 
       // Add all files to the FormData object
-      for (const [key, file] of Object.entries(files)) {
-        if (file) {
-          formData.append(`files[${key}]`, file);
+      if (files && typeof files === 'object') {
+        for (const [key, file] of Object.entries(files)) {
+          if (file) {
+            formData.append(`files[${key}]`, file);
+          }
         }
       }
 

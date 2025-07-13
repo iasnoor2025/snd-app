@@ -148,3 +148,6 @@ Route::get('/api/v1/equipment', function () {
         ->get();
     return response()->json($equipment);
 });
+
+// Employee ERPNext sync (admin only)
+Route::post('/employees/sync-erpnext', [\Modules\EmployeeManagement\Http\Controllers\EmployeeController::class, 'syncToERPNext'])->middleware('auth');

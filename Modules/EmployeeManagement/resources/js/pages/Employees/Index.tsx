@@ -145,12 +145,19 @@ export default function Index({ auth, employees, filters, departments, positions
       active: 'default',
       inactive: 'secondary',
       on_leave: 'outline',
-      terminated: 'destructive',
+      exit: 'destructive',
+    };
+
+    const labels: Record<string, string> = {
+      active: 'Active',
+      inactive: 'Inactive',
+      on_leave: 'On Leave',
+      exit: 'Exit',
     };
 
     return (
       <Badge variant={variants[status] || 'default'}>
-        {status.replace('_', ' ').toUpperCase()}
+        {labels[status] || status.replace('_', ' ').toUpperCase()}
       </Badge>
     );
   };
@@ -212,6 +219,31 @@ export default function Index({ auth, employees, filters, departments, positions
                   text="Add Employee"
                 />
               </Permission>
+              {/* Sync to ERPNext button for admin only */}
+              {auth?.user?.roles?.includes('admin') && (
+                <Button
+                  variant="outline"
+                  onClick={async () => {
+                    try {
+                      setIsLoading(true);
+                      const response = await fetch('/employees/sync-erpnext', { method: 'POST' });
+                      if (response.ok) {
+                        toast.success('Employee data synced to ERPNext successfully');
+                      } else {
+                        toast.error('Failed to sync employee data to ERPNext');
+                      }
+                    } catch (error) {
+                      toast.error('Error syncing to ERPNext');
+                    } finally {
+                      setIsLoading(false);
+                    }
+                  }}
+                  disabled={isLoading}
+                >
+                  {isLoading ? <LoaderCircle className="animate-spin mr-2 h-4 w-4" /> : null}
+                  Sync to ERPNext
+                </Button>
+              )}
             </div>
           </CardHeader>
           <CardContent>
@@ -236,8 +268,8 @@ export default function Index({ auth, employees, filters, departments, positions
                   <SelectItem value="all">{t('opt_all_statuses')}</SelectItem>
                   <SelectItem value="active">Active</SelectItem>
                   <SelectItem value="inactive">Inactive</SelectItem>
-                  <SelectItem value="on_leave">{t('on_leave')}</SelectItem>
-                  <SelectItem value="terminated">Terminated</SelectItem>
+                  <SelectItem value="on_leave">On Leave</SelectItem>
+                  <SelectItem value="exit">Exit</SelectItem>
                 </SelectContent>
               </Select>
               <Select

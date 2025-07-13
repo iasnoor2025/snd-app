@@ -50,7 +50,7 @@ const SectionHeader = ({ children, title }: { children?: React.ReactNode, title?
 );
 
 // Placeholder constants for employee statuses and types
-const EMPLOYEE_STATUSES = ['active', 'inactive', 'terminated'];
+const EMPLOYEE_STATUSES = ['active', 'inactive', 'on_leave', 'exit'];
 const EMPLOYEE_TYPES = ['full_time', 'part_time', 'contractor'];
 
 // Define form schema
@@ -285,19 +285,19 @@ export default function Edit({ auth, employee, users, positions }: Props) {
       await router.post(route('employees.documents.upload', { employee: employee.id }), formData, {
         forceFormData: true,
         onSuccess: () => {
-          EmployeeToastService.dismiss(loadingToastId);
-          EmployeeToastService.documentUploaded(employee.first_name + ' ' + employee.last_name, documentType);
+          ToastService.dismiss(loadingToastId);
+          ToastService.documentUploaded(employee.first_name + ' ' + employee.last_name, documentType);
           fetchDocuments();
         },
         onError: (errors) => {
-          EmployeeToastService.dismiss(loadingToastId);
+          ToastService.dismiss(loadingToastId);
           const errorMessage = errors?.file?.[0] || errors?.message || 'Failed to upload document';
-          EmployeeToastService.documentUploadFailed(documentType, errorMessage);
+          ToastService.documentUploadFailed(documentType, errorMessage);
         }
       });
     } catch (error: any) {
-      EmployeeToastService.dismiss(loadingToastId);
-      EmployeeToastService.employeeProcessFailed('upload document', error.message);
+      ToastService.dismiss(loadingToastId);
+      ToastService.employeeProcessFailed('upload document', error.message);
     }
   };
 
@@ -617,7 +617,11 @@ export default function Edit({ auth, employee, users, positions }: Props) {
                               <SelectContent>
                                 {EMPLOYEE_STATUSES.map((status) => (
                                   <SelectItem key={status} value={status}>
-                                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                                    {status === 'active' ? 'Active' :
+                                     status === 'inactive' ? 'Inactive' :
+                                     status === 'on_leave' ? 'On Leave' :
+                                     status === 'exit' ? 'Exit' :
+                                     status.charAt(0).toUpperCase() + status.slice(1)}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
