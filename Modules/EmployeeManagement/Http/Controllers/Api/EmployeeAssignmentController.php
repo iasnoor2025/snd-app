@@ -52,4 +52,34 @@ class EmployeeAssignmentController extends Controller
             'assignment' => $assignment,
         ], 201);
     }
+
+    /**
+     * Update an existing assignment for an employee.
+     */
+    public function update(Request $request, Employee $employee, EmployeeAssignment $assignment)
+    {
+        if (!$employee || !$assignment || $assignment->employee_id !== $employee->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Assignment or employee not found.'
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'start_date' => 'required|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'location' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
+        ]);
+
+        $assignment->fill($validated);
+        $assignment->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Assignment updated successfully.',
+            'assignment' => $assignment,
+        ]);
+    }
 }

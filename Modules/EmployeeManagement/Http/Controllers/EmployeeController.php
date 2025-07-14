@@ -537,28 +537,27 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Update an assignment for an employee.
+     * Update an existing assignment for an employee (web route).
      */
-    public function updateAssignment(Request $request, Employee $employee, $assignmentId)
+    public function updateAssignment(Request $request, $employeeId, $assignmentId)
     {
-        $assignment = $employee->assignments()->findOrFail($assignmentId);
+        $employee = \Modules\EmployeeManagement\Domain\Models\Employee::findOrFail($employeeId);
+        $assignment = $employee->assignments()->where('id', $assignmentId)->firstOrFail();
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'type' => 'required|string|max:50',
-            'status' => 'required|string|max:50',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'location' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
-            'assigned_by' => 'nullable|integer|exists:users,id',
-            'project_id' => 'nullable|integer|exists:projects,id',
-            'rental_id' => 'nullable|integer|exists:rentals,id',
         ]);
 
         $assignment->update($validated);
 
-        // Always return a redirect (Inertia expects this)
+        // If Inertia or API, return JSON; otherwise, redirect back
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'assignment' => $assignment->fresh()]);
+        }
         return redirect()->back()->with('success', 'Assignment updated successfully.');
     }
 

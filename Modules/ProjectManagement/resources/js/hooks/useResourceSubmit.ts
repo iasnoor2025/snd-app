@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { router } from '@inertiajs/react';
-import { toast } from "@/Core"; 
+import { toast } from "@/Core";
 
 interface UseResourceSubmitProps {
     projectId: number;
@@ -77,6 +77,40 @@ export function useResourceSubmit({
 
     const handleDelete = (id: number) => {
         setIsSubmitting(true);
+
+        if (type === 'manpower') {
+            const url = route('projects.resources.manpower.destroy', {
+                project: projectId,
+                manpower: id
+            });
+            fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || ''
+                },
+                credentials: 'same-origin',
+            })
+                .then(() => {
+                    setIsSubmitting(false);
+                    toast({
+                        title: "Success",
+                        description: `Manpower resource deleted successfully`,
+                        variant: "default",
+                    });
+                    onSuccess?.();
+                })
+                .catch((error) => {
+                    setIsSubmitting(false);
+                    console.error('Delete errors:', error);
+                    toast({
+                        title: "Error",
+                        description: `Failed to delete manpower resource. Please try again.`,
+                        variant: "destructive",
+                    });
+                });
+            return;
+        }
 
         router.delete(`/projects/${projectId}/resources/${type}/${id}`, {
             onSuccess: () => {

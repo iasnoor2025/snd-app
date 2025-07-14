@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Head, Link, router, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/Core";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
-import ResourceForm from '../components/project/ResourceForm';
-import ResourceList from '../components/project/ResourceList';
+import ResourceForm from '../Components/project/ResourceForm';
+import ResourceList from '../Components/project/ResourceList';
 import {
     Dialog,
     DialogContent,
@@ -58,25 +57,27 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Core";
-import TaskList, { ProjectTask } from '../components/project/TaskList';
-import TaskDialog from '../components/project/TaskDialog';
-import { DialogErrorBoundary } from '../components/DialogErrorBoundary';
-import ErrorBoundary from '../components/ErrorBoundary';
-import { SafeDialog } from '../components/ui/SafeDialog';
-import TaskForm from '../components/project/TaskForm';
-import ResourceFilters from '../components/project/ResourceFilters';
-import ResourcePagination from '../components/project/ResourcePagination';
-import ResourceSearch from '../components/project/ResourceSearch';
+import TaskList from '../Components/project/TaskList';
+import TaskDialog from '../Components/project/TaskDialog';
+import DialogErrorBoundary from '../Components/DialogErrorBoundary';
+import ErrorBoundary from '../Components/ErrorBoundary';
+import SafeDialog from '../Components/ui/SafeDialog';
+import TaskForm from '../Components/project/TaskForm';
+import ResourceFilters from '../Components/project/ResourceFilters';
+import ResourcePagination from '../Components/project/ResourcePagination';
+import ResourceSearch from '../Components/project/ResourceSearch';
 import { cn } from "@/Core";
 import { Calendar } from "@/Core";
+import { Head } from '@inertiajs/react';
+import { Inertia } from '@inertiajs/inertia';
 
 // Import tab components
-import { ManpowerTab } from './resources/Tabs/ManpowerTab';
-import { EquipmentTab } from './resources/Tabs/EquipmentTab';
-import { MaterialTab } from './resources/Tabs/MaterialTab';
-import { FuelTab } from './resources/Tabs/FuelTab';
-import { ExpenseTab } from './resources/Tabs/ExpenseTab';
-import TasksTab from './resources/Tabs/TasksTab';
+import ManpowerTab from './Resources/Tabs/ManpowerTab';
+import EquipmentTab from './Resources/Tabs/EquipmentTab';
+import MaterialTab from './Resources/Tabs/MaterialTab';
+import FuelTab from './Resources/Tabs/FuelTab';
+import ExpenseTab from './Resources/Tabs/ExpenseTab';
+import TasksTab from './Resources/Tabs/TasksTab';
 import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 // Define TaskStatus type for better type safety
@@ -610,7 +611,6 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
     }
 
     try {
-        const { tab } = usePage().props as any;
         const [selectedType, setSelectedType] = useState<ResourceType | 'tasks'>(type || 'manpower');
         const [currentPage, setCurrentPage] = useState(Number(page) || 1);
         const [itemsPerPage] = useState(10);
@@ -848,7 +848,7 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
                 setTasks(updatedTasks);
 
                 // Refresh the tasks data from the server
-                router.reload({
+                Inertia.reload({
                     only: ['tasks'],
                     preserveState: true,
                     preserveScroll: true,
@@ -883,7 +883,7 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
                 setTasks(updatedTasks);
 
                 // Refresh the tasks data from the server
-                router.reload({
+                Inertia.reload({
                     only: ['tasks'],
                     preserveState: true,
                     preserveScroll: true,
@@ -917,11 +917,9 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
                     );
                     setTasks(updatedTasks);
 
-                    toast.success(t('projects:task_updated'), {
-                        description: t('projects:task_updated_description')
-                    });
+                    toast.success(t('projects:task_updated'));
                 } else {
-                    axios.get(route('projects.tasks.index', { project: project.id }))
+                    Inertia.get(route('projects.tasks.index', { project: project.id }))
                         .then(response => {
                             if (response.data && Array.isArray(response.data)) {
                                 setTasks(response.data);
@@ -931,11 +929,11 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
                         })
                         .catch(error => {
                             console.error('Error fetching updated tasks:', error);
-                            router.reload({ only: ['tasks'] });
+                            Inertia.reload({ only: ['tasks'] });
                         });
                 }
             } else {
-                router.reload({
+                Inertia.reload({
                     only: ['tasks'],
                     onSuccess: (page) => {
                         if (page.props.tasks) {
@@ -962,23 +960,42 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
             setEditingTask(null);
 
             // Refresh the page data
-            router.reload({ only: [selectedType] });
+            Inertia.reload({ only: [selectedType] });
         };
 
         const handleDeleteConfirmed = async () => {
             if (!resourceToDelete) return;
 
             const { resource, type } = resourceToDelete;
+            // Use web route for manpower delete
+            if (type === 'manpower') {
+                const url = route('projects.resources.manpower.destroy', {
+                    project: project.id,
+                    manpower: resource.id
+                });
+                // Use fetch to send a DELETE request
+                await fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || ''
+                    },
+                    credentials: 'same-origin',
+                });
+                setDeleteConfirmOpen(false);
+                setResourceToDelete(null);
+                Inertia.reload({ only: ['manpower'] });
+                return;
+            }
+            // Keep API route for other types
             const url = `/api/projects/${project.id}/resources/${type}/${resource.id}`;
-
             try {
-                // Ensure CSRF cookie is set for Sanctum
                 await axios.get('/sanctum/csrf-cookie', { withCredentials: true });
                 await axios.delete(url, { withCredentials: true });
                 toast.success(t('projects:resource_deleted_success'));
                 setDeleteConfirmOpen(false);
                 setResourceToDelete(null);
-                router.reload({ only: [type] });
+                Inertia.reload({ only: [type] });
             } catch (error) {
                 console.error('Error deleting resource:', error);
                 toast.error(t('projects:error_deleting_resource'));
@@ -988,7 +1005,7 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
         };
 
         const handlePageChange = (page: number) => {
-            router.get(
+            Inertia.get(
                 route('projects.resources', { project: project.id }),
                 {
                     type: selectedType,
@@ -1006,7 +1023,7 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
         const handleTypeChange = (type: string) => {
             setSelectedType(type as ResourceType | 'tasks');
             setCurrentPage(1);
-            router.get(
+            Inertia.get(
                 route('projects.resources', { project: project.id }),
                 {
                     type,
@@ -1179,10 +1196,10 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
 
                             <div className="flex space-x-2">
                                 <Button variant="outline" size="sm" asChild>
-                                    <Link href={route('projects.show', project.id)}>
+                                    <a href={route('projects.show', project.id)}>
                                         <ArrowLeft className="h-4 w-4 mr-2" />
                                         {t('common:back')} {t('common:to')} {t('projects:project')}
-                                    </Link>
+                                    </a>
                                 </Button>
                                 <Button
                                     size="sm"

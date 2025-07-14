@@ -16,6 +16,7 @@ use Modules\EmployeeManagement\Http\Controllers\PerformanceReviewController;
 use Modules\EmployeeManagement\Http\Controllers\TrainingController;
 use Modules\EmployeeManagement\Http\Controllers\Api\DepartmentApiController;
 use Modules\EmployeeManagement\Http\Controllers\Api\WidgetController;
+use Modules\EmployeeManagement\Http\Controllers\Api\EmployeeAssignmentController;
 
 // Public route for last-file-number (no auth middleware)
 Route::prefix('v1')->group(function () {
@@ -89,6 +90,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
 
     // Manual assignment creation
     Route::post('employees/{employee}/assignments', [\Modules\EmployeeManagement\Http\Controllers\Api\EmployeeAssignmentController::class, 'store']);
+    Route::put('/employees/{employee}/assignments/{assignment}', [EmployeeAssignmentController::class, 'update'])->name('employees.assignments.update');
 });
 
 // Public API endpoints - no authentication required

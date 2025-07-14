@@ -155,6 +155,9 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
         // Route::delete('/{type}/{resource}', [ProjectResourceController::class, 'destroyResource'])
         //     ->middleware('permission:project.delete')
         //     ->name('resource.destroy');
+        Route::delete('/manpower/{manpower}', [ProjectResourceController::class, 'destroyManpower'])
+            ->middleware('permission:manpower.delete')
+            ->name('manpower.destroy');
     });
 
     // Project Reports routes

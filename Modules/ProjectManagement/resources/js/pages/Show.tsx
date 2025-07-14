@@ -265,7 +265,7 @@ export default function Show({ project, manager = [], tasks = [], teamMembers = 
         setDeleteConfirmOpen(true);
     };
 
-    const handleDeleteConfirm = () => {
+    const handleDeleteConfirm = async () => {
         if (!resourceToDelete) return;
 
         const { resource, type } = resourceToDelete;
@@ -280,6 +280,25 @@ export default function Show({ project, manager = [], tasks = [], teamMembers = 
         };
 
         const routeName = routeMapping[type];
+
+        if (type === 'manpower') {
+            const url = route(routeName, {
+                project: project.id,
+                manpower: resource.id
+            });
+            await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || ''
+                },
+                credentials: 'same-origin',
+            });
+            setDeleteConfirmOpen(false);
+            setResourceToDelete(null);
+            window.location.reload();
+            return;
+        }
 
         window.location.href = route(routeName, {
             project: project.id,
@@ -968,11 +987,7 @@ export default function Show({ project, manager = [], tasks = [], teamMembers = 
                         <DialogFooter>
                             <Button variant="outline" onClick={() => setDeleteConfirmOpen(false)}>Cancel</Button>
                             <Button
-                                onClick={() => {
-                                    if (resourceToDelete) {
-                                        handleDeleteResource(resourceToDelete.resource, resourceToDelete.type);
-                                    }
-                                }}
+                                onClick={handleDeleteConfirm}
                                 variant="destructive"
                             >
                                 Delete
