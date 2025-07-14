@@ -397,7 +397,7 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                         const res = await fetch('/api/timesheets/auto-generate', { method: 'POST' });
                         if (res.ok) {
                           toast.success('Auto-generated timesheets successfully');
-                          reloadPage();
+                          window.location.reload();
                         } else {
                           toast.error('Failed to auto-generate timesheets');
                         }
