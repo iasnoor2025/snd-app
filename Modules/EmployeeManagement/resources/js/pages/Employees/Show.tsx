@@ -960,8 +960,15 @@ export default function Show({
         return bDate.getTime() - aDate.getTime();
       })
     : [];
-  // Always show the most recent assignment as current
-  const currentAssignment = sortedAssignments.length > 0 ? sortedAssignments[0] : null;
+  // Show the assignment with the latest start_date as current
+  const currentAssignment = sortedAssignments.length > 0
+    ? sortedAssignments.reduce((latest, curr) => {
+        if (!latest) return curr;
+        const latestDate = latest.start_date ? new Date(latest.start_date) : new Date(0);
+        const currDate = curr.start_date ? new Date(curr.start_date) : new Date(0);
+        return currDate > latestDate ? curr : latest;
+      }, null)
+    : null;
   // All others go to history
   const strictAssignmentHistory = sortedAssignments;
 

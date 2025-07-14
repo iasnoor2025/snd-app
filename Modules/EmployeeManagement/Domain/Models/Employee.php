@@ -584,113 +584,43 @@ class Employee extends Model implements HasMedia
      */
     public function getCurrentAssignmentAttribute()
     {
-        // 1. Check for active manual assignment
-        $manualAssignment = $this->assignments()
-            ->with('assignedBy')
-            ->where('type', 'manual')
-            ->where('status', 'active')
-            ->where(function($query) {
-                $query->whereNull('end_date')
-                    ->orWhere('end_date', '>=', now()->toDateString());
-            })
-            ->orderBy('start_date', 'desc')
+        $assignment = $this->assignments()
+            ->with(['assignedBy', 'project', 'rental'])
+            ->orderByDesc('start_date')
             ->first();
-
-        if ($manualAssignment) {
-            return [
-                'id' => (int) $manualAssignment->id,
-                'type' => 'manual',
-                'name' => $manualAssignment->name,
-                'status' => $manualAssignment->status,
-                'location' => $manualAssignment->location,
-                'location_name' => $manualAssignment->location_name ?? null,
-                'start_date' => $manualAssignment->start_date ? $manualAssignment->start_date->toDateString() : null,
-                'end_date' => $manualAssignment->end_date ? $manualAssignment->end_date->toDateString() : null,
-                'notes' => $manualAssignment->notes,
-                'assigned_by' => $manualAssignment->assignedBy ? [
-                    'id' => $manualAssignment->assignedBy->id,
-                    'name' => $manualAssignment->assignedBy->name,
-                ] : null,
-                'project_id' => $manualAssignment->project_id,
-                'rental_id' => $manualAssignment->rental_id,
-                'deleted_at' => $manualAssignment->deleted_at,
-                'title' => ucfirst($manualAssignment->type),
-                'description' => $manualAssignment->notes,
-                'project' => $manualAssignment->project ? [
-                    'id' => $manualAssignment->project->id,
-                    'name' => $manualAssignment->project->name,
-                ] : null,
-                'rental' => $manualAssignment->rental ? [
-                    'id' => $manualAssignment->rental->id,
-                    'project_name' => $manualAssignment->rental->project_name,
-                    'rental_number' => $manualAssignment->rental->rental_number ?? null,
-                ] : null,
-                'rental_number' => $manualAssignment->rental ? $manualAssignment->rental->rental_number ?? null : null,
-            ];
+        if (!$assignment) {
+            return null;
         }
-
-        // Try to find active project assignment
-        $projectAssignment = $this->projectManpower()
-            ->where(function($query) {
-                // An assignment is active if end_date is in the future or null
-                $query->whereNull('end_date')
-                    ->orWhere('end_date', '>=', now()->toDateString());
-            })
-            ->with(['project:id,name'])
-            ->orderBy('start_date', 'desc')
-            ->first();
-
-        if ($projectAssignment) {
-            return [
-                'type' => 'project',
-                'id' => $projectAssignment->project_id,
-                'name' => $projectAssignment->project->name,
-                'location' => 'Project Location', // Projects don't have location in current schema
-                'date' => $projectAssignment->start_date,
-                'role' => $projectAssignment->job_title,
-            ];
-        }
-
-        // Try to find active rental assignment
-        $rentalAssignment = $this->rentalAssignments()
-            ->where('status', 'active')
-            ->with(['rental:id,customer_id,location_id', 'rental.customer:id,name', 'rental.location:id,name'])
-            ->orderBy('assignment_date', 'desc')
-            ->first();
-
-        if ($rentalAssignment) {
-            return [
-                'type' => 'rental',
-                'id' => $rentalAssignment->rental_id,
-                'name' => $rentalAssignment->rental->customer->name ?? 'Unknown Customer',
-                'location' => $rentalAssignment->rental->location->name ?? 'Unknown Location',
-                'date' => $rentalAssignment->assignment_date,
-                'role' => 'Operator',
-            ];
-        }
-
-        // Check if assigned as operator to any active rental items
-        $rentalItem = $this->rentalItems()
-            ->whereHas('rental', function ($query) {
-                $query->where('status', 'active');
-            })
-            ->with(['equipment:id,name', 'rental:id,customer_id,location_id', 'rental.customer:id,name', 'rental.location:id,name'])
-            ->orderBy('created_at', 'desc')
-            ->first();
-
-        if ($rentalItem) {
-            return [
-                'type' => 'rental_item',
-                'id' => $rentalItem->rental_id,
-                'name' => $rentalItem->rental->customer->name ?? 'Unknown Customer',
-                'equipment' => $rentalItem->equipment->name ?? 'Unknown Equipment',
-                'location' => $rentalItem->rental->location->name ?? 'Unknown Location',
-                'date' => $rentalItem->created_at,
-                'role' => 'Equipment Operator',
-            ];
-        }
-
-        return null;
+        return [
+            'id' => (int) $assignment->id,
+            'type' => $assignment->type,
+            'name' => $assignment->name,
+            'status' => $assignment->status,
+            'location' => $assignment->location,
+            'location_name' => $assignment->location_name ?? null,
+            'start_date' => $assignment->start_date ? $assignment->start_date->toDateString() : null,
+            'end_date' => $assignment->end_date ? $assignment->end_date->toDateString() : null,
+            'notes' => $assignment->notes,
+            'assigned_by' => $assignment->assignedBy ? [
+                'id' => $assignment->assignedBy->id,
+                'name' => $assignment->assignedBy->name,
+            ] : null,
+            'project_id' => $assignment->project_id,
+            'rental_id' => $assignment->rental_id,
+            'deleted_at' => $assignment->deleted_at,
+            'title' => $assignment->project ? $assignment->project->name : ($assignment->rental ? $assignment->rental->project_name : ucfirst($assignment->type)),
+            'description' => $assignment->notes ?? ($assignment->project ? $assignment->project->description : ($assignment->rental ? $assignment->rental->description : '')),
+            'project' => $assignment->project ? [
+                'id' => $assignment->project->id,
+                'name' => $assignment->project->name,
+            ] : null,
+            'rental' => $assignment->rental ? [
+                'id' => $assignment->rental->id,
+                'project_name' => $assignment->rental->project_name,
+                'rental_number' => $assignment->rental->rental_number ?? null,
+            ] : null,
+            'rental_number' => $assignment->rental ? $assignment->rental->rental_number ?? null : null,
+        ];
     }
 
     /**

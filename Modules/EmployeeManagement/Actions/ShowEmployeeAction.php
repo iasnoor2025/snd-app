@@ -173,15 +173,17 @@ class ShowEmployeeAction
                 ->values()
                 ->all();
 
-            // Find the current assignment from the assignments list by matching type and id
+            // Find the current assignment as the one with the latest start_date
             $currentAssignment = null;
-            $current = $employee->current_assignment;
-            if ($current && isset($current['type'], $current['id'])) {
-                $currentAssignment = collect($assignments['data'])->first(function ($a) use ($current) {
-                    return $a['type'] === $current['type'] && $a['id'] == $current['id'];
-                });
+            if (count($assignments['data']) > 0) {
+                $currentAssignment = collect($assignments['data'])->reduce(function ($latest, $curr) {
+                    if (!$latest) return $curr;
+                    $latestDate = $latest['start_date'] ? strtotime($latest['start_date']) : 0;
+                    $currDate = $curr['start_date'] ? strtotime($curr['start_date']) : 0;
+                    return $currDate > $latestDate ? $curr : $latest;
+                }, null);
             }
-            $employeeData['current_assignment'] = $currentAssignment ?: $employee->current_assignment;
+            $employeeData['current_assignment'] = $currentAssignment;
 
             // Get final settlements
             $finalSettlements = ['data' => []];
