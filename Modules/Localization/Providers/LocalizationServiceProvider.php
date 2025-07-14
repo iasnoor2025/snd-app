@@ -72,7 +72,7 @@ class LocalizationServiceProvider extends ServiceProvider
         if (function_exists('safe_module_path')) {
             return safe_module_path($this->moduleName, $path);
         }
-        
+
         return module_path($this->moduleName, $path);
     }
 
@@ -84,10 +84,10 @@ class LocalizationServiceProvider extends ServiceProvider
     protected function registerConfig()
     {
         $this->publishes([
-            $this->getModulePath('config/config.php') => config_path($this->moduleNameLower . '.php')
+            $this->getModulePath('Config/config.php') => config_path($this->moduleNameLower . '.php')
         ], 'config');
         $this->mergeConfigFrom(
-            $this->getModulePath('config/config.php'), $this->moduleNameLower
+            $this->getModulePath('Config/config.php'), $this->moduleNameLower
         );
     }
 
@@ -153,7 +153,7 @@ class LocalizationServiceProvider extends ServiceProvider
     /**
      * Register module translations.
      * This method registers translations for all modules in the system.
-     * 
+     *
      * @return void
      */
     protected function registerModuleTranslations()
@@ -163,22 +163,22 @@ class LocalizationServiceProvider extends ServiceProvider
 
         foreach ($modules as $module) {
             $langPath = $this->getModulePathForName($module, 'resources/lang');
-            
+
             if (is_dir($langPath)) {
                 // Register PHP translations
                 $this->loadTranslationsFrom($langPath, $module);
-                
+
                 // Register JSON translations
                 $this->loadJsonTranslationsFrom($langPath);
             }
-            
+
             // Also check for public locales
             $publicLocalesPath = public_path("locales/$module");
-            
+
             if (is_dir($publicLocalesPath)) {
                 // Register each language directory as a namespace
                 $languages = array_map('basename', File::directories($publicLocalesPath));
-                
+
                 foreach ($languages as $lang) {
                     $this->loadJsonTranslationsFrom("$publicLocalesPath/$lang");
                 }
@@ -198,7 +198,7 @@ class LocalizationServiceProvider extends ServiceProvider
         if (function_exists('safe_module_path')) {
             return safe_module_path($name, $path);
         }
-        
+
         // Fallback to direct path construction
         return base_path('Modules/' . $name . ($path ? '/' . $path : ''));
     }
