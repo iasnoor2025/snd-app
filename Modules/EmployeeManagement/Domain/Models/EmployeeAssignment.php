@@ -61,38 +61,25 @@ class EmployeeAssignment extends Model
             }
         });
 
-        static::created(function ($assignment) {
-            if (!$assignment->employee_id) return;
-            $employeeId = $assignment->employee_id;
-            $start = $assignment->start_date ? $assignment->start_date->toDateString() : now()->toDateString();
-            $end = $assignment->end_date ? $assignment->end_date->toDateString() : $start;
-            $today = now()->toDateString();
-            $from = $start < $today ? $today : $start;
-            $to = $end;
-            $period = new \DatePeriod(new \DateTime($from), new \DateInterval('P1D'), (new \DateTime($to))->modify('+1 day'));
-            foreach ($period as $date) {
-                $dateStr = $date->format('Y-m-d');
-                $data = [
-                    'employee_id' => $employeeId,
-                    'date' => $dateStr,
-                    'status' => \Modules\TimesheetManagement\Domain\Models\Timesheet::STATUS_DRAFT,
-                    'hours_worked' => 0,
-                    'overtime_hours' => 0,
-                    'start_time' => '08:00',
-                    'end_time' => null,
-                ];
-                if ($assignment->type === 'project' && $assignment->project_id) {
-                    $data['project_id'] = $assignment->project_id;
+        $updateAssignmentStatuses = function ($assignment) {
+            $allAssignments = self::where('employee_id', $assignment->employee_id)
+                ->orderBy('start_date', 'desc')
+                ->get();
+            if ($allAssignments->isEmpty()) return;
+            $latest = $allAssignments->first();
+            foreach ($allAssignments as $a) {
+                if ($a->id == $latest->id) {
+                    $a->status = 'active';
+                    $a->end_date = null;
+                } else {
+                    $a->status = 'completed';
+                    $a->end_date = (new \DateTime($latest->start_date))->modify('-1 day')->format('Y-m-d');
                 }
-                if ($assignment->type === 'rental' && $assignment->rental_id) {
-                    $data['rental_id'] = $assignment->rental_id;
-                }
-                // For other types, you may want to add a 'description' or 'location' field
-                if (!\Modules\TimesheetManagement\Domain\Models\Timesheet::hasOverlap($employeeId, $dateStr)) {
-                    \Modules\TimesheetManagement\Domain\Models\Timesheet::create($data);
-                }
+                $a->save();
             }
-        });
+        };
+        static::created($updateAssignmentStatuses);
+        static::updated($updateAssignmentStatuses);
 
         static::deleted(function ($assignment) {
             if (!$assignment->employee_id) return;

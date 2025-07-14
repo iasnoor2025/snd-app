@@ -960,8 +960,10 @@ export default function Show({
         return bDate.getTime() - aDate.getTime();
       })
     : [];
-  const currentAssignment = sortedAssignments.find(a => a.status === 'active');
-  const assignmentHistory = sortedAssignments.filter(a => !currentAssignment || a.id !== currentAssignment.id);
+  // Always show the most recent assignment as current
+  const currentAssignment = sortedAssignments.length > 0 ? sortedAssignments[0] : null;
+  // All others go to history
+  const strictAssignmentHistory = sortedAssignments.filter(a => a.status === 'completed');
 
   return (
     <AppLayout title={employee ? `${employee.first_name || ''} ${employee.last_name || ''}` : 'Employee Details'} breadcrumbs={currentBreadcrumbs} requiredPermission="employees.view">
@@ -2252,53 +2254,51 @@ export default function Show({
             {/* Assignment History Section */}
             <div>
               <h3 className="text-lg font-semibold mb-2">Assignment History</h3>
-              {assignmentHistory.length === 0 ? (
+              {strictAssignmentHistory.length === 0 ? (
                 <div className="text-muted-foreground">No previous assignments found.</div>
               ) : (
-                <div className="space-y-2">
-                  {assignmentHistory.map((a) => (
-                    <Card key={a.id} className="border border-gray-200">
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-base font-semibold">{a.name || a.title || '-'}
-                          {hasPermission('employees.edit') && (
-                            <Button size="sm" variant="outline" className="ml-2" onClick={() => { setEditAssignment(a); setIsEditAssignmentDialogOpen(true); }}>
-                              <Edit className="h-4 w-4 mr-1 inline" /> Edit
-                            </Button>
-                          )}
-                          {hasPermission('admin') && (
-                            <Button size="sm" variant="destructive" className="ml-2" onClick={() => { setDeleteAssignmentId(a.id); setIsDeletingAssignment(true); }}>
-                              <Trash2 className="h-4 w-4 mr-1 inline" /> Delete
-                            </Button>
-                          )}
-                        </CardTitle>
-                        <div className="flex flex-wrap items-center gap-3 mt-2">
-                          <Badge className="bg-blue-500 text-white capitalize">{a.type || 'assignment'}</Badge>
-                          <span className="text-xs text-muted-foreground">
-                            {a.type === 'project' && a.project?.name ? `Project: ${a.project.name}` :
-                              (a.type === 'rental' || a.type === 'rental_item') && (a.rental?.rental_number || a.rental_number) ? `Rental #: ${a.rental?.rental_number || a.rental_number}` :
-                              '-'}
-                          </span>
-                          <Badge className={a.status === 'active' ? 'bg-green-500 text-white' : 'bg-gray-400 text-white'}>
-                            {a.status || 'active'}
-                          </Badge>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="pt-0">
-                        <div className="flex flex-col gap-1 mt-2">
-                          <span className="text-sm text-muted-foreground">
-                            <strong>Location:</strong> {a.location || '-'}
-                          </span>
-                          <span className="text-sm text-muted-foreground">
-                            <strong>From:</strong> {a.start_date ? format(new Date(a.start_date), 'MMM d, yyyy') : '-'}
-                            {a.end_date ? ` - ${format(new Date(a.end_date), 'MMM d, yyyy')}` : ''}
-                          </span>
-                          {a.equipment && (
-                            <span className="text-sm text-muted-foreground"><strong>Equipment:</strong> {a.equipment}</span>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                <div className="overflow-x-auto">
+                  <table className="min-w-full bg-white border border-gray-200 rounded-lg">
+                    <thead>
+                      <tr>
+                        <th className="px-4 py-2 text-left">Assignment Name</th>
+                        <th className="px-4 py-2 text-left">Type</th>
+                        <th className="px-4 py-2 text-left">Location</th>
+                        <th className="px-4 py-2 text-left">Start Date</th>
+                        <th className="px-4 py-2 text-left">End Date</th>
+                        <th className="px-4 py-2 text-left">Status</th>
+                        <th className="px-4 py-2 text-left">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {strictAssignmentHistory.map((a) => (
+                        <tr key={a.id} className="border-t">
+                          <td className="px-4 py-2 font-medium">{a.name || a.title || '-'}</td>
+                          <td className="px-4 py-2 capitalize">{a.type || '-'}</td>
+                          <td className="px-4 py-2">{a.location || '-'}</td>
+                          <td className="px-4 py-2">{a.start_date ? format(new Date(a.start_date), 'MMM d, yyyy') : '-'}</td>
+                          <td className="px-4 py-2">{a.end_date ? format(new Date(a.end_date), 'MMM d, yyyy') : '-'}</td>
+                          <td className="px-4 py-2">
+                            <span className={a.status === 'active' ? 'bg-green-100 text-green-800 px-2 py-1 rounded text-xs' : 'bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs'}>
+                              {a.status || '-'}
+                            </span>
+                          </td>
+                          <td className="px-4 py-2">
+                            {hasPermission('employees.edit') && (
+                              <Button size="sm" variant="outline" className="mr-2" onClick={() => { setEditAssignment(a); setIsEditAssignmentDialogOpen(true); }}>
+                                <Edit className="h-4 w-4 mr-1 inline" /> Edit
+                              </Button>
+                            )}
+                            {hasPermission('admin') && (
+                              <Button size="sm" variant="destructive" onClick={() => { setDeleteAssignmentId(a.id); setIsDeletingAssignment(true); }}>
+                                <Trash2 className="h-4 w-4 mr-1 inline" /> Delete
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               )}
             </div>

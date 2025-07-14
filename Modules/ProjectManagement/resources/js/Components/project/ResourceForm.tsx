@@ -108,7 +108,7 @@ const manpowerSchema = z.object({
     worker_name: z.string().optional(),
     job_title: z.string().min(1, 'Job title is required').max(255, 'Job title cannot exceed 255 characters'),
     start_date: z.string().min(1, 'Start date is required'),
-    end_date: z.string().nullable().optional(),
+    end_date: z.string().nullable().optional(), // Make end_date optional
     daily_rate: z.number().min(0, 'Daily rate must be positive'),
     total_days: z.number().min(0, 'Total days must be positive'),
     notes: z.string().nullable().optional(),
@@ -857,7 +857,6 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                     type="date"
                                     value={data.end_date || ''}
                                     onChange={(e) => handleInputChange('end_date', e.target.value)}
-                                    required
                                     className={errors.end_date ? 'border-red-500' : ''}
                                 />
                                 {errors.end_date && (
