@@ -74,11 +74,10 @@ export function AppSidebar() {
                     .filter(([_, enabled]) => enabled)
                     .map(([module]) => module)
                     .filter((module) => moduleMap[module]);
-                console.log('[Sidebar] Enabled modules from JSON:', enabledModules);
                 setModules(enabledModules);
             })
             .catch((err) => {
-                console.error('[Sidebar] Error fetching modules_statuses.json:', err);
+                console.error('Error fetching modules_statuses.json:', err);
             });
     }, []);
 
@@ -88,7 +87,6 @@ export function AppSidebar() {
             if (isAdmin) return true; // Admin sees all enabled modules
             const perm = moduleMap[module]?.permission;
             const allowed = !perm || hasPermission(perm);
-            console.log(`[Sidebar] Module: ${module}, Permission: ${perm}, Allowed: ${allowed}, isAdmin: ${isAdmin}`);
             return allowed;
         })
         .map((module) => ({
@@ -97,9 +95,6 @@ export function AppSidebar() {
             icon: moduleMap[module].icon,
             permission: moduleMap[module].permission,
         }));
-
-    console.log('[Sidebar] navigationItems:', navigationItems);
-    console.log('[Sidebar] Current user:', user);
 
     return (
         <Sidebar collapsible="icon" className="bg-white border-r">

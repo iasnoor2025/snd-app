@@ -220,27 +220,27 @@ createInertiaApp({
   resolve: async (name) => {
     // Only log page resolution in development mode
     if (process.env.NODE_ENV === 'development') {
-      console.log('Resolving page:', name);
+      // console.log('Resolving page:', name);
     }
 
     // Special case for auth pages - add more debug logging
     if (name.startsWith('auth/')) {
-      console.log('Attempting to resolve auth page:', name);
+      // console.log('Attempting to resolve auth page:', name);
       try {
         // Try lowercase pages directory first
         const page = await resolvePageComponent(`./pages/${name}.tsx`, import.meta.glob('./pages/**/*.tsx'));
-        console.log('Successfully resolved auth page from lowercase pages directory:', name);
+        // console.log('Successfully resolved auth page from lowercase pages directory:', name);
         return page;
       } catch (error) {
-        console.error(`Failed to resolve auth page from lowercase pages directory: ${name}`, error);
+        // console.error(`Failed to resolve auth page from lowercase pages directory: ${name}`, error);
 
         try {
           // Try uppercase Pages directory
           const page = await resolvePageComponent(`./pages/${name}.tsx`, import.meta.glob('./pages/**/*.tsx'));
-          console.log('Successfully resolved auth page from uppercase Pages directory:', name);
+          // console.log('Successfully resolved auth page from uppercase Pages directory:', name);
           return page;
         } catch (upperError) {
-          console.error(`Failed to resolve auth page from uppercase Pages directory: ${name}`, upperError);
+          // console.error(`Failed to resolve auth page from uppercase Pages directory: ${name}`, upperError);
         }
       }
     }
@@ -292,7 +292,7 @@ createInertiaApp({
             const pagePath = employeePages[name];
             return await modulePages[pagePath]();
           } catch (e) {
-            console.error(`Failed to import ${name} page directly:`, e);
+            // console.error(`Failed to import ${name} page directly:`, e);
           }
         }
 

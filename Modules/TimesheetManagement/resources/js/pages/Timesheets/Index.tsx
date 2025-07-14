@@ -394,7 +394,18 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                     variant="default"
                     onClick={async () => {
                       try {
-                        const res = await fetch('/api/timesheets/auto-generate', { method: 'POST' });
+                        // Always fetch CSRF cookie for Sanctum
+                        await fetch('/sanctum/csrf-cookie', { credentials: 'same-origin' });
+                        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                        const res = await fetch('/api/timesheets/auto-generate', {
+                          method: 'POST',
+                          headers: {
+                            'X-CSRF-TOKEN': csrfToken || '',
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                          },
+                          credentials: 'same-origin',
+                        });
                         if (res.ok) {
                           toast.success('Auto-generated timesheets successfully');
                           window.location.reload();
