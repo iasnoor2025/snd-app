@@ -271,51 +271,44 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
 
     // Fetch employees/equipment data
     useEffect(() => {
-        const fetchData = async () => {
-            if (!mounted.current) return;
-
-            setIsLoading(true);
-            try {
-                if (type === 'manpower') {
-                    // Use the authenticated employees endpoint
-                    const response = await axios.get('/api/employees/all');
+        if (!mounted.current) return;
+        setIsLoading(true);
+        try {
+            if (type === 'manpower') {
+                // Only fetch employees if creating a new resource (no initialData or no employee_id)
+                if (!initialData || !initialData.employee_id) {
+                    axios.get('/api/employees/all').then(response => {
+                        if (mounted.current) {
+                            setEmployees(response.data);
+                        }
+                    });
+                } else {
+                    // Editing: do not fetch, just use the already-linked employee
+                    setEmployees([]);
+                }
+            } else if (type === 'equipment' || type === 'fuel') {
+                axios.get('/api/v1/equipment').then(response => {
                     if (mounted.current) {
-                        setEmployees(response.data);
-                    }
-                } else if (type === 'equipment' || type === 'fuel') {
-                    // Use the authenticated equipment endpoint, match manpower logic
-                    const response = await axios.get('/api/v1/equipment');
-                    if (mounted.current) {
-                        // If response.data is paginated (has .data), use .data, else use response.data directly
                         const equipmentList = Array.isArray(response.data) ? response.data : (response.data.data || []);
                         setEquipment(equipmentList);
-                        // If we have initial data, set the hourly rate based on the equipment
                         if (initialData?.equipment_id) {
-                            const selectedEquipment = equipmentList.find((e: Equipment) => e.id === initialData.equipment_id);
+                            const selectedEquipment = equipmentList.find((e) => e.id === initialData.equipment_id);
                             if (selectedEquipment) {
                                 const hourlyRate = selectedEquipment.daily_rate ? (selectedEquipment.daily_rate / 8) : 0;
-                                setData(prev => ({
-                                    ...prev,
-                                    hourly_rate: hourlyRate.toString()
-                                }));
+                                setData(prev => ({ ...prev, hourly_rate: hourlyRate.toString() }));
                             }
                         }
                     }
-                }
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                // if (mounted.current) {
-                //     ToastService.error("Failed to load required data.");
-                // }
-            } finally {
-                if (mounted.current) {
-                    setIsLoading(false);
-                }
+                });
             }
-        };
-
-        fetchData();
-    }, [type, initialData?.equipment_id]);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            if (mounted.current) {
+                setIsLoading(false);
+            }
+        }
+    }, [type, initialData?.equipment_id, initialData?.employee_id]);
 
     // Add calculateTotalDays function
     const calculateTotalDays = useCallback((startDate: string, endDate?: string) => {
@@ -765,6 +758,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                         onPressedChange={handleUseEmployeeChange}
                                         className="bg-white border border-gray-300 hover:bg-gray-50 data-[state=on]:bg-blue-500 data-[state=on]:text-white min-w-12 h-8"
                                         aria-label={t('lbl_toggle_employee_link')}
+                                        disabled={!!initialData?.employee_id} // Disable toggle if editing and employee is already linked
                                     />
                                 </div>
                             </div>
@@ -773,33 +767,40 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                         {useEmployee ? (
                             <div className="space-y-2">
                                 <Label htmlFor="employee_id">{t('lbl_select_employee')}</Label>
-                                <Select
-                                    value={data.employee_id?.toString()}
-                                    onValueChange={(value) => {
-                                        const employeeId = parseInt(value);
-                                        if (!isNaN(employeeId)) {
-                                            handleInputChange('employee_id', employeeId);
-                                        }
-                                    }}
-                                >
-                                    <SelectTrigger className={cn(
-                                        "w-full",
-                                        errors.employee_id && "border-red-500"
-                                    )}>
-                                        <SelectValue placeholder={t('ph_select_an_employee')} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {employees && employees.length > 0 ? (
-                                            employees.map((employee) => (
-                                                <SelectItem key={employee.id} value={employee.id.toString()}>
-                                                    {`${employee.first_name} ${employee.last_name}`}
-                                                </SelectItem>
-                                            ))
-                                        ) : (
-                                            <SelectItem value="no-employee" disabled>{t('opt_no_employees_available')}</SelectItem>
-                                        )}
-                                    </SelectContent>
-                                </Select>
+                                {initialData && initialData.employee_id ? (
+                                    <div className="p-2 bg-gray-100 rounded text-gray-800">
+                                        {/* Show the already-linked employee as plain text */}
+                                        {initialData.employee && (initialData.employee.full_name || `${initialData.employee.first_name} ${initialData.employee.last_name}`)}
+                                    </div>
+                                ) : (
+                                    <Select
+                                        value={data.employee_id?.toString()}
+                                        onValueChange={(value) => {
+                                            const employeeId = parseInt(value);
+                                            if (!isNaN(employeeId)) {
+                                                handleInputChange('employee_id', employeeId);
+                                            }
+                                        }}
+                                    >
+                                        <SelectTrigger className={cn(
+                                            "w-full",
+                                            errors.employee_id && "border-red-500"
+                                        )}>
+                                            <SelectValue placeholder={t('ph_select_an_employee')} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {employees && employees.length > 0 ? (
+                                                employees.map((employee) => (
+                                                    <SelectItem key={employee.id} value={employee.id.toString()}>
+                                                        {`${employee.first_name} ${employee.last_name}`}
+                                                    </SelectItem>
+                                                ))
+                                            ) : (
+                                                <SelectItem value="no-employee" disabled>{t('opt_no_employees_available')}</SelectItem>
+                                            )}
+                                        </SelectContent>
+                                    </Select>
+                                )}
                                 {errors.employee_id && (
                                     <p className="text-sm text-red-500">{errors.employee_id}</p>
                                 )}
@@ -1476,6 +1477,7 @@ export default function ResourceForm(props: ResourceFormProps) {
         </ErrorBoundary>
     );
 }
+
 
 
 

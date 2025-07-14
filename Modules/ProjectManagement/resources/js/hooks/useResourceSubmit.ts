@@ -104,7 +104,7 @@ export function useResourceSubmit({
                     setIsSubmitting(false);
                     console.error('Delete errors:', error);
                     toast({
-                        title: "Error",
+                        title: "Error", 
                         description: `Failed to delete manpower resource. Please try again.`,
                         variant: "destructive",
                     });
