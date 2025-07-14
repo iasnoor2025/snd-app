@@ -61,6 +61,61 @@ class EmployeeAssignment extends Model
             }
         });
 
+        // On save, update only the immediate previous assignment's end_date and status if it does not already have an end_date
+        static::saved(function ($assignment) {
+            if (!$assignment->start_date || !$assignment->employee_id) return;
+            $currentStart = (new \DateTime($assignment->start_date))->format('Y-m-d');
+            Log::info('EmployeeAssignment saved event', [
+                'current_id' => $assignment->id,
+                'employee_id' => $assignment->employee_id,
+                'current_start' => $currentStart
+            ]);
+            // Only run if this is the latest assignment for the employee
+            $latest = self::where('employee_id', $assignment->employee_id)
+                ->orderByDesc('start_date')
+                ->orderByDesc('id')
+                ->first();
+            if (!$latest || $latest->id !== $assignment->id) {
+                Log::info('Not the latest assignment, skipping previous update', ['current_id' => $assignment->id, 'latest_id' => $latest ? $latest->id : null]);
+                return;
+            }
+            // Find the immediate previous assignment for the same employee (latest start_date before current), or if same start_date, lower id
+            $previous = self::where('employee_id', $assignment->employee_id)
+                ->where('id', '!=', $assignment->id)
+                ->where(function($query) use ($currentStart, $assignment) {
+                    $query->whereRaw('DATE(start_date) < ?', [$currentStart])
+                        ->orWhere(function($q) use ($currentStart, $assignment) {
+                            $q->whereRaw('DATE(start_date) = ?', [$currentStart])
+                              ->where('id', '<', $assignment->id);
+                        });
+                })
+                ->whereNull('end_date')
+                ->orderByDesc('start_date')
+                ->orderByDesc('id')
+                ->first();
+            Log::info('Previous assignment query result', [
+                'previous_id' => $previous ? $previous->id : null,
+                'previous_start' => $previous ? $previous->start_date : null,
+                'previous_end_date_before' => $previous ? $previous->end_date : null,
+                'previous_status_before' => $previous ? $previous->status : null
+            ]);
+            if ($previous) {
+                $previous->refresh();
+                $previous->end_date = (new \DateTime($assignment->start_date))->modify('-1 day')->format('Y-m-d');
+                $previous->status = 'completed';
+                $previous->save();
+                $previous->refresh();
+                Log::info('Updated previous assignment', [
+                    'prev_id' => $previous->id,
+                    'new_end_date' => $previous->end_date,
+                    'new_status' => $previous->status
+                ]);
+            } else {
+                $all = self::where('employee_id', $assignment->employee_id)->orderBy('start_date')->get(['id','start_date','end_date','status'])->toArray();
+                Log::info('No previous assignment found to update', ['employee_id' => $assignment->employee_id, 'current_start' => $currentStart, 'all_assignments' => $all]);
+            }
+        });
+
         // Only keep timesheet cleanup on delete
         static::deleted(function ($assignment) {
             if (!$assignment->employee_id) return;

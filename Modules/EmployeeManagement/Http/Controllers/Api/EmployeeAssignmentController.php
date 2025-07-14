@@ -44,6 +44,9 @@ class EmployeeAssignmentController extends Controller
 
         $assignment = new EmployeeAssignment($validated);
         $assignment->employee_id = $employee->id;
+        // Always ensure current assignment has end_date = null and status = 'active'
+        $assignment->end_date = null;
+        $assignment->status = 'active';
         $assignment->save();
 
         return response()->json([
@@ -74,6 +77,9 @@ class EmployeeAssignmentController extends Controller
         ]);
 
         $assignment->fill($validated);
+        // Always ensure current assignment has end_date = null and status = 'active'
+        $assignment->end_date = null;
+        $assignment->status = 'active';
         $assignment->save();
 
         return response()->json([

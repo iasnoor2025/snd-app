@@ -9,7 +9,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/Components/ui/card';
+} from '@/../../Modules/Core/resources/js/components/ui/card';
 import {
   Form,
   FormControl,
@@ -17,10 +17,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/Components/ui/form';
-import { Input } from '@/Components/ui/input';
-import { Textarea } from '@/Components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Components/ui/select';
+} from '@/../../Modules/Core/resources/js/components/ui/form';
+import { Input } from '@/../../Modules/Core/resources/js/components/ui/input';
+import { Textarea } from '@/../../Modules/Core/resources/js/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/../../Modules/Core/resources/js/components/ui/select';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -138,199 +138,274 @@ export default function Edit({ invoice, customers, rentals, documents }: EditPro
 
   return (
     <AppLayout>
-      <Head title={`${t('edit_invoice')} ${invoice.invoice_number}`} />
-
-      <div className="container mx-auto py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">{t('edit_invoice')} #{invoice.invoice_number}</h1>
-          <Button
-            variant="outline"
-            onClick={() => Inertia.visit(`/invoices/${invoice.id}`)}
-          >
-            {t('cancel')}
-          </Button>
-        </div>
-
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Invoice Details */}
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('invoice_details')}</CardTitle>
-                <CardDescription>{t('edit_invoice_information')}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="invoice_number"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('invoice_number')}</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="customer_id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('customer')}</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
+      <Head title={`Edit Invoice #${invoice.invoice_number}`} />
+      <div className="py-12">
+        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+          <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div className="p-6 text-gray-900">
+              <h1 className="text-2xl font-bold mb-4">{t('edit_invoice')}</h1>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="customer_id"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('customer')}</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <SelectTrigger>
                               <SelectValue placeholder={t('select_customer')} />
                             </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {customers.map((customer) => (
-                              <SelectItem key={customer.id} value={String(customer.id)}>
-                                {customer.company_name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="rental_id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('rental')}</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
+                            <SelectContent>
+                              {customers.map((customer) => (
+                                <SelectItem key={customer.id} value={String(customer.id)}>
+                                  {customer.company_name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="rental_id"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('rental')}</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <SelectTrigger>
                               <SelectValue placeholder={t('select_rental')} />
                             </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="">
-                              {t('none')}
-                            </SelectItem>
-                            {rentals.map((rental) => (
-                              <SelectItem key={rental.id} value={String(rental.id)}>
-                                {rental.rental_number}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                            <SelectContent>
+                              {rentals.map((rental) => (
+                                <SelectItem key={rental.id} value={String(rental.id)}>
+                                  {rental.rental_number}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="invoice_number"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('invoice_number')}</FormLabel>
+                          <Input {...field} />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div>
                     <FormField
                       control={form.control}
                       name="issue_date"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>{t('issue_date')}</FormLabel>
-                          <FormControl>
-                            <Input type="date" {...field} />
-                          </FormControl>
+                          <Input type="date" {...field} />
                           <FormMessage />
                         </FormItem>
                       )}
                     />
+                  </div>
+                </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
                     <FormField
                       control={form.control}
                       name="due_date"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>{t('due_date')}</FormLabel>
-                          <FormControl>
-                            <Input type="date" {...field} />
-                          </FormControl>
+                          <Input type="date" {...field} />
                           <FormMessage />
                         </FormItem>
                       )}
                     />
                   </div>
-
-                  <FormField
-                    control={form.control}
-                    name="status"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('status')}</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="status"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('status')}</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <SelectTrigger>
                               <SelectValue placeholder={t('select_status')} />
                             </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="draft">{t('draft')}</SelectItem>
-                            <SelectItem value="sent">{t('sent')}</SelectItem>
-                            <SelectItem value="paid">{t('paid')}</SelectItem>
-                            <SelectItem value="partially_paid">{t('partially_paid')}</SelectItem>
-                            <SelectItem value="overdue">{t('overdue')}</SelectItem>
-                            <SelectItem value="cancelled">{t('cancelled')}</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                            <SelectContent>
+                              <SelectItem value="Draft">Draft</SelectItem>
+                              <SelectItem value="Sent">Sent</SelectItem>
+                              <SelectItem value="Paid">Paid</SelectItem>
+                              <SelectItem value="Overdue">Overdue</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
 
+                <div>
                   <FormField
                     control={form.control}
                     name="notes"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>{t('notes')}</FormLabel>
-                        <FormControl>
-                          <Textarea {...field} />
-                        </FormControl>
+                        <Textarea {...field} />
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* Invoice Items */}
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('invoice_items')}</CardTitle>
-                <CardDescription>{t('edit_invoice_items')}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {/* This would be a dynamic form for invoice items */}
-                  <p className="text-sm text-gray-500">{t('item_editing_not_implemented')}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="subtotal"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('subtotal')}</FormLabel>
+                          <Input type="number" step="0.01" {...field} />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="discount_amount"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('discount_amount')}</FormLabel>
+                          <Input type="number" step="0.01" {...field} />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
 
-          <div className="mt-6 flex justify-end">
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? t('saving') : t('save_changes')}
-            </Button>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="tax_amount"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('tax_amount')}</FormLabel>
+                          <Input type="number" step="0.01" {...field} />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="total_amount"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('total_amount')}</FormLabel>
+                          <Input type="number" step="0.01" {...field} />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <h2 className="text-lg font-bold mb-4">{t('items')}</h2>
+                  {form.formState.errors.items && (
+                    <p className="text-red-500 text-sm">{form.formState.errors.items.message}</p>
+                  )}
+                  {form.watch('items').map((item, index) => (
+                    <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end mb-4">
+                      <div>
+                        <FormField
+                          control={form.control}
+                          name={`items.${index}.description`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>{t('description')}</FormLabel>
+                              <Input {...field} />
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div>
+                        <FormField
+                          control={form.control}
+                          name={`items.${index}.quantity`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>{t('quantity')}</FormLabel>
+                              <Input type="number" {...field} />
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div>
+                        <FormField
+                          control={form.control}
+                          name={`items.${index}.unit_price`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>{t('unit_price')}</FormLabel>
+                              <Input type="number" step="0.01" {...field} />
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div>
+                        <FormField
+                          control={form.control}
+                          name={`items.${index}.amount`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>{t('amount')}</FormLabel>
+                              <Input type="number" step="0.01" {...field} />
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? t('saving') : t('save_changes')}
+                </Button>
+              </form>
+            </div>
           </div>
-        </form>
+        </div>
       </div>
     </AppLayout>
   );

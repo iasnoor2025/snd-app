@@ -508,6 +508,9 @@ class EmployeeController extends Controller
 
         $assignment = new \Modules\EmployeeManagement\Domain\Models\EmployeeAssignment($validated);
         $assignment->employee_id = $employee->id;
+        // Always ensure current assignment has end_date = null and status = 'active'
+        $assignment->end_date = null;
+        $assignment->status = 'active';
         $assignment->save();
 
         return redirect()->back()->with('success', 'Manual assignment created successfully.');
@@ -553,6 +556,10 @@ class EmployeeController extends Controller
         ]);
 
         $assignment->update($validated);
+        // Always ensure current assignment has end_date = null and status = 'active'
+        $assignment->end_date = null;
+        $assignment->status = 'active';
+        $assignment->save();
 
         // If Inertia or API, return JSON; otherwise, redirect back
         if ($request->wantsJson()) {

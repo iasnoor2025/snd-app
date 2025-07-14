@@ -969,8 +969,8 @@ export default function Show({
         return currDate > latestDate ? curr : latest;
       }, null)
     : null;
-  // All others go to history
-  const strictAssignmentHistory = sortedAssignments;
+  // All others go to history (exclude current assignment)
+  const strictAssignmentHistory = sortedAssignments.filter(a => !currentAssignment || a.id !== currentAssignment.id);
 
   return (
     <AppLayout title={employee ? `${employee.first_name || ''} ${employee.last_name || ''}` : 'Employee Details'} breadcrumbs={currentBreadcrumbs} requiredPermission="employees.view">

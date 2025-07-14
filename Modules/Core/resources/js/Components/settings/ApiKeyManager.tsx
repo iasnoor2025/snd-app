@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
@@ -53,7 +53,7 @@ export default function ApiKeyManager({ apiKeys: initialApiKeys }: ApiKeyManager
             });
 
             const data = await response.json();
-            
+
             if (response.ok) {
                 setApiKeys([...apiKeys, data.key]);
                 setNewKeyValue(data.value);
@@ -240,4 +240,4 @@ export default function ApiKeyManager({ apiKeys: initialApiKeys }: ApiKeyManager
             </Dialog>
         </Card>
     );
-} 
+}
