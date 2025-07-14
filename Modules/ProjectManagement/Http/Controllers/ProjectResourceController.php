@@ -550,42 +550,6 @@ class ProjectResourceController extends Controller
     }
 
     /**
-     * Remove the specified manpower resource.
-     */
-    public function destroyManpower(Request $request, Project $project, ProjectManpower $manpower, DeleteManpower $action = null)
-    {
-        if (!$action) {
-            $action = app(DeleteManpower::class);
-        }
-
-        try {
-            $action->execute($manpower);
-
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Manpower resource deleted successfully'
-                ]);
-            }
-
-            return redirect()->back()->with('success', 'Manpower resource deleted successfully.');
-        } catch (\Exception $e) {
-            Log::error('Failed to delete manpower resource: ' . $e->getMessage());
-
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Failed to delete manpower resource',
-                    'error' => $e->getMessage()
-                ], 500);
-            }
-
-            return redirect()->back()
-                ->withErrors(['error' => 'Failed to delete manpower resource: ' . $e->getMessage()]);
-        }
-    }
-
-    /**
      * Delete an equipment resource.
      */
     public function destroyEquipment(Request $request, Project $project, ProjectEquipment $equipment)
@@ -698,65 +662,6 @@ class ProjectResourceController extends Controller
             }
 
             return back()->withErrors(['error' => 'Failed to delete expense resource: ' . $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Handle generic resource deletion with type parameter in the URL
-     */
-    public function destroyResource(Request $request, Project $project, $type, $resourceId)
-    {
-        try {
-            switch ($type) {
-                case 'manpower':
-                    $resource = ProjectManpower::findOrFail($resourceId);
-                    $action = app(DeleteManpower::class);
-                    break;
-                case 'equipment':
-                    $resource = ProjectEquipment::findOrFail($resourceId);
-                    $action = app(\Modules\ProjectManagement\Actions\ProjectResources\DeleteEquipment::class);
-                    break;
-                case 'material':
-                    $resource = ProjectMaterial::findOrFail($resourceId);
-                    $action = app(\Modules\ProjectManagement\Actions\ProjectResources\DeleteMaterial::class);
-                    break;
-                case 'fuel':
-                    $resource = ProjectFuel::findOrFail($resourceId);
-                    $action = app(\Modules\ProjectManagement\Actions\ProjectResources\DeleteFuel::class);
-                    break;
-                case 'expense':
-                    $resource = ProjectExpense::findOrFail($resourceId);
-                    $action = app(\Modules\ProjectManagement\Actions\ProjectResources\DeleteExpense::class);
-                    break;
-                default:
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Invalid resource type'
-                    ], 400);
-            }
-
-            // Check if resource belongs to the project
-            if ($resource->project_id != $project->id) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Resource does not belong to this project'
-                ], 403);
-            }
-
-            $action->execute($resource);
-
-            return response()->json([
-                'success' => true,
-                'message' => ucfirst($type) . ' resource deleted successfully'
-            ]);
-        } catch (\Exception $e) {
-            Log::error("Failed to delete {$type} resource: " . $e->getMessage());
-
-            return response()->json([
-                'success' => false,
-                'message' => "Failed to delete {$type} resource",
-                'error' => $e->getMessage()
-            ], 500);
         }
     }
 

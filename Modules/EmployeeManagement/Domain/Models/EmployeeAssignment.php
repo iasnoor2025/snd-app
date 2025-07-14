@@ -29,7 +29,7 @@ class EmployeeAssignment extends Model
         'start_date',
         'end_date',
         'notes',
-        'assigned_by_id',
+        'assigned_by',
         'project_id',
         'rental_id',
     ];
@@ -124,7 +124,7 @@ class EmployeeAssignment extends Model
      */
     public function assignedBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'assigned_by_id');
+        return $this->belongsTo(User::class, 'assigned_by');
     }
 
     /**

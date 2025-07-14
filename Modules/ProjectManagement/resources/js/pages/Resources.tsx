@@ -965,25 +965,26 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
             router.reload({ only: [selectedType] });
         };
 
-        const handleDeleteConfirmed = () => {
+        const handleDeleteConfirmed = async () => {
             if (!resourceToDelete) return;
 
             const { resource, type } = resourceToDelete;
             const url = `/api/projects/${project.id}/resources/${type}/${resource.id}`;
 
-            axios.delete(url)
-                .then(() => {
-                    toast.success(t('projects:resource_deleted_success'));
-                    setDeleteConfirmOpen(false);
-                    setResourceToDelete(null);
-                    router.reload({ only: [type] });
-                })
-                .catch((error) => {
-                    console.error('Error deleting resource:', error);
-                    toast.error(t('projects:error_deleting_resource'));
-                    setDeleteConfirmOpen(false);
-                    setResourceToDelete(null);
-                });
+            try {
+                // Ensure CSRF cookie is set for Sanctum
+                await axios.get('/sanctum/csrf-cookie', { withCredentials: true });
+                await axios.delete(url, { withCredentials: true });
+                toast.success(t('projects:resource_deleted_success'));
+                setDeleteConfirmOpen(false);
+                setResourceToDelete(null);
+                router.reload({ only: [type] });
+            } catch (error) {
+                console.error('Error deleting resource:', error);
+                toast.error(t('projects:error_deleting_resource'));
+                setDeleteConfirmOpen(false);
+                setResourceToDelete(null);
+            }
         };
 
         const handlePageChange = (page: number) => {

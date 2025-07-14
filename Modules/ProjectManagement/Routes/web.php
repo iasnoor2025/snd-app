@@ -94,9 +94,6 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
         Route::put('/manpower/{manpower}', [ProjectResourceController::class, 'updateManpower'])
             ->middleware('permission:manpower.edit')
             ->name('manpower.update');
-        Route::delete('/manpower/{manpower}', [ProjectResourceController::class, 'destroyManpower'])
-            ->middleware('permission:manpower.delete')
-            ->name('manpower.destroy');
 
         // Equipment routes
         Route::get('/equipment', [EquipmentController::class, 'index'])
@@ -155,16 +152,16 @@ Route::prefix('projects')->name('projects.')->middleware(['web', 'auth'])->group
             ->name('expense.destroy');
 
         // Generic resource delete route with type parameter
-        Route::delete('/{type}/{resource}', [ProjectResourceController::class, 'destroyResource'])
-            ->middleware('permission:project.delete')
-            ->name('resource.destroy');
+        // Route::delete('/{type}/{resource}', [ProjectResourceController::class, 'destroyResource'])
+        //     ->middleware('permission:project.delete')
+        //     ->name('resource.destroy');
     });
 
     // Project Reports routes
     Route::get('/reports', function() {
         return Inertia::render('Projects/Reports/Index');
     })->middleware('permission:project.view')->name('reports');
-    
+
     Route::post('/reports/generate', function() {
         Route::get('/projects/{project}/report', [ProjectController::class, 'generateReport'])
     ->middleware('permission:projects.view')

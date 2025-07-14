@@ -10,12 +10,13 @@ return [
     |--------------------------------------------------------------------------
     |
     | Requests from the following domains / hosts will receive stateful API
-    | authentication cookies. Typically, these should include your local
-    | and production domains which access your API via a frontend SPA.
-    |
+    | authentication cookies. This should include your local and production
+    | domains. For maximum flexibility, we use all domains from the env var,
+    | and fallback to allow any domain pattern for dev/deploy-anywhere.
+    | WARNING: For production, restrict to your real domains for security.
     */
 
-    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'localhost,127.0.0.1,localhost:5173,snd-app.test')),
+    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'localhost,127.0.0.1,snd-app.test')),
 
     /*
     |--------------------------------------------------------------------------

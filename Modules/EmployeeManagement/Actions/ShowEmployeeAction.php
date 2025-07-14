@@ -137,7 +137,10 @@ class ShowEmployeeAction
                                 'start_date' => $assignment->start_date ? $assignment->start_date->toDateString() : null,
                                 'end_date' => $assignment->end_date ? $assignment->end_date->toDateString() : null,
                                 'notes' => $assignment->notes,
-                                'assigned_by_id' => $assignment->assigned_by_id,
+                                'assigned_by' => $assignment->assignedBy ? [
+                                    'id' => $assignment->assignedBy->id,
+                                    'name' => $assignment->assignedBy->name,
+                                ] : null,
                                 'project_id' => $assignment->project_id,
                                 'rental_id' => $assignment->rental_id,
                                 'deleted_at' => $assignment->deleted_at,

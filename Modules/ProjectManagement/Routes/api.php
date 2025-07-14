@@ -64,6 +64,11 @@ Route::post('/projects/{project}/resources', [ProjectResourceController::class, 
 
 Route::post('/projects/{project}/fuel', [\Modules\ProjectManagement\Http\Controllers\ProjectResourceController::class, 'storeFuel']);
 
+// Correct protected manpower delete route
+Route::middleware(['api', 'auth:sanctum', 'permission:manpower.delete'])->group(function () {
+    Route::delete('/projects/{project}/resources/manpower/{manpowerId}', [\Modules\ProjectManagement\Http\Controllers\Api\ProjectResourcesApiController::class, 'destroyManpower']);
+});
+
 Route::get('/projects/{project}/milestones', [MilestoneController::class, 'index']);
 Route::post('/projects/{project}/milestones', [MilestoneController::class, 'store']);
 Route::patch('/projects/{project}/milestones/{milestone}', [MilestoneController::class, 'update']);

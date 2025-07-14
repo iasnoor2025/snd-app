@@ -27,16 +27,20 @@ class EmployeeAssignmentController extends Controller
         // Validate required fields
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'type' => 'required|string|max:50',
-            'status' => 'required|string|max:50',
+            //'type' => 'required|string|max:50', // force type below
+            //'status' => 'required|string|max:50', // force status below
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'location' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
-            'assigned_by_id' => 'nullable|integer|exists:users,id',
+            'assigned_by' => 'nullable|integer|exists:users,id',
             'project_id' => 'nullable|integer|exists:projects,id',
             'rental_id' => 'nullable|integer|exists:rentals,id',
         ]);
+
+        $validated['type'] = 'manual';
+        $validated['status'] = 'active';
+        $validated['assigned_by'] = Auth::id();
 
         $assignment = new EmployeeAssignment($validated);
         $assignment->employee_id = $employee->id;

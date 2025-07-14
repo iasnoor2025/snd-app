@@ -1,5 +1,5 @@
 <?php
-namespace Modules\ProjectManagement\Http\Controllers;
+namespace Modules\ProjectManagement\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Modules\ProjectManagement\Domain\Models\Project;
@@ -171,18 +171,29 @@ class ProjectResourcesApiController extends Controller
     /**
      * Delete a manpower resource
      */
-    public function destroyManpower(Request $request, Project $project, ProjectManpower $manpower, DeleteManpower $action)
+    public function destroyManpower(Request $request, Project $project, $manpowerId, DeleteManpower $action)
     {
+        $manpower = \Modules\ProjectManagement\Domain\Models\ProjectManpower::where('id', $manpowerId)
+            ->where('project_id', $project->id)
+            ->first();
+        if (!$manpower) {
+            \Log::warning('Manpower not found or does not belong to project', [
+                'project_id' => $project->id,
+                'manpower_id' => $manpowerId,
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Manpower resource not found or does not belong to this project.'
+            ], 404);
+        }
         try {
             $action->execute($manpower);
-
             return response()->json([
                 'success' => true,
                 'message' => 'Manpower resource deleted successfully'
             ]);
         } catch (\Exception $e) {
-            Log::error('Failed to delete manpower resource: ' . $e->getMessage());
-
+            \Log::error('Failed to delete manpower resource: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to delete manpower resource',

@@ -586,6 +586,7 @@ class Employee extends Model implements HasMedia
     {
         // 1. Check for active manual assignment
         $manualAssignment = $this->assignments()
+            ->with('assignedBy')
             ->where('type', 'manual')
             ->where('status', 'active')
             ->where(function($query) {
@@ -597,12 +598,34 @@ class Employee extends Model implements HasMedia
 
         if ($manualAssignment) {
             return [
+                'id' => (int) $manualAssignment->id,
                 'type' => 'manual',
-                'id' => $manualAssignment->id,
                 'name' => $manualAssignment->name,
+                'status' => $manualAssignment->status,
                 'location' => $manualAssignment->location,
-                'date' => $manualAssignment->start_date,
-                'role' => $manualAssignment->notes ?? 'Manual Assignment',
+                'location_name' => $manualAssignment->location_name ?? null,
+                'start_date' => $manualAssignment->start_date ? $manualAssignment->start_date->toDateString() : null,
+                'end_date' => $manualAssignment->end_date ? $manualAssignment->end_date->toDateString() : null,
+                'notes' => $manualAssignment->notes,
+                'assigned_by' => $manualAssignment->assignedBy ? [
+                    'id' => $manualAssignment->assignedBy->id,
+                    'name' => $manualAssignment->assignedBy->name,
+                ] : null,
+                'project_id' => $manualAssignment->project_id,
+                'rental_id' => $manualAssignment->rental_id,
+                'deleted_at' => $manualAssignment->deleted_at,
+                'title' => ucfirst($manualAssignment->type),
+                'description' => $manualAssignment->notes,
+                'project' => $manualAssignment->project ? [
+                    'id' => $manualAssignment->project->id,
+                    'name' => $manualAssignment->project->name,
+                ] : null,
+                'rental' => $manualAssignment->rental ? [
+                    'id' => $manualAssignment->rental->id,
+                    'project_name' => $manualAssignment->rental->project_name,
+                    'rental_number' => $manualAssignment->rental->rental_number ?? null,
+                ] : null,
+                'rental_number' => $manualAssignment->rental ? $manualAssignment->rental->rental_number ?? null : null,
             ];
         }
 
