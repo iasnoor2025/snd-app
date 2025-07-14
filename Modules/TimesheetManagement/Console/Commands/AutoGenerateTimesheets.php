@@ -28,9 +28,16 @@ class AutoGenerateTimesheets extends Command
                 continue;
             }
             $start = Carbon::parse($assignment->start_date);
+            // Strictly use assignment's end_date if set, otherwise today (never after today)
+            $today = Carbon::today();
             $end = $assignment->end_date ? Carbon::parse($assignment->end_date) : $today;
             if ($end->greaterThan($today)) {
                 $end = $today;
+            }
+            // If start is after end, skip
+            if ($start->greaterThan($end)) {
+                Log::warning('Assignment skipped: start_date after end_date', ['assignment_id' => $assignment->id]);
+                continue;
             }
             $period = new \DatePeriod(
                 new \DateTime($start->toDateString()),
@@ -45,8 +52,7 @@ class AutoGenerateTimesheets extends Command
                 // Ignore soft-deleted timesheets when checking for overlap
                 $projectId = $assignment->type === 'project' ? $assignment->project_id : null;
                 $rentalId = $assignment->type === 'rental' ? $assignment->rental_id : null;
-                $overlap = \Modules\TimesheetManagement\Domain\Models\Timesheet::withTrashed()
-                    ->where('employee_id', $employeeId)
+                $overlap = \Modules\TimesheetManagement\Domain\Models\Timesheet::where('employee_id', $employeeId)
                     ->whereDate('date', $dateStr);
                 if ($projectId !== null) {
                     $overlap->where('project_id', $projectId);

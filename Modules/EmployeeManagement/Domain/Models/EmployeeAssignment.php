@@ -61,26 +61,7 @@ class EmployeeAssignment extends Model
             }
         });
 
-        $updateAssignmentStatuses = function ($assignment) {
-            $allAssignments = self::where('employee_id', $assignment->employee_id)
-                ->orderBy('start_date', 'desc')
-                ->get();
-            if ($allAssignments->isEmpty()) return;
-            $latest = $allAssignments->first();
-            foreach ($allAssignments as $a) {
-                if ($a->id == $latest->id) {
-                    $a->status = 'active';
-                    $a->end_date = null;
-                } else {
-                    $a->status = 'completed';
-                    $a->end_date = (new \DateTime($latest->start_date))->modify('-1 day')->format('Y-m-d');
-                }
-                $a->save();
-            }
-        };
-        static::created($updateAssignmentStatuses);
-        static::updated($updateAssignmentStatuses);
-
+        // Only keep timesheet cleanup on delete
         static::deleted(function ($assignment) {
             if (!$assignment->employee_id) return;
             $employeeId = $assignment->employee_id;

@@ -963,7 +963,7 @@ export default function Show({
   // Always show the most recent assignment as current
   const currentAssignment = sortedAssignments.length > 0 ? sortedAssignments[0] : null;
   // All others go to history
-  const strictAssignmentHistory = sortedAssignments.filter(a => a.status === 'completed');
+  const strictAssignmentHistory = sortedAssignments;
 
   return (
     <AppLayout title={employee ? `${employee.first_name || ''} ${employee.last_name || ''}` : 'Employee Details'} breadcrumbs={currentBreadcrumbs} requiredPermission="employees.view">

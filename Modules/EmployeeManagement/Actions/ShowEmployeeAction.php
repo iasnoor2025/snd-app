@@ -128,7 +128,7 @@ class ShowEmployeeAction
                     ->orderBy('created_at', 'desc')
                     ->get();
                 \Log::info('Assignments before mapping', ['raw' => $rawAssignments->toArray()]);
-                $assignmentList = array_merge($assignmentList, $rawAssignments
+                $assignmentList = $rawAssignments
                     ->map(function ($assignment) {
                         return [
                             'id' => $assignment->id,
@@ -160,132 +160,14 @@ class ShowEmployeeAction
                             ] : null,
                             'rental_number' => $assignment->rental ? $assignment->rental->rental_number ?? null : null,
                         ];
-                    })->toArray());
+                    })->toArray();
                 \Log::info('Assignments after mapping', ['mapped' => $assignmentList]);
             }
 
-            // 2. Project manpower assignments
-            if (method_exists($employee, 'projectManpower')) {
-                $assignmentList = array_merge($assignmentList, $employee->projectManpower()
-                    ->with(['project:id,name'])
-                    ->where(function($query) {
-                        $query->whereNull('end_date')
-                            ->orWhere('end_date', '>=', now()->toDateString());
-                    })
-                    ->orderBy('start_date', 'desc')
-                    ->get()
-                    ->map(function ($pm) {
-                        return [
-                            'id' => $pm->id,
-                            'type' => 'project',
-                            'status' => 'active',
-                            'location' => 'Project Location',
-                            'location_name' => null,
-                            'start_date' => $pm->start_date ? $pm->start_date->toDateString() : null,
-                            'end_date' => $pm->end_date ? $pm->end_date->toDateString() : null,
-                            'notes' => $pm->notes ?? null,
-                            'assigned_by_id' => null,
-                            'project_id' => $pm->project_id,
-                            'rental_id' => null,
-                            'deleted_at' => null,
-                            'title' => $pm->project ? $pm->project->name : 'Project',
-                            'description' => $pm->job_title ?? '',
-                            'project' => $pm->project ? [
-                                'id' => $pm->project->id,
-                                'name' => $pm->project->name,
-                            ] : null,
-                            'rental' => null,
-                            'rental_number' => null,
-                            'assigned_by' => null,
-                        ];
-                    })->toArray());
-            }
-
-            // 3. Rental assignments
-            if (method_exists($employee, 'rentalAssignments')) {
-                $assignmentList = array_merge($assignmentList, $employee->rentalAssignments()
-                    ->with(['rental:id,customer_id,location_id,rental_number', 'rental.customer:id,name', 'rental.location:id,name'])
-                    // Remove ->where('status', 'active') to include all statuses
-                    ->orderBy('assignment_date', 'desc')
-                    ->get()
-                    ->map(function ($ra) {
-                        return [
-                            'id' => $ra->id,
-                            'type' => 'rental',
-                            'status' => $ra->status,
-                            'location' => $ra->rental && $ra->rental->location ? $ra->rental->location->name : 'Unknown Location',
-                            'location_name' => null,
-                            'start_date' => $ra->assignment_date ? $ra->assignment_date->toDateString() : null,
-                            'end_date' => $ra->end_date ? $ra->end_date->toDateString() : null,
-                            'notes' => $ra->notes,
-                            'assigned_by_id' => $ra->assigned_by_id,
-                            'project_id' => null,
-                            'rental_id' => $ra->rental_id,
-                            'deleted_at' => $ra->deleted_at,
-                            'title' => $ra->rental && $ra->rental->customer ? $ra->rental->customer->name : 'Rental',
-                            'description' => $ra->notes ?? '',
-                            'project' => null,
-                            'rental' => $ra->rental ? [
-                                'id' => $ra->rental->id,
-                                'project_name' => $ra->rental->customer->name ?? '',
-                                'rental_number' => $ra->rental->rental_number ?? null,
-                            ] : null,
-                            'rental_number' => $ra->rental ? $ra->rental->rental_number ?? null : null,
-                            'assigned_by' => $ra->assignedBy ? [
-                                'id' => $ra->assignedBy->id,
-                                'name' => $ra->assignedBy->name,
-                            ] : null,
-                ];
-                    })->toArray());
-            }
-
-            // 4. Rental items where employee is operator
-            if (method_exists($employee, 'rentalItems')) {
-                $assignmentList = array_merge($assignmentList, $employee->rentalItems()
-                    ->with(['rental:id,customer_id,location_id,rental_number', 'rental.customer:id,name', 'rental.location:id,name', 'equipment:id,name'])
-                    ->orderBy('start_date', 'desc')
-                    ->get()
-                    ->map(function ($ri) {
-                        $startDate = $ri->start_date;
-                        if ($startDate instanceof \DateTimeInterface) {
-                            $startDate = $startDate->toDateString();
-                        }
-                        $endDate = $ri->end_date;
-                        if ($endDate instanceof \DateTimeInterface) {
-                            $endDate = $endDate->toDateString();
-                        }
-                        return [
-                            'id' => $ri->id,
-                            'type' => 'rental_item',
-                            'status' => $ri->rental && $ri->rental->status ? $ri->rental->status : 'unknown',
-                            'location' => $ri->rental && $ri->rental->location ? $ri->rental->location->name : 'Unknown Location',
-                            'location_name' => null,
-                            'start_date' => $startDate,
-                            'end_date' => $endDate,
-                            'notes' => $ri->notes,
-                            'assigned_by_id' => null,
-                            'project_id' => null,
-                            'rental_id' => $ri->rental_id,
-                            'deleted_at' => $ri->deleted_at,
-                            'title' => $ri->rental && $ri->rental->customer ? $ri->rental->customer->name : 'Rental',
-                            'description' => $ri->notes ?? '',
-                            'project' => null,
-                            'rental' => $ri->rental ? [
-                                'id' => $ri->rental->id,
-                                'project_name' => $ri->rental->customer->name ?? '',
-                                'rental_number' => $ri->rental->rental_number ?? null,
-                            ] : null,
-                            'rental_number' => $ri->rental ? $ri->rental->rental_number ?? null : null,
-                            'assigned_by' => null,
-                            'equipment' => $ri->equipment ? $ri->equipment->name : null,
-                        ];
-                    })->toArray());
-            }
-
-            // Remove duplicates by id + type
+            // Remove duplicates by id + type (case-insensitive)
             $assignments['data'] = collect($assignmentList)
                 ->unique(function ($item) {
-                    return $item['id'] . '-' . $item['type'];
+                    return $item['id'] . '-' . strtolower($item['type'] ?? '');
                 })
                 ->sortByDesc('start_date')
                 ->values()
