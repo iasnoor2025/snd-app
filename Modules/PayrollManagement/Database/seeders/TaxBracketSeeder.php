@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\PayrollManagement\database\seeders;
+namespace Modules\PayrollManagement\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Modules\PayrollManagement\Models\TaxBracket;
@@ -13,4 +13,4 @@ class TaxBracketSeeder extends Seeder
         $taxRule = TaxRule::first() ?? TaxRule::factory()->create();
         TaxBracket::factory()->count(3)->create(['tax_rule_id' => $taxRule->id]);
     }
-} 
+}

@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Settings\Http\Controllers\Api;
+namespace Modules\Settings\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -20,7 +20,7 @@ class ReportSettingsApiController extends Controller
     {
         try {
             $settings = $this->reportSettingsService->getSettings();
-            
+
             return response()->json([
                 'success' => true,
                 'data' => $settings
@@ -51,7 +51,7 @@ class ReportSettingsApiController extends Controller
             ]);
 
             $settings = $this->reportSettingsService->updateSettings($request->all());
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Report settings updated successfully',
@@ -71,4 +71,4 @@ class ReportSettingsApiController extends Controller
             ], 500);
         }
     }
-} 
+}

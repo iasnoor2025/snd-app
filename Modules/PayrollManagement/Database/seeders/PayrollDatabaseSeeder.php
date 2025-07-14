@@ -1,5 +1,5 @@
 <?php
-namespace Modules\PayrollManagement\database\Seeders;
+namespace Modules\PayrollManagement\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 

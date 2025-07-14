@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\PayrollManagement\database\factories;
+namespace Modules\PayrollManagement\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\PayrollManagement\Models\TaxDeduction;
@@ -24,4 +24,4 @@ class TaxDeductionFactory extends Factory
             'metadata' => null,
         ];
     }
-} 
+}

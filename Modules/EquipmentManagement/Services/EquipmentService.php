@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace Modules\EquipmentManagement\Services;
 
 use App\Models\Equipment;
 use Illuminate\Support\Facades\Date;

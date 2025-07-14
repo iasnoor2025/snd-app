@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\PayrollManagement\database\seeders;
+namespace Modules\PayrollManagement\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 
@@ -21,4 +21,4 @@ class PayrollManagementDatabaseSeeder extends Seeder
             TaxRuleSeeder::class,
         ]);
     }
-} 
+}

@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Settings\Http\Controllers\Api;
+namespace Modules\Settings\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -20,7 +20,7 @@ class NotificationSettingsApiController extends Controller
     {
         try {
             $settings = $this->notificationSettingsService->getSettings();
-            
+
             return response()->json([
                 'success' => true,
                 'data' => $settings
@@ -50,7 +50,7 @@ class NotificationSettingsApiController extends Controller
             ]);
 
             $settings = $this->notificationSettingsService->updateSettings($request->all());
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Notification settings updated successfully',
@@ -70,4 +70,4 @@ class NotificationSettingsApiController extends Controller
             ], 500);
         }
     }
-} 
+}

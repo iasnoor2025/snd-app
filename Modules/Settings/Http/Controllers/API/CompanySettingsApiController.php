@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Settings\Http\Controllers\Api;
+namespace Modules\Settings\Http\Controllers\API;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,7 +19,7 @@ class CompanySettingsApiController extends Controller
     {
         try {
             $settings = DB::table('company_settings')->first();
-            
+
             if (!$settings) {
                 // Return default settings if none exist
                 $settings = [
@@ -43,7 +43,7 @@ class CompanySettingsApiController extends Controller
             ]);
         } catch (Exception $e) {
             Log::error('Failed to get company settings', ['error' => $e->getMessage()]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to retrieve company settings',
@@ -102,7 +102,7 @@ class CompanySettingsApiController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Failed to update company settings', ['error' => $e->getMessage()]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update company settings',
@@ -122,7 +122,7 @@ class CompanySettingsApiController extends Controller
 
         try {
             $logoFile = $request->file('logo');
-            
+
             // Store the logo
             $logoPath = $logoFile->store('company/logos', 'public');
 
@@ -165,7 +165,7 @@ class CompanySettingsApiController extends Controller
             ]);
         } catch (Exception $e) {
             Log::error('Failed to update company logo', ['error' => $e->getMessage()]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update company logo',
@@ -173,4 +173,4 @@ class CompanySettingsApiController extends Controller
             ], 500);
         }
     }
-} 
+}

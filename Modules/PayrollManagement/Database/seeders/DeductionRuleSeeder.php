@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\PayrollManagement\database\seeders;
+namespace Modules\PayrollManagement\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Modules\PayrollManagement\Models\DeductionRule;
@@ -11,4 +11,4 @@ class DeductionRuleSeeder extends Seeder
     {
         DeductionRule::factory()->count(3)->create();
     }
-} 
+}

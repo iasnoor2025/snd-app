@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\PayrollManagement\database\factories;
+namespace Modules\PayrollManagement\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\PayrollManagement\Models\DeductionRule;
@@ -31,4 +31,4 @@ class DeductionRuleFactory extends Factory
             'updated_by' => null,
         ];
     }
-} 
+}

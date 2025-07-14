@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\PayrollManagement\database\seeders;
+namespace Modules\PayrollManagement\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Modules\PayrollManagement\Models\TaxRule;
@@ -11,4 +11,4 @@ class TaxRuleSeeder extends Seeder
     {
         TaxRule::factory()->count(3)->create();
     }
-} 
+}

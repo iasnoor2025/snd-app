@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Settings\Http\Controllers\Api;
+namespace Modules\Settings\Http\Controllers\API;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -26,7 +26,7 @@ class PasswordApiController extends Controller
 
         try {
             $user = Auth::user();
-            
+
             if (!$user) {
                 return response()->json([
                     'success' => false,
@@ -56,7 +56,7 @@ class PasswordApiController extends Controller
             ]);
         } catch (Exception $e) {
             Log::error('Failed to change password', ['error' => $e->getMessage()]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to change password',
@@ -92,7 +92,7 @@ class PasswordApiController extends Controller
             }
         } catch (Exception $e) {
             Log::error('Failed to send password reset link', ['error' => $e->getMessage()]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to send password reset link',
@@ -100,4 +100,4 @@ class PasswordApiController extends Controller
             ], 500);
         }
     }
-} 
+}
