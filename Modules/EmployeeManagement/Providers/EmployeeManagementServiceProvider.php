@@ -150,6 +150,13 @@ class EmployeeManagementServiceProvider extends ServiceProvider
                 }
             }
         }
+        $this->publishes([
+            module_path($this->name, 'Config/config.php') => config_path($this->nameLower . '.php')
+        ], 'config');
+        $this->mergeConfigFrom(
+            module_path($this->name, 'Config/config.php'),
+            $this->nameLower
+        );
     }
 
     /**
