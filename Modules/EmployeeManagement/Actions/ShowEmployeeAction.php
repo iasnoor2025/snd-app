@@ -29,7 +29,7 @@ class ShowEmployeeAction
             }
 
             // Employee details
-            $employeeData = $employee->load(['position', 'department', 'user'])->toArray();
+            $employeeData = $employee->load(['department', 'user'])->toArray();
             // Add current_assignment to employee data for show page
             $employeeData['current_assignment'] = $employee->current_assignment;
 
@@ -123,45 +123,45 @@ class ShowEmployeeAction
 
             // 1. EmployeeAssignment records
             if (class_exists('Modules\\EmployeeManagement\\Domain\\Models\\EmployeeAssignment')) {
-                $assignmentList = array_merge($assignmentList, EmployeeAssignment::withTrashed()->with(['project', 'rental', 'assignedBy'])
-                        ->where('employee_id', $employee->id)
-                        ->orderBy('created_at', 'desc')
-                        ->get()
-                        ->map(function ($assignment) {
-                            return [
-                                'id' => $assignment->id,
-                                'type' => $assignment->type,
-                                'status' => $assignment->status,
-                                'location' => $assignment->location,
-                                'location_name' => $assignment->location_name,
-                                'start_date' => $assignment->start_date ? $assignment->start_date->toDateString() : null,
-                                'end_date' => $assignment->end_date ? $assignment->end_date->toDateString() : null,
-                                'notes' => $assignment->notes,
-                                'assigned_by' => $assignment->assignedBy ? [
-                                    'id' => $assignment->assignedBy->id,
-                                    'name' => $assignment->assignedBy->name,
-                                ] : null,
-                                'project_id' => $assignment->project_id,
-                                'rental_id' => $assignment->rental_id,
-                                'deleted_at' => $assignment->deleted_at,
-                                'title' => $assignment->project ? $assignment->project->name : ($assignment->rental ? $assignment->rental->project_name : ucfirst($assignment->type)),
-                                'description' => $assignment->notes ?? ($assignment->project ? $assignment->project->description : ($assignment->rental ? $assignment->rental->description : '')),
-                                'project' => $assignment->project ? [
-                                    'id' => $assignment->project->id,
-                                    'name' => $assignment->project->name,
-                                ] : null,
-                                'rental' => $assignment->rental ? [
-                                    'id' => $assignment->rental->id,
-                                    'project_name' => $assignment->rental->project_name,
+                $rawAssignments = EmployeeAssignment::withTrashed()->with(['project', 'rental', 'assignedBy'])
+                    ->where('employee_id', $employee->id)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+                \Log::info('Assignments before mapping', ['raw' => $rawAssignments->toArray()]);
+                $assignmentList = array_merge($assignmentList, $rawAssignments
+                    ->map(function ($assignment) {
+                        return [
+                            'id' => $assignment->id,
+                            'type' => $assignment->type,
+                            'name' => $assignment->name,
+                            'status' => $assignment->status,
+                            'location' => $assignment->location,
+                            'location_name' => $assignment->location_name,
+                            'start_date' => $assignment->start_date ? $assignment->start_date->toDateString() : null,
+                            'end_date' => $assignment->end_date ? $assignment->end_date->toDateString() : null,
+                            'notes' => $assignment->notes,
+                            'assigned_by' => $assignment->assignedBy ? [
+                                'id' => $assignment->assignedBy->id,
+                                'name' => $assignment->assignedBy->name,
+                            ] : null,
+                            'project_id' => $assignment->project_id,
+                            'rental_id' => $assignment->rental_id,
+                            'deleted_at' => $assignment->deleted_at,
+                            'title' => $assignment->project ? $assignment->project->name : ($assignment->rental ? $assignment->rental->project_name : ucfirst($assignment->type)),
+                            'description' => $assignment->notes ?? ($assignment->project ? $assignment->project->description : ($assignment->rental ? $assignment->rental->description : '')),
+                            'project' => $assignment->project ? [
+                                'id' => $assignment->project->id,
+                                'name' => $assignment->project->name,
+                            ] : null,
+                            'rental' => $assignment->rental ? [
+                                'id' => $assignment->rental->id,
+                                'project_name' => $assignment->rental->project_name,
                                 'rental_number' => $assignment->rental->rental_number ?? null,
-                                ] : null,
+                            ] : null,
                             'rental_number' => $assignment->rental ? $assignment->rental->rental_number ?? null : null,
-                                'assigned_by' => $assignment->assignedBy ? [
-                                    'id' => $assignment->assignedBy->id,
-                                    'name' => $assignment->assignedBy->name,
-                                ] : null,
-                            ];
+                        ];
                     })->toArray());
+                \Log::info('Assignments after mapping', ['mapped' => $assignmentList]);
             }
 
             // 2. Project manpower assignments
@@ -293,13 +293,11 @@ class ShowEmployeeAction
 
             // Find the current assignment from the assignments list by matching type and id
             $currentAssignment = null;
-            if (!empty($assignments['data'])) {
-                $current = $employee->current_assignment;
-                if ($current && isset($current['type'], $current['id'])) {
-                    $currentAssignment = collect($assignments['data'])->first(function ($a) use ($current) {
-                        return $a['type'] === $current['type'] && $a['project_id'] == $current['id'];
-                    });
-                }
+            $current = $employee->current_assignment;
+            if ($current && isset($current['type'], $current['id'])) {
+                $currentAssignment = collect($assignments['data'])->first(function ($a) use ($current) {
+                    return $a['type'] === $current['type'] && $a['id'] == $current['id'];
+                });
             }
             $employeeData['current_assignment'] = $currentAssignment ?: $employee->current_assignment;
 
