@@ -664,20 +664,30 @@ class AdvancePaymentController extends Controller
             return back()->withErrors(['error' => 'Associated advance payment not found.']);
         }
 
+        // Ensure payment_date is a Carbon instance
+        $paymentDate = $paymentRecord->payment_date;
+        if (is_string($paymentDate)) {
+            try {
+                $paymentDate = \Carbon\Carbon::parse($paymentDate);
+            } catch (\Exception $e) {
+                $paymentDate = null;
+            }
+        }
+
         $data = [
             'payment' => [
                 'id' => $paymentRecord->id,
                 'amount' => $paymentRecord->amount,
-                'payment_date' => $paymentRecord->payment_date->format('Y-m-d'),
+                'payment_date' => $paymentDate ? $paymentDate->format('Y-m-d') : $paymentRecord->payment_date,
                 'notes' => $paymentRecord->notes,
                 'recorded_by' => $paymentRecord->recorder ? $paymentRecord->recorder->name : 'System',
-                'created_at' => $paymentRecord->created_at?->format('Y-m-d H:i:s')->format('Y-m-d H:i:s'),
+                'created_at' => $paymentRecord->created_at?->format('Y-m-d H:i:s'),
             ],
             'advance' => [
                 'id' => $advance->id,
                 'amount' => $advance->amount,
                 'reason' => $advance->reason,
-                'payment_date' => $advance->payment_date ? $advance->payment_date->format('Y-m-d') : null,
+                'payment_date' => $advance->payment_date ? (is_string($advance->payment_date) ? \Carbon\Carbon::parse($advance->payment_date)->format('Y-m-d') : $advance->payment_date->format('Y-m-d')) : null,
                 'repaid_amount' => $advance->repaid_amount,
                 'balance' => $advance->remaining_balance,
             ],
@@ -695,7 +705,7 @@ class AdvancePaymentController extends Controller
             ],
         ];
 
-        return Inertia::render('Payroll/Advances/Receipt', $data);
+        return Inertia::render('Employees/Advances/Receipt', $data);
     }
 
     /**
