@@ -1,12 +1,9 @@
 import { useState } from 'react';
-import { Button } from '@/Core/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/Core/components/ui/card';
-import { Input } from '@/Core/components/ui/input';
-import { Label } from '@/Core/components/ui/label';
-import { toast } from 'sonner';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/Core/components/ui/dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/components/ui/table';
-import { MultiSelect } from '@/Core/components/ui/multi-select';
+import { Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Input } from '../../ui';
+import { Label } from '../../ui/label';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../../ui/dialog';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
+import { MultiSelect } from '../../ui/multi-select';
 import { formatDateTime } from '@/Core/utils/dateFormatter';
 
 interface ApiKey {

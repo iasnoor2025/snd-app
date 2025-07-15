@@ -1,8 +1,8 @@
 import React, { useState, useRef } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/card';
+import { Button } from '../../ui/button';
+import { Input } from '../../ui/input';
+import InputLabel from '../../InputLabel';
 import { toast } from 'sonner';
 import { Camera, Upload, X, Crop, RotateCw } from 'lucide-react';
 
@@ -41,13 +41,13 @@ const AvatarUploader = ({ user, onAvatarUpdate }) => {
         try {
             // Simulate upload delay
             await new Promise(resolve => setTimeout(resolve, 1500));
-            
+
             // In a real implementation, you would upload to your server here
             // const formData = new FormData();
             // formData.append('avatar', fileInputRef.current.files[0]);
             // const response = await fetch('/api/avatar', { method: 'POST', body: formData });
             // const data = await response.json();
-            
+
             // For now, just pass the preview URL
             onAvatarUpdate(preview);
             toast.success('Avatar uploaded successfully');
@@ -81,7 +81,7 @@ const AvatarUploader = ({ user, onAvatarUpdate }) => {
             <CardContent className="space-y-4">
                 {/* Upload Area */}
                 <div className="space-y-2">
-                    <Label htmlFor="avatar">Select Image</Label>
+                    <InputLabel htmlFor="avatar">Select Image</InputLabel>
                     <Input
                         ref={fileInputRef}
                         id="avatar"
@@ -163,4 +163,4 @@ const AvatarUploader = ({ user, onAvatarUpdate }) => {
     );
 };
 
-export default AvatarUploader; 
+export default AvatarUploader;

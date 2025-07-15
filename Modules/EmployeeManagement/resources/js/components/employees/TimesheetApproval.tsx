@@ -334,14 +334,16 @@ export const TimesheetApproval: React.FC<TimesheetApprovalProps> = ({
                   variant="outline"
                   onClick={() => openBulkActionDialog('approve')}
                   className="flex items-center gap-1"
-                  <Check className="h-4 w-4" />
+                >
+                  {<Check className="h-4 w-4" />}
                   Approve Selected ({selectedEntries.length})
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => openBulkActionDialog('reject')}
                   className="flex items-center gap-1"
-                  <X className="h-4 w-4" />
+                >
+                  {<X className="h-4 w-4" />}
                   Reject Selected ({selectedEntries.length})
                 </Button>
               </div>
@@ -383,6 +385,7 @@ export const TimesheetApproval: React.FC<TimesheetApprovalProps> = ({
                   <Select
                     value={filter.status}
                     onValueChange={(value) => handleFilterChange('status', value)}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder={t('opt_all_status')} />
                     </SelectTrigger>
@@ -400,6 +403,7 @@ export const TimesheetApproval: React.FC<TimesheetApprovalProps> = ({
                   <Select
                     value={filter.employee_id}
                     onValueChange={(value) => handleFilterChange('employee_id', value)}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder={t('opt_all_employees')} />
                     </SelectTrigger>
@@ -419,6 +423,7 @@ export const TimesheetApproval: React.FC<TimesheetApprovalProps> = ({
                   <Select
                     value={filter.project_id}
                     onValueChange={(value) => handleFilterChange('project_id', value)}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder={t('opt_all_projects')} />
                     </SelectTrigger>
@@ -530,7 +535,8 @@ export const TimesheetApproval: React.FC<TimesheetApprovalProps> = ({
                               size="icon"
                               title={t('ttl_view_details')}
                               onClick={() => viewEntryDetails(entry)}
-                              <Eye className="h-4 w-4" />
+                            >
+                              {<Eye className="h-4 w-4" />}
                             </Button>
 
                             {entry.status === 'pending' && (
@@ -540,7 +546,8 @@ export const TimesheetApproval: React.FC<TimesheetApprovalProps> = ({
                                   title={t('ttl_approve')}
                                   onClick={() => approveEntry(entry.id)}
                                   className="text-green-600"
-                                  <Check className="h-4 w-4" />
+                                >
+                                  {<Check className="h-4 w-4" />}
                                 </Button>
                                 <Button
                                   variant="ghost"
@@ -548,7 +555,8 @@ export const TimesheetApproval: React.FC<TimesheetApprovalProps> = ({
                                   title={t('ttl_reject')}
                                   onClick={() => openRejectDialog(entry)}
                                   className="text-red-600"
-                                  <X className="h-4 w-4" />
+                                >
+                                  {<X className="h-4 w-4" />}
                                 </Button>
                               </>
                             )}
@@ -651,13 +659,15 @@ export const TimesheetApproval: React.FC<TimesheetApprovalProps> = ({
                     variant="outline"
                     onClick={() => openRejectDialog(currentEntry)}
                     className="flex items-center gap-1"
-                    <X className="h-4 w-4" />
+                  >
+                    {<X className="h-4 w-4" />}
                     Reject
                   </Button>
                   <Button
                     onClick={() => approveEntry(currentEntry.id)}
                     className="flex items-center gap-1"
-                    <Check className="h-4 w-4" />
+                  >
+                    {<Check className="h-4 w-4" />}
                     Approve
                   </Button>
                 </div>
@@ -695,6 +705,7 @@ export const TimesheetApproval: React.FC<TimesheetApprovalProps> = ({
               onClick={rejectEntry}
               className="bg-red-500 hover:bg-red-600"
               disabled={!rejectionNote.trim()}
+            >
               Reject Entry
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -733,6 +744,7 @@ export const TimesheetApproval: React.FC<TimesheetApprovalProps> = ({
               onClick={executeBulkAction}
               className={bulkAction === 'approve' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}
               disabled={bulkAction === 'reject' && !rejectionNote.trim()}
+            >
               {bulkAction === 'approve' ? 'Approve Selected' : 'Reject Selected'}
             </AlertDialogAction>
           </AlertDialogFooter>

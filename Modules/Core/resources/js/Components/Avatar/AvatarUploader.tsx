@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/card';
+import { Button } from '../../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Upload, Camera, User } from 'lucide-react';
+import { Input } from '../../ui/input';
+import InputLabel from '../../InputLabel';
 
 interface AvatarUploaderProps {
   user: {
@@ -80,9 +82,9 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ user, onAvatarUpdate })
       <CardContent className="space-y-4">
         <div className="flex flex-col items-center space-y-4">
           <Avatar className="h-24 w-24">
-            <AvatarImage 
-              src={previewUrl || user.avatar} 
-              alt={user.name} 
+            <AvatarImage
+              src={previewUrl || user.avatar}
+              alt={user.name}
             />
             <AvatarFallback className="text-2xl">
               {getInitials(user.name)}
@@ -142,4 +144,4 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ user, onAvatarUpdate })
   );
 };
 
-export default AvatarUploader; 
+export default AvatarUploader;

@@ -1,10 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Button } from '@/Core/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/Core/components/ui/dialog';
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Dialog, DialogContent, DialogTitle, DialogDescription, DialogTrigger } from '../ui';
 import { toast } from 'sonner';
 import { AlertCircle, Laptop, Smartphone, Tablet, Globe, X } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface DeviceSession {
     name: string;
@@ -49,7 +46,7 @@ export function DeviceSessions() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ session_id: session.id }),
+                body: JSON.stringify({ session_id: session.name }),
             });
 
             if (response.ok) {
@@ -116,7 +113,7 @@ export function DeviceSessions() {
                     <div className="space-y-4">
                         {sessions.map((session, index) => (
                             <div
-                                key={index}
+                                key={session.name + index}
                                 className="flex items-center justify-between p-4 border rounded-lg"
                             >
                                 <div className="flex items-center space-x-4">
@@ -160,13 +157,11 @@ export function DeviceSessions() {
 
             <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
                 <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Sign out other devices</DialogTitle>
-                        <DialogDescription>
-                            Are you sure you want to sign out all other devices? This action cannot be undone.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <DialogFooter>
+                    <DialogTitle>Sign out other devices</DialogTitle>
+                    <DialogDescription>
+                        Are you sure you want to sign out all other devices? This action cannot be undone.
+                    </DialogDescription>
+                    <div className="flex justify-end space-x-2">
                         <Button
                             variant="outline"
                             onClick={() => setShowConfirmDialog(false)}
@@ -179,7 +174,7 @@ export function DeviceSessions() {
                         >
                             Sign out
                         </Button>
-                    </DialogFooter>
+                    </div>
                 </DialogContent>
             </Dialog>
         </Card>
