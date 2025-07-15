@@ -1,16 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { Head } from '@inertiajs/react';
 import { AppLayout } from '@/Core';
-import { Button } from "@/Core";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/Core";
-import { Badge } from "@/Core";
+import { Button } from '@/Core/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/Core/components/ui/card';
+import { Badge } from '@/Core/components/ui/badge';
 import {
   Clock as ClockIcon,
   ArrowLeft as ArrowLeftIcon,
@@ -21,15 +14,13 @@ import {
   Calendar as CalendarIcon,
   User as UserIcon
 } from 'lucide-react';
-import { useToast } from "@/Core";
-import { formatDate } from "@/Core";
 import { usePermission } from "@/Core";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/Core";
+} from "@/Core/components/ui/tooltip";
 import { format } from 'date-fns';
 import { ApprovalDialog } from '../../components/ApprovalDialog';
 
@@ -47,7 +38,6 @@ interface Props {
 export default function TimesheetShow({ timesheet, employee = {}, project = {}, rental = {}, user = {}, created_at, updated_at, deleted_at }: Props) {
   const { t } = useTranslation('TimesheetManagement');
 
-  const { toast } = useToast();
   const { hasPermission } = usePermission();
 
   const breadcrumbs = [
@@ -91,14 +81,14 @@ export default function TimesheetShow({ timesheet, employee = {}, project = {}, 
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          toast({ description: t('success', 'Success') });
+          console.log(t('success', 'Success'));
           window.location.href = route('timesheets.index');
         } else {
-          toast({ description: data.error || t('delete_failed', 'Failed to delete timesheet') });
+          console.log(data.error || t('delete_failed', 'Failed to delete timesheet'));
         }
       })
       .catch(error => {
-        toast({ description: error.message || t('delete_failed', 'Failed to delete timesheet') });
+        console.log(error.message || t('delete_failed', 'Failed to delete timesheet'));
       });
     }
   };
@@ -274,14 +264,14 @@ export default function TimesheetShow({ timesheet, employee = {}, project = {}, 
                         .then(response => response.json())
                         .then(data => {
                           if (data.success) {
-                            toast({ description: t('success', 'Timesheet submitted for approval') });
+                            console.log(t('success', 'Timesheet submitted for approval'));
                             window.location.reload();
                           } else {
-                            toast({ description: data.error || t('submit_failed', 'Failed to submit timesheet') });
+                            console.log(data.error || t('submit_failed', 'Failed to submit timesheet'));
                           }
                         })
                         .catch(error => {
-                          toast({ description: error.message || t('submit_failed', 'Failed to submit timesheet') });
+                          console.log(error.message || t('submit_failed', 'Failed to submit timesheet'));
                         });
                       }}
                     >
@@ -335,7 +325,7 @@ export default function TimesheetShow({ timesheet, employee = {}, project = {}, 
                       <div key={index} className="flex justify-between items-center text-sm">
                         <div className="flex items-center">
                           <CalendarIcon className="h-3 w-3 mr-2 text-muted-foreground" />
-                          <span>{formatDate(entry.date)}</span>
+                          <span>{format(new Date(entry.date), 'PPP')}</span>
                           <span className="text-muted-foreground ml-2">
                             ({entry.hours_worked + entry.overtime_hours} hrs)
                           </span>
