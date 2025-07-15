@@ -1,9 +1,8 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-import MfaSettings from '../../components/settings/MfaSettings';
+import PageHeader from '../../components/page-header';
 import ApiKeySettings from '../../components/settings/ApiKeySettings';
 import { DeviceSessions } from '../../components/settings/DeviceSessions';
-import PageHeader from '../../components/page-header';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import MfaSettings from '../../components/settings/MfaSettings';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 
 interface SecuritySettingsProps {
     mfa_enabled: boolean;
@@ -18,10 +17,7 @@ interface SecuritySettingsProps {
 export default function SecuritySettings({ mfa_enabled, api_keys }: SecuritySettingsProps) {
     return (
         <div className="space-y-6">
-            <PageHeader
-                title="Security Settings"
-                description="Manage your account's security settings and API access"
-            />
+            <PageHeader title="Security Settings" description="Manage your account's security settings and API access" />
 
             <Tabs defaultValue="2fa" className="space-y-6">
                 <TabsList>

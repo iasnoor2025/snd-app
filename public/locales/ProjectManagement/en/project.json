@@ -1,30 +1,30 @@
 {
-  "title": "Project Management",
-  "list": {
-    "title": "Projects",
-    "description": "Manage all projects"
-  },
-  "fields": {
-    "name": "Project Name",
-    "description": "Description",
-    "start_date": "Start Date",
-    "end_date": "End Date",
-    "status": "Status",
-    "manager": "Project Manager",
-    "client": "Client",
-    "budget": "Budget",
-    "progress": "Progress"
-  },
-  "status": {
-    "not_started": "Not Started",
-    "in_progress": "In Progress",
-    "completed": "Completed",
-    "on_hold": "On Hold",
-    "cancelled": "Cancelled"
-  },
-  "messages": {
-    "create_success": "Project created successfully",
-    "update_success": "Project updated successfully",
-    "delete_success": "Project deleted successfully"
-  }
+    "title": "Project Management",
+    "list": {
+        "title": "Projects",
+        "description": "Manage all projects"
+    },
+    "fields": {
+        "name": "Project Name",
+        "description": "Description",
+        "start_date": "Start Date",
+        "end_date": "End Date",
+        "status": "Status",
+        "manager": "Project Manager",
+        "client": "Client",
+        "budget": "Budget",
+        "progress": "Progress"
+    },
+    "status": {
+        "not_started": "Not Started",
+        "in_progress": "In Progress",
+        "completed": "Completed",
+        "on_hold": "On Hold",
+        "cancelled": "Cancelled"
+    },
+    "messages": {
+        "create_success": "Project created successfully",
+        "update_success": "Project updated successfully",
+        "delete_success": "Project deleted successfully"
+    }
 }

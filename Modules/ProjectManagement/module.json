@@ -4,9 +4,7 @@
     "description": "Project Management module for HR & Payroll system",
     "keywords": ["project", "management", "tasks", "teams"],
     "priority": 0,
-    "providers": [
-        "Modules\\ProjectManagement\\Providers\\ProjectManagementServiceProvider"
-    ],
+    "providers": ["Modules\\ProjectManagement\\Providers\\ProjectManagementServiceProvider"],
     "aliases": {},
     "files": [],
     "requires": []

@@ -1,7 +1,6 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { EquipmentForm } from '../EquipmentForm';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 const mockEquipment = {
     id: 1,
@@ -27,7 +26,7 @@ describe('EquipmentForm', () => {
     beforeEach(() => {
         mockSubmit.mockClear();
         mockCancel.mockClear();
-    })
+    });
 
     it('renders empty form correctly', () => {
         render(<EquipmentForm onSubmit={mockSubmit} onCancel={mockCancel} />);
@@ -48,16 +47,10 @@ describe('EquipmentForm', () => {
         // Check buttons
         expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
-    })
+    });
 
     it('renders form with initial values correctly', () => {
-        render(
-            <EquipmentForm
-                equipment={mockEquipment}
-                onSubmit={mockSubmit}
-                onCancel={mockCancel}
-            />
-        );
+        render(<EquipmentForm equipment={mockEquipment} onSubmit={mockSubmit} onCancel={mockCancel} />);
 
         // Check if form fields are populated
         expect(screen.getByLabelText(/name/i)).toHaveValue('Test Equipment');
@@ -68,7 +61,7 @@ describe('EquipmentForm', () => {
         expect(screen.getByLabelText(/monthly rate/i)).toHaveValue(2400);
         expect(screen.getByLabelText(/serial number/i)).toHaveValue('SN001');
         expect(screen.getByLabelText(/notes/i)).toHaveValue('Test Notes');
-    })
+    });
 
     it('validates required fields', async () => {
         render(<EquipmentForm onSubmit={mockSubmit} onCancel={mockCancel} />);
@@ -82,10 +75,10 @@ describe('EquipmentForm', () => {
             expect(screen.getByText(/category is required/i)).toBeInTheDocument();
             expect(screen.getByText(/daily rate is required/i)).toBeInTheDocument();
             expect(screen.getByText(/serial number is required/i)).toBeInTheDocument();
-        })
+        });
 
         expect(mockSubmit).not.toHaveBeenCalled();
-    })
+    });
 
     it('submits form with valid data', async () => {
         render(<EquipmentForm onSubmit={mockSubmit} onCancel={mockCancel} />);
@@ -101,21 +94,23 @@ describe('EquipmentForm', () => {
 
         // Check if submit was called with correct data
         await waitFor(() => {
-            expect(mockSubmit).toHaveBeenCalledWith(expect.objectContaining({
-                name: 'New Equipment',
-                category: 'New Category',
-                daily_rate: 150,
-                serial_number: 'SN002',
-            }));
-        })
-    })
+            expect(mockSubmit).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    name: 'New Equipment',
+                    category: 'New Category',
+                    daily_rate: 150,
+                    serial_number: 'SN002',
+                }),
+            );
+        });
+    });
 
     it('calls onCancel when cancel button is clicked', () => {
         render(<EquipmentForm onSubmit={mockSubmit} onCancel={mockCancel} />);
 
         fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
         expect(mockCancel).toHaveBeenCalledTimes(1);
-    })
+    });
 
     it('validates numeric fields', async () => {
         render(<EquipmentForm onSubmit={mockSubmit} onCancel={mockCancel} />);
@@ -136,10 +131,10 @@ describe('EquipmentForm', () => {
             expect(screen.getByText(/daily rate must be a number/i)).toBeInTheDocument();
             expect(screen.getByText(/weekly rate must be a number/i)).toBeInTheDocument();
             expect(screen.getByText(/monthly rate must be a number/i)).toBeInTheDocument();
-        })
+        });
 
         expect(mockSubmit).not.toHaveBeenCalled();
-    })
+    });
 
     it('validates date fields', async () => {
         render(<EquipmentForm onSubmit={mockSubmit} onCancel={mockCancel} />);
@@ -159,25 +154,8 @@ describe('EquipmentForm', () => {
         await waitFor(() => {
             expect(screen.getByText(/purchase date must be a valid date/i)).toBeInTheDocument();
             expect(screen.getByText(/last maintenance date must be a valid date/i)).toBeInTheDocument();
-        })
+        });
 
         expect(mockSubmit).not.toHaveBeenCalled();
-    })
-})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    });
+});

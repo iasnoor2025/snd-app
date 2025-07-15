@@ -4,9 +4,7 @@
     "description": "EquipmentManagement module for the application",
     "keywords": [],
     "priority": 0,
-    "providers": [
-        "Modules\\EquipmentManagement\\Providers\\EquipmentManagementServiceProvider"
-    ],
+    "providers": ["Modules\\EquipmentManagement\\Providers\\EquipmentManagementServiceProvider"],
     "aliases": [],
     "files": [],
     "requires": []

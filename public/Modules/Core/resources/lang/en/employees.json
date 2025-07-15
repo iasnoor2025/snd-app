@@ -1,18 +1,18 @@
 {
-  "title": "Employees",
-  "create": "Create Employee",
-  "edit": "Edit Employee",
-  "delete": "Delete Employee",
-  "name": "Name",
-  "email": "Email",
-  "phone": "Phone",
-  "department": "Department",
-  "designation": "Designation",
-  "status": "Status",
-  "hire_date": "Hire Date",
-  "actions": {
-    "view": "View",
-    "edit": "Edit",
-    "delete": "Delete"
-  }
+    "title": "Employees",
+    "create": "Create Employee",
+    "edit": "Edit Employee",
+    "delete": "Delete Employee",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "department": "Department",
+    "designation": "Designation",
+    "status": "Status",
+    "hire_date": "Hire Date",
+    "actions": {
+        "view": "View",
+        "edit": "Edit",
+        "delete": "Delete"
+    }
 }

@@ -1,13 +1,10 @@
-import { useEffect, useState } from 'react';
+import { Badge, Card, CardContent, CardHeader, CardTitle, useToast } from '@/Core';
 import { useWebSocket } from '@/hooks/useWebSocket';
-import { useToast } from "@/Core";
-import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
-import { Badge } from "@/Core";
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import { Icon } from 'leaflet';
 import { formatDistanceToNow } from 'date-fns';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import { Icon } from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import { useState } from 'react';
+import { MapContainer, Marker, Polyline, Popup, TileLayer } from 'react-leaflet';
 
 interface Location {
     latitude: number;
@@ -50,16 +47,16 @@ export function EquipmentTracking({ equipmentId }: EquipmentTrackingProps) {
         event: 'App\\Events\\EquipmentLocationUpdated',
         onMessage: (data) => {
             setLocation(data);
-            setMovementHistory(prev => [...prev, data].slice(-10)); // Keep last 10 locations
+            setMovementHistory((prev) => [...prev, data].slice(-10)); // Keep last 10 locations
         },
         onError: (error) => {
             toast({
-                title: "Location Update Error",
+                title: 'Location Update Error',
                 description: error.message || 'Failed to receive location updates',
-                variant: "destructive",
-            })
+                variant: 'destructive',
+            });
         },
-    })
+    });
 
     // Subscribe to alerts
     const { isConnected: isAlertConnected } = useWebSocket({
@@ -67,22 +64,22 @@ export function EquipmentTracking({ equipmentId }: EquipmentTrackingProps) {
         event: 'App\\Events\\EquipmentStatusAlertCreated',
         onMessage: (data) => {
             if (data.equipment_id === equipmentId) {
-                setAlerts(prev => [data, ...prev].slice(0, 5)); // Keep last 5 alerts
+                setAlerts((prev) => [data, ...prev].slice(0, 5)); // Keep last 5 alerts
                 toast({
                     title: data.alert_type,
                     description: data.message,
                     variant: data.severity === 'high' ? 'destructive' : 'default',
-                })
+                });
             }
         },
         onError: (error) => {
             toast({
-                title: "Alert Error",
+                title: 'Alert Error',
                 description: error.message || 'Failed to receive alerts',
-                variant: "destructive",
-            })
+                variant: 'destructive',
+            });
         },
-    })
+    });
 
     const getStatusColor = (status: string) => {
         switch (status) {
@@ -116,7 +113,7 @@ export function EquipmentTracking({ equipmentId }: EquipmentTrackingProps) {
         iconUrl: '/images/equipment-marker.png',
         iconSize: [32, 32],
         iconAnchor: [16, 32],
-    })
+    });
 
     return (
         <div className="space-y-4">
@@ -125,14 +122,10 @@ export function EquipmentTracking({ equipmentId }: EquipmentTrackingProps) {
                     <CardTitle className="flex items-center justify-between">
                         <span>Equipment Tracking</span>
                         <div className="flex items-center space-x-2">
-                            <Badge variant={isLocationConnected ? "success" : "destructive"}>
-                                {isLocationConnected ? "Connected" : "Disconnected"}
+                            <Badge variant={isLocationConnected ? 'success' : 'destructive'}>
+                                {isLocationConnected ? 'Connected' : 'Disconnected'}
                             </Badge>
-                            {location && (
-                                <Badge className={getStatusColor(location.status)}>
-                                    {location.status}
-                                </Badge>
-                            )}
+                            {location && <Badge className={getStatusColor(location.status)}>{location.status}</Badge>}
                         </div>
                     </CardTitle>
                 </CardHeader>
@@ -157,20 +150,13 @@ export function EquipmentTracking({ equipmentId }: EquipmentTrackingProps) {
                                     <p>{location.signal_strength || 'N/A'}</p>
                                 </div>
                             </div>
-                            <div className="h-[400px] rounded-lg overflow-hidden">
-                                <MapContainer
-                                    center={[location.latitude, location.longitude]}
-                                    zoom={13}
-                                    style={{ height: '100%', width: '100%' }}
-                                >
+                            <div className="h-[400px] overflow-hidden rounded-lg">
+                                <MapContainer center={[location.latitude, location.longitude]} zoom={13} style={{ height: '100%', width: '100%' }}>
                                     <TileLayer
                                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                                     />
-                                    <Marker
-                                        position={[location.latitude, location.longitude]}
-                                        icon={customIcon}
-                                    >
+                                    <Marker position={[location.latitude, location.longitude]} icon={customIcon}>
                                         <Popup>
                                             <div>
                                                 <p className="font-medium">Equipment Location</p>
@@ -181,19 +167,13 @@ export function EquipmentTracking({ equipmentId }: EquipmentTrackingProps) {
                                         </Popup>
                                     </Marker>
                                     {movementHistory.length > 1 && (
-                                        <Polyline
-                                            positions={movementHistory.map(loc => [loc.latitude, loc.longitude])}
-                                            color="blue"
-                                            weight={3}
-                                        />
+                                        <Polyline positions={movementHistory.map((loc) => [loc.latitude, loc.longitude])} color="blue" weight={3} />
                                     )}
                                 </MapContainer>
                             </div>
                         </div>
                     ) : (
-                        <div className="flex items-center justify-center h-[400px] text-muted-foreground">
-                            No location data available
-                        </div>
+                        <div className="flex h-[400px] items-center justify-center text-muted-foreground">No location data available</div>
                     )}
                 </CardContent>
             </Card>
@@ -206,25 +186,16 @@ export function EquipmentTracking({ equipmentId }: EquipmentTrackingProps) {
                     <CardContent>
                         <div className="space-y-2">
                             {alerts.map((alert) => (
-                                <div
-                                    key={alert.id}
-                                    className="flex items-start justify-between p-3 rounded-lg border"
-                                >
+                                <div key={alert.id} className="flex items-start justify-between rounded-lg border p-3">
                                     <div className="space-y-1">
                                         <div className="flex items-center space-x-2">
-                                            <Badge className={getSeverityColor(alert.severity)}>
-                                                {alert.severity}
-                                            </Badge>
+                                            <Badge className={getSeverityColor(alert.severity)}>{alert.severity}</Badge>
                                             <span className="font-medium">{alert.alert_type}</span>
                                         </div>
                                         <p className="text-sm text-muted-foreground">{alert.message}</p>
-                                        <p className="text-xs text-muted-foreground">
-                                            {formatDistanceToNow(new Date(alert.created_at))} ago
-                                        </p>
+                                        <p className="text-xs text-muted-foreground">{formatDistanceToNow(new Date(alert.created_at))} ago</p>
                                     </div>
-                                    <Badge variant={alert.status === 'active' ? 'default' : 'secondary'}>
-                                        {alert.status}
-                                    </Badge>
+                                    <Badge variant={alert.status === 'active' ? 'default' : 'secondary'}>{alert.status}</Badge>
                                 </div>
                             ))}
                         </div>
@@ -234,20 +205,3 @@ export function EquipmentTracking({ equipmentId }: EquipmentTrackingProps) {
         </div>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

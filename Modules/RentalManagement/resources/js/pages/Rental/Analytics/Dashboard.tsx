@@ -1,11 +1,9 @@
+import { Card, CardContent, CardHeader, CardTitle, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Core';
+import { Head } from '@inertiajs/react';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Head } from '@inertiajs/react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
 // import { LineChart, BarChart, PieChart, MapChart } from "@/Core";
-import { formatCurrency, formatPercentage } from "@/Core";
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import { formatCurrency, formatPercentage } from '@/Core';
 
 interface Props {
     analytics: {
@@ -92,7 +90,7 @@ export const Dashboard: FC<Props> = ({ analytics, period }) => {
             <Head title={t('rental_analytics')} />
 
             <div className="container mx-auto py-6">
-                <div className="flex justify-between items-center mb-6">
+                <div className="mb-6 flex items-center justify-between">
                     <h1 className="text-2xl font-bold">{t('rental_analytics')}</h1>
                     <Select value={period} onValueChange={handlePeriodChange}>
                         <SelectTrigger className="w-[180px]">
@@ -107,15 +105,13 @@ export const Dashboard: FC<Props> = ({ analytics, period }) => {
                     </Select>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                     <Card>
                         <CardHeader>
                             <CardTitle>{t('total_revenue')}</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">
-                                {formatCurrency(analytics.revenue.total)}
-                            </div>
+                            <div className="text-2xl font-bold">{formatCurrency(analytics.revenue.total)}</div>
                         </CardContent>
                     </Card>
 
@@ -124,9 +120,7 @@ export const Dashboard: FC<Props> = ({ analytics, period }) => {
                             <CardTitle>{t('ttl_equipment_utilization')}</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">
-                                {formatPercentage(analytics.equipment.utilization_rate)}
-                            </div>
+                            <div className="text-2xl font-bold">{formatPercentage(analytics.equipment.utilization_rate)}</div>
                         </CardContent>
                     </Card>
 
@@ -135,9 +129,7 @@ export const Dashboard: FC<Props> = ({ analytics, period }) => {
                             <CardTitle>{t('ttl_customer_retention')}</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">
-                                {formatPercentage(analytics.customers.retention_rate)}
-                            </div>
+                            <div className="text-2xl font-bold">{formatPercentage(analytics.customers.retention_rate)}</div>
                         </CardContent>
                     </Card>
 
@@ -146,22 +138,18 @@ export const Dashboard: FC<Props> = ({ analytics, period }) => {
                             <CardTitle>{t('ttl_customer_satisfaction')}</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">
-                                {formatPercentage(analytics.performance.customer_satisfaction)}
-                            </div>
+                            <div className="text-2xl font-bold">{formatPercentage(analytics.performance.customer_satisfaction)}</div>
                         </CardContent>
                     </Card>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                     <Card>
                         <CardHeader>
                             <CardTitle>{t('ttl_active_gps_tracking')}</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">
-                                {analytics.gps_tracking.active_tracking.count}
-                            </div>
+                            <div className="text-2xl font-bold">{analytics.gps_tracking.active_tracking.count}</div>
                             <p className="text-sm text-gray-500">
                                 {formatPercentage(analytics.gps_tracking.active_tracking.percentage)} of equipment
                             </p>
@@ -173,9 +161,7 @@ export const Dashboard: FC<Props> = ({ analytics, period }) => {
                             <CardTitle>{t('ttl_location_history')}</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">
-                                {analytics.gps_tracking.location_history.total_points}
-                            </div>
+                            <div className="text-2xl font-bold">{analytics.gps_tracking.location_history.total_points}</div>
                             <p className="text-sm text-gray-500">tracking points recorded</p>
                         </CardContent>
                     </Card>
@@ -185,9 +171,7 @@ export const Dashboard: FC<Props> = ({ analytics, period }) => {
                             <CardTitle>{t('ttl_active_alerts')}</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">
-                                {analytics.gps_tracking.alerts.active_alerts.length}
-                            </div>
+                            <div className="text-2xl font-bold">{analytics.gps_tracking.alerts.active_alerts.length}</div>
                             <p className="text-sm text-gray-500">current alerts</p>
                         </CardContent>
                     </Card>
@@ -197,15 +181,13 @@ export const Dashboard: FC<Props> = ({ analytics, period }) => {
                             <CardTitle>{t('ttl_geofence_violations')}</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">
-                                {analytics.gps_tracking.alerts.geofence_violations.length}
-                            </div>
+                            <div className="text-2xl font-bold">{analytics.gps_tracking.alerts.geofence_violations.length}</div>
                             <p className="text-sm text-gray-500">violations detected</p>
                         </CardContent>
                     </Card>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                     <Card>
                         <CardHeader>
                             <CardTitle>{t('ttl_revenue_trends')}</CardTitle>
@@ -261,7 +243,7 @@ export const Dashboard: FC<Props> = ({ analytics, period }) => {
                     </Card>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                     <Card>
                         <CardHeader>
                             <CardTitle>{t('ttl_active_alerts')}</CardTitle>
@@ -269,20 +251,15 @@ export const Dashboard: FC<Props> = ({ analytics, period }) => {
                         <CardContent>
                             <div className="space-y-4">
                                 {analytics.gps_tracking.alerts.active_alerts.map((alert) => (
-                                    <div
-                                        key={`${alert.equipment_id}-${alert.timestamp}`}
-                                        className="p-4 bg-yellow-50 rounded-lg"
-                                    >
-                                        <div className="flex justify-between items-start">
+                                    <div key={`${alert.equipment_id}-${alert.timestamp}`} className="rounded-lg bg-yellow-50 p-4">
+                                        <div className="flex items-start justify-between">
                                             <div>
                                                 <p className="font-medium text-yellow-800">
                                                     {alert.name} - {alert.type}
                                                 </p>
                                                 <p className="text-sm text-yellow-600">{alert.message}</p>
                                             </div>
-                                            <span className="text-xs text-yellow-500">
-                                                {new Date(alert.timestamp)}
-                                            </span>
+                                            <span className="text-xs text-yellow-500">{new Date(alert.timestamp)}</span>
                                         </div>
                                     </div>
                                 ))}
@@ -297,22 +274,13 @@ export const Dashboard: FC<Props> = ({ analytics, period }) => {
                         <CardContent>
                             <div className="space-y-4">
                                 {analytics.gps_tracking.alerts.geofence_violations.map((violation) => (
-                                    <div
-                                        key={`${violation.equipment_id}-${violation.timestamp}`}
-                                        className="p-4 bg-red-50 rounded-lg"
-                                    >
-                                        <div className="flex justify-between items-start">
+                                    <div key={`${violation.equipment_id}-${violation.timestamp}`} className="rounded-lg bg-red-50 p-4">
+                                        <div className="flex items-start justify-between">
                                             <div>
-                                                <p className="font-medium text-red-800">
-                                                    Equipment #{violation.equipment_id}
-                                                </p>
-                                                <p className="text-sm text-red-600">
-                                                    {violation.violation_type}
-                                                </p>
+                                                <p className="font-medium text-red-800">Equipment #{violation.equipment_id}</p>
+                                                <p className="text-sm text-red-600">{violation.violation_type}</p>
                                             </div>
-                                            <span className="text-xs text-red-500">
-                                                {new Date(violation.timestamp)}
-                                            </span>
+                                            <span className="text-xs text-red-500">{new Date(violation.timestamp)}</span>
                                         </div>
                                     </div>
                                 ))}
@@ -324,17 +292,3 @@ export const Dashboard: FC<Props> = ({ analytics, period }) => {
         </>
     );
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-

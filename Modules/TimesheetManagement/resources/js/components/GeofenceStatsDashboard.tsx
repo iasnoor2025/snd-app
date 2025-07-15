@@ -1,71 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
+    Badge,
+    Button,
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from "@/Core";
-import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
     Table,
     TableBody,
     TableCell,
     TableHead,
     TableHeader,
     TableRow,
-} from "@/Core";
-import { Button } from "@/Core";
-import { Badge } from "@/Core";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/Core";
-import {
     Tabs,
     TabsContent,
     TabsList,
     TabsTrigger,
-} from "@/Core";
-import {
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    ResponsiveContainer,
-    PieChart,
-    Pie,
-    Cell,
-    LineChart,
-    Line,
-    Area,
-    AreaChart
-} from 'recharts';
-import {
-    Shield,
-    AlertTriangle,
-    CheckCircle,
-    TrendingUp,
-    TrendingDown,
-    Users,
-    MapPin,
-    Clock,
-    Target,
-    Activity,
-    Download,
-    Filter,
-    Calendar,
-    BarChart3,
-    PieChart as PieChartIcon
-} from 'lucide-react';
-import { toast } from 'sonner';
+} from '@/Core';
 import axios from 'axios';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import { AlertTriangle, CheckCircle, Download, Shield, Target } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { toast } from 'sonner';
 
 interface GeofenceStats {
     total_zones: number;
@@ -138,11 +100,7 @@ const GeofenceStatsDashboard: React.FC = () => {
     const fetchData = async () => {
         try {
             setLoading(true);
-            await Promise.all([
-                fetchStats(),
-                fetchViolations(),
-                fetchCoverage()
-            ]);
+            await Promise.all([fetchStats(), fetchViolations(), fetchCoverage()]);
         } catch (error) {
             console.error('Error fetching dashboard data:', error);
             toast.error('Failed to load dashboard data');
@@ -154,7 +112,7 @@ const GeofenceStatsDashboard: React.FC = () => {
     const fetchStats = async () => {
         const params = new URLSearchParams({
             period: dateRange,
-            ...(selectedProject !== 'all' && { project_id: selectedProject })
+            ...(selectedProject !== 'all' && { project_id: selectedProject }),
         });
 
         const response = await axios.get(`/api/geofences/statistics?${params}`);
@@ -165,7 +123,7 @@ const GeofenceStatsDashboard: React.FC = () => {
         const params = new URLSearchParams({
             period: dateRange,
             ...(selectedProject !== 'all' && { project_id: selectedProject }),
-            limit: '50'
+            limit: '50',
         });
 
         const response = await axios.get(`/api/geofences/violations?${params}`);
@@ -182,17 +140,17 @@ const GeofenceStatsDashboard: React.FC = () => {
             const params = new URLSearchParams({
                 period: dateRange,
                 ...(selectedProject !== 'all' && { project_id: selectedProject }),
-                format: 'csv'
+                format: 'csv',
             });
 
             const endpoint = {
                 stats: '/api/geofences/statistics/export',
                 violations: '/api/geofences/violations/export',
-                coverage: '/api/geofences/work-area-coverage/export'
+                coverage: '/api/geofences/work-area-coverage/export',
             }[type];
 
             const response = await axios.get(`${endpoint}?${params}`, {
-                responseType: 'blob'
+                responseType: 'blob',
             });
 
             const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -211,12 +169,12 @@ const GeofenceStatsDashboard: React.FC = () => {
     };
 
     const getSeverityColor = (severity: string) => {
-  const { t } = useTranslation('timesheet');
+        const { t } = useTranslation('timesheet');
 
         const colors = {
             low: 'bg-yellow-100 text-yellow-800',
             medium: 'bg-orange-100 text-orange-800',
-            high: 'bg-red-100 text-red-800'
+            high: 'bg-red-100 text-red-800',
         };
         return colors[severity as keyof typeof colors] || 'bg-gray-100 text-gray-800';
     };
@@ -233,20 +191,18 @@ const GeofenceStatsDashboard: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <div className="flex h-64 items-center justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
             </div>
         );
     }
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">{t('geofence_analytics')}</h1>
-                    <p className="text-muted-foreground">
-                        Monitor compliance, violations, and coverage statistics
-                    </p>
+                    <p className="text-muted-foreground">Monitor compliance, violations, and coverage statistics</p>
                 </div>
                 <div className="flex space-x-2">
                     <Select value={dateRange} onValueChange={setDateRange}>
@@ -282,9 +238,7 @@ const GeofenceStatsDashboard: React.FC = () => {
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">{stats.total_zones}</div>
-                            <p className="text-xs text-muted-foreground">
-                                {stats.active_zones} active zones
-                            </p>
+                            <p className="text-xs text-muted-foreground">{stats.active_zones} active zones</p>
                         </CardContent>
                     </Card>
 
@@ -294,13 +248,15 @@ const GeofenceStatsDashboard: React.FC = () => {
                             <CheckCircle className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-green-600">
-                                {formatPercentage(stats.compliance_rate)}
-                            </div>
+                            <div className="text-2xl font-bold text-green-600">{formatPercentage(stats.compliance_rate)}</div>
                             <p className="text-xs text-muted-foreground">
-                                {stats.compliance_rate >= 95 ? 'Excellent' :
-                                 stats.compliance_rate >= 85 ? 'Good' :
-                                 stats.compliance_rate >= 70 ? 'Fair' : 'Needs Improvement'}
+                                {stats.compliance_rate >= 95
+                                    ? 'Excellent'
+                                    : stats.compliance_rate >= 85
+                                      ? 'Good'
+                                      : stats.compliance_rate >= 70
+                                        ? 'Fair'
+                                        : 'Needs Improvement'}
                             </p>
                         </CardContent>
                     </Card>
@@ -312,9 +268,7 @@ const GeofenceStatsDashboard: React.FC = () => {
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold text-red-600">{stats.total_violations}</div>
-                            <p className="text-xs text-muted-foreground">
-                                {stats.violations_by_severity.high || 0} high severity
-                            </p>
+                            <p className="text-xs text-muted-foreground">{stats.violations_by_severity.high || 0} high severity</p>
                         </CardContent>
                     </Card>
 
@@ -325,14 +279,11 @@ const GeofenceStatsDashboard: React.FC = () => {
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">
-                                {coverage.length > 0 ?
-                                    formatPercentage(coverage.reduce((acc, c) => acc + c.coverage_percentage, 0) / coverage.length) :
-                                    '0%'
-                                }
+                                {coverage.length > 0
+                                    ? formatPercentage(coverage.reduce((acc, c) => acc + c.coverage_percentage, 0) / coverage.length)
+                                    : '0%'}
                             </div>
-                            <p className="text-xs text-muted-foreground">
-                                Average work area coverage
-                            </p>
+                            <p className="text-xs text-muted-foreground">Average work area coverage</p>
                         </CardContent>
                     </Card>
                 </div>
@@ -361,7 +312,7 @@ const GeofenceStatsDashboard: React.FC = () => {
                                             <Pie
                                                 data={Object.entries(stats.zones_by_type).map(([type, count]) => ({
                                                     name: type.replace('_', ' '),
-                                                    value: count
+                                                    value: count,
                                                 }))}
                                                 cx="50%"
                                                 cy="50%"
@@ -391,10 +342,12 @@ const GeofenceStatsDashboard: React.FC = () => {
                             <CardContent>
                                 {stats?.violations_by_severity && (
                                     <ResponsiveContainer width="100%" height={300}>
-                                        <BarChart data={Object.entries(stats.violations_by_severity).map(([severity, count]) => ({
-                                            severity: severity.charAt(0).toUpperCase() + severity.slice(1),
-                                            count
-                                        }))}>
+                                        <BarChart
+                                            data={Object.entries(stats.violations_by_severity).map(([severity, count]) => ({
+                                                severity: severity.charAt(0).toUpperCase() + severity.slice(1),
+                                                count,
+                                            }))}
+                                        >
                                             <CartesianGrid strokeDasharray="3 3" />
                                             <XAxis dataKey="severity" />
                                             <YAxis />
@@ -410,7 +363,7 @@ const GeofenceStatsDashboard: React.FC = () => {
                     {/* Daily Compliance Trend */}
                     <Card>
                         <CardHeader>
-                            <div className="flex justify-between items-center">
+                            <div className="flex items-center justify-between">
                                 <div>
                                     <CardTitle>{t('ttl_compliance_trend')}</CardTitle>
                                     <CardDescription>{t('daily_compliance_rate_over_time')}</CardDescription>
@@ -431,17 +384,14 @@ const GeofenceStatsDashboard: React.FC = () => {
                                         <Tooltip
                                             formatter={(value, name) => [
                                                 name === 'compliance_rate' ? `${value}%` : value,
-                                                name === 'compliance_rate' ? 'Compliance Rate' :
-                                                name === 'total_entries' ? 'Total Entries' : 'Violations'
+                                                name === 'compliance_rate'
+                                                    ? 'Compliance Rate'
+                                                    : name === 'total_entries'
+                                                      ? 'Total Entries'
+                                                      : 'Violations',
                                             ]}
                                         />
-                                        <Area
-                                            type="monotone"
-                                            dataKey="compliance_rate"
-                                            stroke="#10B981"
-                                            fill="#10B981"
-                                            fillOpacity={0.3}
-                                        />
+                                        <Area type="monotone" dataKey="compliance_rate" stroke="#10B981" fill="#10B981" fillOpacity={0.3} />
                                     </AreaChart>
                                 </ResponsiveContainer>
                             )}
@@ -452,7 +402,7 @@ const GeofenceStatsDashboard: React.FC = () => {
                 <TabsContent value="violations" className="space-y-4">
                     <Card>
                         <CardHeader>
-                            <div className="flex justify-between items-center">
+                            <div className="flex items-center justify-between">
                                 <div>
                                     <CardTitle>{t('ttl_recent_violations')}</CardTitle>
                                     <CardDescription>{t('latest_geofence_violations_and_their_details')}</CardDescription>
@@ -480,30 +430,22 @@ const GeofenceStatsDashboard: React.FC = () => {
                                 <TableBody>
                                     {violations.map((violation) => (
                                         <TableRow key={violation.id}>
-                                            <TableCell className="font-medium">
-                                                {violation.employee_name}
-                                            </TableCell>
+                                            <TableCell className="font-medium">{violation.employee_name}</TableCell>
                                             <TableCell>{violation.project_name}</TableCell>
                                             <TableCell>{violation.zone_name}</TableCell>
                                             <TableCell>{violation.violation_type}</TableCell>
                                             <TableCell>
-                                                <Badge className={getSeverityColor(violation.severity)}>
-                                                    {violation.severity}
-                                                </Badge>
+                                                <Badge className={getSeverityColor(violation.severity)}>{violation.severity}</Badge>
                                             </TableCell>
                                             <TableCell>{formatDistance(violation.distance_from_zone)}</TableCell>
-                                            <TableCell>
-                                                {new Date(violation.timestamp)}
-                                            </TableCell>
+                                            <TableCell>{new Date(violation.timestamp)}</TableCell>
                                             <TableCell>
                                                 {violation.resolved ? (
-                                                    <Badge variant="secondary" className="text-green-700 bg-green-100">
+                                                    <Badge variant="secondary" className="bg-green-100 text-green-700">
                                                         Resolved
                                                     </Badge>
                                                 ) : (
-                                                    <Badge variant="destructive">
-                                                        Open
-                                                    </Badge>
+                                                    <Badge variant="destructive">Open</Badge>
                                                 )}
                                             </TableCell>
                                         </TableRow>
@@ -527,21 +469,24 @@ const GeofenceStatsDashboard: React.FC = () => {
                                     {stats?.top_violating_employees?.map((employee, index) => (
                                         <div key={employee.employee_id} className="flex items-center justify-between">
                                             <div className="flex items-center space-x-3">
-                                                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium">
+                                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-medium">
                                                     {index + 1}
                                                 </div>
                                                 <div>
                                                     <div className="font-medium">{employee.employee_name}</div>
-                                                    <div className="text-sm text-muted-foreground">
-                                                        {employee.violation_count} violations
-                                                    </div>
+                                                    <div className="text-sm text-muted-foreground">{employee.violation_count} violations</div>
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                <div className={`font-medium ${
-                                                    employee.compliance_rate >= 90 ? 'text-green-600' :
-                                                    employee.compliance_rate >= 70 ? 'text-yellow-600' : 'text-red-600'
-                                                }`}>
+                                                <div
+                                                    className={`font-medium ${
+                                                        employee.compliance_rate >= 90
+                                                            ? 'text-green-600'
+                                                            : employee.compliance_rate >= 70
+                                                              ? 'text-yellow-600'
+                                                              : 'text-red-600'
+                                                    }`}
+                                                >
                                                     {formatPercentage(employee.compliance_rate)}
                                                 </div>
                                                 <div className="text-sm text-muted-foreground">compliance</div>
@@ -562,20 +507,28 @@ const GeofenceStatsDashboard: React.FC = () => {
                                 <div className="space-y-4">
                                     {stats?.zone_performance?.map((zone) => (
                                         <div key={zone.zone_id} className="space-y-2">
-                                            <div className="flex justify-between items-center">
+                                            <div className="flex items-center justify-between">
                                                 <div className="font-medium">{zone.zone_name}</div>
-                                                <div className={`font-medium ${
-                                                    zone.compliance_rate >= 90 ? 'text-green-600' :
-                                                    zone.compliance_rate >= 70 ? 'text-yellow-600' : 'text-red-600'
-                                                }`}>
+                                                <div
+                                                    className={`font-medium ${
+                                                        zone.compliance_rate >= 90
+                                                            ? 'text-green-600'
+                                                            : zone.compliance_rate >= 70
+                                                              ? 'text-yellow-600'
+                                                              : 'text-red-600'
+                                                    }`}
+                                                >
                                                     {formatPercentage(zone.compliance_rate)}
                                                 </div>
                                             </div>
-                                            <div className="w-full bg-gray-200 rounded-full h-2">
+                                            <div className="h-2 w-full rounded-full bg-gray-200">
                                                 <div
                                                     className={`h-2 rounded-full ${
-                                                        zone.compliance_rate >= 90 ? 'bg-green-500' :
-                                                        zone.compliance_rate >= 70 ? 'bg-yellow-500' : 'bg-red-500'
+                                                        zone.compliance_rate >= 90
+                                                            ? 'bg-green-500'
+                                                            : zone.compliance_rate >= 70
+                                                              ? 'bg-yellow-500'
+                                                              : 'bg-red-500'
                                                     }`}
                                                     style={{ width: `${zone.compliance_rate}%` }}
                                                 />
@@ -594,7 +547,7 @@ const GeofenceStatsDashboard: React.FC = () => {
                 <TabsContent value="coverage" className="space-y-4">
                     <Card>
                         <CardHeader>
-                            <div className="flex justify-between items-center">
+                            <div className="flex items-center justify-between">
                                 <div>
                                     <CardTitle>{t('ttl_work_area_coverage')}</CardTitle>
                                     <CardDescription>{t('geofence_coverage_analysis_by_project')}</CardDescription>
@@ -609,7 +562,7 @@ const GeofenceStatsDashboard: React.FC = () => {
                             <div className="space-y-6">
                                 {coverage.map((project) => (
                                     <div key={project.project_id} className="space-y-4">
-                                        <div className="flex justify-between items-center">
+                                        <div className="flex items-center justify-between">
                                             <div>
                                                 <h3 className="font-semibold">{project.project_name}</h3>
                                                 <p className="text-sm text-muted-foreground">
@@ -617,21 +570,29 @@ const GeofenceStatsDashboard: React.FC = () => {
                                                 </p>
                                             </div>
                                             <div className="text-right">
-                                                <div className={`text-lg font-bold ${
-                                                    project.coverage_percentage >= 90 ? 'text-green-600' :
-                                                    project.coverage_percentage >= 70 ? 'text-yellow-600' : 'text-red-600'
-                                                }`}>
+                                                <div
+                                                    className={`text-lg font-bold ${
+                                                        project.coverage_percentage >= 90
+                                                            ? 'text-green-600'
+                                                            : project.coverage_percentage >= 70
+                                                              ? 'text-yellow-600'
+                                                              : 'text-red-600'
+                                                    }`}
+                                                >
                                                     {formatPercentage(project.coverage_percentage)}
                                                 </div>
                                                 <div className="text-sm text-muted-foreground">coverage</div>
                                             </div>
                                         </div>
 
-                                        <div className="w-full bg-gray-200 rounded-full h-3">
+                                        <div className="h-3 w-full rounded-full bg-gray-200">
                                             <div
                                                 className={`h-3 rounded-full ${
-                                                    project.coverage_percentage >= 90 ? 'bg-green-500' :
-                                                    project.coverage_percentage >= 70 ? 'bg-yellow-500' : 'bg-red-500'
+                                                    project.coverage_percentage >= 90
+                                                        ? 'bg-green-500'
+                                                        : project.coverage_percentage >= 70
+                                                          ? 'bg-yellow-500'
+                                                          : 'bg-red-500'
                                                 }`}
                                                 style={{ width: `${project.coverage_percentage}%` }}
                                             />
@@ -639,15 +600,13 @@ const GeofenceStatsDashboard: React.FC = () => {
 
                                         {project.gaps.length > 0 && (
                                             <div className="space-y-2">
-                                                <h4 className="font-medium text-sm">Coverage Gaps:</h4>
+                                                <h4 className="text-sm font-medium">Coverage Gaps:</h4>
                                                 {project.gaps.map((gap, index) => (
-                                                    <div key={index} className="flex justify-between items-center text-sm">
+                                                    <div key={index} className="flex items-center justify-between text-sm">
                                                         <span>{gap.description}</span>
                                                         <div className="flex items-center space-x-2">
                                                             <span>{gap.area_km2.toFixed(2)} km²</span>
-                                                            <Badge className={getSeverityColor(gap.priority)}>
-                                                                {gap.priority}
-                                                            </Badge>
+                                                            <Badge className={getSeverityColor(gap.priority)}>{gap.priority}</Badge>
                                                         </div>
                                                     </div>
                                                 ))}
@@ -665,17 +624,3 @@ const GeofenceStatsDashboard: React.FC = () => {
 };
 
 export default GeofenceStatsDashboard;
-
-
-
-
-
-
-
-
-
-
-
-
-
-

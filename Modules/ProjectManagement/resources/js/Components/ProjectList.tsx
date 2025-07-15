@@ -1,18 +1,6 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/Core";
-import { Badge } from "@/Core";
-import { Button } from "@/Core";
-import { Progress } from "@/Core";
+import { Badge, Button, Progress, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core';
 import { format } from 'date-fns';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import React from 'react';
 
 interface Project {
     id: number;
@@ -48,11 +36,7 @@ const priorityColors = {
     low: 'bg-green-500',
 };
 
-export const ProjectList: React.FC<ProjectListProps> = ({
-    projects,
-    onEdit,
-    onDelete,
-}) => {
+export const ProjectList: React.FC<ProjectListProps> = ({ projects, onEdit, onDelete }) => {
     return (
         <div className="rounded-md border">
             <Table>
@@ -75,14 +59,10 @@ export const ProjectList: React.FC<ProjectListProps> = ({
                             <TableCell className="font-medium">{project.name}</TableCell>
                             <TableCell>{project.client_name}</TableCell>
                             <TableCell>
-                                <Badge className={statusColors[project.status as keyof typeof statusColors]}>
-                                    {project.status}
-                                </Badge>
+                                <Badge className={statusColors[project.status as keyof typeof statusColors]}>{project.status}</Badge>
                             </TableCell>
                             <TableCell>
-                                <Badge className={priorityColors[project.priority as keyof typeof priorityColors]}>
-                                    {project.priority}
-                                </Badge>
+                                <Badge className={priorityColors[project.priority as keyof typeof priorityColors]}>{project.priority}</Badge>
                             </TableCell>
                             <TableCell>
                                 <div className="flex items-center gap-2">
@@ -91,26 +71,14 @@ export const ProjectList: React.FC<ProjectListProps> = ({
                                 </div>
                             </TableCell>
                             <TableCell>{format(new Date(project.start_date), 'MMM d, yyyy')}</TableCell>
-                            <TableCell>
-                                {project.end_date
-                                    ? format(new Date(project.end_date), 'MMM d, yyyy')
-                                    : 'N/A'}
-                            </TableCell>
+                            <TableCell>{project.end_date ? format(new Date(project.end_date), 'MMM d, yyyy') : 'N/A'}</TableCell>
                             <TableCell>${project.budget}</TableCell>
                             <TableCell>
                                 <div className="flex gap-2">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => onEdit(project)}
-                                    >
+                                    <Button variant="outline" size="sm" onClick={() => onEdit(project)}>
                                         Edit
                                     </Button>
-                                    <Button
-                                        variant="destructive"
-                                        size="sm"
-                                        onClick={() => onDelete(project.id)}
-                                    >
+                                    <Button variant="destructive" size="sm" onClick={() => onDelete(project.id)}>
                                         Delete
                                     </Button>
                                 </div>
@@ -122,17 +90,3 @@ export const ProjectList: React.FC<ProjectListProps> = ({
         </div>
     );
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-

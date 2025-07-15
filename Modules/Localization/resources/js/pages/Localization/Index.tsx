@@ -1,30 +1,43 @@
-import React, { useState } from 'react';
-import { Head, Link, router } from '@inertiajs/react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Core";
-import { Button } from "@/Core";
-import { Badge } from "@/Core";
-import { Progress } from "@/Core";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
-import { Input } from "@/Core";
-import { Label } from "@/Core";
-import { Alert, AlertDescription } from "@/Core";
 import {
+    Alert,
+    AlertDescription,
+    Badge,
+    Button,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+    Input,
+    Label,
+    Progress,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from '@/Core';
+import { Head, Link, router } from '@inertiajs/react';
+import {
+    AlertCircle,
+    BarChart3,
+    CheckCircle,
+    Clock,
+    Download,
+    FileText,
+    Filter,
     Globe,
     Languages,
-    FileText,
-    Settings,
-    Download,
-    Upload,
-    BarChart3,
-    Clock,
-    CheckCircle,
-    AlertCircle,
     Plus,
     Search,
-    Filter,
-    RefreshCw
+    Settings,
+    Upload,
 } from 'lucide-react';
+import { useState } from 'react';
 
 interface LocalizationStats {
     total_keys: number;
@@ -51,7 +64,7 @@ export default function LocalizationIndex({
     translationStats,
     dateFormats,
     timeFormats,
-    currencies
+    currencies,
 }: LocalizationIndexProps) {
     const [selectedLocale, setSelectedLocale] = useState(currentLocale);
     const [searchTerm, setSearchTerm] = useState('');
@@ -76,14 +89,12 @@ export default function LocalizationIndex({
         <>
             <Head title="Localization Management" />
 
-            <div className="container mx-auto py-6 space-y-6">
+            <div className="container mx-auto space-y-6 py-6">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight">Localization Management</h1>
-                        <p className="text-muted-foreground">
-                            Manage translations, languages, and regional settings
-                        </p>
+                        <p className="text-muted-foreground">Manage translations, languages, and regional settings</p>
                     </div>
                     <div className="flex items-center space-x-2">
                         <Select value={selectedLocale} onValueChange={setSelectedLocale}>
@@ -98,19 +109,15 @@ export default function LocalizationIndex({
                                 ))}
                             </SelectContent>
                         </Select>
-                        <Button
-                            onClick={() => handleLocaleSwitch(selectedLocale)}
-                            variant="outline"
-                            size="sm"
-                        >
-                            <Globe className="h-4 w-4 mr-2" />
+                        <Button onClick={() => handleLocaleSwitch(selectedLocale)} variant="outline" size="sm">
+                            <Globe className="mr-2 h-4 w-4" />
                             Switch Language
                         </Button>
                     </div>
                 </div>
 
                 {/* Quick Stats */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Total Keys</CardTitle>
@@ -118,9 +125,7 @@ export default function LocalizationIndex({
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">{translationStats.total_keys}</div>
-                            <p className="text-xs text-muted-foreground">
-                                Translation keys available
-                            </p>
+                            <p className="text-xs text-muted-foreground">Translation keys available</p>
                         </CardContent>
                     </Card>
 
@@ -130,12 +135,8 @@ export default function LocalizationIndex({
                             <CheckCircle className="h-4 w-4 text-green-600" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-green-600">
-                                {translationStats.translated_keys}
-                            </div>
-                            <p className="text-xs text-muted-foreground">
-                                Keys with translations
-                            </p>
+                            <div className="text-2xl font-bold text-green-600">{translationStats.translated_keys}</div>
+                            <p className="text-xs text-muted-foreground">Keys with translations</p>
                         </CardContent>
                     </Card>
 
@@ -145,12 +146,8 @@ export default function LocalizationIndex({
                             <AlertCircle className="h-4 w-4 text-red-600" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-red-600">
-                                {translationStats.missing_keys}
-                            </div>
-                            <p className="text-xs text-muted-foreground">
-                                Keys needing translation
-                            </p>
+                            <div className="text-2xl font-bold text-red-600">{translationStats.missing_keys}</div>
+                            <p className="text-xs text-muted-foreground">Keys needing translation</p>
                         </CardContent>
                     </Card>
 
@@ -163,10 +160,7 @@ export default function LocalizationIndex({
                             <div className={`text-2xl font-bold ${getCompletionColor(translationStats.completion_percentage)}`}>
                                 {translationStats.completion_percentage}%
                             </div>
-                            <Progress
-                                value={translationStats.completion_percentage}
-                                className="mt-2"
-                            />
+                            <Progress value={translationStats.completion_percentage} className="mt-2" />
                         </CardContent>
                     </Card>
                 </div>
@@ -181,25 +175,21 @@ export default function LocalizationIndex({
                     </TabsList>
 
                     <TabsContent value="overview" className="space-y-4">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                             {/* Translation Progress */}
                             <Card>
                                 <CardHeader>
                                     <CardTitle className="flex items-center">
-                                        <Languages className="h-5 w-5 mr-2" />
+                                        <Languages className="mr-2 h-5 w-5" />
                                         Translation Progress
                                     </CardTitle>
-                                    <CardDescription>
-                                        Current translation status by language
-                                    </CardDescription>
+                                    <CardDescription>Current translation status by language</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     {Object.entries(availableLocales).map(([code, name]) => (
                                         <div key={code} className="flex items-center justify-between">
                                             <div className="flex items-center space-x-2">
-                                                <Badge variant={code === currentLocale ? 'default' : 'secondary'}>
-                                                    {code.toUpperCase()}
-                                                </Badge>
+                                                <Badge variant={code === currentLocale ? 'default' : 'secondary'}>{code.toUpperCase()}</Badge>
                                                 <span className="font-medium">{name}</span>
                                                 {code === defaultLocale && (
                                                     <Badge variant="outline" className="text-xs">
@@ -209,11 +199,18 @@ export default function LocalizationIndex({
                                             </div>
                                             <div className="flex items-center space-x-2">
                                                 <Progress
-                                                    value={code === currentLocale ? translationStats.completion_percentage : Math.floor(Math.random() * 100)}
+                                                    value={
+                                                        code === currentLocale
+                                                            ? translationStats.completion_percentage
+                                                            : Math.floor(Math.random() * 100)
+                                                    }
                                                     className="w-20"
                                                 />
                                                 <Badge variant={getCompletionBadgeVariant(translationStats.completion_percentage)}>
-                                                    {code === currentLocale ? translationStats.completion_percentage : Math.floor(Math.random() * 100)}%
+                                                    {code === currentLocale
+                                                        ? translationStats.completion_percentage
+                                                        : Math.floor(Math.random() * 100)}
+                                                    %
                                                 </Badge>
                                             </div>
                                         </div>
@@ -225,34 +222,32 @@ export default function LocalizationIndex({
                             <Card>
                                 <CardHeader>
                                     <CardTitle className="flex items-center">
-                                        <Settings className="h-5 w-5 mr-2" />
+                                        <Settings className="mr-2 h-5 w-5" />
                                         Quick Actions
                                     </CardTitle>
-                                    <CardDescription>
-                                        Common localization tasks
-                                    </CardDescription>
+                                    <CardDescription>Common localization tasks</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-3">
                                     <Link href={route('localization.translations')}>
                                         <Button className="w-full justify-start" variant="outline">
-                                            <FileText className="h-4 w-4 mr-2" />
+                                            <FileText className="mr-2 h-4 w-4" />
                                             Manage Translations
                                         </Button>
                                     </Link>
                                     <Link href={route('localization.languages')}>
                                         <Button className="w-full justify-start" variant="outline">
-                                            <Languages className="h-4 w-4 mr-2" />
+                                            <Languages className="mr-2 h-4 w-4" />
                                             Manage Languages
                                         </Button>
                                     </Link>
                                     <Link href={route('localization.translations.export')}>
                                         <Button className="w-full justify-start" variant="outline">
-                                            <Download className="h-4 w-4 mr-2" />
+                                            <Download className="mr-2 h-4 w-4" />
                                             Export Translations
                                         </Button>
                                     </Link>
                                     <Button className="w-full justify-start" variant="outline">
-                                        <Upload className="h-4 w-4 mr-2" />
+                                        <Upload className="mr-2 h-4 w-4" />
                                         Import Translations
                                     </Button>
                                 </CardContent>
@@ -263,41 +258,33 @@ export default function LocalizationIndex({
                         <Card>
                             <CardHeader>
                                 <CardTitle className="flex items-center">
-                                    <Clock className="h-5 w-5 mr-2" />
+                                    <Clock className="mr-2 h-5 w-5" />
                                     Recent Activity
                                 </CardTitle>
-                                <CardDescription>
-                                    Latest translation updates and changes
-                                </CardDescription>
+                                <CardDescription>Latest translation updates and changes</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-3">
-                                    <div className="flex items-center justify-between py-2 border-b">
+                                    <div className="flex items-center justify-between border-b py-2">
                                         <div>
                                             <p className="font-medium">Updated common translations</p>
                                             <p className="text-sm text-muted-foreground">English locale</p>
                                         </div>
-                                        <Badge variant="secondary">
-                                            {translationStats.last_updated}
-                                        </Badge>
+                                        <Badge variant="secondary">{translationStats.last_updated}</Badge>
                                     </div>
-                                    <div className="flex items-center justify-between py-2 border-b">
+                                    <div className="flex items-center justify-between border-b py-2">
                                         <div>
                                             <p className="font-medium">Added new language support</p>
                                             <p className="text-sm text-muted-foreground">Spanish locale</p>
                                         </div>
-                                        <Badge variant="secondary">
-                                            2 days ago
-                                        </Badge>
+                                        <Badge variant="secondary">2 days ago</Badge>
                                     </div>
                                     <div className="flex items-center justify-between py-2">
                                         <div>
                                             <p className="font-medium">Imported translation file</p>
                                             <p className="text-sm text-muted-foreground">French locale</p>
                                         </div>
-                                        <Badge variant="secondary">
-                                            1 week ago
-                                        </Badge>
+                                        <Badge variant="secondary">1 week ago</Badge>
                                     </div>
                                 </div>
                             </CardContent>
@@ -308,30 +295,28 @@ export default function LocalizationIndex({
                         <Card>
                             <CardHeader>
                                 <CardTitle>Translation Management</CardTitle>
-                                <CardDescription>
-                                    Manage translations for different languages and groups
-                                </CardDescription>
+                                <CardDescription>Manage translations for different languages and groups</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <div className="flex items-center justify-between mb-4">
+                                <div className="mb-4 flex items-center justify-between">
                                     <div className="flex items-center space-x-2">
                                         <div className="relative">
-                                            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                                            <Search className="absolute top-2.5 left-2 h-4 w-4 text-muted-foreground" />
                                             <Input
                                                 placeholder="Search translations..."
                                                 value={searchTerm}
                                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                                className="pl-8 w-64"
+                                                className="w-64 pl-8"
                                             />
                                         </div>
                                         <Button variant="outline" size="sm">
-                                            <Filter className="h-4 w-4 mr-2" />
+                                            <Filter className="mr-2 h-4 w-4" />
                                             Filter
                                         </Button>
                                     </div>
                                     <Link href={route('localization.translations')}>
                                         <Button>
-                                            <Plus className="h-4 w-4 mr-2" />
+                                            <Plus className="mr-2 h-4 w-4" />
                                             Add Translation
                                         </Button>
                                     </Link>
@@ -350,9 +335,7 @@ export default function LocalizationIndex({
                         <Card>
                             <CardHeader>
                                 <CardTitle>Language Management</CardTitle>
-                                <CardDescription>
-                                    Configure available languages and regional settings
-                                </CardDescription>
+                                <CardDescription>Configure available languages and regional settings</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-4">
@@ -360,12 +343,12 @@ export default function LocalizationIndex({
                                         <h3 className="text-lg font-medium">Available Languages</h3>
                                         <Link href={route('localization.languages')}>
                                             <Button>
-                                                <Plus className="h-4 w-4 mr-2" />
+                                                <Plus className="mr-2 h-4 w-4" />
                                                 Add Language
                                             </Button>
                                         </Link>
                                     </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                                         {Object.entries(availableLocales).map(([code, name]) => (
                                             <Card key={code} className="p-4">
                                                 <div className="flex items-center justify-between">
@@ -374,12 +357,8 @@ export default function LocalizationIndex({
                                                         <p className="text-sm text-muted-foreground">{code.toUpperCase()}</p>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
-                                                        {code === defaultLocale && (
-                                                            <Badge variant="default">Default</Badge>
-                                                        )}
-                                                        {code === currentLocale && (
-                                                            <Badge variant="secondary">Active</Badge>
-                                                        )}
+                                                        {code === defaultLocale && <Badge variant="default">Default</Badge>}
+                                                        {code === currentLocale && <Badge variant="secondary">Active</Badge>}
                                                     </div>
                                                 </div>
                                             </Card>
@@ -391,13 +370,11 @@ export default function LocalizationIndex({
                     </TabsContent>
 
                     <TabsContent value="settings">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                             <Card>
                                 <CardHeader>
                                     <CardTitle>Regional Settings</CardTitle>
-                                    <CardDescription>
-                                        Configure date, time, and currency formats
-                                    </CardDescription>
+                                    <CardDescription>Configure date, time, and currency formats</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="space-y-2">
@@ -446,7 +423,7 @@ export default function LocalizationIndex({
                                         </Select>
                                     </div>
                                     <Button className="w-full">
-                                        <Settings className="h-4 w-4 mr-2" />
+                                        <Settings className="mr-2 h-4 w-4" />
                                         Save Settings
                                     </Button>
                                 </CardContent>
@@ -455,9 +432,7 @@ export default function LocalizationIndex({
                             <Card>
                                 <CardHeader>
                                     <CardTitle>Import/Export</CardTitle>
-                                    <CardDescription>
-                                        Backup and restore translation data
-                                    </CardDescription>
+                                    <CardDescription>Backup and restore translation data</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="space-y-2">
@@ -476,7 +451,7 @@ export default function LocalizationIndex({
                                                 </SelectContent>
                                             </Select>
                                             <Button variant="outline">
-                                                <Download className="h-4 w-4 mr-2" />
+                                                <Download className="mr-2 h-4 w-4" />
                                                 Export
                                             </Button>
                                         </div>
@@ -486,7 +461,7 @@ export default function LocalizationIndex({
                                         <div className="flex space-x-2">
                                             <Input type="file" accept=".json,.php" className="flex-1" />
                                             <Button variant="outline">
-                                                <Upload className="h-4 w-4 mr-2" />
+                                                <Upload className="mr-2 h-4 w-4" />
                                                 Import
                                             </Button>
                                         </div>
@@ -506,17 +481,3 @@ export default function LocalizationIndex({
         </>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

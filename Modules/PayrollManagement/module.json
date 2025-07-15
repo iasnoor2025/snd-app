@@ -1,7 +1,5 @@
 {
-  "name": "PayrollManagement",
-  "alias": "PayrollManagement",
-  "providers": [
-    "Modules\\PayrollManagement\\Providers\\PayrollManagementServiceProvider"
-  ]
+    "name": "PayrollManagement",
+    "alias": "PayrollManagement",
+    "providers": ["Modules\\PayrollManagement\\Providers\\PayrollManagementServiceProvider"]
 }

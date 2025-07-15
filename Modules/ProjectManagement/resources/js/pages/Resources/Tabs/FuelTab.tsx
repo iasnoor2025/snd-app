@@ -1,13 +1,11 @@
-import React from 'react';
+import { Button } from '@/Core';
+import { formatDateMedium } from '@/Core/utils/dateFormatter';
 import { useTranslation } from 'react-i18next';
-import { Button } from "@/Core";
-import { Pencil, Trash2 } from 'lucide-react';
 import { ResourceFormModal } from '../../../components/project/resources/ResourceModal';
+import { ResourceTable } from '../../../Components/project/resources/ResourceTable';
 import { useResourceFormModal } from '../../../hooks/useResourceFormModal';
 import { useResourceSubmit } from '../../../hooks/useResourceSubmit';
 import { formatCurrency } from '../../../lib/utils';
-import { formatDateMedium } from '@/Core/utils/dateFormatter';
-import { ResourceTable } from '../../../Components/project/resources/ResourceTable';
 
 interface FuelTabProps {
     project: {
@@ -34,24 +32,16 @@ interface FuelTabProps {
 }
 
 export function FuelTab({ project, fuel, projectEquipment }: FuelTabProps) {
-  const { t } = useTranslation('project');
+    const { t } = useTranslation('project');
 
-    const {
-        isCreateModalOpen,
-        isEditModalOpen,
-        selectedResource,
-        isLoading,
-        openCreateModal,
-        openEditModal,
-        closeCreateModal,
-        closeEditModal,
-    } = useResourceFormModal({
-        projectId: Number(project.id),
-        type: 'fuel',
-        onSuccess: () => {
-            window.location.reload();
-        }
-    });
+    const { isCreateModalOpen, isEditModalOpen, selectedResource, isLoading, openCreateModal, openEditModal, closeCreateModal, closeEditModal } =
+        useResourceFormModal({
+            projectId: Number(project.id),
+            type: 'fuel',
+            onSuccess: () => {
+                window.location.reload();
+            },
+        });
 
     const { isSubmitting, handleSubmit, handleUpdate, handleDelete } = useResourceSubmit({
         projectId: Number(project.id),
@@ -60,7 +50,7 @@ export function FuelTab({ project, fuel, projectEquipment }: FuelTabProps) {
             closeCreateModal();
             closeEditModal();
             window.location.reload();
-        }
+        },
     });
 
     const handleDeleteClick = (fuelItem: any) => {
@@ -120,13 +110,7 @@ export function FuelTab({ project, fuel, projectEquipment }: FuelTabProps) {
             <div className="flex justify-end">
                 <Button onClick={openCreateModal}>{t('ttl_add_fuel')}</Button>
             </div>
-            <ResourceTable
-                data={fuel}
-                columns={columns}
-                onEdit={openEditModal}
-                onDelete={handleDeleteClick}
-                isLoading={isLoading}
-            />
+            <ResourceTable data={fuel} columns={columns} onEdit={openEditModal} onDelete={handleDeleteClick} isLoading={isLoading} />
             <ResourceFormModal
                 isOpen={isCreateModalOpen}
                 onClose={closeCreateModal}
@@ -149,17 +133,3 @@ export function FuelTab({ project, fuel, projectEquipment }: FuelTabProps) {
 }
 
 export default FuelTab;
-
-
-
-
-
-
-
-
-
-
-
-
-
-

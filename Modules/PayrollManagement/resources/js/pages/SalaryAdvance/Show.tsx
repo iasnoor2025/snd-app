@@ -1,44 +1,27 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Head, useForm, router } from '@inertiajs/react';
-import { PageProps } from "@/Core/types";
-import { AppLayout } from '@/Core';
-import { Button } from "@/Core";
-import { Badge } from "@/Core";
 import {
+    AppLayout,
+    Badge,
+    Button,
     Card,
     CardContent,
-    CardDescription,
     CardHeader,
     CardTitle,
-} from "@/Core";
-import {
     Dialog,
     DialogContent,
     DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from "@/Core";
+} from '@/Core';
+import { PageProps } from '@/Core/types';
+import { Head, router } from '@inertiajs/react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { Textarea } from "@/Core";
-import { Label } from "@/Core";
-import { Separator } from "@/Core";
-import {
-    ArrowLeft,
-    Check,
-    X,
-    DollarSign,
-    Calendar,
-    FileText,
-    User,
-    Clock,
-} from 'lucide-react';
+import { usePermission } from '@/Core';
 import { Link } from '@inertiajs/react';
 import { format } from 'date-fns';
-import { route } from 'ziggy-js';
-import { usePermission } from "@/Core";
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import { ArrowLeft, Check, Clock, DollarSign, FileText, User, X } from 'lucide-react';
 
 interface Employee {
     id: number;
@@ -106,43 +89,48 @@ const getStatusBadge = (status: string) => {
 };
 
 export default function Show({ auth, salaryAdvance }: Props) {
-  const { t } = useTranslation('payroll');
+    const { t } = useTranslation('payroll');
 
     const { hasPermission } = usePermission();
     const [showApproveDialog, setShowApproveDialog] = useState(false);
     const [showRejectDialog, setShowRejectDialog] = useState(false);
     const [processing, setProcessing] = useState(false);
 
-    const canApprove = hasPermission('salary-advances.edit') &&
-                      salaryAdvance.status === 'pending' &&
-                      (auth.user?.roles?.some(role => ['admin', 'hr'].includes(role.name)) || false);
+    const canApprove =
+        hasPermission('salary-advances.edit') &&
+        salaryAdvance.status === 'pending' &&
+        (auth.user?.roles?.some((role) => ['admin', 'hr'].includes(role.name)) || false);
 
     const handleApprove = () => {
         setProcessing(true);
-        router.post(`/salary-advances/${salaryAdvance.id}/approve`, {}, {
-            onFinish: () => {
-                setProcessing(false);
-                setShowApproveDialog(false);
+        router.post(
+            `/salary-advances/${salaryAdvance.id}/approve`,
+            {},
+            {
+                onFinish: () => {
+                    setProcessing(false);
+                    setShowApproveDialog(false);
+                },
             },
-        });
+        );
     };
 
     const handleReject = () => {
         setProcessing(true);
-        router.post(`/salary-advances/${salaryAdvance.id}/reject`, {}, {
-            onFinish: () => {
-                setProcessing(false);
-                setShowRejectDialog(false);
+        router.post(
+            `/salary-advances/${salaryAdvance.id}/reject`,
+            {},
+            {
+                onFinish: () => {
+                    setProcessing(false);
+                    setShowRejectDialog(false);
+                },
             },
-        });
+        );
     };
 
     return (
-        <AppLayout
-            title={t('ttl_salary_advance_details')}
-            breadcrumbs={breadcrumbs}
-            requiredPermission="salary-advances.view"
-        >
+        <AppLayout title={t('ttl_salary_advance_details')} breadcrumbs={breadcrumbs} requiredPermission="salary-advances.view">
             <Head title={`Salary Advance #${salaryAdvance.id}`} />
 
             <div className="flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -155,9 +143,7 @@ export default function Show({ auth, salaryAdvance }: Props) {
                             </Link>
                         </Button>
                         <div>
-                            <h1 className="text-3xl font-bold tracking-tight">
-                                Salary Advance #{salaryAdvance.id}
-                            </h1>
+                            <h1 className="text-3xl font-bold tracking-tight">Salary Advance #{salaryAdvance.id}</h1>
                             <p className="text-muted-foreground">
                                 Request submitted on {format(new Date(salaryAdvance.created_at), 'MMMM dd, yyyy')}
                             </p>
@@ -176,10 +162,7 @@ export default function Show({ auth, salaryAdvance }: Props) {
                                     <X className="mr-2 h-4 w-4" />
                                     Reject
                                 </Button>
-                                <Button
-                                    size="sm"
-                                    onClick={() => setShowApproveDialog(true)}
-                                >
+                                <Button size="sm" onClick={() => setShowApproveDialog(true)}>
                                     <Check className="mr-2 h-4 w-4" />
                                     Approve
                                 </Button>
@@ -222,22 +205,16 @@ export default function Show({ auth, salaryAdvance }: Props) {
                         <CardContent className="space-y-4">
                             <div>
                                 <p className="text-sm font-medium text-muted-foreground">Amount</p>
-                                <p className="text-2xl font-bold text-green-600">
-                                    ${salaryAdvance.amount}
-                                </p>
+                                <p className="text-2xl font-bold text-green-600">${salaryAdvance.amount}</p>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <p className="text-sm font-medium text-muted-foreground">{t('advance_date')}</p>
-                                    <p className="font-medium">
-                                        {format(new Date(salaryAdvance.advance_date), 'MMM dd, yyyy')}
-                                    </p>
+                                    <p className="font-medium">{format(new Date(salaryAdvance.advance_date), 'MMM dd, yyyy')}</p>
                                 </div>
                                 <div>
                                     <p className="text-sm font-medium text-muted-foreground">{t('deduction_start')}</p>
-                                    <p className="font-medium">
-                                        {format(new Date(salaryAdvance.deduction_start_date), 'MMM dd, yyyy')}
-                                    </p>
+                                    <p className="font-medium">{format(new Date(salaryAdvance.deduction_start_date), 'MMM dd, yyyy')}</p>
                                 </div>
                             </div>
                         </CardContent>
@@ -252,9 +229,7 @@ export default function Show({ auth, salaryAdvance }: Props) {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p className="whitespace-pre-wrap text-sm leading-relaxed">
-                                {salaryAdvance.reason}
-                            </p>
+                            <p className="text-sm leading-relaxed whitespace-pre-wrap">{salaryAdvance.reason}</p>
                         </CardContent>
                     </Card>
 
@@ -270,29 +245,19 @@ export default function Show({ auth, salaryAdvance }: Props) {
                             <div className="grid gap-4 md:grid-cols-3">
                                 <div>
                                     <p className="text-sm font-medium text-muted-foreground">{t('current_status')}</p>
-                                    <div className="mt-1">
-                                        {getStatusBadge(salaryAdvance.status)}
-                                    </div>
+                                    <div className="mt-1">{getStatusBadge(salaryAdvance.status)}</div>
                                 </div>
                                 <div>
                                     <p className="text-sm font-medium text-muted-foreground">Submitted</p>
-                                    <p className="font-medium">
-                                        {format(new Date(salaryAdvance.created_at), 'MMM dd, yyyy HH:mm')}
-                                    </p>
+                                    <p className="font-medium">{format(new Date(salaryAdvance.created_at), 'MMM dd, yyyy HH:mm')}</p>
                                 </div>
                                 {salaryAdvance.approved_at && (
                                     <div>
                                         <p className="text-sm font-medium text-muted-foreground">
                                             {salaryAdvance.status === 'approved' ? 'Approved' : 'Processed'}
                                         </p>
-                                        <p className="font-medium">
-                                            {format(new Date(salaryAdvance.approved_at), 'MMM dd, yyyy HH:mm')}
-                                        </p>
-                                        {salaryAdvance.approver && (
-                                            <p className="text-sm text-muted-foreground">
-                                                by {salaryAdvance.approver.name}
-                                            </p>
-                                        )}
+                                        <p className="font-medium">{format(new Date(salaryAdvance.approved_at), 'MMM dd, yyyy HH:mm')}</p>
+                                        {salaryAdvance.approver && <p className="text-sm text-muted-foreground">by {salaryAdvance.approver.name}</p>}
                                     </div>
                                 )}
                             </div>
@@ -315,11 +280,7 @@ export default function Show({ auth, salaryAdvance }: Props) {
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
-                        <Button
-                            variant="outline"
-                            onClick={() => setShowApproveDialog(false)}
-                            disabled={processing}
-                        >
+                        <Button variant="outline" onClick={() => setShowApproveDialog(false)} disabled={processing}>
                             Cancel
                         </Button>
                         <Button onClick={handleApprove} disabled={processing}>
@@ -338,23 +299,15 @@ export default function Show({ auth, salaryAdvance }: Props) {
                             Are you sure you want to reject this salary advance request for{' '}
                             <strong>
                                 {salaryAdvance.employee.first_name} {salaryAdvance.employee.last_name}
-                            </strong>?
-                            This action cannot be undone.
+                            </strong>
+                            ? This action cannot be undone.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
-                        <Button
-                            variant="outline"
-                            onClick={() => setShowRejectDialog(false)}
-                            disabled={processing}
-                        >
+                        <Button variant="outline" onClick={() => setShowRejectDialog(false)} disabled={processing}>
                             Cancel
                         </Button>
-                        <Button
-                            variant="destructive"
-                            onClick={handleReject}
-                            disabled={processing}
-                        >
+                        <Button variant="destructive" onClick={handleReject} disabled={processing}>
                             {processing ? 'Rejecting...' : 'Reject'}
                         </Button>
                     </DialogFooter>
@@ -363,17 +316,3 @@ export default function Show({ auth, salaryAdvance }: Props) {
         </AppLayout>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

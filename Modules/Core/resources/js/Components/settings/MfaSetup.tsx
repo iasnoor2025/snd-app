@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import { Alert, AlertDescription } from '@/Core/components/ui/alert';
 import { Button } from '@/Core/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/Core/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/Core/components/ui/dialog';
 import { Input } from '@/Core/components/ui/input';
 import { Label } from '@/Core/components/ui/label';
 import { Switch } from '@/Core/components/ui/switch';
-import { toast } from 'sonner';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/Core/components/ui/dialog';
-import { Alert, AlertDescription } from '@/Core/components/ui/alert';
 import { QRCodeSVG } from 'qrcode.react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface MfaSetupProps {
     isEnabled: boolean;
@@ -77,20 +77,13 @@ export default function MfaSetup({ isEnabled, secretKey, backupCodes }: MfaSetup
             </CardHeader>
             <CardContent>
                 <div className="flex items-center space-x-4">
-                    <Switch
-                        checked={isEnabled}
-                        onCheckedChange={handleToggleMfa}
-                        disabled={isSubmitting}
-                    />
+                    <Switch checked={isEnabled} onCheckedChange={handleToggleMfa} disabled={isSubmitting} />
                     <Label>Enable two-factor authentication</Label>
                 </div>
 
                 {isEnabled && (
                     <div className="mt-4">
-                        <Button
-                            variant="outline"
-                            onClick={() => setShowBackupCodes(true)}
-                        >
+                        <Button variant="outline" onClick={() => setShowBackupCodes(true)}>
                             View Backup Codes
                         </Button>
                     </div>
@@ -101,16 +94,12 @@ export default function MfaSetup({ isEnabled, secretKey, backupCodes }: MfaSetup
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Set up Two-Factor Authentication</DialogTitle>
-                        <DialogDescription>
-                            Scan this QR code with your authenticator app, then enter the verification code below.
-                        </DialogDescription>
+                        <DialogDescription>Scan this QR code with your authenticator app, then enter the verification code below.</DialogDescription>
                     </DialogHeader>
 
                     <div className="flex justify-center py-4">
                         <QRCodeSVG
-                            value={`otpauth://totp/SND-App:${encodeURIComponent(
-                                'user@email.com'
-                            )}?secret=${secretKey}&issuer=SND-App`}
+                            value={`otpauth://totp/SND-App:${encodeURIComponent('user@email.com')}?secret=${secretKey}&issuer=SND-App`}
                             size={200}
                         />
                     </div>
@@ -128,10 +117,7 @@ export default function MfaSetup({ isEnabled, secretKey, backupCodes }: MfaSetup
                     </div>
 
                     <DialogFooter>
-                        <Button
-                            onClick={handleVerifyAndEnable}
-                            disabled={isSubmitting || verificationCode.length !== 6}
-                        >
+                        <Button onClick={handleVerifyAndEnable} disabled={isSubmitting || verificationCode.length !== 6}>
                             {isSubmitting ? 'Verifying...' : 'Verify and Enable'}
                         </Button>
                     </DialogFooter>
@@ -149,7 +135,7 @@ export default function MfaSetup({ isEnabled, secretKey, backupCodes }: MfaSetup
 
                     <Alert>
                         <AlertDescription>
-                            <div className="font-mono space-y-2">
+                            <div className="space-y-2 font-mono">
                                 {backupCodes?.map((code, index) => (
                                     <div key={index}>{code}</div>
                                 ))}
@@ -158,9 +144,7 @@ export default function MfaSetup({ isEnabled, secretKey, backupCodes }: MfaSetup
                     </Alert>
 
                     <DialogFooter>
-                        <Button onClick={() => setShowBackupCodes(false)}>
-                            Close
-                        </Button>
+                        <Button onClick={() => setShowBackupCodes(false)}>Close</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

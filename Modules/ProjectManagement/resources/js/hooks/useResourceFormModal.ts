@@ -18,18 +18,14 @@ interface UseResourceFormModalReturn {
     closeEditModal: () => void;
 }
 
-export function useResourceFormModal({
-    projectId,
-    type,
-    onSuccess
-}: UseResourceFormModalProps): UseResourceFormModalReturn {
+export function useResourceFormModal({ projectId, type, onSuccess }: UseResourceFormModalProps): UseResourceFormModalReturn {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedResource, setSelectedResource] = useState<unknown | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
     const openCreateModal = () => {
-  const { t } = useTranslation('project');
+        const { t } = useTranslation('project');
 
         setIsCreateModalOpen(true);
     };
@@ -60,4 +56,3 @@ export function useResourceFormModal({
         closeEditModal,
     };
 }
-

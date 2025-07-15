@@ -5,6 +5,7 @@ The Core module serves as the centralized resource hub for the entire applicatio
 ## Overview
 
 All shared resources have been moved to the Core module to:
+
 - **Eliminate Duplication**: Prevent code duplication across modules
 - **Ensure Consistency**: Maintain consistent UI/UX across the application
 - **Simplify Maintenance**: Centralized updates and bug fixes
@@ -53,32 +54,19 @@ Modules/Core/resources/
 
 ```tsx
 // In any module's component file
-import { 
-  Button, 
-  Card, 
-  Modal, 
-  DataTable,
-  AuthenticatedLayout,
-  AppSidebar
-} from '@/../../Modules/Core/resources/js/components';
+import { Button, Card, Modal, DataTable, AuthenticatedLayout, AppSidebar } from '@/../../Modules/Core/resources/js/components';
 
 // Or use the main index
-import { 
-  Button, 
-  Card, 
-  Modal 
-} from '@/../../Modules/Core/resources/js';
+import { Button, Card, Modal } from '@/../../Modules/Core/resources/js';
 
 export default function MyComponent() {
-  return (
-    <AuthenticatedLayout>
-      <Card>
-        <Button variant="primary">
-          Click me
-        </Button>
-      </Card>
-    </AuthenticatedLayout>
-  );
+    return (
+        <AuthenticatedLayout>
+            <Card>
+                <Button variant="primary">Click me</Button>
+            </Card>
+        </AuthenticatedLayout>
+    );
 }
 ```
 
@@ -86,23 +74,18 @@ export default function MyComponent() {
 
 ```tsx
 // In any module's component file
-import { 
-  useAuth, 
-  usePermissions, 
-  useApi,
-  useLocalStorage 
-} from '@/../../Modules/Core/resources/js/hooks';
+import { useAuth, usePermissions, useApi, useLocalStorage } from '@/../../Modules/Core/resources/js/hooks';
 
 export default function MyComponent() {
-  const { user } = useAuth();
-  const { can } = usePermissions();
-  const { data, loading } = useApi('/api/data');
-  
-  if (!can('view-data')) {
-    return <div>Access denied</div>;
-  }
-  
-  return <div>{data?.message}</div>;
+    const { user } = useAuth();
+    const { can } = usePermissions();
+    const { data, loading } = useApi('/api/data');
+
+    if (!can('view-data')) {
+        return <div>Access denied</div>;
+    }
+
+    return <div>{data?.message}</div>;
 }
 ```
 
@@ -110,20 +93,15 @@ export default function MyComponent() {
 
 ```tsx
 // In any module's component file
-import { 
-  cn, 
-  formatDate, 
-  formatCurrency,
-  validateEmail 
-} from '@/../../Modules/Core/resources/js/utils';
+import { cn, formatDate, formatCurrency, validateEmail } from '@/../../Modules/Core/resources/js/utils';
 
 export default function MyComponent({ className, date, amount }) {
-  return (
-    <div className={cn('base-class', className)}>
-      <p>Date: {formatDate(date)}</p>
-      <p>Amount: {formatCurrency(amount)}</p>
-    </div>
-  );
+    return (
+        <div className={cn('base-class', className)}>
+            <p>Date: {formatDate(date)}</p>
+            <p>Amount: {formatCurrency(amount)}</p>
+        </div>
+    );
 }
 ```
 
@@ -131,20 +109,15 @@ export default function MyComponent({ className, date, amount }) {
 
 ```tsx
 // In any module's TypeScript file
-import type { 
-  User, 
-  ApiResponse, 
-  PageProps,
-  FormData 
-} from '@/../../Modules/Core/resources/js/types';
+import type { User, ApiResponse, PageProps, FormData } from '@/../../Modules/Core/resources/js/types';
 
 interface MyComponentProps {
-  user: User;
-  response: ApiResponse<FormData>;
+    user: User;
+    response: ApiResponse<FormData>;
 }
 
 export default function MyComponent({ user, response }: MyComponentProps) {
-  // Component implementation
+    // Component implementation
 }
 ```
 
@@ -152,10 +125,10 @@ export default function MyComponent({ user, response }: MyComponentProps) {
 
 ```tsx
 // In any module's component file
-import { 
-  authService, 
+import {
+  authService,
   apiService,
-  notificationService 
+  notificationService
 } from '@/../../Modules/Core/resources/js/services';
 
 export default function MyComponent() {
@@ -167,7 +140,7 @@ export default function MyComponent() {
       notificationService.error('Login failed');
     }
   };
-  
+
   return (
     // Component JSX
   );
@@ -181,15 +154,13 @@ export default function MyComponent() {
 import { AuthenticatedLayout } from '@/../../Modules/Core/resources/js/layouts';
 
 export default function ModulePage({ auth, children }) {
-  return (
-    <AuthenticatedLayout user={auth.user}>
-      <div className="py-12">
-        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-          {children}
-        </div>
-      </div>
-    </AuthenticatedLayout>
-  );
+    return (
+        <AuthenticatedLayout user={auth.user}>
+            <div className="py-12">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">{children}</div>
+            </div>
+        </AuthenticatedLayout>
+    );
 }
 ```
 
@@ -215,14 +186,11 @@ import * as Core from '@/../../Modules/Core/resources/js';
 import { Button } from '@/../../Modules/Core/resources/js/components';
 
 export const ModuleSpecificButton = ({ children, ...props }) => {
-  return (
-    <Button 
-      className="module-specific-styling" 
-      {...props}
-    >
-      {children}
-    </Button>
-  );
+    return (
+        <Button className="module-specific-styling" {...props}>
+            {children}
+        </Button>
+    );
 };
 ```
 
@@ -233,7 +201,7 @@ export const ModuleSpecificButton = ({ children, ...props }) => {
 import type { BaseUser } from '@/../../Modules/Core/resources/js/types';
 
 export interface ModuleUser extends BaseUser {
-  moduleSpecificField: string;
+    moduleSpecificField: string;
 }
 ```
 
@@ -294,7 +262,7 @@ This maintains Laravel's expected structure while leveraging the centralized res
 ✅ **Better Performance**: Improved bundling and code splitting  
 ✅ **Type Safety**: Shared TypeScript types ensure consistency  
 ✅ **Simplified Imports**: Clear import paths for shared resources  
-✅ **Modular Architecture**: Clean separation of concerns  
+✅ **Modular Architecture**: Clean separation of concerns
 
 ## Next Steps
 
@@ -307,6 +275,7 @@ This maintains Laravel's expected structure while leveraging the centralized res
 ## Support
 
 For questions about using shared resources from the Core module, refer to:
+
 - Component documentation in `Modules/Core/resources/js/components/`
 - Hook documentation in `Modules/Core/resources/js/hooks/`
 - Utility documentation in `Modules/Core/resources/js/utils/`

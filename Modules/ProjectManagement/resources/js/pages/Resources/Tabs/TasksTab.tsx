@@ -1,13 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import { Button, Card, CardContent, CardHeader, CardTitle, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/Core';
 import { router } from '@inertiajs/react';
-import { Button } from "@/Core";
-import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
 import { Plus } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/Core";
-import { toast } from 'sonner';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useProjectResources } from '../../../hooks/useProjectResources';
-import { TaskStatus } from '../../../types/projectResources';
+import { toast } from 'sonner';
 import TaskList, { ProjectTask } from '../../../components/project/TaskList';
 
 interface TasksTabProps {
@@ -55,33 +51,39 @@ export default function TasksTab({ project, tasks, assignableUsers }: TasksTabPr
         }
     }, [project.id, taskToDelete]);
 
-    const handleStatusChange = useCallback(async (task: ProjectTask, event: any) => {
-        try {
-            await router.put(route('projects.tasks.status', { project: project.id, task: task.id }), {
-                status: event.target.value
-            });
-            toast.success(t('projects:task_status_updated_success'));
-        } catch (error) {
-            toast.error(t('projects:error_updating_task_status'));
-        }
-    }, [project.id]);
+    const handleStatusChange = useCallback(
+        async (task: ProjectTask, event: any) => {
+            try {
+                await router.put(route('projects.tasks.status', { project: project.id, task: task.id }), {
+                    status: event.target.value,
+                });
+                toast.success(t('projects:task_status_updated_success'));
+            } catch (error) {
+                toast.error(t('projects:error_updating_task_status'));
+            }
+        },
+        [project.id],
+    );
 
-    const handleCompletionChange = useCallback(async (task: ProjectTask, percentage: number) => {
-        try {
-            await router.put(route('projects.tasks.update', [project.id, task.id]), {
-                completion_percentage: percentage
-            });
-            toast.success(t('projects:task_completion_updated_success'));
-        } catch (error) {
-            toast.error(t('projects:error_updating_task_completion'));
-        }
-    }, [project.id]);
+    const handleCompletionChange = useCallback(
+        async (task: ProjectTask, percentage: number) => {
+            try {
+                await router.put(route('projects.tasks.update', [project.id, task.id]), {
+                    completion_percentage: percentage,
+                });
+                toast.success(t('projects:task_completion_updated_success'));
+            } catch (error) {
+                toast.error(t('projects:error_updating_task_completion'));
+            }
+        },
+        [project.id],
+    );
 
     return (
         <div className="space-y-4">
             <div className="flex justify-end">
                 <Button onClick={handleCreate}>
-                    <Plus className="h-4 w-4 mr-2" />
+                    <Plus className="mr-2 h-4 w-4" />
                     Add Task
                 </Button>
             </div>
@@ -106,18 +108,13 @@ export default function TasksTab({ project, tasks, assignableUsers }: TasksTabPr
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>{t('delete_task')}</DialogTitle>
-                        <DialogDescription>
-                            Are you sure you want to delete this task? This action cannot be undone.
-                        </DialogDescription>
+                        <DialogDescription>Are you sure you want to delete this task? This action cannot be undone.</DialogDescription>
                     </DialogHeader>
                     <div className="flex justify-end space-x-2">
                         <Button variant="outline" onClick={() => setDeleteModalOpen(false)}>
                             Cancel
                         </Button>
-                        <Button
-                            variant="destructive"
-                            onClick={handleDeleteConfirmed}
-                        >
+                        <Button variant="destructive" onClick={handleDeleteConfirmed}>
                             Delete
                         </Button>
                     </div>
@@ -126,17 +123,3 @@ export default function TasksTab({ project, tasks, assignableUsers }: TasksTabPr
         </div>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,10 +1,10 @@
-import { render, screen, act } from '@testing-library/react';
-import { FlashMessage, FlashMessageContainer } from '../FlashMessage';
 import { usePage } from '@inertiajs/react';
+import { act, render, screen } from '@testing-library/react';
+import { FlashMessage, FlashMessageContainer } from '../FlashMessage';
 
 // Mock usePage hook
 jest.mock('@inertiajs/react', () => ({
-    usePage: jest.fn()
+    usePage: jest.fn(),
 }));
 
 describe('FlashMessage', () => {
@@ -55,9 +55,9 @@ describe('FlashMessageContainer', () => {
         (usePage as jest.Mock).mockReturnValue({
             props: {
                 flash: {
-                    success: 'Success message'
-                }
-            }
+                    success: 'Success message',
+                },
+            },
         });
 
         render(<FlashMessageContainer />);
@@ -68,9 +68,9 @@ describe('FlashMessageContainer', () => {
         (usePage as jest.Mock).mockReturnValue({
             props: {
                 flash: {
-                    error: 'Error message'
-                }
-            }
+                    error: 'Error message',
+                },
+            },
         });
 
         render(<FlashMessageContainer />);
@@ -82,9 +82,9 @@ describe('FlashMessageContainer', () => {
             props: {
                 flash: {
                     success: 'Success message',
-                    error: 'Error message'
-                }
-            }
+                    error: 'Error message',
+                },
+            },
         });
 
         render(<FlashMessageContainer />);
@@ -95,8 +95,8 @@ describe('FlashMessageContainer', () => {
     it('renders nothing when no flash messages', () => {
         (usePage as jest.Mock).mockReturnValue({
             props: {
-                flash: {}
-            }
+                flash: {},
+            },
         });
 
         render(<FlashMessageContainer />);
@@ -104,24 +104,3 @@ describe('FlashMessageContainer', () => {
         expect(screen.queryByText('Error message')).not.toBeInTheDocument();
     });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,16 +1,3 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Head } from '@inertiajs/react';
-import { Inertia } from '@inertiajs/inertia';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Core";
-import { Button } from "@/Core";
-import { Badge } from "@/Core";
-import { Separator } from "@/Core";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/Core";
-import { ArrowLeftIcon, EditIcon, TrashIcon, CalendarIcon, ClockIcon, UsersIcon, CreditCardIcon, CheckCircleIcon, XCircleIcon } from 'lucide-react';
-import { toast } from 'sonner';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
-import { route } from 'ziggy-js';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -21,7 +8,27 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-} from "@/Core";
+    Badge,
+    Breadcrumb,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+    Button,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+    Separator,
+} from '@/Core';
+import { formatDateMedium } from '@/Core/utils/dateFormatter';
+import { Inertia } from '@inertiajs/inertia';
+import { Head } from '@inertiajs/react';
+import { ArrowLeftIcon, CalendarIcon, CheckCircleIcon, ClockIcon, CreditCardIcon, EditIcon, TrashIcon, UsersIcon, XCircleIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
+import { route } from 'ziggy-js';
 
 // Temporary inline permission hook
 const usePermission = () => {
@@ -55,7 +62,7 @@ interface Props {
 }
 
 export default function ShowLeaveType({ leaveType }: Props) {
-  const { t } = useTranslation('leave');
+    const { t } = useTranslation('leave');
 
     const { can } = usePermission();
 
@@ -143,18 +150,11 @@ export default function ShowLeaveType({ leaveType }: Props) {
                         </Button>
                         <div>
                             <div className="flex items-center gap-3">
-                                <div
-                                    className="w-4 h-4 rounded-full"
-                                    style={{ backgroundColor: leaveType.color }}
-                                />
+                                <div className="h-4 w-4 rounded-full" style={{ backgroundColor: leaveType.color }} />
                                 <h1 className="text-3xl font-bold tracking-tight">{leaveType.name}</h1>
-                                <Badge variant={leaveType.is_active ? 'default' : 'secondary'}>
-                                    {leaveType.is_active ? 'Active' : 'Inactive'}
-                                </Badge>
+                                <Badge variant={leaveType.is_active ? 'default' : 'secondary'}>{leaveType.is_active ? 'Active' : 'Inactive'}</Badge>
                             </div>
-                            <p className="text-muted-foreground mt-1">
-                                {leaveType.description || 'No description provided'}
-                            </p>
+                            <p className="mt-1 text-muted-foreground">{leaveType.description || 'No description provided'}</p>
                         </div>
                     </div>
 
@@ -179,7 +179,7 @@ export default function ShowLeaveType({ leaveType }: Props) {
                                         <AlertDialogDescription>
                                             Are you sure you want to delete "{leaveType.name}"? This action cannot be undone.
                                             {leaveType.requests_count && leaveType.requests_count > 0 && (
-                                                <span className="block mt-2 text-red-600 font-medium">
+                                                <span className="mt-2 block font-medium text-red-600">
                                                     Warning: This leave type has {leaveType.requests_count} associated requests.
                                                 </span>
                                             )}
@@ -198,26 +198,21 @@ export default function ShowLeaveType({ leaveType }: Props) {
                 </div>
 
                 {/* Content */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                     {/* Main Information */}
-                    <div className="lg:col-span-2 space-y-6">
+                    <div className="space-y-6 lg:col-span-2">
                         {/* Basic Details */}
                         <Card>
                             <CardHeader>
                                 <CardTitle>{t('ttl_basic_information')}</CardTitle>
-                                <CardDescription>
-                                    Core details and configuration of the leave type
-                                </CardDescription>
+                                <CardDescription>Core details and configuration of the leave type</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                     <div className="space-y-2">
                                         <div className="text-sm font-medium text-muted-foreground">Name</div>
                                         <div className="flex items-center gap-2">
-                                            <div
-                                                className="w-3 h-3 rounded-full"
-                                                style={{ backgroundColor: leaveType.color }}
-                                            />
+                                            <div className="h-3 w-3 rounded-full" style={{ backgroundColor: leaveType.color }} />
                                             <span className="font-medium">{leaveType.name}</span>
                                         </div>
                                     </div>
@@ -225,10 +220,7 @@ export default function ShowLeaveType({ leaveType }: Props) {
                                     <div className="space-y-2">
                                         <div className="text-sm font-medium text-muted-foreground">{t('color_code')}</div>
                                         <div className="flex items-center gap-2">
-                                            <div
-                                                className="w-6 h-6 rounded border"
-                                                style={{ backgroundColor: leaveType.color }}
-                                            />
+                                            <div className="h-6 w-6 rounded border" style={{ backgroundColor: leaveType.color }} />
                                             <span className="font-mono text-sm">{leaveType.color}</span>
                                         </div>
                                     </div>
@@ -247,12 +239,10 @@ export default function ShowLeaveType({ leaveType }: Props) {
                         <Card>
                             <CardHeader>
                                 <CardTitle>{t('ttl_leave_configuration')}</CardTitle>
-                                <CardDescription>
-                                    Rules and limits for this leave type
-                                </CardDescription>
+                                <CardDescription>Rules and limits for this leave type</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                                     <div className="flex items-center gap-3">
                                         <CalendarIcon className="h-5 w-5 text-muted-foreground" />
                                         <div>
@@ -315,9 +305,7 @@ export default function ShowLeaveType({ leaveType }: Props) {
                         <Card>
                             <CardHeader>
                                 <CardTitle>Settings</CardTitle>
-                                <CardDescription>
-                                    Leave type behavior and permissions
-                                </CardDescription>
+                                <CardDescription>Leave type behavior and permissions</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="flex items-center justify-between">
@@ -355,9 +343,7 @@ export default function ShowLeaveType({ leaveType }: Props) {
                             <Card>
                                 <CardHeader>
                                     <CardTitle>{t('ttl_usage_statistics')}</CardTitle>
-                                    <CardDescription>
-                                        Leave requests using this type
-                                    </CardDescription>
+                                    <CardDescription>Leave requests using this type</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     {leaveType.requests_count !== undefined && (
@@ -381,9 +367,7 @@ export default function ShowLeaveType({ leaveType }: Props) {
                         <Card>
                             <CardHeader>
                                 <CardTitle>Metadata</CardTitle>
-                                <CardDescription>
-                                    Creation and modification details
-                                </CardDescription>
+                                <CardDescription>Creation and modification details</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">

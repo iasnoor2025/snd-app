@@ -19,4 +19,4 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 window.React = React;
-window.ReactDOM = { createRoot }; 
+window.ReactDOM = { createRoot };

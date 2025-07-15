@@ -1,27 +1,25 @@
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { useInitials } from '../../hooks/use-initials';
 import DashboardWidgetCard from './DashboardWidgetCard';
-import { useInitials } from "../../hooks/use-initials";
 
 interface TeamMember {
-  id: string;
-  name: string;
-  role: string;
-  avatarUrl?: string;
+    id: string;
+    name: string;
+    role: string;
+    avatarUrl?: string;
 }
 
 interface TeamWidgetProps {
-  members: TeamMember[];
-  className?: string;
-  onRemove: () => void;
+    members: TeamMember[];
+    className?: string;
+    onRemove: () => void;
 }
 
 const TeamWidget: React.FC<TeamWidgetProps> = ({ members, className = '', onRemove }) => {
-  const getInitials = useInitials();
-  return (
-    <DashboardWidgetCard title="Team" summary={members.length === 0 ? 'No team members.' : undefined} onRemove={onRemove} className={className}>
-      {/*
+    const getInitials = useInitials();
+    return (
+        <DashboardWidgetCard title="Team" summary={members.length === 0 ? 'No team members.' : undefined} onRemove={onRemove} className={className}>
+            {/*
       <CardContent>
         <ul className="space-y-3">
           {members.length === 0 ? (
@@ -49,10 +47,10 @@ const TeamWidget: React.FC<TeamWidgetProps> = ({ members, className = '', onRemo
         </ul>
       </CardContent>
       */}
-    </DashboardWidgetCard>
-  );
+        </DashboardWidgetCard>
+    );
 };
 
 export default TeamWidget;
 
-export type { TeamWidgetProps, TeamMember };
+export type { TeamMember, TeamWidgetProps };

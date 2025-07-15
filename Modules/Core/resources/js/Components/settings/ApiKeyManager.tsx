@@ -1,14 +1,13 @@
-import { useState } from 'react';
-import { Button } from '@/Core/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import { Button } from '@/Core/components/ui/button';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 
 interface ApiKey {
     id: number;
@@ -32,13 +31,13 @@ export default function ApiKeyManager({ apiKeys: initialApiKeys }: ApiKeyManager
     const [formData, setFormData] = useState({
         name: '',
         scopes: [] as string[],
-        expires_in: '30' // days
+        expires_in: '30', // days
     });
 
     const availableScopes = [
         { value: 'read', label: 'Read Access' },
         { value: 'write', label: 'Write Access' },
-        { value: 'admin', label: 'Admin Access' }
+        { value: 'admin', label: 'Admin Access' },
     ];
 
     const handleCreateKey = async () => {
@@ -47,9 +46,9 @@ export default function ApiKeyManager({ apiKeys: initialApiKeys }: ApiKeyManager
             const response = await fetch('/api/api-keys', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(formData),
             });
 
             const data = await response.json();
@@ -73,11 +72,11 @@ export default function ApiKeyManager({ apiKeys: initialApiKeys }: ApiKeyManager
     const handleRevokeKey = async (keyId: number) => {
         try {
             const response = await fetch(`/api/api-keys/${keyId}`, {
-                method: 'DELETE'
+                method: 'DELETE',
             });
 
             if (response.ok) {
-                setApiKeys(apiKeys.filter(key => key.id !== keyId));
+                setApiKeys(apiKeys.filter((key) => key.id !== keyId));
                 toast.success('API key revoked successfully');
             } else {
                 throw new Error('Failed to revoke key');
@@ -91,15 +90,11 @@ export default function ApiKeyManager({ apiKeys: initialApiKeys }: ApiKeyManager
         <Card>
             <CardHeader>
                 <CardTitle>API Keys</CardTitle>
-                <CardDescription>
-                    Manage API keys for programmatic access to your account.
-                </CardDescription>
+                <CardDescription>Manage API keys for programmatic access to your account.</CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
-                    <Button onClick={() => setShowCreateDialog(true)}>
-                        Create New API Key
-                    </Button>
+                    <Button onClick={() => setShowCreateDialog(true)}>Create New API Key</Button>
 
                     <Table>
                         <TableHeader>
@@ -118,18 +113,10 @@ export default function ApiKeyManager({ apiKeys: initialApiKeys }: ApiKeyManager
                                     <TableCell>{key.name}</TableCell>
                                     <TableCell>{key.scopes.join(', ')}</TableCell>
                                     <TableCell>{new Date(key.created_at)}</TableCell>
+                                    <TableCell>{key.expires_at ? new Date(key.expires_at) : 'Never'}</TableCell>
+                                    <TableCell>{key.last_used_at ? new Date(key.last_used_at) : 'Never'}</TableCell>
                                     <TableCell>
-                                        {key.expires_at ? new Date(key.expires_at) : 'Never'}
-                                    </TableCell>
-                                    <TableCell>
-                                        {key.last_used_at ? new Date(key.last_used_at) : 'Never'}
-                                    </TableCell>
-                                    <TableCell>
-                                        <Button
-                                            variant="destructive"
-                                            size="sm"
-                                            onClick={() => handleRevokeKey(key.id)}
-                                        >
+                                        <Button variant="destructive" size="sm" onClick={() => handleRevokeKey(key.id)}>
                                             Revoke
                                         </Button>
                                     </TableCell>
@@ -144,9 +131,7 @@ export default function ApiKeyManager({ apiKeys: initialApiKeys }: ApiKeyManager
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Create New API Key</DialogTitle>
-                        <DialogDescription>
-                            Create a new API key with specific permissions and expiration.
-                        </DialogDescription>
+                        <DialogDescription>Create a new API key with specific permissions and expiration.</DialogDescription>
                     </DialogHeader>
 
                     <div className="space-y-4">
@@ -180,10 +165,7 @@ export default function ApiKeyManager({ apiKeys: initialApiKeys }: ApiKeyManager
 
                         <div>
                             <Label>Expires In (Days)</Label>
-                            <Select
-                                value={formData.expires_in}
-                                onValueChange={(value) => setFormData({ ...formData, expires_in: value })}
-                            >
+                            <Select value={formData.expires_in} onValueChange={(value) => setFormData({ ...formData, expires_in: value })}>
                                 <SelectTrigger>
                                     <SelectValue />
                                 </SelectTrigger>
@@ -199,10 +181,7 @@ export default function ApiKeyManager({ apiKeys: initialApiKeys }: ApiKeyManager
                     </div>
 
                     <DialogFooter>
-                        <Button
-                            onClick={handleCreateKey}
-                            disabled={isSubmitting || !formData.name || formData.scopes.length === 0}
-                        >
+                        <Button onClick={handleCreateKey} disabled={isSubmitting || !formData.name || formData.scopes.length === 0}>
                             {isSubmitting ? 'Creating...' : 'Create Key'}
                         </Button>
                     </DialogFooter>
@@ -213,16 +192,12 @@ export default function ApiKeyManager({ apiKeys: initialApiKeys }: ApiKeyManager
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>API Key Created</DialogTitle>
-                        <DialogDescription>
-                            Copy your API key now. You won't be able to see it again!
-                        </DialogDescription>
+                        <DialogDescription>Copy your API key now. You won't be able to see it again!</DialogDescription>
                     </DialogHeader>
 
                     <Alert>
                         <AlertDescription>
-                            <div className="font-mono break-all">
-                                {newKeyValue}
-                            </div>
+                            <div className="font-mono break-all">{newKeyValue}</div>
                         </AlertDescription>
                     </Alert>
 

@@ -1,62 +1,49 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
+    Badge,
+    Button,
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from "@/Core";
-import { Button } from "@/Core";
-import { Input } from "@/Core";
-import { Textarea } from "@/Core";
-import { Badge } from "@/Core";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/Core";
-import {
     Dialog,
     DialogContent,
     DialogDescription,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/Core";
-import { Switch } from "@/Core";
-import { Label } from "@/Core";
+    Input,
+    Label,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    Switch,
+    Textarea,
+} from '@/Core';
+import { formatDateMedium } from '@/Core/utils/dateFormatter';
+import axios from 'axios';
 import {
-    Play,
-    Pause,
-    Square,
+    Battery,
+    CheckCircle,
+    Download,
     MapPin,
+    Navigation,
+    Pause,
+    Play,
+    Settings,
+    Signal,
+    Smartphone,
+    Square,
+    Sync,
+    Upload,
     Wifi,
     WifiOff,
-    Clock,
-    Calendar,
-    User,
-    Building,
-    CheckCircle,
-    AlertTriangle,
-    Smartphone,
-    Battery,
-    Signal,
-    Navigation,
-    Target,
-    Upload,
-    Download,
-    Sync,
-    History,
-    Settings,
-    Camera,
-    Mic
 } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import axios from 'axios';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Project {
     id: number;
@@ -131,7 +118,7 @@ const MobileTimesheetEntry: React.FC = () => {
         description: '',
         date: new Date().toISOString().split('T')[0],
         start_time: '',
-        status: 'draft'
+        status: 'draft',
     });
     const [isTracking, setIsTracking] = useState(false);
     const [trackingStartTime, setTrackingStartTime] = useState<Date | null>(null);
@@ -204,11 +191,7 @@ const MobileTimesheetEntry: React.FC = () => {
 
     const initializeApp = async () => {
         try {
-            await Promise.all([
-                fetchProjects(),
-                initializeLocation(),
-                getDeviceInfo()
-            ]);
+            await Promise.all([fetchProjects(), initializeLocation(), getDeviceInfo()]);
         } catch (error) {
             console.error('Failed to initialize app:', error);
             toast.error('Failed to initialize application');
@@ -216,7 +199,7 @@ const MobileTimesheetEntry: React.FC = () => {
     };
 
     const setupEventListeners = () => {
-  const { t } = useTranslation('timesheet');
+        const { t } = useTranslation('timesheet');
 
         // Online/offline detection
         window.addEventListener('online', () => {
@@ -284,7 +267,7 @@ const MobileTimesheetEntry: React.FC = () => {
         const options = {
             enableHighAccuracy: highAccuracy,
             timeout: 10000,
-            maximumAge: 60000
+            maximumAge: 60000,
         };
 
         // Get initial position
@@ -294,7 +277,7 @@ const MobileTimesheetEntry: React.FC = () => {
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude,
                     accuracy: position.coords.accuracy,
-                    timestamp: new Date().toISOString()
+                    timestamp: new Date().toISOString(),
                 };
                 setLocation(locationData);
                 setIsLocationEnabled(true);
@@ -304,7 +287,7 @@ const MobileTimesheetEntry: React.FC = () => {
                 console.error('Location error:', error);
                 toast.error('Failed to get location: ' + error.message);
             },
-            options
+            options,
         );
 
         // Watch position if tracking is enabled
@@ -315,19 +298,19 @@ const MobileTimesheetEntry: React.FC = () => {
                         latitude: position.coords.latitude,
                         longitude: position.coords.longitude,
                         accuracy: position.coords.accuracy,
-                        timestamp: new Date().toISOString()
+                        timestamp: new Date().toISOString(),
                     };
                     setLocation(locationData);
 
                     // Add to location history if tracking
                     if (isTracking) {
-                        setLocationHistory(prev => [...prev.slice(-99), locationData]); // Keep last 100 points
+                        setLocationHistory((prev) => [...prev.slice(-99), locationData]); // Keep last 100 points
                     }
                 },
                 (error) => {
                     console.error('Location watch error:', error);
                 },
-                options
+                options,
             );
         }
     };
@@ -336,7 +319,7 @@ const MobileTimesheetEntry: React.FC = () => {
         try {
             // Mock reverse geocoding - in real implementation, use a geocoding service
             const address = `${locationData.latitude.toFixed(4)}, ${locationData.longitude.toFixed(4)}`;
-            setLocation(prev => prev ? { ...prev, address } : null);
+            setLocation((prev) => (prev ? { ...prev, address } : null));
         } catch (error) {
             console.error('Reverse geocoding failed:', error);
         }
@@ -347,7 +330,7 @@ const MobileTimesheetEntry: React.FC = () => {
             id: localStorage.getItem('device_id') || generateDeviceId(),
             platform: navigator.platform,
             version: navigator.userAgent,
-            is_online: navigator.onLine
+            is_online: navigator.onLine,
         };
 
         // Get battery info if available
@@ -390,7 +373,7 @@ const MobileTimesheetEntry: React.FC = () => {
     };
 
     const removePendingEntry = (id: number) => {
-        const updated = pendingEntries.filter(entry => entry.id !== id);
+        const updated = pendingEntries.filter((entry) => entry.id !== id);
         setPendingEntries(updated);
         localStorage.setItem('pending_timesheets', JSON.stringify(updated));
     };
@@ -407,7 +390,7 @@ const MobileTimesheetEntry: React.FC = () => {
         setElapsedTime(0);
         setLocationHistory([]);
 
-        setCurrentEntry(prev => ({
+        setCurrentEntry((prev) => ({
             ...prev,
             start_time: now.toTimeString().slice(0, 8),
             latitude: location?.latitude,
@@ -415,7 +398,7 @@ const MobileTimesheetEntry: React.FC = () => {
             gps_accuracy: location?.accuracy,
             address: location?.address,
             device_id: deviceInfo?.id,
-            app_version: '1.0.0'
+            app_version: '1.0.0',
         }));
 
         toast.success('Time tracking started');
@@ -438,12 +421,12 @@ const MobileTimesheetEntry: React.FC = () => {
         const totalSeconds = Math.floor((now.getTime() - trackingStartTime.getTime()) / 1000);
         const hours = totalSeconds / 3600;
 
-        setCurrentEntry(prev => ({
+        setCurrentEntry((prev) => ({
             ...prev,
             end_time: now.toTimeString().slice(0, 8),
             hours_worked: Math.round(hours * 100) / 100,
             location_history: locationHistory,
-            sync_timestamp: new Date().toISOString()
+            sync_timestamp: new Date().toISOString(),
         }));
 
         setIsTracking(false);
@@ -465,7 +448,7 @@ const MobileTimesheetEntry: React.FC = () => {
             const entryToSubmit = {
                 ...currentEntry,
                 is_offline_entry: !isOnline,
-                sync_timestamp: new Date().toISOString()
+                sync_timestamp: new Date().toISOString(),
             };
 
             if (isOnline) {
@@ -494,7 +477,7 @@ const MobileTimesheetEntry: React.FC = () => {
                 await axios.post('/api/timesheets', {
                     ...entry,
                     is_offline_entry: true,
-                    sync_timestamp: new Date().toISOString()
+                    sync_timestamp: new Date().toISOString(),
                 });
                 removePendingEntry(entry.id!);
             }
@@ -514,7 +497,7 @@ const MobileTimesheetEntry: React.FC = () => {
             description: '',
             date: new Date().toISOString().split('T')[0],
             start_time: '',
-            status: 'draft'
+            status: 'draft',
         });
         setLocationHistory([]);
     };
@@ -541,18 +524,16 @@ const MobileTimesheetEntry: React.FC = () => {
     const locationStatus = getLocationStatus();
 
     return (
-        <div className="max-w-md mx-auto space-y-4 p-4">
+        <div className="mx-auto max-w-md space-y-4 p-4">
             {/* Header */}
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold">{t('mobile_timesheet')}</h1>
-                    <p className="text-sm text-muted-foreground">
-                        {new Date()}
-                    </p>
+                    <p className="text-sm text-muted-foreground">{new Date()}</p>
                 </div>
                 <div className="flex items-center space-x-2">
                     <Badge variant={isOnline ? 'default' : 'destructive'}>
-                        {isOnline ? <Wifi className="h-3 w-3 mr-1" /> : <WifiOff className="h-3 w-3 mr-1" />}
+                        {isOnline ? <Wifi className="mr-1 h-3 w-3" /> : <WifiOff className="mr-1 h-3 w-3" />}
                         {isOnline ? 'Online' : 'Offline'}
                     </Badge>
                     <Dialog open={showSettings} onOpenChange={setShowSettings}>
@@ -564,34 +545,20 @@ const MobileTimesheetEntry: React.FC = () => {
                         <DialogContent>
                             <DialogHeader>
                                 <DialogTitle>Settings</DialogTitle>
-                                <DialogDescription>
-                                    Configure mobile timesheet preferences
-                                </DialogDescription>
+                                <DialogDescription>Configure mobile timesheet preferences</DialogDescription>
                             </DialogHeader>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <Label htmlFor="auto-sync">{t('lbl_auto_sync')}</Label>
-                                    <Switch
-                                        id="auto-sync"
-                                        checked={autoSync}
-                                        onCheckedChange={setAutoSync}
-                                    />
+                                    <Switch id="auto-sync" checked={autoSync} onCheckedChange={setAutoSync} />
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <Label htmlFor="track-location">{t('lbl_track_location')}</Label>
-                                    <Switch
-                                        id="track-location"
-                                        checked={trackLocation}
-                                        onCheckedChange={setTrackLocation}
-                                    />
+                                    <Switch id="track-location" checked={trackLocation} onCheckedChange={setTrackLocation} />
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <Label htmlFor="high-accuracy">{t('lbl_high_accuracy_gps')}</Label>
-                                    <Switch
-                                        id="high-accuracy"
-                                        checked={highAccuracy}
-                                        onCheckedChange={setHighAccuracy}
-                                    />
+                                    <Switch id="high-accuracy" checked={highAccuracy} onCheckedChange={setHighAccuracy} />
                                 </div>
                             </div>
                         </DialogContent>
@@ -630,20 +597,14 @@ const MobileTimesheetEntry: React.FC = () => {
             <Card>
                 <CardHeader className="pb-3">
                     <CardTitle className="text-lg">{t('time_tracking')}</CardTitle>
-                    <CardDescription>
-                        {isTracking ? 'Currently tracking time' : 'Ready to start tracking'}
-                    </CardDescription>
+                    <CardDescription>{isTracking ? 'Currently tracking time' : 'Ready to start tracking'}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     {/* Timer Display */}
                     <div className="text-center">
-                        <div className="text-4xl font-mono font-bold">
-                            {formatTime(elapsedTime)}
-                        </div>
+                        <div className="font-mono text-4xl font-bold">{formatTime(elapsedTime)}</div>
                         {trackingStartTime && (
-                            <div className="text-sm text-muted-foreground">
-                                Started at {trackingStartTime.toLocaleTimeString()}
-                            </div>
+                            <div className="text-sm text-muted-foreground">Started at {trackingStartTime.toLocaleTimeString()}</div>
                         )}
                     </div>
 
@@ -681,7 +642,7 @@ const MobileTimesheetEntry: React.FC = () => {
                         <Label htmlFor="project">Project *</Label>
                         <Select
                             value={currentEntry.project_id.toString()}
-                            onValueChange={(value) => setCurrentEntry(prev => ({ ...prev, project_id: parseInt(value) }))}
+                            onValueChange={(value) => setCurrentEntry((prev) => ({ ...prev, project_id: parseInt(value) }))}
                         >
                             <SelectTrigger>
                                 <SelectValue placeholder={t('ph_select_project')} />
@@ -703,7 +664,7 @@ const MobileTimesheetEntry: React.FC = () => {
                             id="description"
                             placeholder={t('ph_what_did_you_work_on')}
                             value={currentEntry.description}
-                            onChange={(e) => setCurrentEntry(prev => ({ ...prev, description: e.target.value }))}
+                            onChange={(e) => setCurrentEntry((prev) => ({ ...prev, description: e.target.value }))}
                             rows={3}
                         />
                     </div>
@@ -716,7 +677,7 @@ const MobileTimesheetEntry: React.FC = () => {
                                 id="date"
                                 type="date"
                                 value={formatDateMedium(currentEntry.date)}
-                                onChange={(e) => setCurrentEntry(prev => ({ ...prev, date: e.target.value }))}
+                                onChange={(e) => setCurrentEntry((prev) => ({ ...prev, date: e.target.value }))}
                             />
                         </div>
                         <div className="space-y-2">
@@ -725,19 +686,19 @@ const MobileTimesheetEntry: React.FC = () => {
                                 id="start-time"
                                 type="time"
                                 value={currentEntry.start_time}
-                                onChange={(e) => setCurrentEntry(prev => ({ ...prev, start_time: e.target.value }))}
+                                onChange={(e) => setCurrentEntry((prev) => ({ ...prev, start_time: e.target.value }))}
                             />
                         </div>
                     </div>
 
                     {/* Location Info */}
                     {location && (
-                        <div className="p-3 bg-muted rounded-lg">
-                            <div className="flex items-center space-x-2 mb-2">
+                        <div className="rounded-lg bg-muted p-3">
+                            <div className="mb-2 flex items-center space-x-2">
                                 <Navigation className="h-4 w-4" />
                                 <span className="text-sm font-medium">{t('current_location')}</span>
                             </div>
-                            <div className="text-xs text-muted-foreground space-y-1">
+                            <div className="space-y-1 text-xs text-muted-foreground">
                                 <div>{location.address || 'Getting address...'}</div>
                                 <div className="font-mono">
                                     {location.latitude.toFixed(6)}, {location.longitude.toFixed(6)}
@@ -748,13 +709,9 @@ const MobileTimesheetEntry: React.FC = () => {
                     )}
 
                     {/* Submit Button */}
-                    <Button
-                        onClick={submitEntry}
-                        disabled={loading || !currentEntry.project_id || !currentEntry.description}
-                        className="w-full"
-                    >
+                    <Button onClick={submitEntry} disabled={loading || !currentEntry.project_id || !currentEntry.description} className="w-full">
                         {loading ? (
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                            <div className="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>
                         ) : isOnline ? (
                             <CheckCircle className="mr-2 h-4 w-4" />
                         ) : (
@@ -769,14 +726,10 @@ const MobileTimesheetEntry: React.FC = () => {
             {pendingEntries.length > 0 && (
                 <Card>
                     <CardHeader className="pb-3">
-                        <CardTitle className="text-lg flex items-center justify-between">
+                        <CardTitle className="flex items-center justify-between text-lg">
                             <span>Pending Entries ({pendingEntries.length})</span>
                             {isOnline && (
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={syncPendingEntries}
-                                >
+                                <Button variant="outline" size="sm" onClick={syncPendingEntries}>
                                     <Sync className="mr-2 h-3 w-3" />
                                     Sync All
                                 </Button>
@@ -786,12 +739,10 @@ const MobileTimesheetEntry: React.FC = () => {
                     <CardContent>
                         <div className="space-y-2">
                             {pendingEntries.slice(0, 3).map((entry) => (
-                                <div key={entry.id} className="p-2 border rounded">
-                                    <div className="flex justify-between items-start">
+                                <div key={entry.id} className="rounded border p-2">
+                                    <div className="flex items-start justify-between">
                                         <div>
-                                            <div className="font-medium text-sm">
-                                                {projects.find(p => p.id === entry.project_id)?.name}
-                                            </div>
+                                            <div className="text-sm font-medium">{projects.find((p) => p.id === entry.project_id)?.name}</div>
                                             <div className="text-xs text-muted-foreground">
                                                 {formatDateMedium(entry.date)} • {entry.hours_worked}h
                                             </div>
@@ -803,9 +754,7 @@ const MobileTimesheetEntry: React.FC = () => {
                                 </div>
                             ))}
                             {pendingEntries.length > 3 && (
-                                <div className="text-center text-sm text-muted-foreground">
-                                    +{pendingEntries.length - 3} more entries
-                                </div>
+                                <div className="text-center text-sm text-muted-foreground">+{pendingEntries.length - 3} more entries</div>
                             )}
                         </div>
                     </CardContent>
@@ -842,17 +791,3 @@ const MobileTimesheetEntry: React.FC = () => {
 };
 
 export default MobileTimesheetEntry;
-
-
-
-
-
-
-
-
-
-
-
-
-
-

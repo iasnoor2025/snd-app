@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useDebounce } from '@/hooks/useDebounce';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import axios from 'axios';
+import { useCallback, useEffect, useState } from 'react';
 
 export interface LayoutConfig {
     device: 'mobile' | 'tablet' | 'desktop';
@@ -51,11 +51,7 @@ export interface UseResponsiveLayoutOptions {
 }
 
 export function useResponsiveLayout(options: UseResponsiveLayoutOptions = {}) {
-    const {
-        updateInterval = 1000,
-        enableGestures = true,
-        enableCache = true,
-    } = options;
+    const { updateInterval = 1000, enableGestures = true, enableCache = true } = options;
 
     const [layoutConfig, setLayoutConfig] = useState<LayoutConfig | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -122,48 +118,60 @@ export function useResponsiveLayout(options: UseResponsiveLayoutOptions = {}) {
     }, [enableGestures, layoutConfig, isMobile, isTablet]);
 
     // Helper functions
-    const getBreakpoint = useCallback((breakpoint: string): string => {
-        return layoutConfig?.breakpoints[breakpoint] || '0px';
-    }, [layoutConfig]);
+    const getBreakpoint = useCallback(
+        (breakpoint: string): string => {
+            return layoutConfig?.breakpoints[breakpoint] || '0px';
+        },
+        [layoutConfig],
+    );
 
-    const getFontSize = useCallback((level: number): string => {
-        if (!layoutConfig?.fontSizes) return '16px';
+    const getFontSize = useCallback(
+        (level: number): string => {
+            if (!layoutConfig?.fontSizes) return '16px';
 
-        const { base, scale, minSize, maxSize } = layoutConfig.fontSizes;
-        const baseSize = parseFloat(base);
-        const size = baseSize * Math.pow(scale, level);
+            const { base, scale, minSize, maxSize } = layoutConfig.fontSizes;
+            const baseSize = parseFloat(base);
+            const size = baseSize * Math.pow(scale, level);
 
-        const min = parseFloat(minSize);
-        const max = parseFloat(maxSize);
+            const min = parseFloat(minSize);
+            const max = parseFloat(maxSize);
 
-        return `${Math.min(Math.max(size, min), max)}px`;
-    }, [layoutConfig]);
+            return `${Math.min(Math.max(size, min), max)}px`;
+        },
+        [layoutConfig],
+    );
 
-    const getSpacing = useCallback((level: number): string => {
-        if (!layoutConfig?.spacing) return '16px';
+    const getSpacing = useCallback(
+        (level: number): string => {
+            if (!layoutConfig?.spacing) return '16px';
 
-        const { base, scale, minSpace, maxSpace } = layoutConfig.spacing;
-        const baseSize = parseFloat(base);
-        const size = baseSize * Math.pow(scale, level);
+            const { base, scale, minSpace, maxSpace } = layoutConfig.spacing;
+            const baseSize = parseFloat(base);
+            const size = baseSize * Math.pow(scale, level);
 
-        const min = parseFloat(minSpace);
-        const max = parseFloat(maxSpace);
+            const min = parseFloat(minSpace);
+            const max = parseFloat(maxSpace);
 
-        return `${Math.min(Math.max(size, min), max)}px`;
-    }, [layoutConfig]);
+            return `${Math.min(Math.max(size, min), max)}px`;
+        },
+        [layoutConfig],
+    );
 
-    const optimizeImage = useCallback((src: string, options: Partial<LayoutConfig['imageOptimization']> = {}): string => {
-        if (!layoutConfig?.imageOptimization) return src;
+    const optimizeImage = useCallback(
+        (src: string, options: Partial<LayoutConfig['imageOptimization']> = {}): string => {
+            if (!layoutConfig?.imageOptimization) return src;
 
-        const config = { ...layoutConfig.imageOptimization, ...options };
-        const params = new URLSearchParams({
-            width: config.maxWidth.toString(),
-            quality: config.quality.toString(),
-            format: config.formats[0],
-        });
+            const config = { ...layoutConfig.imageOptimization, ...options };
+            const params = new URLSearchParams({
+                width: config.maxWidth.toString(),
+                quality: config.quality.toString(),
+                format: config.formats[0],
+            });
 
-        return `/api/mobile-bridge/optimize-image?src=${encodeURIComponent(src)}&${params.toString()}`;
-    }, [layoutConfig]);
+            return `/api/mobile-bridge/optimize-image?src=${encodeURIComponent(src)}&${params.toString()}`;
+        },
+        [layoutConfig],
+    );
 
     const getNavigationType = useCallback((): LayoutConfig['navigation']['type'] => {
         if (!layoutConfig?.navigation) return 'side-nav';
@@ -187,4 +195,4 @@ export function useResponsiveLayout(options: UseResponsiveLayoutOptions = {}) {
         optimizeImage,
         getNavigationType,
     };
-} 
+}

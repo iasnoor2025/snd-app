@@ -1,25 +1,24 @@
+import {
+    AppLayout,
+    Badge,
+    Button,
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+    formatCurrency,
+    formatDate,
+    Separator,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+    useToast,
+} from '@/Core';
 import { Head, Link, router } from '@inertiajs/react';
-import { AppLayout } from '@/Core';
-import { useState, useEffect } from 'react';
-import { formatCurrency, formatDate } from "@/Core";
-import {
-  ArrowLeft as ArrowLeftIcon,
-  Edit as EditIcon,
-  Trash as TrashIcon
-} from 'lucide-react';
-import { Button } from "@/Core";
-import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
-import { Badge } from "@/Core";
-import { Separator } from "@/Core";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/Core";
-import { useToast } from "@/Core";
+import { ArrowLeft as ArrowLeftIcon, Edit as EditIcon, Trash as TrashIcon } from 'lucide-react';
 
 // Placeholder types
 type BreadcrumbItem = any;
@@ -63,28 +62,31 @@ export default function Show({ maintenanceRecord }: Props) {
             router.delete(route('maintenance.destroy', maintenanceRecord.id), {
                 onSuccess: () => {
                     toast({
-                        title: "Success",
-                        description: "Maintenance record deleted successfully"
+                        title: 'Success',
+                        description: 'Maintenance record deleted successfully',
                     });
                     window.location.href = route('maintenance.index');
                 },
                 onError: () => {
                     toast({
-                        title: "Error",
-                        description: "Failed to delete maintenance record",
-                        variant: "destructive"
+                        title: 'Error',
+                        description: 'Failed to delete maintenance record',
+                        variant: 'destructive',
                     });
-                }
+                },
             });
         }
     };
 
     return (
-        <AppLayout title={`Maintenance Record #${maintenanceRecord.id}`} breadcrumbs={[
-            { title: 'Dashboard', href: '/dashboard' },
-            { title: 'Maintenance', href: '/maintenance' },
-            { title: `Record #${maintenanceRecord.id}`, href: `/maintenance/${maintenanceRecord.id}` }
-        ]}>
+        <AppLayout
+            title={`Maintenance Record #${maintenanceRecord.id}`}
+            breadcrumbs={[
+                { title: 'Dashboard', href: '/dashboard' },
+                { title: 'Maintenance', href: '/maintenance' },
+                { title: `Record #${maintenanceRecord.id}`, href: `/maintenance/${maintenanceRecord.id}` },
+            ]}
+        >
             <Head title="Maintenance Details" />
             <div className="flex h-full flex-1 flex-col gap-4 p-4">
                 <Card>
@@ -112,14 +114,20 @@ export default function Show({ maintenanceRecord }: Props) {
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                             <div className="space-y-1">
                                 <p className="text-sm font-medium text-gray-500">Equipment</p>
-                                <p>{maintenanceRecord.equipment?.name} ({maintenanceRecord.equipment?.serial_number})</p>
+                                <p>
+                                    {maintenanceRecord.equipment?.name} ({maintenanceRecord.equipment?.serial_number})
+                                </p>
                             </div>
                             <div className="space-y-1">
                                 <p className="text-sm font-medium text-gray-500">Type</p>
-                                <p>{maintenanceRecord.maintenance_type ? maintenanceRecord.maintenance_type.charAt(0).toUpperCase() + maintenanceRecord.maintenance_type.slice(1) : '-'}</p>
+                                <p>
+                                    {maintenanceRecord.maintenance_type
+                                        ? maintenanceRecord.maintenance_type.charAt(0).toUpperCase() + maintenanceRecord.maintenance_type.slice(1)
+                                        : '-'}
+                                </p>
                             </div>
                             <div className="space-y-1">
                                 <p className="text-sm font-medium text-gray-500">Status</p>
@@ -131,26 +139,28 @@ export default function Show({ maintenanceRecord }: Props) {
                             </div>
                             <div className="space-y-1">
                                 <p className="text-sm font-medium text-gray-500">Technician</p>
-                                <p>{maintenanceRecord.performer ?
-                                    `${maintenanceRecord.performer.first_name} ${maintenanceRecord.performer.last_name}` :
-                                    'Not Assigned'}</p>
+                                <p>
+                                    {maintenanceRecord.performer
+                                        ? `${maintenanceRecord.performer.first_name} ${maintenanceRecord.performer.last_name}`
+                                        : 'Not Assigned'}
+                                </p>
                             </div>
                             <div className="space-y-1">
                                 <p className="text-sm font-medium text-gray-500">Total Cost</p>
                                 <p>{formatCurrency(parseFloat(maintenanceRecord.cost.toString()))}</p>
                             </div>
-                            <div className="space-y-1 col-span-3">
+                            <div className="col-span-3 space-y-1">
                                 <p className="text-sm font-medium text-gray-500">Description</p>
                                 <p>{maintenanceRecord.description}</p>
                             </div>
-                            <div className="space-y-1 col-span-3">
+                            <div className="col-span-3 space-y-1">
                                 <p className="text-sm font-medium text-gray-500">Notes</p>
                                 <p>{maintenanceRecord.notes || 'No notes provided'}</p>
                             </div>
                         </div>
 
                         <Separator className="my-6" />
-                        <h3 className="text-lg font-medium mb-4">Parts Used</h3>
+                        <h3 className="mb-4 text-lg font-medium">Parts Used</h3>
 
                         {maintenanceRecord.maintenanceParts && maintenanceRecord.maintenanceParts.length > 0 ? (
                             <div className="rounded-md border">
@@ -186,20 +196,3 @@ export default function Show({ maintenanceRecord }: Props) {
         </AppLayout>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,16 +1,7 @@
-import React from 'react';
 import { Head } from '@inertiajs/react';
+import { Bell, Download, Settings, Shield, Smartphone, Wifi, Zap } from 'lucide-react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
-import {
-    Smartphone,
-    Bell,
-    Wifi,
-    Settings,
-    Download,
-    Shield,
-    Zap
-} from 'lucide-react';
 
 interface PWAIndexProps {
     stats?: {
@@ -26,7 +17,7 @@ const PWAIndex: React.FC<PWAIndexProps> = ({ stats }) => {
 
     const breadcrumbs = [
         { label: t('common:dashboard'), href: '/dashboard' },
-        { label: t('pwa_management'), href: '/pwa' }
+        { label: t('pwa_management'), href: '/pwa' },
     ];
 
     const features = [
@@ -34,40 +25,38 @@ const PWAIndex: React.FC<PWAIndexProps> = ({ stats }) => {
             icon: <Download className="h-8 w-8 text-blue-600" />,
             title: t('app_installation'),
             description: t('app_installation_desc'),
-            benefits: [t('faster_loading'), t('home_screen_access'), t('fullscreen_experience')]
+            benefits: [t('faster_loading'), t('home_screen_access'), t('fullscreen_experience')],
         },
         {
             icon: <Wifi className="h-8 w-8 text-green-600" />,
             title: t('offline_support'),
             description: t('offline_support_desc'),
-            benefits: [t('offline_functionality'), t('auto_sync'), t('data_persistence')]
+            benefits: [t('offline_functionality'), t('auto_sync'), t('data_persistence')],
         },
         {
             icon: <Bell className="h-8 w-8 text-purple-600" />,
             title: t('push_notifications'),
             description: t('push_notifications_desc'),
-            benefits: [t('realtime_alerts'), t('customizable_categories'), t('smart_scheduling')]
+            benefits: [t('realtime_alerts'), t('customizable_categories'), t('smart_scheduling')],
         },
         {
             icon: <Zap className="h-8 w-8 text-yellow-600" />,
             title: t('performance'),
             description: t('performance_desc'),
-            benefits: [t('fast_loading'), t('background_updates'), t('efficient_caching')]
-        }
+            benefits: [t('fast_loading'), t('background_updates'), t('efficient_caching')],
+        },
     ];
 
     return (
         <div className="min-h-screen bg-gray-50 p-6">
             <Head title={t('pwa_management')} />
 
-            <div className="max-w-7xl mx-auto space-y-6">
+            <div className="mx-auto max-w-7xl space-y-6">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight">{t('pwa_management')}</h1>
-                        <p className="text-muted-foreground mt-2">
-                            {t('pwa_management_desc')}
-                        </p>
+                        <p className="mt-2 text-muted-foreground">{t('pwa_management_desc')}</p>
                     </div>
                     <div className="flex items-center gap-2">
                         <Smartphone className="h-8 w-8 text-blue-600" />
@@ -77,8 +66,8 @@ const PWAIndex: React.FC<PWAIndexProps> = ({ stats }) => {
 
                 {/* Stats Overview */}
                 {stats && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div className="bg-white rounded-lg shadow p-6">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+                        <div className="rounded-lg bg-white p-6 shadow">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-medium text-gray-600">{t('install_rate')}</p>
@@ -87,7 +76,7 @@ const PWAIndex: React.FC<PWAIndexProps> = ({ stats }) => {
                                 <Download className="h-8 w-8 text-blue-600" />
                             </div>
                         </div>
-                        <div className="bg-white rounded-lg shadow p-6">
+                        <div className="rounded-lg bg-white p-6 shadow">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-medium text-gray-600">{t('active_users')}</p>
@@ -96,7 +85,7 @@ const PWAIndex: React.FC<PWAIndexProps> = ({ stats }) => {
                                 <Smartphone className="h-8 w-8 text-green-600" />
                             </div>
                         </div>
-                        <div className="bg-white rounded-lg shadow p-6">
+                        <div className="rounded-lg bg-white p-6 shadow">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-medium text-gray-600">{t('offline_usage')}</p>
@@ -105,7 +94,7 @@ const PWAIndex: React.FC<PWAIndexProps> = ({ stats }) => {
                                 <Wifi className="h-8 w-8 text-purple-600" />
                             </div>
                         </div>
-                        <div className="bg-white rounded-lg shadow p-6">
+                        <div className="rounded-lg bg-white p-6 shadow">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-medium text-gray-600">{t('notification_rate')}</p>
@@ -118,30 +107,26 @@ const PWAIndex: React.FC<PWAIndexProps> = ({ stats }) => {
                 )}
 
                 {/* PWA Features Overview */}
-                <div className='bg-white rounded-lg shadow'>
-                    <div className='p-6 pb-4'>
-                        <h3 className='text-lg font-semibold'>
+                <div className="rounded-lg bg-white shadow">
+                    <div className="p-6 pb-4">
+                        <h3 className="text-lg font-semibold">
                             <Shield className="h-5 w-5" />
                             {t('pwa_features')}
                         </h3>
-                        <p className='text-gray-600 text-sm mt-2'>
-                            {t('pwa_features_desc')}
-                        </p>
+                        <p className="mt-2 text-sm text-gray-600">{t('pwa_features_desc')}</p>
                     </div>
-                    <div className='p-6 pt-0'>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="p-6 pt-0">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                             {features.map((feature, index) => (
                                 <div key={index} className="flex gap-4">
-                                    <div className="flex-shrink-0">
-                                        {feature.icon}
-                                    </div>
+                                    <div className="flex-shrink-0">{feature.icon}</div>
                                     <div className="flex-1">
-                                        <h3 className="font-semibold text-lg mb-2">{feature.title}</h3>
-                                        <p className="text-muted-foreground mb-3">{feature.description}</p>
+                                        <h3 className="mb-2 text-lg font-semibold">{feature.title}</h3>
+                                        <p className="mb-3 text-muted-foreground">{feature.description}</p>
                                         <ul className="space-y-1">
                                             {feature.benefits.map((benefit, benefitIndex) => (
                                                 <li key={benefitIndex} className="flex items-center gap-2 text-sm">
-                                                    <div className="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
+                                                    <div className="h-1.5 w-1.5 rounded-full bg-blue-600"></div>
                                                     {benefit}
                                                 </li>
                                             ))}
@@ -154,80 +139,74 @@ const PWAIndex: React.FC<PWAIndexProps> = ({ stats }) => {
                 </div>
 
                 {/* Main PWA Management Tabs */}
-                <div className="bg-white rounded-lg shadow">
+                <div className="rounded-lg bg-white shadow">
                     <div className="p-6">
-                        <div className="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg">
-                            <button className="flex items-center gap-2 px-4 py-2 rounded-md bg-blue-600 text-white">
+                        <div className="mb-6 flex space-x-1 rounded-lg bg-gray-100 p-1">
+                            <button className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-white">
                                 <Settings className="h-4 w-4" />
                                 {t('dashboard')}
                             </button>
-                            <button className="flex items-center gap-2 px-4 py-2 rounded-md text-gray-600 hover:bg-gray-200">
+                            <button className="flex items-center gap-2 rounded-md px-4 py-2 text-gray-600 hover:bg-gray-200">
                                 <Bell className="h-4 w-4" />
                                 {t('notifications')}
                             </button>
-                            <button className="flex items-center gap-2 px-4 py-2 rounded-md text-gray-600 hover:bg-gray-200">
+                            <button className="flex items-center gap-2 rounded-md px-4 py-2 text-gray-600 hover:bg-gray-200">
                                 <Wifi className="h-4 w-4" />
                                 {t('offline_sync')}
                             </button>
-                            <button className="flex items-center gap-2 px-4 py-2 rounded-md text-gray-600 hover:bg-gray-200">
+                            <button className="flex items-center gap-2 rounded-md px-4 py-2 text-gray-600 hover:bg-gray-200">
                                 <Download className="h-4 w-4" />
                                 {t('installation')}
                             </button>
                         </div>
 
                         <div className="space-y-6">
-                            <div className="bg-gray-50 rounded-lg p-6">
-                                <h3 className="text-lg font-semibold mb-2">{t('pwa_dashboard')}</h3>
-                                <p className="text-gray-600 text-sm mb-4">{t('pwa_dashboard_desc')}</p>
+                            <div className="rounded-lg bg-gray-50 p-6">
+                                <h3 className="mb-2 text-lg font-semibold">{t('pwa_dashboard')}</h3>
+                                <p className="mb-4 text-sm text-gray-600">{t('pwa_dashboard_desc')}</p>
                                 <p className="text-muted-foreground">{t('pwa_dashboard_content')}</p>
                             </div>
 
-                            <div className="bg-gray-50 rounded-lg p-6">
-                                <h3 className="text-lg font-semibold mb-2">{t('notification_settings')}</h3>
-                                <p className="text-gray-600 text-sm mb-4">{t('notification_settings_desc')}</p>
+                            <div className="rounded-lg bg-gray-50 p-6">
+                                <h3 className="mb-2 text-lg font-semibold">{t('notification_settings')}</h3>
+                                <p className="mb-4 text-sm text-gray-600">{t('notification_settings_desc')}</p>
                                 <p className="text-muted-foreground">{t('notification_settings_content')}</p>
                             </div>
 
-                            <div className="bg-gray-50 rounded-lg p-6">
-                                <h3 className="text-lg font-semibold mb-2">{t('offline_synchronization')}</h3>
-                                <p className="text-gray-600 text-sm mb-4">
-                                    {t('offline_synchronization_desc')}
-                                </p>
+                            <div className="rounded-lg bg-gray-50 p-6">
+                                <h3 className="mb-2 text-lg font-semibold">{t('offline_synchronization')}</h3>
+                                <p className="mb-4 text-sm text-gray-600">{t('offline_synchronization_desc')}</p>
                                 <p className="text-muted-foreground">{t('offline_sync_content')}</p>
                             </div>
 
-                            <div className="bg-gray-50 rounded-lg p-6">
-                                <h3 className="text-lg font-semibold mb-2">{t('app_installation')}</h3>
-                                <p className="text-gray-600 text-sm mb-4">
-                                    {t('app_installation_page_desc')}
-                                </p>
+                            <div className="rounded-lg bg-gray-50 p-6">
+                                <h3 className="mb-2 text-lg font-semibold">{t('app_installation')}</h3>
+                                <p className="mb-4 text-sm text-gray-600">{t('app_installation_page_desc')}</p>
                                 <div className="space-y-4">
-                                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                                        <h3 className="font-semibold text-blue-900 mb-2">{t('why_install')}</h3>
+                                    <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+                                        <h3 className="mb-2 font-semibold text-blue-900">{t('why_install')}</h3>
                                         <ul className="space-y-2 text-sm text-blue-800">
                                             <li className="flex items-center gap-2">
-                                                <div className="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
+                                                <div className="h-1.5 w-1.5 rounded-full bg-blue-600"></div>
                                                 {t('why_install_1')}
                                             </li>
                                             <li className="flex items-center gap-2">
-                                                <div className="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
+                                                <div className="h-1.5 w-1.5 rounded-full bg-blue-600"></div>
                                                 {t('why_install_2')}
                                             </li>
                                             <li className="flex items-center gap-2">
-                                                <div className="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
+                                                <div className="h-1.5 w-1.5 rounded-full bg-blue-600"></div>
                                                 {t('why_install_3')}
                                             </li>
                                             <li className="flex items-center gap-2">
-                                                <div className="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
+                                                <div className="h-1.5 w-1.5 rounded-full bg-blue-600"></div>
                                                 {t('why_install_4')}
                                             </li>
                                         </ul>
                                     </div>
 
                                     <div className="text-center">
-                                        <p className="text-muted-foreground mb-4">
-                                            {t('install_prompt_info')}
-                                        </p>
+                                        <p className="mb-4 text-muted-foreground">{t('install_prompt_info')}</p>
                                     </div>
                                 </div>
                             </div>
@@ -240,8 +219,3 @@ const PWAIndex: React.FC<PWAIndexProps> = ({ stats }) => {
 };
 
 export default PWAIndex;
-
-
-
-
-

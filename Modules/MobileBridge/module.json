@@ -4,9 +4,7 @@
     "description": "MobileBridge module for the application",
     "keywords": [],
     "priority": 0,
-    "providers": [
-        "Modules\\MobileBridge\\Providers\\MobileBridgeServiceProvider"
-    ],
+    "providers": ["Modules\\MobileBridge\\Providers\\MobileBridgeServiceProvider"],
     "aliases": [],
     "files": [],
     "requires": []

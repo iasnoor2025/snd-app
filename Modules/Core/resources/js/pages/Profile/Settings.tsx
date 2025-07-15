@@ -1,36 +1,20 @@
-import { useEffect, useState } from 'react';
-import React from 'react';
-import { Head } from '@inertiajs/react';
-import { AppLayout } from '@/Core';
-import { ProfileNav } from '../../components/profile-nav';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
-import { Button, Input, Separator } from '../../components/ui';
-import { Label } from "@/Core";
-import { AppearanceTabs } from '../../components/index';
-import { toast } from 'sonner';
-import {
-    User,
-    Lock,
-    Save,
-    AlertTriangle,
-    Check,
-    Eye,
-    EyeOff,
-    Palette,
-    Bell,
-    Shield,
-    CreditCard,
-    Activity
-} from 'lucide-react';
-import { DeviceSessions } from '../../components/settings/DeviceSessions';
-import ApiKeySettings from '../../components/settings/ApiKeySettings';
-import ActivityFeed from '../../components/dashboard/ActivityFeed';
-import { SmartAvatar } from '../../components/ui/smart-avatar';
-import AvatarUploader from '../../components/Avatar/AvatarUploader';
-import { Badge } from '../../components/ui/badge';
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from '../../components/ui/dialog';
-import { SiGoogle, SiWhatsapp } from 'react-icons/si';
+import { AppLayout, Label } from '@/Core';
+import { Activity, AlertTriangle, Bell, Check, Eye, EyeOff, Lock, Palette, Save, Shield, User } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { FaMicrosoft } from 'react-icons/fa';
+import { SiGoogle, SiWhatsapp } from 'react-icons/si';
+import { toast } from 'sonner';
+import AvatarUploader from '../../components/Avatar/AvatarUploader';
+import ActivityFeed from '../../components/dashboard/ActivityFeed';
+import { AppearanceTabs } from '../../components/index';
+import { ProfileNav } from '../../components/profile-nav';
+import ApiKeySettings from '../../components/settings/ApiKeySettings';
+import { DeviceSessions } from '../../components/settings/DeviceSessions';
+import { Button, Input, Separator } from '../../components/ui';
+import { Badge } from '../../components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '../../components/ui/dialog';
+import { SmartAvatar } from '../../components/ui/smart-avatar';
 
 // Fix ProfileSettingsProps user type
 type UserType = {
@@ -92,7 +76,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
     });
 
     const [profileSaving, setProfileSaving] = useState(false);
-    const [profileError, setProfileError] = useState<string|null>(null);
+    const [profileError, setProfileError] = useState<string | null>(null);
     const [profileSuccess, setProfileSuccess] = useState(false);
 
     const handleProfileSubmit = async (e: React.FormEvent) => {
@@ -156,7 +140,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
             address,
             birthday,
             timezone,
-            locale
+            locale,
         ].filter(Boolean).length;
         const progressValue = Math.round((completedFields / totalFields) * 100);
         return (
@@ -166,12 +150,10 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                         <User className="h-5 w-5" />
                         Profile Information
                     </CardTitle>
-                    <CardDescription>
-                        Update your account's profile information and email address.
-                    </CardDescription>
+                    <CardDescription>Update your account's profile information and email address.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="flex items-center gap-4 mb-6">
+                    <div className="mb-6 flex items-center gap-4">
                         <SmartAvatar>
                             <img src={avatarUrl || user.avatar} alt={user.name} className="h-24 w-24 rounded-full" />
                         </SmartAvatar>
@@ -179,7 +161,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                             <div className="font-medium">{user.name}</div>
                             <div className="text-sm text-muted-foreground">{user.email}</div>
                             {user.roles && user.roles.length > 0 && (
-                                <div className="flex flex-wrap gap-2 mt-2">
+                                <div className="mt-2 flex flex-wrap gap-2">
                                     {user.roles.map((role) => (
                                         <Badge key={role.id} variant="outline" className="flex items-center gap-1">
                                             <Shield className="h-3 w-3" />
@@ -191,7 +173,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                         </div>
                     </div>
                     <div className="mb-6">
-                        <AvatarUploader user={{...user, avatar: avatarUrl}} onAvatarUpdate={setAvatarUrl} />
+                        <AvatarUploader user={{ ...user, avatar: avatarUrl }} onAvatarUpdate={setAvatarUrl} />
                     </div>
                     <Card className="mb-6">
                         <CardHeader>
@@ -199,17 +181,23 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                                 <Shield className="h-5 w-5" />
                                 Social Accounts
                             </CardTitle>
-                            <CardDescription>
-                                Link your account with social providers for easier login.
-                            </CardDescription>
+                            <CardDescription>Link your account with social providers for easier login.</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="flex gap-4">
-                                <Button variant="outline" className="flex items-center gap-2" onClick={() => window.location.href = '/auth/redirect/google'}>
+                                <Button
+                                    variant="outline"
+                                    className="flex items-center gap-2"
+                                    onClick={() => (window.location.href = '/auth/redirect/google')}
+                                >
                                     <SiGoogle className="h-5 w-5" />
                                     Link Google
                                 </Button>
-                                <Button variant="outline" className="flex items-center gap-2" onClick={() => window.location.href = '/auth/redirect/microsoft'}>
+                                <Button
+                                    variant="outline"
+                                    className="flex items-center gap-2"
+                                    onClick={() => (window.location.href = '/auth/redirect/microsoft')}
+                                >
                                     <FaMicrosoft className="h-5 w-5" />
                                     Link Microsoft
                                 </Button>
@@ -276,30 +264,15 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="address">Address</Label>
-                                <Input
-                                    id="address"
-                                    type="text"
-                                    value={address}
-                                    onChange={(e) => setAddress(e.target.value)}
-                                />
+                                <Input id="address" type="text" value={address} onChange={(e) => setAddress(e.target.value)} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="birthday">Birthday</Label>
-                                <Input
-                                    id="birthday"
-                                    type="date"
-                                    value={birthday}
-                                    onChange={(e) => setBirthday(e.target.value)}
-                                />
+                                <Input id="birthday" type="date" value={birthday} onChange={(e) => setBirthday(e.target.value)} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="timezone">Timezone</Label>
-                                <select
-                                    id="timezone"
-                                    className="input"
-                                    value={timezone}
-                                    onChange={(e) => setTimezone(e.target.value)}
-                                >
+                                <select id="timezone" className="input" value={timezone} onChange={(e) => setTimezone(e.target.value)}>
                                     <option value="">Select timezone</option>
                                     <option value="UTC">UTC</option>
                                     <option value="America/New_York">America/New_York</option>
@@ -310,12 +283,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="locale">Locale</Label>
-                                <select
-                                    id="locale"
-                                    className="input"
-                                    value={locale}
-                                    onChange={(e) => setLocale(e.target.value)}
-                                >
+                                <select id="locale" className="input" value={locale} onChange={(e) => setLocale(e.target.value)}>
                                     <option value="">Select locale</option>
                                     <option value="en">English</option>
                                     <option value="ar">Arabic</option>
@@ -325,15 +293,13 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                         </div>
 
                         {mustVerifyEmail && user.email_verified_at === null && (
-                            <div className="flex items-center gap-3 p-4 border border-yellow-200 bg-yellow-50 rounded-lg">
+                            <div className="flex items-center gap-3 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
                                 <AlertTriangle className="h-5 w-5 text-yellow-600" />
                                 <div>
-                                    <p className="text-sm text-yellow-800">
-                                        Your email address is unverified.
-                                    </p>
+                                    <p className="text-sm text-yellow-800">Your email address is unverified.</p>
                                     <Button
                                         variant="link"
-                                        className="p-0 h-auto text-yellow-600 hover:text-yellow-800"
+                                        className="h-auto p-0 text-yellow-600 hover:text-yellow-800"
                                         onClick={() => toast.success('Verification link sent!')}
                                     >
                                         Click here to re-send the verification email.
@@ -343,16 +309,21 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                         )}
 
                         <div className="flex justify-end">
-                            <Button
-                                type="submit"
-                                disabled={profileSaving}
-                                className="flex items-center gap-2"
-                            >
+                            <Button type="submit" disabled={profileSaving} className="flex items-center gap-2">
                                 {profileSaving ? (
                                     <>
-                                        <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <svg
+                                            className="h-4 w-4 animate-spin text-white"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                        >
                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            <path
+                                                className="opacity-75"
+                                                fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                            ></path>
                                         </svg>
                                         Saving...
                                     </>
@@ -364,12 +335,8 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                                 )}
                             </Button>
                         </div>
-                        {profileError && (
-                            <div className="text-center text-destructive text-sm mt-2">{profileError}</div>
-                        )}
-                        {profileSuccess && (
-                            <div className="text-center text-green-600 text-sm mt-2">Profile updated successfully!</div>
-                        )}
+                        {profileError && <div className="mt-2 text-center text-sm text-destructive">{profileError}</div>}
+                        {profileSuccess && <div className="mt-2 text-center text-sm text-green-600">Profile updated successfully!</div>}
                     </form>
                     <Card className="mt-6">
                         <CardHeader>
@@ -377,9 +344,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                                 <AlertTriangle className="h-5 w-5 text-destructive" />
                                 Deactivate Account
                             </CardTitle>
-                            <CardDescription>
-                                Temporarily deactivate your account. You can reactivate by logging in again.
-                            </CardDescription>
+                            <CardDescription>Temporarily deactivate your account. You can reactivate by logging in again.</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <Button variant="destructive" onClick={() => toast('Account deactivation requested (not implemented)')}>
@@ -397,12 +362,10 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                        <AlertTriangle className="h-5 w-5 text-warning" />
+                        <AlertTriangle className="text-warning h-5 w-5" />
                         Security Alerts
                     </CardTitle>
-                    <CardDescription>
-                        Recent security events and alerts for your account.
-                    </CardDescription>
+                    <CardDescription>Recent security events and alerts for your account.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
@@ -427,13 +390,9 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                         <Shield className="h-5 w-5" />
                         Multi-Factor Authentication (MFA)
                     </CardTitle>
-                    <CardDescription>
-                        Add an extra layer of security to your account by enabling MFA.
-                    </CardDescription>
+                    <CardDescription>Add an extra layer of security to your account by enabling MFA.</CardDescription>
                 </CardHeader>
-                <CardContent>
-                    {/* MfaSettings component was not provided in the original file, so it's removed. */}
-                </CardContent>
+                <CardContent>{/* MfaSettings component was not provided in the original file, so it's removed. */}</CardContent>
             </Card>
             <Card>
                 <CardHeader>
@@ -441,9 +400,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                         <Lock className="h-5 w-5" />
                         Update Password
                     </CardTitle>
-                    <CardDescription>
-                        Ensure your account is using a long, random password to stay secure.
-                    </CardDescription>
+                    <CardDescription>Ensure your account is using a long, random password to stay secure.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handlePasswordSubmit} className="space-y-6">
@@ -453,7 +410,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                                 <div className="relative">
                                     <Input
                                         id="current_password"
-                                        type={showCurrentPassword ? "text" : "password"}
+                                        type={showCurrentPassword ? 'text' : 'password'}
                                         value={passwordForm.current_password}
                                         onChange={(e) => setPasswordForm({ ...passwordForm, current_password: e.target.value })}
                                         required
@@ -461,13 +418,9 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                                     <button
                                         type="button"
                                         onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                        className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                                     >
-                                        {showCurrentPassword ? (
-                                            <EyeOff className="h-4 w-4" />
-                                        ) : (
-                                            <Eye className="h-4 w-4" />
-                                        )}
+                                        {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                     </button>
                                 </div>
                             </div>
@@ -477,7 +430,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                                 <div className="relative">
                                     <Input
                                         id="password"
-                                        type={showNewPassword ? "text" : "password"}
+                                        type={showNewPassword ? 'text' : 'password'}
                                         value={passwordForm.password}
                                         onChange={(e) => setPasswordForm({ ...passwordForm, password: e.target.value })}
                                         required
@@ -485,13 +438,9 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                                     <button
                                         type="button"
                                         onClick={() => setShowNewPassword(!showNewPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                        className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                                     >
-                                        {showNewPassword ? (
-                                            <EyeOff className="h-4 w-4" />
-                                        ) : (
-                                            <Eye className="h-4 w-4" />
-                                        )}
+                                        {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                     </button>
                                 </div>
                             </div>
@@ -501,7 +450,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                                 <div className="relative">
                                     <Input
                                         id="password_confirmation"
-                                        type={showConfirmPassword ? "text" : "password"}
+                                        type={showConfirmPassword ? 'text' : 'password'}
                                         value={passwordForm.password_confirmation}
                                         onChange={(e) => setPasswordForm({ ...passwordForm, password_confirmation: e.target.value })}
                                         required
@@ -509,13 +458,9 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                                     <button
                                         type="button"
                                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                        className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                                     >
-                                        {showConfirmPassword ? (
-                                            <EyeOff className="h-4 w-4" />
-                                        ) : (
-                                            <Eye className="h-4 w-4" />
-                                        )}
+                                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                     </button>
                                 </div>
                             </div>
@@ -542,9 +487,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                         <Activity className="h-5 w-5" />
                         Login History
                     </CardTitle>
-                    <CardDescription>
-                        View your recent login activity, including device and location information.
-                    </CardDescription>
+                    <CardDescription>View your recent login activity, including device and location information.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="overflow-x-auto">
@@ -585,17 +528,13 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                     <Palette className="h-5 w-5" />
                     Appearance
                 </CardTitle>
-                <CardDescription>
-                    Customize how the application looks and feels.
-                </CardDescription>
+                <CardDescription>Customize how the application looks and feels.</CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="space-y-6">
                     <div className="space-y-2">
                         <Label>Theme Preference</Label>
-                        <p className="text-sm text-muted-foreground">
-                            Choose how you want the application to look.
-                        </p>
+                        <p className="text-sm text-muted-foreground">Choose how you want the application to look.</p>
                         <AppearanceTabs className="mt-3" />
                     </div>
                 </div>
@@ -615,13 +554,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
             sms_notifications: false,
             push_notifications: true,
             notification_frequency: 'immediate',
-            notification_types: [
-                'rental_reminders',
-                'payment_due',
-                'equipment_maintenance',
-                'project_updates',
-                'employee_updates',
-            ],
+            notification_types: ['rental_reminders', 'payment_due', 'equipment_maintenance', 'project_updates', 'employee_updates'],
         };
 
         useEffect(() => {
@@ -633,8 +566,8 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
                 },
             })
-                .then(res => res.json())
-                .then(data => {
+                .then((res) => res.json())
+                .then((data) => {
                     setSettings(data.data && Object.keys(data.data).length > 0 ? data.data : defaultNotificationSettings);
                     setLoading(false);
                 })
@@ -668,8 +601,18 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
             }
         };
 
-        if (loading) return <div role="status" aria-live="polite" className="py-8 text-center text-muted-foreground">Loading notification settings...</div>;
-        if (error) return <div role="alert" className="py-8 text-center text-destructive">{error}</div>;
+        if (loading)
+            return (
+                <div role="status" aria-live="polite" className="py-8 text-center text-muted-foreground">
+                    Loading notification settings...
+                </div>
+            );
+        if (error)
+            return (
+                <div role="alert" className="py-8 text-center text-destructive">
+                    {error}
+                </div>
+            );
         if (!settings) return <div className="py-8 text-center text-muted-foreground">No notification settings found.</div>;
         return (
             <Card aria-label="Notification Preferences">
@@ -678,28 +621,40 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                         <Bell className="h-5 w-5" />
                         Notification Preferences
                     </CardTitle>
-                    <CardDescription>
-                        Manage how you receive notifications (email, SMS, in-app, etc.).
-                    </CardDescription>
+                    <CardDescription>Manage how you receive notifications (email, SMS, in-app, etc.).</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
                         <div className="flex items-center justify-between">
                             <Label>Email Notifications</Label>
-                            <input type="checkbox" checked={!!settings?.email_notifications} onChange={() => setSettings((s: typeof settings) => ({...s, email_notifications: !s.email_notifications}))} />
+                            <input
+                                type="checkbox"
+                                checked={!!settings?.email_notifications}
+                                onChange={() => setSettings((s: typeof settings) => ({ ...s, email_notifications: !s.email_notifications }))}
+                            />
                         </div>
                         <div className="flex items-center justify-between">
                             <Label>SMS Notifications</Label>
-                            <input type="checkbox" checked={!!settings?.sms_notifications} onChange={() => setSettings((s: typeof settings) => ({...s, sms_notifications: !s.sms_notifications}))} />
+                            <input
+                                type="checkbox"
+                                checked={!!settings?.sms_notifications}
+                                onChange={() => setSettings((s: typeof settings) => ({ ...s, sms_notifications: !s.sms_notifications }))}
+                            />
                         </div>
                         <div className="flex items-center justify-between">
                             <Label>Push Notifications</Label>
-                            <input type="checkbox" checked={!!settings?.push_notifications} onChange={() => setSettings((s: typeof settings) => ({...s, push_notifications: !s.push_notifications}))} />
+                            <input
+                                type="checkbox"
+                                checked={!!settings?.push_notifications}
+                                onChange={() => setSettings((s: typeof settings) => ({ ...s, push_notifications: !s.push_notifications }))}
+                            />
                         </div>
                         <div className="flex justify-end gap-2">
-                            {error && <span className="text-destructive text-xs">{error}</span>}
-                            {success && <span className="text-green-600 text-xs">Saved!</span>}
-                            <Button onClick={handleSave} disabled={saving}>{saving ? 'Saving...' : 'Save Preferences'}</Button>
+                            {error && <span className="text-xs text-destructive">{error}</span>}
+                            {success && <span className="text-xs text-green-600">Saved!</span>}
+                            <Button onClick={handleSave} disabled={saving}>
+                                {saving ? 'Saving...' : 'Save Preferences'}
+                            </Button>
                         </div>
                     </div>
                 </CardContent>
@@ -714,9 +669,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                     <Shield className="h-5 w-5" />
                     Privacy Settings
                 </CardTitle>
-                <CardDescription>
-                    Control your privacy, data export, and account deletion options.
-                </CardDescription>
+                <CardDescription>Control your privacy, data export, and account deletion options.</CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
@@ -726,20 +679,22 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                     </div>
                     <div className="flex items-center justify-between">
                         <Label>Export my data</Label>
-                        <Button variant="outline" onClick={() => toast.success('Data export started!')}>Export</Button>
+                        <Button variant="outline" onClick={() => toast.success('Data export started!')}>
+                            Export
+                        </Button>
                     </div>
                     <Card className="mb-4">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
-                                <AlertTriangle className="h-5 w-5 text-warning" />
+                                <AlertTriangle className="text-warning h-5 w-5" />
                                 GDPR Data Export
                             </CardTitle>
-                            <CardDescription>
-                                Download a copy of your personal data for GDPR compliance.
-                            </CardDescription>
+                            <CardDescription>Download a copy of your personal data for GDPR compliance.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <Button variant="secondary" onClick={() => toast.success('GDPR data export requested!')}>Request Data Export</Button>
+                            <Button variant="secondary" onClick={() => toast.success('GDPR data export requested!')}>
+                                Request Data Export
+                            </Button>
                         </CardContent>
                     </Card>
                     <Separator />
@@ -762,8 +717,8 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
             setLoading(true);
             setError(null);
             fetch('/api/activity-log')
-                .then(res => res.json())
-                .then(data => {
+                .then((res) => res.json())
+                .then((data) => {
                     setActivities(data.data || []);
                     setLoading(false);
                 })
@@ -773,8 +728,18 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                 });
         }, []);
 
-        if (loading) return <div role="status" aria-live="polite" className="py-8 text-center text-muted-foreground">Loading activity log...</div>;
-        if (error) return <div role="alert" className="py-8 text-center text-destructive">{error}</div>;
+        if (loading)
+            return (
+                <div role="status" aria-live="polite" className="py-8 text-center text-muted-foreground">
+                    Loading activity log...
+                </div>
+            );
+        if (error)
+            return (
+                <div role="alert" className="py-8 text-center text-destructive">
+                    {error}
+                </div>
+            );
         if (activities.length === 0) return <div className="py-8 text-center text-muted-foreground">No activity log found.</div>;
         return (
             <Card aria-label="Activity Log">
@@ -783,13 +748,9 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                         <Activity className="h-5 w-5" />
                         Activity Log
                     </CardTitle>
-                    <CardDescription>
-                        View your recent account activity and security events.
-                    </CardDescription>
+                    <CardDescription>View your recent account activity and security events.</CardDescription>
                 </CardHeader>
-                <CardContent>
-                    {loading ? <div>Loading...</div> : <ActivityFeed activities={activities} onRemove={() => {}} />}
-                </CardContent>
+                <CardContent>{loading ? <div>Loading...</div> : <ActivityFeed activities={activities} onRemove={() => {}} />}</CardContent>
             </Card>
         );
     };
@@ -820,34 +781,26 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
     const [timezone, setTimezone] = useState(user.timezone || '');
     const [locale, setLocale] = useState(user.locale || '');
     const totalFields = 8;
-    const completedFields = [
-        user.name,
-        user.email,
-        user.phone,
-        user.department,
-        avatarUrl,
-        address,
-        birthday,
-        timezone,
-        locale
-    ].filter(Boolean).length;
+    const completedFields = [user.name, user.email, user.phone, user.department, avatarUrl, address, birthday, timezone, locale].filter(
+        Boolean,
+    ).length;
     const progressValue = Math.round((completedFields / totalFields) * 100);
     return (
         <AppLayout
             title="Profile Settings"
             breadcrumbs={[
                 { title: 'Profile', href: route('profile.index') },
-                { title: 'Settings', href: route('profile.settings') }
+                { title: 'Settings', href: route('profile.settings') },
             ]}
         >
             <div className="py-6">
                 <div className="mb-6">
-                    <div className="flex items-center justify-between mb-1">
+                    <div className="mb-1 flex items-center justify-between">
                         <span className="text-xs font-medium text-muted-foreground">Profile Completion</span>
                         <span className="text-xs font-medium text-muted-foreground">{progressValue}%</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${progressValue}%` }}></div>
+                    <div className="h-2 w-full rounded-full bg-gray-200">
+                        <div className="h-2 rounded-full bg-blue-600" style={{ width: `${progressValue}%` }}></div>
                     </div>
                 </div>
                 <Card className="mb-6">
@@ -875,13 +828,11 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                         </ul>
                     </CardContent>
                 </Card>
-                <div className="flex flex-col md:flex-row gap-8">
+                <div className="flex flex-col gap-8 md:flex-row">
                     <aside className="md:w-1/4">
                         <ProfileNav />
                     </aside>
-                    <main className="flex-1">
-                        {renderContent()}
-                    </main>
+                    <main className="flex-1">{renderContent()}</main>
                 </div>
             </div>
         </AppLayout>

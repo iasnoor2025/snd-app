@@ -1,9 +1,9 @@
-import { Icon } from "./icon";
-import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar";
 import { type NavItem } from '@/Core/types';
+import { Link } from '@inertiajs/react';
 import { type ComponentPropsWithoutRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from "@inertiajs/react";
+import { Icon } from './icon';
+import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from './ui/sidebar';
 
 export function NavFooter({
     items,
@@ -26,7 +26,7 @@ export function NavFooter({
                             >
                                 <a href={item.href} target="_blank" rel="noopener noreferrer">
                                     {item.icon && <Icon name={item.icon.toLowerCase()} className="h-5 w-5" />}
-                                    <span>{t(`footer.${item.title.toLowerCase().replace(' ', '_')}`, {defaultValue: item.title})}</span>
+                                    <span>{t(`footer.${item.title.toLowerCase().replace(' ', '_')}`, { defaultValue: item.title })}</span>
                                 </a>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
@@ -47,24 +47,3 @@ export function NavFooter({
 
 // Default export for compatibility with index.ts
 export default NavFooter;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

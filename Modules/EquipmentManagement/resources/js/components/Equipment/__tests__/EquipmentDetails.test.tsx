@@ -1,6 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { EquipmentDetails } from '../EquipmentDetails';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 const mockEquipment = {
     id: 1,
@@ -39,7 +38,7 @@ describe('EquipmentDetails', () => {
         const statusBadge = screen.getByText('Available');
         expect(statusBadge).toBeInTheDocument();
         expect(statusBadge).toHaveClass('bg-green-100', 'text-green-800');
-    })
+    });
 
     it('displays edit button when onEdit prop is provided', () => {
         const handleEdit = jest.fn();
@@ -50,14 +49,14 @@ describe('EquipmentDetails', () => {
 
         fireEvent.click(editButton);
         expect(handleEdit).toHaveBeenCalledTimes(1);
-    })
+    });
 
     it('does not display edit button when onEdit prop is not provided', () => {
         render(<EquipmentDetails equipment={mockEquipment} />);
 
         const editButton = screen.queryByText('Edit Equipment');
         expect(editButton).not.toBeInTheDocument();
-    })
+    });
 
     it('displays "No notes provided" when notes are empty', () => {
         const equipmentWithoutNotes = {
@@ -67,7 +66,7 @@ describe('EquipmentDetails', () => {
 
         render(<EquipmentDetails equipment={equipmentWithoutNotes} />);
         expect(screen.getByText('No notes provided')).toBeInTheDocument();
-    })
+    });
 
     it('displays correct status badge colors for different statuses', () => {
         const statuses = [
@@ -86,13 +85,13 @@ describe('EquipmentDetails', () => {
             const { unmount } = render(<EquipmentDetails equipment={equipment} />);
 
             const statusBadge = screen.getByText(status.charAt(0).toUpperCase() + status.slice(1));
-            classes.forEach(className => {
+            classes.forEach((className) => {
                 expect(statusBadge).toHaveClass(className);
-            })
+            });
 
             unmount();
-        })
-    })
+        });
+    });
 
     it('formats currency values correctly', () => {
         const equipmentWithDifferentRates = {
@@ -107,23 +106,5 @@ describe('EquipmentDetails', () => {
         expect(screen.getByText('$1,234.56')).toBeInTheDocument();
         expect(screen.getByText('$7,890.12')).toBeInTheDocument();
         expect(screen.getByText('$34,567.89')).toBeInTheDocument();
-    })
-})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    });
+});

@@ -1,7 +1,6 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { EquipmentManagement } from '../EquipmentManagement';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 const mockEquipment = [
     {
@@ -53,7 +52,7 @@ describe('EquipmentManagement', () => {
         // Check if status badges are rendered
         expect(screen.getByText('Available')).toBeInTheDocument();
         expect(screen.getByText('Rented')).toBeInTheDocument();
-    })
+    });
 
     it('opens create modal when Add Equipment button is clicked', async () => {
         render(<EquipmentManagement equipment={mockEquipment} />);
@@ -67,8 +66,8 @@ describe('EquipmentManagement', () => {
             expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
             expect(screen.getByLabelText(/category/i)).toBeInTheDocument();
             expect(screen.getByLabelText(/daily rate/i)).toBeInTheDocument();
-        })
-    })
+        });
+    });
 
     it('opens edit modal when Edit button is clicked', async () => {
         render(<EquipmentManagement equipment={mockEquipment} />);
@@ -83,8 +82,8 @@ describe('EquipmentManagement', () => {
             expect(screen.getByLabelText(/name/i)).toHaveValue('Test Equipment 1');
             expect(screen.getByLabelText(/category/i)).toHaveValue('Test Category 1');
             expect(screen.getByLabelText(/daily rate/i)).toHaveValue(100);
-        })
-    })
+        });
+    });
 
     it('opens details modal when View button is clicked', async () => {
         render(<EquipmentManagement equipment={mockEquipment} />);
@@ -99,8 +98,8 @@ describe('EquipmentManagement', () => {
             expect(screen.getByText('Test Equipment 1')).toBeInTheDocument();
             expect(screen.getByText('Test Category 1')).toBeInTheDocument();
             expect(screen.getByText('$100.00')).toBeInTheDocument();
-        })
-    })
+        });
+    });
 
     it('filters equipment by search term', async () => {
         render(<EquipmentManagement equipment={mockEquipment} />);
@@ -112,31 +111,31 @@ describe('EquipmentManagement', () => {
         // Check if only matching equipment is shown
         expect(screen.getByText('Test Equipment 1')).toBeInTheDocument();
         expect(screen.queryByText('Test Equipment 2')).not.toBeInTheDocument();
-    })
+    });
 
     it('filters equipment by status', async () => {
         render(<EquipmentManagement equipment={mockEquipment} />);
 
         // Select status filter
         const statusFilter = screen.getByLabelText(/status/i);
-        fireEvent.change(statusFilter, { target: { value: 'available' } })
+        fireEvent.change(statusFilter, { target: { value: 'available' } });
 
         // Check if only available equipment is shown
         expect(screen.getByText('Test Equipment 1')).toBeInTheDocument();
         expect(screen.queryByText('Test Equipment 2')).not.toBeInTheDocument();
-    })
+    });
 
     it('filters equipment by category', async () => {
         render(<EquipmentManagement equipment={mockEquipment} />);
 
         // Select category filter
         const categoryFilter = screen.getByLabelText(/category/i);
-        fireEvent.change(categoryFilter, { target: { value: 'Test Category 1' } })
+        fireEvent.change(categoryFilter, { target: { value: 'Test Category 1' } });
 
         // Check if only matching category equipment is shown
         expect(screen.getByText('Test Equipment 1')).toBeInTheDocument();
         expect(screen.queryByText('Test Equipment 2')).not.toBeInTheDocument();
-    })
+    });
 
     it('sorts equipment by name', async () => {
         render(<EquipmentManagement equipment={mockEquipment} />);
@@ -161,7 +160,7 @@ describe('EquipmentManagement', () => {
         // Check if sorted in descending order
         expect(sortedEquipmentNames[0]).toHaveTextContent('Test Equipment 2');
         expect(sortedEquipmentNames[1]).toHaveTextContent('Test Equipment 1');
-    })
+    });
 
     it('sorts equipment by daily rate', async () => {
         render(<EquipmentManagement equipment={mockEquipment} />);
@@ -186,23 +185,5 @@ describe('EquipmentManagement', () => {
         // Check if sorted in descending order
         expect(sortedRates[0]).toHaveTextContent('$200.00');
         expect(sortedRates[1]).toHaveTextContent('$100.00');
-    })
-})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    });
+});

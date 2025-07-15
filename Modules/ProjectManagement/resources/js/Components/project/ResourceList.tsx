@@ -1,21 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/Core";
-import { Button } from "@/Core";
-import { Pencil, Trash2, UserX } from 'lucide-react';
-import { format } from 'date-fns';
-import { Badge } from "@/Core";
-import axios from 'axios';
+import { Badge, Button, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core';
 import { usePage } from '@inertiajs/react';
-import { getTranslation } from '@/Core/utils/translation';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import { format } from 'date-fns';
+import { Pencil, Trash2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Employee {
     id: number;
@@ -43,19 +31,11 @@ const dummyEmployees: Record<number, Employee> = {
     2: { id: 2, first_name: 'Jane', last_name: 'Smith', full_name: 'Jane Smith' },
     3: { id: 3, first_name: 'Mike', last_name: 'Johnson', full_name: 'Mike Johnson' },
     4: { id: 4, first_name: 'Sarah', last_name: 'Williams', full_name: 'Sarah Williams' },
-    5: { id: 5, first_name: 'David', last_name: 'Brown', full_name: 'David Brown' }
+    5: { id: 5, first_name: 'David', last_name: 'Brown', full_name: 'David Brown' },
 };
 
-export default function ResourceList({
-    type,
-    resources = [],
-    onEdit,
-    onDelete,
-    onSort,
-    sortState,
-    getSortIcon
-}: ResourceListProps) {
-  const { t } = useTranslation('project');
+export default function ResourceList({ type, resources = [], onEdit, onDelete, onSort, sortState, getSortIcon }: ResourceListProps) {
+    const { t } = useTranslation('project');
 
     // Extract locale from Inertia shared props
     const { locale = 'en' } = usePage<any>().props;
@@ -68,14 +48,14 @@ export default function ResourceList({
     useEffect(() => {
         const fetchEmployeeData = async () => {
             const employeeIds = safeResources
-                .filter(resource => resource.employee_id && !resource.employee)
-                .map(resource => resource.employee_id);
+                .filter((resource) => resource.employee_id && !resource.employee)
+                .map((resource) => resource.employee_id);
 
             if (employeeIds.length === 0) return;
 
             // Instead of making an API call, use dummy data
             const newEmployeeData: Record<number, Employee> = {};
-            employeeIds.forEach(employeeId => {
+            employeeIds.forEach((employeeId) => {
                 // If we already have this employee in our dummy data, use it
                 if (dummyEmployees[employeeId]) {
                     newEmployeeData[employeeId] = dummyEmployees[employeeId];
@@ -85,12 +65,12 @@ export default function ResourceList({
                         id: employeeId,
                         first_name: 'Employee',
                         last_name: `#${employeeId}`,
-                        full_name: `Employee #${employeeId}`
+                        full_name: `Employee #${employeeId}`,
                     };
                 }
-            })
+            });
 
-            setEmployeeData(prev => ({ ...prev, ...newEmployeeData }));
+            setEmployeeData((prev) => ({ ...prev, ...newEmployeeData }));
         };
 
         fetchEmployeeData();
@@ -109,9 +89,7 @@ export default function ResourceList({
         if (resource.employee_id) {
             const employee = resource.employee || employeeData[resource.employee_id];
             if (employee) {
-                return employee.full_name ||
-                       `${employee.first_name || ''} ${employee.last_name || ''}`.trim() ||
-                       'Unnamed Internal Worker';
+                return employee.full_name || `${employee.first_name || ''} ${employee.last_name || ''}`.trim() || 'Unnamed Internal Worker';
             }
             return 'Unnamed Internal Worker';
         }
@@ -125,11 +103,8 @@ export default function ResourceList({
             if (onSort) onSort(key);
         };
 
-        const renderSortableHeader = (label: string, key: string, className: string = "") => (
-            <TableHead
-                className={`cursor-pointer hover:bg-muted/50 ${className}`}
-                onClick={() => handleSort(key)}
-            >
+        const renderSortableHeader = (label: string, key: string, className: string = '') => (
+            <TableHead className={`cursor-pointer hover:bg-muted/50 ${className}`} onClick={() => handleSort(key)}>
                 <div className="flex items-center gap-1">
                     {label}
                     {getSortIcon && getSortIcon(key)}
@@ -217,11 +192,7 @@ export default function ResourceList({
                                 <span>{employeeName}</span>
                                 <Badge
                                     variant="outline"
-                                    className={`ml-2 text-xs px-1 py-0 ${
-                                        isInternalWorker
-                                            ? 'bg-blue-100 text-blue-800'
-                                            : 'bg-slate-100'
-                                    }`}
+                                    className={`ml-2 px-1 py-0 text-xs ${isInternalWorker ? 'bg-blue-100 text-blue-800' : 'bg-slate-100'}`}
                                 >
                                     {isInternalWorker ? 'Internal' : 'External'}
                                 </Badge>
@@ -234,18 +205,10 @@ export default function ResourceList({
                         <TableCell className="text-right">SAR {formatCurrency(resource.total_cost)}</TableCell>
                         <TableCell className="w-[100px]">
                             <div className="flex items-center gap-2">
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => onEdit?.(resource)}
-                                >
+                                <Button variant="ghost" size="icon" onClick={() => onEdit?.(resource)}>
                                     <Pencil className="h-4 w-4" />
                                 </Button>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => onDelete?.(resource)}
-                                >
+                                <Button variant="ghost" size="icon" onClick={() => onDelete?.(resource)}>
                                     <Trash2 className="h-4 w-4" />
                                 </Button>
                             </div>
@@ -322,42 +285,20 @@ export default function ResourceList({
         <div className="w-full overflow-x-auto">
             <Table>
                 <TableHeader>
-                    <TableRow>
-                        {renderTableHeaders()}
-                    </TableRow>
+                    <TableRow>{renderTableHeaders()}</TableRow>
                 </TableHeader>
                 <TableBody>
                     {safeResources.length === 0 ? (
                         <TableRow>
-                            <TableCell colSpan={getColumnCount()} className="text-center py-8 text-muted-foreground">
+                            <TableCell colSpan={getColumnCount()} className="py-8 text-center text-muted-foreground">
                                 No resources found
                             </TableCell>
                         </TableRow>
                     ) : (
-                        safeResources.map((resource) => (
-                            <TableRow key={resource.id}>
-                                {renderTableRow(resource)}
-                            </TableRow>
-                        ))
+                        safeResources.map((resource) => <TableRow key={resource.id}>{renderTableRow(resource)}</TableRow>)
                     )}
                 </TableBody>
             </Table>
         </div>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

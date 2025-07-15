@@ -15,6 +15,7 @@ A comprehensive, production-ready **Laravel 12 + React** application for rental 
 ## 🏢 Business Purpose
 
 This system unifies fragmented rental business operations into a single, modular platform. It streamlines equipment tracking, customer management, employee scheduling, project coordination, payroll, compliance, and reporting. The platform is designed for:
+
 - Rental Managers
 - Project Managers
 - HR Managers
@@ -50,6 +51,7 @@ This system unifies fragmented rental business operations into a single, modular
 - **CI/CD**: GitHub Actions (suggested)
 
 ### Directory Structure
+
 ```
 Modules/
   └── {ModuleName}/
@@ -80,6 +82,7 @@ resources/js/
 ## ⚡ Quick Start
 
 ### Prerequisites
+
 - PHP >= 8.2
 - Composer >= 2.0
 - Node.js >= 18
@@ -87,44 +90,53 @@ resources/js/
 - MySQL 8+ (for production) or SQLite (for development)
 
 ### 1. Clone the Repository
+
 ```bash
 git clone https://github.com/your-org/snd-app.git
 cd snd-app
 ```
 
 ### 2. Install Backend Dependencies
+
 ```bash
 composer install
 ```
 
 ### 3. Install Frontend Dependencies
+
 ```bash
 npm install
 ```
 
 ### 4. Environment Setup
+
 - Copy `.env.example` to `.env` and configure database/mail settings
 - Generate app key:
+
 ```bash
 php artisan key:generate
 ```
 
 ### 5. Database Setup
+
 - For SQLite (default):
-  - Touch `database/database.sqlite`
+    - Touch `database/database.sqlite`
 - For MySQL/PostgreSQL: update `.env` accordingly
 - Run migrations & seeders:
+
 ```bash
 php artisan migrate --seed
 ```
 
 ### 6. Build Assets
+
 ```bash
 npm run dev   # For development
 npm run build # For production
 ```
 
 ### 7. Start the Application
+
 ```bash
 php artisan serve
 ```
@@ -132,6 +144,7 @@ php artisan serve
 ---
 
 ## 🌍 Internationalization
+
 - All translations are managed per module in `public/locales/{ModuleName}/{lang}`
 - Use `npm run scan-i18n` to extract keys, `npm run i18n-report` for coverage
 - RTL support for Arabic, Hebrew, etc.
@@ -147,6 +160,7 @@ php artisan serve
 5. Open a Pull Request
 
 **Coding Standards:**
+
 - PHP: PSR-12, Laravel Pint
 - JS/TS: ESLint, Prettier
 - Use module structure for all business logic
@@ -161,6 +175,7 @@ This project is open-sourced under the [MIT license](LICENSE).
 ---
 
 ## 🙏 Acknowledgements
+
 - [Laravel](https://laravel.com/)
 - [React](https://react.dev/)
 - [Inertia.js](https://inertiajs.com/)
@@ -172,4 +187,5 @@ This project is open-sourced under the [MIT license](LICENSE).
 ---
 
 ## 📬 Contact
-For questions, issues, or feature requests, please open an issue or contact the maintainers via GitHub. 
+
+For questions, issues, or feature requests, please open an issue or contact the maintainers via GitHub.

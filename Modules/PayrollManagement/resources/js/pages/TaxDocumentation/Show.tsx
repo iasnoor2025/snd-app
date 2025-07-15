@@ -1,37 +1,25 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Head, Link } from '@inertiajs/react';
-import { PageProps } from "@/Core/types";
-import { AppLayout } from '@/Core';
-import { Button } from "@/Core";
-import { Badge } from "@/Core";
 import {
+    AppLayout,
+    Badge,
+    Button,
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from "@/Core";
-import {
+    Separator,
     Table,
     TableBody,
     TableCell,
     TableHead,
     TableHeader,
     TableRow,
-} from "@/Core";
-import { Separator } from "@/Core";
-import {
-    ArrowLeft,
-    Download,
-    FileText,
-    User,
-    Calendar,
-    DollarSign,
-    TrendingUp,
-    Receipt
-} from 'lucide-react';
+} from '@/Core';
+import { PageProps } from '@/Core/types';
+import { Head, Link } from '@inertiajs/react';
 import { format } from 'date-fns';
+import { ArrowLeft, Calendar, DollarSign, Download, FileText, Receipt, TrendingUp, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { route } from 'ziggy-js';
 
 interface Employee {
@@ -90,7 +78,7 @@ interface Props extends PageProps {
 }
 
 export default function Show({ taxDocument }: Props) {
-  const { t } = useTranslation('payroll');
+    const { t } = useTranslation('payroll');
 
     const formatCurrency = (amount: number, currency: string = 'SAR') => {
         return new Intl.NumberFormat('en-US', {
@@ -101,11 +89,16 @@ export default function Show({ taxDocument }: Props) {
 
     const getStatusColor = (status: string) => {
         switch (status) {
-            case 'draft': return 'bg-yellow-100 text-yellow-800';
-            case 'generated': return 'bg-blue-100 text-blue-800';
-            case 'sent': return 'bg-green-100 text-green-800';
-            case 'archived': return 'bg-gray-100 text-gray-800';
-            default: return 'bg-gray-100 text-gray-800';
+            case 'draft':
+                return 'bg-yellow-100 text-yellow-800';
+            case 'generated':
+                return 'bg-blue-100 text-blue-800';
+            case 'sent':
+                return 'bg-green-100 text-green-800';
+            case 'archived':
+                return 'bg-gray-100 text-gray-800';
+            default:
+                return 'bg-gray-100 text-gray-800';
         }
     };
 
@@ -113,46 +106,49 @@ export default function Show({ taxDocument }: Props) {
         {
             label: 'Base Salary',
             amount: taxDocument.gross_income - taxDocument.overtime_income - taxDocument.bonus_income - taxDocument.other_income,
-            percentage: ((taxDocument.gross_income - taxDocument.overtime_income - taxDocument.bonus_income - taxDocument.other_income) / taxDocument.gross_income) * 100
+            percentage:
+                ((taxDocument.gross_income - taxDocument.overtime_income - taxDocument.bonus_income - taxDocument.other_income) /
+                    taxDocument.gross_income) *
+                100,
         },
         {
             label: 'Overtime',
             amount: taxDocument.overtime_income,
-            percentage: (taxDocument.overtime_income / taxDocument.gross_income) * 100
+            percentage: (taxDocument.overtime_income / taxDocument.gross_income) * 100,
         },
         {
             label: 'Bonus',
             amount: taxDocument.bonus_income,
-            percentage: (taxDocument.bonus_income / taxDocument.gross_income) * 100
+            percentage: (taxDocument.bonus_income / taxDocument.gross_income) * 100,
         },
         {
             label: 'Other Income',
             amount: taxDocument.other_income,
-            percentage: (taxDocument.other_income / taxDocument.gross_income) * 100
-        }
+            percentage: (taxDocument.other_income / taxDocument.gross_income) * 100,
+        },
     ];
 
     const deductionBreakdown = [
         {
             label: 'Tax Withheld',
             amount: taxDocument.tax_withheld,
-            percentage: (taxDocument.tax_withheld / taxDocument.total_deductions) * 100
+            percentage: (taxDocument.tax_withheld / taxDocument.total_deductions) * 100,
         },
         {
             label: 'Insurance',
             amount: taxDocument.insurance_deductions,
-            percentage: (taxDocument.insurance_deductions / taxDocument.total_deductions) * 100
+            percentage: (taxDocument.insurance_deductions / taxDocument.total_deductions) * 100,
         },
         {
             label: 'Advance Deductions',
             amount: taxDocument.advance_deductions,
-            percentage: (taxDocument.advance_deductions / taxDocument.total_deductions) * 100
+            percentage: (taxDocument.advance_deductions / taxDocument.total_deductions) * 100,
         },
         {
             label: 'Other Deductions',
             amount: taxDocument.other_deductions,
-            percentage: (taxDocument.other_deductions / taxDocument.total_deductions) * 100
-        }
+            percentage: (taxDocument.other_deductions / taxDocument.total_deductions) * 100,
+        },
     ];
 
     return (
@@ -161,30 +157,26 @@ export default function Show({ taxDocument }: Props) {
 
             <div className="space-y-6">
                 {/* Header */}
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <Link href={route('payroll.tax-documentation.index')}>
                             <Button variant="outline" size="sm">
-                                <ArrowLeft className="h-4 w-4 mr-2" />
+                                <ArrowLeft className="mr-2 h-4 w-4" />
                                 Back
                             </Button>
                         </Link>
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-900">
-                                Tax Document {taxDocument.document_number}
-                            </h1>
+                            <h1 className="text-2xl font-bold text-gray-900">Tax Document {taxDocument.document_number}</h1>
                             <p className="text-gray-600">
                                 {taxDocument.employee.name} - Tax Year {taxDocument.tax_year}
                             </p>
                         </div>
                     </div>
                     <div className="flex gap-2">
-                        <Badge className={getStatusColor(taxDocument.status)}>
-                            {taxDocument.status}
-                        </Badge>
+                        <Badge className={getStatusColor(taxDocument.status)}>{taxDocument.status}</Badge>
                         <Link href={route('payroll.tax-documentation.download', taxDocument.id)}>
                             <Button>
-                                <Download className="h-4 w-4 mr-2" />
+                                <Download className="mr-2 h-4 w-4" />
                                 Download PDF
                             </Button>
                         </Link>
@@ -200,7 +192,7 @@ export default function Show({ taxDocument }: Props) {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                             <div>
                                 <p className="text-sm font-medium text-gray-500">{t('employee_name')}</p>
                                 <p className="text-lg font-semibold">{taxDocument.employee.name}</p>
@@ -218,7 +210,7 @@ export default function Show({ taxDocument }: Props) {
                 </Card>
 
                 {/* Summary Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">{t('th_gross_income')}</CardTitle>
@@ -258,7 +250,7 @@ export default function Show({ taxDocument }: Props) {
                 </div>
 
                 {/* Income and Deduction Breakdown */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                     {/* Income Breakdown */}
                     <Card>
                         <CardHeader>
@@ -268,7 +260,7 @@ export default function Show({ taxDocument }: Props) {
                         <CardContent>
                             <div className="space-y-4">
                                 {incomeBreakdown.map((item, index) => (
-                                    <div key={index} className="flex justify-between items-center">
+                                    <div key={index} className="flex items-center justify-between">
                                         <div>
                                             <p className="font-medium">{item.label}</p>
                                             <p className="text-sm text-gray-500">{item.percentage.toFixed(1)}% of total</p>
@@ -277,7 +269,7 @@ export default function Show({ taxDocument }: Props) {
                                     </div>
                                 ))}
                                 <Separator />
-                                <div className="flex justify-between items-center font-bold">
+                                <div className="flex items-center justify-between font-bold">
                                     <p>{t('total_gross_income')}</p>
                                     <p>{formatCurrency(taxDocument.gross_income, taxDocument.currency)}</p>
                                 </div>
@@ -294,7 +286,7 @@ export default function Show({ taxDocument }: Props) {
                         <CardContent>
                             <div className="space-y-4">
                                 {deductionBreakdown.map((item, index) => (
-                                    <div key={index} className="flex justify-between items-center">
+                                    <div key={index} className="flex items-center justify-between">
                                         <div>
                                             <p className="font-medium">{item.label}</p>
                                             <p className="text-sm text-gray-500">{item.percentage.toFixed(1)}% of total</p>
@@ -303,7 +295,7 @@ export default function Show({ taxDocument }: Props) {
                                     </div>
                                 ))}
                                 <Separator />
-                                <div className="flex justify-between items-center font-bold">
+                                <div className="flex items-center justify-between font-bold">
                                     <p>{t('total_deductions')}</p>
                                     <p>{formatCurrency(taxDocument.total_deductions, taxDocument.currency)}</p>
                                 </div>
@@ -337,9 +329,7 @@ export default function Show({ taxDocument }: Props) {
                                 <TableBody>
                                     {taxDocument.monthly_breakdown.map((month, index) => (
                                         <TableRow key={index}>
-                                            <TableCell className="font-medium">
-                                                {format(new Date(month.month + '-01'), 'MMM yyyy')}
-                                            </TableCell>
+                                            <TableCell className="font-medium">{format(new Date(month.month + '-01'), 'MMM yyyy')}</TableCell>
                                             <TableCell>{formatCurrency(month.gross_income, taxDocument.currency)}</TableCell>
                                             <TableCell>{formatCurrency(month.tax_withheld, taxDocument.currency)}</TableCell>
                                             <TableCell>{formatCurrency(month.net_income, taxDocument.currency)}</TableCell>
@@ -403,7 +393,7 @@ export default function Show({ taxDocument }: Props) {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                             <div>
                                 <p className="text-sm font-medium text-gray-500">{t('document_number')}</p>
                                 <p className="text-lg font-semibold">{taxDocument.document_number}</p>
@@ -411,10 +401,7 @@ export default function Show({ taxDocument }: Props) {
                             <div>
                                 <p className="text-sm font-medium text-gray-500">{t('generated_date')}</p>
                                 <p className="text-lg font-semibold">
-                                    {taxDocument.generated_at ?
-                                        format(new Date(taxDocument.generated_at), 'MMM dd, yyyy HH:mm') :
-                                        'Not generated'
-                                    }
+                                    {taxDocument.generated_at ? format(new Date(taxDocument.generated_at), 'MMM dd, yyyy HH:mm') : 'Not generated'}
                                 </p>
                             </div>
                             {taxDocument.notes && (
@@ -430,17 +417,3 @@ export default function Show({ taxDocument }: Props) {
         </AppLayout>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,32 +1,32 @@
 {
-  "title": "Rental Management",
-  "list": {
-    "title": "Rentals",
-    "add": "Add Rental",
-    "edit": "Edit Rental",
-    "delete": "Delete Rental"
-  },
-  "fields": {
-    "rental_id": "Rental ID",
-    "customer": "Customer",
-    "equipment": "Equipment",
-    "start_date": "Start Date",
-    "expected_end_date": "Expected End Date",
-    "status": "Status",
-    "rental_rate": "Rental Rate",
-    "deposit": "Deposit"
-  },
-  "status": {
-    "active": "Active",
-    "pending": "Pending",
-    "completed": "Completed",
-    "cancelled": "Cancelled",
-    "overdue": "Overdue"
-  },
-  "messages": {
-    "create_success": "Rental created successfully",
-    "update_success": "Rental updated successfully",
-    "delete_success": "Rental deleted successfully",
-    "delete_confirm": "Are you sure you want to delete this rental?"
-  }
-} 
+    "title": "Rental Management",
+    "list": {
+        "title": "Rentals",
+        "add": "Add Rental",
+        "edit": "Edit Rental",
+        "delete": "Delete Rental"
+    },
+    "fields": {
+        "rental_id": "Rental ID",
+        "customer": "Customer",
+        "equipment": "Equipment",
+        "start_date": "Start Date",
+        "expected_end_date": "Expected End Date",
+        "status": "Status",
+        "rental_rate": "Rental Rate",
+        "deposit": "Deposit"
+    },
+    "status": {
+        "active": "Active",
+        "pending": "Pending",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "overdue": "Overdue"
+    },
+    "messages": {
+        "create_success": "Rental created successfully",
+        "update_success": "Rental updated successfully",
+        "delete_success": "Rental deleted successfully",
+        "delete_confirm": "Are you sure you want to delete this rental?"
+    }
+}

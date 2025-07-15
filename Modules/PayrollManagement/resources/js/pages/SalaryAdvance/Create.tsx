@@ -1,31 +1,26 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Head, useForm, router } from '@inertiajs/react';
-import { PageProps } from "@/Core/types";
-import { AppLayout } from '@/Core';
-import { Button } from "@/Core";
 import {
+    AppLayout,
+    Button,
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from "@/Core";
-import { Input } from "@/Core";
-import { Label } from "@/Core";
-import { Textarea } from "@/Core";
-import {
+    Input,
+    Label,
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/Core";
-import { ArrowLeft, DollarSign, Calendar, FileText } from 'lucide-react';
-import { route } from 'ziggy-js';
-import { Link } from '@inertiajs/react';
+    Textarea,
+} from '@/Core';
+import { PageProps } from '@/Core/types';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { format } from 'date-fns';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import { ArrowLeft, Calendar, DollarSign, FileText } from 'lucide-react';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Employee {
     id: number;
@@ -54,7 +49,7 @@ const breadcrumbs = [
 ];
 
 export default function Create({ auth, employees }: Props) {
-  const { t } = useTranslation('payroll');
+    const { t } = useTranslation('payroll');
 
     const { data, setData, post, processing, errors } = useForm({
         employee_id: '',
@@ -73,15 +68,11 @@ export default function Create({ auth, employees }: Props) {
         setData('employee_id', employeeId);
     };
 
-    const selectedEmployee = employees.find(emp => emp.id === parseInt(data.employee_id));
+    const selectedEmployee = employees.find((emp) => emp.id === parseInt(data.employee_id));
     const maxAdvanceAmount = selectedEmployee?.basic_salary ? selectedEmployee.basic_salary * 0.5 : 0;
 
     return (
-        <AppLayout
-            title={t('request_salary_advance')}
-            breadcrumbs={breadcrumbs}
-            requiredPermission="salary-advances.create"
-        >
+        <AppLayout title={t('request_salary_advance')} breadcrumbs={breadcrumbs} requiredPermission="salary-advances.create">
             <Head title={t('request_salary_advance')} />
 
             <div className="flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -94,9 +85,7 @@ export default function Create({ auth, employees }: Props) {
                     </Button>
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight">{t('request_salary_advance')}</h1>
-                        <p className="text-muted-foreground">
-                            Submit a new salary advance request
-                        </p>
+                        <p className="text-muted-foreground">Submit a new salary advance request</p>
                     </div>
                 </div>
 
@@ -107,44 +96,33 @@ export default function Create({ auth, employees }: Props) {
                                 <DollarSign className="h-5 w-5" />
                                 Salary Advance Request
                             </CardTitle>
-                            <CardDescription>
-                                Fill out the form below to request a salary advance. All requests require approval.
-                            </CardDescription>
+                            <CardDescription>Fill out the form below to request a salary advance. All requests require approval.</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 {/* Employee Selection */}
                                 <div className="space-y-2">
                                     <Label htmlFor="employee_id">Employee *</Label>
-                                    <Select
-                                        value={data.employee_id}
-                                        onValueChange={handleEmployeeChange}
-                                        required
-                                    >
+                                    <Select value={data.employee_id} onValueChange={handleEmployeeChange} required>
                                         <SelectTrigger>
                                             <SelectValue placeholder={t('ph_select_employee_1')} />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {employees.map((employee) => (
-                                                <SelectItem
-                                                    key={employee.id}
-                                                    value={employee.id.toString()}
-                                                >
+                                                <SelectItem key={employee.id} value={employee.id.toString()}>
                                                     {employee.first_name} {employee.last_name}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    {errors.employee_id && (
-                                        <p className="text-sm text-destructive">{errors.employee_id}</p>
-                                    )}
+                                    {errors.employee_id && <p className="text-sm text-destructive">{errors.employee_id}</p>}
                                 </div>
 
                                 {/* Amount */}
                                 <div className="space-y-2">
                                     <Label htmlFor="amount">Amount *</Label>
                                     <div className="relative">
-                                        <DollarSign className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                        <DollarSign className="absolute top-3 left-3 h-4 w-4 text-muted-foreground" />
                                         <Input
                                             id="amount"
                                             type="number"
@@ -159,20 +137,16 @@ export default function Create({ auth, employees }: Props) {
                                         />
                                     </div>
                                     {maxAdvanceAmount > 0 && (
-                                        <p className="text-sm text-muted-foreground">
-                                            Maximum advance: ${maxAdvanceAmount} (50% of basic salary)
-                                        </p>
+                                        <p className="text-sm text-muted-foreground">Maximum advance: ${maxAdvanceAmount} (50% of basic salary)</p>
                                     )}
-                                    {errors.amount && (
-                                        <p className="text-sm text-destructive">{errors.amount}</p>
-                                    )}
+                                    {errors.amount && <p className="text-sm text-destructive">{errors.amount}</p>}
                                 </div>
 
                                 {/* Advance Date */}
                                 <div className="space-y-2">
                                     <Label htmlFor="advance_date">Advance Date *</Label>
                                     <div className="relative">
-                                        <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                        <Calendar className="absolute top-3 left-3 h-4 w-4 text-muted-foreground" />
                                         <Input
                                             id="advance_date"
                                             type="date"
@@ -182,16 +156,14 @@ export default function Create({ auth, employees }: Props) {
                                             required
                                         />
                                     </div>
-                                    {errors.advance_date && (
-                                        <p className="text-sm text-destructive">{errors.advance_date}</p>
-                                    )}
+                                    {errors.advance_date && <p className="text-sm text-destructive">{errors.advance_date}</p>}
                                 </div>
 
                                 {/* Deduction Start Date */}
                                 <div className="space-y-2">
                                     <Label htmlFor="deduction_start_date">Deduction Start Date *</Label>
                                     <div className="relative">
-                                        <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                        <Calendar className="absolute top-3 left-3 h-4 w-4 text-muted-foreground" />
                                         <Input
                                             id="deduction_start_date"
                                             type="date"
@@ -202,35 +174,27 @@ export default function Create({ auth, employees }: Props) {
                                             required
                                         />
                                     </div>
-                                    <p className="text-sm text-muted-foreground">
-                                        When should the deduction from salary begin?
-                                    </p>
-                                    {errors.deduction_start_date && (
-                                        <p className="text-sm text-destructive">{errors.deduction_start_date}</p>
-                                    )}
+                                    <p className="text-sm text-muted-foreground">When should the deduction from salary begin?</p>
+                                    {errors.deduction_start_date && <p className="text-sm text-destructive">{errors.deduction_start_date}</p>}
                                 </div>
 
                                 {/* Reason */}
                                 <div className="space-y-2">
                                     <Label htmlFor="reason">Reason *</Label>
                                     <div className="relative">
-                                        <FileText className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                        <FileText className="absolute top-3 left-3 h-4 w-4 text-muted-foreground" />
                                         <Textarea
                                             id="reason"
                                             placeholder={t('ph_please_provide_a_reason_for_the_salary_advance')}
                                             value={data.reason}
                                             onChange={(e) => setData('reason', e.target.value)}
-                                            className="min-h-[100px] pl-10 pt-3"
+                                            className="min-h-[100px] pt-3 pl-10"
                                             maxLength={500}
                                             required
                                         />
                                     </div>
-                                    <p className="text-sm text-muted-foreground">
-                                        {data.reason.length}/500 characters
-                                    </p>
-                                    {errors.reason && (
-                                        <p className="text-sm text-destructive">{errors.reason}</p>
-                                    )}
+                                    <p className="text-sm text-muted-foreground">{data.reason.length}/500 characters</p>
+                                    {errors.reason && <p className="text-sm text-destructive">{errors.reason}</p>}
                                 </div>
 
                                 {/* Important Notes */}
@@ -247,9 +211,7 @@ export default function Create({ auth, employees }: Props) {
                                 {/* Submit Button */}
                                 <div className="flex justify-end space-x-4">
                                     <Button variant="outline" asChild>
-                                        <Link href="/salary-advances">
-                                            Cancel
-                                        </Link>
+                                        <Link href="/salary-advances">Cancel</Link>
                                     </Button>
                                     <Button type="submit" disabled={processing}>
                                         {processing ? 'Submitting...' : 'Submit Request'}
@@ -263,17 +225,3 @@ export default function Create({ auth, employees }: Props) {
         </AppLayout>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

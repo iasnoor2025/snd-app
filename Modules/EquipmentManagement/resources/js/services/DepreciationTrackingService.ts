@@ -1,11 +1,10 @@
 const DepreciationTrackingService = {
-  async getFleetDepreciationSummary() {
-    return {};
-  },
-  async getEquipmentNeedingReplacement() {
-    return [];
-  }
+    async getFleetDepreciationSummary() {
+        return {};
+    },
+    async getEquipmentNeedingReplacement() {
+        return [];
+    },
 };
 
 export default DepreciationTrackingService;
-

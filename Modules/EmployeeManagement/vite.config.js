@@ -1,9 +1,7 @@
-import { defineConfig } from 'vite';
-import laravel from 'laravel-vite-plugin';
-import { readdirSync, statSync } from 'fs';
-import { join, relative, dirname, resolve } from 'path';
-import { fileURLToPath } from 'url';
 import react from '@vitejs/plugin-react';
+import laravel from 'laravel-vite-plugin';
+import { resolve } from 'path';
+import { defineConfig } from 'vite';
 
 export default defineConfig({
     build: {
@@ -30,8 +28,7 @@ export default defineConfig({
                 __dirname + '/resources/js/pages/Employees/PerformanceReviews.tsx',
                 __dirname + '/resources/js/pages/Employees/PerformanceManagement.tsx',
                 __dirname + '/resources/js/pages/Employees/SalaryHistory.tsx',
-                __dirname + '/resources/js/pages/Employees/LeaveHistory.tsx'
-
+                __dirname + '/resources/js/pages/Employees/LeaveHistory.tsx',
             ],
             refresh: true,
         }),
@@ -60,7 +57,7 @@ export const paths = [
     'Modules/EmployeeManagement/resources/js/pages/Employees/PerformanceReviews.tsx',
     'Modules/EmployeeManagement/resources/js/pages/Employees/PerformanceManagement.tsx',
     'Modules/EmployeeManagement/resources/js/pages/Employees/SalaryHistory.tsx',
-    'Modules/EmployeeManagement/resources/js/pages/Employees/LeaveHistory.tsx'
+    'Modules/EmployeeManagement/resources/js/pages/Employees/LeaveHistory.tsx',
 ];
 
 // Scen all resources for assets file. Return array
@@ -90,7 +87,6 @@ export const paths = [
 
 //const assetsDir = join(__dirname, 'resources/assets');
 //export const paths = getFilePaths(assetsDir);
-
 
 //export const paths = [
 //    'Modules/EmployeeManagement/resources/assets/sass/app.scss',

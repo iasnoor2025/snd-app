@@ -1,15 +1,6 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/Core";
-import { Badge } from "@/Core";
+import { Badge, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 interface PerformanceReview {
     id: number;
@@ -28,7 +19,7 @@ interface Props {
 }
 
 export default function PerformanceReviews({ reviews }: Props) {
-  const { t } = useTranslation('employee');
+    const { t } = useTranslation('employee');
 
     const getRatingBadge = (rating: number) => {
         let variant: 'default' | 'success' | 'warning' | 'destructive' = 'default';
@@ -44,13 +35,7 @@ export default function PerformanceReviews({ reviews }: Props) {
     };
 
     const getStatusBadge = (status: PerformanceReview['status']) => {
-        return (
-            <Badge
-                variant={status === 'completed' ? 'success' : 'secondary'}
-            >
-                {status}
-            </Badge>
-        );
+        return <Badge variant={status === 'completed' ? 'success' : 'secondary'}>{status}</Badge>;
     };
 
     const formatList = (items: string[]) => {
@@ -75,32 +60,19 @@ export default function PerformanceReviews({ reviews }: Props) {
                 <TableBody>
                     {reviews.map((review) => (
                         <TableRow key={review.id}>
-                            <TableCell>
-                                {format(new Date(review.review_date), 'MMM dd, yyyy')}
-                            </TableCell>
+                            <TableCell>{format(new Date(review.review_date), 'MMM dd, yyyy')}</TableCell>
                             <TableCell>{review.reviewer}</TableCell>
                             <TableCell>{getRatingBadge(review.rating)}</TableCell>
                             <TableCell>{getStatusBadge(review.status)}</TableCell>
-                            <TableCell className="max-w-xs truncate">
-                                {formatList(review.strengths)}
-                            </TableCell>
-                            <TableCell className="max-w-xs truncate">
-                                {formatList(review.areas_for_improvement)}
-                            </TableCell>
-                            <TableCell className="max-w-xs truncate">
-                                {formatList(review.goals)}
-                            </TableCell>
-                            <TableCell className="max-w-xs truncate">
-                                {review.notes || '-'}
-                            </TableCell>
+                            <TableCell className="max-w-xs truncate">{formatList(review.strengths)}</TableCell>
+                            <TableCell className="max-w-xs truncate">{formatList(review.areas_for_improvement)}</TableCell>
+                            <TableCell className="max-w-xs truncate">{formatList(review.goals)}</TableCell>
+                            <TableCell className="max-w-xs truncate">{review.notes || '-'}</TableCell>
                         </TableRow>
                     ))}
                     {reviews.length === 0 && (
                         <TableRow>
-                            <TableCell
-                                colSpan={8}
-                                className="h-24 text-center text-muted-foreground"
-                            >
+                            <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
                                 No performance reviews found
                             </TableCell>
                         </TableRow>
@@ -110,19 +82,3 @@ export default function PerformanceReviews({ reviews }: Props) {
         </div>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

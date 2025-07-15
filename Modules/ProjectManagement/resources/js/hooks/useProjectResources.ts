@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface UseProjectResourcesProps {
     projectId: number;
@@ -13,9 +13,7 @@ interface UseProjectResourcesReturn {
     refetch: () => void;
 }
 
-export function useProjectResources({
-    projectId
-}: UseProjectResourcesProps): UseProjectResourcesReturn {
+export function useProjectResources({ projectId }: UseProjectResourcesProps): UseProjectResourcesReturn {
     const [resources, setResources] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -23,7 +21,7 @@ export function useProjectResources({
     const fetchResources = async () => {
         setIsLoading(true);
         setError(null);
-        
+
         try {
             const response = await axios.get(`/api/projects/${projectId}/resources`);
             setResources(response.data);
@@ -42,7 +40,7 @@ export function useProjectResources({
     }, [projectId]);
 
     const refetch = () => {
-  const { t } = useTranslation('project');
+        const { t } = useTranslation('project');
 
         fetchResources();
     };
@@ -54,4 +52,3 @@ export function useProjectResources({
         refetch,
     };
 }
-

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
 import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/components/ui/card';
-import { toast } from 'sonner';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/components/ui/card';
 import axios from 'axios';
+import { Html5QrcodeScanner } from 'html5-qrcode';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 interface Equipment {
     id: number;
@@ -38,7 +38,7 @@ export function CodeScanner() {
                 qrbox: 250,
                 aspectRatio: 1,
             },
-            false
+            false,
         );
 
         newScanner.render(onScanSuccess, onScanError);
@@ -74,12 +74,10 @@ export function CodeScanner() {
     };
 
     return (
-        <Card className="w-full max-w-2xl mx-auto">
+        <Card className="mx-auto w-full max-w-2xl">
             <CardHeader>
                 <CardTitle>Equipment Scanner</CardTitle>
-                <CardDescription>
-                    Scan QR codes or barcodes to access equipment information.
-                </CardDescription>
+                <CardDescription>Scan QR codes or barcodes to access equipment information.</CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
@@ -90,37 +88,27 @@ export function CodeScanner() {
                     ) : (
                         <div className="space-y-4">
                             <div id="scanner" className="w-full" />
-                            <Button
-                                onClick={stopScanning}
-                                variant="outline"
-                                className="w-full"
-                            >
+                            <Button onClick={stopScanning} variant="outline" className="w-full">
                                 Stop Scanning
                             </Button>
                         </div>
                     )}
 
                     {lastScan && (
-                        <div className="mt-8 p-4 border rounded-lg">
-                            <h3 className="font-medium text-lg mb-2">
-                                Last Scan Result
-                            </h3>
+                        <div className="mt-8 rounded-lg border p-4">
+                            <h3 className="mb-2 text-lg font-medium">Last Scan Result</h3>
                             <div className="space-y-2">
                                 <p>
-                                    <span className="font-medium">Equipment:</span>{' '}
-                                    {lastScan.equipment.name}
+                                    <span className="font-medium">Equipment:</span> {lastScan.equipment.name}
                                 </p>
                                 <p>
-                                    <span className="font-medium">Description:</span>{' '}
-                                    {lastScan.equipment.description}
+                                    <span className="font-medium">Description:</span> {lastScan.equipment.description}
                                 </p>
                                 <p>
-                                    <span className="font-medium">Status:</span>{' '}
-                                    {lastScan.equipment.status}
+                                    <span className="font-medium">Status:</span> {lastScan.equipment.status}
                                 </p>
                                 <p>
-                                    <span className="font-medium">Scan Time:</span>{' '}
-                                    {lastScan.scan_time}
+                                    <span className="font-medium">Scan Time:</span> {lastScan.scan_time}
                                 </p>
                             </div>
                         </div>
@@ -129,4 +117,4 @@ export function CodeScanner() {
             </CardContent>
         </Card>
     );
-} 
+}

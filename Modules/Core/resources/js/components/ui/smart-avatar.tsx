@@ -1,10 +1,10 @@
-import * as React from "react";
+import * as React from 'react';
 
 interface SmartAvatarProps {
-  children: React.ReactNode;
+    children: React.ReactNode;
 }
 
 export function SmartAvatar({ children }: SmartAvatarProps) {
-  // Placeholder for future logic (e.g., status, tooltips)
-  return <>{children}</>;
+    // Placeholder for future logic (e.g., status, tooltips)
+    return <>{children}</>;
 }

@@ -1,10 +1,7 @@
-import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle, Input, Label } from '@/Core';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
-import { Input } from "@/Core";
-import { Label } from "@/Core";
-import DesignationSelector from './DesignationSelector';
 import { Designation } from '../../../types/employee';
+import DesignationSelector from './DesignationSelector';
 
 interface EmploymentDetailsData {
     designation_id: number | null;
@@ -22,13 +19,13 @@ interface EmploymentDetailsTabProps {
 }
 
 export function EmploymentDetailsTab({ data, designations, onSaveDraft, isSubmitting }: EmploymentDetailsTabProps) {
-  const { t } = useTranslation('employee');
+    const { t } = useTranslation('employee');
 
     const handleChange = (field: keyof EmploymentDetailsData, value: any) => {
         onSaveDraft({
             ...data,
-            [field]: value
-        })
+            [field]: value,
+        });
     };
 
     return (
@@ -93,19 +90,3 @@ export function EmploymentDetailsTab({ data, designations, onSaveDraft, isSubmit
         </Card>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

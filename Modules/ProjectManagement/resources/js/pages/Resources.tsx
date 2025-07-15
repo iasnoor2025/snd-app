@@ -1,84 +1,39 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import axios from 'axios';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/Core";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
-import ResourceForm from '../Components/project/ResourceForm';
-import ResourceList from '../Components/project/ResourceList';
 import {
+    AppLayout,
+    Badge,
+    Button,
+    Card,
+    CardContent,
+    CardDescription,
+    CardTitle,
     Dialog,
     DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
     DialogDescription,
     DialogFooter,
-} from "@/Core";
-import { Button } from "@/Core";
-import { Plus, ArrowLeft, Layers, PieChart, BarChart, DollarSign, Users, Search, Filter, SlidersHorizontal, X, CheckSquare, FileText, Package, Calendar as CalendarIcon } from 'lucide-react';
-import { AppLayout } from '@/Core';
-import { toast } from "sonner";
-import { Separator } from "@/Core";
-import { Badge } from "@/Core";
-import { Progress } from "@/Core";
-import { Input } from "@/Core";
-import { format } from 'date-fns';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-    DropdownMenuCheckboxItem,
-    DropdownMenuSub,
-    DropdownMenuSubContent,
-    DropdownMenuSubTrigger,
-    DropdownMenuPortal,
-} from "@/Core";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/Core";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/Core";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/Core";
-import TaskList from '../Components/project/TaskList';
-import TaskDialog from '../Components/project/TaskDialog';
+    DialogHeader,
+    DialogTitle,
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from '@/Core';
+import { Inertia } from '@inertiajs/inertia';
+import { Head } from '@inertiajs/react';
+import axios from 'axios';
+import { ArrowLeft, Layers, Plus } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import DialogErrorBoundary from '../Components/DialogErrorBoundary';
 import ErrorBoundary from '../Components/ErrorBoundary';
-import SafeDialog from '../Components/ui/SafeDialog';
-import TaskForm from '../Components/project/TaskForm';
 import ResourceFilters from '../Components/project/ResourceFilters';
+import ResourceForm from '../Components/project/ResourceForm';
+import ResourceList from '../Components/project/ResourceList';
 import ResourcePagination from '../Components/project/ResourcePagination';
-import ResourceSearch from '../Components/project/ResourceSearch';
-import { cn } from "@/Core";
-import { Calendar } from "@/Core";
-import { Head } from '@inertiajs/react';
-import { Inertia } from '@inertiajs/inertia';
+import TaskForm from '../Components/project/TaskForm';
+import TaskList from '../Components/project/TaskList';
 
 // Import tab components
-import ManpowerTab from './Resources/Tabs/ManpowerTab';
-import EquipmentTab from './Resources/Tabs/EquipmentTab';
-import MaterialTab from './Resources/Tabs/MaterialTab';
-import FuelTab from './Resources/Tabs/FuelTab';
-import ExpenseTab from './Resources/Tabs/ExpenseTab';
-import TasksTab from './Resources/Tabs/TasksTab';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 // Define TaskStatus type for better type safety
 type TaskStatus = 'pending' | 'in_progress' | 'completed' | 'cancelled';
@@ -233,250 +188,197 @@ type ResourceFilters = {
 };
 
 // Separate dialog components for each resource type
-const ManpowerDialog = React.memo(({
-  open,
-  onOpenChange,
-  projectId,
-  initialData = null,
-  onSuccess
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  projectId: number;
-  initialData: any;
-  onSuccess: () => void;
-}) => {
-  const formKey = useMemo(() =>
-    `manpower-form-${initialData?.id || 'new'}-${Date.now()}`,
-    [initialData?.id]
-  );
+const ManpowerDialog = React.memo(
+    ({
+        open,
+        onOpenChange,
+        projectId,
+        initialData = null,
+        onSuccess,
+    }: {
+        open: boolean;
+        onOpenChange: (open: boolean) => void;
+        projectId: number;
+        initialData: any;
+        onSuccess: () => void;
+    }) => {
+        const formKey = useMemo(() => `manpower-form-${initialData?.id || 'new'}-${Date.now()}`, [initialData?.id]);
 
-  return (
-    <DialogErrorBoundary>
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-semibold">
-              {initialData ? 'Edit Manpower Resource' : 'Add Manpower Resource'}
-            </DialogTitle>
-            <DialogDescription className="text-muted-foreground">
-              {initialData
-                ? 'Update the details for this manpower resource.'
-                : 'Add a new manpower resource to this project.'}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4">
-            <ErrorBoundary>
-              <ResourceForm
-                key={formKey}
-                type="manpower"
-                projectId={projectId}
-                initialData={initialData}
-                onSuccess={onSuccess}
-              />
-            </ErrorBoundary>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </DialogErrorBoundary>
-  );
-});
+        return (
+            <DialogErrorBoundary>
+                <Dialog open={open} onOpenChange={onOpenChange}>
+                    <DialogContent className="max-w-2xl">
+                        <DialogHeader>
+                            <DialogTitle className="text-xl font-semibold">
+                                {initialData ? 'Edit Manpower Resource' : 'Add Manpower Resource'}
+                            </DialogTitle>
+                            <DialogDescription className="text-muted-foreground">
+                                {initialData ? 'Update the details for this manpower resource.' : 'Add a new manpower resource to this project.'}
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="py-4">
+                            <ErrorBoundary>
+                                <ResourceForm key={formKey} type="manpower" projectId={projectId} initialData={initialData} onSuccess={onSuccess} />
+                            </ErrorBoundary>
+                        </div>
+                    </DialogContent>
+                </Dialog>
+            </DialogErrorBoundary>
+        );
+    },
+);
 
-const EquipmentDialog = React.memo(({
-  open,
-  onOpenChange,
-  projectId,
-  initialData = null,
-  onSuccess
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  projectId: number;
-  initialData: any;
-  onSuccess: () => void;
-}) => {
-  const formKey = useMemo(() =>
-    `equipment-form-${initialData?.id || 'new'}-${Date.now()}`,
-    [initialData?.id]
-  );
+const EquipmentDialog = React.memo(
+    ({
+        open,
+        onOpenChange,
+        projectId,
+        initialData = null,
+        onSuccess,
+    }: {
+        open: boolean;
+        onOpenChange: (open: boolean) => void;
+        projectId: number;
+        initialData: any;
+        onSuccess: () => void;
+    }) => {
+        const formKey = useMemo(() => `equipment-form-${initialData?.id || 'new'}-${Date.now()}`, [initialData?.id]);
 
-  return (
-    <DialogErrorBoundary>
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>
-              {initialData ? 'Edit Equipment' : 'Add Equipment'}
-            </DialogTitle>
-            <DialogDescription>
-              {initialData
-                ? 'Update the details for this equipment resource.'
-                : 'Add a new equipment resource to this project.'}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-2">
-            <ErrorBoundary>
-              <ResourceForm
-                key={formKey}
-                type="equipment"
-                projectId={projectId}
-                initialData={initialData}
-                onSuccess={onSuccess}
-              />
-            </ErrorBoundary>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </DialogErrorBoundary>
-  );
-});
+        return (
+            <DialogErrorBoundary>
+                <Dialog open={open} onOpenChange={onOpenChange}>
+                    <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
+                        <DialogHeader>
+                            <DialogTitle>{initialData ? 'Edit Equipment' : 'Add Equipment'}</DialogTitle>
+                            <DialogDescription>
+                                {initialData ? 'Update the details for this equipment resource.' : 'Add a new equipment resource to this project.'}
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="py-2">
+                            <ErrorBoundary>
+                                <ResourceForm key={formKey} type="equipment" projectId={projectId} initialData={initialData} onSuccess={onSuccess} />
+                            </ErrorBoundary>
+                        </div>
+                    </DialogContent>
+                </Dialog>
+            </DialogErrorBoundary>
+        );
+    },
+);
 
-const MaterialDialog = React.memo(({
-  open,
-  onOpenChange,
-  projectId,
-  initialData = null,
-  onSuccess
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  projectId: number;
-  initialData: any;
-  onSuccess: () => void;
-}) => {
-  const formKey = useMemo(() =>
-    `material-form-${initialData?.id || 'new'}-${Date.now()}`,
-    [initialData?.id]
-  );
+const MaterialDialog = React.memo(
+    ({
+        open,
+        onOpenChange,
+        projectId,
+        initialData = null,
+        onSuccess,
+    }: {
+        open: boolean;
+        onOpenChange: (open: boolean) => void;
+        projectId: number;
+        initialData: any;
+        onSuccess: () => void;
+    }) => {
+        const formKey = useMemo(() => `material-form-${initialData?.id || 'new'}-${Date.now()}`, [initialData?.id]);
 
-  return (
-    <DialogErrorBoundary>
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>
-              {initialData ? 'Edit Material' : 'Add Material'}
-            </DialogTitle>
-            <DialogDescription>
-              {initialData
-                ? 'Update the details for this material resource.'
-                : 'Add a new material resource to this project.'}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-2">
-            <ErrorBoundary>
-              <ResourceForm
-                key={formKey}
-                type="material"
-                projectId={projectId}
-                initialData={initialData}
-                onSuccess={onSuccess}
-              />
-            </ErrorBoundary>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </DialogErrorBoundary>
-  );
-});
+        return (
+            <DialogErrorBoundary>
+                <Dialog open={open} onOpenChange={onOpenChange}>
+                    <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
+                        <DialogHeader>
+                            <DialogTitle>{initialData ? 'Edit Material' : 'Add Material'}</DialogTitle>
+                            <DialogDescription>
+                                {initialData ? 'Update the details for this material resource.' : 'Add a new material resource to this project.'}
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="py-2">
+                            <ErrorBoundary>
+                                <ResourceForm key={formKey} type="material" projectId={projectId} initialData={initialData} onSuccess={onSuccess} />
+                            </ErrorBoundary>
+                        </div>
+                    </DialogContent>
+                </Dialog>
+            </DialogErrorBoundary>
+        );
+    },
+);
 
-const FuelDialog = React.memo(({
-  open,
-  onOpenChange,
-  projectId,
-  initialData = null,
-  onSuccess
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  projectId: number;
-  initialData: any;
-  onSuccess: () => void;
-}) => {
-  const formKey = useMemo(() =>
-    `fuel-form-${initialData?.id || 'new'}-${Date.now()}`,
-    [initialData?.id]
-  );
+const FuelDialog = React.memo(
+    ({
+        open,
+        onOpenChange,
+        projectId,
+        initialData = null,
+        onSuccess,
+    }: {
+        open: boolean;
+        onOpenChange: (open: boolean) => void;
+        projectId: number;
+        initialData: any;
+        onSuccess: () => void;
+    }) => {
+        const formKey = useMemo(() => `fuel-form-${initialData?.id || 'new'}-${Date.now()}`, [initialData?.id]);
 
-  return (
-    <DialogErrorBoundary>
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>
-              {initialData ? 'Edit Fuel' : 'Add Fuel'}
-            </DialogTitle>
-            <DialogDescription>
-              {initialData
-                ? 'Update the details for this fuel resource.'
-                : 'Add a new fuel resource to this project.'}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-2">
-            <ErrorBoundary>
-              <ResourceForm
-                key={formKey}
-                type="fuel"
-                projectId={projectId}
-                initialData={initialData}
-                onSuccess={onSuccess}
-              />
-            </ErrorBoundary>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </DialogErrorBoundary>
-  );
-});
+        return (
+            <DialogErrorBoundary>
+                <Dialog open={open} onOpenChange={onOpenChange}>
+                    <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
+                        <DialogHeader>
+                            <DialogTitle>{initialData ? 'Edit Fuel' : 'Add Fuel'}</DialogTitle>
+                            <DialogDescription>
+                                {initialData ? 'Update the details for this fuel resource.' : 'Add a new fuel resource to this project.'}
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="py-2">
+                            <ErrorBoundary>
+                                <ResourceForm key={formKey} type="fuel" projectId={projectId} initialData={initialData} onSuccess={onSuccess} />
+                            </ErrorBoundary>
+                        </div>
+                    </DialogContent>
+                </Dialog>
+            </DialogErrorBoundary>
+        );
+    },
+);
 
-const ExpenseDialog = React.memo(({
-  open,
-  onOpenChange,
-  projectId,
-  initialData = null,
-  onSuccess
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  projectId: number;
-  initialData: any;
-  onSuccess: () => void;
-}) => {
-  const formKey = useMemo(() =>
-    `expense-form-${initialData?.id || 'new'}-${Date.now()}`,
-    [initialData?.id]
-  );
+const ExpenseDialog = React.memo(
+    ({
+        open,
+        onOpenChange,
+        projectId,
+        initialData = null,
+        onSuccess,
+    }: {
+        open: boolean;
+        onOpenChange: (open: boolean) => void;
+        projectId: number;
+        initialData: any;
+        onSuccess: () => void;
+    }) => {
+        const formKey = useMemo(() => `expense-form-${initialData?.id || 'new'}-${Date.now()}`, [initialData?.id]);
 
-  return (
-    <DialogErrorBoundary>
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>
-              {initialData ? 'Edit Expense' : 'Add Expense'}
-            </DialogTitle>
-            <DialogDescription>
-              {initialData
-                ? 'Update the details for this expense.'
-                : 'Add a new expense to this project.'}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-2">
-            <ErrorBoundary>
-              <ResourceForm
-                key={formKey}
-                type="expense"
-                projectId={projectId}
-                initialData={initialData}
-                onSuccess={onSuccess}
-              />
-            </ErrorBoundary>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </DialogErrorBoundary>
-  );
-});
+        return (
+            <DialogErrorBoundary>
+                <Dialog open={open} onOpenChange={onOpenChange}>
+                    <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
+                        <DialogHeader>
+                            <DialogTitle>{initialData ? 'Edit Expense' : 'Add Expense'}</DialogTitle>
+                            <DialogDescription>
+                                {initialData ? 'Update the details for this expense.' : 'Add a new expense to this project.'}
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="py-2">
+                            <ErrorBoundary>
+                                <ResourceForm key={formKey} type="expense" projectId={projectId} initialData={initialData} onSuccess={onSuccess} />
+                            </ErrorBoundary>
+                        </div>
+                    </DialogContent>
+                </Dialog>
+            </DialogErrorBoundary>
+        );
+    },
+);
 
 // This isolates the TaskDialog rendering from the parent component
 function TaskDialogWrapper({
@@ -485,7 +387,7 @@ function TaskDialogWrapper({
     projectId,
     initialData,
     assignableUsers,
-    onSuccess
+    onSuccess,
 }: {
     open: boolean;
     onOpenChange: (open: boolean) => void;
@@ -522,12 +424,10 @@ function TaskDialogWrapper({
     return (
         <DialogErrorBoundary>
             <Dialog open={open} onOpenChange={onOpenChange}>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
                     <DialogHeader>
-                        <DialogTitle>{initialData ? "Edit Task" : "Add Task"}</DialogTitle>
-                        <DialogDescription>
-                            {initialData ? "Update task details" : "Add a new task to this project"}
-                        </DialogDescription>
+                        <DialogTitle>{initialData ? 'Edit Task' : 'Add Task'}</DialogTitle>
+                        <DialogDescription>{initialData ? 'Update task details' : 'Add a new task to this project'}</DialogDescription>
                     </DialogHeader>
                     <TaskForm
                         projectId={projectId}
@@ -545,7 +445,18 @@ function TaskDialogWrapper({
 }
 
 // The main component wrapper
-const ResourcesPage = ({ project, manpower = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 }, equipment = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 }, materials = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 }, fuel = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 }, expenses = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 }, tasks = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 }, assignableUsers = [], type = 'manpower', page = 1 }: ResourcesPageProps) => {
+const ResourcesPage = ({
+    project,
+    manpower = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 },
+    equipment = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 },
+    materials = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 },
+    fuel = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 },
+    expenses = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 },
+    tasks = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 },
+    assignableUsers = [],
+    type = 'manpower',
+    page = 1,
+}: ResourcesPageProps) => {
     const { t } = useTranslation(['projects', 'common']);
     // Wrap the entire component with an ErrorBoundary to prevent blank page
     return (
@@ -555,23 +466,23 @@ const ResourcesPage = ({ project, manpower = { data: [], current_page: 1, last_p
                 { title: t('common:dashboard'), href: '/dashboard' },
                 { title: t('projects:projects'), href: '/projects' },
                 { title: project.name, href: `/projects/${project.id}` },
-                { title: t('projects:resources'), href: `/projects/${project.id}/resources` }
+                { title: t('projects:resources'), href: `/projects/${project.id}/resources` },
             ]}
         >
-            <ErrorBoundary fallback={
-                <div className="container mx-auto py-10 text-center">
-                    <h2 className="text-2xl font-bold mb-4">{t('projects:something_went_wrong')}</h2>
-                    <p className="mb-4">{t('projects:error_loading_resources')}</p>
-                    <div className="flex justify-center gap-4">
-                        <Button onClick={() => window.location.reload()}>
-                            {t('projects:reload_page')}
-                        </Button>
-                        <Button variant="outline" onClick={() => window.history.back()}>
-                            {t('projects:go_back')}
-                        </Button>
+            <ErrorBoundary
+                fallback={
+                    <div className="container mx-auto py-10 text-center">
+                        <h2 className="mb-4 text-2xl font-bold">{t('projects:something_went_wrong')}</h2>
+                        <p className="mb-4">{t('projects:error_loading_resources')}</p>
+                        <div className="flex justify-center gap-4">
+                            <Button onClick={() => window.location.reload()}>{t('projects:reload_page')}</Button>
+                            <Button variant="outline" onClick={() => window.history.back()}>
+                                {t('projects:go_back')}
+                            </Button>
+                        </div>
                     </div>
-                </div>
-            }>
+                }
+            >
                 <Resources
                     project={project}
                     manpower={manpower}
@@ -592,7 +503,18 @@ const ResourcesPage = ({ project, manpower = { data: [], current_page: 1, last_p
 export default ResourcesPage;
 
 // Main component implementation
-function Resources({ project, manpower = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 }, equipment = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 }, materials = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 }, fuel = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 }, expenses = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 }, tasks = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 }, assignableUsers = [], type = 'manpower', page = 1 }: ResourcesPageProps) {
+function Resources({
+    project,
+    manpower = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 },
+    equipment = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 },
+    materials = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 },
+    fuel = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 },
+    expenses = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 },
+    tasks = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0 },
+    assignableUsers = [],
+    type = 'manpower',
+    page = 1,
+}: ResourcesPageProps) {
     const { t } = useTranslation(['projects', 'common']);
     // Debug logging only in development mode
     if (process.env.NODE_ENV === 'development') {
@@ -605,8 +527,8 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
                 fuelCount: Array.isArray(fuel.data) ? fuel.data.length : 'not an array',
                 expensesCount: Array.isArray(expenses.data) ? expenses.data.length : 'not an array',
                 tasksCount: Array.isArray(tasks.data) ? tasks.data.length : 'not an array',
-                hasAssignableUsers: Array.isArray(assignableUsers) && assignableUsers.length > 0
-            }
+                hasAssignableUsers: Array.isArray(assignableUsers) && assignableUsers.length > 0,
+            },
         });
     }
 
@@ -666,7 +588,7 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
             startDate: undefined,
             endDate: undefined,
             sortBy: 'created_at',
-            sortOrder: 'desc'
+            sortOrder: 'desc',
         });
 
         const getResourcesByType = (type: ResourceType): Resource[] => {
@@ -694,43 +616,43 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
                     return {
                         currentPage: manpower.current_page,
                         totalPages: manpower.last_page,
-                        total: manpower.total
+                        total: manpower.total,
                     };
                 case 'equipment':
                     return {
                         currentPage: equipment.current_page,
                         totalPages: equipment.last_page,
-                        total: equipment.total
+                        total: equipment.total,
                     };
                 case 'material':
                     return {
                         currentPage: materials.current_page,
                         totalPages: materials.last_page,
-                        total: materials.total
+                        total: materials.total,
                     };
                 case 'fuel':
                     return {
                         currentPage: fuel.current_page,
                         totalPages: fuel.last_page,
-                        total: fuel.total
+                        total: fuel.total,
                     };
                 case 'expense':
                     return {
                         currentPage: expenses.current_page,
                         totalPages: expenses.last_page,
-                        total: expenses.total
+                        total: expenses.total,
                     };
                 case 'tasks':
                     return {
                         currentPage: tasks.current_page,
                         totalPages: tasks.last_page,
-                        total: tasks.total
+                        total: tasks.total,
                     };
                 default:
                     return {
                         currentPage: 1,
                         totalPages: 1,
-                        total: 0
+                        total: 0,
                     };
             }
         };
@@ -836,68 +758,74 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
             }
 
             // Update the task's status in the backend
-            axios.put(route('projects.tasks.update', { project: project.id, task: task.id }), {
-                status: newStatus,
-            }).then((response) => {
-                // Update the task in local state
-                const updatedTasks = localTasks.map(t =>
-                    t.id === task.id
-                    ? { ...t, status: newStatus, updated_at: new Date().toISOString() }
-                    : t
-                );
-                setTasks(updatedTasks);
+            axios
+                .put(route('projects.tasks.update', { project: project.id, task: task.id }), {
+                    status: newStatus,
+                })
+                .then((response) => {
+                    // Update the task in local state
+                    const updatedTasks = localTasks.map((t) =>
+                        t.id === task.id ? { ...t, status: newStatus, updated_at: new Date().toISOString() } : t,
+                    );
+                    setTasks(updatedTasks);
 
-                // Refresh the tasks data from the server
-                Inertia.reload({
-                    only: ['tasks'],
-                    preserveState: true,
-                    preserveScroll: true,
-                    onSuccess: (page) => {
-                        if (page.props.tasks) {
-                            setTasks(page.props.tasks.data);
-                        }
-                    }
+                    // Refresh the tasks data from the server
+                    Inertia.reload({
+                        only: ['tasks'],
+                        preserveState: true,
+                        preserveScroll: true,
+                        onSuccess: (page) => {
+                            if (page.props.tasks) {
+                                setTasks(page.props.tasks.data);
+                            }
+                        },
+                    });
+
+                    // Show success message
+                    toast.success(
+                        t('projects:task_status_changed', { oldStatus: t(`projects:${oldStatus}`), newStatus: t(`projects:${newStatus}`) }),
+                    );
+                })
+                .catch((error) => {
+                    // Show error message
+                    toast.error(t('projects:error_updating_task_status'));
                 });
-
-                // Show success message
-                toast.success(t('projects:task_status_changed', { oldStatus: t(`projects:${oldStatus}`), newStatus: t(`projects:${newStatus}`) }));
-            }).catch((error) => {
-                // Show error message
-                toast.error(t('projects:error_updating_task_status'));
-            });
         };
 
         const handleTaskCompletionChange = (task: Resource, percentage: number) => {
             const updatedStatus = percentage === 100 ? 'completed' : task.status;
 
-            axios.put(route('projects.tasks.update', { project: project.id, task: task.id }), {
-                completion_percentage: percentage,
-                status: updatedStatus
-            }).then(() => {
-                // Update local state
-                const updatedTasks = localTasks.map(t =>
-                    t.id === task.id
-                        ? { ...t, completion_percentage: percentage, status: updatedStatus, updated_at: new Date().toISOString() }
-                        : t
-                );
-                setTasks(updatedTasks);
+            axios
+                .put(route('projects.tasks.update', { project: project.id, task: task.id }), {
+                    completion_percentage: percentage,
+                    status: updatedStatus,
+                })
+                .then(() => {
+                    // Update local state
+                    const updatedTasks = localTasks.map((t) =>
+                        t.id === task.id
+                            ? { ...t, completion_percentage: percentage, status: updatedStatus, updated_at: new Date().toISOString() }
+                            : t,
+                    );
+                    setTasks(updatedTasks);
 
-                // Refresh the tasks data from the server
-                Inertia.reload({
-                    only: ['tasks'],
-                    preserveState: true,
-                    preserveScroll: true,
-                    onSuccess: (page) => {
-                        if (page.props.tasks) {
-                            setTasks(page.props.tasks.data);
-                        }
-                    }
+                    // Refresh the tasks data from the server
+                    Inertia.reload({
+                        only: ['tasks'],
+                        preserveState: true,
+                        preserveScroll: true,
+                        onSuccess: (page) => {
+                            if (page.props.tasks) {
+                                setTasks(page.props.tasks.data);
+                            }
+                        },
+                    });
+
+                    toast.success(t('projects:task_completion_updated', { percentage }));
+                })
+                .catch(() => {
+                    toast.error(t('projects:error_updating_task_completion'));
                 });
-
-                toast.success(t('projects:task_completion_updated', { percentage }));
-            }).catch(() => {
-                toast.error(t('projects:error_updating_task_completion'));
-            });
         };
 
         const handleTaskSuccess = () => {
@@ -910,24 +838,22 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
                 const taskData = Object.fromEntries(formData.entries());
 
                 if (editingTask) {
-                    const updatedTasks = localTasks.map(task =>
-                        task.id === editingTask.id
-                            ? { ...task, ...taskData, updated_at: new Date().toISOString() }
-                            : task
+                    const updatedTasks = localTasks.map((task) =>
+                        task.id === editingTask.id ? { ...task, ...taskData, updated_at: new Date().toISOString() } : task,
                     );
                     setTasks(updatedTasks);
 
                     toast.success(t('projects:task_updated'));
                 } else {
                     Inertia.get(route('projects.tasks.index', { project: project.id }))
-                        .then(response => {
+                        .then((response) => {
                             if (response.data && Array.isArray(response.data)) {
                                 setTasks(response.data);
                             }
 
                             toast.success(t('projects:task_added_success'));
                         })
-                        .catch(error => {
+                        .catch((error) => {
                             console.error('Error fetching updated tasks:', error);
                             Inertia.reload({ only: ['tasks'] });
                         });
@@ -941,7 +867,7 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
                         }
 
                         toast.success(editingTask ? t('projects:task_updated_success') : t('projects:task_added_success'));
-                    }
+                    },
                 });
             }
         };
@@ -971,14 +897,14 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
             if (type === 'manpower') {
                 const url = route('projects.resources.manpower.destroy', {
                     project: project.id,
-                    manpower: resource.id
+                    manpower: resource.id,
                 });
                 // Use fetch to send a DELETE request
                 await fetch(url, {
                     method: 'DELETE',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || ''
+                        'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '',
                     },
                     credentials: 'same-origin',
                 });
@@ -1009,14 +935,14 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
                 route('projects.resources', { project: project.id }),
                 {
                     type: selectedType,
-                    page: page
+                    page: page,
                 },
                 {
                     preserveState: true,
                     preserveScroll: true,
                     only: [selectedType],
-                    replace: true
-                }
+                    replace: true,
+                },
             );
         };
 
@@ -1027,34 +953,34 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
                 route('projects.resources', { project: project.id }),
                 {
                     type,
-                    page: 1
+                    page: 1,
                 },
                 {
                     preserveState: true,
                     preserveScroll: true,
                     only: [type],
-                    replace: true
-                }
+                    replace: true,
+                },
             );
         };
 
         // Calculate project analytics
         const { taskProgress, taskStats } = useMemo(() => {
             const totalTasks = (tasks.data || []).length;
-            const completedTasks = (tasks.data || []).filter(task => task.status === 'completed').length;
+            const completedTasks = (tasks.data || []).filter((task) => task.status === 'completed').length;
             const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
 
             const stats = {
                 total: totalTasks,
                 completed: completedTasks,
-                inProgress: (tasks.data || []).filter(task => task.status === 'in_progress').length,
-                pending: (tasks.data || []).filter(task => task.status === 'pending').length,
-                cancelled: (tasks.data || []).filter(task => task.status === 'cancelled').length
+                inProgress: (tasks.data || []).filter((task) => task.status === 'in_progress').length,
+                pending: (tasks.data || []).filter((task) => task.status === 'pending').length,
+                cancelled: (tasks.data || []).filter((task) => task.status === 'cancelled').length,
             };
 
             return {
                 taskProgress: progress,
-                taskStats: stats
+                taskStats: stats,
             };
         }, [tasks.data]);
 
@@ -1097,7 +1023,7 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
                 equipmentPercentage: getPercentage(equipmentCost),
                 materialsPercentage: getPercentage(materialsCost),
                 fuelPercentage: getPercentage(fuelCost),
-                expensesPercentage: getPercentage(expensesCost)
+                expensesPercentage: getPercentage(expensesCost),
             };
         }, [manpower.data, equipment.data, materials.data, fuel.data, expenses.data, project.budget]);
 
@@ -1109,14 +1035,17 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
             // Apply search filter
             if (filters.search) {
                 const query = filters.search.toLowerCase();
-                filtered = filtered.filter(resource => {
+                filtered = filtered.filter((resource) => {
                     // Search in common fields
                     const searchable = [
                         'name' in resource ? resource.name : '',
                         'description' in resource ? resource.description : '',
                         'notes' in resource ? resource.notes : '',
                         'title' in resource ? resource.title : '', // For tasks
-                    ].filter(Boolean).join(' ').toLowerCase();
+                    ]
+                        .filter(Boolean)
+                        .join(' ')
+                        .toLowerCase();
 
                     return searchable.includes(query);
                 });
@@ -1124,7 +1053,7 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
 
             // Apply date range filter
             if (filters.startDate || filters.endDate) {
-                filtered = filtered.filter(resource => {
+                filtered = filtered.filter((resource) => {
                     const resourceDate = new Date(resource.created_at);
                     if (filters.startDate && resourceDate < filters.startDate) return false;
                     if (filters.endDate && resourceDate > filters.endDate) return false;
@@ -1158,14 +1087,26 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
                         break;
                     case 'cost':
                     case 'amount':
-                        aValue = ('daily_rate' in a ? a.daily_rate :
-                                 'hourly_rate' in a ? a.hourly_rate :
-                                 'unit_price' in a ? a.unit_price :
-                                 'amount' in a ? a.amount : 0) || 0;
-                        bValue = ('daily_rate' in b ? b.daily_rate :
-                                 'hourly_rate' in b ? b.hourly_rate :
-                                 'unit_price' in b ? b.unit_price :
-                                 'amount' in b ? b.amount : 0) || 0;
+                        aValue =
+                            ('daily_rate' in a
+                                ? a.daily_rate
+                                : 'hourly_rate' in a
+                                  ? a.hourly_rate
+                                  : 'unit_price' in a
+                                    ? a.unit_price
+                                    : 'amount' in a
+                                      ? a.amount
+                                      : 0) || 0;
+                        bValue =
+                            ('daily_rate' in b
+                                ? b.daily_rate
+                                : 'hourly_rate' in b
+                                  ? b.hourly_rate
+                                  : 'unit_price' in b
+                                    ? b.unit_price
+                                    : 'amount' in b
+                                      ? b.amount
+                                      : 0) || 0;
                         break;
                     default:
                         aValue = 0;
@@ -1180,67 +1121,62 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
             <ErrorBoundary>
                 <Head title={`${project.name} - ${t('projects:resources')}`} />
 
-                <div className="container mx-auto py-6 space-y-6">
+                <div className="container mx-auto space-y-6 py-6">
                     {/* Header section with clean modern styling */}
-                    <div className="bg-white dark:bg-gray-900 shadow-sm rounded-lg p-6 border border-gray-100 dark:border-gray-800">
+                    <div className="rounded-lg border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
                         <div className="flex items-center justify-between">
                             <div className="space-y-1">
-                                <CardTitle className="text-xl flex items-center">
-                                    <Layers className="h-5 w-5 mr-2 text-blue-500" />
+                                <CardTitle className="flex items-center text-xl">
+                                    <Layers className="mr-2 h-5 w-5 text-blue-500" />
                                     {t('projects:resources')}
                                 </CardTitle>
-                                <CardDescription>
-                                    {t('projects:project_resources')}
-                                </CardDescription>
+                                <CardDescription>{t('projects:project_resources')}</CardDescription>
                             </div>
 
                             <div className="flex space-x-2">
                                 <Button variant="outline" size="sm" asChild>
                                     <a href={route('projects.show', project.id)}>
-                                        <ArrowLeft className="h-4 w-4 mr-2" />
+                                        <ArrowLeft className="mr-2 h-4 w-4" />
                                         {t('common:back')} {t('common:to')} {t('projects:project')}
                                     </a>
                                 </Button>
-                                <Button
-                                    size="sm"
-                                    onClick={handleAddResource}
-                                >
-                                    <Plus className="h-4 w-4 mr-2" />
+                                <Button size="sm" onClick={handleAddResource}>
+                                    <Plus className="mr-2 h-4 w-4" />
                                     {t('projects:add_resource')}
                                 </Button>
                             </div>
                         </div>
                     </div>
 
-                    <Card className="shadow-sm border-t-4 border-t-blue-500">
+                    <Card className="border-t-4 border-t-blue-500 shadow-sm">
                         <CardContent className="pt-6">
                             {/* Filters Section */}
                             <ResourceFilters
                                 type={selectedType === 'tasks' ? 'manpower' : selectedType}
                                 filters={filters}
                                 onFilterChange={setFilters}
-                                onReset={() => setFilters({
-                                    search: '',
-                                    status: '',
-                                    startDate: undefined,
-                                    endDate: undefined,
-                                    sortBy: 'created_at',
-                                    sortOrder: 'desc'
-                                })}
+                                onReset={() =>
+                                    setFilters({
+                                        search: '',
+                                        status: '',
+                                        startDate: undefined,
+                                        endDate: undefined,
+                                        sortBy: 'created_at',
+                                        sortOrder: 'desc',
+                                    })
+                                }
                             />
 
                             <div className="mt-6">
-                                <Tabs
-                                    defaultValue="manpower"
-                                    value={selectedType}
-                                    onValueChange={handleTypeChange}
-                                    className="w-full"
-                                >
-                                    <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 mb-4">
+                                <Tabs defaultValue="manpower" value={selectedType} onValueChange={handleTypeChange} className="w-full">
+                                    <TabsList className="mb-4 grid w-full grid-cols-3 lg:grid-cols-6">
                                         <TabsTrigger value="manpower" className="flex items-center justify-center gap-2 text-xs lg:text-sm">
                                             <span className="truncate">{t('projects:manpower')}</span>
                                             {getResourceCount('manpower') > 0 && (
-                                                <Badge variant="secondary" className="h-4 px-1.5 text-xs min-w-[1.5rem] flex items-center justify-center">
+                                                <Badge
+                                                    variant="secondary"
+                                                    className="flex h-4 min-w-[1.5rem] items-center justify-center px-1.5 text-xs"
+                                                >
                                                     {getResourceCount('manpower')}
                                                 </Badge>
                                             )}
@@ -1248,7 +1184,10 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
                                         <TabsTrigger value="equipment" className="flex items-center justify-center gap-2 text-xs lg:text-sm">
                                             <span className="truncate">{t('projects:equipment')}</span>
                                             {getResourceCount('equipment') > 0 && (
-                                                <Badge variant="secondary" className="h-4 px-1.5 text-xs min-w-[1.5rem] flex items-center justify-center">
+                                                <Badge
+                                                    variant="secondary"
+                                                    className="flex h-4 min-w-[1.5rem] items-center justify-center px-1.5 text-xs"
+                                                >
                                                     {getResourceCount('equipment')}
                                                 </Badge>
                                             )}
@@ -1256,7 +1195,10 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
                                         <TabsTrigger value="material" className="flex items-center justify-center gap-2 text-xs lg:text-sm">
                                             <span className="truncate">{t('projects:materials')}</span>
                                             {getResourceCount('material') > 0 && (
-                                                <Badge variant="secondary" className="h-4 px-1.5 text-xs min-w-[1.5rem] flex items-center justify-center">
+                                                <Badge
+                                                    variant="secondary"
+                                                    className="flex h-4 min-w-[1.5rem] items-center justify-center px-1.5 text-xs"
+                                                >
                                                     {getResourceCount('material')}
                                                 </Badge>
                                             )}
@@ -1264,7 +1206,10 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
                                         <TabsTrigger value="fuel" className="flex items-center justify-center gap-2 text-xs lg:text-sm">
                                             <span className="truncate">{t('projects:fuel')}</span>
                                             {getResourceCount('fuel') > 0 && (
-                                                <Badge variant="secondary" className="h-4 px-1.5 text-xs min-w-[1.5rem] flex items-center justify-center">
+                                                <Badge
+                                                    variant="secondary"
+                                                    className="flex h-4 min-w-[1.5rem] items-center justify-center px-1.5 text-xs"
+                                                >
                                                     {getResourceCount('fuel')}
                                                 </Badge>
                                             )}
@@ -1272,7 +1217,10 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
                                         <TabsTrigger value="expense" className="flex items-center justify-center gap-2 text-xs lg:text-sm">
                                             <span className="truncate">{t('projects:expenses')}</span>
                                             {getResourceCount('expense') > 0 && (
-                                                <Badge variant="secondary" className="h-4 px-1.5 text-xs min-w-[1.5rem] flex items-center justify-center">
+                                                <Badge
+                                                    variant="secondary"
+                                                    className="flex h-4 min-w-[1.5rem] items-center justify-center px-1.5 text-xs"
+                                                >
                                                     {getResourceCount('expense')}
                                                 </Badge>
                                             )}
@@ -1280,94 +1228,110 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
                                         <TabsTrigger value="tasks" className="flex items-center justify-center gap-2 text-xs lg:text-sm">
                                             <span className="truncate">{t('projects:tasks')}</span>
                                             {getResourceCount('tasks') > 0 && (
-                                                <Badge variant="secondary" className="h-4 px-1.5 text-xs min-w-[1.5rem] flex items-center justify-center">
+                                                <Badge
+                                                    variant="secondary"
+                                                    className="flex h-4 min-w-[1.5rem] items-center justify-center px-1.5 text-xs"
+                                                >
                                                     {getResourceCount('tasks')}
                                                 </Badge>
                                             )}
                                         </TabsTrigger>
                                     </TabsList>
                                     <TabsContent value="manpower">
-                                        {getResourcesByType("manpower").length > 0 ? (
+                                        {getResourcesByType('manpower').length > 0 ? (
                                             <ErrorBoundary>
                                                 <ResourceList
                                                     type="manpower"
-                                                    resources={getResourcesByType("manpower")}
-                                                    onEdit={(resource) => handleEditResource(resource, "manpower")}
-                                                    onDelete={(resource) => handleDeleteResource(resource, "manpower")}
+                                                    resources={getResourcesByType('manpower')}
+                                                    onEdit={(resource) => handleEditResource(resource, 'manpower')}
+                                                    onDelete={(resource) => handleDeleteResource(resource, 'manpower')}
                                                 />
                                             </ErrorBoundary>
                                         ) : (
                                             <div className="py-10 text-center">
-                                                <p className="text-muted-foreground">No manpower resources found{filters.search && ' matching your search'}</p>
+                                                <p className="text-muted-foreground">
+                                                    No manpower resources found{filters.search && ' matching your search'}
+                                                </p>
                                             </div>
                                         )}
                                     </TabsContent>
                                     <TabsContent value="equipment">
-                                        {getResourcesByType("equipment").length > 0 ? (
+                                        {getResourcesByType('equipment').length > 0 ? (
                                             <ErrorBoundary>
                                                 <ResourceList
                                                     type="equipment"
-                                                    resources={getResourcesByType("equipment")}
-                                                    onEdit={(resource) => handleEditResource(resource, "equipment")}
-                                                    onDelete={(resource) => handleDeleteResource(resource, "equipment")}
+                                                    resources={getResourcesByType('equipment')}
+                                                    onEdit={(resource) => handleEditResource(resource, 'equipment')}
+                                                    onDelete={(resource) => handleDeleteResource(resource, 'equipment')}
                                                 />
                                             </ErrorBoundary>
                                         ) : (
                                             <div className="py-10 text-center">
-                                                <p className="text-muted-foreground">No equipment resources found{filters.search && ' matching your search'}</p>
+                                                <p className="text-muted-foreground">
+                                                    No equipment resources found{filters.search && ' matching your search'}
+                                                </p>
                                             </div>
                                         )}
                                     </TabsContent>
                                     <TabsContent value="material">
-                                        {getResourcesByType("material").length > 0 ? (
+                                        {getResourcesByType('material').length > 0 ? (
                                             <ErrorBoundary>
                                                 <ResourceList
                                                     type="material"
-                                                    resources={getResourcesByType("material")}
-                                                    onEdit={(resource) => handleEditResource(resource, "material")}
-                                                    onDelete={(resource) => handleDeleteResource(resource, "material")}
+                                                    resources={getResourcesByType('material')}
+                                                    onEdit={(resource) => handleEditResource(resource, 'material')}
+                                                    onDelete={(resource) => handleDeleteResource(resource, 'material')}
                                                 />
                                             </ErrorBoundary>
                                         ) : (
                                             <div className="py-10 text-center">
-                                                <p className="text-muted-foreground">{t('projects:no_resources_found', {type: t('projects:material')})}{filters.search && t('projects:matching_your_search')}</p>
+                                                <p className="text-muted-foreground">
+                                                    {t('projects:no_resources_found', { type: t('projects:material') })}
+                                                    {filters.search && t('projects:matching_your_search')}
+                                                </p>
                                             </div>
                                         )}
                                     </TabsContent>
                                     <TabsContent value="fuel">
-                                        {getResourcesByType("fuel").length > 0 ? (
+                                        {getResourcesByType('fuel').length > 0 ? (
                                             <ErrorBoundary>
                                                 <ResourceList
                                                     type="fuel"
-                                                    resources={getResourcesByType("fuel")}
-                                                    onEdit={(resource) => handleEditResource(resource, "fuel")}
-                                                    onDelete={(resource) => handleDeleteResource(resource, "fuel")}
+                                                    resources={getResourcesByType('fuel')}
+                                                    onEdit={(resource) => handleEditResource(resource, 'fuel')}
+                                                    onDelete={(resource) => handleDeleteResource(resource, 'fuel')}
                                                 />
                                             </ErrorBoundary>
                                         ) : (
                                             <div className="py-10 text-center">
-                                                <p className="text-muted-foreground">{t('projects:no_resources_found', {type: t('projects:fuel')})}{filters.search && t('projects:matching_your_search')}</p>
+                                                <p className="text-muted-foreground">
+                                                    {t('projects:no_resources_found', { type: t('projects:fuel') })}
+                                                    {filters.search && t('projects:matching_your_search')}
+                                                </p>
                                             </div>
                                         )}
                                     </TabsContent>
                                     <TabsContent value="expense">
-                                        {getResourcesByType("expense").length > 0 ? (
+                                        {getResourcesByType('expense').length > 0 ? (
                                             <ErrorBoundary>
                                                 <ResourceList
                                                     type="expense"
-                                                    resources={getResourcesByType("expense")}
-                                                    onEdit={(resource) => handleEditResource(resource, "expense")}
-                                                    onDelete={(resource) => handleDeleteResource(resource, "expense")}
+                                                    resources={getResourcesByType('expense')}
+                                                    onEdit={(resource) => handleEditResource(resource, 'expense')}
+                                                    onDelete={(resource) => handleDeleteResource(resource, 'expense')}
                                                 />
                                             </ErrorBoundary>
                                         ) : (
                                             <div className="py-10 text-center">
-                                                <p className="text-muted-foreground">{t('projects:no_resources_found', {type: t('projects:expense')})}{filters.search && t('projects:matching_your_search')}</p>
+                                                <p className="text-muted-foreground">
+                                                    {t('projects:no_resources_found', { type: t('projects:expense') })}
+                                                    {filters.search && t('projects:matching_your_search')}
+                                                </p>
                                             </div>
                                         )}
                                     </TabsContent>
                                     <TabsContent value="tasks">
-                                        {(localTasks && localTasks.length > 0) ? (
+                                        {localTasks && localTasks.length > 0 ? (
                                             <ErrorBoundary>
                                                 <TaskList
                                                     tasks={sortedResources as Resource[]}
@@ -1379,7 +1343,10 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
                                             </ErrorBoundary>
                                         ) : (
                                             <div className="py-10 text-center">
-                                                <p className="text-muted-foreground">{t('projects:no_tasks_found')}{filters.search && t('projects:matching_your_search')}</p>
+                                                <p className="text-muted-foreground">
+                                                    {t('projects:no_tasks_found')}
+                                                    {filters.search && t('projects:matching_your_search')}
+                                                </p>
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
@@ -1388,7 +1355,7 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
                                                     }}
                                                     className="mt-2"
                                                 >
-                                                    <Plus className="h-4 w-4 mr-2" />
+                                                    <Plus className="mr-2 h-4 w-4" />
                                                     {t('projects:add_first_task')}
                                                 </Button>
                                             </div>
@@ -1478,16 +1445,14 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
                         <DialogContent>
                             <DialogHeader>
                                 <DialogTitle>
-                                    {resourceToDelete?.type === 'tasks'
-                                        ? t('projects:delete_task')
-                                        : t('projects:delete_resource')
-                                    }
+                                    {resourceToDelete?.type === 'tasks' ? t('projects:delete_task') : t('projects:delete_resource')}
                                 </DialogTitle>
                                 <DialogDescription>
                                     {resourceToDelete?.type === 'tasks'
                                         ? t('projects:confirm_delete_task')
-                                        : t('projects:confirm_delete_resource', {type: resourceToDelete?.type ? t(`projects:${resourceToDelete.type}`) : ''})
-                                    }
+                                        : t('projects:confirm_delete_resource', {
+                                              type: resourceToDelete?.type ? t(`projects:${resourceToDelete.type}`) : '',
+                                          })}
                                 </DialogDescription>
                             </DialogHeader>
                             <DialogFooter>
@@ -1507,12 +1472,12 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
         console.error('Error in Resources component:', error);
         return (
             <div className="container mx-auto py-10 text-center">
-                <h2 className="text-2xl font-bold mb-4">{t('projects:something_went_wrong')}</h2>
-                <p className="mb-4">{t('projects:error_loading_resources')} Error: {error instanceof Error ? error.message : String(error)}</p>
+                <h2 className="mb-4 text-2xl font-bold">{t('projects:something_went_wrong')}</h2>
+                <p className="mb-4">
+                    {t('projects:error_loading_resources')} Error: {error instanceof Error ? error.message : String(error)}
+                </p>
                 <div className="flex justify-center gap-4">
-                    <Button onClick={() => window.location.reload()}>
-                        {t('projects:reload_page')}
-                    </Button>
+                    <Button onClick={() => window.location.reload()}>{t('projects:reload_page')}</Button>
                     <Button variant="outline" onClick={() => window.history.back()}>
                         {t('projects:go_back')}
                     </Button>
@@ -1521,20 +1486,3 @@ function Resources({ project, manpower = { data: [], current_page: 1, last_page:
         );
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

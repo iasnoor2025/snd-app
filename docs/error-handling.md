@@ -16,6 +16,7 @@ The system implements a comprehensive error handling strategy that includes:
 ## Error Response Format
 
 ### Standard Error Response
+
 ```json
 {
     "status": "error",
@@ -28,16 +29,14 @@ The system implements a comprehensive error handling strategy that includes:
 ```
 
 ### Validation Error Response
+
 ```json
 {
     "status": "error",
     "message": "Validation failed",
     "error_code": "E422",
     "errors": {
-        "field_name": [
-            "Error message 1",
-            "Error message 2"
-        ]
+        "field_name": ["Error message 1", "Error message 2"]
     }
 }
 ```
@@ -45,6 +44,7 @@ The system implements a comprehensive error handling strategy that includes:
 ## Exception Handling
 
 ### Custom Exception Handler
+
 ```php
 // app/Exceptions/Handler.php
 namespace App\Exceptions;
@@ -94,6 +94,7 @@ class Handler extends ExceptionHandler
 ```
 
 ### Custom Exceptions
+
 ```php
 // app/Exceptions/RentalException.php
 namespace App\Exceptions;
@@ -127,6 +128,7 @@ class RentalException extends \Exception
 ## Validation
 
 ### Request Validation
+
 ```php
 // app/Http/Requests/CreateRentalRequest.php
 namespace App\Http\Requests;
@@ -159,6 +161,7 @@ class CreateRentalRequest extends FormRequest
 ```
 
 ### Controller Implementation
+
 ```php
 // app/Http/Controllers/RentalController.php
 public function store(CreateRentalRequest $request)
@@ -183,6 +186,7 @@ public function store(CreateRentalRequest $request)
 ## Error Logging
 
 ### Logging Configuration
+
 ```php
 // config/logging.php
 return [
@@ -209,6 +213,7 @@ return [
 ```
 
 ### Logging Service
+
 ```php
 // app/Services/LoggingService.php
 namespace App\Services;
@@ -243,6 +248,7 @@ class LoggingService
 ## Error Monitoring
 
 ### Sentry Integration
+
 ```php
 // config/sentry.php
 return [
@@ -260,6 +266,7 @@ return [
 ```
 
 ### Error Tracking Middleware
+
 ```php
 // app/Http/Middleware/TrackErrors.php
 namespace App\Http\Middleware;
@@ -296,6 +303,7 @@ class TrackErrors
 ## Error Codes
 
 ### System Error Codes
+
 ```php
 // app/Constants/ErrorCodes.php
 namespace App\Constants;
@@ -334,6 +342,7 @@ class ErrorCodes
 ## Error Pages
 
 ### Custom Error Views
+
 ```php
 // resources/views/errors/404.blade.php
 @extends('layouts.error')
@@ -352,6 +361,7 @@ class ErrorCodes
 ```
 
 ### Error Layout
+
 ```php
 // resources/views/layouts/error.blade.php
 <!DOCTYPE html>
@@ -372,6 +382,7 @@ class ErrorCodes
 ## Client-Side Error Handling
 
 ### API Error Interceptor
+
 ```typescript
 // resources/js/services/api.ts
 import axios from 'axios';
@@ -381,15 +392,15 @@ const api = axios.create({
     baseURL: '/api',
     headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
+        Accept: 'application/json',
     },
 });
 
 api.interceptors.response.use(
-    response => response,
-    error => {
+    (response) => response,
+    (error) => {
         const { response } = error;
-        
+
         if (response?.data?.message) {
             toast.error(response.data.message);
         }
@@ -408,12 +419,12 @@ api.interceptors.response.use(
             // Handle validation errors
             const errors = response.data.errors;
             Object.values(errors).forEach((messages: string[]) => {
-                messages.forEach(message => toast.error(message));
+                messages.forEach((message) => toast.error(message));
             });
         }
 
         return Promise.reject(error);
-    }
+    },
 );
 
 export default api;
@@ -422,6 +433,7 @@ export default api;
 ## Testing Error Handling
 
 ### Feature Tests
+
 ```php
 // tests/Feature/ErrorHandlingTest.php
 namespace Tests\Feature;
@@ -453,7 +465,7 @@ class ErrorHandlingTest extends TestCase
     public function test_handles_custom_exceptions()
     {
         $user = User::factory()->create();
-        
+
         $this->actingAs($user)
             ->postJson('/api/rentals/1/approve')
             ->assertStatus(400)
@@ -468,38 +480,40 @@ class ErrorHandlingTest extends TestCase
 ## Best Practices
 
 1. **Consistent Error Format**
-   - Use standardized error response format
-   - Include error codes for all errors
-   - Provide helpful error messages
-   - Include debug information in development
+    - Use standardized error response format
+    - Include error codes for all errors
+    - Provide helpful error messages
+    - Include debug information in development
 
 2. **Proper Error Logging**
-   - Log all errors with context
-   - Use appropriate log levels
-   - Implement log rotation
-   - Monitor error logs
+    - Log all errors with context
+    - Use appropriate log levels
+    - Implement log rotation
+    - Monitor error logs
 
 3. **Security Considerations**
-   - Hide sensitive information
-   - Sanitize error messages
-   - Log security-related errors
-   - Implement rate limiting
+    - Hide sensitive information
+    - Sanitize error messages
+    - Log security-related errors
+    - Implement rate limiting
 
 4. **User Experience**
-   - Show user-friendly messages
-   - Provide clear error feedback
-   - Implement proper error recovery
-   - Guide users to solutions
+    - Show user-friendly messages
+    - Provide clear error feedback
+    - Implement proper error recovery
+    - Guide users to solutions
 
 ## Support and Debugging
 
 ### Error Reporting Tools
+
 - Sentry for error tracking
 - Slack notifications for critical errors
 - Email notifications for system errors
 - Daily error reports
 
 ### Debugging Tools
+
 - Laravel Telescope
 - Laravel Debug Bar
 - Custom debug endpoints
@@ -508,25 +522,25 @@ class ErrorHandlingTest extends TestCase
 ## Error Resolution Guide
 
 1. **Authentication Errors**
-   - Check token validity
-   - Verify credentials
-   - Check session state
-   - Validate MFA setup
+    - Check token validity
+    - Verify credentials
+    - Check session state
+    - Validate MFA setup
 
 2. **Authorization Errors**
-   - Check user permissions
-   - Verify role assignments
-   - Check access policies
-   - Review middleware
+    - Check user permissions
+    - Verify role assignments
+    - Check access policies
+    - Review middleware
 
 3. **Validation Errors**
-   - Check input data
-   - Verify validation rules
-   - Review form submissions
-   - Check client-side validation
+    - Check input data
+    - Verify validation rules
+    - Review form submissions
+    - Check client-side validation
 
 4. **System Errors**
-   - Check server logs
-   - Review error context
-   - Check external services
-   - Monitor system resources 
+    - Check server logs
+    - Review error context
+    - Check external services
+    - Monitor system resources

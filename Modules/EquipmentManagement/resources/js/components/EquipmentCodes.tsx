@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
 import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/../../Modules/Core/resources/js/components/ui/dialog';
-import { toast } from 'sonner';
-import { QRCodeSVG } from 'qrcode.react';
-import Barcode from 'react-barcode';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/../../Modules/Core/resources/js/components/ui/dialog';
 import axios from 'axios';
+import { QRCodeSVG } from 'qrcode.react';
+import { useEffect, useState } from 'react';
+import Barcode from 'react-barcode';
+import { toast } from 'sonner';
 
 interface EquipmentCode {
     id: number;
@@ -108,51 +108,29 @@ export function EquipmentCodes({ equipmentId }: EquipmentCodesProps) {
         <Card className="w-full">
             <CardHeader>
                 <CardTitle>Equipment Codes</CardTitle>
-                <CardDescription>
-                    Manage QR codes and barcodes for this equipment.
-                </CardDescription>
+                <CardDescription>Manage QR codes and barcodes for this equipment.</CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
                     <div className="flex space-x-4">
-                        <Button onClick={() => handleGenerateQr()}>
-                            Generate QR Code
-                        </Button>
-                        <Button onClick={() => handleGenerateBarcode()}>
-                            Generate Barcode
-                        </Button>
+                        <Button onClick={() => handleGenerateQr()}>Generate QR Code</Button>
+                        <Button onClick={() => handleGenerateBarcode()}>Generate Barcode</Button>
                     </div>
 
                     <div className="space-y-4">
                         {codes.map((code) => (
-                            <div
-                                key={code.id}
-                                className="p-4 border rounded-lg space-y-2"
-                            >
-                                <div className="flex justify-between items-start">
+                            <div key={code.id} className="space-y-2 rounded-lg border p-4">
+                                <div className="flex items-start justify-between">
                                     <div>
                                         <h3 className="font-medium">
                                             {code.type === 'qr' ? 'QR Code' : 'Barcode'}
-                                            {code.is_primary && (
-                                                <span className="ml-2 text-sm text-green-600">
-                                                    (Primary)
-                                                </span>
-                                            )}
+                                            {code.is_primary && <span className="ml-2 text-sm text-green-600">(Primary)</span>}
                                         </h3>
-                                        {code.last_scanned && (
-                                            <p className="text-sm text-gray-500">
-                                                Last scanned: {code.last_scanned}
-                                            </p>
-                                        )}
+                                        {code.last_scanned && <p className="text-sm text-gray-500">Last scanned: {code.last_scanned}</p>}
                                     </div>
                                     <div className="flex space-x-2">
                                         {!code.is_primary && (
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => handleSetPrimary(code)}
-                                                disabled={isLoading}
-                                            >
+                                            <Button variant="outline" size="sm" onClick={() => handleSetPrimary(code)} disabled={isLoading}>
                                                 Set as Primary
                                             </Button>
                                         )}
@@ -170,12 +148,7 @@ export function EquipmentCodes({ equipmentId }: EquipmentCodesProps) {
                                         >
                                             View
                                         </Button>
-                                        <Button
-                                            variant="destructive"
-                                            size="sm"
-                                            onClick={() => handleDelete(code)}
-                                            disabled={isLoading}
-                                        >
+                                        <Button variant="destructive" size="sm" onClick={() => handleDelete(code)} disabled={isLoading}>
                                             Delete
                                         </Button>
                                     </div>
@@ -190,9 +163,7 @@ export function EquipmentCodes({ equipmentId }: EquipmentCodesProps) {
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>QR Code</DialogTitle>
-                        <DialogDescription>
-                            Scan this QR code to access equipment information.
-                        </DialogDescription>
+                        <DialogDescription>Scan this QR code to access equipment information.</DialogDescription>
                     </DialogHeader>
                     {selectedCode?.qr_url && (
                         <div className="flex flex-col items-center space-y-4">
@@ -215,9 +186,7 @@ export function EquipmentCodes({ equipmentId }: EquipmentCodesProps) {
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Barcode</DialogTitle>
-                        <DialogDescription>
-                            Scan this barcode to access equipment information.
-                        </DialogDescription>
+                        <DialogDescription>Scan this barcode to access equipment information.</DialogDescription>
                     </DialogHeader>
                     {selectedCode?.barcode_value && (
                         <div className="flex flex-col items-center space-y-4">

@@ -1,24 +1,20 @@
-import React from 'react';
-import { Button } from "@/Core";
-import { Input } from "@/Core";
 import {
+    Button,
+    Calendar,
+    cn,
+    Input,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/Core";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/Core";
-import { Calendar } from "@/Core";
+} from '@/Core';
 import { format } from 'date-fns';
-import { CalendarIcon, Filter, X } from 'lucide-react';
-import { cn } from "@/Core";
+import { CalendarIcon, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface ResourceFiltersProps {
     type: 'manpower' | 'equipment' | 'material' | 'fuel' | 'expense';
@@ -34,20 +30,15 @@ interface ResourceFiltersProps {
     onReset: () => void;
 }
 
-export default function ResourceFilters({
-    type,
-    filters,
-    onFilterChange,
-    onReset
-}: ResourceFiltersProps) {
+export default function ResourceFilters({ type, filters, onFilterChange, onReset }: ResourceFiltersProps) {
     const { t } = useTranslation();
     const handleDateChange = (date: Date | undefined, field: 'startDate' | 'endDate') => {
-        onFilterChange({ ...filters, [field]: date })
+        onFilterChange({ ...filters, [field]: date });
     };
 
     const handleSortChange = (value: string) => {
         const [sortBy, sortOrder] = value.split('-');
-        onFilterChange({ ...filters, sortBy, sortOrder })
+        onFilterChange({ ...filters, sortBy, sortOrder });
     };
 
     const getSortOptions = () => {
@@ -101,7 +92,7 @@ export default function ResourceFilters({
     };
 
     return (
-        <div className="flex flex-wrap items-center gap-4 p-4 border rounded-lg">
+        <div className="flex flex-wrap items-center gap-4 rounded-lg border p-4">
             {/* Search Input */}
             <Input
                 placeholder={t('projects:search_resources')}
@@ -116,26 +107,14 @@ export default function ResourceFilters({
                     <PopoverTrigger asChild>
                         <Button
                             variant="outline"
-                            className={cn(
-                                "w-[240px] justify-start text-left font-normal",
-                                !filters.startDate && "text-muted-foreground"
-                            )}
+                            className={cn('w-[240px] justify-start text-left font-normal', !filters.startDate && 'text-muted-foreground')}
                         >
                             <CalendarIcon className="mr-2 h-4 w-4" />
-                            {filters.startDate ? (
-                                format(filters.startDate, "PPP")
-                            ) : (
-                                <span>{t('projects:start_date')}</span>
-                            )}
+                            {filters.startDate ? format(filters.startDate, 'PPP') : <span>{t('projects:start_date')}</span>}
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                            mode="single"
-                            selected={filters.startDate}
-                            onSelect={(date) => handleDateChange(date, 'startDate')}
-                            initialFocus
-                        />
+                        <Calendar mode="single" selected={filters.startDate} onSelect={(date) => handleDateChange(date, 'startDate')} initialFocus />
                     </PopoverContent>
                 </Popover>
 
@@ -145,35 +124,20 @@ export default function ResourceFilters({
                     <PopoverTrigger asChild>
                         <Button
                             variant="outline"
-                            className={cn(
-                                "w-[240px] justify-start text-left font-normal",
-                                !filters.endDate && "text-muted-foreground"
-                            )}
+                            className={cn('w-[240px] justify-start text-left font-normal', !filters.endDate && 'text-muted-foreground')}
                         >
                             <CalendarIcon className="mr-2 h-4 w-4" />
-                            {filters.endDate ? (
-                                format(filters.endDate, "PPP")
-                            ) : (
-                                <span>{t('projects:end_date')}</span>
-                            )}
+                            {filters.endDate ? format(filters.endDate, 'PPP') : <span>{t('projects:end_date')}</span>}
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                            mode="single"
-                            selected={filters.endDate}
-                            onSelect={(date) => handleDateChange(date, 'endDate')}
-                            initialFocus
-                        />
+                        <Calendar mode="single" selected={filters.endDate} onSelect={(date) => handleDateChange(date, 'endDate')} initialFocus />
                     </PopoverContent>
                 </Popover>
             </div>
 
             {/* Sort Select */}
-            <Select
-                value={`${filters.sortBy || 'created_at'}-${filters.sortOrder || 'desc'}`}
-                onValueChange={handleSortChange}
-            >
+            <Select value={`${filters.sortBy || 'created_at'}-${filters.sortOrder || 'desc'}`} onValueChange={handleSortChange}>
                 <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder={t('projects:sort_by')} />
                 </SelectTrigger>
@@ -187,29 +151,10 @@ export default function ResourceFilters({
             </Select>
 
             {/* Reset Button */}
-            <Button
-                variant="outline"
-                onClick={onReset}
-                className="ml-auto"
-            >
-                <X className="h-4 w-4 mr-2" />
+            <Button variant="outline" onClick={onReset} className="ml-auto">
+                <X className="mr-2 h-4 w-4" />
                 {t('projects:reset_filters')}
             </Button>
         </div>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

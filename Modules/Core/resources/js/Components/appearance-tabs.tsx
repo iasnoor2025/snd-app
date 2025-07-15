@@ -1,7 +1,7 @@
-import { Appearance, useAppearance } from '../hooks/use-appearance';
-import { cn } from '../lib/utils';
 import { LucideIcon, Monitor, Moon, Sun } from 'lucide-react';
 import { HTMLAttributes } from 'react';
+import { Appearance, useAppearance } from '../hooks/use-appearance';
+import { cn } from '../lib/utils';
 
 export default function AppearanceToggleTab({ className = '', ...props }: HTMLAttributes<HTMLDivElement>) {
     const { appearance, updateAppearance } = useAppearance();
@@ -32,24 +32,3 @@ export default function AppearanceToggleTab({ className = '', ...props }: HTMLAt
         </div>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

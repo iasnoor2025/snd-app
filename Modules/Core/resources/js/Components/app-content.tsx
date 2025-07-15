@@ -1,4 +1,4 @@
-import { SidebarInset } from "@/Core";
+import { SidebarInset } from '@/Core';
 import * as React from 'react';
 
 interface AppContentProps extends React.ComponentProps<'main'> {
@@ -16,24 +16,3 @@ export function AppContent({ variant = 'header', children, ...props }: AppConten
         </main>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

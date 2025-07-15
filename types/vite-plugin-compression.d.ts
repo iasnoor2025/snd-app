@@ -11,4 +11,4 @@ declare module 'vite-plugin-compression' {
         error?: (err: Error) => void;
     }
     export default function compression(options?: VitePluginCompressionOptions): Plugin;
-} 
+}

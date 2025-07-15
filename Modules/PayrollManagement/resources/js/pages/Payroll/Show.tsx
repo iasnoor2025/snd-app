@@ -1,13 +1,7 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { AppLayout, Button, Card, CardContent, CardHeader, CardTitle } from '@/Core';
 import { Head } from '@inertiajs/react';
-import { PageProps } from '../../types';
-import { AppLayout } from '@/Core';
-import { Button } from "@/Core";
-import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
 import { format } from 'date-fns';
-import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import { useTranslation } from 'react-i18next';
 
 interface PayrollItem {
     id: number;
@@ -38,18 +32,18 @@ interface Payroll {
 }
 
 interface Props {
-  payroll: any;
-  employee?: any;
-  items?: any[];
-  approver?: any;
-  payer?: any;
-  created_at?: string;
-  updated_at?: string;
-  deleted_at?: string;
+    payroll: any;
+    employee?: any;
+    items?: any[];
+    approver?: any;
+    payer?: any;
+    created_at?: string;
+    updated_at?: string;
+    deleted_at?: string;
 }
 
 export default function Show({ payroll, employee = {}, items = [], approver = {}, payer = {}, created_at, updated_at, deleted_at }: Props) {
-  const { t } = useTranslation('payrolls');
+    const { t } = useTranslation('payrolls');
 
     const getStatusBadge = (status: string) => {
         const statusClasses = {
@@ -60,7 +54,7 @@ export default function Show({ payroll, employee = {}, items = [], approver = {}
         };
 
         return (
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusClasses[status as keyof typeof statusClasses]}`}>
+            <span className={`rounded-full px-2 py-1 text-xs font-medium ${statusClasses[status as keyof typeof statusClasses]}`}>
                 {status.charAt(0).toUpperCase() + status.slice(1)}
             </span>
         );
@@ -79,19 +73,13 @@ export default function Show({ payroll, employee = {}, items = [], approver = {}
     };
 
     return (
-        <AppLayout
-            user={payroll.employee}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">{t('ttl_payroll_details')}</h2>}
-        >
+        <AppLayout user={payroll.employee} header={<h2 className="text-xl leading-tight font-semibold text-gray-800">{t('ttl_payroll_details')}</h2>}>
             <Head title={t('ttl_payroll_details')} />
 
             <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="flex justify-between items-center mb-6">
-                        <Button
-                            variant="outline"
-                            onClick={() => window.history.back()}
-                        >
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    <div className="mb-6 flex items-center justify-between">
+                        <Button variant="outline" onClick={() => window.history.back()}>
                             Back to Payrolls
                         </Button>
                         {payroll.status === 'pending' && (
@@ -130,7 +118,7 @@ export default function Show({ payroll, employee = {}, items = [], approver = {}
                         )}
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <Card>
                             <CardHeader>
                                 <CardTitle>{t('ttl_payroll_information')}</CardTitle>
@@ -143,9 +131,7 @@ export default function Show({ payroll, employee = {}, items = [], approver = {}
                                     </div>
                                     <div>
                                         <dt className="text-sm font-medium text-gray-500">{t('lbl_payroll_month')}</dt>
-                                        <dd className="mt-1 text-sm text-gray-900">
-                                            {format(new Date(payroll.payroll_month), 'MMMM yyyy')}
-                                        </dd>
+                                        <dd className="mt-1 text-sm text-gray-900">{format(new Date(payroll.payroll_month), 'MMMM yyyy')}</dd>
                                     </div>
                                     <div>
                                         <dt className="text-sm font-medium text-gray-500">Status</dt>
@@ -153,15 +139,11 @@ export default function Show({ payroll, employee = {}, items = [], approver = {}
                                     </div>
                                     <div>
                                         <dt className="text-sm font-medium text-gray-500">{t('created_at')}</dt>
-                                        <dd className="mt-1 text-sm text-gray-900">
-                                            {format(new Date(created_at || payroll.created_at), 'PPpp')}
-                                        </dd>
+                                        <dd className="mt-1 text-sm text-gray-900">{format(new Date(created_at || payroll.created_at), 'PPpp')}</dd>
                                     </div>
                                     <div>
                                         <dt className="text-sm font-medium text-gray-500">{t('last_updated')}</dt>
-                                        <dd className="mt-1 text-sm text-gray-900">
-                                            {format(new Date(updated_at || payroll.updated_at), 'PPpp')}
-                                        </dd>
+                                        <dd className="mt-1 text-sm text-gray-900">{format(new Date(updated_at || payroll.updated_at), 'PPpp')}</dd>
                                     </div>
                                 </dl>
                             </CardContent>
@@ -176,31 +158,37 @@ export default function Show({ payroll, employee = {}, items = [], approver = {}
                                     <div>
                                         <dt className="text-sm font-medium text-gray-500">{t('base_salary')}</dt>
                                         <dd className="mt-1 text-sm text-gray-900">
-                                            {getCurrencySymbol(payroll.currency)}{payroll.base_salary.toFixed(2)}
+                                            {getCurrencySymbol(payroll.currency)}
+                                            {payroll.base_salary.toFixed(2)}
                                         </dd>
                                     </div>
                                     <div>
                                         <dt className="text-sm font-medium text-gray-500">Overtime</dt>
                                         <dd className="mt-1 text-sm text-gray-900">
-                                            {payroll.overtime_hours} hours × {getCurrencySymbol(payroll.currency)}{payroll.overtime_rate.toFixed(2)} = {getCurrencySymbol(payroll.currency)}{(payroll.overtime_hours * payroll.overtime_rate).toFixed(2)}
+                                            {payroll.overtime_hours} hours × {getCurrencySymbol(payroll.currency)}
+                                            {payroll.overtime_rate.toFixed(2)} = {getCurrencySymbol(payroll.currency)}
+                                            {(payroll.overtime_hours * payroll.overtime_rate).toFixed(2)}
                                         </dd>
                                     </div>
                                     <div>
                                         <dt className="text-sm font-medium text-gray-500">Bonus</dt>
                                         <dd className="mt-1 text-sm text-gray-900">
-                                            {getCurrencySymbol(payroll.currency)}{payroll.bonus_amount.toFixed(2)}
+                                            {getCurrencySymbol(payroll.currency)}
+                                            {payroll.bonus_amount.toFixed(2)}
                                         </dd>
                                     </div>
                                     <div>
                                         <dt className="text-sm font-medium text-gray-500">Deductions</dt>
                                         <dd className="mt-1 text-sm text-gray-900">
-                                            {getCurrencySymbol(payroll.currency)}{payroll.deduction_amount.toFixed(2)}
+                                            {getCurrencySymbol(payroll.currency)}
+                                            {payroll.deduction_amount.toFixed(2)}
                                         </dd>
                                     </div>
-                                    <div className="pt-4 border-t">
+                                    <div className="border-t pt-4">
                                         <dt className="text-sm font-medium text-gray-500">{t('final_amount')}</dt>
                                         <dd className="mt-1 text-lg font-semibold text-gray-900">
-                                            {getCurrencySymbol(payroll.currency)}{payroll.final_amount.toFixed(2)}
+                                            {getCurrencySymbol(payroll.currency)}
+                                            {payroll.final_amount.toFixed(2)}
                                         </dd>
                                     </div>
                                 </dl>
@@ -218,28 +206,25 @@ export default function Show({ payroll, employee = {}, items = [], approver = {}
                                     <table className="min-w-full divide-y divide-gray-200">
                                         <thead>
                                             <tr>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                                                     Type
                                                 </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                                                     Description
                                                 </th>
-                                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                <th className="px-6 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase">
                                                     Amount
                                                 </th>
                                             </tr>
                                         </thead>
-                                        <tbody className="bg-white divide-y divide-gray-200">
+                                        <tbody className="divide-y divide-gray-200 bg-white">
                                             {items.map((item) => (
                                                 <tr key={item.id}>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                        {item.type}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                        {item.description}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
-                                                        {getCurrencySymbol(payroll.currency)}{item.amount.toFixed(2)}
+                                                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">{item.type}</td>
+                                                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">{item.description}</td>
+                                                    <td className="px-6 py-4 text-right text-sm whitespace-nowrap text-gray-900">
+                                                        {getCurrencySymbol(payroll.currency)}
+                                                        {item.amount.toFixed(2)}
                                                     </td>
                                                 </tr>
                                             ))}
@@ -265,17 +250,3 @@ export default function Show({ payroll, employee = {}, items = [], approver = {}
         </AppLayout>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

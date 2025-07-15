@@ -1,31 +1,25 @@
+import { Form, Input, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Textarea } from '@/Core';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Form } from "@/Core";
-import { Input } from "@/Core";
-import { Label } from "@/Core";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
-import { Textarea } from "@/Core";
 import { UseFormReturn } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 interface ResourceFormProps {
-    form: UseFormReturn<any>
+    form: UseFormReturn<any>;
     children: React.ReactNode;
 }
 
 export function ResourceForm({ form, children }: ResourceFormProps) {
-  const { t } = useTranslation('project');
+    const { t } = useTranslation('project');
 
     return (
         <Form>
-            <form className="space-y-4">
-                {children}
-            </form>
+            <form className="space-y-4">{children}</form>
         </Form>
     );
 }
 
 interface ResourceInputProps {
-    form: UseFormReturn<any>
+    form: UseFormReturn<any>;
     name: string;
     label: string;
     type?: string;
@@ -36,24 +30,17 @@ export function ResourceInput({ form, name, label, type = 'text', placeholder }:
     return (
         <div className="space-y-2">
             <Label htmlFor={name}>{label}</Label>
-            <Input
-                id={name}
-                type={type}
-                placeholder={placeholder}
-                {...form.register(name)}
-            />
-            {form.formState.errors[name] && (
-                <p className="text-sm text-red-500">{form.formState.errors[name]?.message}</p>
-            )}
+            <Input id={name} type={type} placeholder={placeholder} {...form.register(name)} />
+            {form.formState.errors[name] && <p className="text-sm text-red-500">{form.formState.errors[name]?.message}</p>}
         </div>
     );
 }
 
 interface ResourceSelectProps {
-    form: UseFormReturn<any>
+    form: UseFormReturn<any>;
     name: string;
     label: string;
-    options: Array<{ value: string; label: string }>
+    options: Array<{ value: string; label: string }>;
     placeholder?: string;
 }
 
@@ -61,10 +48,7 @@ export function ResourceSelect({ form, name, label, options, placeholder }: Reso
     return (
         <div className="space-y-2">
             <Label htmlFor={name}>{label}</Label>
-            <Select
-                onValueChange={(value) => form.setValue(name, value)}
-                defaultValue={form.getValues(name)}
-            >
+            <Select onValueChange={(value) => form.setValue(name, value)} defaultValue={form.getValues(name)}>
                 <SelectTrigger>
                     <SelectValue placeholder={placeholder} />
                 </SelectTrigger>
@@ -76,15 +60,13 @@ export function ResourceSelect({ form, name, label, options, placeholder }: Reso
                     ))}
                 </SelectContent>
             </Select>
-            {form.formState.errors[name] && (
-                <p className="text-sm text-red-500">{form.formState.errors[name]?.message}</p>
-            )}
+            {form.formState.errors[name] && <p className="text-sm text-red-500">{form.formState.errors[name]?.message}</p>}
         </div>
     );
 }
 
 interface ResourceTextareaProps {
-    form: UseFormReturn<any>
+    form: UseFormReturn<any>;
     name: string;
     label: string;
     placeholder?: string;
@@ -94,28 +76,8 @@ export function ResourceTextarea({ form, name, label, placeholder }: ResourceTex
     return (
         <div className="space-y-2">
             <Label htmlFor={name}>{label}</Label>
-            <Textarea
-                id={name}
-                placeholder={placeholder}
-                {...form.register(name)}
-            />
-            {form.formState.errors[name] && (
-                <p className="text-sm text-red-500">{form.formState.errors[name]?.message}</p>
-            )}
+            <Textarea id={name} placeholder={placeholder} {...form.register(name)} />
+            {form.formState.errors[name] && <p className="text-sm text-red-500">{form.formState.errors[name]?.message}</p>}
         </div>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

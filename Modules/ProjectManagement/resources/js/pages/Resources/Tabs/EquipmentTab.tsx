@@ -1,13 +1,11 @@
-import React from 'react';
+import { Badge, Button } from '@/Core';
 import { useTranslation } from 'react-i18next';
-import { Button } from "@/Core";
-import { Badge } from "@/Core";
 import { ResourceFormModal } from '../../../Components/project/resources/ResourceModal';
 import { ResourceTable } from '../../../Components/project/resources/ResourceTable';
 import { useResourceFormModal } from '../../../hooks/useResourceFormModal';
 import { useResourceSubmit } from '../../../hooks/useResourceSubmit';
-import type { EquipmentResource } from '../../../types/projectResources';
 import { formatCurrency } from '../../../lib/utils';
+import type { EquipmentResource } from '../../../types/projectResources';
 
 interface EquipmentTabProps {
     project: {
@@ -18,25 +16,17 @@ interface EquipmentTabProps {
 }
 
 export function EquipmentTab({ project, equipments, availableEquipment }: EquipmentTabProps) {
-  const { t } = useTranslation('project');
+    const { t } = useTranslation('project');
 
-    const {
-        isCreateModalOpen,
-        isEditModalOpen,
-        selectedResource,
-        isLoading,
-        openCreateModal,
-        openEditModal,
-        closeCreateModal,
-        closeEditModal,
-    } = useResourceFormModal({
-        projectId: project.id,
-        type: 'equipment',
-        onSuccess: () => {
-            // Refresh the list of equipment
-            window.location.reload();
-        }
-    });
+    const { isCreateModalOpen, isEditModalOpen, selectedResource, isLoading, openCreateModal, openEditModal, closeCreateModal, closeEditModal } =
+        useResourceFormModal({
+            projectId: project.id,
+            type: 'equipment',
+            onSuccess: () => {
+                // Refresh the list of equipment
+                window.location.reload();
+            },
+        });
 
     const { isSubmitting, handleSubmit, handleUpdate, handleDelete } = useResourceSubmit({
         projectId: project.id,
@@ -45,7 +35,7 @@ export function EquipmentTab({ project, equipments, availableEquipment }: Equipm
             closeCreateModal();
             closeEditModal();
             window.location.reload();
-        }
+        },
     });
 
     const handleDeleteClick = (equipment: EquipmentResource) => {
@@ -62,7 +52,9 @@ export function EquipmentTab({ project, equipments, availableEquipment }: Equipm
                 <span>
                     {row.original.equipment_name}
                     {row.original.is_orphaned_equipment && (
-                        <Badge variant="destructive" className="ml-2">Orphaned</Badge>
+                        <Badge variant="destructive" className="ml-2">
+                            Orphaned
+                        </Badge>
                     )}
                 </span>
             ),
@@ -142,18 +134,3 @@ export function EquipmentTab({ project, equipments, availableEquipment }: Equipm
 }
 
 export default EquipmentTab;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

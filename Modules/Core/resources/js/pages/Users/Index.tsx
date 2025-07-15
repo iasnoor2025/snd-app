@@ -1,53 +1,18 @@
-import React, { useState } from 'react';
 import { AppLayout } from '@/Core';
+import { formatDateMedium } from '@/Core/utils/dateFormatter';
 import { Head, Link, router } from '@inertiajs/react';
-import { Page } from '@inertiajs/core';
-import { BreadcrumbItem } from '../../types';
+import { Edit, Eye, Loader2, MoreHorizontal, Plus, Search, Trash2, Users as UsersIcon } from 'lucide-react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { Button } from '../../../../resources/js/components/ui/button';
 import { Badge } from '../../components/ui/badge';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow
-} from '../../components/ui/table';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle
-} from '../../components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../../components/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../components/ui/dropdown-menu';
 import { Input } from '../../components/ui/input';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from '../../components/ui/dialog';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from '../../components/ui/dropdown-menu';
-import {
-    Plus,
-    Search,
-    MoreHorizontal,
-    Eye,
-    Edit,
-    Trash2,
-    Users as UsersIcon,
-    Loader2
-} from 'lucide-react';
-import { toast } from 'sonner';
-import { useTranslation } from 'react-i18next';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/table';
+import { BreadcrumbItem } from '../../types';
 
 interface User {
     id: number;
@@ -88,10 +53,11 @@ export default function Index({ users, roles, can }: Props) {
     ];
 
     // Filter users based on search term
-    const filteredUsers = users.filter(user =>
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.roles.some(role => role.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    const filteredUsers = users.filter(
+        (user) =>
+            user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.roles.some((role) => role.name.toLowerCase().includes(searchTerm.toLowerCase())),
     );
 
     const handleDeleteUser = () => {
@@ -109,7 +75,7 @@ export default function Index({ users, roles, can }: Props) {
             },
             onFinish: () => {
                 setIsDeleting(false);
-            }
+            },
         });
     };
 
@@ -123,7 +89,7 @@ export default function Index({ users, roles, can }: Props) {
             <Head title={t('navigation.users')} />
 
             <div className="py-6">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <Card>
                         <CardHeader>
                             <div className="flex items-center justify-between">
@@ -132,14 +98,12 @@ export default function Index({ users, roles, can }: Props) {
                                         <UsersIcon className="h-5 w-5" />
                                         {t('users:title')}
                                     </CardTitle>
-                                    <CardDescription>
-                                        {t('users:messages.manage_user_description')}
-                                    </CardDescription>
+                                    <CardDescription>{t('users:messages.manage_user_description')}</CardDescription>
                                 </div>
                                 {can.create_users && (
                                     <Link href={route('users.create')}>
                                         <Button>
-                                            <Plus className="h-4 w-4 mr-2" />
+                                            <Plus className="mr-2 h-4 w-4" />
                                             {t('users:create')}
                                         </Button>
                                     </Link>
@@ -150,7 +114,7 @@ export default function Index({ users, roles, can }: Props) {
                             {/* Search */}
                             <div className="mb-6">
                                 <div className="relative">
-                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                                    <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
                                     <Input
                                         placeholder={t('users:search')}
                                         value={searchTerm}
@@ -161,7 +125,7 @@ export default function Index({ users, roles, can }: Props) {
                             </div>
 
                             {/* Users Table */}
-                            <div className="border rounded-lg">
+                            <div className="rounded-lg border">
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
@@ -176,16 +140,14 @@ export default function Index({ users, roles, can }: Props) {
                                     <TableBody>
                                         {filteredUsers.length === 0 ? (
                                             <TableRow>
-                                                <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                                                <TableCell colSpan={6} className="py-8 text-center text-gray-500">
                                                     {searchTerm ? t('messages.no_results') : t('messages.no_users')}
                                                 </TableCell>
                                             </TableRow>
                                         ) : (
                                             filteredUsers.map((user) => (
                                                 <TableRow key={user.id}>
-                                                    <TableCell className="font-medium">
-                                                        {user.name}
-                                                    </TableCell>
+                                                    <TableCell className="font-medium">{user.name}</TableCell>
                                                     <TableCell>{user.email}</TableCell>
                                                     <TableCell>
                                                         <div className="flex flex-wrap gap-1">
@@ -197,15 +159,11 @@ export default function Index({ users, roles, can }: Props) {
                                                         </div>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Badge
-                                                            variant={user.email_verified_at ? "default" : "destructive"}
-                                                        >
+                                                        <Badge variant={user.email_verified_at ? 'default' : 'destructive'}>
                                                             {user.email_verified_at ? t('status.verified') : t('status.unverified')}
                                                         </Badge>
                                                     </TableCell>
-                                                    <TableCell>
-                                                        {formatDateMedium(new Date(user.created_at))}
-                                                    </TableCell>
+                                                    <TableCell>{formatDateMedium(new Date(user.created_at))}</TableCell>
                                                     <TableCell className="text-right">
                                                         <DropdownMenu>
                                                             <DropdownMenuTrigger asChild>
@@ -216,27 +174,18 @@ export default function Index({ users, roles, can }: Props) {
                                                             </DropdownMenuTrigger>
                                                             <DropdownMenuContent align="end">
                                                                 <DropdownMenuItem>
-                                                                    <Link
-                                                                        href={route('users.show', user.id)}
-                                                                        className="flex items-center"
-                                                                    >
+                                                                    <Link href={route('users.show', user.id)} className="flex items-center">
                                                                         <Eye className="mr-2 h-4 w-4" />
                                                                         {t('users:view')}
                                                                     </Link>
                                                                 </DropdownMenuItem>
                                                                 <DropdownMenuItem>
-                                                                    <Link
-                                                                        href={route('users.edit', user.id)}
-                                                                        className="flex items-center"
-                                                                    >
+                                                                    <Link href={route('users.edit', user.id)} className="flex items-center">
                                                                         <Edit className="mr-2 h-4 w-4" />
                                                                         {t('users:edit')}
                                                                     </Link>
                                                                 </DropdownMenuItem>
-                                                                <DropdownMenuItem
-                                                                    onClick={() => openDeleteDialog(user)}
-                                                                    className="text-red-600"
-                                                                >
+                                                                <DropdownMenuItem onClick={() => openDeleteDialog(user)} className="text-red-600">
                                                                     <Trash2 className="mr-2 h-4 w-4" />
                                                                     {t('users:delete')}
                                                                 </DropdownMenuItem>
@@ -264,18 +213,10 @@ export default function Index({ users, roles, can }: Props) {
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
-                        <Button
-                            variant="outline"
-                            onClick={() => setDeleteDialogOpen(false)}
-                            disabled={isDeleting}
-                        >
+                        <Button variant="outline" onClick={() => setDeleteDialogOpen(false)} disabled={isDeleting}>
                             {t('users:messages.cancel')}
                         </Button>
-                        <Button
-                            variant="destructive"
-                            onClick={handleDeleteUser}
-                            disabled={isDeleting}
-                        >
+                        <Button variant="destructive" onClick={handleDeleteUser} disabled={isDeleting}>
                             {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             {t('users:messages.delete')}
                         </Button>

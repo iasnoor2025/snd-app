@@ -1,34 +1,34 @@
 {
-  "title": "إدارة العملاء",
-  "list": {
-    "title": "العملاء",
-    "description": "إدارة معلومات العملاء"
-  },
-  "fields": {
-    "name": "اسم العميل",
-    "company": "الشركة",
-    "email": "البريد الإلكتروني",
-    "phone": "الهاتف",
-    "address": "العنوان",
-    "status": "الحالة",
-    "type": "نوع العميل",
-    "credit_limit": "حد الائتمان",
-    "balance": "الرصيد"
-  },
-  "status": {
-    "active": "نشط",
-    "inactive": "غير نشط",
-    "blocked": "محظور",
-    "pending": "قيد التحقق"
-  },
-  "types": {
-    "individual": "فرد",
-    "business": "شركة",
-    "government": "حكومي"
-  },
-  "messages": {
-    "create_success": "تم إنشاء العميل بنجاح",
-    "update_success": "تم تحديث العميل بنجاح",
-    "delete_success": "تم حذف العميل بنجاح"
-  }
-} 
+    "title": "إدارة العملاء",
+    "list": {
+        "title": "العملاء",
+        "description": "إدارة معلومات العملاء"
+    },
+    "fields": {
+        "name": "اسم العميل",
+        "company": "الشركة",
+        "email": "البريد الإلكتروني",
+        "phone": "الهاتف",
+        "address": "العنوان",
+        "status": "الحالة",
+        "type": "نوع العميل",
+        "credit_limit": "حد الائتمان",
+        "balance": "الرصيد"
+    },
+    "status": {
+        "active": "نشط",
+        "inactive": "غير نشط",
+        "blocked": "محظور",
+        "pending": "قيد التحقق"
+    },
+    "types": {
+        "individual": "فرد",
+        "business": "شركة",
+        "government": "حكومي"
+    },
+    "messages": {
+        "create_success": "تم إنشاء العميل بنجاح",
+        "update_success": "تم تحديث العميل بنجاح",
+        "delete_success": "تم حذف العميل بنجاح"
+    }
+}

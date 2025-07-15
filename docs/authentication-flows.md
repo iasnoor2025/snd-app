@@ -20,6 +20,7 @@ The system implements a robust authentication system using Laravel Sanctum for A
 Used for API access and mobile applications. Implements Laravel Sanctum for secure token management.
 
 #### Token Generation
+
 ```php
 // API Login Controller
 public function login(Request $request)
@@ -48,6 +49,7 @@ public function login(Request $request)
 ```
 
 #### Token Usage
+
 ```http
 GET /api/rentals
 Authorization: Bearer {token}
@@ -59,6 +61,7 @@ Accept: application/json
 Used for web interface access. Implements Laravel's built-in session authentication with CSRF protection.
 
 #### Login Process
+
 ```php
 // Web Login Controller
 public function login(Request $request)
@@ -70,7 +73,7 @@ public function login(Request $request)
 
     if (Auth::attempt($credentials, $request->remember)) {
         $request->session()->regenerate();
-        
+
         return redirect()->intended('dashboard');
     }
 
@@ -81,6 +84,7 @@ public function login(Request $request)
 ```
 
 #### Session Security
+
 - CSRF Protection
 - Session Encryption
 - Secure Cookie Handling
@@ -91,12 +95,13 @@ public function login(Request $request)
 Optional two-factor authentication for enhanced security.
 
 #### MFA Setup
+
 ```php
 // MFA Controller
 public function setupMFA(Request $request)
 {
     $user = Auth::user();
-    
+
     if (!$user->two_factor_secret) {
         $user->two_factor_secret = $this->generateSecretKey();
         $user->save();
@@ -110,6 +115,7 @@ public function setupMFA(Request $request)
 ```
 
 #### MFA Verification
+
 ```php
 // MFA Verification
 public function verifyMFA(Request $request)
@@ -119,7 +125,7 @@ public function verifyMFA(Request $request)
     ]);
 
     $user = Auth::user();
-    
+
     if (!$this->verifyTOTP($user->two_factor_secret, $request->code)) {
         return response()->json([
             'status' => 'error',
@@ -128,7 +134,7 @@ public function verifyMFA(Request $request)
     }
 
     $request->session()->put('mfa_verified', true);
-    
+
     return response()->json([
         'status' => 'success',
         'message' => 'MFA verification successful',
@@ -141,6 +147,7 @@ public function verifyMFA(Request $request)
 Support for social login providers (Google, Microsoft, etc.).
 
 #### Provider Configuration
+
 ```php
 // config/services.php
 return [
@@ -158,13 +165,14 @@ return [
 ```
 
 #### Social Login Implementation
+
 ```php
 // Social Auth Controller
 public function handleProviderCallback(Request $request, $provider)
 {
     try {
         $socialUser = Socialite::driver($provider)->user();
-        
+
         $user = User::updateOrCreate(
             ['email' => $socialUser->email],
             [
@@ -175,7 +183,7 @@ public function handleProviderCallback(Request $request, $provider)
         );
 
         Auth::login($user);
-        
+
         return redirect()->intended('dashboard');
     } catch (\Exception $e) {
         return redirect()->route('login')
@@ -290,7 +298,7 @@ public function handle($request, Closure $next)
     $response->headers->set('X-Frame-Options', 'DENY');
     $response->headers->set('X-XSS-Protection', '1; mode=block');
     $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-    
+
     return $response;
 }
 ```
@@ -371,34 +379,34 @@ public function login(Request $request)
 ## Security Recommendations
 
 1. **Password Management**
-   - Enforce strong password policies
-   - Implement password expiration
-   - Store password history to prevent reuse
-   - Use secure password reset flows
+    - Enforce strong password policies
+    - Implement password expiration
+    - Store password history to prevent reuse
+    - Use secure password reset flows
 
 2. **Session Management**
-   - Implement session timeout
-   - Enforce single session per user
-   - Secure session storage
-   - Implement remember-me functionality securely
+    - Implement session timeout
+    - Enforce single session per user
+    - Secure session storage
+    - Implement remember-me functionality securely
 
 3. **API Security**
-   - Use token expiration
-   - Implement token refresh mechanism
-   - Rate limit API endpoints
-   - Validate all input data
+    - Use token expiration
+    - Implement token refresh mechanism
+    - Rate limit API endpoints
+    - Validate all input data
 
 4. **Access Control**
-   - Implement principle of least privilege
-   - Regular permission audits
-   - Role-based menu visibility
-   - Dynamic permission checking
+    - Implement principle of least privilege
+    - Regular permission audits
+    - Role-based menu visibility
+    - Dynamic permission checking
 
 5. **Monitoring and Logging**
-   - Log all authentication attempts
-   - Monitor for suspicious activities
-   - Implement alerting system
-   - Regular security audits
+    - Log all authentication attempts
+    - Monitor for suspicious activities
+    - Implement alerting system
+    - Regular security audits
 
 ## Testing Authentication
 
@@ -438,10 +446,10 @@ public function test_user_can_login()
 public function test_user_cannot_access_protected_route()
 {
     $user = User::factory()->create();
-    
+
     $response = $this->actingAs($user)
         ->getJson('/api/admin/settings');
-        
+
     $response->assertStatus(403);
 }
 ```
@@ -451,28 +459,28 @@ public function test_user_cannot_access_protected_route()
 ### Common Issues
 
 1. **Token Expired**
-   - Check token expiration time
-   - Implement token refresh
-   - Verify server time synchronization
+    - Check token expiration time
+    - Implement token refresh
+    - Verify server time synchronization
 
 2. **Permission Denied**
-   - Check user roles and permissions
-   - Verify permission assignments
-   - Check middleware configuration
+    - Check user roles and permissions
+    - Verify permission assignments
+    - Check middleware configuration
 
 3. **Session Issues**
-   - Clear session data
-   - Verify session configuration
-   - Check for session conflicts
+    - Clear session data
+    - Verify session configuration
+    - Check for session conflicts
 
 4. **MFA Problems**
-   - Verify time synchronization
-   - Check secret key storage
-   - Validate TOTP implementation
+    - Verify time synchronization
+    - Check secret key storage
+    - Validate TOTP implementation
 
 ## Support and Resources
 
 - Documentation: https://docs.example.com/auth
 - Security Issues: security@example.com
 - API Support: api-support@example.com
-- Status Page: https://status.example.com 
+- Status Page: https://status.example.com

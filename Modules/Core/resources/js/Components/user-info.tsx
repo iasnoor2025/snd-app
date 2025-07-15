@@ -1,8 +1,8 @@
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { SmartAvatar } from "./ui/smart-avatar";
-import { useInitials } from "../hooks/use-initials";
-import { usePage } from "@inertiajs/react";
-import { type SharedData } from "@/Core/types";
+import { type SharedData } from '@/Core/types';
+import { usePage } from '@inertiajs/react';
+import { useInitials } from '../hooks/use-initials';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { SmartAvatar } from './ui/smart-avatar';
 
 export function UserInfo() {
     const { auth } = usePage<SharedData>().props;
@@ -24,24 +24,3 @@ export function UserInfo() {
         </div>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

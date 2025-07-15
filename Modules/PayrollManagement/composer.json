@@ -12,9 +12,7 @@
             "providers": [
                 "Modules\\PayrollManagement\\Providers\\PayrollServiceProvider"
             ],
-            "aliases": {
-
-            }
+            "aliases": {}
         }
     },
     "autoload": {

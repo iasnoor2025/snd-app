@@ -1,4 +1,4 @@
-import { routes, route } from '../routes';
+import { route, routes } from '../routes';
 
 describe('Route Helpers', () => {
     describe('routes', () => {
@@ -25,16 +25,13 @@ describe('Route Helpers', () => {
         });
 
         it('replaces parameters in route patterns', () => {
-            expect(route('core.modules.show', { name: 'test-module' }))
-                .toBe('/modules/test-module');
+            expect(route('core.modules.show', { name: 'test-module' })).toBe('/modules/test-module');
 
-            expect(route('core.modules.initialize', { name: 'test-module' }))
-                .toBe('/api/modules/test-module/initialize');
+            expect(route('core.modules.initialize', { name: 'test-module' })).toBe('/api/modules/test-module/initialize');
         });
 
         it('handles numeric parameters', () => {
-            expect(route('core.modules.show', { name: 123 }))
-                .toBe('/modules/123');
+            expect(route('core.modules.show', { name: 123 })).toBe('/modules/123');
         });
 
         it('throws error for invalid route names', () => {
@@ -42,6 +39,3 @@ describe('Route Helpers', () => {
         });
     });
 });
-
-
-

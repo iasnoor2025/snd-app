@@ -1,18 +1,31 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
+import {
+    AppLayout,
+    Badge,
+    Button,
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+    Input,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+    usePermission,
+} from '@/Core';
+import { formatDateMedium } from '@/Core/utils/dateFormatter';
 import { Head, Link } from '@inertiajs/react';
-import { PageProps } from '../../types';
-import { AppLayout } from '@/Core';
-import { Button } from "@/Core";
-import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
 import { format } from 'date-fns';
 import { Plus } from 'lucide-react';
-import { Badge } from "@/Core";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/Core";
-import { Input } from "@/Core";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
-import { usePermission } from "@/Core";
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import { useTranslation } from 'react-i18next';
+import { PageProps } from '../../types';
 
 interface Props extends PageProps {
     auth?: any;
@@ -51,7 +64,7 @@ interface Props extends PageProps {
 }
 
 export default function Index({ auth, settlements, filters }: Props) {
-  const { t } = useTranslation('payroll');
+    const { t } = useTranslation('payroll');
 
     const { hasPermission } = usePermission();
 
@@ -89,7 +102,7 @@ export default function Index({ auth, settlements, filters }: Props) {
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
                                 <div>
                                     <Input
                                         type="text"
@@ -168,32 +181,20 @@ export default function Index({ auth, settlements, filters }: Props) {
                                                         href={route('employees.show', settlement.employee.id)}
                                                         className="font-medium hover:underline"
                                                     >
-                                                        {settlement.employee.first_name}{' '}
-                                                        {settlement.employee.last_name}
+                                                        {settlement.employee.first_name} {settlement.employee.last_name}
                                                     </Link>
-                                                    <div className="text-sm text-muted-foreground">
-                                                        {settlement.employee.employee_id}
-                                                    </div>
+                                                    <div className="text-sm text-muted-foreground">{settlement.employee.employee_id}</div>
                                                 </TableCell>
-                                                <TableCell>
-                                                    {format(new Date(settlement.last_working_day), 'PPP')}
-                                                </TableCell>
-                                                <TableCell>
-                                                    SAR {settlement.total_payable.toFixed(2)}
-                                                </TableCell>
+                                                <TableCell>{format(new Date(settlement.last_working_day), 'PPP')}</TableCell>
+                                                <TableCell>SAR {settlement.total_payable.toFixed(2)}</TableCell>
                                                 <TableCell>{getStatusBadge(settlement.status)}</TableCell>
-                                                <TableCell>
-                                                    {format(new Date(settlement.created_at), 'PPP')}
-                                                </TableCell>
+                                                <TableCell>{format(new Date(settlement.created_at), 'PPP')}</TableCell>
                                                 <TableCell>
                                                     {settlement.approved_by ? (
                                                         <>
                                                             {settlement.approved_by.name}
                                                             <div className="text-sm text-muted-foreground">
-                                                                {format(
-                                                                    new Date(settlement.approved_at!),
-                                                                    'PPP'
-                                                                )}
+                                                                {format(new Date(settlement.approved_at!), 'PPP')}
                                                             </div>
                                                         </>
                                                     ) : (
@@ -201,17 +202,8 @@ export default function Index({ auth, settlements, filters }: Props) {
                                                     )}
                                                 </TableCell>
                                                 <TableCell>
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        asChild
-                                                    >
-                                                        <Link
-                                                            href={route(
-                                                                'final-settlements.show',
-                                                                settlement.id
-                                                            )}
-                                                        >
+                                                    <Button variant="outline" size="sm" asChild>
+                                                        <Link href={route('final-settlements.show', settlement.id)}>
                                                             {t('employee:ttl_view_details')}
                                                         </Link>
                                                     </Button>
@@ -223,23 +215,15 @@ export default function Index({ auth, settlements, filters }: Props) {
                             </div>
 
                             {settlements.data.length === 0 && (
-                                <div className="text-center py-8">
+                                <div className="py-8 text-center">
                                     <p className="text-muted-foreground">No settlements found.</p>
                                 </div>
                             )}
 
                             {settlements.meta.total > settlements.meta.per_page && (
                                 <div className="flex justify-center space-x-2">
-                                    {Array.from(
-                                        { length: settlements.meta.last_page },
-                                        (_, i) => i + 1
-                                    ).map((page) => (
-                                        <Button
-                                            key={page}
-                                            variant={page === settlements.meta.current_page ? 'default' : 'outline'}
-                                            size="sm"
-                                            asChild
-                                        >
+                                    {Array.from({ length: settlements.meta.last_page }, (_, i) => i + 1).map((page) => (
+                                        <Button key={page} variant={page === settlements.meta.current_page ? 'default' : 'outline'} size="sm" asChild>
                                             <Link
                                                 href={route('final-settlements.index', {
                                                     page,
@@ -259,17 +243,3 @@ export default function Index({ auth, settlements, filters }: Props) {
         </AppLayout>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

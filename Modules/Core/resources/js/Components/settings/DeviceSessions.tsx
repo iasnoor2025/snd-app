@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Dialog, DialogContent, DialogTitle, DialogDescription, DialogTrigger } from '../ui';
+import { Globe, Laptop, Smartphone, Tablet, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { AlertCircle, Laptop, Smartphone, Tablet, Globe, X } from 'lucide-react';
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Dialog, DialogContent, DialogDescription, DialogTitle } from '../ui';
 
 interface DeviceSession {
     name: string;
@@ -95,57 +95,35 @@ export function DeviceSessions() {
         <Card>
             <CardHeader>
                 <CardTitle>Active Sessions</CardTitle>
-                <CardDescription>
-                    Manage your active sessions across different devices
-                </CardDescription>
+                <CardDescription>Manage your active sessions across different devices</CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
                     {sessions.length > 1 && (
-                        <Button
-                            variant="destructive"
-                            onClick={() => setShowConfirmDialog(true)}
-                        >
+                        <Button variant="destructive" onClick={() => setShowConfirmDialog(true)}>
                             Sign out other devices
                         </Button>
                     )}
 
                     <div className="space-y-4">
                         {sessions.map((session, index) => (
-                            <div
-                                key={session.name + index}
-                                className="flex items-center justify-between p-4 border rounded-lg"
-                            >
+                            <div key={session.name + index} className="flex items-center justify-between rounded-lg border p-4">
                                 <div className="flex items-center space-x-4">
                                     {getDeviceIcon(session.type)}
                                     <div>
                                         <div className="font-medium">
                                             {session.name}
-                                            {session.is_current && (
-                                                <span className="ml-2 text-sm text-green-600">
-                                                    (Current session)
-                                                </span>
-                                            )}
+                                            {session.is_current && <span className="ml-2 text-sm text-green-600">(Current session)</span>}
                                         </div>
                                         <div className="text-sm text-gray-500">
                                             {session.browser} on {session.platform}
                                         </div>
-                                        {session.location && (
-                                            <div className="text-sm text-gray-500">
-                                                {session.location}
-                                            </div>
-                                        )}
-                                        <div className="text-sm text-gray-500">
-                                            Last active: {session.last_active}
-                                        </div>
+                                        {session.location && <div className="text-sm text-gray-500">{session.location}</div>}
+                                        <div className="text-sm text-gray-500">Last active: {session.last_active}</div>
                                     </div>
                                 </div>
                                 {!session.is_current && (
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => handleRevokeSession(session)}
-                                    >
+                                    <Button variant="ghost" size="icon" onClick={() => handleRevokeSession(session)}>
                                         <X className="h-4 w-4" />
                                     </Button>
                                 )}
@@ -158,20 +136,12 @@ export function DeviceSessions() {
             <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
                 <DialogContent>
                     <DialogTitle>Sign out other devices</DialogTitle>
-                    <DialogDescription>
-                        Are you sure you want to sign out all other devices? This action cannot be undone.
-                    </DialogDescription>
+                    <DialogDescription>Are you sure you want to sign out all other devices? This action cannot be undone.</DialogDescription>
                     <div className="flex justify-end space-x-2">
-                        <Button
-                            variant="outline"
-                            onClick={() => setShowConfirmDialog(false)}
-                        >
+                        <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>
                             Cancel
                         </Button>
-                        <Button
-                            variant="destructive"
-                            onClick={handleRevokeAllSessions}
-                        >
+                        <Button variant="destructive" onClick={handleRevokeAllSessions}>
                             Sign out
                         </Button>
                     </div>

@@ -1,7 +1,6 @@
-import { readFile, writeFile, readdir, stat } from 'fs/promises';
-import { join } from 'path';
+import { readdir, readFile, stat, writeFile } from 'fs/promises';
+import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -13,12 +12,15 @@ async function updateImports(filePath) {
         // Replace old import paths with new ones
         let updatedContent = content
             // Fix incorrect Core imports
-            .replace(/import\s*{\s*AppLayout\s*}\s*from\s*['"]@\/Core\/layouts['"]/g, 'import AppLayout from \'@/Core/layouts/AppLayout\'')
-            .replace(/import\s*{\s*AuthLayout\s*}\s*from\s*['"]@\/Core\/layouts['"]/g, 'import AuthLayout from \'@/Core/layouts/auth-layout\'')
-            .replace(/import\s*{\s*AuthenticatedLayout\s*}\s*from\s*['"]@\/Core\/layouts['"]/g, 'import AuthenticatedLayout from \'@/Core/layouts/AuthenticatedLayout\'')
-            .replace(/import\s*{\s*GuestLayout\s*}\s*from\s*['"]@\/Core\/layouts['"]/g, 'import GuestLayout from \'@/Core/layouts/GuestLayout\'')
-            .replace(/import\s*{\s*AdminLayout\s*}\s*from\s*['"]@\/Core\/layouts['"]/g, 'import AdminLayout from \'@/Core/layouts/AppLayout\'')
-            .replace(/import\s*AdminLayout\s*from\s*['"]@\/Core\/layouts\/AppLayout['"]/g, 'import AppLayout from \'@/Core/layouts/AppLayout\'')
+            .replace(/import\s*{\s*AppLayout\s*}\s*from\s*['"]@\/Core\/layouts['"]/g, "import AppLayout from '@/Core/layouts/AppLayout'")
+            .replace(/import\s*{\s*AuthLayout\s*}\s*from\s*['"]@\/Core\/layouts['"]/g, "import AuthLayout from '@/Core/layouts/auth-layout'")
+            .replace(
+                /import\s*{\s*AuthenticatedLayout\s*}\s*from\s*['"]@\/Core\/layouts['"]/g,
+                "import AuthenticatedLayout from '@/Core/layouts/AuthenticatedLayout'",
+            )
+            .replace(/import\s*{\s*GuestLayout\s*}\s*from\s*['"]@\/Core\/layouts['"]/g, "import GuestLayout from '@/Core/layouts/GuestLayout'")
+            .replace(/import\s*{\s*AdminLayout\s*}\s*from\s*['"]@\/Core\/layouts['"]/g, "import AdminLayout from '@/Core/layouts/AppLayout'")
+            .replace(/import\s*AdminLayout\s*from\s*['"]@\/Core\/layouts\/AppLayout['"]/g, "import AppLayout from '@/Core/layouts/AppLayout'")
             // Replace component imports
             .replace(/@\/Modules\/Core\/resources\/js\/components\//g, '@/Core/components/')
             // Replace layout imports

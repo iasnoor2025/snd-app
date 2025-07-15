@@ -1,27 +1,27 @@
 {
-  "title": "إدارة سجلات الدوام",
-  "list": {
-    "title": "سجلات الدوام",
-    "description": "إدارة سجلات دوام الموظفين"
-  },
-  "fields": {
-    "employee": "الموظف",
-    "date": "التاريخ",
-    "project": "المشروع",
-    "task": "المهمة",
-    "hours": "الساعات",
-    "description": "الوصف",
-    "status": "الحالة"
-  },
-  "status": {
-    "draft": "مسودة",
-    "submitted": "مقدم",
-    "approved": "معتمد",
-    "rejected": "مرفوض"
-  },
-  "messages": {
-    "create_success": "تم إنشاء سجل الدوام بنجاح",
-    "update_success": "تم تحديث سجل الدوام بنجاح",
-    "delete_success": "تم حذف سجل الدوام بنجاح"
-  }
-} 
+    "title": "إدارة سجلات الدوام",
+    "list": {
+        "title": "سجلات الدوام",
+        "description": "إدارة سجلات دوام الموظفين"
+    },
+    "fields": {
+        "employee": "الموظف",
+        "date": "التاريخ",
+        "project": "المشروع",
+        "task": "المهمة",
+        "hours": "الساعات",
+        "description": "الوصف",
+        "status": "الحالة"
+    },
+    "status": {
+        "draft": "مسودة",
+        "submitted": "مقدم",
+        "approved": "معتمد",
+        "rejected": "مرفوض"
+    },
+    "messages": {
+        "create_success": "تم إنشاء سجل الدوام بنجاح",
+        "update_success": "تم تحديث سجل الدوام بنجاح",
+        "delete_success": "تم حذف سجل الدوام بنجاح"
+    }
+}

@@ -2,7 +2,6 @@ import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
-
 import TextLink from '../../components/text-link';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -50,7 +49,6 @@ export default function Register() {
                             disabled={processing}
                             placeholder="Full name"
                         />
-                        
                     </div>
 
                     <div className="grid gap-2">
@@ -66,7 +64,6 @@ export default function Register() {
                             disabled={processing}
                             placeholder="email@example.com"
                         />
-                        
                     </div>
 
                     <div className="grid gap-2">
@@ -82,7 +79,6 @@ export default function Register() {
                             disabled={processing}
                             placeholder="Password"
                         />
-                        
                     </div>
 
                     <div className="grid gap-2">
@@ -98,7 +94,6 @@ export default function Register() {
                             disabled={processing}
                             placeholder="Confirm password"
                         />
-                        
                     </div>
 
                     <Button type="submit" className="mt-2 w-full" tabIndex={5} disabled={processing}>
@@ -107,7 +102,7 @@ export default function Register() {
                     </Button>
                 </div>
 
-                <div className="text-muted-foreground text-center text-sm">
+                <div className="text-center text-sm text-muted-foreground">
                     Already have an account?{' '}
                     <TextLink href={route('login')} tabIndex={6}>
                         Log in
@@ -117,10 +112,3 @@ export default function Register() {
         </AuthLayout>
     );
 }
-
-
-
-
-
-
-

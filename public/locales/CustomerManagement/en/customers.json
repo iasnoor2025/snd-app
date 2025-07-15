@@ -1,27 +1,27 @@
 {
-  "title": "Customers",
-  "description": "Manage customer accounts",
-  "actions": {
-    "create": "Create Customer",
-    "edit": "Edit Customer",
-    "delete": "Delete Customer",
-    "view": "View Customer"
-  },
-  "fields": {
-    "name": "Name",
-    "company": "Company",
-    "email": "Email",
-    "phone": "Phone",
-    "address": "Address",
-    "status": "Status"
-  },
-  "status": {
-    "active": "Active",
-    "inactive": "Inactive"
-  },
-  "messages": {
-    "created": "Customer created successfully",
-    "updated": "Customer updated successfully",
-    "deleted": "Customer deleted successfully"
-  }
-} 
+    "title": "Customers",
+    "description": "Manage customer accounts",
+    "actions": {
+        "create": "Create Customer",
+        "edit": "Edit Customer",
+        "delete": "Delete Customer",
+        "view": "View Customer"
+    },
+    "fields": {
+        "name": "Name",
+        "company": "Company",
+        "email": "Email",
+        "phone": "Phone",
+        "address": "Address",
+        "status": "Status"
+    },
+    "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+    },
+    "messages": {
+        "created": "Customer created successfully",
+        "updated": "Customer updated successfully",
+        "deleted": "Customer deleted successfully"
+    }
+}

@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Input } from "@/Core";
+import { cn, Input } from '@/Core';
 import { Search, X } from 'lucide-react';
-import { cn } from "@/Core";
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ResourceSearchProps {
     value: string;
@@ -17,9 +16,9 @@ export default function ResourceSearch({
     onChange,
     placeholder = 'Search resources...',
     className = '',
-    debounceTime = 300
+    debounceTime = 300,
 }: ResourceSearchProps) {
-  const { t } = useTranslation('project');
+    const { t } = useTranslation('project');
 
     const [searchValue, setSearchValue] = useState(value);
 
@@ -39,19 +38,19 @@ export default function ResourceSearch({
 
     return (
         <div className={cn('relative', className)}>
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
             <Input
                 type="search"
                 placeholder={placeholder}
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
-                className="pl-8 pr-8"
+                className="pr-8 pl-8"
             />
             {searchValue && (
                 <button
                     type="button"
                     onClick={handleClear}
-                    className="absolute right-2.5 top-2.5 h-4 w-4 text-muted-foreground hover:text-foreground"
+                    className="absolute top-2.5 right-2.5 h-4 w-4 text-muted-foreground hover:text-foreground"
                 >
                     <X className="h-4 w-4" />
                 </button>
@@ -59,17 +58,3 @@ export default function ResourceSearch({
         </div>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

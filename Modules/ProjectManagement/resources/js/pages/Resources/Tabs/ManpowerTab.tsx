@@ -5,17 +5,15 @@
  * It uses shared components and utilities for consistent UI and functionality.
  */
 
-import React from 'react';
+import { Button } from '@/Core';
+import { router } from '@inertiajs/react';
+import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
-import { Button } from "@/Core";
-import { Pencil, Trash2 } from 'lucide-react';
 import { ResourceFormModal } from '../../../components/project/resources/ResourceModal';
+import { ResourceTable } from '../../../Components/project/resources/ResourceTable';
 import { useResourceFormModal } from '../../../hooks/useResourceFormModal';
 import { useResourceSubmit } from '../../../hooks/useResourceSubmit';
 import type { ManpowerResource } from '../../../types/projectResources';
-import { router } from '@inertiajs/react';
-import { format } from 'date-fns';
-import { ResourceTable } from '../../../Components/project/resources/ResourceTable';
 
 /**
  * Props interface for ManpowerTab component
@@ -45,24 +43,16 @@ interface ManpowerTabProps {
  * @returns JSX element containing the manpower management interface
  */
 export function ManpowerTab({ project, manpowers }: ManpowerTabProps) {
-  const { t } = useTranslation('project');
+    const { t } = useTranslation('project');
 
-    const {
-        isCreateModalOpen,
-        isEditModalOpen,
-        selectedResource,
-        isLoading,
-        openCreateModal,
-        openEditModal,
-        closeCreateModal,
-        closeEditModal,
-    } = useResourceFormModal({
-        projectId: Number(project.id),
-        type: 'manpower',
-        onSuccess: () => {
-            router.reload({ only: ['manpowers'] });
-        }
-    });
+    const { isCreateModalOpen, isEditModalOpen, selectedResource, isLoading, openCreateModal, openEditModal, closeCreateModal, closeEditModal } =
+        useResourceFormModal({
+            projectId: Number(project.id),
+            type: 'manpower',
+            onSuccess: () => {
+                router.reload({ only: ['manpowers'] });
+            },
+        });
 
     const { isSubmitting, handleSubmit, handleUpdate, handleDelete } = useResourceSubmit({
         projectId: Number(project.id),
@@ -71,7 +61,7 @@ export function ManpowerTab({ project, manpowers }: ManpowerTabProps) {
             closeCreateModal();
             closeEditModal();
             router.reload({ only: ['manpowers'] });
-        }
+        },
     });
 
     const handleDeleteClick = (manpower: ManpowerResource) => {
@@ -152,13 +142,7 @@ export function ManpowerTab({ project, manpowers }: ManpowerTabProps) {
             <div className="flex justify-end">
                 <Button onClick={openCreateModal}>{t('ttl_add_manpower')}</Button>
             </div>
-            <ResourceTable
-                data={manpowers}
-                columns={columns}
-                onEdit={openEditModal}
-                onDelete={handleDeleteClick}
-                isLoading={isLoading}
-            />
+            <ResourceTable data={manpowers} columns={columns} onEdit={openEditModal} onDelete={handleDeleteClick} isLoading={isLoading} />
             <ResourceFormModal
                 isOpen={isCreateModalOpen}
                 onClose={closeCreateModal}
@@ -180,18 +164,3 @@ export function ManpowerTab({ project, manpowers }: ManpowerTabProps) {
     );
 }
 export default ManpowerTab;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

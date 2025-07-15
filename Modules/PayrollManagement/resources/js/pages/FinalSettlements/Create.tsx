@@ -1,17 +1,9 @@
+import { AppLayout, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label, Textarea, usePermission } from '@/Core';
+import { Head, useForm } from '@inertiajs/react';
+import { ArrowLeft } from 'lucide-react';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Head, useForm } from '@inertiajs/react';
 import { PageProps } from '../../types';
-import { AppLayout } from '@/Core';
-import { Breadcrumb } from "@/Core";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Core";
-import { Button } from "@/Core";
-import { Input } from "@/Core";
-import { Label } from "@/Core";
-import { Textarea } from "@/Core";
-import { format } from 'date-fns';
-import { ArrowLeft } from 'lucide-react';
-import { usePermission } from "@/Core";
 
 const breadcrumbs = [
     {
@@ -50,7 +42,7 @@ interface Props extends PageProps {
 }
 
 export default function Create({ auth, employee, initialData }: Props) {
-  const { t } = useTranslation('payroll');
+    const { t } = useTranslation('payroll');
 
     const { hasPermission } = usePermission();
 
@@ -105,9 +97,7 @@ export default function Create({ auth, employee, initialData }: Props) {
                         </a>
                     </Button>
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight">
-                            {t('ttl_create_final_settlement')}
-                        </h1>
+                        <h1 className="text-2xl font-bold tracking-tight">{t('ttl_create_final_settlement')}</h1>
                         <p className="text-muted-foreground">
                             For {employee.first_name} {employee.last_name} (ID: {employee.employee_id})
                         </p>
@@ -121,19 +111,17 @@ export default function Create({ auth, employee, initialData }: Props) {
                             <CardDescription>{t('enter_the_final_settlement_details')}</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="last_working_day">{t('last_working_day')}</Label>
                                     <Input
                                         id="last_working_day"
                                         type="date"
                                         value={data.last_working_day}
-                                        onChange={e => setData('last_working_day', e.target.value)}
+                                        onChange={(e) => setData('last_working_day', e.target.value)}
                                         required
                                     />
-                                    {errors.last_working_day && (
-                                        <p className="text-sm text-red-500">{errors.last_working_day}</p>
-                                    )}
+                                    {errors.last_working_day && <p className="text-sm text-red-500">{errors.last_working_day}</p>}
                                 </div>
 
                                 <div className="space-y-2">
@@ -143,12 +131,10 @@ export default function Create({ auth, employee, initialData }: Props) {
                                         type="number"
                                         step="0.01"
                                         value={data.leave_encashment}
-                                        onChange={e => setData('leave_encashment', parseFloat(e.target.value))}
+                                        onChange={(e) => setData('leave_encashment', parseFloat(e.target.value))}
                                         required
                                     />
-                                    {errors.leave_encashment && (
-                                        <p className="text-sm text-red-500">{errors.leave_encashment}</p>
-                                    )}
+                                    {errors.leave_encashment && <p className="text-sm text-red-500">{errors.leave_encashment}</p>}
                                 </div>
 
                                 <div className="space-y-2">
@@ -158,12 +144,10 @@ export default function Create({ auth, employee, initialData }: Props) {
                                         type="number"
                                         step="0.01"
                                         value={data.unpaid_salary}
-                                        onChange={e => setData('unpaid_salary', parseFloat(e.target.value))}
+                                        onChange={(e) => setData('unpaid_salary', parseFloat(e.target.value))}
                                         required
                                     />
-                                    {errors.unpaid_salary && (
-                                        <p className="text-sm text-red-500">{errors.unpaid_salary}</p>
-                                    )}
+                                    {errors.unpaid_salary && <p className="text-sm text-red-500">{errors.unpaid_salary}</p>}
                                 </div>
 
                                 <div className="space-y-2">
@@ -173,12 +157,10 @@ export default function Create({ auth, employee, initialData }: Props) {
                                         type="number"
                                         step="0.01"
                                         value={data.unpaid_overtime}
-                                        onChange={e => setData('unpaid_overtime', parseFloat(e.target.value))}
+                                        onChange={(e) => setData('unpaid_overtime', parseFloat(e.target.value))}
                                         required
                                     />
-                                    {errors.unpaid_overtime && (
-                                        <p className="text-sm text-red-500">{errors.unpaid_overtime}</p>
-                                    )}
+                                    {errors.unpaid_overtime && <p className="text-sm text-red-500">{errors.unpaid_overtime}</p>}
                                 </div>
 
                                 <div className="space-y-2">
@@ -188,12 +170,10 @@ export default function Create({ auth, employee, initialData }: Props) {
                                         type="number"
                                         step="0.01"
                                         value={data.deductions}
-                                        onChange={e => setData('deductions', parseFloat(e.target.value))}
+                                        onChange={(e) => setData('deductions', parseFloat(e.target.value))}
                                         required
                                     />
-                                    {errors.deductions && (
-                                        <p className="text-sm text-red-500">{errors.deductions}</p>
-                                    )}
+                                    {errors.deductions && <p className="text-sm text-red-500">{errors.deductions}</p>}
                                 </div>
 
                                 <div className="space-y-2">
@@ -203,40 +183,23 @@ export default function Create({ auth, employee, initialData }: Props) {
                                         type="number"
                                         step="0.01"
                                         value={data.gratuity}
-                                        onChange={e => setData('gratuity', parseFloat(e.target.value))}
+                                        onChange={(e) => setData('gratuity', parseFloat(e.target.value))}
                                         required
                                     />
-                                    {errors.gratuity && (
-                                        <p className="text-sm text-red-500">{errors.gratuity}</p>
-                                    )}
+                                    {errors.gratuity && <p className="text-sm text-red-500">{errors.gratuity}</p>}
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="total_payable">{t('lbl_total_payable')}</Label>
-                                    <Input
-                                        id="total_payable"
-                                        type="number"
-                                        step="0.01"
-                                        value={data.total_payable}
-                                        readOnly
-                                    />
-                                    {errors.total_payable && (
-                                        <p className="text-sm text-red-500">{errors.total_payable}</p>
-                                    )}
+                                    <Input id="total_payable" type="number" step="0.01" value={data.total_payable} readOnly />
+                                    {errors.total_payable && <p className="text-sm text-red-500">{errors.total_payable}</p>}
                                 </div>
                             </div>
 
                             <div className="space-y-2">
                                 <Label htmlFor="notes">Notes</Label>
-                                <Textarea
-                                    id="notes"
-                                    value={data.notes}
-                                    onChange={e => setData('notes', e.target.value)}
-                                    rows={3}
-                                />
-                                {errors.notes && (
-                                    <p className="text-sm text-red-500">{errors.notes}</p>
-                                )}
+                                <Textarea id="notes" value={data.notes} onChange={(e) => setData('notes', e.target.value)} rows={3} />
+                                {errors.notes && <p className="text-sm text-red-500">{errors.notes}</p>}
                             </div>
 
                             <div className="space-y-2">
@@ -244,22 +207,16 @@ export default function Create({ auth, employee, initialData }: Props) {
                                 <Textarea
                                     id="agreement_terms"
                                     value={data.agreement_terms}
-                                    onChange={e => setData('agreement_terms', e.target.value)}
+                                    onChange={(e) => setData('agreement_terms', e.target.value)}
                                     rows={5}
                                 />
-                                {errors.agreement_terms && (
-                                    <p className="text-sm text-red-500">{errors.agreement_terms}</p>
-                                )}
+                                {errors.agreement_terms && <p className="text-sm text-red-500">{errors.agreement_terms}</p>}
                             </div>
                         </CardContent>
                     </Card>
 
                     <div className="flex justify-end gap-2">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => window.history.back()}
-                        >
+                        <Button type="button" variant="outline" onClick={() => window.history.back()}>
                             Cancel
                         </Button>
                         <Button type="submit" disabled={processing}>
@@ -271,18 +228,3 @@ export default function Create({ auth, employee, initialData }: Props) {
         </AppLayout>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

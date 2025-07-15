@@ -36,7 +36,7 @@ export function useTranslatedFields<T extends Record<string, any>>(fields: T): T
             // Translate error messages
             if (validation.messages) {
                 const messages = { ...validation.messages };
-                Object.keys(messages).forEach(key => {
+                Object.keys(messages).forEach((key) => {
                     messages[key] = t(`validation:${messages[key]}`, messages[key]);
                 });
                 validation.messages = messages;
@@ -51,7 +51,7 @@ export function useTranslatedFields<T extends Record<string, any>>(fields: T): T
                 if (typeof option === 'object' && option !== null) {
                     return {
                         ...option,
-                        label: t(`fields:${option.label}`, option.label)
+                        label: t(`fields:${option.label}`, option.label),
                     };
                 }
                 return option;
@@ -64,7 +64,7 @@ export function useTranslatedFields<T extends Record<string, any>>(fields: T): T
     // Create a new object with translated fields
     const translatedFields: Record<string, any> = {};
 
-    Object.keys(fields).forEach(key => {
+    Object.keys(fields).forEach((key) => {
         translatedFields[key] = translateField(fields[key]);
     });
 
@@ -82,7 +82,7 @@ export function useTranslatedErrors<T extends Record<string, string>>(errors: T)
 
     const translatedErrors: Record<string, string> = {};
 
-    Object.keys(errors).forEach(key => {
+    Object.keys(errors).forEach((key) => {
         translatedErrors[key] = t(`validation:${errors[key]}`, errors[key]);
     });
 

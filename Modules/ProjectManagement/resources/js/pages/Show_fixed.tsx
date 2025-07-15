@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next';
 // This is a temporary file to demonstrate the fix
 // The issue is on line 633 where there's an extra space after })()}
 // It should be:
@@ -23,17 +22,3 @@ import { useTranslation } from 'react-i18next';
     className="h-3 bg-gray-100"
 />
 */
-
-
-
-
-
-
-
-
-
-
-
-
-
-

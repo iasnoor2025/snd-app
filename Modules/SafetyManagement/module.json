@@ -4,8 +4,6 @@
     "description": "",
     "keywords": [],
     "priority": 0,
-    "providers": [
-        "Modules\\SafetyManagement\\Providers\\SafetyManagementServiceProvider"
-    ],
+    "providers": ["Modules\\SafetyManagement\\Providers\\SafetyManagementServiceProvider"],
     "files": []
 }

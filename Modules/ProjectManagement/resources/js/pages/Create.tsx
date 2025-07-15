@@ -1,20 +1,31 @@
+import {
+    AppLayout,
+    Button,
+    Calendar,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+    cn,
+    Input,
+    Label,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    Separator,
+    Textarea,
+} from '@/Core';
+import { Link, useForm } from '@inertiajs/react';
+import { format } from 'date-fns';
+import { ArrowLeft, CalendarIcon, Plus } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Head, useForm, Link } from '@inertiajs/react';
-import { AppLayout } from '@/Core';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/Core";
-import { Input } from "@/Core";
-import { Label } from "@/Core";
-import { Button } from "@/Core";
-import { Textarea } from "@/Core";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
-import { Calendar } from "@/Core";
-import { Popover, PopoverContent, PopoverTrigger } from "@/Core";
-import { format } from 'date-fns';
-import { CalendarIcon, ArrowLeft, Plus } from 'lucide-react';
-import { cn } from "@/Core";
-import { Separator } from "@/Core";
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Customer {
     id: number;
@@ -34,7 +45,7 @@ interface Props {
 }
 
 export default function Create({ customers, locations }: Props) {
-  const { t } = useTranslation('project');
+    const { t } = useTranslation('project');
 
     console.log('Received locations:', locations);
 
@@ -53,7 +64,7 @@ export default function Create({ customers, locations }: Props) {
     // Deduplicate locations based on name, city, and state
     const uniqueLocations = React.useMemo(() => {
         const seen = new Set();
-        return locations.filter(location => {
+        return locations.filter((location) => {
             const key = `${location.name}-${location.city}-${location.state}`;
             if (seen.has(key)) {
                 return false;
@@ -74,7 +85,7 @@ export default function Create({ customers, locations }: Props) {
         { value: 'active', label: 'Active' },
         { value: 'completed', label: 'Completed' },
         { value: 'on_hold', label: 'On Hold' },
-        { value: 'cancelled', label: 'Cancelled' }
+        { value: 'cancelled', label: 'Cancelled' },
     ];
 
     const breadcrumbs = [
@@ -85,10 +96,13 @@ export default function Create({ customers, locations }: Props) {
 
     return (
         <AppLayout title={t('create_project')} breadcrumbs={breadcrumbs} requiredPermission="projects.create">
-            <div className="container mx-auto py-6 space-y-6">
+            <div className="container mx-auto space-y-6 py-6">
                 <div className="flex flex-col space-y-2">
-                    <Link href={window.route('projects.index')} className="flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors">
-                        <ArrowLeft className="h-4 w-4 mr-1" />
+                    <Link
+                        href={window.route('projects.index')}
+                        className="flex items-center text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                        <ArrowLeft className="mr-1 h-4 w-4" />
                         {t('back_to_projects')}
                     </Link>
 
@@ -105,7 +119,7 @@ export default function Create({ customers, locations }: Props) {
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-8">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="name">{t('lbl_project_name')}</Label>
                                     <Input
@@ -116,17 +130,12 @@ export default function Create({ customers, locations }: Props) {
                                         className="w-full"
                                         required
                                     />
-                                    {errors.name && (
-                                        <p className="text-sm text-destructive">{errors.name}</p>
-                                    )}
+                                    {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="customer_id">Customer</Label>
-                                    <Select
-                                        value={data.customer_id}
-                                        onValueChange={(value) => setData('customer_id', value)}
-                                    >
+                                    <Select value={data.customer_id} onValueChange={(value) => setData('customer_id', value)}>
                                         <SelectTrigger className="w-full">
                                             <SelectValue placeholder={t('ph_select_customer')} />
                                         </SelectTrigger>
@@ -138,34 +147,24 @@ export default function Create({ customers, locations }: Props) {
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    {errors.customer_id && (
-                                        <p className="text-sm text-destructive">{errors.customer_id}</p>
-                                    )}
+                                    {errors.customer_id && <p className="text-sm text-destructive">{errors.customer_id}</p>}
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="location_id">Location</Label>
-                                    <Select
-                                        value={data.location_id}
-                                        onValueChange={(value) => setData('location_id', value)}
-                                    >
+                                    <Select value={data.location_id} onValueChange={(value) => setData('location_id', value)}>
                                         <SelectTrigger className="w-full">
                                             <SelectValue placeholder={t('ph_select_location')} />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {uniqueLocations.map((location) => (
-                                                <SelectItem
-                                                    key={location.id}
-                                                    value={location.id.toString()}
-                                                >
+                                                <SelectItem key={location.id} value={location.id.toString()}>
                                                     {`${location.name} - ${location.city}, ${location.state}`}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    {errors.location_id && (
-                                        <p className="text-sm text-destructive">{errors.location_id}</p>
-                                    )}
+                                    {errors.location_id && <p className="text-sm text-destructive">{errors.location_id}</p>}
                                 </div>
 
                                 <div className="space-y-2">
@@ -177,15 +176,11 @@ export default function Create({ customers, locations }: Props) {
                                                 variant="outline"
                                                 className={cn(
                                                     'w-full justify-start text-left font-normal',
-                                                    !data.start_date && 'text-muted-foreground'
+                                                    !data.start_date && 'text-muted-foreground',
                                                 )}
                                             >
                                                 <CalendarIcon className="mr-2 h-4 w-4" />
-                                                {data.start_date ? (
-                                                    format(data.start_date, 'PPP')
-                                                ) : (
-                                                    <span>{t('pick_a_date')}</span>
-                                                )}
+                                                {data.start_date ? format(data.start_date, 'PPP') : <span>{t('pick_a_date')}</span>}
                                             </Button>
                                         </PopoverTrigger>
                                         <PopoverContent className="w-auto p-0" align="start">
@@ -197,9 +192,7 @@ export default function Create({ customers, locations }: Props) {
                                             />
                                         </PopoverContent>
                                     </Popover>
-                                    {errors.start_date && (
-                                        <p className="text-sm text-destructive">{errors.start_date}</p>
-                                    )}
+                                    {errors.start_date && <p className="text-sm text-destructive">{errors.start_date}</p>}
                                 </div>
 
                                 <div className="space-y-2">
@@ -211,15 +204,11 @@ export default function Create({ customers, locations }: Props) {
                                                 variant="outline"
                                                 className={cn(
                                                     'w-full justify-start text-left font-normal',
-                                                    !data.end_date && 'text-muted-foreground'
+                                                    !data.end_date && 'text-muted-foreground',
                                                 )}
                                             >
                                                 <CalendarIcon className="mr-2 h-4 w-4" />
-                                                {data.end_date ? (
-                                                    format(data.end_date, 'PPP')
-                                                ) : (
-                                                    <span>{t('pick_a_date')}</span>
-                                                )}
+                                                {data.end_date ? format(data.end_date, 'PPP') : <span>{t('pick_a_date')}</span>}
                                             </Button>
                                         </PopoverTrigger>
                                         <PopoverContent className="w-auto p-0" align="start">
@@ -231,17 +220,12 @@ export default function Create({ customers, locations }: Props) {
                                             />
                                         </PopoverContent>
                                     </Popover>
-                                    {errors.end_date && (
-                                        <p className="text-sm text-destructive">{errors.end_date}</p>
-                                    )}
+                                    {errors.end_date && <p className="text-sm text-destructive">{errors.end_date}</p>}
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="status">Status</Label>
-                                    <Select
-                                        value={data.status}
-                                        onValueChange={(value) => setData('status', value)}
-                                    >
+                                    <Select value={data.status} onValueChange={(value) => setData('status', value)}>
                                         <SelectTrigger className="w-full">
                                             <SelectValue placeholder={t('ph_select_status')} />
                                         </SelectTrigger>
@@ -253,9 +237,7 @@ export default function Create({ customers, locations }: Props) {
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    {errors.status && (
-                                        <p className="text-sm text-destructive">{errors.status}</p>
-                                    )}
+                                    {errors.status && <p className="text-sm text-destructive">{errors.status}</p>}
                                 </div>
 
                                 <div className="space-y-2">
@@ -269,9 +251,7 @@ export default function Create({ customers, locations }: Props) {
                                         className="w-full"
                                         required
                                     />
-                                    {errors.budget && (
-                                        <p className="text-sm text-destructive">{errors.budget}</p>
-                                    )}
+                                    {errors.budget && <p className="text-sm text-destructive">{errors.budget}</p>}
                                 </div>
                             </div>
 
@@ -288,9 +268,7 @@ export default function Create({ customers, locations }: Props) {
                                         rows={4}
                                         className="resize-none"
                                     />
-                                    {errors.description && (
-                                        <p className="text-sm text-destructive">{errors.description}</p>
-                                    )}
+                                    {errors.description && <p className="text-sm text-destructive">{errors.description}</p>}
                                 </div>
 
                                 <div className="space-y-2">
@@ -303,19 +281,13 @@ export default function Create({ customers, locations }: Props) {
                                         rows={3}
                                         className="resize-none"
                                     />
-                                    {errors.notes && (
-                                        <p className="text-sm text-destructive">{errors.notes}</p>
-                                    )}
+                                    {errors.notes && <p className="text-sm text-destructive">{errors.notes}</p>}
                                 </div>
                             </div>
 
                             <div className="flex justify-end">
-                                <Button
-                                    type="submit"
-                                    disabled={processing}
-                                    className="flex items-center"
-                                >
-                                    <Plus className="h-4 w-4 mr-2" />
+                                <Button type="submit" disabled={processing} className="flex items-center">
+                                    <Plus className="mr-2 h-4 w-4" />
                                     {t('create_project')}
                                 </Button>
                             </div>
@@ -326,18 +298,3 @@ export default function Create({ customers, locations }: Props) {
         </AppLayout>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

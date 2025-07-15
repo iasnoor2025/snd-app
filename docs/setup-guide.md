@@ -9,37 +9,38 @@ This guide provides step-by-step instructions for setting up the development env
 ### Software Requirements
 
 1. **Core Requirements**
-   - PHP 8.2 or higher
-   - Node.js 18.x or higher
-   - MySQL 8.0 or higher
-   - Composer 2.x
-   - Git
+    - PHP 8.2 or higher
+    - Node.js 18.x or higher
+    - MySQL 8.0 or higher
+    - Composer 2.x
+    - Git
 
 2. **Optional Tools**
-   - Docker Desktop
-   - Visual Studio Code
-   - TablePlus/MySQL Workbench
-   - Postman/Insomnia
+    - Docker Desktop
+    - Visual Studio Code
+    - TablePlus/MySQL Workbench
+    - Postman/Insomnia
 
 ### Development Environment
 
 1. **PHP Extensions**
-   ```bash
-   # Ubuntu/Debian
-   sudo apt-get install php8.2-cli php8.2-fpm php8.2-mysql php8.2-xml php8.2-curl php8.2-mbstring php8.2-zip php8.2-gd php8.2-intl
 
-   # macOS (using Homebrew)
-   brew install php@8.2
-   brew install mysql@8.0
-   ```
+    ```bash
+    # Ubuntu/Debian
+    sudo apt-get install php8.2-cli php8.2-fpm php8.2-mysql php8.2-xml php8.2-curl php8.2-mbstring php8.2-zip php8.2-gd php8.2-intl
+
+    # macOS (using Homebrew)
+    brew install php@8.2
+    brew install mysql@8.0
+    ```
 
 2. **Node.js Setup**
-   ```bash
-   # Using nvm (recommended)
-   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-   nvm install 18
-   nvm use 18
-   ```
+    ```bash
+    # Using nvm (recommended)
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+    nvm install 18
+    nvm use 18
+    ```
 
 ## Installation Steps
 
@@ -216,163 +217,169 @@ npm run type-check
 ### Common Issues
 
 1. **Composer Issues**
-   ```bash
-   # Clear composer cache
-   composer clear-cache
 
-   # Update composer
-   composer self-update
+    ```bash
+    # Clear composer cache
+    composer clear-cache
 
-   # Reinstall dependencies
-   rm -rf vendor composer.lock
-   composer install
-   ```
+    # Update composer
+    composer self-update
+
+    # Reinstall dependencies
+    rm -rf vendor composer.lock
+    composer install
+    ```
 
 2. **Node.js Issues**
-   ```bash
-   # Clear npm cache
-   npm cache clean --force
 
-   # Reinstall dependencies
-   rm -rf node_modules package-lock.json
-   npm install
-   ```
+    ```bash
+    # Clear npm cache
+    npm cache clean --force
+
+    # Reinstall dependencies
+    rm -rf node_modules package-lock.json
+    npm install
+    ```
 
 3. **Laravel Issues**
-   ```bash
-   # Clear application cache
-   php artisan cache:clear
-   php artisan config:clear
-   php artisan route:clear
-   php artisan view:clear
 
-   # Optimize application
-   php artisan optimize
-   ```
+    ```bash
+    # Clear application cache
+    php artisan cache:clear
+    php artisan config:clear
+    php artisan route:clear
+    php artisan view:clear
+
+    # Optimize application
+    php artisan optimize
+    ```
 
 ### Support Resources
 
 1. **Documentation**
-   - Laravel Documentation
-   - Module Documentation
-   - API Documentation
-   - Testing Documentation
+    - Laravel Documentation
+    - Module Documentation
+    - API Documentation
+    - Testing Documentation
 
 2. **Contact Information**
-   - Development Team
-   - DevOps Team
-   - Project Managers
-   - Technical Support
+    - Development Team
+    - DevOps Team
+    - Project Managers
+    - Technical Support
 
 ## Best Practices
 
 ### Code Standards
 
 1. **PHP Code Style**
-   - Follow PSR-12
-   - Use type hints
-   - Document classes and methods
-   - Follow SOLID principles
+    - Follow PSR-12
+    - Use type hints
+    - Document classes and methods
+    - Follow SOLID principles
 
 2. **JavaScript/TypeScript Style**
-   - Use ESLint configuration
-   - Follow Prettier rules
-   - Use TypeScript interfaces
-   - Follow component patterns
+    - Use ESLint configuration
+    - Follow Prettier rules
+    - Use TypeScript interfaces
+    - Follow component patterns
 
 ### Security
 
 1. **Development Security**
-   - Use environment variables
-   - Secure API endpoints
-   - Validate user input
-   - Follow OWASP guidelines
+    - Use environment variables
+    - Secure API endpoints
+    - Validate user input
+    - Follow OWASP guidelines
 
 2. **Data Protection**
-   - Use encryption
-   - Secure sensitive data
-   - Follow privacy guidelines
-   - Implement access control
+    - Use encryption
+    - Secure sensitive data
+    - Follow privacy guidelines
+    - Implement access control
 
 ## Deployment
 
 ### Local Development
 
 1. **Development Server**
-   ```bash
-   # Start Laravel server
-   php artisan serve
 
-   # Start Vite development server
-   npm run dev
-   ```
+    ```bash
+    # Start Laravel server
+    php artisan serve
+
+    # Start Vite development server
+    npm run dev
+    ```
 
 2. **Docker Development**
-   ```bash
-   # Build containers
-   docker-compose build
 
-   # Start services
-   docker-compose up -d
+    ```bash
+    # Build containers
+    docker-compose build
 
-   # Stop services
-   docker-compose down
-   ```
+    # Start services
+    docker-compose up -d
+
+    # Stop services
+    docker-compose down
+    ```
 
 ### Staging/Production
 
 1. **Build Process**
-   ```bash
-   # Build assets
-   npm run build
 
-   # Optimize Laravel
-   php artisan optimize
-   php artisan route:cache
-   php artisan config:cache
-   php artisan view:cache
-   ```
+    ```bash
+    # Build assets
+    npm run build
+
+    # Optimize Laravel
+    php artisan optimize
+    php artisan route:cache
+    php artisan config:cache
+    php artisan view:cache
+    ```
 
 2. **Deployment Commands**
-   ```bash
-   # Deploy script
-   php artisan down
-   git pull origin main
-   composer install --no-dev
-   npm ci
-   npm run build
-   php artisan migrate --force
-   php artisan optimize
-   php artisan up
-   ```
+    ```bash
+    # Deploy script
+    php artisan down
+    git pull origin main
+    composer install --no-dev
+    npm ci
+    npm run build
+    php artisan migrate --force
+    php artisan optimize
+    php artisan up
+    ```
 
 ## Additional Resources
 
 ### Learning Resources
 
 1. **Documentation**
-   - Laravel Documentation
-   - TypeScript Documentation
-   - React Documentation
-   - Testing Documentation
+    - Laravel Documentation
+    - TypeScript Documentation
+    - React Documentation
+    - Testing Documentation
 
 2. **Community Resources**
-   - Laravel Forums
-   - GitHub Discussions
-   - Stack Overflow
-   - Discord Channels
+    - Laravel Forums
+    - GitHub Discussions
+    - Stack Overflow
+    - Discord Channels
 
 ### Tools and Extensions
 
 1. **VS Code Extensions**
-   - Laravel Extension Pack
-   - PHP Intelephense
-   - ESLint
-   - Prettier
-   - GitLens
+    - Laravel Extension Pack
+    - PHP Intelephense
+    - ESLint
+    - Prettier
+    - GitLens
 
 2. **Development Tools**
-   - Laravel Telescope
-   - Laravel Debug Bar
-   - React Developer Tools
-   - Redux DevTools 
+    - Laravel Telescope
+    - Laravel Debug Bar
+    - React Developer Tools
+    - Redux DevTools

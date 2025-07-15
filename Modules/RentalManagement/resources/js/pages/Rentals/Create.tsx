@@ -1,45 +1,43 @@
-import React, { useState, useEffect } from "react";
-import { useTranslation } from 'react-i18next';
-import { Head, Link, router } from "@inertiajs/react";
-import { PageProps, User, Customer, Equipment } from '@/Core/types';
-import { AppLayout } from '@/Core';
-import { format, isAfter, isBefore, startOfToday } from "date-fns";
-import { toast } from "sonner";
-import { cn } from '@/lib/utils';
-import { ChevronLeftIcon } from 'lucide-react';
 import {
+    AppLayout,
+    Badge,
+    Button,
+    Calendar,
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
+    Input,
+    Label,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
+    Separator,
+    Textarea,
     ToggleGroup,
     ToggleGroupItem,
-    Button,
-    Badge,
-    Input,
-    Label,
-    Textarea,
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-    Calendar,
-    Separator,
 } from '@/Core';
+import { Customer, Equipment, PageProps, User } from '@/Core/types';
+import { cn } from '@/lib/utils';
 import { useForm } from '@inertiajs/react';
+import { format, isAfter, isBefore, startOfToday } from 'date-fns';
+import { ChevronLeftIcon } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 // Icons
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon } from 'lucide-react';
 
 // Our components
-import RentalForm from "../../Components/rentals/RentalForm";
-import { route } from 'ziggy-js';
 import FileUpload from '@/Core/components/ui/FileUpload';
+import { route } from 'ziggy-js';
 
 interface Customer {
     id: number;
@@ -72,8 +70,8 @@ interface RentalItem {
     operator_id?: string;
 }
 
-const defaultRentalPeriod = "daily";
-const defaultCurrency = "USD";
+const defaultRentalPeriod = 'daily';
+const defaultCurrency = 'USD';
 
 export default function Create({ auth, errors, customers = [], equipment = [], nextRentalNumber, employees = [] }: CreateProps) {
     const { t } = useTranslation('RentalManagement');
@@ -107,19 +105,20 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
     const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
     const addRentalItem = () => {
-        setData('rental_items', [...data.rental_items, {
-            equipment_id: '',
-            quantity: 1,
-            unit_price: 0,
-            rental_rate_period: defaultRentalPeriod,
-            operator_id: '',
-        }]);
+        setData('rental_items', [
+            ...data.rental_items,
+            {
+                equipment_id: '',
+                quantity: 1,
+                unit_price: 0,
+                rental_rate_period: defaultRentalPeriod,
+                operator_id: '',
+            },
+        ]);
     };
 
     const updateRentalItem = (index: number, field: keyof RentalItem, value: any) => {
-        const updatedItems = data.rental_items.map((item, i) =>
-            i === index ? { ...item, [field]: value } : item
-        );
+        const updatedItems = data.rental_items.map((item, i) => (i === index ? { ...item, [field]: value } : item));
         setData('rental_items', updatedItems);
     };
 
@@ -173,23 +172,25 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
             const days = Math.ceil((endDateObj.getTime() - startDateObj.getTime()) / (1000 * 60 * 60 * 24));
 
             // Create rental item from selected equipment
-            const selectedEquipment = equipment.find(eq => eq.id.toString() === data.selected_equipment_id);
+            const selectedEquipment = equipment.find((eq) => eq.id.toString() === data.selected_equipment_id);
             if (!selectedEquipment) {
                 toast.error('Selected equipment not found');
                 setIsSubmitting(false);
                 return;
             }
 
-            const rentalItems = [{
-                equipment_id: parseInt(data.selected_equipment_id),
-                rate: data.rental_rate || selectedEquipment.unit_price,
-                rate_type: data.billing_cycle || 'daily',
-                operator_id: data.selected_operator_id ? parseInt(data.selected_operator_id) : null,
-                notes: data.notes || '',
-                days: days,
-                discount_percentage: 0,
-                total_amount: (data.rental_rate || selectedEquipment.unit_price) * days
-            }];
+            const rentalItems = [
+                {
+                    equipment_id: parseInt(data.selected_equipment_id),
+                    rate: data.rental_rate || selectedEquipment.unit_price,
+                    rate_type: data.billing_cycle || 'daily',
+                    operator_id: data.selected_operator_id ? parseInt(data.selected_operator_id) : null,
+                    notes: data.notes || '',
+                    days: days,
+                    discount_percentage: 0,
+                    total_amount: (data.rental_rate || selectedEquipment.unit_price) * days,
+                },
+            ];
 
             // Calculate totals
             const subtotal = rentalItems.reduce((total, item) => total + item.total_amount, 0);
@@ -216,7 +217,7 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                 rental_items: rentalItems,
                 subtotal,
                 tax_amount: taxAmount,
-                total_amount: totalAmount
+                total_amount: totalAmount,
             };
 
             // If file is uploaded, append to FormData
@@ -238,7 +239,7 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                 },
                 onError: () => {
                     setIsSubmitting(false);
-                }
+                },
             });
         } catch (error) {
             console.error('Error submitting rental:', error);
@@ -274,7 +275,7 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
     useEffect(() => {
         const updatePrice = async () => {
             if (!data.selected_equipment_id || !data.start_date || !data.expected_end_date) return;
-            const selectedEquipment = equipment.find(eq => eq.id.toString() === data.selected_equipment_id);
+            const selectedEquipment = equipment.find((eq) => eq.id.toString() === data.selected_equipment_id);
             if (!selectedEquipment) return;
             const startDateObj = new Date(data.start_date);
             const endDateObj = new Date(data.expected_end_date);
@@ -292,23 +293,20 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data.selected_equipment_id, data.start_date, data.expected_end_date]);
 
-    console.log("Ziggy routes in Create.tsx:", Ziggy.routes);
+    console.log('Ziggy routes in Create.tsx:', Ziggy.routes);
 
     return (
         <AppLayout title={String(t('ttl_create_rental')) || 'Create Rental'}>
             <div className="flex min-h-screen w-full flex-col bg-muted/40">
                 <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
                     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-                        <form
-                            className="mx-auto grid w-full flex-1 auto-rows-max gap-4"
-                            onSubmit={handleSubmit}
-                        >
+                        <form className="mx-auto grid w-full flex-1 auto-rows-max gap-4" onSubmit={handleSubmit}>
                             <div className="flex items-center gap-4">
                                 <Button variant="outline" size="icon" className="h-7 w-7">
                                     <ChevronLeftIcon className="h-4 w-4" />
                                     <span className="sr-only">{String(t('back')) || 'Back'}</span>
                                 </Button>
-                                <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
+                                <h1 className="flex-1 shrink-0 text-xl font-semibold tracking-tight whitespace-nowrap sm:grow-0">
                                     {String(t('new_rental')) || 'New Rental'}
                                 </h1>
                                 <Badge variant="outline" className="ml-auto sm:ml-0">
@@ -319,7 +317,7 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                         {String(t('discard')) || 'Discard'}
                                     </Button>
                                     <Button size="sm" type="submit" disabled={isSubmitting}>
-                                        {isSubmitting ? 'Saving...' : (String(t('save_rental')) || 'Save Rental')}
+                                        {isSubmitting ? 'Saving...' : String(t('save_rental')) || 'Save Rental'}
                                     </Button>
                                 </div>
                             </div>
@@ -345,10 +343,7 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                                 </div>
                                                 <div className="grid gap-3">
                                                     <Label htmlFor="customer">{String(t('customer')) || 'Customer'}</Label>
-                                                    <Select
-                                                        value={data.customer_id}
-                                                        onValueChange={(value) => setData('customer_id', value)}
-                                                    >
+                                                    <Select value={data.customer_id} onValueChange={(value) => setData('customer_id', value)}>
                                                         <SelectTrigger id="customer">
                                                             <SelectValue placeholder={String(t('select_customer')) || 'Select a customer'} />
                                                         </SelectTrigger>
@@ -367,18 +362,15 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                                         id="description"
                                                         value={data.notes}
                                                         onChange={(e) => setData('notes', e.target.value)}
-                                                        placeholder={String(t('rental_description_placeholder')) || "Rental of heavy machinery for construction project."}
+                                                        placeholder={
+                                                            String(t('rental_description_placeholder')) ||
+                                                            'Rental of heavy machinery for construction project.'
+                                                        }
                                                     />
                                                 </div>
                                                 <div className="grid gap-3">
                                                     <Label htmlFor="rental-number">{String(t('rental_number')) || 'Rental Number'}</Label>
-                                                    <Input
-                                                        id="rental-number"
-                                                        type="text"
-                                                        value={data.rental_number}
-                                                        readOnly
-                                                        className="bg-muted"
-                                                    />
+                                                    <Input id="rental-number" type="text" value={data.rental_number} readOnly className="bg-muted" />
                                                 </div>
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div className="grid gap-3">
@@ -386,21 +378,25 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                                         <Popover>
                                                             <PopoverTrigger asChild>
                                                                 <Button
-                                                                    variant={"outline"}
+                                                                    variant={'outline'}
                                                                     className={cn(
-                                                                        "w-full justify-start text-left font-normal",
-                                                                        !data.start_date && "text-muted-foreground"
+                                                                        'w-full justify-start text-left font-normal',
+                                                                        !data.start_date && 'text-muted-foreground',
                                                                     )}
                                                                 >
                                                                     <CalendarIcon className="mr-2 h-4 w-4" />
-                                                                    {data.start_date ? format(new Date(data.start_date), "PPP") : <span>{String(t('pick_a_date')) || 'Pick a date'}</span>}
+                                                                    {data.start_date ? (
+                                                                        format(new Date(data.start_date), 'PPP')
+                                                                    ) : (
+                                                                        <span>{String(t('pick_a_date')) || 'Pick a date'}</span>
+                                                                    )}
                                                                 </Button>
                                                             </PopoverTrigger>
                                                             <PopoverContent className="w-auto p-0">
                                                                 <Calendar
                                                                     mode="single"
                                                                     selected={data.start_date ? new Date(data.start_date) : undefined}
-                                                                    onSelect={(date) => setData('start_date', date ? format(date, "yyyy-MM-dd") : '')}
+                                                                    onSelect={(date) => setData('start_date', date ? format(date, 'yyyy-MM-dd') : '')}
                                                                     initialFocus
                                                                 />
                                                             </PopoverContent>
@@ -411,21 +407,27 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                                         <Popover>
                                                             <PopoverTrigger asChild>
                                                                 <Button
-                                                                    variant={"outline"}
+                                                                    variant={'outline'}
                                                                     className={cn(
-                                                                        "w-full justify-start text-left font-normal",
-                                                                        !data.expected_end_date && "text-muted-foreground"
+                                                                        'w-full justify-start text-left font-normal',
+                                                                        !data.expected_end_date && 'text-muted-foreground',
                                                                     )}
                                                                 >
                                                                     <CalendarIcon className="mr-2 h-4 w-4" />
-                                                                    {data.expected_end_date ? format(new Date(data.expected_end_date), "PPP") : <span>{String(t('pick_a_date')) || 'Pick a date'}</span>}
+                                                                    {data.expected_end_date ? (
+                                                                        format(new Date(data.expected_end_date), 'PPP')
+                                                                    ) : (
+                                                                        <span>{String(t('pick_a_date')) || 'Pick a date'}</span>
+                                                                    )}
                                                                 </Button>
                                                             </PopoverTrigger>
                                                             <PopoverContent className="w-auto p-0">
                                                                 <Calendar
                                                                     mode="single"
                                                                     selected={data.expected_end_date ? new Date(data.expected_end_date) : undefined}
-                                                                    onSelect={(date) => setData('expected_end_date', date ? format(date, "yyyy-MM-dd") : '')}
+                                                                    onSelect={(date) =>
+                                                                        setData('expected_end_date', date ? format(date, 'yyyy-MM-dd') : '')
+                                                                    }
                                                                     initialFocus
                                                                 />
                                                             </PopoverContent>
@@ -446,7 +448,9 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                                     </ToggleGroup>
                                                 </div>
                                                 <div className="grid gap-3">
-                                                    <Label htmlFor="rental-rate">{String(t('rental_rate')) || 'Rental Rate'} ({defaultCurrency})</Label>
+                                                    <Label htmlFor="rental-rate">
+                                                        {String(t('rental_rate')) || 'Rental Rate'} ({defaultCurrency})
+                                                    </Label>
                                                     <Input
                                                         id="rental-rate"
                                                         type="number"
@@ -456,7 +460,9 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                                     />
                                                 </div>
                                                 <div className="grid gap-3">
-                                                    <Label htmlFor="deposit">{String(t('deposit')) || 'Deposit'} ({defaultCurrency})</Label>
+                                                    <Label htmlFor="deposit">
+                                                        {String(t('deposit')) || 'Deposit'} ({defaultCurrency})
+                                                    </Label>
                                                     <Input
                                                         id="deposit"
                                                         type="number"
@@ -496,10 +502,12 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                                     </Select>
                                                 </div>
                                                 <div className="grid gap-3">
-                                                    <Label htmlFor="operator">{String(t('assigned_operator')) || 'Assigned Operator'} (Optional)</Label>
+                                                    <Label htmlFor="operator">
+                                                        {String(t('assigned_operator')) || 'Assigned Operator'} (Optional)
+                                                    </Label>
                                                     <Select
-                                                        value={data.selected_operator_id || "none"}
-                                                        onValueChange={(value) => setData('selected_operator_id', value === "none" ? "" : value)}
+                                                        value={data.selected_operator_id || 'none'}
+                                                        onValueChange={(value) => setData('selected_operator_id', value === 'none' ? '' : value)}
                                                     >
                                                         <SelectTrigger id="operator">
                                                             <SelectValue placeholder={String(t('select_operator')) || 'Select an operator'} />
@@ -527,16 +535,24 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                             <div className="grid gap-2">
                                                 <div className="flex items-center justify-between">
                                                     <div>{String(t('subtotal')) || 'Subtotal'}</div>
-                                                    <div>{defaultCurrency} {data.subtotal.toFixed(2)}</div>
+                                                    <div>
+                                                        {defaultCurrency} {data.subtotal.toFixed(2)}
+                                                    </div>
                                                 </div>
                                                 <div className="flex items-center justify-between">
-                                                    <div>{String(t('tax')) || 'Tax'} ({data.tax_percentage}%)</div>
-                                                    <div>{defaultCurrency} {data.tax_amount.toFixed(2)}</div>
+                                                    <div>
+                                                        {String(t('tax')) || 'Tax'} ({data.tax_percentage}%)
+                                                    </div>
+                                                    <div>
+                                                        {defaultCurrency} {data.tax_amount.toFixed(2)}
+                                                    </div>
                                                 </div>
                                                 <Separator className="my-2" />
                                                 <div className="flex items-center justify-between font-semibold">
                                                     <div>{String(t('total')) || 'Total'}</div>
-                                                    <div>{defaultCurrency} {data.total_amount.toFixed(2)}</div>
+                                                    <div>
+                                                        {defaultCurrency} {data.total_amount.toFixed(2)}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </CardContent>
@@ -547,7 +563,9 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                                 <CardTitle className="group flex items-center gap-2 text-lg">
                                                     {String(t('payment_schedule')) || 'Payment Schedule'}
                                                 </CardTitle>
-                                                <CardDescription>{String(t('payment_schedule_desc')) || 'Configure payment installments'}</CardDescription>
+                                                <CardDescription>
+                                                    {String(t('payment_schedule_desc')) || 'Configure payment installments'}
+                                                </CardDescription>
                                             </div>
                                         </CardHeader>
                                         <CardContent className="p-6 text-sm">
@@ -555,12 +573,20 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                                 <div className="font-semibold">{String(t('installments')) || 'Installments'}</div>
                                                 <ul className="grid gap-3">
                                                     <li className="flex items-center justify-between">
-                                                        <span className="text-muted-foreground">{String(t('first_payment')) || 'First Payment'} (50%)</span>
-                                                        <span>{defaultCurrency} {(data.total_amount / 2).toFixed(2)}</span>
+                                                        <span className="text-muted-foreground">
+                                                            {String(t('first_payment')) || 'First Payment'} (50%)
+                                                        </span>
+                                                        <span>
+                                                            {defaultCurrency} {(data.total_amount / 2).toFixed(2)}
+                                                        </span>
                                                     </li>
                                                     <li className="flex items-center justify-between">
-                                                        <span className="text-muted-foreground">{String(t('second_payment')) || 'Second Payment'} (50%)</span>
-                                                        <span>{defaultCurrency} {(data.total_amount / 2).toFixed(2)}</span>
+                                                        <span className="text-muted-foreground">
+                                                            {String(t('second_payment')) || 'Second Payment'} (50%)
+                                                        </span>
+                                                        <span>
+                                                            {defaultCurrency} {(data.total_amount / 2).toFixed(2)}
+                                                        </span>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -573,11 +599,11 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
                                     {t('discard') || 'Discard'}
                                 </Button>
                                 <Button size="sm" type="submit" disabled={isSubmitting}>
-                                    {isSubmitting ? 'Saving...' : (t('save_rental') || 'Save Rental')}
+                                    {isSubmitting ? 'Saving...' : t('save_rental') || 'Save Rental'}
                                 </Button>
                             </div>
                             <div>
-                                <label className="block font-medium mb-1">Upload Rental Document/Media</label>
+                                <label className="mb-1 block font-medium">Upload Rental Document/Media</label>
                                 <FileUpload onFileSelect={setUploadedFile} accept=".pdf,.jpg,.jpeg,.png" maxSize={10 * 1024 * 1024} />
                             </div>
                         </form>
@@ -587,17 +613,3 @@ export default function Create({ auth, errors, customers = [], equipment = [], n
         </AppLayout>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,11 +1,11 @@
-import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from "./ui/dropdown-menu";
-import { UserInfo } from "./user-info";
-import { useMobileNavigation } from "../hooks/use-mobile-navigation";
-import { useTranslation } from "react-i18next";
-import { Link } from "@inertiajs/react";
-import { Icon } from "./icon";
-import { LogOut, Settings, Globe } from 'lucide-react';
-import LanguageSwitcher from "./LanguageSwitcher";
+import { Link } from '@inertiajs/react';
+import { Globe, LogOut } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { useMobileNavigation } from '../hooks/use-mobile-navigation';
+import { Icon } from './icon';
+import LanguageSwitcher from './LanguageSwitcher';
+import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from './ui/dropdown-menu';
+import { UserInfo } from './user-info';
 
 export function UserMenuContent() {
     const { t } = useTranslation(['common']);
@@ -47,25 +47,3 @@ export function UserMenuContent() {
         </>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

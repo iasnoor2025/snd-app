@@ -1,15 +1,6 @@
 import { Link } from '@inertiajs/react';
+import { Activity, Bell, Lock, Palette, Shield, User } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { Icon } from './icon';
-import {
-    User,
-    Lock,
-    Bell,
-    Shield,
-    Palette,
-    CreditCard,
-    Activity
-} from 'lucide-react';
 
 interface ProfileNavProps {
     className?: string;
@@ -57,7 +48,7 @@ export function ProfileNav({ className }: ProfileNavProps) {
     ];
 
     return (
-        <nav className={cn("flex flex-col space-y-1", className)} aria-label="Profile Settings Navigation">
+        <nav className={cn('flex flex-col space-y-1', className)} aria-label="Profile Settings Navigation">
             {items.map((item) => {
                 const isActive = currentTab === item.tab;
                 return (
@@ -67,17 +58,15 @@ export function ProfileNav({ className }: ProfileNavProps) {
                         tabIndex={0}
                         aria-current={isActive ? 'page' : undefined}
                         className={cn(
-                            "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary",
+                            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors focus:ring-2 focus:ring-primary focus:outline-none',
                             isActive
-                                ? "bg-accent text-accent-foreground font-semibold"
-                                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                                ? 'bg-accent font-semibold text-accent-foreground'
+                                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
                         )}
                     >
                         <item.icon className="h-4 w-4" />
                         {item.title}
-                        {isActive && (
-                            <span className="sr-only">(Current tab)</span>
-                        )}
+                        {isActive && <span className="sr-only">(Current tab)</span>}
                     </Link>
                 );
             })}

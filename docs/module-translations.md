@@ -41,7 +41,7 @@ import { useTranslation } from 'react-i18next';
 
 const MyComponent = () => {
   const { t } = useTranslation(['common', 'employees']);
-  
+
   return (
     <div>
       <h1>{t('common:dashboard')}</h1>
@@ -55,7 +55,7 @@ import { useTranslation } from 'react-i18next';
 
 const MyComponent = () => {
   const { t } = useTranslation();
-  
+
   return (
     <div>
       <h1>{t('dashboard')}</h1>
@@ -71,27 +71,27 @@ The system automatically maps namespaces to modules. Here's the default mapping:
 
 ```javascript
 const moduleMap = {
-  common: 'Core',
-  core: 'Core',
-  employees: 'EmployeeManagement',
-  employee: 'EmployeeManagement',
-  projects: 'ProjectManagement',
-  project: 'ProjectManagement',
-  equipment: 'EquipmentManagement',
-  rentals: 'RentalManagement',
-  rental: 'RentalManagement',
-  timesheet: 'TimesheetManagement',
-  timesheets: 'TimesheetManagement',
-  payrolls: 'Payroll',
-  payroll: 'Payroll',
-  mobile: 'MobileBridge',
-  analytics: 'Analytics',
-  booking: 'Core',
-  customer: 'CustomerManagement',
-  customers: 'CustomerManagement',
-  leave: 'LeaveManagement',
-  leaves: 'LeaveManagement',
-  // ... and more
+    common: 'Core',
+    core: 'Core',
+    employees: 'EmployeeManagement',
+    employee: 'EmployeeManagement',
+    projects: 'ProjectManagement',
+    project: 'ProjectManagement',
+    equipment: 'EquipmentManagement',
+    rentals: 'RentalManagement',
+    rental: 'RentalManagement',
+    timesheet: 'TimesheetManagement',
+    timesheets: 'TimesheetManagement',
+    payrolls: 'Payroll',
+    payroll: 'Payroll',
+    mobile: 'MobileBridge',
+    analytics: 'Analytics',
+    booking: 'Core',
+    customer: 'CustomerManagement',
+    customers: 'CustomerManagement',
+    leave: 'LeaveManagement',
+    leaves: 'LeaveManagement',
+    // ... and more
 };
 ```
 
@@ -124,9 +124,9 @@ Example:
 ```json
 // public/locales/CustomerManagement/en/customers.json
 {
-  "customer_details": "Customer Details",
-  "customer_name": "Customer Name",
-  "contact_person": "Contact Person"
+    "customer_details": "Customer Details",
+    "customer_name": "Customer Name",
+    "contact_person": "Contact Person"
 }
 ```
 
@@ -139,14 +139,16 @@ import { TranslatableText } from '@/Core';
 import { useTranslation } from '@/Core';
 
 const CustomerDetails = ({ customer }) => {
-  const { t } = useTranslation();
-  
-  return (
-    <div>
-      <h1><TranslatableText>{customer.name}</TranslatableText></h1>
-      <p>{t(customer.description)}</p>
-    </div>
-  );
+    const { t } = useTranslation();
+
+    return (
+        <div>
+            <h1>
+                <TranslatableText>{customer.name}</TranslatableText>
+            </h1>
+            <p>{t(customer.description)}</p>
+        </div>
+    );
 };
 ```
 
@@ -159,17 +161,17 @@ import { toast } from 'sonner';
 import { useTranslation } from '@/Core';
 
 const SaveButton = ({ successMessage }) => {
-  const { t } = useTranslation();
-  
-  const handleSave = () => {
-    // CORRECT
-    toast.success(t(successMessage));
-    
-    // INCORRECT - DO NOT USE
-    // toast.success(successMessage);
-  };
-  
-  return <button onClick={handleSave}>Save</button>;
+    const { t } = useTranslation();
+
+    const handleSave = () => {
+        // CORRECT
+        toast.success(t(successMessage));
+
+        // INCORRECT - DO NOT USE
+        // toast.success(successMessage);
+    };
+
+    return <button onClick={handleSave}>Save</button>;
 };
 ```
 
@@ -203,4 +205,4 @@ The following scripts are available to help with the migration to module-based t
 3. Keep translations organized by module
 4. Use the `TranslatableText` component for rendering translatable model fields
 5. Convert translatable objects to strings before passing them to toast notifications
-6. Use the `safe_module_path` function when accessing module paths to avoid errors 
+6. Use the `safe_module_path` function when accessing module paths to avoid errors

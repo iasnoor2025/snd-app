@@ -1,18 +1,9 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Head, Link } from '@inertiajs/react';
+import { AppLayout, Badge, Button, Card, CardContent, CardHeader, CardTitle, Separator, useToast } from '@/Core';
 import { PageProps } from '@/Modules/PayrollManagement/resources/js/types';
-import { AppLayout } from '@/Core';
-import { Button } from "@/Core";
-import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
+import { Head, Link } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { ArrowLeft, Download, Printer } from 'lucide-react';
-import { useToast } from "@/Core";
-import { Badge } from "@/Core";
-import { Separator } from "@/Core";
-import { Alert, AlertDescription } from "@/Core";
-import { AlertCircle } from 'lucide-react';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import { useTranslation } from 'react-i18next';
 
 interface Props extends PageProps {
     settlement: {
@@ -54,7 +45,7 @@ interface Props extends PageProps {
 }
 
 export default function Show({ auth, settlement }: Props) {
-  const { t } = useTranslation('payroll');
+    const { t } = useTranslation('payroll');
 
     const { toast } = useToast();
 
@@ -67,7 +58,7 @@ export default function Show({ auth, settlement }: Props) {
             const response = await fetch(route('final-settlements.pdf', settlement.id), {
                 method: 'GET',
                 headers: {
-                    'Accept': 'application/pdf',
+                    Accept: 'application/pdf',
                     'X-Requested-With': 'XMLHttpRequest',
                 },
             });
@@ -135,7 +126,7 @@ export default function Show({ auth, settlement }: Props) {
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div className="space-y-4">
                                     <h3 className="text-sm font-medium text-muted-foreground">{t('employee_information')}</h3>
                                     <dl className="space-y-2">
@@ -151,9 +142,7 @@ export default function Show({ auth, settlement }: Props) {
                                         </div>
                                         <div className="flex justify-between border-b pb-2">
                                             <dt className="text-sm font-medium">{t('last_working_day')}</dt>
-                                            <dd className="text-sm">
-                                                {format(new Date(settlement.last_working_day), 'PPP')}
-                                            </dd>
+                                            <dd className="text-sm">{format(new Date(settlement.last_working_day), 'PPP')}</dd>
                                         </div>
                                         <div className="flex justify-between border-b pb-2">
                                             <dt className="text-sm font-medium">Status</dt>
@@ -198,7 +187,7 @@ export default function Show({ auth, settlement }: Props) {
                                     <h3 className="text-sm font-medium text-muted-foreground">Deductions</h3>
                                     <div className="space-y-4">
                                         {settlement.deductions_list.map((deduction, index) => (
-                                            <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                            <div key={index} className="grid grid-cols-1 gap-4 md:grid-cols-4">
                                                 <div>
                                                     <p className="text-sm font-medium">Type</p>
                                                     <p className="text-sm">{deduction.type}</p>
@@ -238,9 +227,7 @@ export default function Show({ auth, settlement }: Props) {
                                 <dl className="space-y-2">
                                     <div className="flex justify-between border-b pb-2">
                                         <dt className="text-sm font-medium">{t('created_at')}</dt>
-                                        <dd className="text-sm">
-                                            {format(new Date(settlement.created_at), 'PPP p')}
-                                        </dd>
+                                        <dd className="text-sm">{format(new Date(settlement.created_at), 'PPP p')}</dd>
                                     </div>
                                     {settlement.approved_by && (
                                         <div className="flex justify-between border-b pb-2">
@@ -251,17 +238,13 @@ export default function Show({ auth, settlement }: Props) {
                                     {settlement.approved_at && (
                                         <div className="flex justify-between border-b pb-2">
                                             <dt className="text-sm font-medium">{t('approved_at')}</dt>
-                                            <dd className="text-sm">
-                                                {format(new Date(settlement.approved_at), 'PPP p')}
-                                            </dd>
+                                            <dd className="text-sm">{format(new Date(settlement.approved_at), 'PPP p')}</dd>
                                         </div>
                                     )}
                                     {settlement.completed_at && (
                                         <div className="flex justify-between border-b pb-2">
                                             <dt className="text-sm font-medium">{t('completed_at')}</dt>
-                                            <dd className="text-sm">
-                                                {format(new Date(settlement.completed_at), 'PPP p')}
-                                            </dd>
+                                            <dd className="text-sm">{format(new Date(settlement.completed_at), 'PPP p')}</dd>
                                         </div>
                                     )}
                                 </dl>
@@ -273,17 +256,3 @@ export default function Show({ auth, settlement }: Props) {
         </AppLayout>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

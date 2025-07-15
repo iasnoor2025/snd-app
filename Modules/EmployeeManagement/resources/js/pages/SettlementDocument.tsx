@@ -1,17 +1,8 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import {
-    Button,
-    Input,
-    Label,
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-    DatePicker
-} from '@/Core';
-import { toast } from 'sonner';
+import { Button, Card, CardContent, CardHeader, CardTitle, DatePicker, Input, Label } from '@/Core';
 import axios from 'axios';
+import { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { toast } from 'sonner';
 
 interface SettlementData {
     last_working_date: Date | null;
@@ -31,7 +22,7 @@ export default function SettlementDocument() {
         notice_period_served: 0,
         unpaid_salary: 0,
         deductions: 0,
-        bonuses: 0
+        bonuses: 0,
     });
 
     const handleGenerate = async () => {
@@ -44,7 +35,7 @@ export default function SettlementDocument() {
         try {
             const response = await axios.post(`/api/employees/${employeeId}/settlement`, {
                 ...data,
-                last_working_date: data.last_working_date.toISOString().split('T')[0]
+                last_working_date: data.last_working_date.toISOString().split('T')[0],
             });
 
             // Open PDF in new tab
@@ -71,10 +62,12 @@ export default function SettlementDocument() {
                             <Label htmlFor="last_working_date">Last Working Date</Label>
                             <DatePicker
                                 value={data.last_working_date}
-                                onChange={(date) => setData(prev => ({
-                                    ...prev,
-                                    last_working_date: date
-                                }))}
+                                onChange={(date) =>
+                                    setData((prev) => ({
+                                        ...prev,
+                                        last_working_date: date,
+                                    }))
+                                }
                             />
                         </div>
                         <div>
@@ -83,10 +76,12 @@ export default function SettlementDocument() {
                                 id="unused_leaves"
                                 type="number"
                                 value={data.unused_leaves}
-                                onChange={(e) => setData(prev => ({
-                                    ...prev,
-                                    unused_leaves: parseInt(e.target.value) || 0
-                                }))}
+                                onChange={(e) =>
+                                    setData((prev) => ({
+                                        ...prev,
+                                        unused_leaves: parseInt(e.target.value) || 0,
+                                    }))
+                                }
                                 className="mt-1"
                             />
                         </div>
@@ -96,10 +91,12 @@ export default function SettlementDocument() {
                                 id="notice_period_served"
                                 type="number"
                                 value={data.notice_period_served}
-                                onChange={(e) => setData(prev => ({
-                                    ...prev,
-                                    notice_period_served: parseInt(e.target.value) || 0
-                                }))}
+                                onChange={(e) =>
+                                    setData((prev) => ({
+                                        ...prev,
+                                        notice_period_served: parseInt(e.target.value) || 0,
+                                    }))
+                                }
                                 className="mt-1"
                             />
                         </div>
@@ -109,10 +106,12 @@ export default function SettlementDocument() {
                                 id="unpaid_salary"
                                 type="number"
                                 value={data.unpaid_salary}
-                                onChange={(e) => setData(prev => ({
-                                    ...prev,
-                                    unpaid_salary: parseFloat(e.target.value) || 0
-                                }))}
+                                onChange={(e) =>
+                                    setData((prev) => ({
+                                        ...prev,
+                                        unpaid_salary: parseFloat(e.target.value) || 0,
+                                    }))
+                                }
                                 className="mt-1"
                             />
                         </div>
@@ -122,10 +121,12 @@ export default function SettlementDocument() {
                                 id="deductions"
                                 type="number"
                                 value={data.deductions}
-                                onChange={(e) => setData(prev => ({
-                                    ...prev,
-                                    deductions: parseFloat(e.target.value) || 0
-                                }))}
+                                onChange={(e) =>
+                                    setData((prev) => ({
+                                        ...prev,
+                                        deductions: parseFloat(e.target.value) || 0,
+                                    }))
+                                }
                                 className="mt-1"
                             />
                         </div>
@@ -135,10 +136,12 @@ export default function SettlementDocument() {
                                 id="bonuses"
                                 type="number"
                                 value={data.bonuses}
-                                onChange={(e) => setData(prev => ({
-                                    ...prev,
-                                    bonuses: parseFloat(e.target.value) || 0
-                                }))}
+                                onChange={(e) =>
+                                    setData((prev) => ({
+                                        ...prev,
+                                        bonuses: parseFloat(e.target.value) || 0,
+                                    }))
+                                }
                                 className="mt-1"
                             />
                         </div>
@@ -150,4 +153,4 @@ export default function SettlementDocument() {
             </Card>
         </div>
     );
-} 
+}

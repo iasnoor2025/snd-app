@@ -1,31 +1,51 @@
-import React, { useState } from 'react';
-import { Head, Link, router, useForm } from '@inertiajs/react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Core";
-import { Button } from "@/Core";
-import { Badge } from "@/Core";
-import { Input } from "@/Core";
-import { Label } from "@/Core";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/Core";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/Core";
-import { Alert, AlertDescription } from "@/Core";
-import { Switch } from "@/Core";
 import {
+    Alert,
+    AlertDescription,
+    Badge,
+    Button,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+    Input,
+    Label,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    Switch,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/Core';
+import { Head, Link, router, useForm } from '@inertiajs/react';
+import {
+    AlertCircle,
     ArrowLeft,
-    Plus,
+    Calendar,
+    CheckCircle,
+    Clock,
+    DollarSign,
     Edit,
-    Trash2,
+    Flag,
     Globe,
     Languages as LanguagesIcon,
-    CheckCircle,
-    AlertCircle,
-    Settings,
-    Flag,
-    Users,
-    Calendar,
-    DollarSign,
-    Clock
+    Plus,
+    Trash2,
 } from 'lucide-react';
+import { useState } from 'react';
 
 interface Language {
     code: string;
@@ -58,7 +78,14 @@ export default function Languages({ languages, defaultLanguage }: LanguagesProps
         enabled: true,
     });
 
-    const { data: editData, setData: setEditData, put, processing: editProcessing, errors: editErrors, reset: resetEdit } = useForm({
+    const {
+        data: editData,
+        setData: setEditData,
+        put,
+        processing: editProcessing,
+        errors: editErrors,
+        reset: resetEdit,
+    } = useForm({
         name: '',
         native_name: '',
         direction: 'ltr' as 'ltr' | 'rtl',
@@ -70,7 +97,7 @@ export default function Languages({ languages, defaultLanguage }: LanguagesProps
             onSuccess: () => {
                 setIsAddDialogOpen(false);
                 reset();
-            }
+            },
         });
     };
 
@@ -82,7 +109,7 @@ export default function Languages({ languages, defaultLanguage }: LanguagesProps
                 setIsEditDialogOpen(false);
                 setEditingLanguage(null);
                 resetEdit();
-            }
+            },
         });
     };
 
@@ -93,7 +120,7 @@ export default function Languages({ languages, defaultLanguage }: LanguagesProps
             onSuccess: () => {
                 setIsDeleteDialogOpen(false);
                 setDeletingLanguage(null);
-            }
+            },
         });
     };
 
@@ -115,49 +142,43 @@ export default function Languages({ languages, defaultLanguage }: LanguagesProps
 
     const languagesList = Object.entries(languages).map(([code, lang]) => ({
         ...lang,
-        code
+        code,
     }));
 
-    const enabledLanguages = languagesList.filter(lang => lang.enabled);
+    const enabledLanguages = languagesList.filter((lang) => lang.enabled);
     const totalLanguages = languagesList.length;
-    const averageCompletion = Math.round(
-        languagesList.reduce((sum, lang) => sum + (lang.completion_percentage || 0), 0) / totalLanguages
-    );
+    const averageCompletion = Math.round(languagesList.reduce((sum, lang) => sum + (lang.completion_percentage || 0), 0) / totalLanguages);
 
     return (
         <>
             <Head title="Language Management" />
 
-            <div className="container mx-auto py-6 space-y-6">
+            <div className="container mx-auto space-y-6 py-6">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                         <Link href={route('localization.index')}>
                             <Button variant="outline" size="sm">
-                                <ArrowLeft className="h-4 w-4 mr-2" />
+                                <ArrowLeft className="mr-2 h-4 w-4" />
                                 Back
                             </Button>
                         </Link>
                         <div>
                             <h1 className="text-3xl font-bold tracking-tight">Language Management</h1>
-                            <p className="text-muted-foreground">
-                                Configure available languages and regional settings
-                            </p>
+                            <p className="text-muted-foreground">Configure available languages and regional settings</p>
                         </div>
                     </div>
                     <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                         <DialogTrigger asChild>
                             <Button>
-                                <Plus className="h-4 w-4 mr-2" />
+                                <Plus className="mr-2 h-4 w-4" />
                                 Add Language
                             </Button>
                         </DialogTrigger>
                         <DialogContent>
                             <DialogHeader>
                                 <DialogTitle>Add New Language</DialogTitle>
-                                <DialogDescription>
-                                    Add a new language to your application
-                                </DialogDescription>
+                                <DialogDescription>Add a new language to your application</DialogDescription>
                             </DialogHeader>
                             <div className="space-y-4">
                                 <div className="grid grid-cols-2 gap-4">
@@ -170,9 +191,7 @@ export default function Languages({ languages, defaultLanguage }: LanguagesProps
                                             placeholder="e.g., en, es, fr"
                                             maxLength={5}
                                         />
-                                        {errors.code && (
-                                            <p className="text-sm text-red-600 mt-1">{errors.code}</p>
-                                        )}
+                                        {errors.code && <p className="mt-1 text-sm text-red-600">{errors.code}</p>}
                                     </div>
                                     <div>
                                         <Label htmlFor="direction">Text Direction</Label>
@@ -185,9 +204,7 @@ export default function Languages({ languages, defaultLanguage }: LanguagesProps
                                                 <SelectItem value="rtl">Right to Left (RTL)</SelectItem>
                                             </SelectContent>
                                         </Select>
-                                        {errors.direction && (
-                                            <p className="text-sm text-red-600 mt-1">{errors.direction}</p>
-                                        )}
+                                        {errors.direction && <p className="mt-1 text-sm text-red-600">{errors.direction}</p>}
                                     </div>
                                 </div>
                                 <div>
@@ -198,9 +215,7 @@ export default function Languages({ languages, defaultLanguage }: LanguagesProps
                                         onChange={(e) => setData('name', e.target.value)}
                                         placeholder="e.g., English, Spanish, French"
                                     />
-                                    {errors.name && (
-                                        <p className="text-sm text-red-600 mt-1">{errors.name}</p>
-                                    )}
+                                    {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
                                 </div>
                                 <div>
                                     <Label htmlFor="native_name">Native Name</Label>
@@ -210,16 +225,10 @@ export default function Languages({ languages, defaultLanguage }: LanguagesProps
                                         onChange={(e) => setData('native_name', e.target.value)}
                                         placeholder="e.g., English, Español, Français"
                                     />
-                                    {errors.native_name && (
-                                        <p className="text-sm text-red-600 mt-1">{errors.native_name}</p>
-                                    )}
+                                    {errors.native_name && <p className="mt-1 text-sm text-red-600">{errors.native_name}</p>}
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                    <Switch
-                                        id="enabled"
-                                        checked={data.enabled}
-                                        onCheckedChange={(checked) => setData('enabled', checked)}
-                                    />
+                                    <Switch id="enabled" checked={data.enabled} onCheckedChange={(checked) => setData('enabled', checked)} />
                                     <Label htmlFor="enabled">Enable this language</Label>
                                 </div>
                             </div>
@@ -236,7 +245,7 @@ export default function Languages({ languages, defaultLanguage }: LanguagesProps
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
                     <Card>
                         <CardContent className="p-4">
                             <div className="flex items-center justify-between">
@@ -287,20 +296,16 @@ export default function Languages({ languages, defaultLanguage }: LanguagesProps
                 <Card>
                     <CardHeader>
                         <CardTitle>Available Languages</CardTitle>
-                        <CardDescription>
-                            Manage languages available in your application
-                        </CardDescription>
+                        <CardDescription>Manage languages available in your application</CardDescription>
                     </CardHeader>
                     <CardContent>
                         {languagesList.length === 0 ? (
-                            <div className="text-center py-8">
-                                <LanguagesIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                                <h3 className="text-lg font-medium mb-2">No languages configured</h3>
-                                <p className="text-muted-foreground mb-4">
-                                    Add your first language to get started with localization
-                                </p>
+                            <div className="py-8 text-center">
+                                <LanguagesIcon className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+                                <h3 className="mb-2 text-lg font-medium">No languages configured</h3>
+                                <p className="mb-4 text-muted-foreground">Add your first language to get started with localization</p>
                                 <Button onClick={() => setIsAddDialogOpen(true)}>
-                                    <Plus className="h-4 w-4 mr-2" />
+                                    <Plus className="mr-2 h-4 w-4" />
                                     Add First Language
                                 </Button>
                             </div>
@@ -323,20 +328,16 @@ export default function Languages({ languages, defaultLanguage }: LanguagesProps
                                             <TableCell>
                                                 <div className="flex items-center space-x-3">
                                                     <div className="flex-shrink-0">
-                                                        <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-sm font-medium text-white">
                                                             {language.code.toUpperCase().slice(0, 2)}
                                                         </div>
                                                     </div>
                                                     <div>
                                                         <div className="flex items-center space-x-2">
                                                             <span className="font-medium">{language.name}</span>
-                                                            {language.is_default && (
-                                                                <Badge variant="default">Default</Badge>
-                                                            )}
+                                                            {language.is_default && <Badge variant="default">Default</Badge>}
                                                         </div>
-                                                        <p className="text-sm text-muted-foreground">
-                                                            {language.native_name}
-                                                        </p>
+                                                        <p className="text-sm text-muted-foreground">{language.native_name}</p>
                                                     </div>
                                                 </div>
                                             </TableCell>
@@ -357,49 +358,37 @@ export default function Languages({ languages, defaultLanguage }: LanguagesProps
                                             <TableCell>
                                                 {language.enabled ? (
                                                     <Badge variant="default" className="bg-green-100 text-green-800">
-                                                        <CheckCircle className="h-3 w-3 mr-1" />
+                                                        <CheckCircle className="mr-1 h-3 w-3" />
                                                         Enabled
                                                     </Badge>
                                                 ) : (
                                                     <Badge variant="secondary">
-                                                        <AlertCircle className="h-3 w-3 mr-1" />
+                                                        <AlertCircle className="mr-1 h-3 w-3" />
                                                         Disabled
                                                     </Badge>
                                                 )}
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex items-center space-x-2">
-                                                    <div className="w-16 bg-gray-200 rounded-full h-2">
+                                                    <div className="h-2 w-16 rounded-full bg-gray-200">
                                                         <div
-                                                            className="bg-blue-600 h-2 rounded-full"
+                                                            className="h-2 rounded-full bg-blue-600"
                                                             style={{ width: `${language.completion_percentage || 0}%` }}
                                                         ></div>
                                                     </div>
-                                                    <span className="text-sm font-medium">
-                                                        {language.completion_percentage || 0}%
-                                                    </span>
+                                                    <span className="text-sm font-medium">{language.completion_percentage || 0}%</span>
                                                 </div>
                                             </TableCell>
                                             <TableCell>
-                                                <span className="text-sm text-muted-foreground">
-                                                    {language.last_updated || 'Never'}
-                                                </span>
+                                                <span className="text-sm text-muted-foreground">{language.last_updated || 'Never'}</span>
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex items-center justify-end space-x-2">
-                                                    <Button
-                                                        size="sm"
-                                                        variant="ghost"
-                                                        onClick={() => openEditDialog(language)}
-                                                    >
+                                                    <Button size="sm" variant="ghost" onClick={() => openEditDialog(language)}>
                                                         <Edit className="h-4 w-4" />
                                                     </Button>
                                                     {!language.is_default && (
-                                                        <Button
-                                                            size="sm"
-                                                            variant="ghost"
-                                                            onClick={() => openDeleteDialog(language)}
-                                                        >
+                                                        <Button size="sm" variant="ghost" onClick={() => openDeleteDialog(language)}>
                                                             <Trash2 className="h-4 w-4" />
                                                         </Button>
                                                     )}
@@ -414,28 +403,26 @@ export default function Languages({ languages, defaultLanguage }: LanguagesProps
                 </Card>
 
                 {/* Regional Settings */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center">
-                                <Calendar className="h-5 w-5 mr-2" />
+                                <Calendar className="mr-2 h-5 w-5" />
                                 Date Formats
                             </CardTitle>
-                            <CardDescription>
-                                Configure date display formats
-                            </CardDescription>
+                            <CardDescription>Configure date display formats</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-3">
-                                <div className="flex justify-between items-center py-2 border-b">
+                                <div className="flex items-center justify-between border-b py-2">
                                     <span className="text-sm">MM/DD/YYYY</span>
                                     <Badge variant="outline">US</Badge>
                                 </div>
-                                <div className="flex justify-between items-center py-2 border-b">
+                                <div className="flex items-center justify-between border-b py-2">
                                     <span className="text-sm">DD/MM/YYYY</span>
                                     <Badge variant="outline">EU</Badge>
                                 </div>
-                                <div className="flex justify-between items-center py-2">
+                                <div className="flex items-center justify-between py-2">
                                     <span className="text-sm">YYYY-MM-DD</span>
                                     <Badge variant="outline">ISO</Badge>
                                 </div>
@@ -446,20 +433,18 @@ export default function Languages({ languages, defaultLanguage }: LanguagesProps
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center">
-                                <Clock className="h-5 w-5 mr-2" />
+                                <Clock className="mr-2 h-5 w-5" />
                                 Time Formats
                             </CardTitle>
-                            <CardDescription>
-                                Configure time display formats
-                            </CardDescription>
+                            <CardDescription>Configure time display formats</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-3">
-                                <div className="flex justify-between items-center py-2 border-b">
+                                <div className="flex items-center justify-between border-b py-2">
                                     <span className="text-sm">12-hour (AM/PM)</span>
                                     <Badge variant="outline">12H</Badge>
                                 </div>
-                                <div className="flex justify-between items-center py-2">
+                                <div className="flex items-center justify-between py-2">
                                     <span className="text-sm">24-hour</span>
                                     <Badge variant="outline">24H</Badge>
                                 </div>
@@ -470,24 +455,22 @@ export default function Languages({ languages, defaultLanguage }: LanguagesProps
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center">
-                                <DollarSign className="h-5 w-5 mr-2" />
+                                <DollarSign className="mr-2 h-5 w-5" />
                                 Currencies
                             </CardTitle>
-                            <CardDescription>
-                                Configure currency formats
-                            </CardDescription>
+                            <CardDescription>Configure currency formats</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-3">
-                                <div className="flex justify-between items-center py-2 border-b">
+                                <div className="flex items-center justify-between border-b py-2">
                                     <span className="text-sm">US Dollar</span>
                                     <Badge variant="outline">USD</Badge>
                                 </div>
-                                <div className="flex justify-between items-center py-2 border-b">
+                                <div className="flex items-center justify-between border-b py-2">
                                     <span className="text-sm">Euro</span>
                                     <Badge variant="outline">EUR</Badge>
                                 </div>
-                                <div className="flex justify-between items-center py-2">
+                                <div className="flex items-center justify-between py-2">
                                     <span className="text-sm">British Pound</span>
                                     <Badge variant="outline">GBP</Badge>
                                 </div>
@@ -501,22 +484,14 @@ export default function Languages({ languages, defaultLanguage }: LanguagesProps
                     <DialogContent>
                         <DialogHeader>
                             <DialogTitle>Edit Language</DialogTitle>
-                            <DialogDescription>
-                                Update language settings for {editingLanguage?.name}
-                            </DialogDescription>
+                            <DialogDescription>Update language settings for {editingLanguage?.name}</DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <Label htmlFor="edit-name">English Name</Label>
-                                    <Input
-                                        id="edit-name"
-                                        value={editData.name}
-                                        onChange={(e) => setEditData('name', e.target.value)}
-                                    />
-                                    {editErrors.name && (
-                                        <p className="text-sm text-red-600 mt-1">{editErrors.name}</p>
-                                    )}
+                                    <Input id="edit-name" value={editData.name} onChange={(e) => setEditData('name', e.target.value)} />
+                                    {editErrors.name && <p className="mt-1 text-sm text-red-600">{editErrors.name}</p>}
                                 </div>
                                 <div>
                                     <Label htmlFor="edit-direction">Text Direction</Label>
@@ -538,16 +513,10 @@ export default function Languages({ languages, defaultLanguage }: LanguagesProps
                                     value={editData.native_name}
                                     onChange={(e) => setEditData('native_name', e.target.value)}
                                 />
-                                {editErrors.native_name && (
-                                    <p className="text-sm text-red-600 mt-1">{editErrors.native_name}</p>
-                                )}
+                                {editErrors.native_name && <p className="mt-1 text-sm text-red-600">{editErrors.native_name}</p>}
                             </div>
                             <div className="flex items-center space-x-2">
-                                <Switch
-                                    id="edit-enabled"
-                                    checked={editData.enabled}
-                                    onCheckedChange={(checked) => setEditData('enabled', checked)}
-                                />
+                                <Switch id="edit-enabled" checked={editData.enabled} onCheckedChange={(checked) => setEditData('enabled', checked)} />
                                 <Label htmlFor="edit-enabled">Enable this language</Label>
                             </div>
                         </div>
@@ -568,7 +537,8 @@ export default function Languages({ languages, defaultLanguage }: LanguagesProps
                         <DialogHeader>
                             <DialogTitle>Delete Language</DialogTitle>
                             <DialogDescription>
-                                Are you sure you want to delete {deletingLanguage?.name}? This action cannot be undone and will remove all translations for this language.
+                                Are you sure you want to delete {deletingLanguage?.name}? This action cannot be undone and will remove all
+                                translations for this language.
                             </DialogDescription>
                         </DialogHeader>
                         <DialogFooter>
@@ -586,26 +556,11 @@ export default function Languages({ languages, defaultLanguage }: LanguagesProps
                 <Alert>
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription>
-                        <strong>Note:</strong> The default language cannot be deleted.
-                        Disabling a language will hide it from users but preserve all translations.
-                        RTL languages require additional CSS support for proper text direction.
+                        <strong>Note:</strong> The default language cannot be deleted. Disabling a language will hide it from users but preserve all
+                        translations. RTL languages require additional CSS support for proper text direction.
                     </AlertDescription>
                 </Alert>
             </div>
         </>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

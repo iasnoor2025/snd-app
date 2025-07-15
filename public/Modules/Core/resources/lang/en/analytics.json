@@ -1,26 +1,26 @@
 {
-  "title": "Analytics",
-  "dashboard": {
-    "overview": "Overview",
-    "reports": "Reports",
-    "metrics": "Key Metrics"
-  },
-  "metrics": {
-    "revenue": "Revenue",
-    "expenses": "Expenses",
-    "profit": "Profit",
-    "utilization": "Equipment Utilization",
-    "customers": "Total Customers",
-    "rentals": "Active Rentals"
-  },
-  "filters": {
-    "date_range": "Date Range",
-    "category": "Category",
-    "status": "Status"
-  },
-  "actions": {
-    "export": "Export Report",
-    "refresh": "Refresh Data",
-    "filter": "Apply Filters"
-  }
-} 
+    "title": "Analytics",
+    "dashboard": {
+        "overview": "Overview",
+        "reports": "Reports",
+        "metrics": "Key Metrics"
+    },
+    "metrics": {
+        "revenue": "Revenue",
+        "expenses": "Expenses",
+        "profit": "Profit",
+        "utilization": "Equipment Utilization",
+        "customers": "Total Customers",
+        "rentals": "Active Rentals"
+    },
+    "filters": {
+        "date_range": "Date Range",
+        "category": "Category",
+        "status": "Status"
+    },
+    "actions": {
+        "export": "Export Report",
+        "refresh": "Refresh Data",
+        "filter": "Apply Filters"
+    }
+}

@@ -1,38 +1,40 @@
+import {
+    Badge,
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+    Button,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+    Input,
+    Label,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    Separator,
+    Switch,
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from '@/Core';
+import { Head, useForm } from '@inertiajs/react';
+import { Bell, Calendar, DollarSign, Download, RotateCcw, Save, Settings, Shield, Users } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Head, useForm } from '@inertiajs/react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Core";
-import { Button } from "@/Core";
-import { Input } from "@/Core";
-import { Label } from "@/Core";
-import { Switch } from "@/Core";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
-import { Textarea } from "@/Core";
-import { Badge } from "@/Core";
-import { Separator } from "@/Core";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
-import { Alert, AlertDescription } from "@/Core";
 import { toast } from 'sonner';
-import {
-    Settings,
-    Save,
-    RotateCcw,
-    Download,
-    Upload,
-    Calendar,
-    Clock,
-    Users,
-    Bell,
-    Shield,
-    DollarSign,
-    AlertTriangle,
-    Info
-} from 'lucide-react';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/Core";
 
 // Temporary inline implementation - replace with actual hook
 const usePermission = () => ({
-    can: (permission: string) => true // Placeholder implementation
+    can: (permission: string) => true, // Placeholder implementation
 });
 
 interface LeaveSettings {
@@ -112,16 +114,12 @@ const weekDays = [
 ];
 
 export default function Index({ settings }: Props) {
-  const { t } = useTranslation('leave');
+    const { t } = useTranslation('leave');
 
     const { can } = usePermission();
     const [activeTab, setActiveTab] = useState('general');
-    const [reminderDays, setReminderDays] = useState<string>(
-        settings.reminder_days_before_expiry.join(', ')
-    );
-    const [probationTypes, setProbationTypes] = useState<string>(
-        settings.probation_leave_types.join(', ')
-    );
+    const [reminderDays, setReminderDays] = useState<string>(settings.reminder_days_before_expiry.join(', '));
+    const [probationTypes, setProbationTypes] = useState<string>(settings.probation_leave_types.join(', '));
 
     const { data, setData, put, processing, errors, reset } = useForm<LeaveSettings>({
         ...settings,
@@ -135,12 +133,12 @@ export default function Index({ settings }: Props) {
             ...data,
             reminder_days_before_expiry: reminderDays
                 .split(',')
-                .map(day => parseInt(day.trim()))
-                .filter(day => !isNaN(day)),
+                .map((day) => parseInt(day.trim()))
+                .filter((day) => !isNaN(day)),
             probation_leave_types: probationTypes
                 .split(',')
-                .map(type => type.trim())
-                .filter(type => type.length > 0),
+                .map((type) => type.trim())
+                .filter((type) => type.length > 0),
         };
 
         put(route('leaves.settings.update'), {
@@ -174,9 +172,7 @@ export default function Index({ settings }: Props) {
 
     const handleWeekendDayToggle = (day: string) => {
         const currentDays = data.weekend_days || [];
-        const newDays = currentDays.includes(day)
-            ? currentDays.filter(d => d !== day)
-            : [...currentDays, day];
+        const newDays = currentDays.includes(day) ? currentDays.filter((d) => d !== day) : [...currentDays, day];
         setData('weekend_days', newDays);
     };
 
@@ -205,22 +201,12 @@ export default function Index({ settings }: Props) {
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={handleExport}
-                            disabled={processing}
-                        >
-                            <Download className="h-4 w-4 mr-2" />
+                        <Button variant="outline" size="sm" onClick={handleExport} disabled={processing}>
+                            <Download className="mr-2 h-4 w-4" />
                             Export
                         </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={handleReset}
-                            disabled={processing || !can('leave-settings.edit')}
-                        >
-                            <RotateCcw className="h-4 w-4 mr-2" />
+                        <Button variant="outline" size="sm" onClick={handleReset} disabled={processing || !can('leave-settings.edit')}>
+                            <RotateCcw className="mr-2 h-4 w-4" />
                             Reset to Defaults
                         </Button>
                     </div>
@@ -264,9 +250,7 @@ export default function Index({ settings }: Props) {
                                         <Settings className="h-5 w-5" />
                                         General Settings
                                     </CardTitle>
-                                    <CardDescription>
-                                        Configure basic leave management settings
-                                    </CardDescription>
+                                    <CardDescription>Configure basic leave management settings</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-6">
                                     {/* Leave Year Settings */}
@@ -288,9 +272,7 @@ export default function Index({ settings }: Props) {
                                                     ))}
                                                 </SelectContent>
                                             </Select>
-                                            {errors.leave_year_start_month && (
-                                                <p className="text-sm text-red-600">{errors.leave_year_start_month}</p>
-                                            )}
+                                            {errors.leave_year_start_month && <p className="text-sm text-red-600">{errors.leave_year_start_month}</p>}
                                         </div>
 
                                         <div className="space-y-2">
@@ -303,9 +285,7 @@ export default function Index({ settings }: Props) {
                                                 value={data.leave_year_start_day}
                                                 onChange={(e) => setData('leave_year_start_day', parseInt(e.target.value))}
                                             />
-                                            {errors.leave_year_start_day && (
-                                                <p className="text-sm text-red-600">{errors.leave_year_start_day}</p>
-                                            )}
+                                            {errors.leave_year_start_day && <p className="text-sm text-red-600">{errors.leave_year_start_day}</p>}
                                         </div>
                                     </div>
 
@@ -326,9 +306,7 @@ export default function Index({ settings }: Props) {
                                                 </Badge>
                                             ))}
                                         </div>
-                                        {errors.weekend_days && (
-                                            <p className="text-sm text-red-600">{errors.weekend_days}</p>
-                                        )}
+                                        {errors.weekend_days && <p className="text-sm text-red-600">{errors.weekend_days}</p>}
                                     </div>
 
                                     <Separator />
@@ -351,9 +329,7 @@ export default function Index({ settings }: Props) {
                                         <div className="flex items-center justify-between">
                                             <div className="space-y-0.5">
                                                 <Label>{t('lbl_allow_half_day_leave')}</Label>
-                                                <p className="text-sm text-muted-foreground">
-                                                    Allow employees to request half-day leave
-                                                </p>
+                                                <p className="text-sm text-muted-foreground">Allow employees to request half-day leave</p>
                                             </div>
                                             <Switch
                                                 checked={data.allow_half_day_leave}
@@ -403,17 +379,13 @@ export default function Index({ settings }: Props) {
                                         <Shield className="h-5 w-5" />
                                         Approval Settings
                                     </CardTitle>
-                                    <CardDescription>
-                                        Configure leave approval workflow and requirements
-                                    </CardDescription>
+                                    <CardDescription>Configure leave approval workflow and requirements</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-6">
                                     <div className="flex items-center justify-between">
                                         <div className="space-y-0.5">
                                             <Label>{t('lbl_auto_approve_sick_leave')}</Label>
-                                            <p className="text-sm text-muted-foreground">
-                                                Automatically approve sick leave requests
-                                            </p>
+                                            <p className="text-sm text-muted-foreground">Automatically approve sick leave requests</p>
                                         </div>
                                         <Switch
                                             checked={data.auto_approve_sick_leave}
@@ -438,7 +410,9 @@ export default function Index({ settings }: Props) {
                                         </div>
 
                                         <div className="space-y-2">
-                                            <Label htmlFor="max_consecutive_days_without_approval">{t('lbl_max_consecutive_days_without_approval')}</Label>
+                                            <Label htmlFor="max_consecutive_days_without_approval">
+                                                {t('lbl_max_consecutive_days_without_approval')}
+                                            </Label>
                                             <Input
                                                 id="max_consecutive_days_without_approval"
                                                 type="number"
@@ -479,9 +453,7 @@ export default function Index({ settings }: Props) {
                                                 value={data.escalation_days}
                                                 onChange={(e) => setData('escalation_days', parseInt(e.target.value))}
                                             />
-                                            {errors.escalation_days && (
-                                                <p className="text-sm text-red-600">{errors.escalation_days}</p>
-                                            )}
+                                            {errors.escalation_days && <p className="text-sm text-red-600">{errors.escalation_days}</p>}
                                         </div>
                                     </div>
                                 </CardContent>
@@ -496,17 +468,13 @@ export default function Index({ settings }: Props) {
                                         <Calendar className="h-5 w-5" />
                                         {t('carry_forward_settings')}
                                     </CardTitle>
-                                    <CardDescription>
-                                        Configure leave carry forward policies
-                                    </CardDescription>
+                                    <CardDescription>Configure leave carry forward policies</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-6">
                                     <div className="flex items-center justify-between">
                                         <div className="space-y-0.5">
                                             <Label>{t('lbl_enable_global_carry_forward')}</Label>
-                                            <p className="text-sm text-muted-foreground">
-                                                Allow unused leave to be carried forward to next year
-                                            </p>
+                                            <p className="text-sm text-muted-foreground">Allow unused leave to be carried forward to next year</p>
                                         </div>
                                         <Switch
                                             checked={data.global_carry_forward_enabled}
@@ -600,18 +568,14 @@ export default function Index({ settings }: Props) {
                                         <Bell className="h-5 w-5" />
                                         Notification Settings
                                     </CardTitle>
-                                    <CardDescription>
-                                        Configure notification preferences for leave events
-                                    </CardDescription>
+                                    <CardDescription>Configure notification preferences for leave events</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-6">
                                     <div className="space-y-4">
                                         <div className="flex items-center justify-between">
                                             <div className="space-y-0.5">
                                                 <Label>{t('lbl_notify_employee_on_approval')}</Label>
-                                                <p className="text-sm text-muted-foreground">
-                                                    Send notification when leave is approved
-                                                </p>
+                                                <p className="text-sm text-muted-foreground">Send notification when leave is approved</p>
                                             </div>
                                             <Switch
                                                 checked={data.notify_employee_on_approval}
@@ -622,9 +586,7 @@ export default function Index({ settings }: Props) {
                                         <div className="flex items-center justify-between">
                                             <div className="space-y-0.5">
                                                 <Label>{t('lbl_notify_employee_on_rejection')}</Label>
-                                                <p className="text-sm text-muted-foreground">
-                                                    Send notification when leave is rejected
-                                                </p>
+                                                <p className="text-sm text-muted-foreground">Send notification when leave is rejected</p>
                                             </div>
                                             <Switch
                                                 checked={data.notify_employee_on_rejection}
@@ -635,9 +597,7 @@ export default function Index({ settings }: Props) {
                                         <div className="flex items-center justify-between">
                                             <div className="space-y-0.5">
                                                 <Label>{t('lbl_notify_manager_on_request')}</Label>
-                                                <p className="text-sm text-muted-foreground">
-                                                    Send notification to manager when leave is requested
-                                                </p>
+                                                <p className="text-sm text-muted-foreground">Send notification to manager when leave is requested</p>
                                             </div>
                                             <Switch
                                                 checked={data.notify_manager_on_request}
@@ -648,9 +608,7 @@ export default function Index({ settings }: Props) {
                                         <div className="flex items-center justify-between">
                                             <div className="space-y-0.5">
                                                 <Label>{t('lbl_notify_hr_on_long_leave')}</Label>
-                                                <p className="text-sm text-muted-foreground">
-                                                    Send notification to HR for long leave requests
-                                                </p>
+                                                <p className="text-sm text-muted-foreground">Send notification to HR for long leave requests</p>
                                             </div>
                                             <Switch
                                                 checked={data.notify_hr_on_long_leave}
@@ -683,9 +641,7 @@ export default function Index({ settings }: Props) {
                                                 value={reminderDays}
                                                 onChange={(e) => setReminderDays(e.target.value)}
                                             />
-                                            <p className="text-xs text-muted-foreground">
-                                                Comma-separated list of days
-                                            </p>
+                                            <p className="text-xs text-muted-foreground">Comma-separated list of days</p>
                                             {errors.reminder_days_before_expiry && (
                                                 <p className="text-sm text-red-600">{errors.reminder_days_before_expiry}</p>
                                             )}
@@ -703,17 +659,13 @@ export default function Index({ settings }: Props) {
                                         <Users className="h-5 w-5" />
                                         Probation Settings
                                     </CardTitle>
-                                    <CardDescription>
-                                        Configure leave policies for employees on probation
-                                    </CardDescription>
+                                    <CardDescription>Configure leave policies for employees on probation</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-6">
                                     <div className="flex items-center justify-between">
                                         <div className="space-y-0.5">
                                             <Label>{t('lbl_allow_probation_leave')}</Label>
-                                            <p className="text-sm text-muted-foreground">
-                                                Allow employees on probation to take leave
-                                            </p>
+                                            <p className="text-sm text-muted-foreground">Allow employees on probation to take leave</p>
                                         </div>
                                         <Switch
                                             checked={data.probation_leave_allowed}
@@ -746,9 +698,7 @@ export default function Index({ settings }: Props) {
                                                     value={probationTypes}
                                                     onChange={(e) => setProbationTypes(e.target.value)}
                                                 />
-                                                <p className="text-xs text-muted-foreground">
-                                                    Comma-separated list of leave types
-                                                </p>
+                                                <p className="text-xs text-muted-foreground">Comma-separated list of leave types</p>
                                                 {errors.probation_leave_types && (
                                                     <p className="text-sm text-red-600">{errors.probation_leave_types}</p>
                                                 )}
@@ -767,9 +717,7 @@ export default function Index({ settings }: Props) {
                                         <DollarSign className="h-5 w-5" />
                                         Advanced Settings
                                     </CardTitle>
-                                    <CardDescription>
-                                        Configure advanced leave features and integrations
-                                    </CardDescription>
+                                    <CardDescription>Configure advanced leave features and integrations</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-6">
                                     {/* Leave Encashment */}
@@ -777,9 +725,7 @@ export default function Index({ settings }: Props) {
                                         <div className="flex items-center justify-between">
                                             <div className="space-y-0.5">
                                                 <Label>{t('lbl_enable_leave_encashment')}</Label>
-                                                <p className="text-sm text-muted-foreground">
-                                                    Allow employees to encash unused leave
-                                                </p>
+                                                <p className="text-sm text-muted-foreground">Allow employees to encash unused leave</p>
                                             </div>
                                             <Switch
                                                 checked={data.leave_encashment_enabled}
@@ -844,9 +790,7 @@ export default function Index({ settings }: Props) {
                                         <div className="flex items-center justify-between">
                                             <div className="space-y-0.5">
                                                 <Label>{t('lbl_leave_calendar_integration')}</Label>
-                                                <p className="text-sm text-muted-foreground">
-                                                    Integrate with external calendar systems
-                                                </p>
+                                                <p className="text-sm text-muted-foreground">Integrate with external calendar systems</p>
                                             </div>
                                             <Switch
                                                 checked={data.leave_calendar_integration}
@@ -857,9 +801,7 @@ export default function Index({ settings }: Props) {
                                         <div className="flex items-center justify-between">
                                             <div className="space-y-0.5">
                                                 <Label>{t('lbl_manager_override_balance')}</Label>
-                                                <p className="text-sm text-muted-foreground">
-                                                    Allow managers to override leave balance restrictions
-                                                </p>
+                                                <p className="text-sm text-muted-foreground">Allow managers to override leave balance restrictions</p>
                                             </div>
                                             <Switch
                                                 checked={data.manager_override_balance}
@@ -891,19 +833,11 @@ export default function Index({ settings }: Props) {
 
                         {/* Action Buttons */}
                         <div className="flex items-center justify-end gap-4 pt-6">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => reset()}
-                                disabled={processing}
-                            >
+                            <Button type="button" variant="outline" onClick={() => reset()} disabled={processing}>
                                 Cancel
                             </Button>
-                            <Button
-                                type="submit"
-                                disabled={processing || !can('leave-settings.edit')}
-                            >
-                                <Save className="h-4 w-4 mr-2" />
+                            <Button type="submit" disabled={processing || !can('leave-settings.edit')}>
+                                <Save className="mr-2 h-4 w-4" />
                                 {processing ? 'Saving...' : 'Save Settings'}
                             </Button>
                         </div>
@@ -913,17 +847,3 @@ export default function Index({ settings }: Props) {
         </>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

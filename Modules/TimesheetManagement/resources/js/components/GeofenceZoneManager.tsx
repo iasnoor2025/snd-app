@@ -1,24 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
+    Badge,
+    Button,
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from "@/Core";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/Core";
-import { Button } from "@/Core";
-import { Input } from "@/Core";
-import { Badge } from "@/Core";
-import {
     Dialog,
     DialogContent,
     DialogDescription,
@@ -26,34 +13,27 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/Core";
-import {
+    Input,
+    Label,
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/Core";
-import { Label } from "@/Core";
-import { Textarea } from "@/Core";
-import { Switch } from "@/Core";
-import {
-    MapPin,
-    Plus,
-    Edit,
-    Trash2,
-    Eye,
-    ToggleLeft,
-    ToggleRight,
-    AlertTriangle,
-    CheckCircle,
-    Search,
-    Filter,
-    Download,
-    Map
-} from 'lucide-react';
-import { toast } from 'sonner';
+    Switch,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+    Textarea,
+} from '@/Core';
 import axios from 'axios';
+import { AlertTriangle, CheckCircle, Edit, Plus, Search, ToggleLeft, ToggleRight, Trash2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 interface GeofenceZone {
     id: number;
@@ -136,8 +116,8 @@ const GeofenceZoneManager: React.FC = () => {
         alert_on_exit: false,
         metadata: {
             color: '#3B82F6',
-            priority: '5'
-        }
+            priority: '5',
+        },
     });
 
     useEffect(() => {
@@ -168,8 +148,8 @@ const GeofenceZoneManager: React.FC = () => {
                 project_id: formData.project_id ? parseInt(formData.project_id) : null,
                 metadata: {
                     color: formData.metadata.color,
-                    priority: parseInt(formData.metadata.priority)
-                }
+                    priority: parseInt(formData.metadata.priority),
+                },
             };
 
             const response = await axios.post('/api/geofences', payload);
@@ -196,12 +176,12 @@ const GeofenceZoneManager: React.FC = () => {
                 project_id: formData.project_id ? parseInt(formData.project_id) : null,
                 metadata: {
                     color: formData.metadata.color,
-                    priority: parseInt(formData.metadata.priority)
-                }
+                    priority: parseInt(formData.metadata.priority),
+                },
             };
 
             const response = await axios.put(`/api/geofences/${selectedZone.id}`, payload);
-            setZones(zones.map(zone => zone.id === selectedZone.id ? response.data.data : zone));
+            setZones(zones.map((zone) => (zone.id === selectedZone.id ? response.data.data : zone)));
             setIsEditDialogOpen(false);
             setSelectedZone(null);
             resetForm();
@@ -219,7 +199,7 @@ const GeofenceZoneManager: React.FC = () => {
 
         try {
             await axios.delete(`/api/geofences/${zone.id}`);
-            setZones(zones.filter(z => z.id !== zone.id));
+            setZones(zones.filter((z) => z.id !== zone.id));
             toast.success('Geofence zone deleted successfully');
         } catch (error: any) {
             console.error('Error deleting geofence zone:', error);
@@ -230,7 +210,7 @@ const GeofenceZoneManager: React.FC = () => {
     const handleToggleActive = async (zone: GeofenceZone) => {
         try {
             const response = await axios.post(`/api/geofences/${zone.id}/toggle-active`);
-            setZones(zones.map(z => z.id === zone.id ? response.data.data : z));
+            setZones(zones.map((z) => (z.id === zone.id ? response.data.data : z)));
             toast.success(`Geofence zone ${response.data.data.is_active ? 'activated' : 'deactivated'}`);
         } catch (error: any) {
             console.error('Error toggling geofence zone:', error);
@@ -239,7 +219,7 @@ const GeofenceZoneManager: React.FC = () => {
     };
 
     const openEditDialog = (zone: GeofenceZone) => {
-  const { t } = useTranslation('timesheet');
+        const { t } = useTranslation('timesheet');
 
         setSelectedZone(zone);
         setFormData({
@@ -258,8 +238,8 @@ const GeofenceZoneManager: React.FC = () => {
             alert_on_exit: zone.alert_on_exit,
             metadata: {
                 color: zone.metadata?.color || '#3B82F6',
-                priority: zone.metadata?.priority?.toString() || '5'
-            }
+                priority: zone.metadata?.priority?.toString() || '5',
+            },
         });
         setIsEditDialogOpen(true);
     };
@@ -281,20 +261,20 @@ const GeofenceZoneManager: React.FC = () => {
             alert_on_exit: false,
             metadata: {
                 color: '#3B82F6',
-                priority: '5'
-            }
+                priority: '5',
+            },
         });
     };
 
-    const filteredZones = zones.filter(zone => {
-        const matchesSearch = zone.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                            zone.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                            zone.project?.name?.toLowerCase().includes(searchTerm.toLowerCase());
+    const filteredZones = zones.filter((zone) => {
+        const matchesSearch =
+            zone.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            zone.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            zone.project?.name?.toLowerCase().includes(searchTerm.toLowerCase());
 
         const matchesType = filterType === 'all' || zone.zone_type === filterType;
-        const matchesActive = filterActive === 'all' ||
-                            (filterActive === 'active' && zone.is_active) ||
-                            (filterActive === 'inactive' && !zone.is_active);
+        const matchesActive =
+            filterActive === 'all' || (filterActive === 'active' && zone.is_active) || (filterActive === 'inactive' && !zone.is_active);
 
         return matchesSearch && matchesType && matchesActive;
     });
@@ -305,7 +285,7 @@ const GeofenceZoneManager: React.FC = () => {
             office: 'bg-green-100 text-green-800',
             warehouse: 'bg-yellow-100 text-yellow-800',
             restricted: 'bg-red-100 text-red-800',
-            custom: 'bg-purple-100 text-purple-800'
+            custom: 'bg-purple-100 text-purple-800',
         };
         return colors[type as keyof typeof colors] || 'bg-gray-100 text-gray-800';
     };
@@ -319,12 +299,10 @@ const GeofenceZoneManager: React.FC = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">{t('geofence_zones')}</h1>
-                    <p className="text-muted-foreground">
-                        Manage location-based boundaries for timesheet validation
-                    </p>
+                    <p className="text-muted-foreground">Manage location-based boundaries for timesheet validation</p>
                 </div>
                 <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
                     <DialogTrigger asChild>
@@ -333,12 +311,10 @@ const GeofenceZoneManager: React.FC = () => {
                             Create Zone
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
                         <DialogHeader>
                             <DialogTitle>{t('ttl_create_geofence_zone')}</DialogTitle>
-                            <DialogDescription>
-                                Define a new geographical boundary for timesheet validation.
-                            </DialogDescription>
+                            <DialogDescription>Define a new geographical boundary for timesheet validation.</DialogDescription>
                         </DialogHeader>
                         <div className="grid gap-4 py-4">
                             <div className="grid grid-cols-2 gap-4">
@@ -347,13 +323,13 @@ const GeofenceZoneManager: React.FC = () => {
                                     <Input
                                         id="name"
                                         value={formData.name}
-                                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                         placeholder={t('ph_enter_zone_name')}
                                     />
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="zone_type">{t('lbl_zone_type')}</Label>
-                                    <Select value={formData.zone_type} onValueChange={(value) => setFormData({...formData, zone_type: value})}>
+                                    <Select value={formData.zone_type} onValueChange={(value) => setFormData({ ...formData, zone_type: value })}>
                                         <SelectTrigger>
                                             <SelectValue />
                                         </SelectTrigger>
@@ -373,7 +349,7 @@ const GeofenceZoneManager: React.FC = () => {
                                 <Textarea
                                     id="description"
                                     value={formData.description}
-                                    onChange={(e) => setFormData({...formData, description: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                     placeholder={t('ph_optional_description')}
                                 />
                             </div>
@@ -386,7 +362,7 @@ const GeofenceZoneManager: React.FC = () => {
                                         type="number"
                                         step="any"
                                         value={formData.center_latitude}
-                                        onChange={(e) => setFormData({...formData, center_latitude: e.target.value})}
+                                        onChange={(e) => setFormData({ ...formData, center_latitude: e.target.value })}
                                         placeholder={t('ph_90_to_90')}
                                     />
                                 </div>
@@ -397,7 +373,7 @@ const GeofenceZoneManager: React.FC = () => {
                                         type="number"
                                         step="any"
                                         value={formData.center_longitude}
-                                        onChange={(e) => setFormData({...formData, center_longitude: e.target.value})}
+                                        onChange={(e) => setFormData({ ...formData, center_longitude: e.target.value })}
                                         placeholder={t('ph_180_to_180')}
                                     />
                                 </div>
@@ -407,7 +383,7 @@ const GeofenceZoneManager: React.FC = () => {
                                         id="radius"
                                         type="number"
                                         value={formData.radius_meters}
-                                        onChange={(e) => setFormData({...formData, radius_meters: e.target.value})}
+                                        onChange={(e) => setFormData({ ...formData, radius_meters: e.target.value })}
                                         placeholder="100"
                                     />
                                 </div>
@@ -420,7 +396,7 @@ const GeofenceZoneManager: React.FC = () => {
                                         id="buffer"
                                         type="number"
                                         value={formData.buffer_meters}
-                                        onChange={(e) => setFormData({...formData, buffer_meters: e.target.value})}
+                                        onChange={(e) => setFormData({ ...formData, buffer_meters: e.target.value })}
                                         placeholder="0"
                                     />
                                 </div>
@@ -430,7 +406,7 @@ const GeofenceZoneManager: React.FC = () => {
                                         id="color"
                                         type="color"
                                         value={formData.metadata.color}
-                                        onChange={(e) => setFormData({...formData, metadata: {...formData.metadata, color: e.target.value}})}
+                                        onChange={(e) => setFormData({ ...formData, metadata: { ...formData.metadata, color: e.target.value } })}
                                     />
                                 </div>
                             </div>
@@ -440,7 +416,7 @@ const GeofenceZoneManager: React.FC = () => {
                                     <Switch
                                         id="active"
                                         checked={formData.is_active}
-                                        onCheckedChange={(checked) => setFormData({...formData, is_active: checked})}
+                                        onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
                                     />
                                     <Label htmlFor="active">Active</Label>
                                 </div>
@@ -448,7 +424,7 @@ const GeofenceZoneManager: React.FC = () => {
                                     <Switch
                                         id="strict"
                                         checked={formData.strict_enforcement}
-                                        onCheckedChange={(checked) => setFormData({...formData, strict_enforcement: checked})}
+                                        onCheckedChange={(checked) => setFormData({ ...formData, strict_enforcement: checked })}
                                     />
                                     <Label htmlFor="strict">{t('lbl_strict_enforcement')}</Label>
                                 </div>
@@ -456,7 +432,7 @@ const GeofenceZoneManager: React.FC = () => {
                                     <Switch
                                         id="monitoring"
                                         checked={formData.monitoring_enabled}
-                                        onCheckedChange={(checked) => setFormData({...formData, monitoring_enabled: checked})}
+                                        onCheckedChange={(checked) => setFormData({ ...formData, monitoring_enabled: checked })}
                                     />
                                     <Label htmlFor="monitoring">{t('lbl_enable_monitoring')}</Label>
                                 </div>
@@ -466,9 +442,7 @@ const GeofenceZoneManager: React.FC = () => {
                             <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
                                 Cancel
                             </Button>
-                            <Button onClick={handleCreateZone}>
-                                Create Zone
-                            </Button>
+                            <Button onClick={handleCreateZone}>Create Zone</Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
@@ -478,9 +452,9 @@ const GeofenceZoneManager: React.FC = () => {
             <Card>
                 <CardContent className="pt-6">
                     <div className="flex flex-wrap gap-4">
-                        <div className="flex-1 min-w-[200px]">
+                        <div className="min-w-[200px] flex-1">
                             <div className="relative">
-                                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Search className="absolute top-2.5 left-2 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     placeholder={t('ph_search_zones')}
                                     value={searchTerm}
@@ -520,14 +494,12 @@ const GeofenceZoneManager: React.FC = () => {
             <Card>
                 <CardHeader>
                     <CardTitle>Geofence Zones ({filteredZones.length})</CardTitle>
-                    <CardDescription>
-                        Manage and monitor geographical boundaries for timesheet validation
-                    </CardDescription>
+                    <CardDescription>Manage and monitor geographical boundaries for timesheet validation</CardDescription>
                 </CardHeader>
                 <CardContent>
                     {loading ? (
                         <div className="flex justify-center py-8">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                            <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
                         </div>
                     ) : (
                         <Table>
@@ -549,23 +521,17 @@ const GeofenceZoneManager: React.FC = () => {
                                         <TableCell>
                                             <div className="flex items-center space-x-2">
                                                 <div
-                                                    className="w-3 h-3 rounded-full"
+                                                    className="h-3 w-3 rounded-full"
                                                     style={{ backgroundColor: zone.metadata?.color || '#3B82F6' }}
                                                 />
                                                 <div>
                                                     <div className="font-medium">{zone.name}</div>
-                                                    {zone.description && (
-                                                        <div className="text-sm text-muted-foreground">
-                                                            {zone.description}
-                                                        </div>
-                                                    )}
+                                                    {zone.description && <div className="text-sm text-muted-foreground">{zone.description}</div>}
                                                 </div>
                                             </div>
                                         </TableCell>
                                         <TableCell>
-                                            <Badge className={getZoneTypeColor(zone.zone_type)}>
-                                                {zone.zone_type.replace('_', ' ')}
-                                            </Badge>
+                                            <Badge className={getZoneTypeColor(zone.zone_type)}>{zone.zone_type.replace('_', ' ')}</Badge>
                                         </TableCell>
                                         <TableCell>
                                             <div className="text-sm">
@@ -577,9 +543,7 @@ const GeofenceZoneManager: React.FC = () => {
                                             <div className="text-sm">
                                                 <div>{formatDistance(zone.radius_meters)}</div>
                                                 {zone.buffer_meters > 0 && (
-                                                    <div className="text-muted-foreground">
-                                                        +{formatDistance(zone.buffer_meters)} buffer
-                                                    </div>
+                                                    <div className="text-muted-foreground">+{formatDistance(zone.buffer_meters)} buffer</div>
                                                 )}
                                             </div>
                                         </TableCell>
@@ -611,29 +575,13 @@ const GeofenceZoneManager: React.FC = () => {
                                         </TableCell>
                                         <TableCell className="text-right">
                                             <div className="flex justify-end space-x-2">
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => handleToggleActive(zone)}
-                                                >
-                                                    {zone.is_active ? (
-                                                        <ToggleRight className="h-4 w-4" />
-                                                    ) : (
-                                                        <ToggleLeft className="h-4 w-4" />
-                                                    )}
+                                                <Button variant="ghost" size="sm" onClick={() => handleToggleActive(zone)}>
+                                                    {zone.is_active ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
                                                 </Button>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => openEditDialog(zone)}
-                                                >
+                                                <Button variant="ghost" size="sm" onClick={() => openEditDialog(zone)}>
                                                     <Edit className="h-4 w-4" />
                                                 </Button>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => handleDeleteZone(zone)}
-                                                >
+                                                <Button variant="ghost" size="sm" onClick={() => handleDeleteZone(zone)}>
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
@@ -648,12 +596,10 @@ const GeofenceZoneManager: React.FC = () => {
 
             {/* Edit Dialog */}
             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle>{t('ttl_edit_geofence_zone')}</DialogTitle>
-                        <DialogDescription>
-                            Update the geographical boundary settings.
-                        </DialogDescription>
+                        <DialogDescription>Update the geographical boundary settings.</DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                         {/* Same form fields as create dialog */}
@@ -663,13 +609,13 @@ const GeofenceZoneManager: React.FC = () => {
                                 <Input
                                     id="edit-name"
                                     value={formData.name}
-                                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     placeholder={t('ph_enter_zone_name')}
                                 />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="edit-zone_type">{t('lbl_zone_type')}</Label>
-                                <Select value={formData.zone_type} onValueChange={(value) => setFormData({...formData, zone_type: value})}>
+                                <Select value={formData.zone_type} onValueChange={(value) => setFormData({ ...formData, zone_type: value })}>
                                     <SelectTrigger>
                                         <SelectValue />
                                     </SelectTrigger>
@@ -689,7 +635,7 @@ const GeofenceZoneManager: React.FC = () => {
                             <Textarea
                                 id="edit-description"
                                 value={formData.description}
-                                onChange={(e) => setFormData({...formData, description: e.target.value})}
+                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                 placeholder={t('ph_optional_description')}
                             />
                         </div>
@@ -702,7 +648,7 @@ const GeofenceZoneManager: React.FC = () => {
                                     type="number"
                                     step="any"
                                     value={formData.center_latitude}
-                                    onChange={(e) => setFormData({...formData, center_latitude: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, center_latitude: e.target.value })}
                                     placeholder={t('ph_90_to_90')}
                                 />
                             </div>
@@ -713,7 +659,7 @@ const GeofenceZoneManager: React.FC = () => {
                                     type="number"
                                     step="any"
                                     value={formData.center_longitude}
-                                    onChange={(e) => setFormData({...formData, center_longitude: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, center_longitude: e.target.value })}
                                     placeholder={t('ph_180_to_180')}
                                 />
                             </div>
@@ -723,7 +669,7 @@ const GeofenceZoneManager: React.FC = () => {
                                     id="edit-radius"
                                     type="number"
                                     value={formData.radius_meters}
-                                    onChange={(e) => setFormData({...formData, radius_meters: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, radius_meters: e.target.value })}
                                     placeholder="100"
                                 />
                             </div>
@@ -734,7 +680,7 @@ const GeofenceZoneManager: React.FC = () => {
                                 <Switch
                                     id="edit-active"
                                     checked={formData.is_active}
-                                    onCheckedChange={(checked) => setFormData({...formData, is_active: checked})}
+                                    onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
                                 />
                                 <Label htmlFor="edit-active">Active</Label>
                             </div>
@@ -742,7 +688,7 @@ const GeofenceZoneManager: React.FC = () => {
                                 <Switch
                                     id="edit-strict"
                                     checked={formData.strict_enforcement}
-                                    onCheckedChange={(checked) => setFormData({...formData, strict_enforcement: checked})}
+                                    onCheckedChange={(checked) => setFormData({ ...formData, strict_enforcement: checked })}
                                 />
                                 <Label htmlFor="edit-strict">{t('lbl_strict_enforcement')}</Label>
                             </div>
@@ -752,9 +698,7 @@ const GeofenceZoneManager: React.FC = () => {
                         <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
                             Cancel
                         </Button>
-                        <Button onClick={handleUpdateZone}>
-                            Update Zone
-                        </Button>
+                        <Button onClick={handleUpdateZone}>Update Zone</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
@@ -763,17 +707,3 @@ const GeofenceZoneManager: React.FC = () => {
 };
 
 export default GeofenceZoneManager;
-
-
-
-
-
-
-
-
-
-
-
-
-
-

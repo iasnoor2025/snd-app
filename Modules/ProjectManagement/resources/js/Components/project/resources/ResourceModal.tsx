@@ -1,32 +1,28 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
 import {
+    Button,
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
-} from "@/Core";
-import {
     Form,
     FormControl,
     FormField,
     FormItem,
     FormLabel,
     FormMessage,
-} from "@/Core";
-import { Input } from "@/Core";
-import { Button } from "@/Core";
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import {
+    Input,
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/Core";
-import { Textarea } from "@/Core";
+    Textarea,
+} from '@/Core';
+import { zodResolver } from '@hookform/resolvers/zod';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import * as z from 'zod';
 
 interface ResourceModalProps {
     open: boolean;
@@ -71,22 +67,14 @@ const formSchemas = {
     }),
 };
 
-const ResourceModal: React.FC<ResourceModalProps> = ({
-    open,
-    onOpenChange,
-    title,
-    initialData,
-    onSubmit,
-    isSubmitting,
-    type,
-}) => {
+const ResourceModal: React.FC<ResourceModalProps> = ({ open, onOpenChange, title, initialData, onSubmit, isSubmitting, type }) => {
     const form = useForm({
         resolver: zodResolver(formSchemas[type]),
         defaultValues: initialData || {},
-    })
+    });
 
     const handleSubmit = (data: any) => {
-  const { t } = useTranslation('project');
+        const { t } = useTranslation('project');
 
         onSubmit(data);
     };
@@ -98,335 +86,282 @@ const ResourceModal: React.FC<ResourceModalProps> = ({
                     <DialogTitle>{title}</DialogTitle>
                 </DialogHeader>
                 <Form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-                        {type === 'manpower' && (
-                            <>
-                                <FormField
-                                    control={form.control}
-                                    name="employee_id"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Employee</FormLabel>
-                                            <Select
-                                                onValueChange={(value) => field.onChange(Number(value))}
-                                                defaultValue={field.value?.toString()}
-                                            >
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder={t('ph_select_employee')} />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    {/* Add employee options here */}
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="daily_rate"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>{t('lbl_daily_rate')}</FormLabel>
+                    {type === 'manpower' && (
+                        <>
+                            <FormField
+                                control={form.control}
+                                name="employee_id"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Employee</FormLabel>
+                                        <Select onValueChange={(value) => field.onChange(Number(value))} defaultValue={field.value?.toString()}>
                                             <FormControl>
-                                                <Input
-                                                    type="number"
-                                                    {...field}
-                                                    onChange={(e) => field.onChange(Number(e.target.value))}
-                                                />
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder={t('ph_select_employee')} />
+                                                </SelectTrigger>
                                             </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </>
+                                            <SelectContent>{/* Add employee options here */}</SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="daily_rate"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>{t('lbl_daily_rate')}</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </>
+                    )}
+
+                    {type === 'equipment' && (
+                        <>
+                            <FormField
+                                control={form.control}
+                                name="equipment_id"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Equipment</FormLabel>
+                                        <Select onValueChange={(value) => field.onChange(Number(value))} defaultValue={field.value?.toString()}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder={t('ph_select_equipment')} />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>{/* Add equipment options here */}</SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="hourly_rate"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>{t('lbl_hourly_rate')}</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </>
+                    )}
+
+                    {type === 'material' && (
+                        <>
+                            <FormField
+                                control={form.control}
+                                name="name"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Name</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="unit_price"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>{t('lbl_unit_price')}</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="quantity"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Quantity</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="unit"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Unit</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </>
+                    )}
+
+                    {type === 'fuel' && (
+                        <>
+                            <FormField
+                                control={form.control}
+                                name="equipment_id"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Equipment</FormLabel>
+                                        <Select onValueChange={(value) => field.onChange(Number(value))} defaultValue={field.value?.toString()}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder={t('ph_select_equipment')} />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>{/* Add equipment options here */}</SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="fuel_type"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>{t('lbl_fuel_type')}</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder={t('ph_select_fuel_type')} />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="diesel">Diesel</SelectItem>
+                                                <SelectItem value="petrol">Petrol</SelectItem>
+                                                <SelectItem value="lpg">LPG</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="amount"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Amount</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="unit_price"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>{t('lbl_unit_price')}</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </>
+                    )}
+
+                    {type === 'expense' && (
+                        <>
+                            <FormField
+                                control={form.control}
+                                name="name"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Name</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="amount"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Amount</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="category"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Category</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder={t('ph_select_category')} />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="office">Office</SelectItem>
+                                                <SelectItem value="travel">Travel</SelectItem>
+                                                <SelectItem value="supplies">Supplies</SelectItem>
+                                                <SelectItem value="other">Other</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </>
+                    )}
+
+                    <FormField
+                        control={form.control}
+                        name="notes"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Notes</FormLabel>
+                                <FormControl>
+                                    <Textarea {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
                         )}
+                    />
 
-                        {type === 'equipment' && (
-                            <>
-                                <FormField
-                                    control={form.control}
-                                    name="equipment_id"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Equipment</FormLabel>
-                                            <Select
-                                                onValueChange={(value) => field.onChange(Number(value))}
-                                                defaultValue={field.value?.toString()}
-                                            >
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder={t('ph_select_equipment')} />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    {/* Add equipment options here */}
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="hourly_rate"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>{t('lbl_hourly_rate')}</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type="number"
-                                                    {...field}
-                                                    onChange={(e) => field.onChange(Number(e.target.value))}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </>
-                        )}
-
-                        {type === 'material' && (
-                            <>
-                                <FormField
-                                    control={form.control}
-                                    name="name"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Name</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="unit_price"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>{t('lbl_unit_price')}</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type="number"
-                                                    {...field}
-                                                    onChange={(e) => field.onChange(Number(e.target.value))}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="quantity"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Quantity</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type="number"
-                                                    {...field}
-                                                    onChange={(e) => field.onChange(Number(e.target.value))}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="unit"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Unit</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </>
-                        )}
-
-                        {type === 'fuel' && (
-                            <>
-                                <FormField
-                                    control={form.control}
-                                    name="equipment_id"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Equipment</FormLabel>
-                                            <Select
-                                                onValueChange={(value) => field.onChange(Number(value))}
-                                                defaultValue={field.value?.toString()}
-                                            >
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder={t('ph_select_equipment')} />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    {/* Add equipment options here */}
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="fuel_type"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>{t('lbl_fuel_type')}</FormLabel>
-                                            <Select
-                                                onValueChange={field.onChange}
-                                                defaultValue={field.value}
-                                            >
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder={t('ph_select_fuel_type')} />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    <SelectItem value="diesel">Diesel</SelectItem>
-                                                    <SelectItem value="petrol">Petrol</SelectItem>
-                                                    <SelectItem value="lpg">LPG</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="amount"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Amount</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type="number"
-                                                    {...field}
-                                                    onChange={(e) => field.onChange(Number(e.target.value))}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="unit_price"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>{t('lbl_unit_price')}</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type="number"
-                                                    {...field}
-                                                    onChange={(e) => field.onChange(Number(e.target.value))}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </>
-                        )}
-
-                        {type === 'expense' && (
-                            <>
-                                <FormField
-                                    control={form.control}
-                                    name="name"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Name</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="amount"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Amount</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type="number"
-                                                    {...field}
-                                                    onChange={(e) => field.onChange(Number(e.target.value))}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="category"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Category</FormLabel>
-                                            <Select
-                                                onValueChange={field.onChange}
-                                                defaultValue={field.value}
-                                            >
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder={t('ph_select_category')} />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    <SelectItem value="office">Office</SelectItem>
-                                                    <SelectItem value="travel">Travel</SelectItem>
-                                                    <SelectItem value="supplies">Supplies</SelectItem>
-                                                    <SelectItem value="other">Other</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </>
-                        )}
-
-                        <FormField
-                            control={form.control}
-                            name="notes"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Notes</FormLabel>
-                                    <FormControl>
-                                        <Textarea {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <div className="flex justify-end space-x-2">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => onOpenChange(false)}
-                            >
-                                Cancel
-                            </Button>
-                            <Button type="submit" disabled={isSubmitting}>
-                                {isSubmitting ? 'Saving...' : 'Save'}
-                            </Button>
-                        </div>
+                    <div className="flex justify-end space-x-2">
+                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                            Cancel
+                        </Button>
+                        <Button type="submit" disabled={isSubmitting}>
+                            {isSubmitting ? 'Saving...' : 'Save'}
+                        </Button>
+                    </div>
                 </Form>
             </DialogContent>
         </Dialog>
@@ -435,23 +370,4 @@ const ResourceModal: React.FC<ResourceModalProps> = ({
 
 export default ResourceModal;
 
-export const ResourceFormModal = (props: any) => (
-  <div className="resource-form-modal-placeholder">
-    {props.children || 'Resource Form Modal'}
-  </div>
-);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export const ResourceFormModal = (props: any) => <div className="resource-form-modal-placeholder">{props.children || 'Resource Form Modal'}</div>;

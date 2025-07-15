@@ -1,7 +1,6 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { ModuleCard } from '../ModuleCard';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { route } from '../../../routes';
+import { ModuleCard } from '../ModuleCard';
 
 describe('ModuleCard', () => {
     const defaultProps = {
@@ -58,24 +57,3 @@ describe('ModuleCard', () => {
         expect(link).toHaveAttribute('href', route('core.modules.show', { name: 'Test Module' }));
     });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

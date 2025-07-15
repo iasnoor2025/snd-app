@@ -1,18 +1,31 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Head, Link, router } from '@inertiajs/react';
-import { Button } from "@/Core";
-import { Input } from "@/Core";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Core";
-import { Badge } from "@/Core";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/Core";
-import { Pagination } from "@/Core";
-import { Search, Plus, Eye, Edit, Check, X, Calendar } from 'lucide-react';
-import { AppLayout } from '@/Core';
+import {
+    AppLayout,
+    Badge,
+    Button,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+    Input,
+    Pagination,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/Core';
 import { PageProps } from '@/Core/types';
-import SalaryHistory from '../Employees/SalaryHistory';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import { Head, Link, router } from '@inertiajs/react';
+import { Calendar, Check, Edit, Eye, Plus, Search, X } from 'lucide-react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Employee {
     id: number;
@@ -72,7 +85,7 @@ interface Props extends PageProps {
 }
 
 export default function Index({ increments, statistics, projectedCost, filters, employees }: Props) {
-  const { t } = useTranslation('employees');
+    const { t } = useTranslation('employees');
 
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
     const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
@@ -80,15 +93,19 @@ export default function Index({ increments, statistics, projectedCost, filters, 
     const [typeFilter, setTypeFilter] = useState(filters.increment_type || 'all');
 
     const handleSearch = () => {
-        router.get(route('salary-increments.index'), {
-            search: searchTerm,
-            status: statusFilter === 'all' ? '' : statusFilter,
-            employee_id: employeeFilter === 'all' ? '' : employeeFilter,
-            increment_type: typeFilter === 'all' ? '' : typeFilter,
-        }, {
-            preserveState: true,
-            replace: true,
-        });
+        router.get(
+            route('salary-increments.index'),
+            {
+                search: searchTerm,
+                status: statusFilter === 'all' ? '' : statusFilter,
+                employee_id: employeeFilter === 'all' ? '' : employeeFilter,
+                increment_type: typeFilter === 'all' ? '' : typeFilter,
+            },
+            {
+                preserveState: true,
+                replace: true,
+            },
+        );
     };
 
     const clearFilters = () => {
@@ -106,11 +123,7 @@ export default function Index({ increments, statistics, projectedCost, filters, 
             rejected: 'bg-red-100 text-red-800',
             applied: 'bg-blue-100 text-blue-800',
         };
-        return (
-            <Badge className={variants[status as keyof typeof variants]}>
-                {status.charAt(0).toUpperCase() + status.slice(1)}
-            </Badge>
-        );
+        return <Badge className={variants[status as keyof typeof variants]}>{status.charAt(0).toUpperCase() + status.slice(1)}</Badge>;
     };
 
     const formatCurrency = (amount: number | null | undefined) => {
@@ -143,31 +156,27 @@ export default function Index({ increments, statistics, projectedCost, filters, 
 
     const breadcrumbs = [
         { title: 'Employee Management', href: '/employee-management' },
-        { title: 'Salary Increments', href: route('salary-increments.index') }
+        { title: 'Salary Increments', href: route('salary-increments.index') },
     ];
 
     return (
-        <AppLayout
-            title={t('salary_increments')}
-            breadcrumbs={breadcrumbs}
-            requiredPermission="salary-increments.view"
-        >
+        <AppLayout title={t('salary_increments')} breadcrumbs={breadcrumbs} requiredPermission="salary-increments.view">
             <Head title={t('salary_increments')} />
 
             <div className="py-12">
                 <div className="sm:px-6 lg:px-8">
                     {/* Header with Action Button */}
-                    <div className="flex justify-between items-center mb-6">
+                    <div className="mb-6 flex items-center justify-between">
                         <h1 className="text-2xl font-bold text-gray-900">{t('salary_increments')}</h1>
                         <Link href={route('salary-increments.create')}>
                             <Button>
-                                <Plus className="h-4 w-4 mr-2" />
+                                <Plus className="mr-2 h-4 w-4" />
                                 {t('new_increment')}
                             </Button>
                         </Link>
                     </div>
                     {/* Statistics Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                    <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                         <Card>
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                 <CardTitle className="text-sm font-medium">{t('ttl_total_increments')}</CardTitle>
@@ -189,9 +198,7 @@ export default function Index({ increments, statistics, projectedCost, filters, 
                                 <CardTitle className="text-sm font-medium">{t('ttl_total_increment_amount')}</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold text-green-600">
-                                    {formatCurrency(statistics.total_increment_amount)}
-                                </div>
+                                <div className="text-2xl font-bold text-green-600">{formatCurrency(statistics.total_increment_amount)}</div>
                             </CardContent>
                         </Card>
                         <Card>
@@ -199,9 +206,7 @@ export default function Index({ increments, statistics, projectedCost, filters, 
                                 <CardTitle className="text-sm font-medium">{t('ttl_salary_annual_total')}</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold text-blue-600">
-                                    {formatCurrency(projectedCost)}
-                                </div>
+                                <div className="text-2xl font-bold text-blue-600">{formatCurrency(projectedCost)}</div>
                             </CardContent>
                         </Card>
                     </div>
@@ -212,7 +217,7 @@ export default function Index({ increments, statistics, projectedCost, filters, 
                             <CardTitle>{t('filters')}</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
                                 <div>
                                     <Input
                                         placeholder={t('ph_search_employees')}
@@ -268,7 +273,7 @@ export default function Index({ increments, statistics, projectedCost, filters, 
                                 </div>
                                 <div className="flex gap-2">
                                     <Button onClick={handleSearch} className="flex-1">
-                                        <Search className="h-4 w-4 mr-2" />
+                                        <Search className="mr-2 h-4 w-4" />
                                         {t('search')}
                                     </Button>
                                     <Button variant="outline" onClick={clearFilters}>
@@ -283,9 +288,7 @@ export default function Index({ increments, statistics, projectedCost, filters, 
                     <Card>
                         <CardHeader>
                             <CardTitle>{t('salary_increments')}</CardTitle>
-                            <CardDescription>
-                                {t('manage_salary_increments')}
-                            </CardDescription>
+                            <CardDescription>{t('manage_salary_increments')}</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <Table>
@@ -315,9 +318,7 @@ export default function Index({ increments, statistics, projectedCost, filters, 
                                                         <div className="font-medium">
                                                             {increment.employee.first_name} {increment.employee.last_name}
                                                         </div>
-                                                        <div className="text-sm text-gray-500">
-                                                            {increment.employee.employee_id}
-                                                        </div>
+                                                        <div className="text-sm text-gray-500">{increment.employee.employee_id}</div>
                                                     </div>
                                                 </TableCell>
                                                 <TableCell>{increment.employee.department?.name || 'N/A'}</TableCell>
@@ -325,22 +326,14 @@ export default function Index({ increments, statistics, projectedCost, filters, 
                                                 <TableCell>{formatCurrency(increment.new_total_salary)}</TableCell>
                                                 <TableCell>
                                                     <div>
-                                                        <div className="font-medium text-green-600">
-                                                            +{formatCurrency(increaseAmount)}
-                                                        </div>
-                                                        <div className="text-sm text-gray-500">
-                                                            +{increasePercentage}%
-                                                        </div>
+                                                        <div className="font-medium text-green-600">+{formatCurrency(increaseAmount)}</div>
+                                                        <div className="text-sm text-gray-500">+{increasePercentage}%</div>
                                                     </div>
                                                 </TableCell>
                                                 <TableCell>
-                                                    <Badge variant="outline">
-                                                        {increment.increment_type.replace('_', ' ').toUpperCase()}
-                                                    </Badge>
+                                                    <Badge variant="outline">{increment.increment_type.replace('_', ' ').toUpperCase()}</Badge>
                                                 </TableCell>
-                                                <TableCell>
-                                                    {new Date(increment.effective_date)}
-                                                </TableCell>
+                                                <TableCell>{new Date(increment.effective_date)}</TableCell>
                                                 <TableCell>{getStatusBadge(increment.status)}</TableCell>
                                                 <TableCell>{increment.requested_by.name}</TableCell>
                                                 <TableCell>
@@ -414,19 +407,3 @@ export default function Index({ increments, statistics, projectedCost, filters, 
         </AppLayout>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { EquipmentList } from '../EquipmentList';
 
@@ -38,7 +38,7 @@ describe('EquipmentList', () => {
         // Check if status badges are rendered
         expect(screen.getByText('Available')).toBeInTheDocument();
         expect(screen.getByText('Rented')).toBeInTheDocument();
-    })
+    });
 
     it('filters equipment by search term', async () => {
         render(<EquipmentList equipment={mockEquipment} />);
@@ -48,27 +48,27 @@ describe('EquipmentList', () => {
 
         expect(screen.getByText('Test Equipment 1')).toBeInTheDocument();
         expect(screen.queryByText('Test Equipment 2')).not.toBeInTheDocument();
-    })
+    });
 
     it('filters equipment by status', () => {
         render(<EquipmentList equipment={mockEquipment} />);
 
-        const statusSelect = screen.getByRole('combobox', { name: /status/i })
-        fireEvent.change(statusSelect, { target: { value: 'available' } })
+        const statusSelect = screen.getByRole('combobox', { name: /status/i });
+        fireEvent.change(statusSelect, { target: { value: 'available' } });
 
         expect(screen.getByText('Test Equipment 1')).toBeInTheDocument();
         expect(screen.queryByText('Test Equipment 2')).not.toBeInTheDocument();
-    })
+    });
 
     it('filters equipment by category', () => {
         render(<EquipmentList equipment={mockEquipment} />);
 
-        const categorySelect = screen.getByRole('combobox', { name: /category/i })
-        fireEvent.change(categorySelect, { target: { value: 'Category A' } })
+        const categorySelect = screen.getByRole('combobox', { name: /category/i });
+        fireEvent.change(categorySelect, { target: { value: 'Category A' } });
 
         expect(screen.getByText('Test Equipment 1')).toBeInTheDocument();
         expect(screen.queryByText('Test Equipment 2')).not.toBeInTheDocument();
-    })
+    });
 
     it('sorts equipment by name', () => {
         render(<EquipmentList equipment={mockEquipment} />);
@@ -84,7 +84,7 @@ describe('EquipmentList', () => {
         const reversedRows = screen.getAllByRole('row');
         const firstReversedRow = reversedRows[1];
         expect(firstReversedRow).toHaveTextContent('Test Equipment 2');
-    })
+    });
 
     it('sorts equipment by daily rate', () => {
         render(<EquipmentList equipment={mockEquipment} />);
@@ -100,14 +100,14 @@ describe('EquipmentList', () => {
         const reversedRows = screen.getAllByRole('row');
         const firstReversedRow = reversedRows[1];
         expect(firstReversedRow).toHaveTextContent('$200.00');
-    })
+    });
 
     it('displays correct currency format', () => {
         render(<EquipmentList equipment={mockEquipment} />);
 
         expect(screen.getByText('$100.00')).toBeInTheDocument();
         expect(screen.getByText('$200.00')).toBeInTheDocument();
-    })
+    });
 
     it('displays correct status badge colors', () => {
         render(<EquipmentList equipment={mockEquipment} />);
@@ -117,23 +117,5 @@ describe('EquipmentList', () => {
 
         expect(availableBadge).toHaveClass('bg-green-100', 'text-green-800');
         expect(rentedBadge).toHaveClass('bg-blue-100', 'text-blue-800');
-    })
-})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    });
+});

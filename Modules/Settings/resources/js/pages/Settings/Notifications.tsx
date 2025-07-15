@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Head } from '@inertiajs/react';
 import { AppLayout } from '@/Core';
-import { Bell, Mail, MessageSquare, Calendar, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Head } from '@inertiajs/react';
+import { AlertTriangle, Bell, Calendar, CheckCircle, Mail, MessageSquare } from 'lucide-react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface NotificationSettings {
@@ -41,7 +41,7 @@ export default function NotificationSettings() {
     });
 
     const handleSwitchChange = (key: keyof NotificationSettings, value: boolean) => {
-        setSettings(prev => ({ ...prev, [key]: value }));
+        setSettings((prev) => ({ ...prev, [key]: value }));
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -156,7 +156,7 @@ export default function NotificationSettings() {
 
     const breadcrumbs = [
         { title: t('ui.titles.settings'), href: route('settings.index') },
-        { title: t('settings.notifications'), href: route('settings.notifications') }
+        { title: t('settings.notifications'), href: route('settings.notifications') },
     ];
 
     return (
@@ -164,21 +164,17 @@ export default function NotificationSettings() {
             <Head title={t('settings.notifications')} />
 
             <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
-                        <h2 className="text-lg font-medium text-gray-900">
-                            {t('settings.notification_preferences')}
-                        </h2>
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    <div className="overflow-hidden bg-white p-6 shadow-xl sm:rounded-lg">
+                        <h2 className="text-lg font-medium text-gray-900">{t('settings.notification_preferences')}</h2>
 
-                        <p className="mt-1 text-sm text-gray-600">
-                            {t('settings.notification_preferences_description')}
-                        </p>
+                        <p className="mt-1 text-sm text-gray-600">{t('settings.notification_preferences_description')}</p>
 
                         <form onSubmit={handleSubmit} className="space-y-6">
                             {notificationGroups.map((group, groupIndex) => (
-                                <div key={groupIndex} className="bg-white rounded-lg shadow p-6">
+                                <div key={groupIndex} className="rounded-lg bg-white p-6 shadow">
                                     <div className="mb-4">
-                                        <h3 className="text-lg font-semibold flex items-center gap-2 mb-2">
+                                        <h3 className="mb-2 flex items-center gap-2 text-lg font-semibold">
                                             {group.icon}
                                             {group.title}
                                         </h3>
@@ -191,20 +187,18 @@ export default function NotificationSettings() {
                                                 <div className="flex items-start gap-3">
                                                     {setting.icon && <div className="mt-0.5">{setting.icon}</div>}
                                                     <div>
-                                                        <label className="font-medium text-gray-900 cursor-pointer">
-                                                            {setting.label}
-                                                        </label>
+                                                        <label className="cursor-pointer font-medium text-gray-900">{setting.label}</label>
                                                         <p className="text-sm text-gray-600">{setting.description}</p>
                                                     </div>
                                                 </div>
-                                                <label className="relative inline-flex items-center cursor-pointer">
+                                                <label className="relative inline-flex cursor-pointer items-center">
                                                     <input
                                                         type="checkbox"
-                                                        className="sr-only peer"
+                                                        className="peer sr-only"
                                                         checked={settings[setting.key]}
                                                         onChange={(e) => handleSwitchChange(setting.key, e.target.checked)}
                                                     />
-                                                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                                    <div className="peer h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-blue-600 peer-focus:ring-4 peer-focus:ring-blue-300 peer-focus:outline-none after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
                                                 </label>
                                             </div>
                                         ))}
@@ -215,7 +209,7 @@ export default function NotificationSettings() {
                             <div className="flex justify-end pt-6">
                                 <button
                                     type="submit"
-                                    className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
                                 >
                                     {t('settings.save_settings')}
                                 </button>

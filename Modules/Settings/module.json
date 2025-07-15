@@ -12,8 +12,6 @@
     "aliases": {
         "Setting": "Modules\\Settings\\Facades\\Setting"
     },
-    "files": [
-        "Helpers/settings.php"
-    ],
+    "files": ["Helpers/settings.php"],
     "requires": []
 }

@@ -1,4 +1,4 @@
 export interface Designation {
-  id: string;
-  name: string;
+    id: string;
+    name: string;
 }

@@ -4,9 +4,7 @@
     "description": "Notifications module for the application",
     "keywords": [],
     "priority": 0,
-    "providers": [
-        "Modules\\Notifications\\Providers\\NotificationsServiceProvider"
-    ],
+    "providers": ["Modules\\Notifications\\Providers\\NotificationsServiceProvider"],
     "aliases": [],
     "files": [],
     "requires": []

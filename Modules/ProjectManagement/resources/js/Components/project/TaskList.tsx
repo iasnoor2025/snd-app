@@ -1,17 +1,8 @@
-import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { CheckCircle2, Clock, AlertCircle, MoreHorizontal, Edit, Trash2 } from 'lucide-react';
-import { Badge } from "@/Core";
-import { Progress } from "@/Core";
-import { Button } from "@/Core";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/Core";
+import { Badge, Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Progress } from '@/Core';
 import { formatDistanceToNow } from 'date-fns';
+import { AlertCircle, CheckCircle2, Clock, Edit, MoreHorizontal, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface ProjectTask {
     id: number;
@@ -38,11 +29,20 @@ interface TaskListProps {
     onRemoveDependency?: (taskId: number, dependsOnId: number) => void;
 }
 
-export default function TaskList({ tasks, onEdit, onDelete, onStatusChange, onCompletionChange, dependencies = {}, onAddDependency, onRemoveDependency }: TaskListProps) {
-  const { t } = useTranslation('project');
+export default function TaskList({
+    tasks,
+    onEdit,
+    onDelete,
+    onStatusChange,
+    onCompletionChange,
+    dependencies = {},
+    onAddDependency,
+    onRemoveDependency,
+}: TaskListProps) {
+    const { t } = useTranslation('project');
 
     // Debug check for the task array passed to the component
-    console.log('TaskList component received tasks:', { count: tasks?.length || 0, sample: tasks?.[0] })
+    console.log('TaskList component received tasks:', { count: tasks?.length || 0, sample: tasks?.[0] });
 
     // Ensure tasks is always an array, even if null is passed
     const taskArray = tasks || [];
@@ -52,28 +52,56 @@ export default function TaskList({ tasks, onEdit, onDelete, onStatusChange, onCo
     const getStatusBadge = (status: string) => {
         switch (status) {
             case 'pending':
-                return <Badge variant="outline" className="bg-slate-100">Pending</Badge>
+                return (
+                    <Badge variant="outline" className="bg-slate-100">
+                        Pending
+                    </Badge>
+                );
             case 'in_progress':
-                return <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200">{t('in_progress')}</Badge>
+                return (
+                    <Badge variant="outline" className="border-blue-200 bg-blue-100 text-blue-800">
+                        {t('in_progress')}
+                    </Badge>
+                );
             case 'completed':
-                return <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">Completed</Badge>
+                return (
+                    <Badge variant="outline" className="border-green-200 bg-green-100 text-green-800">
+                        Completed
+                    </Badge>
+                );
             case 'cancelled':
-                return <Badge variant="outline" className="bg-red-100 text-red-800 border-red-200">Cancelled</Badge>
+                return (
+                    <Badge variant="outline" className="border-red-200 bg-red-100 text-red-800">
+                        Cancelled
+                    </Badge>
+                );
             default:
-                return <Badge variant="outline">Unknown</Badge>
+                return <Badge variant="outline">Unknown</Badge>;
         }
     };
 
     const getPriorityBadge = (priority: string) => {
         switch (priority) {
             case 'low':
-                return <Badge variant="outline" className="bg-slate-100">Low</Badge>
+                return (
+                    <Badge variant="outline" className="bg-slate-100">
+                        Low
+                    </Badge>
+                );
             case 'medium':
-                return <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-200">Medium</Badge>
+                return (
+                    <Badge variant="outline" className="border-yellow-200 bg-yellow-100 text-yellow-800">
+                        Medium
+                    </Badge>
+                );
             case 'high':
-                return <Badge variant="outline" className="bg-red-100 text-red-800 border-red-200">High</Badge>
+                return (
+                    <Badge variant="outline" className="border-red-200 bg-red-100 text-red-800">
+                        High
+                    </Badge>
+                );
             default:
-                return <Badge variant="outline">Unknown</Badge>
+                return <Badge variant="outline">Unknown</Badge>;
         }
     };
 
@@ -86,9 +114,9 @@ export default function TaskList({ tasks, onEdit, onDelete, onStatusChange, onCo
 
     if (taskArray.length === 0) {
         return (
-            <div className="border rounded-md p-8 text-center">
+            <div className="rounded-md border p-8 text-center">
                 <p className="text-lg font-medium text-gray-900">{t('no_tasks_found')}</p>
-                <p className="text-sm text-gray-500 mt-1">{t('add_tasks_to_track_project_progress')}</p>
+                <p className="mt-1 text-sm text-gray-500">{t('add_tasks_to_track_project_progress')}</p>
             </div>
         );
     }
@@ -96,34 +124,37 @@ export default function TaskList({ tasks, onEdit, onDelete, onStatusChange, onCo
     return (
         <div className="space-y-4">
             {taskArray.map((task) => (
-                <div key={task.id} className="border rounded-md p-4 hover:shadow-sm transition-shadow">
-                    <div className="flex justify-between items-start">
-                        <div className="space-y-1 flex-1">
+                <div key={task.id} className="rounded-md border p-4 transition-shadow hover:shadow-sm">
+                    <div className="flex items-start justify-between">
+                        <div className="flex-1 space-y-1">
                             <div className="flex items-center space-x-2">
                                 <h3 className="font-medium">{task.title}</h3>
-                                {task.status === 'completed' && (
-                                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                                )}
-                                {task.status === 'in_progress' && (
-                                    <Clock className="h-4 w-4 text-blue-500" />
-                                )}
+                                {task.status === 'completed' && <CheckCircle2 className="h-4 w-4 text-green-500" />}
+                                {task.status === 'in_progress' && <Clock className="h-4 w-4 text-blue-500" />}
                                 {task.due_date && isDueOrOverdue(task.due_date) && task.status !== 'completed' && (
                                     <AlertCircle className="h-4 w-4 text-red-500" />
                                 )}
                             </div>
 
-                            <p className="text-sm text-gray-500 line-clamp-2">{task.description || 'No description'}</p>
+                            <p className="line-clamp-2 text-sm text-gray-500">{task.description || 'No description'}</p>
 
-                            <div className="flex flex-wrap gap-2 mt-2">
+                            <div className="mt-2 flex flex-wrap gap-2">
                                 {getStatusBadge(task.status)}
                                 {getPriorityBadge(task.priority)}
                                 {task.due_date && (
-                                    <Badge variant="outline" className={isDueOrOverdue(task.due_date) && task.status !== 'completed' ? 'bg-red-100 text-red-800 border-red-200' : ''}>
+                                    <Badge
+                                        variant="outline"
+                                        className={
+                                            isDueOrOverdue(task.due_date) && task.status !== 'completed'
+                                                ? 'border-red-200 bg-red-100 text-red-800'
+                                                : ''
+                                        }
+                                    >
                                         Due {formatDistanceToNow(new Date(task.due_date), { addSuffix: true })}
                                     </Badge>
                                 )}
                                 {task.assigned_to && (
-                                    <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-200">
+                                    <Badge variant="outline" className="border-purple-200 bg-purple-100 text-purple-800">
                                         {task.assigned_to.name}
                                     </Badge>
                                 )}
@@ -132,11 +163,17 @@ export default function TaskList({ tasks, onEdit, onDelete, onStatusChange, onCo
                             <div className="mt-2">
                                 <span className="text-xs text-gray-500">Depends on: </span>
                                 {dependencies[task.id] && dependencies[task.id].length > 0 ? (
-                                    dependencies[task.id].map(dep => (
-                                        <span key={dep.id} className="inline-block bg-slate-200 text-xs rounded px-2 py-0.5 mr-1">
+                                    dependencies[task.id].map((dep) => (
+                                        <span key={dep.id} className="mr-1 inline-block rounded bg-slate-200 px-2 py-0.5 text-xs">
                                             {dep.title}
                                             {onRemoveDependency && (
-                                                <button type="button" className="ml-1 text-red-500" onClick={() => onRemoveDependency(task.id, dep.id)}>&times;</button>
+                                                <button
+                                                    type="button"
+                                                    className="ml-1 text-red-500"
+                                                    onClick={() => onRemoveDependency(task.id, dep.id)}
+                                                >
+                                                    &times;
+                                                </button>
                                             )}
                                         </span>
                                     ))
@@ -146,18 +183,22 @@ export default function TaskList({ tasks, onEdit, onDelete, onStatusChange, onCo
                                 {onAddDependency && (
                                     <div className="mt-1 flex items-center gap-2">
                                         <select
-                                            className="border rounded px-2 py-1 text-xs"
+                                            className="rounded border px-2 py-1 text-xs"
                                             value={selectedDependency[task.id] || ''}
-                                            onChange={e => setSelectedDependency({ ...selectedDependency, [task.id]: Number(e.target.value) })}
+                                            onChange={(e) => setSelectedDependency({ ...selectedDependency, [task.id]: Number(e.target.value) })}
                                         >
                                             <option value="">Add dependency...</option>
-                                            {taskArray.filter(t => t.id !== task.id && !(dependencies[task.id] || []).some(dep => dep.id === t.id)).map(t => (
-                                                <option key={t.id} value={t.id}>{t.title}</option>
-                                            ))}
+                                            {taskArray
+                                                .filter((t) => t.id !== task.id && !(dependencies[task.id] || []).some((dep) => dep.id === t.id))
+                                                .map((t) => (
+                                                    <option key={t.id} value={t.id}>
+                                                        {t.title}
+                                                    </option>
+                                                ))}
                                         </select>
                                         <button
                                             type="button"
-                                            className="text-xs bg-blue-500 text-white rounded px-2 py-1"
+                                            className="rounded bg-blue-500 px-2 py-1 text-xs text-white"
                                             disabled={!selectedDependency[task.id]}
                                             onClick={() => {
                                                 if (selectedDependency[task.id]) {
@@ -165,7 +206,9 @@ export default function TaskList({ tasks, onEdit, onDelete, onStatusChange, onCo
                                                     setSelectedDependency({ ...selectedDependency, [task.id]: 0 });
                                                 }
                                             }}
-                                        >Add</button>
+                                        >
+                                            Add
+                                        </button>
                                     </div>
                                 )}
                             </div>
@@ -211,7 +254,7 @@ export default function TaskList({ tasks, onEdit, onDelete, onStatusChange, onCo
                     </div>
 
                     <div className="mt-4">
-                        <div className="flex items-center justify-between mb-1">
+                        <div className="mb-1 flex items-center justify-between">
                             <span className="text-xs font-medium">{task.completion_percentage}% completed</span>
                             <div className="flex space-x-2">
                                 {task.status !== 'completed' && task.completion_percentage < 100 && (
@@ -219,7 +262,7 @@ export default function TaskList({ tasks, onEdit, onDelete, onStatusChange, onCo
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            className="h-6 text-xs py-0 px-2"
+                                            className="h-6 px-2 py-0 text-xs"
                                             onClick={() => onCompletionChange(task, Math.min(100, task.completion_percentage + 10))}
                                         >
                                             +10%
@@ -227,7 +270,7 @@ export default function TaskList({ tasks, onEdit, onDelete, onStatusChange, onCo
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            className="h-6 text-xs py-0 px-2"
+                                            className="h-6 px-2 py-0 text-xs"
                                             onClick={() => onCompletionChange(task, 100)}
                                         >
                                             Mark 100%
@@ -243,17 +286,3 @@ export default function TaskList({ tasks, onEdit, onDelete, onStatusChange, onCo
         </div>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

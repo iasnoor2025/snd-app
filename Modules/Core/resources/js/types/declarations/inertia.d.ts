@@ -10,12 +10,8 @@ declare module '@inertiajs/react' {
 
     export interface CreateInertiaAppProps {
         resolve: (name: string) => Promise<Page>;
-        setup: (props: {
-            el: HTMLElement;
-            App: ComponentType<any>;
-            props: Record<string, any>;
-        }) => void;
+        setup: (props: { el: HTMLElement; App: ComponentType<any>; props: Record<string, any> }) => void;
     }
 
     export function createInertiaApp(props: CreateInertiaAppProps): Promise<void>;
-} 
+}

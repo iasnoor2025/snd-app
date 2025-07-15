@@ -1,24 +1,24 @@
 {
-  "title": "API",
-  "description": "API integrations and management",
-  "sections": {
-    "keys": "API Keys",
-    "tokens": "Access Tokens",
-    "logs": "API Logs",
-    "documentation": "Documentation"
-  },
-  "actions": {
-    "generate_key": "Generate API Key",
-    "revoke_key": "Revoke API Key",
-    "create_token": "Create Token",
-    "revoke_token": "Revoke Token"
-  },
-  "fields": {
-    "key": "API Key",
-    "token": "Access Token",
-    "expiry": "Expiry Date",
-    "permissions": "Permissions",
-    "status": "Status",
-    "last_used": "Last Used"
-  }
-} 
+    "title": "API",
+    "description": "API integrations and management",
+    "sections": {
+        "keys": "API Keys",
+        "tokens": "Access Tokens",
+        "logs": "API Logs",
+        "documentation": "Documentation"
+    },
+    "actions": {
+        "generate_key": "Generate API Key",
+        "revoke_key": "Revoke API Key",
+        "create_token": "Create Token",
+        "revoke_token": "Revoke Token"
+    },
+    "fields": {
+        "key": "API Key",
+        "token": "Access Token",
+        "expiry": "Expiry Date",
+        "permissions": "Permissions",
+        "status": "Status",
+        "last_used": "Last Used"
+    }
+}

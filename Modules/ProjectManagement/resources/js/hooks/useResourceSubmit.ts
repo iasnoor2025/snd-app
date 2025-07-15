@@ -1,7 +1,7 @@
+import { toast } from '@/Core';
+import { router } from '@inertiajs/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { router } from '@inertiajs/react';
-import { toast } from "@/Core";
 
 interface UseResourceSubmitProps {
     projectId: number;
@@ -16,15 +16,11 @@ interface UseResourceSubmitReturn {
     handleDelete: (id: number) => void;
 }
 
-export function useResourceSubmit({
-    projectId,
-    type,
-    onSuccess
-}: UseResourceSubmitProps): UseResourceSubmitReturn {
+export function useResourceSubmit({ projectId, type, onSuccess }: UseResourceSubmitProps): UseResourceSubmitReturn {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = (data: any) => {
-  const { t } = useTranslation('project');
+        const { t } = useTranslation('project');
 
         setIsSubmitting(true);
 
@@ -32,9 +28,9 @@ export function useResourceSubmit({
             onSuccess: () => {
                 setIsSubmitting(false);
                 toast({
-                    title: "Success",
+                    title: 'Success',
                     description: `${type.charAt(0).toUpperCase() + type.slice(1)} resource created successfully`,
-                    variant: "default",
+                    variant: 'default',
                 });
                 onSuccess?.();
             },
@@ -42,11 +38,11 @@ export function useResourceSubmit({
                 setIsSubmitting(false);
                 console.error('Submission errors:', errors);
                 toast({
-                    title: "Error",
+                    title: 'Error',
                     description: `Failed to create ${type} resource. Please check your input and try again.`,
-                    variant: "destructive",
+                    variant: 'destructive',
                 });
-            }
+            },
         });
     };
 
@@ -57,9 +53,9 @@ export function useResourceSubmit({
             onSuccess: () => {
                 setIsSubmitting(false);
                 toast({
-                    title: "Success",
+                    title: 'Success',
                     description: `${type.charAt(0).toUpperCase() + type.slice(1)} resource updated successfully`,
-                    variant: "default",
+                    variant: 'default',
                 });
                 onSuccess?.();
             },
@@ -67,11 +63,11 @@ export function useResourceSubmit({
                 setIsSubmitting(false);
                 console.error('Update errors:', errors);
                 toast({
-                    title: "Error",
+                    title: 'Error',
                     description: `Failed to update ${type} resource. Please check your input and try again.`,
-                    variant: "destructive",
+                    variant: 'destructive',
                 });
-            }
+            },
         });
     };
 
@@ -81,22 +77,22 @@ export function useResourceSubmit({
         if (type === 'manpower') {
             const url = route('projects.resources.manpower.destroy', {
                 project: projectId,
-                manpower: id
+                manpower: id,
             });
             fetch(url, {
                 method: 'DELETE',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || ''
+                    'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '',
                 },
                 credentials: 'same-origin',
             })
                 .then(() => {
                     setIsSubmitting(false);
                     toast({
-                        title: "Success",
+                        title: 'Success',
                         description: `Manpower resource deleted successfully`,
-                        variant: "default",
+                        variant: 'default',
                     });
                     onSuccess?.();
                 })
@@ -104,9 +100,9 @@ export function useResourceSubmit({
                     setIsSubmitting(false);
                     console.error('Delete errors:', error);
                     toast({
-                        title: "Error", 
+                        title: 'Error',
                         description: `Failed to delete manpower resource. Please try again.`,
-                        variant: "destructive",
+                        variant: 'destructive',
                     });
                 });
             return;
@@ -116,9 +112,9 @@ export function useResourceSubmit({
             onSuccess: () => {
                 setIsSubmitting(false);
                 toast({
-                    title: "Success",
+                    title: 'Success',
                     description: `${type.charAt(0).toUpperCase() + type.slice(1)} resource deleted successfully`,
-                    variant: "default",
+                    variant: 'default',
                 });
                 onSuccess?.();
             },
@@ -126,11 +122,11 @@ export function useResourceSubmit({
                 setIsSubmitting(false);
                 console.error('Delete errors:', errors);
                 toast({
-                    title: "Error",
+                    title: 'Error',
                     description: `Failed to delete ${type} resource. Please try again.`,
-                    variant: "destructive",
+                    variant: 'destructive',
                 });
-            }
+            },
         });
     };
 
@@ -141,4 +137,3 @@ export function useResourceSubmit({
         handleDelete,
     };
 }
-

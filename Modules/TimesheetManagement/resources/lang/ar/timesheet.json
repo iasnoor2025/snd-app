@@ -1,52 +1,52 @@
 {
-  "title": "إدارة سجلات الدوام",
-  "list": {
-    "title": "سجلات الدوام",
-    "description": "إدارة سجلات دوام الموظفين"
-  },
-  "fields": {
-    "employee": "الموظف",
-    "date": "التاريخ",
-    "project": "المشروع",
-    "task": "المهمة",
-    "hours": "الساعات",
-    "description": "الوصف",
-    "status": "الحالة"
-  },
-  "status": {
-    "draft": "مسودة",
-    "submitted": "مقدم",
-    "approved": "معتمد",
-    "rejected": "مرفوض"
-  },
-  "messages": {
-    "create_success": "تم إنشاء سجل الدوام بنجاح",
-    "update_success": "تم تحديث سجل الدوام بنجاح",
-    "delete_success": "تم حذف سجل الدوام بنجاح"
-  },
-  "lbl_location": "الموقع",
-  "lbl_use_time_clock": "استخدم ساعة الدوام (تسجيل الدخول/الخروج)",
-  "lbl_calculated_regular_hours": "ساعات العمل العادية المحسوبة",
-  "lbl_calculated_overtime_hours": "ساعات العمل الإضافية المحسوبة",
-  "lbl_notes": "ملاحظات",
-  "optional": "اختياري",
-  "btn_saving": "جارٍ الحفظ...",
-  "btn_save_timesheet": "حفظ الجدول الزمني",
-  "status_foreman_approved": "تمت الموافقة من الفورمان",
-  "status_incharge_approved": "تمت الموافقة من المسؤول",
-  "status_checking_approved": "تمت الموافقة من الفاحص",
-  "status_pending": "قيد الانتظار",
-  "lbl_timesheet": "سجل الدوام",
-  "lbl_selected": "محدد",
-  "btn_approve_selected": "الموافقة على المحدد",
-  "btn_delete_selected": "حذف المحدد",
-  "msg_loading_timesheets": "جاري تحميل سجلات الدوام...",
-  "lbl_regular": "عادي",
-  "lbl_ot": "إضافي",
-  "msg_reject_reason_notify": "يرجى تقديم سبب لرفض سجل الدوام. سيتم إخطار الموظف.",
-  "btn_rejecting": "جاري الرفض...",
-  "btn_reject_timesheet": "رفض سجل الدوام",
-  "msg_confirm_delete_timesheets": "هل أنت متأكد أنك تريد حذف سجلات الدوام المحددة؟ لا يمكن التراجع عن هذا الإجراء.",
-  "btn_deleting": "جاري الحذف...",
-  "btn_delete_timesheets": "حذف سجلات الدوام"
+    "title": "إدارة سجلات الدوام",
+    "list": {
+        "title": "سجلات الدوام",
+        "description": "إدارة سجلات دوام الموظفين"
+    },
+    "fields": {
+        "employee": "الموظف",
+        "date": "التاريخ",
+        "project": "المشروع",
+        "task": "المهمة",
+        "hours": "الساعات",
+        "description": "الوصف",
+        "status": "الحالة"
+    },
+    "status": {
+        "draft": "مسودة",
+        "submitted": "مقدم",
+        "approved": "معتمد",
+        "rejected": "مرفوض"
+    },
+    "messages": {
+        "create_success": "تم إنشاء سجل الدوام بنجاح",
+        "update_success": "تم تحديث سجل الدوام بنجاح",
+        "delete_success": "تم حذف سجل الدوام بنجاح"
+    },
+    "lbl_location": "الموقع",
+    "lbl_use_time_clock": "استخدم ساعة الدوام (تسجيل الدخول/الخروج)",
+    "lbl_calculated_regular_hours": "ساعات العمل العادية المحسوبة",
+    "lbl_calculated_overtime_hours": "ساعات العمل الإضافية المحسوبة",
+    "lbl_notes": "ملاحظات",
+    "optional": "اختياري",
+    "btn_saving": "جارٍ الحفظ...",
+    "btn_save_timesheet": "حفظ الجدول الزمني",
+    "status_foreman_approved": "تمت الموافقة من الفورمان",
+    "status_incharge_approved": "تمت الموافقة من المسؤول",
+    "status_checking_approved": "تمت الموافقة من الفاحص",
+    "status_pending": "قيد الانتظار",
+    "lbl_timesheet": "سجل الدوام",
+    "lbl_selected": "محدد",
+    "btn_approve_selected": "الموافقة على المحدد",
+    "btn_delete_selected": "حذف المحدد",
+    "msg_loading_timesheets": "جاري تحميل سجلات الدوام...",
+    "lbl_regular": "عادي",
+    "lbl_ot": "إضافي",
+    "msg_reject_reason_notify": "يرجى تقديم سبب لرفض سجل الدوام. سيتم إخطار الموظف.",
+    "btn_rejecting": "جاري الرفض...",
+    "btn_reject_timesheet": "رفض سجل الدوام",
+    "msg_confirm_delete_timesheets": "هل أنت متأكد أنك تريد حذف سجلات الدوام المحددة؟ لا يمكن التراجع عن هذا الإجراء.",
+    "btn_deleting": "جاري الحذف...",
+    "btn_delete_timesheets": "حذف سجلات الدوام"
 }

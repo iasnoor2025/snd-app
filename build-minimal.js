@@ -12,10 +12,10 @@ const viteConfigBackupPath = path.join(__dirname, 'vite.config.ts.bak');
 // Backup original files
 console.log('Backing up original files...');
 if (fs.existsSync(appTsxPath)) {
-  fs.copyFileSync(appTsxPath, appTsxBackupPath);
+    fs.copyFileSync(appTsxPath, appTsxBackupPath);
 }
 if (fs.existsSync(viteConfigPath)) {
-  fs.copyFileSync(viteConfigPath, viteConfigBackupPath);
+    fs.copyFileSync(viteConfigPath, viteConfigBackupPath);
 }
 
 // Create a minimal app.tsx
@@ -87,7 +87,7 @@ const welcomePagePath = path.join(__dirname, 'resources/js/Pages/Welcome.tsx');
 const welcomePageBackupPath = path.join(__dirname, 'resources/js/Pages/Welcome.tsx.bak');
 
 if (fs.existsSync(welcomePagePath)) {
-  fs.copyFileSync(welcomePagePath, welcomePageBackupPath);
+    fs.copyFileSync(welcomePagePath, welcomePageBackupPath);
 }
 
 const minimalWelcomePage = `import React from 'react';
@@ -111,13 +111,13 @@ fs.writeFileSync(welcomePagePath, minimalWelcomePage);
 // Create Pages directory if it doesn't exist
 const pagesDir = path.join(__dirname, 'resources/js/Pages');
 if (!fs.existsSync(pagesDir)) {
-  fs.mkdirSync(pagesDir, { recursive: true });
+    fs.mkdirSync(pagesDir, { recursive: true });
 }
 
 // Create Auth directory if it doesn't exist
 const authDir = path.join(__dirname, 'resources/js/Pages/Auth');
 if (!fs.existsSync(authDir)) {
-  fs.mkdirSync(authDir, { recursive: true });
+    fs.mkdirSync(authDir, { recursive: true });
 }
 
 // Create minimal Login page
@@ -125,7 +125,7 @@ const loginPagePath = path.join(__dirname, 'resources/js/Pages/Auth/Login.tsx');
 const loginPageBackupPath = path.join(__dirname, 'resources/js/Pages/Auth/Login.tsx.bak');
 
 if (fs.existsSync(loginPagePath)) {
-  fs.copyFileSync(loginPagePath, loginPageBackupPath);
+    fs.copyFileSync(loginPagePath, loginPageBackupPath);
 }
 
 const minimalLoginPage = `import React from 'react';
@@ -147,7 +147,7 @@ const dashboardPagePath = path.join(__dirname, 'resources/js/Pages/Dashboard.tsx
 const dashboardPageBackupPath = path.join(__dirname, 'resources/js/Pages/Dashboard.tsx.bak');
 
 if (fs.existsSync(dashboardPagePath)) {
-  fs.copyFileSync(dashboardPagePath, dashboardPageBackupPath);
+    fs.copyFileSync(dashboardPagePath, dashboardPageBackupPath);
 }
 
 const minimalDashboardPage = `import React from 'react';
@@ -165,33 +165,33 @@ export default function Dashboard() {
 fs.writeFileSync(dashboardPagePath, minimalDashboardPage);
 
 try {
-  // Run the build command
-  console.log('Running build command with simplified files...');
-  execSync('npx vite build', { stdio: 'inherit' });
-  console.log('Build completed successfully!');
+    // Run the build command
+    console.log('Running build command with simplified files...');
+    execSync('npx vite build', { stdio: 'inherit' });
+    console.log('Build completed successfully!');
 } catch (error) {
-  console.error('Build failed:', error.message);
+    console.error('Build failed:', error.message);
 } finally {
-  // Restore original files
-  console.log('Restoring original files...');
-  if (fs.existsSync(appTsxBackupPath)) {
-    fs.copyFileSync(appTsxBackupPath, appTsxPath);
-    fs.unlinkSync(appTsxBackupPath);
-  }
-  if (fs.existsSync(viteConfigBackupPath)) {
-    fs.copyFileSync(viteConfigBackupPath, viteConfigPath);
-    fs.unlinkSync(viteConfigBackupPath);
-  }
-  if (fs.existsSync(welcomePageBackupPath)) {
-    fs.copyFileSync(welcomePageBackupPath, welcomePagePath);
-    fs.unlinkSync(welcomePageBackupPath);
-  }
-  if (fs.existsSync(loginPageBackupPath)) {
-    fs.copyFileSync(loginPageBackupPath, loginPagePath);
-    fs.unlinkSync(loginPageBackupPath);
-  }
-  if (fs.existsSync(dashboardPageBackupPath)) {
-    fs.copyFileSync(dashboardPageBackupPath, dashboardPagePath);
-    fs.unlinkSync(dashboardPageBackupPath);
-  }
+    // Restore original files
+    console.log('Restoring original files...');
+    if (fs.existsSync(appTsxBackupPath)) {
+        fs.copyFileSync(appTsxBackupPath, appTsxPath);
+        fs.unlinkSync(appTsxBackupPath);
+    }
+    if (fs.existsSync(viteConfigBackupPath)) {
+        fs.copyFileSync(viteConfigBackupPath, viteConfigPath);
+        fs.unlinkSync(viteConfigBackupPath);
+    }
+    if (fs.existsSync(welcomePageBackupPath)) {
+        fs.copyFileSync(welcomePageBackupPath, welcomePagePath);
+        fs.unlinkSync(welcomePageBackupPath);
+    }
+    if (fs.existsSync(loginPageBackupPath)) {
+        fs.copyFileSync(loginPageBackupPath, loginPagePath);
+        fs.unlinkSync(loginPageBackupPath);
+    }
+    if (fs.existsSync(dashboardPageBackupPath)) {
+        fs.copyFileSync(dashboardPageBackupPath, dashboardPagePath);
+        fs.unlinkSync(dashboardPageBackupPath);
+    }
 }

@@ -1,11 +1,11 @@
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar";
-import { UserMenuContent } from "./user-menu-content";
-import { UserInfo } from "./user-info";
-import { useIsMobile } from '../hooks/use-mobile';
 import { type SharedData } from '@/Core/types';
 import { usePage } from '@inertiajs/react';
 import { ChevronsUpDown } from 'lucide-react';
+import { useIsMobile } from '../hooks/use-mobile';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from './ui/dropdown-menu';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from './ui/sidebar';
+import { UserInfo } from './user-info';
+import { UserMenuContent } from './user-menu-content';
 
 export function NavUser() {
     const { auth } = usePage<SharedData>().props;
@@ -16,16 +16,12 @@ export function NavUser() {
             <SidebarMenuItem>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <SidebarMenuButton size="lg" className="text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent group">
+                        <SidebarMenuButton size="lg" className="group text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent">
                             <UserInfo user={auth.user} />
                             <ChevronsUpDown className="ml-auto size-4" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                        className="w-[var(--sidebar-width)]"
-                        align="end"
-                        side={isMobile ? 'bottom' : 'bottom'}
-                    >
+                    <DropdownMenuContent className="w-[var(--sidebar-width)]" align="end" side={isMobile ? 'bottom' : 'bottom'}>
                         <UserMenuContent user={auth.user} />
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -36,26 +32,3 @@ export function NavUser() {
 
 // Default export for compatibility with index.ts
 export default NavUser;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

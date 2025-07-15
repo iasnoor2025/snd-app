@@ -1,13 +1,12 @@
-import { FC, useState } from 'react';
+import { Button } from '@/Core';
 import { useForm } from '@inertiajs/react';
+import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EquipmentToastService } from '../../services/EquipmentToastService';
-import { EquipmentList } from './EquipmentList';
-import { EquipmentForm } from './EquipmentForm';
-import { EquipmentDetails } from './EquipmentDetails';
 import { Modal } from '../Modal';
-import { Button } from '@/Core';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import { EquipmentDetails } from './EquipmentDetails';
+import { EquipmentForm } from './EquipmentForm';
+import { EquipmentList } from './EquipmentList';
 
 interface Equipment {
     id: number;
@@ -63,7 +62,7 @@ export const EquipmentManagement: FC<Props> = ({ equipment }) => {
                 },
                 onError: (error) => {
                     EquipmentToastService.equipmentProcessFailed('create', error?.message);
-                }
+                },
             });
         } catch (error) {
             EquipmentToastService.equipmentProcessFailed('create', error?.message);
@@ -103,7 +102,7 @@ export const EquipmentManagement: FC<Props> = ({ equipment }) => {
                 },
                 onError: (error) => {
                     EquipmentToastService.equipmentProcessFailed('update', error?.message);
-                }
+                },
             });
         } catch (error) {
             EquipmentToastService.equipmentProcessFailed('update', error?.message);
@@ -120,7 +119,7 @@ export const EquipmentManagement: FC<Props> = ({ equipment }) => {
                 },
                 onError: (error) => {
                     EquipmentToastService.equipmentProcessFailed('delete', error?.message);
-                }
+                },
             });
         } catch (error) {
             EquipmentToastService.equipmentProcessFailed('delete', error?.message);
@@ -138,7 +137,7 @@ export const EquipmentManagement: FC<Props> = ({ equipment }) => {
                 },
                 onError: (error) => {
                     EquipmentToastService.statusUpdateFailed(equipment.name, error?.message);
-                }
+                },
             });
         } catch (error) {
             EquipmentToastService.statusUpdateFailed(equipment.name, error?.message);
@@ -152,12 +151,9 @@ export const EquipmentManagement: FC<Props> = ({ equipment }) => {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-gray-900">{t('equipment_management')}</h2>
-                <Button
-                    onClick={() => setIsCreateModalOpen(true)}
-                    className="inline-flex items-center"
-                >
+                <Button onClick={() => setIsCreateModalOpen(true)} className="inline-flex items-center">
                     {t('add_equipment')}
                 </Button>
             </div>
@@ -170,16 +166,8 @@ export const EquipmentManagement: FC<Props> = ({ equipment }) => {
                 onStatusChange={handleStatusChange}
             />
 
-            <Modal
-                isOpen={isCreateModalOpen}
-                onClose={() => setIsCreateModalOpen(false)}
-                title={t('add_new_equipment')}
-            >
-                <EquipmentForm
-                    form={form}
-                    onSubmit={handleCreate}
-                    submitLabel={t('create_equipment')}
-                />
+            <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} title={t('add_new_equipment')}>
+                <EquipmentForm form={form} onSubmit={handleCreate} submitLabel={t('create_equipment')} />
             </Modal>
 
             <Modal
@@ -190,11 +178,7 @@ export const EquipmentManagement: FC<Props> = ({ equipment }) => {
                 }}
                 title={t('edit_equipment')}
             >
-                <EquipmentForm
-                    form={form}
-                    onSubmit={handleUpdate}
-                    submitLabel={t('update_equipment')}
-                />
+                <EquipmentForm form={form} onSubmit={handleUpdate} submitLabel={t('update_equipment')} />
             </Modal>
 
             <Modal
@@ -218,20 +202,3 @@ export const EquipmentManagement: FC<Props> = ({ equipment }) => {
         </div>
     );
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

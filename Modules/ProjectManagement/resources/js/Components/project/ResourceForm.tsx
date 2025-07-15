@@ -1,30 +1,24 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { useForm, router } from '@inertiajs/react';
-import { Button } from "@/Core";
-import { Input } from "@/Core";
-import { Label } from "@/Core";
-import { Textarea } from "@/Core";
 import {
+    Button,
+    cn,
+    DatePicker,
+    ErrorBoundary,
+    Input,
+    Label,
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/Core";
-import { Calendar } from "@/Core";
-import { Popover, PopoverContent, PopoverTrigger } from "@/Core";
-import { format } from 'date-fns';
-import { CalendarIcon, User } from 'lucide-react';
-import { cn } from "@/Core";
+    Textarea,
+    Toggle,
+} from '@/Core';
+import { router, useForm } from '@inertiajs/react';
 import axios from 'axios';
-import { Toggle } from "@/Core";
-import { ErrorBoundary } from "@/Core";
-import { z } from 'zod';
-import { route } from 'ziggy-js';
-import { ToastService } from "@/Core";
-import { DatePicker } from "@/Core";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import { route } from 'ziggy-js';
+import { z } from 'zod';
 
 interface Employee {
     id: number;
@@ -103,31 +97,36 @@ interface RequestData {
     description?: string;
 }
 
-const manpowerSchema = z.object({
-    employee_id: z.number().nullable().optional(),
-    worker_name: z.string().optional(),
-    job_title: z.string().min(1, 'Job title is required').max(255, 'Job title cannot exceed 255 characters'),
-    start_date: z.string().min(1, 'Start date is required'),
-    end_date: z.string().nullable().optional(), // Make end_date optional
-    daily_rate: z.number().min(0, 'Daily rate must be positive'),
-    total_days: z.number().min(0, 'Total days must be positive'),
-    notes: z.string().nullable().optional(),
-}).refine(data => {
-    // If end_date is provided, it must be after or equal to start_date
-    if (data.end_date && data.start_date) {
-        const startDate = new Date(data.start_date);
-        const endDate = new Date(data.end_date);
-        if (endDate < startDate) return false;
-    }
-    // Require worker_name if employee_id is not set
-    if (!data.employee_id && !(data.worker_name && data.worker_name.length > 0)) {
-        return false;
-    }
-    return true;
-}, {
-    message: 'Worker name is required if no employee is selected',
-    path: ['worker_name'],
-});
+const manpowerSchema = z
+    .object({
+        employee_id: z.number().nullable().optional(),
+        worker_name: z.string().optional(),
+        job_title: z.string().min(1, 'Job title is required').max(255, 'Job title cannot exceed 255 characters'),
+        start_date: z.string().min(1, 'Start date is required'),
+        end_date: z.string().nullable().optional(), // Make end_date optional
+        daily_rate: z.number().min(0, 'Daily rate must be positive'),
+        total_days: z.number().min(0, 'Total days must be positive'),
+        notes: z.string().nullable().optional(),
+    })
+    .refine(
+        (data) => {
+            // If end_date is provided, it must be after or equal to start_date
+            if (data.end_date && data.start_date) {
+                const startDate = new Date(data.start_date);
+                const endDate = new Date(data.end_date);
+                if (endDate < startDate) return false;
+            }
+            // Require worker_name if employee_id is not set
+            if (!data.employee_id && !(data.worker_name && data.worker_name.length > 0)) {
+                return false;
+            }
+            return true;
+        },
+        {
+            message: 'Worker name is required if no employee is selected',
+            path: ['worker_name'],
+        },
+    );
 
 const materialSchema = z.object({
     material_id: z.number().min(1, 'Material selection is required'),
@@ -139,7 +138,7 @@ const materialSchema = z.object({
     date_used: z.string().min(1, 'Date used is required'),
     description: z.string().optional(),
     project_id: z.number().optional(),
-    notes: z.string().optional()
+    notes: z.string().optional(),
 });
 
 const equipmentSchema = z.object({
@@ -149,7 +148,7 @@ const equipmentSchema = z.object({
     maintenance_cost: z.number().min(0, 'Maintenance cost must be positive').optional(),
     start_date: z.string().min(1, 'Start date is required'),
     end_date: z.string().optional(),
-    description: z.string().optional()
+    description: z.string().optional(),
 });
 
 const fuelSchema = z.object({
@@ -158,7 +157,7 @@ const fuelSchema = z.object({
     unit_price: z.number().min(0, 'Unit price must be positive'),
     total_cost: z.number().min(0, 'Total cost must be positive'),
     date: z.string().min(1, 'Date is required'),
-    description: z.string().optional()
+    description: z.string().optional(),
 });
 
 const expenseSchema = z.object({
@@ -166,7 +165,7 @@ const expenseSchema = z.object({
     amount: z.number().min(0.01, 'Amount must be greater than 0'),
     total_cost: z.number().min(0, 'Total cost must be positive'),
     date: z.string().min(1, 'Date is required'),
-    description: z.string().optional()
+    description: z.string().optional(),
 });
 
 // Create a wrapped component to handle errors
@@ -259,7 +258,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
     }, [projectId, initialData]);
 
     const { data, setData, post, put, processing, errors: formErrors, reset } = useForm(initialFormData);
-    const [errors, setErrors] = useState<Record<string, string>>({})
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
     // Set mounted flag
     useEffect(() => {
@@ -277,7 +276,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
             if (type === 'manpower') {
                 // Only fetch employees if creating a new resource (no initialData or no employee_id)
                 if (!initialData || !initialData.employee_id) {
-                    axios.get('/api/employees/all').then(response => {
+                    axios.get('/api/employees/all').then((response) => {
                         if (mounted.current) {
                             setEmployees(response.data);
                         }
@@ -287,15 +286,15 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                     setEmployees([]);
                 }
             } else if (type === 'equipment' || type === 'fuel') {
-                axios.get('/api/v1/equipment').then(response => {
+                axios.get('/api/v1/equipment').then((response) => {
                     if (mounted.current) {
-                        const equipmentList = Array.isArray(response.data) ? response.data : (response.data.data || []);
+                        const equipmentList = Array.isArray(response.data) ? response.data : response.data.data || [];
                         setEquipment(equipmentList);
                         if (initialData?.equipment_id) {
                             const selectedEquipment = equipmentList.find((e) => e.id === initialData.equipment_id);
                             if (selectedEquipment) {
-                                const hourlyRate = selectedEquipment.daily_rate ? (selectedEquipment.daily_rate / 8) : 0;
-                                setData(prev => ({ ...prev, hourly_rate: hourlyRate.toString() }));
+                                const hourlyRate = selectedEquipment.daily_rate ? selectedEquipment.daily_rate / 8 : 0;
+                                setData((prev) => ({ ...prev, hourly_rate: hourlyRate.toString() }));
                             }
                         }
                     }
@@ -323,9 +322,9 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
     useEffect(() => {
         if (type === 'manpower' && data.start_date) {
             const days = calculateTotalDays(data.start_date, data.end_date);
-            setData(prev => ({
+            setData((prev) => ({
                 ...prev,
-                total_days: days.toString()
+                total_days: days.toString(),
             }));
         }
     }, [data.start_date, data.end_date, type, calculateTotalDays, setData]);
@@ -345,103 +344,109 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
     useEffect(() => {
         if (type === 'equipment' && data.start_date) {
             const hours = calculateUsageHours(data.start_date, projectEndDate);
-            setData(prev => ({
+            setData((prev) => ({
                 ...prev,
-                usage_hours: hours.toString()
+                usage_hours: hours.toString(),
             }));
         }
     }, [data.start_date, projectEndDate, type, calculateUsageHours, setData]);
 
     // Update handleInputChange to properly handle employee selection
-    const handleInputChange = useCallback((field: string, value: any) => {
-        setData((prev: any) => {
-            const newData = {
-                ...prev,
-                [field]: value
-            };
+    const handleInputChange = useCallback(
+        (field: string, value: any) => {
+            setData((prev: any) => {
+                const newData = {
+                    ...prev,
+                    [field]: value,
+                };
 
-            // Handle employee_id specifically
-            if (field === 'employee_id') {
-                if (value) {
-                    const employeeId = Number(value);
-                    if (!isNaN(employeeId)) {
-                        newData.employee_id = employeeId;
-                        newData.worker_name = '';
-                        const selectedEmployee = employees.find(emp => emp.id === employeeId);
-                        if (selectedEmployee) {
-                            if (selectedEmployee.designation) {
-                                newData.job_title = selectedEmployee.designation;
+                // Handle employee_id specifically
+                if (field === 'employee_id') {
+                    if (value) {
+                        const employeeId = Number(value);
+                        if (!isNaN(employeeId)) {
+                            newData.employee_id = employeeId;
+                            newData.worker_name = '';
+                            const selectedEmployee = employees.find((emp) => emp.id === employeeId);
+                            if (selectedEmployee) {
+                                if (selectedEmployee.designation) {
+                                    newData.job_title = selectedEmployee.designation;
+                                }
+                                let calculatedDailyRate = '';
+                                if (selectedEmployee.hourly_rate) {
+                                    calculatedDailyRate = (selectedEmployee.hourly_rate * 10).toFixed(2);
+                                }
+                                newData.daily_rate = calculatedDailyRate;
                             }
-                            let calculatedDailyRate = '';
-                            if (selectedEmployee.hourly_rate) {
-                                calculatedDailyRate = (selectedEmployee.hourly_rate * 10).toFixed(2);
-                            }
-                            newData.daily_rate = calculatedDailyRate;
+                        } else {
+                            newData.employee_id = null;
                         }
                     } else {
                         newData.employee_id = null;
                     }
-                } else {
+                }
+
+                // Handle worker_name specifically
+                if (field === 'worker_name') {
+                    newData.worker_name = String(value).trim();
                     newData.employee_id = null;
                 }
-            }
 
-            // Handle worker_name specifically
-            if (field === 'worker_name') {
-                newData.worker_name = String(value).trim();
-                newData.employee_id = null;
-            }
-
-            return newData;
-        })
-    }, [employees, setData]);
+                return newData;
+            });
+        },
+        [employees, setData],
+    );
 
     // Add effect to ensure status is always valid
     useEffect(() => {
         if (type === 'expense') {
             const validStatuses = ['active', 'inactive', 'pending'];
             if (!data.status || !validStatuses.includes(data.status)) {
-                setData(prev => ({
+                setData((prev) => ({
                     ...prev,
-                    status: 'pending'
+                    status: 'pending',
                 }));
             }
         }
     }, [type, data.status, setData]);
 
     // Update handleUseEmployeeChange to properly handle worker_name
-    const handleUseEmployeeChange = useCallback((checked: boolean) => {
-        setUseEmployee(checked);
-        if (checked) {
-            // Clear worker name and reset form when switching to employee mode
-            setData(prev => ({
-                ...prev,
-                worker_name: '',
-                employee_id: null,
-                job_title: '',
-                daily_rate: '',
-                total_days: '',
-                total_cost: '',
-                start_date: '',
-                end_date: '',
-                notes: ''
-            }));
-        } else {
-            // Clear employee_id and reset form when switching to worker name mode
-            setData(prev => ({
-                ...prev,
-                employee_id: null,
-                worker_name: '',
-                job_title: '',
-                daily_rate: '',
-                total_days: '',
-                total_cost: '',
-                start_date: '',
-                end_date: '',
-                notes: ''
-            }));
-        }
-    }, [setData]);
+    const handleUseEmployeeChange = useCallback(
+        (checked: boolean) => {
+            setUseEmployee(checked);
+            if (checked) {
+                // Clear worker name and reset form when switching to employee mode
+                setData((prev) => ({
+                    ...prev,
+                    worker_name: '',
+                    employee_id: null,
+                    job_title: '',
+                    daily_rate: '',
+                    total_days: '',
+                    total_cost: '',
+                    start_date: '',
+                    end_date: '',
+                    notes: '',
+                }));
+            } else {
+                // Clear employee_id and reset form when switching to worker name mode
+                setData((prev) => ({
+                    ...prev,
+                    employee_id: null,
+                    worker_name: '',
+                    job_title: '',
+                    daily_rate: '',
+                    total_days: '',
+                    total_cost: '',
+                    start_date: '',
+                    end_date: '',
+                    notes: '',
+                }));
+            }
+        },
+        [setData],
+    );
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -452,7 +457,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
             const formData = {
                 ...data,
                 status: data.status || 'pending',
-                resource_type: type  // renamed from 'type' to 'resource_type' to avoid confusion
+                resource_type: type, // renamed from 'type' to 'resource_type' to avoid confusion
             };
 
             // Calculate total_cost for manpower resources
@@ -463,11 +468,11 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
             // Make sure at least employee_id or worker_name is set
             if (type === 'manpower') {
                 if (useEmployee && !formData.employee_id) {
-                    setErrors({worker_info: 'Please select an employee'})
+                    setErrors({ worker_info: 'Please select an employee' });
                     setIsLoading(false);
                     return;
                 } else if (!useEmployee && !formData.worker_name) {
-                    setErrors({worker_name: 'Please enter a worker name'})
+                    setErrors({ worker_name: 'Please enter a worker name' });
                     setIsLoading(false);
                     return;
                 }
@@ -488,7 +493,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                 };
                 try {
                     const response = await axios.post(apiUrl, payload, {
-                        headers: { 'Accept': 'application/json' }
+                        headers: { Accept: 'application/json' },
                     });
                     if (response.data && response.data.resource) {
                         if (onSuccess) onSuccess();
@@ -510,7 +515,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
             const routeName = `projects.resources.${type}.${initialData?.id ? 'update' : 'store'}`;
             const routeParams = {
                 project: projectId,
-                ...(initialData?.id && { [type]: initialData.id })
+                ...(initialData?.id && { [type]: initialData.id }),
             };
 
             console.log('Route name:', routeName);
@@ -524,15 +529,24 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
             switch (type) {
                 case 'manpower':
                     validationSchema = manpowerSchema;
-                    console.log('Using manpower schema - should validate:', manpowerSchema?.shape ? Object.keys(manpowerSchema.shape) : 'Schema not available');
+                    console.log(
+                        'Using manpower schema - should validate:',
+                        manpowerSchema?.shape ? Object.keys(manpowerSchema.shape) : 'Schema not available',
+                    );
                     break;
                 case 'material':
                     validationSchema = materialSchema;
-                    console.log('Using material schema - should validate:', materialSchema?.shape ? Object.keys(materialSchema.shape) : 'Schema not available');
+                    console.log(
+                        'Using material schema - should validate:',
+                        materialSchema?.shape ? Object.keys(materialSchema.shape) : 'Schema not available',
+                    );
                     break;
                 case 'equipment':
                     validationSchema = equipmentSchema;
-                    console.log('Using equipment schema - should validate:', equipmentSchema?.shape ? Object.keys(equipmentSchema.shape) : 'Schema not available');
+                    console.log(
+                        'Using equipment schema - should validate:',
+                        equipmentSchema?.shape ? Object.keys(equipmentSchema.shape) : 'Schema not available',
+                    );
                     break;
                 case 'fuel':
                     validationSchema = fuelSchema;
@@ -540,7 +554,10 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                     break;
                 case 'expense':
                     validationSchema = expenseSchema;
-                    console.log('Using expense schema - should validate:', expenseSchema?.shape ? Object.keys(expenseSchema.shape) : 'Schema not available');
+                    console.log(
+                        'Using expense schema - should validate:',
+                        expenseSchema?.shape ? Object.keys(expenseSchema.shape) : 'Schema not available',
+                    );
                     break;
                 default:
                     console.error('Unknown resource type:', type);
@@ -570,7 +587,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                         5: 'Gravel',
                         6: 'Wood',
                         7: 'Paint',
-                        8: 'Other'
+                        8: 'Other',
                     };
                     dataForValidation.name = materialNames[dataForValidation.material_id] || 'Unknown';
                 } else {
@@ -579,10 +596,8 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                 }
 
                 // Convert numeric fields, keeping them for validation even if empty
-                const quantity = dataForValidation.quantity && dataForValidation.quantity !== ''
-                    ? parseFloat(dataForValidation.quantity) : 0;
-                const unitPrice = dataForValidation.unit_price && dataForValidation.unit_price !== ''
-                    ? parseFloat(dataForValidation.unit_price) : 0;
+                const quantity = dataForValidation.quantity && dataForValidation.quantity !== '' ? parseFloat(dataForValidation.quantity) : 0;
+                const unitPrice = dataForValidation.unit_price && dataForValidation.unit_price !== '' ? parseFloat(dataForValidation.unit_price) : 0;
 
                 dataForValidation.quantity = quantity;
                 dataForValidation.unit_price = unitPrice;
@@ -597,8 +612,8 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                 if (dataForValidation.equipment_id && dataForValidation.equipment_id !== '') {
                     dataForValidation.equipment_id = parseInt(dataForValidation.equipment_id);
                     // Set name to selected equipment's name
-                    const selectedEquipment = equipment.find(e => e.id === dataForValidation.equipment_id);
-                    dataForValidation.name = (selectedEquipment && typeof selectedEquipment.name === 'string') ? selectedEquipment.name : 'Equipment';
+                    const selectedEquipment = equipment.find((e) => e.id === dataForValidation.equipment_id);
+                    dataForValidation.name = selectedEquipment && typeof selectedEquipment.name === 'string' ? selectedEquipment.name : 'Equipment';
                 } else {
                     delete dataForValidation.equipment_id;
                     dataForValidation.name = 'Equipment';
@@ -629,20 +644,14 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                 dataForValidation.date_used = dataForValidation.start_date || '';
             } else if (type === 'fuel') {
                 // Ensure total_cost is always set for fuel
-                const quantity = dataForValidation.quantity && dataForValidation.quantity !== ''
-                    ? parseFloat(dataForValidation.quantity)
-                    : 0;
-                const unitPrice = dataForValidation.unit_price && dataForValidation.unit_price !== ''
-                    ? parseFloat(dataForValidation.unit_price)
-                    : 0;
+                const quantity = dataForValidation.quantity && dataForValidation.quantity !== '' ? parseFloat(dataForValidation.quantity) : 0;
+                const unitPrice = dataForValidation.unit_price && dataForValidation.unit_price !== '' ? parseFloat(dataForValidation.unit_price) : 0;
                 dataForValidation.total_cost = quantity * unitPrice;
                 // Zod expects 'date', form uses 'date_used'
                 dataForValidation.date = dataForValidation.date_used || '';
             } else if (type === 'expense') {
                 // Ensure amount and total_cost are numbers and always set
-                const amount = dataForValidation.amount && dataForValidation.amount !== ''
-                    ? parseFloat(dataForValidation.amount)
-                    : 0;
+                const amount = dataForValidation.amount && dataForValidation.amount !== '' ? parseFloat(dataForValidation.amount) : 0;
                 dataForValidation.amount = amount;
                 dataForValidation.total_cost = amount;
                 // Ensure date is a string (or empty string)
@@ -669,7 +678,162 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
             console.log('Final dataForValidation:', dataForValidation);
 
             // Validate form data before submission
-            let finalSubmissionData: { status: any; resource_type: "manpower" | "equipment" | "material" | "fuel" | "expense"; job_title: string; start_date: string; daily_rate: number; total_days: number; employee_id: any; worker_name: any; end_date: string | null; notes: any; project_id: number; base_daily_rate: any; quantity: any; unit_price: any; unit_cost: any; hourly_rate: any; usage_hours: any; maintenance_cost: any; amount: any; description: any; equipment_id: any; name: any; unit: any; date_used: any; fuel_type: any; date: any; category: any; total_cost: any; material_id: any; } | { status: any; resource_type: "manpower" | "equipment" | "material" | "fuel" | "expense"; material_id: number; name: string; unit: string; quantity: number; unit_price: number; total_cost: number; date_used: string; notes: any; description: any; project_id: number; employee_id: any; worker_name: any; daily_rate: any; base_daily_rate: any; total_days: any; unit_cost: any; hourly_rate: any; usage_hours: any; maintenance_cost: any; amount: any; job_title: any; start_date: string; end_date: string; equipment_id: any; fuel_type: any; date: any; category: any; } | { status: any; resource_type: "manpower" | "equipment" | "material" | "fuel" | "expense"; start_date: string; equipment_id: number; hourly_rate: number; usage_hours: number; end_date: string; description: any; maintenance_cost: any; project_id: number; employee_id: any; worker_name: any; daily_rate: any; base_daily_rate: any; total_days: any; quantity: any; unit_price: any; unit_cost: any; amount: any; job_title: any; notes: any; name: any; unit: any; date_used: any; fuel_type: any; date: any; category: any; total_cost: any; material_id: any; } | { status: any; resource_type: "manpower" | "equipment" | "material" | "fuel" | "expense"; quantity: number; unit_price: number; total_cost: number; date: string; fuel_type: string; description: any; project_id: number; employee_id: any; worker_name: any; daily_rate: any; base_daily_rate: any; total_days: any; unit_cost: any; hourly_rate: any; usage_hours: any; maintenance_cost: any; amount: any; job_title: any; start_date: string; end_date: string; notes: any; equipment_id: any; name: any; unit: any; date_used: any; category: any; material_id: any; } | { status: any; resource_type: "manpower" | "equipment" | "material" | "fuel" | "expense"; total_cost: number; date: string; category: string; amount: number; description: any; project_id: number; employee_id: any; worker_name: any; daily_rate: any; base_daily_rate: any; total_days: any; quantity: any; unit_price: any; unit_cost: any; hourly_rate: any; usage_hours: any; maintenance_cost: any; job_title: any; start_date: string; end_date: string; notes: any; equipment_id: any; name: any; unit: any; date_used: any; fuel_type: any; material_id: any; };
+            let finalSubmissionData:
+                | {
+                      status: any;
+                      resource_type: 'manpower' | 'equipment' | 'material' | 'fuel' | 'expense';
+                      job_title: string;
+                      start_date: string;
+                      daily_rate: number;
+                      total_days: number;
+                      employee_id: any;
+                      worker_name: any;
+                      end_date: string | null;
+                      notes: any;
+                      project_id: number;
+                      base_daily_rate: any;
+                      quantity: any;
+                      unit_price: any;
+                      unit_cost: any;
+                      hourly_rate: any;
+                      usage_hours: any;
+                      maintenance_cost: any;
+                      amount: any;
+                      description: any;
+                      equipment_id: any;
+                      name: any;
+                      unit: any;
+                      date_used: any;
+                      fuel_type: any;
+                      date: any;
+                      category: any;
+                      total_cost: any;
+                      material_id: any;
+                  }
+                | {
+                      status: any;
+                      resource_type: 'manpower' | 'equipment' | 'material' | 'fuel' | 'expense';
+                      material_id: number;
+                      name: string;
+                      unit: string;
+                      quantity: number;
+                      unit_price: number;
+                      total_cost: number;
+                      date_used: string;
+                      notes: any;
+                      description: any;
+                      project_id: number;
+                      employee_id: any;
+                      worker_name: any;
+                      daily_rate: any;
+                      base_daily_rate: any;
+                      total_days: any;
+                      unit_cost: any;
+                      hourly_rate: any;
+                      usage_hours: any;
+                      maintenance_cost: any;
+                      amount: any;
+                      job_title: any;
+                      start_date: string;
+                      end_date: string;
+                      equipment_id: any;
+                      fuel_type: any;
+                      date: any;
+                      category: any;
+                  }
+                | {
+                      status: any;
+                      resource_type: 'manpower' | 'equipment' | 'material' | 'fuel' | 'expense';
+                      start_date: string;
+                      equipment_id: number;
+                      hourly_rate: number;
+                      usage_hours: number;
+                      end_date: string;
+                      description: any;
+                      maintenance_cost: any;
+                      project_id: number;
+                      employee_id: any;
+                      worker_name: any;
+                      daily_rate: any;
+                      base_daily_rate: any;
+                      total_days: any;
+                      quantity: any;
+                      unit_price: any;
+                      unit_cost: any;
+                      amount: any;
+                      job_title: any;
+                      notes: any;
+                      name: any;
+                      unit: any;
+                      date_used: any;
+                      fuel_type: any;
+                      date: any;
+                      category: any;
+                      total_cost: any;
+                      material_id: any;
+                  }
+                | {
+                      status: any;
+                      resource_type: 'manpower' | 'equipment' | 'material' | 'fuel' | 'expense';
+                      quantity: number;
+                      unit_price: number;
+                      total_cost: number;
+                      date: string;
+                      fuel_type: string;
+                      description: any;
+                      project_id: number;
+                      employee_id: any;
+                      worker_name: any;
+                      daily_rate: any;
+                      base_daily_rate: any;
+                      total_days: any;
+                      unit_cost: any;
+                      hourly_rate: any;
+                      usage_hours: any;
+                      maintenance_cost: any;
+                      amount: any;
+                      job_title: any;
+                      start_date: string;
+                      end_date: string;
+                      notes: any;
+                      equipment_id: any;
+                      name: any;
+                      unit: any;
+                      date_used: any;
+                      category: any;
+                      material_id: any;
+                  }
+                | {
+                      status: any;
+                      resource_type: 'manpower' | 'equipment' | 'material' | 'fuel' | 'expense';
+                      total_cost: number;
+                      date: string;
+                      category: string;
+                      amount: number;
+                      description: any;
+                      project_id: number;
+                      employee_id: any;
+                      worker_name: any;
+                      daily_rate: any;
+                      base_daily_rate: any;
+                      total_days: any;
+                      quantity: any;
+                      unit_price: any;
+                      unit_cost: any;
+                      hourly_rate: any;
+                      usage_hours: any;
+                      maintenance_cost: any;
+                      job_title: any;
+                      start_date: string;
+                      end_date: string;
+                      notes: any;
+                      equipment_id: any;
+                      name: any;
+                      unit: any;
+                      date_used: any;
+                      fuel_type: any;
+                      material_id: any;
+                  };
             try {
                 const validatedData = validationSchema.parse(dataForValidation);
                 console.log('Validation passed:', validatedData);
@@ -678,13 +842,13 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                     ...formData,
                     ...validatedData,
                     status: formData.status || 'pending',
-                    resource_type: type
+                    resource_type: type,
                 };
             } catch (validationError) {
                 console.error('Client-side validation failed:', validationError);
                 if (validationError instanceof z.ZodError) {
                     const fieldErrors: Record<string, string> = {};
-                    validationError.errors.forEach(error => {
+                    validationError.errors.forEach((error) => {
                         if (error.path.length > 0) {
                             fieldErrors[error.path[0] as string] = error.message;
                         }
@@ -708,7 +872,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                             console.error('Update errors:', errors);
                             setErrors(errors);
                             reject(errors);
-                        }
+                        },
                     });
                 } else {
                     router.post(route(routeName, routeParams), finalSubmissionData, {
@@ -722,7 +886,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                             console.error('Submission errors:', errors);
                             setErrors(errors);
                             reject(errors);
-                        }
+                        },
                     });
                 }
             });
@@ -744,19 +908,17 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
             case 'manpower':
                 return (
                     <div className="space-y-6">
-                        <div className="bg-muted/40 p-4 rounded-lg">
+                        <div className="rounded-lg bg-muted/40 p-4">
                             <div className="flex items-center justify-between space-y-0">
                                 <div>
                                     <h4 className="font-medium">{t('link_to_employee')}</h4>
-                                    <p className="text-sm text-muted-foreground">
-                                        Do you want to connect this resource to an employee?
-                                    </p>
+                                    <p className="text-sm text-muted-foreground">Do you want to connect this resource to an employee?</p>
                                 </div>
                                 <div className="flex items-center">
                                     <Toggle
                                         pressed={useEmployee}
                                         onPressedChange={handleUseEmployeeChange}
-                                        className="bg-white border border-gray-300 hover:bg-gray-50 data-[state=on]:bg-blue-500 data-[state=on]:text-white min-w-12 h-8"
+                                        className="h-8 min-w-12 border border-gray-300 bg-white hover:bg-gray-50 data-[state=on]:bg-blue-500 data-[state=on]:text-white"
                                         aria-label={t('lbl_toggle_employee_link')}
                                         disabled={!!initialData?.employee_id} // Disable toggle if editing and employee is already linked
                                     />
@@ -768,9 +930,11 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                             <div className="space-y-2">
                                 <Label htmlFor="employee_id">{t('lbl_select_employee')}</Label>
                                 {initialData && initialData.employee_id ? (
-                                    <div className="p-2 bg-gray-100 rounded text-gray-800">
+                                    <div className="rounded bg-gray-100 p-2 text-gray-800">
                                         {/* Show the already-linked employee as plain text */}
-                                        {initialData.employee && (initialData.employee.full_name || `${initialData.employee.first_name} ${initialData.employee.last_name}`)}
+                                        {initialData.employee &&
+                                            (initialData.employee.full_name ||
+                                                `${initialData.employee.first_name} ${initialData.employee.last_name}`)}
                                     </div>
                                 ) : (
                                     <Select
@@ -782,10 +946,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                             }
                                         }}
                                     >
-                                        <SelectTrigger className={cn(
-                                            "w-full",
-                                            errors.employee_id && "border-red-500"
-                                        )}>
+                                        <SelectTrigger className={cn('w-full', errors.employee_id && 'border-red-500')}>
                                             <SelectValue placeholder={t('ph_select_an_employee')} />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -796,14 +957,14 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                                     </SelectItem>
                                                 ))
                                             ) : (
-                                                <SelectItem value="no-employee" disabled>{t('opt_no_employees_available')}</SelectItem>
+                                                <SelectItem value="no-employee" disabled>
+                                                    {t('opt_no_employees_available')}
+                                                </SelectItem>
                                             )}
                                         </SelectContent>
                                     </Select>
                                 )}
-                                {errors.employee_id && (
-                                    <p className="text-sm text-red-500">{errors.employee_id}</p>
-                                )}
+                                {errors.employee_id && <p className="text-sm text-red-500">{errors.employee_id}</p>}
                             </div>
                         ) : (
                             <div className="space-y-2">
@@ -815,9 +976,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                     placeholder={t('ph_enter_worker_name')}
                                     className={errors.worker_name ? 'border-red-500' : ''}
                                 />
-                                {errors.worker_name && (
-                                    <p className="text-sm text-red-500">{errors.worker_name}</p>
-                                )}
+                                {errors.worker_name && <p className="text-sm text-red-500">{errors.worker_name}</p>}
                             </div>
                         )}
 
@@ -830,12 +989,10 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                 placeholder={t('ttl_enter_job_title')}
                                 className={errors.job_title ? 'border-red-500' : ''}
                             />
-                            {errors.job_title && (
-                                <p className="text-sm text-red-500">{errors.job_title}</p>
-                            )}
+                            {errors.job_title && <p className="text-sm text-red-500">{errors.job_title}</p>}
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <div className="space-y-2">
                                 <Label htmlFor="start_date">{t('lbl_start_date')}</Label>
                                 <Input
@@ -846,9 +1003,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                     required
                                     className={errors.start_date ? 'border-red-500' : ''}
                                 />
-                                {errors.start_date && (
-                                    <p className="text-sm text-red-500">{errors.start_date}</p>
-                                )}
+                                {errors.start_date && <p className="text-sm text-red-500">{errors.start_date}</p>}
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="end_date">{t('lbl_end_date')}</Label>
@@ -859,9 +1014,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                     onChange={(e) => handleInputChange('end_date', e.target.value)}
                                     className={errors.end_date ? 'border-red-500' : ''}
                                 />
-                                {errors.end_date && (
-                                    <p className="text-sm text-red-500">{errors.end_date}</p>
-                                )}
+                                {errors.end_date && <p className="text-sm text-red-500">{errors.end_date}</p>}
                             </div>
                         </div>
 
@@ -875,23 +1028,13 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                 placeholder={t('ph_enter_daily_rate')}
                                 className={errors.daily_rate ? 'border-red-500' : ''}
                             />
-                            {errors.daily_rate && (
-                                <p className="text-sm text-red-500">{errors.daily_rate}</p>
-                            )}
+                            {errors.daily_rate && <p className="text-sm text-red-500">{errors.daily_rate}</p>}
                         </div>
 
                         <div className="space-y-2">
                             <Label htmlFor="total_days">{t('lbl_total_days')}</Label>
-                            <Input
-                                id="total_days"
-                                type="number"
-                                value={data.total_days}
-                                readOnly
-                                className="bg-muted"
-                            />
-                            {errors.total_days && (
-                                <p className="text-sm text-red-500">{errors.total_days}</p>
-                            )}
+                            <Input id="total_days" type="number" value={data.total_days} readOnly className="bg-muted" />
+                            {errors.total_days && <p className="text-sm text-red-500">{errors.total_days}</p>}
                         </div>
 
                         <div className="space-y-2 md:col-span-2">
@@ -903,9 +1046,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                 placeholder={t('ph_enter_any_additional_notes')}
                                 className={errors.notes ? 'border-red-500' : ''}
                             />
-                            {errors.notes && (
-                                <p className="text-sm text-red-500">{errors.notes}</p>
-                            )}
+                            {errors.notes && <p className="text-sm text-red-500">{errors.notes}</p>}
                         </div>
                     </div>
                 );
@@ -913,7 +1054,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
             case 'equipment':
                 return (
                     <div className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <div className="space-y-2">
                                 <Label htmlFor="start_date">{t('lbl_start_date')}</Label>
                                 <Input
@@ -924,9 +1065,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                     required
                                     className={errors.start_date ? 'border-red-500' : ''}
                                 />
-                                {errors.start_date && (
-                                    <p className="text-sm text-red-500">{errors.start_date}</p>
-                                )}
+                                {errors.start_date && <p className="text-sm text-red-500">{errors.start_date}</p>}
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="end_date">{t('lbl_end_date')}</Label>
@@ -938,45 +1077,47 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                     required
                                     className={errors.end_date ? 'border-red-500' : ''}
                                 />
-                                {errors.end_date && (
-                                    <p className="text-sm text-red-500">{errors.end_date}</p>
-                                )}
+                                {errors.end_date && <p className="text-sm text-red-500">{errors.end_date}</p>}
                             </div>
                         </div>
                         {/* Equipment selection dropdown */}
                         <div className="space-y-2">
-                            <Label htmlFor="equipment_id" className="text-sm font-medium">{t('lbl_select_equipment')}</Label>
+                            <Label htmlFor="equipment_id" className="text-sm font-medium">
+                                {t('lbl_select_equipment')}
+                            </Label>
                             <Select
                                 value={data.equipment_id?.toString() || ''}
                                 onValueChange={(value) => {
-                                    const selectedEquipment = equipment.find(e => e.id === parseInt(value));
+                                    const selectedEquipment = equipment.find((e) => e.id === parseInt(value));
                                     handleInputChange('equipment_id', parseInt(value));
                                     if (selectedEquipment) {
                                         // Set hourly rate from equipment's daily rate (assuming 8-hour workday)
-                                        const hourlyRate = selectedEquipment.daily_rate ? (selectedEquipment.daily_rate / 8) : 0;
+                                        const hourlyRate = selectedEquipment.daily_rate ? selectedEquipment.daily_rate / 8 : 0;
                                         handleInputChange('hourly_rate', hourlyRate);
                                     }
                                 }}
                                 disabled={isLoading}
                             >
-                                <SelectTrigger className={cn("w-full", errors.equipment_id && "border-red-500")}>
+                                <SelectTrigger className={cn('w-full', errors.equipment_id && 'border-red-500')}>
                                     <SelectValue placeholder={t('ph_select_equipment')} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {(Array.isArray(equipment) && equipment.length > 0) ? (
+                                    {Array.isArray(equipment) && equipment.length > 0 ? (
                                         equipment.map((item) => (
                                             <SelectItem key={item.id} value={item.id.toString()}>
-                                                {typeof item.name === 'object' && item.name !== null ? (item.name.en || Object.values(item.name)[0] || '') : item.name}
+                                                {typeof item.name === 'object' && item.name !== null
+                                                    ? item.name.en || Object.values(item.name)[0] || ''
+                                                    : item.name}
                                             </SelectItem>
                                         ))
                                     ) : (
-                                        <SelectItem value="no-equipment" disabled>{t('opt_no_equipment_available')}</SelectItem>
+                                        <SelectItem value="no-equipment" disabled>
+                                            {t('opt_no_equipment_available')}
+                                        </SelectItem>
                                     )}
                                 </SelectContent>
                             </Select>
-                            {errors.equipment_id && (
-                                <p className="text-sm text-red-500">{errors.equipment_id}</p>
-                            )}
+                            {errors.equipment_id && <p className="text-sm text-red-500">{errors.equipment_id}</p>}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="usage_hours">{t('lbl_usage_hours')}</Label>
@@ -989,11 +1130,9 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                 placeholder={t('ph_enter_usage_hours')}
                                 className={errors.usage_hours ? 'border-red-500' : ''}
                             />
-                            {errors.usage_hours && (
-                                <p className="text-sm text-red-500">{errors.usage_hours}</p>
-                            )}
+                            {errors.usage_hours && <p className="text-sm text-red-500">{errors.usage_hours}</p>}
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <div className="space-y-2">
                                 <Label htmlFor="hourly_rate">{t('lbl_hourly_rate')}</Label>
                                 <Input
@@ -1006,17 +1145,16 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                     placeholder={t('ph_enter_hourly_rate')}
                                     className={errors.hourly_rate ? 'border-red-500' : ''}
                                 />
-                                {errors.hourly_rate && (
-                                    <p className="text-sm text-red-500">{errors.hourly_rate}</p>
-                                )}
+                                {errors.hourly_rate && <p className="text-sm text-red-500">{errors.hourly_rate}</p>}
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="total_cost">{t('lbl_total_cost')}</Label>
                                 <Input
                                     id="total_cost"
                                     type="number"
-                                    value={data.hourly_rate && data.usage_hours ?
-                                        (Number(data.hourly_rate) * Number(data.usage_hours)).toFixed(2) : ''}
+                                    value={
+                                        data.hourly_rate && data.usage_hours ? (Number(data.hourly_rate) * Number(data.usage_hours)).toFixed(2) : ''
+                                    }
                                     disabled
                                     className="w-full bg-muted"
                                 />
@@ -1031,20 +1169,16 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                 placeholder={t('ph_enter_any_additional_notes')}
                                 className={errors.notes ? 'border-red-500' : ''}
                             />
-                            {errors.notes && (
-                                <p className="text-sm text-red-500">{errors.notes}</p>
-                            )}
+                            {errors.notes && <p className="text-sm text-red-500">{errors.notes}</p>}
                         </div>
-                        {type === 'equipment' && (
-                            <input type="hidden" name="date_used" value={data.start_date || ''} />
-                        )}
+                        {type === 'equipment' && <input type="hidden" name="date_used" value={data.start_date || ''} />}
                     </div>
                 );
 
             case 'material':
                 return (
                     <div className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <div className="space-y-2">
                                 <Label htmlFor="material_id">Material</Label>
                                 <Select
@@ -1065,17 +1199,12 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                         <SelectItem value="8">Other</SelectItem>
                                     </SelectContent>
                                 </Select>
-                                {errors.material_id && (
-                                    <p className="text-sm text-red-500">{errors.material_id}</p>
-                                )}
+                                {errors.material_id && <p className="text-sm text-red-500">{errors.material_id}</p>}
                             </div>
 
                             <div className="space-y-2">
                                 <Label htmlFor="unit">Unit</Label>
-                                <Select
-                                    value={data.unit || ''}
-                                    onValueChange={(value) => handleInputChange('unit', value)}
-                                >
+                                <Select value={data.unit || ''} onValueChange={(value) => handleInputChange('unit', value)}>
                                     <SelectTrigger className="w-full">
                                         <SelectValue placeholder={t('ph_select_unit')} />
                                     </SelectTrigger>
@@ -1090,13 +1219,11 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                         <SelectItem value="set">Set</SelectItem>
                                     </SelectContent>
                                 </Select>
-                                {errors.unit && (
-                                    <p className="text-sm text-red-500">{errors.unit}</p>
-                                )}
+                                {errors.unit && <p className="text-sm text-red-500">{errors.unit}</p>}
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <div className="space-y-2">
                                 <Label htmlFor="quantity">Quantity</Label>
                                 <Input
@@ -1107,11 +1234,9 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                     placeholder={t('ph_enter_quantity')}
                                     min="0"
                                     step="0.01"
-                                    className={errors.quantity ? "border-red-500" : ""}
+                                    className={errors.quantity ? 'border-red-500' : ''}
                                 />
-                                {errors.quantity && (
-                                    <p className="text-sm text-red-500">{errors.quantity}</p>
-                                )}
+                                {errors.quantity && <p className="text-sm text-red-500">{errors.quantity}</p>}
                             </div>
 
                             <div className="space-y-2">
@@ -1124,15 +1249,13 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                     placeholder={t('ph_enter_unit_price')}
                                     min="0"
                                     step="0.01"
-                                    className={errors.unit_price ? "border-red-500" : ""}
+                                    className={errors.unit_price ? 'border-red-500' : ''}
                                 />
-                                {errors.unit_price && (
-                                    <p className="text-sm text-red-500">{errors.unit_price}</p>
-                                )}
+                                {errors.unit_price && <p className="text-sm text-red-500">{errors.unit_price}</p>}
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">{t('lbl_date_used')}</label>
                                 <DatePicker
@@ -1140,9 +1263,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                     setDate={(date: Date | undefined) => handleInputChange('date_used', date?.toISOString().split('T')[0])}
                                     placeholder={t('ph_select_date_used')}
                                 />
-                                {errors.date_used && (
-                                    <p className="text-sm text-red-500">{errors.date_used}</p>
-                                )}
+                                {errors.date_used && <p className="text-sm text-red-500">{errors.date_used}</p>}
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="notes">Notes</Label>
@@ -1172,9 +1293,11 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
             case 'fuel':
                 return (
                     <div className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <div className="space-y-2">
-                                <Label htmlFor="equipment_id" className="text-sm font-medium">Equipment</Label>
+                                <Label htmlFor="equipment_id" className="text-sm font-medium">
+                                    Equipment
+                                </Label>
                                 <Select
                                     value={data.equipment_id?.toString()}
                                     onValueChange={(value) => handleInputChange('equipment_id', parseInt(value))}
@@ -1191,21 +1314,18 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                                 </SelectItem>
                                             ))
                                         ) : (
-                                            <SelectItem value="no-equipment" disabled>{t('opt_no_equipment_available')}</SelectItem>
+                                            <SelectItem value="no-equipment" disabled>
+                                                {t('opt_no_equipment_available')}
+                                            </SelectItem>
                                         )}
                                     </SelectContent>
                                 </Select>
-                                {errors.equipment_id && (
-                                    <p className="text-sm text-red-500">{errors.equipment_id}</p>
-                                )}
+                                {errors.equipment_id && <p className="text-sm text-red-500">{errors.equipment_id}</p>}
                             </div>
 
                             <div className="space-y-2">
                                 <Label htmlFor="fuel_type">{t('lbl_fuel_type')}</Label>
-                                <Select
-                                    value={data.fuel_type || ''}
-                                    onValueChange={(value) => handleInputChange('fuel_type', value)}
-                                >
+                                <Select value={data.fuel_type || ''} onValueChange={(value) => handleInputChange('fuel_type', value)}>
                                     <SelectTrigger className="w-full">
                                         <SelectValue placeholder={t('ph_select_fuel_type')} />
                                     </SelectTrigger>
@@ -1214,13 +1334,11 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                         <SelectItem value="petrol">Petrol</SelectItem>
                                     </SelectContent>
                                 </Select>
-                                {errors.fuel_type && (
-                                    <p className="text-sm text-red-500">{errors.fuel_type}</p>
-                                )}
+                                {errors.fuel_type && <p className="text-sm text-red-500">{errors.fuel_type}</p>}
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <div className="space-y-2">
                                 <Label htmlFor="quantity">Quantity (Liters)</Label>
                                 <Input
@@ -1231,11 +1349,9 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                     placeholder={t('ph_enter_quantity')}
                                     min="0"
                                     step="0.01"
-                                    className={errors.quantity ? "border-red-500" : ""}
+                                    className={errors.quantity ? 'border-red-500' : ''}
                                 />
-                                {errors.quantity && (
-                                    <p className="text-sm text-red-500">{errors.quantity}</p>
-                                )}
+                                {errors.quantity && <p className="text-sm text-red-500">{errors.quantity}</p>}
                             </div>
 
                             <div className="space-y-2">
@@ -1248,15 +1364,13 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                     placeholder={t('ph_enter_unit_price')}
                                     min="0"
                                     step="0.01"
-                                    className={errors.unit_price ? "border-red-500" : ""}
+                                    className={errors.unit_price ? 'border-red-500' : ''}
                                 />
-                                {errors.unit_price && (
-                                    <p className="text-sm text-red-500">{errors.unit_price}</p>
-                                )}
+                                {errors.unit_price && <p className="text-sm text-red-500">{errors.unit_price}</p>}
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">{t('lbl_date_used')}</label>
                                 <DatePicker
@@ -1264,9 +1378,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                     setDate={(date: Date | undefined) => handleInputChange('date_used', date?.toISOString().split('T')[0])}
                                     placeholder={t('ph_select_date_used')}
                                 />
-                                {errors.date_used && (
-                                    <p className="text-sm text-red-500">{errors.date_used}</p>
-                                )}
+                                {errors.date_used && <p className="text-sm text-red-500">{errors.date_used}</p>}
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="notes">Notes</Label>
@@ -1281,7 +1393,9 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="total_cost" className="text-sm font-medium">Total Cost (SAR)</Label>
+                            <Label htmlFor="total_cost" className="text-sm font-medium">
+                                Total Cost (SAR)
+                            </Label>
                             <Input
                                 id="total_cost"
                                 type="number"
@@ -1297,25 +1411,22 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                 return (
                     <div className="space-y-6">
                         {/* Header Section */}
-                        <div className="bg-muted/40 p-4 rounded-lg">
+                        <div className="rounded-lg bg-muted/40 p-4">
                             <h3 className="text-lg font-semibold">{t('add_new_expense')}</h3>
-                            <p className="text-sm text-muted-foreground">
-                                Fill in the details below to add a new expense to the project.
-                            </p>
+                            <p className="text-sm text-muted-foreground">Fill in the details below to add a new expense to the project.</p>
                         </div>
 
                         {/* Main Form Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                             {/* Left Column */}
                             <div className="space-y-6">
                                 {/* Category and Amount */}
                                 <div className="space-y-4">
                                     <div className="space-y-2">
-                                        <Label htmlFor="category" className="text-sm font-medium">Category</Label>
-                                        <Select
-                                            value={data.category || ''}
-                                            onValueChange={(value) => handleInputChange('category', value)}
-                                        >
+                                        <Label htmlFor="category" className="text-sm font-medium">
+                                            Category
+                                        </Label>
+                                        <Select value={data.category || ''} onValueChange={(value) => handleInputChange('category', value)}>
                                             <SelectTrigger className="w-full">
                                                 <SelectValue placeholder={t('ph_select_category')} />
                                             </SelectTrigger>
@@ -1328,15 +1439,15 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                                 <SelectItem value="other">Other</SelectItem>
                                             </SelectContent>
                                         </Select>
-                                        {errors.category && (
-                                            <p className="text-sm text-red-500">{errors.category}</p>
-                                        )}
+                                        {errors.category && <p className="text-sm text-red-500">{errors.category}</p>}
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="amount" className="text-sm font-medium">Amount (SAR)</Label>
+                                        <Label htmlFor="amount" className="text-sm font-medium">
+                                            Amount (SAR)
+                                        </Label>
                                         <div className="relative">
-                                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">SAR</span>
+                                            <span className="absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground">SAR</span>
                                             <Input
                                                 id="amount"
                                                 type="number"
@@ -1353,32 +1464,29 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                                 required
                                             />
                                         </div>
-                                        {errors.amount && (
-                                            <p className="text-sm text-red-500">{errors.amount}</p>
-                                        )}
+                                        {errors.amount && <p className="text-sm text-red-500">{errors.amount}</p>}
                                     </div>
                                 </div>
 
                                 {/* Date and Status */}
                                 <div className="space-y-4">
                                     <div className="space-y-2">
-                                        <Label htmlFor="date" className="text-sm font-medium">Date</Label>
+                                        <Label htmlFor="date" className="text-sm font-medium">
+                                            Date
+                                        </Label>
                                         <DatePicker
                                             date={data.date ? new Date(data.date) : undefined}
                                             setDate={(date: Date | undefined) => handleInputChange('date', date?.toISOString().split('T')[0])}
                                             placeholder={t('ph_select_date')}
                                         />
-                                        {errors.date && (
-                                            <p className="text-sm text-red-500">{errors.date}</p>
-                                        )}
+                                        {errors.date && <p className="text-sm text-red-500">{errors.date}</p>}
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="status" className="text-sm font-medium">Status</Label>
-                                        <Select
-                                            value={data.status || 'pending'}
-                                            onValueChange={(value) => handleInputChange('status', value)}
-                                        >
+                                        <Label htmlFor="status" className="text-sm font-medium">
+                                            Status
+                                        </Label>
+                                        <Select value={data.status || 'pending'} onValueChange={(value) => handleInputChange('status', value)}>
                                             <SelectTrigger className="w-full">
                                                 <SelectValue placeholder={t('ph_select_status')} />
                                             </SelectTrigger>
@@ -1388,9 +1496,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                                 <SelectItem value="rejected">Rejected</SelectItem>
                                             </SelectContent>
                                         </Select>
-                                        {errors.status && (
-                                            <p className="text-sm text-red-500">{errors.status}</p>
-                                        )}
+                                        {errors.status && <p className="text-sm text-red-500">{errors.status}</p>}
                                     </div>
                                 </div>
                             </div>
@@ -1399,7 +1505,9 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                             <div className="space-y-6">
                                 {/* Description */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="description" className="text-sm font-medium">Description</Label>
+                                    <Label htmlFor="description" className="text-sm font-medium">
+                                        Description
+                                    </Label>
                                     <Textarea
                                         id="description"
                                         value={data.description || ''}
@@ -1408,14 +1516,14 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                         className="min-h-[120px]"
                                         required
                                     />
-                                    {errors.description && (
-                                        <p className="text-sm text-red-500">{errors.description}</p>
-                                    )}
+                                    {errors.description && <p className="text-sm text-red-500">{errors.description}</p>}
                                 </div>
 
                                 {/* Notes */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="notes" className="text-sm font-medium">Additional Notes (Optional)</Label>
+                                    <Label htmlFor="notes" className="text-sm font-medium">
+                                        Additional Notes (Optional)
+                                    </Label>
                                     <Textarea
                                         id="notes"
                                         value={data.notes || ''}
@@ -1423,16 +1531,14 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                         placeholder={t('ph_add_any_additional_notes_or_comments')}
                                         className="min-h-[100px]"
                                     />
-                                    {errors.notes && (
-                                        <p className="text-sm text-red-500">{errors.notes}</p>
-                                    )}
+                                    {errors.notes && <p className="text-sm text-red-500">{errors.notes}</p>}
                                 </div>
                             </div>
                         </div>
 
                         {/* Summary Section */}
-                        <div className="bg-muted/40 p-4 rounded-lg">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="rounded-lg bg-muted/40 p-4">
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                                 <div>
                                     <p className="text-sm text-muted-foreground">Category</p>
                                     <p className="font-medium">{data.category || 'Not selected'}</p>
@@ -1456,11 +1562,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
         <form ref={formRef} onSubmit={handleSubmit} data-resource-type={type} className="space-y-8">
             {renderFormFields()}
             <div className="flex justify-end space-x-2">
-                <Button
-                    type="submit"
-                    disabled={processing || isLoading}
-                    className="min-w-[100px]"
-                >
+                <Button type="submit" disabled={processing || isLoading} className="min-w-[100px]">
                     {isLoading ? t('common:saving') : initialData?.id ? t('common:update') : t('common:save')}
                 </Button>
             </div>
@@ -1476,19 +1578,3 @@ export default function ResourceForm(props: ResourceFormProps) {
         </ErrorBoundary>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

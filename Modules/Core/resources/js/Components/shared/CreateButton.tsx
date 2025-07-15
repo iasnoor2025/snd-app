@@ -1,79 +1,46 @@
-import React from 'react';
+import { Button, Permission } from '@/Core';
 import { Link } from '@inertiajs/react';
-import { Button } from "@/Core";
 import { Plus } from 'lucide-react';
-import { Permission } from "@/Core";
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface CreateButtonProps {
-  resourceType: string;
-  buttonVariant?: 'default' | 'secondary' | 'destructive' | 'outline' | 'ghost' | 'link';
-  buttonSize?: 'default' | 'sm' | 'lg' | 'icon';
-  text?: string;
-  permission?: string;
-  className?: string;
-  href?: string;
+    resourceType: string;
+    buttonVariant?: 'default' | 'secondary' | 'destructive' | 'outline' | 'ghost' | 'link';
+    buttonSize?: 'default' | 'sm' | 'lg' | 'icon';
+    text?: string;
+    permission?: string;
+    className?: string;
+    href?: string;
 }
 
 const CreateButton: React.FC<CreateButtonProps> = ({
-  resourceType,
-  buttonVariant = 'default',
-  buttonSize = 'default',
-  text,
-  permission,
-  className = '',
-  href,
+    resourceType,
+    buttonVariant = 'default',
+    buttonSize = 'default',
+    text,
+    permission,
+    className = '',
+    href,
 }) => {
-  const { t } = useTranslation(['common']);
-      const defaultText = text || t('actions.add', { resource: resourceType.charAt(0).toUpperCase() + resourceType.slice(1).replace(/s$/, '') });
-  const defaultHref = `/${resourceType}/create`;
+    const { t } = useTranslation(['common']);
+    const defaultText = text || t('actions.add', { resource: resourceType.charAt(0).toUpperCase() + resourceType.slice(1).replace(/s$/, '') });
+    const defaultHref = `/${resourceType}/create`;
 
-  const button = (
-    <Button
-      variant={buttonVariant}
-      size={buttonSize}
-      className={className}
-      asChild
-    >
-      <Link href={href || defaultHref}>
-        <Plus className="mr-2 h-4 w-4" />
-        {defaultText}
-      </Link>
-    </Button>
-  );
-
-  if (permission) {
-    return (
-      <Permission permission={permission}>
-        {button}
-      </Permission>
+    const button = (
+        <Button variant={buttonVariant} size={buttonSize} className={className} asChild>
+            <Link href={href || defaultHref}>
+                <Plus className="mr-2 h-4 w-4" />
+                {defaultText}
+            </Link>
+        </Button>
     );
-  }
 
-  return button;
+    if (permission) {
+        return <Permission permission={permission}>{button}</Permission>;
+    }
+
+    return button;
 };
 
 export default CreateButton;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

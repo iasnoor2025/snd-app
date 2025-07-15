@@ -1,10 +1,10 @@
-import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../../components/ui/form';
-import { toast } from 'sonner';
+import { Input } from '../../components/ui/input';
 
 export default function MfaVerify() {
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -35,9 +35,7 @@ export default function MfaVerify() {
             <Card className="w-[400px]">
                 <CardHeader>
                     <CardTitle>Two-Factor Authentication</CardTitle>
-                    <CardDescription>
-                        Enter the verification code from your authenticator app
-                    </CardDescription>
+                    <CardDescription>Enter the verification code from your authenticator app</CardDescription>
                 </CardHeader>
                 <Form {...form}>
                     <form onSubmit={onSubmit}>
@@ -64,11 +62,7 @@ export default function MfaVerify() {
                             />
                         </CardContent>
                         <CardFooter className="flex justify-between">
-                            <Button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className="w-full"
-                            >
+                            <Button type="submit" disabled={isSubmitting} className="w-full">
                                 {isSubmitting ? 'Verifying...' : 'Verify'}
                             </Button>
                         </CardFooter>

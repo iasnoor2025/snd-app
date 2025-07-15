@@ -1,15 +1,22 @@
-import { useState, useEffect } from 'react';
 import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/../../Modules/Core/resources/js/components/ui/dialog';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/components/ui/card';
+import { DatePicker } from '@/../../Modules/Core/resources/js/components/ui/date-picker';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/../../Modules/Core/resources/js/components/ui/dialog';
 import { Input } from '@/../../Modules/Core/resources/js/components/ui/input';
 import { Label } from '@/../../Modules/Core/resources/js/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/../../Modules/Core/resources/js/components/ui/select';
 import { Switch } from '@/../../Modules/Core/resources/js/components/ui/switch';
-import { toast } from 'sonner';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/../../Modules/Core/resources/js/components/ui/table';
-import { DatePicker } from '@/../../Modules/Core/resources/js/components/ui/date-picker';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import { formatDateMedium } from '@/Core/utils/dateFormatter';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 interface DynamicPricingRule {
     id: number;
@@ -155,15 +162,11 @@ export function DynamicPricingManager({ equipmentId }: DynamicPricingManagerProp
         <Card>
             <CardHeader>
                 <CardTitle>Dynamic Pricing Rules</CardTitle>
-                <CardDescription>
-                    Manage pricing rules and adjustments for this equipment.
-                </CardDescription>
+                <CardDescription>Manage pricing rules and adjustments for this equipment.</CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
-                    <Button onClick={() => setShowCreateDialog(true)}>
-                        Create New Rule
-                    </Button>
+                    <Button onClick={() => setShowCreateDialog(true)}>Create New Rule</Button>
 
                     <Table>
                         <TableHeader>
@@ -183,25 +186,16 @@ export function DynamicPricingManager({ equipmentId }: DynamicPricingManagerProp
                                     <TableCell>
                                         <div className="text-sm">
                                             <div>{rule.condition_type}</div>
-                                            <div className="text-gray-500">
-                                                {renderConditionValue(rule)}
-                                            </div>
+                                            <div className="text-gray-500">{renderConditionValue(rule)}</div>
                                         </div>
                                     </TableCell>
                                     <TableCell>{renderAdjustmentValue(rule)}</TableCell>
                                     <TableCell>{rule.priority}</TableCell>
                                     <TableCell>
-                                        <Switch
-                                            checked={rule.is_active}
-                                            onCheckedChange={() => handleToggleRule(rule)}
-                                        />
+                                        <Switch checked={rule.is_active} onCheckedChange={() => handleToggleRule(rule)} />
                                     </TableCell>
                                     <TableCell>
-                                        <Button
-                                            variant="destructive"
-                                            size="sm"
-                                            onClick={() => handleDeleteRule(rule)}
-                                        >
+                                        <Button variant="destructive" size="sm" onClick={() => handleDeleteRule(rule)}>
                                             Delete
                                         </Button>
                                     </TableCell>
@@ -216,18 +210,13 @@ export function DynamicPricingManager({ equipmentId }: DynamicPricingManagerProp
                 <DialogContent aria-describedby={undefined}>
                     <DialogHeader>
                         <DialogTitle>Create Pricing Rule</DialogTitle>
-                        <DialogDescription>
-                            Set up a new dynamic pricing rule for this equipment.
-                        </DialogDescription>
+                        <DialogDescription>Set up a new dynamic pricing rule for this equipment.</DialogDescription>
                     </DialogHeader>
 
                     <div className="space-y-4">
                         <div>
                             <Label>Rule Type</Label>
-                            <Select
-                                value={formData.rule_type}
-                                onValueChange={(value) => setFormData({ ...formData, rule_type: value })}
-                            >
+                            <Select value={formData.rule_type} onValueChange={(value) => setFormData({ ...formData, rule_type: value })}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select rule type" />
                                 </SelectTrigger>
@@ -244,10 +233,7 @@ export function DynamicPricingManager({ equipmentId }: DynamicPricingManagerProp
 
                         <div>
                             <Label>Condition Type</Label>
-                            <Select
-                                value={formData.condition_type}
-                                onValueChange={(value) => setFormData({ ...formData, condition_type: value })}
-                            >
+                            <Select value={formData.condition_type} onValueChange={(value) => setFormData({ ...formData, condition_type: value })}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select condition type" />
                                 </SelectTrigger>
@@ -263,10 +249,7 @@ export function DynamicPricingManager({ equipmentId }: DynamicPricingManagerProp
 
                         <div>
                             <Label>Adjustment Type</Label>
-                            <Select
-                                value={formData.adjustment_type}
-                                onValueChange={(value) => setFormData({ ...formData, adjustment_type: value })}
-                            >
+                            <Select value={formData.adjustment_type} onValueChange={(value) => setFormData({ ...formData, adjustment_type: value })}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select adjustment type" />
                                 </SelectTrigger>

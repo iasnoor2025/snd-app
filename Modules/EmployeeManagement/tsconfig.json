@@ -1,23 +1,18 @@
-{ 
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@employeemanagement/*": ["resources/js/*"],
-      "@/*": ["../../resources/js/*"],
-      "@/Core": ["../Core/resources/js"],
-      "@/Core/*": ["../Core/resources/js/*"],
-      "@/Core/components": ["../Core/resources/js/components"],
-      "@/Core/components/*": ["../Core/resources/js/components/*"],
-      "@/Core/components/ui": ["../Core/resources/js/components/ui"],
-      "@/Core/components/ui/*": ["../Core/resources/js/components/ui/*"]
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@employeemanagement/*": ["resources/js/*"],
+            "@/*": ["../../resources/js/*"],
+            "@/Core": ["../Core/resources/js"],
+            "@/Core/*": ["../Core/resources/js/*"],
+            "@/Core/components": ["../Core/resources/js/components"],
+            "@/Core/components/*": ["../Core/resources/js/components/*"],
+            "@/Core/components/ui": ["../Core/resources/js/components/ui"],
+            "@/Core/components/ui/*": ["../Core/resources/js/components/ui/*"]
+        },
+        "types": ["vite/client"]
     },
-    "types": ["vite/client"]
-  },
-  "include": [
-    "resources/js/**/*.ts",
-    "resources/js/**/*.tsx",
-    "../Core/resources/js/**/*.ts",
-    "../Core/resources/js/**/*.tsx"
-  ]
+    "include": ["resources/js/**/*.ts", "resources/js/**/*.tsx", "../Core/resources/js/**/*.ts", "../Core/resources/js/**/*.tsx"]
 }

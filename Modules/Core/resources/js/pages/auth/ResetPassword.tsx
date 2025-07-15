@@ -1,15 +1,11 @@
-import { useEffect, FormEventHandler } from 'react';
+import { FormEventHandler, useEffect } from 'react';
 
-
-import { Label } from '../../components/ui/label';
+import { Head, useForm } from '@inertiajs/react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { Head, useForm } from '@inertiajs/react';
+import { Label } from '../../components/ui/label';
 
-export default function ResetPassword({
-    token,
-    email,
-}: { token: string; email: string }) {
+export default function ResetPassword({ token, email }: { token: string; email: string }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         token: token,
         email: email,
@@ -30,7 +26,7 @@ export default function ResetPassword({
     };
 
     return (
-        <div className='min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8'>
+        <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
             <Head title="Reset Password" />
 
             <form onSubmit={submit}>
@@ -47,8 +43,6 @@ export default function ResetPassword({
                         onChange={(e) => setData('email', e.target.value)}
                         required
                     />
-
-                    
                 </div>
 
                 <div className="mt-4">
@@ -65,15 +59,10 @@ export default function ResetPassword({
                         onChange={(e) => setData('password', e.target.value)}
                         required
                     />
-
-                    
                 </div>
 
                 <div className="mt-4">
-                    <Label
-                        htmlFor="password_confirmation"
-                        value="Confirm Password"
-                    />
+                    <Label htmlFor="password_confirmation" value="Confirm Password" />
 
                     <Input
                         id="password_confirmation"
@@ -82,16 +71,12 @@ export default function ResetPassword({
                         value={data.password_confirmation}
                         className="mt-1 block w-full"
                         autoComplete="new-password"
-                        onChange={(e) =>
-                            setData('password_confirmation', e.target.value)
-                        }
+                        onChange={(e) => setData('password_confirmation', e.target.value)}
                         required
                     />
-
-                    
                 </div>
 
-                <div className="flex items-center justify-end mt-4">
+                <div className="mt-4 flex items-center justify-end">
                     <Button className="ml-4" disabled={processing}>
                         Reset Password
                     </Button>
@@ -100,7 +85,3 @@ export default function ResetPassword({
         </div>
     );
 }
-
-
-
-

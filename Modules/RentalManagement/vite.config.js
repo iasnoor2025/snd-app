@@ -1,10 +1,7 @@
-import { defineConfig } from 'vite';
-import laravel from 'laravel-vite-plugin';
 import react from '@vitejs/plugin-react';
-import { readdirSync, statSync } from 'fs';
-import { join,relative,dirname } from 'path';
-import { fileURLToPath } from 'url';
+import laravel from 'laravel-vite-plugin';
 import { resolve } from 'path';
+import { defineConfig } from 'vite';
 
 export default defineConfig({
     build: {
@@ -16,10 +13,7 @@ export default defineConfig({
         laravel({
             publicDirectory: '../../public',
             buildDirectory: 'build-rental',
-            input: [
-                __dirname + '/resources/js/app.tsx',
-                __dirname + '/resources/js/pages/**/*.tsx',
-            ],
+            input: [__dirname + '/resources/js/app.tsx', __dirname + '/resources/js/pages/**/*.tsx'],
             refresh: true,
         }),
         react(),
@@ -62,7 +56,6 @@ export default defineConfig({
 
 //const assetsDir = join(__dirname, 'resources/assets');
 //export const paths = getFilePaths(assetsDir);
-
 
 //export const paths = [
 //    'Modules/Rental/resources/assets/sass/app.scss',

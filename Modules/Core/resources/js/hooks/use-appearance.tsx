@@ -71,23 +71,3 @@ export function useAppearance() {
 
     return { appearance, updateAppearance } as const;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

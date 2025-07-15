@@ -9,11 +9,13 @@ This document provides comprehensive documentation for the Rental Management Sys
 All API endpoints require authentication using Laravel Sanctum tokens.
 
 ### Authentication Headers
+
 ```
 Authorization: Bearer {your-token}
 ```
 
 ### Obtaining Access Token
+
 ```http
 POST /api/auth/login
 Content-Type: application/json
@@ -25,6 +27,7 @@ Content-Type: application/json
 ```
 
 Response:
+
 ```json
 {
     "token": "your-access-token",
@@ -35,6 +38,7 @@ Response:
 ## Common Response Formats
 
 ### Success Response
+
 ```json
 {
     "status": "success",
@@ -46,6 +50,7 @@ Response:
 ```
 
 ### Error Response
+
 ```json
 {
     "status": "error",
@@ -61,6 +66,7 @@ Response:
 ### Rental Management
 
 #### Create Rental Request
+
 ```http
 POST /api/rentals
 Content-Type: application/json
@@ -77,6 +83,7 @@ Authorization: Bearer {token}
 ```
 
 Response:
+
 ```json
 {
     "status": "success",
@@ -93,6 +100,7 @@ Response:
 ```
 
 #### Approve Rental
+
 ```http
 POST /api/rentals/{id}/approve
 Content-Type: application/json
@@ -104,6 +112,7 @@ Authorization: Bearer {token}
 ```
 
 #### Process Rental Return
+
 ```http
 POST /api/rentals/{id}/return
 Content-Type: application/json
@@ -121,6 +130,7 @@ Authorization: Bearer {token}
 ### Employee Management
 
 #### Create Employee
+
 ```http
 POST /api/employees
 Content-Type: application/json
@@ -139,6 +149,7 @@ Authorization: Bearer {token}
 ```
 
 #### Upload Employee Documents
+
 ```http
 POST /api/employees/{id}/documents
 Content-Type: multipart/form-data
@@ -150,6 +161,7 @@ documents[0][expiry_date]: "2025-04-01"
 ```
 
 #### Process Employee Transfer
+
 ```http
 POST /api/employees/{id}/transfer
 Content-Type: application/json
@@ -166,6 +178,7 @@ Authorization: Bearer {token}
 ### Project Management
 
 #### Create Project
+
 ```http
 POST /api/projects
 Content-Type: application/json
@@ -183,6 +196,7 @@ Authorization: Bearer {token}
 ```
 
 #### Create Project Phase
+
 ```http
 POST /api/projects/{id}/phases
 Content-Type: application/json
@@ -207,6 +221,7 @@ Authorization: Bearer {token}
 ```
 
 #### Submit Change Request
+
 ```http
 POST /api/projects/{id}/changes
 Content-Type: application/json
@@ -226,6 +241,7 @@ Authorization: Bearer {token}
 ### Equipment Management
 
 #### Create Equipment
+
 ```http
 POST /api/equipment
 Content-Type: application/json
@@ -242,6 +258,7 @@ Authorization: Bearer {token}
 ```
 
 #### Update Equipment Status
+
 ```http
 PUT /api/equipment/{id}/status
 Content-Type: application/json
@@ -254,6 +271,7 @@ Authorization: Bearer {token}
 ```
 
 #### Record Maintenance
+
 ```http
 POST /api/equipment/{id}/maintenance
 Content-Type: application/json
@@ -270,28 +288,31 @@ Authorization: Bearer {token}
 
 ## Error Codes
 
-| Code | Description |
-|------|-------------|
-| 400  | Bad Request - Invalid input parameters |
-| 401  | Unauthorized - Invalid or missing token |
-| 403  | Forbidden - Insufficient permissions |
-| 404  | Not Found - Resource not found |
+| Code | Description                              |
+| ---- | ---------------------------------------- |
+| 400  | Bad Request - Invalid input parameters   |
+| 401  | Unauthorized - Invalid or missing token  |
+| 403  | Forbidden - Insufficient permissions     |
+| 404  | Not Found - Resource not found           |
 | 422  | Unprocessable Entity - Validation failed |
-| 500  | Internal Server Error |
+| 500  | Internal Server Error                    |
 
 ## Rate Limiting
 
 The API implements rate limiting to prevent abuse:
+
 - 60 requests per minute for authenticated users
 - 30 requests per minute for unauthenticated requests
 
 ## Pagination
 
 List endpoints support pagination with the following query parameters:
+
 - `page`: Page number (default: 1)
 - `per_page`: Items per page (default: 15, max: 100)
 
 Example:
+
 ```http
 GET /api/rentals?page=2&per_page=20
 ```
@@ -299,10 +320,12 @@ GET /api/rentals?page=2&per_page=20
 ## Filtering and Sorting
 
 List endpoints support filtering and sorting:
+
 - `sort`: Field to sort by (prefix with `-` for descending)
 - `filter[field]`: Filter by field value
 
 Example:
+
 ```http
 GET /api/rentals?sort=-created_at&filter[status]=active
 ```
@@ -312,6 +335,7 @@ GET /api/rentals?sort=-created_at&filter[status]=active
 Some endpoints support including related data using the `include` parameter:
 
 Example:
+
 ```http
 GET /api/rentals/1?include=customer,equipment
 ```
@@ -321,6 +345,7 @@ GET /api/rentals/1?include=customer,equipment
 The system supports webhooks for real-time event notifications:
 
 1. Configure webhook endpoint:
+
 ```http
 POST /api/webhooks
 Content-Type: application/json
@@ -334,6 +359,7 @@ Authorization: Bearer {token}
 ```
 
 2. Webhook payload format:
+
 ```json
 {
     "event": "rental.created",
@@ -347,6 +373,7 @@ Authorization: Bearer {token}
 ## API Versioning
 
 The API is versioned through the URL:
+
 - Current version: `/api/v1/`
 - Legacy version: `/api/v1/` (maintained for backward compatibility)
 
@@ -362,6 +389,7 @@ The API is versioned through the URL:
 ## Support
 
 For API support and questions:
+
 - Email: api-support@example.com
 - Documentation: https://docs.example.com
-- Status page: https://status.example.com 
+- Status page: https://status.example.com

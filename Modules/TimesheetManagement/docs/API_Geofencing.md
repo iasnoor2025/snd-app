@@ -24,11 +24,11 @@ All endpoints follow standard HTTP status codes and return errors in the followi
 
 ```json
 {
-  "message": "Error description",
-  "errors": {
-    "field": ["Validation error message"]
-  },
-  "code": "ERROR_CODE"
+    "message": "Error description",
+    "errors": {
+        "field": ["Validation error message"]
+    },
+    "code": "ERROR_CODE"
 }
 ```
 
@@ -44,60 +44,60 @@ GET /api/geofences
 
 **Query Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `project_id` | integer | No | Filter by project ID |
-| `is_active` | boolean | No | Filter by active status |
-| `type` | string | No | Filter by zone type (`circular`, `polygon`) |
-| `page` | integer | No | Page number for pagination |
-| `per_page` | integer | No | Items per page (max 100) |
+| Parameter    | Type    | Required | Description                                 |
+| ------------ | ------- | -------- | ------------------------------------------- |
+| `project_id` | integer | No       | Filter by project ID                        |
+| `is_active`  | boolean | No       | Filter by active status                     |
+| `type`       | string  | No       | Filter by zone type (`circular`, `polygon`) |
+| `page`       | integer | No       | Page number for pagination                  |
+| `per_page`   | integer | No       | Items per page (max 100)                    |
 
 **Response:**
 
 ```json
 {
-  "data": [
-    {
-      "id": 1,
-      "name": "Main Office",
-      "description": "Primary office location",
-      "type": "circular",
-      "latitude": 40.7128,
-      "longitude": -74.0060,
-      "radius": 100,
-      "coordinates": null,
-      "project_id": 1,
-      "is_active": true,
-      "enforce_entry": true,
-      "enforce_exit": true,
-      "monitoring_enabled": true,
-      "alert_on_violation": true,
-      "active_hours_start": "09:00:00",
-      "active_hours_end": "17:00:00",
-      "active_days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
-      "overtime_allowed": false,
-      "created_at": "2025-01-28T10:00:00Z",
-      "updated_at": "2025-01-28T10:00:00Z",
-      "project": {
-        "id": 1,
-        "name": "Project Alpha"
-      }
+    "data": [
+        {
+            "id": 1,
+            "name": "Main Office",
+            "description": "Primary office location",
+            "type": "circular",
+            "latitude": 40.7128,
+            "longitude": -74.006,
+            "radius": 100,
+            "coordinates": null,
+            "project_id": 1,
+            "is_active": true,
+            "enforce_entry": true,
+            "enforce_exit": true,
+            "monitoring_enabled": true,
+            "alert_on_violation": true,
+            "active_hours_start": "09:00:00",
+            "active_hours_end": "17:00:00",
+            "active_days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+            "overtime_allowed": false,
+            "created_at": "2025-01-28T10:00:00Z",
+            "updated_at": "2025-01-28T10:00:00Z",
+            "project": {
+                "id": 1,
+                "name": "Project Alpha"
+            }
+        }
+    ],
+    "links": {
+        "first": "/api/geofences?page=1",
+        "last": "/api/geofences?page=5",
+        "prev": null,
+        "next": "/api/geofences?page=2"
+    },
+    "meta": {
+        "current_page": 1,
+        "from": 1,
+        "last_page": 5,
+        "per_page": 15,
+        "to": 15,
+        "total": 75
     }
-  ],
-  "links": {
-    "first": "/api/geofences?page=1",
-    "last": "/api/geofences?page=5",
-    "prev": null,
-    "next": "/api/geofences?page=2"
-  },
-  "meta": {
-    "current_page": 1,
-    "from": 1,
-    "last_page": 5,
-    "per_page": 15,
-    "to": 15,
-    "total": 75
-  }
 }
 ```
 
@@ -111,82 +111,12 @@ POST /api/geofences
 
 ```json
 {
-  "name": "Main Office",
-  "description": "Primary office location",
-  "type": "circular",
-  "latitude": 40.7128,
-  "longitude": -74.0060,
-  "radius": 100,
-  "project_id": 1,
-  "is_active": true,
-  "enforce_entry": true,
-  "enforce_exit": true,
-  "monitoring_enabled": true,
-  "alert_on_violation": true,
-  "active_hours_start": "09:00:00",
-  "active_hours_end": "17:00:00",
-  "active_days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
-  "overtime_allowed": false
-}
-```
-
-**Request Body (Polygon Zone):**
-
-```json
-{
-  "name": "Construction Site",
-  "description": "Main construction area",
-  "type": "polygon",
-  "coordinates": [
-    [40.7128, -74.0060],
-    [40.7130, -74.0058],
-    [40.7132, -74.0062],
-    [40.7129, -74.0064]
-  ],
-  "project_id": 2,
-  "is_active": true,
-  "enforce_entry": true,
-  "enforce_exit": false,
-  "monitoring_enabled": true,
-  "alert_on_violation": true
-}
-```
-
-**Validation Rules:**
-
-| Field | Type | Required | Rules |
-|-------|------|----------|-------|
-| `name` | string | Yes | max:255, unique per project |
-| `description` | string | No | max:1000 |
-| `type` | string | Yes | in:circular,polygon |
-| `latitude` | numeric | Yes (circular) | between:-90,90 |
-| `longitude` | numeric | Yes (circular) | between:-180,180 |
-| `radius` | numeric | Yes (circular) | min:1, max:5000 |
-| `coordinates` | array | Yes (polygon) | min:3, max:20 points |
-| `project_id` | integer | Yes | exists:projects,id |
-| `is_active` | boolean | No | default:true |
-| `enforce_entry` | boolean | No | default:true |
-| `enforce_exit` | boolean | No | default:true |
-| `monitoring_enabled` | boolean | No | default:true |
-| `alert_on_violation` | boolean | No | default:true |
-| `active_hours_start` | time | No | format:H:i:s |
-| `active_hours_end` | time | No | format:H:i:s |
-| `active_days` | array | No | values in:monday,tuesday,wednesday,thursday,friday,saturday,sunday |
-| `overtime_allowed` | boolean | No | default:false |
-
-**Response:**
-
-```json
-{
-  "data": {
-    "id": 1,
     "name": "Main Office",
     "description": "Primary office location",
     "type": "circular",
     "latitude": 40.7128,
-    "longitude": -74.0060,
+    "longitude": -74.006,
     "radius": 100,
-    "coordinates": null,
     "project_id": 1,
     "is_active": true,
     "enforce_entry": true,
@@ -196,11 +126,81 @@ POST /api/geofences
     "active_hours_start": "09:00:00",
     "active_hours_end": "17:00:00",
     "active_days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
-    "overtime_allowed": false,
-    "created_at": "2025-01-28T10:00:00Z",
-    "updated_at": "2025-01-28T10:00:00Z"
-  },
-  "message": "Geofence zone created successfully"
+    "overtime_allowed": false
+}
+```
+
+**Request Body (Polygon Zone):**
+
+```json
+{
+    "name": "Construction Site",
+    "description": "Main construction area",
+    "type": "polygon",
+    "coordinates": [
+        [40.7128, -74.006],
+        [40.713, -74.0058],
+        [40.7132, -74.0062],
+        [40.7129, -74.0064]
+    ],
+    "project_id": 2,
+    "is_active": true,
+    "enforce_entry": true,
+    "enforce_exit": false,
+    "monitoring_enabled": true,
+    "alert_on_violation": true
+}
+```
+
+**Validation Rules:**
+
+| Field                | Type    | Required       | Rules                                                              |
+| -------------------- | ------- | -------------- | ------------------------------------------------------------------ |
+| `name`               | string  | Yes            | max:255, unique per project                                        |
+| `description`        | string  | No             | max:1000                                                           |
+| `type`               | string  | Yes            | in:circular,polygon                                                |
+| `latitude`           | numeric | Yes (circular) | between:-90,90                                                     |
+| `longitude`          | numeric | Yes (circular) | between:-180,180                                                   |
+| `radius`             | numeric | Yes (circular) | min:1, max:5000                                                    |
+| `coordinates`        | array   | Yes (polygon)  | min:3, max:20 points                                               |
+| `project_id`         | integer | Yes            | exists:projects,id                                                 |
+| `is_active`          | boolean | No             | default:true                                                       |
+| `enforce_entry`      | boolean | No             | default:true                                                       |
+| `enforce_exit`       | boolean | No             | default:true                                                       |
+| `monitoring_enabled` | boolean | No             | default:true                                                       |
+| `alert_on_violation` | boolean | No             | default:true                                                       |
+| `active_hours_start` | time    | No             | format:H:i:s                                                       |
+| `active_hours_end`   | time    | No             | format:H:i:s                                                       |
+| `active_days`        | array   | No             | values in:monday,tuesday,wednesday,thursday,friday,saturday,sunday |
+| `overtime_allowed`   | boolean | No             | default:false                                                      |
+
+**Response:**
+
+```json
+{
+    "data": {
+        "id": 1,
+        "name": "Main Office",
+        "description": "Primary office location",
+        "type": "circular",
+        "latitude": 40.7128,
+        "longitude": -74.006,
+        "radius": 100,
+        "coordinates": null,
+        "project_id": 1,
+        "is_active": true,
+        "enforce_entry": true,
+        "enforce_exit": true,
+        "monitoring_enabled": true,
+        "alert_on_violation": true,
+        "active_hours_start": "09:00:00",
+        "active_hours_end": "17:00:00",
+        "active_days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+        "overtime_allowed": false,
+        "created_at": "2025-01-28T10:00:00Z",
+        "updated_at": "2025-01-28T10:00:00Z"
+    },
+    "message": "Geofence zone created successfully"
 }
 ```
 
@@ -214,38 +214,38 @@ GET /api/geofences/{id}
 
 ```json
 {
-  "data": {
-    "id": 1,
-    "name": "Main Office",
-    "description": "Primary office location",
-    "type": "circular",
-    "latitude": 40.7128,
-    "longitude": -74.0060,
-    "radius": 100,
-    "coordinates": null,
-    "project_id": 1,
-    "is_active": true,
-    "enforce_entry": true,
-    "enforce_exit": true,
-    "monitoring_enabled": true,
-    "alert_on_violation": true,
-    "active_hours_start": "09:00:00",
-    "active_hours_end": "17:00:00",
-    "active_days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
-    "overtime_allowed": false,
-    "created_at": "2025-01-28T10:00:00Z",
-    "updated_at": "2025-01-28T10:00:00Z",
-    "project": {
-      "id": 1,
-      "name": "Project Alpha",
-      "description": "Main project"
-    },
-    "statistics": {
-      "total_entries": 150,
-      "total_violations": 5,
-      "compliance_rate": 96.67
+    "data": {
+        "id": 1,
+        "name": "Main Office",
+        "description": "Primary office location",
+        "type": "circular",
+        "latitude": 40.7128,
+        "longitude": -74.006,
+        "radius": 100,
+        "coordinates": null,
+        "project_id": 1,
+        "is_active": true,
+        "enforce_entry": true,
+        "enforce_exit": true,
+        "monitoring_enabled": true,
+        "alert_on_violation": true,
+        "active_hours_start": "09:00:00",
+        "active_hours_end": "17:00:00",
+        "active_days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+        "overtime_allowed": false,
+        "created_at": "2025-01-28T10:00:00Z",
+        "updated_at": "2025-01-28T10:00:00Z",
+        "project": {
+            "id": 1,
+            "name": "Project Alpha",
+            "description": "Main project"
+        },
+        "statistics": {
+            "total_entries": 150,
+            "total_violations": 5,
+            "compliance_rate": 96.67
+        }
     }
-  }
 }
 ```
 
@@ -269,7 +269,7 @@ DELETE /api/geofences/{id}
 
 ```json
 {
-  "message": "Geofence zone deleted successfully"
+    "message": "Geofence zone deleted successfully"
 }
 ```
 
@@ -283,11 +283,11 @@ POST /api/geofences/{id}/toggle-active
 
 ```json
 {
-  "data": {
-    "id": 1,
-    "is_active": false
-  },
-  "message": "Geofence zone status updated successfully"
+    "data": {
+        "id": 1,
+        "is_active": false
+    },
+    "message": "Geofence zone status updated successfully"
 }
 ```
 
@@ -303,51 +303,51 @@ POST /api/geofences/validate-location
 
 ```json
 {
-  "latitude": 40.7128,
-  "longitude": -74.0060,
-  "employee_id": 123,
-  "project_id": 1,
-  "accuracy": 5.2,
-  "timestamp": "2025-01-28T10:00:00Z"
+    "latitude": 40.7128,
+    "longitude": -74.006,
+    "employee_id": 123,
+    "project_id": 1,
+    "accuracy": 5.2,
+    "timestamp": "2025-01-28T10:00:00Z"
 }
 ```
 
 **Validation Rules:**
 
-| Field | Type | Required | Rules |
-|-------|------|----------|-------|
-| `latitude` | numeric | Yes | between:-90,90 |
-| `longitude` | numeric | Yes | between:-180,180 |
-| `employee_id` | integer | Yes | exists:users,id |
-| `project_id` | integer | No | exists:projects,id |
-| `accuracy` | numeric | No | min:0 |
-| `timestamp` | datetime | No | ISO 8601 format |
+| Field         | Type     | Required | Rules              |
+| ------------- | -------- | -------- | ------------------ |
+| `latitude`    | numeric  | Yes      | between:-90,90     |
+| `longitude`   | numeric  | Yes      | between:-180,180   |
+| `employee_id` | integer  | Yes      | exists:users,id    |
+| `project_id`  | integer  | No       | exists:projects,id |
+| `accuracy`    | numeric  | No       | min:0              |
+| `timestamp`   | datetime | No       | ISO 8601 format    |
 
 **Response:**
 
 ```json
 {
-  "data": {
-    "compliant": false,
-    "violations": [
-      {
-        "zone_id": 1,
-        "zone_name": "Main Office",
-        "violation_type": "outside_zone",
-        "distance_from_zone": 150.5,
-        "severity": "medium",
-        "message": "Employee is 150.5 meters outside the Main Office zone"
-      }
-    ],
-    "nearest_zone": {
-      "id": 1,
-      "name": "Main Office",
-      "distance": 150.5,
-      "type": "circular"
-    },
-    "location_accuracy": 5.2,
-    "validation_timestamp": "2025-01-28T10:00:00Z"
-  }
+    "data": {
+        "compliant": false,
+        "violations": [
+            {
+                "zone_id": 1,
+                "zone_name": "Main Office",
+                "violation_type": "outside_zone",
+                "distance_from_zone": 150.5,
+                "severity": "medium",
+                "message": "Employee is 150.5 meters outside the Main Office zone"
+            }
+        ],
+        "nearest_zone": {
+            "id": 1,
+            "name": "Main Office",
+            "distance": 150.5,
+            "type": "circular"
+        },
+        "location_accuracy": 5.2,
+        "validation_timestamp": "2025-01-28T10:00:00Z"
+    }
 }
 ```
 
@@ -361,10 +361,10 @@ POST /api/geofences/detect-violations
 
 ```json
 {
-  "timesheet_id": 456,
-  "latitude": 40.7128,
-  "longitude": -74.0060,
-  "timestamp": "2025-01-28T10:00:00Z"
+    "timesheet_id": 456,
+    "latitude": 40.7128,
+    "longitude": -74.006,
+    "timestamp": "2025-01-28T10:00:00Z"
 }
 ```
 
@@ -372,23 +372,23 @@ POST /api/geofences/detect-violations
 
 ```json
 {
-  "data": {
-    "violations_detected": true,
-    "violations": [
-      {
-        "id": 789,
-        "timesheet_id": 456,
-        "zone_id": 1,
-        "violation_type": "outside_zone",
-        "severity": "medium",
-        "distance_from_zone": 150.5,
-        "detected_at": "2025-01-28T10:00:00Z",
-        "status": "pending",
-        "auto_resolved": false
-      }
-    ],
-    "total_violations": 1
-  }
+    "data": {
+        "violations_detected": true,
+        "violations": [
+            {
+                "id": 789,
+                "timesheet_id": 456,
+                "zone_id": 1,
+                "violation_type": "outside_zone",
+                "severity": "medium",
+                "distance_from_zone": 150.5,
+                "detected_at": "2025-01-28T10:00:00Z",
+                "status": "pending",
+                "auto_resolved": false
+            }
+        ],
+        "total_violations": 1
+    }
 }
 ```
 
@@ -402,42 +402,42 @@ GET /api/mobile/timesheets/geofences/nearby
 
 **Query Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `latitude` | numeric | Yes | Current latitude |
-| `longitude` | numeric | Yes | Current longitude |
-| `radius` | numeric | No | Search radius in meters (default: 1000) |
-| `project_id` | integer | No | Filter by project |
+| Parameter    | Type    | Required | Description                             |
+| ------------ | ------- | -------- | --------------------------------------- |
+| `latitude`   | numeric | Yes      | Current latitude                        |
+| `longitude`  | numeric | Yes      | Current longitude                       |
+| `radius`     | numeric | No       | Search radius in meters (default: 1000) |
+| `project_id` | integer | No       | Filter by project                       |
 
 **Response:**
 
 ```json
 {
-  "data": [
-    {
-      "id": 1,
-      "name": "Main Office",
-      "type": "circular",
-      "distance": 50.2,
-      "is_within": true,
-      "project_id": 1,
-      "project_name": "Project Alpha"
+    "data": [
+        {
+            "id": 1,
+            "name": "Main Office",
+            "type": "circular",
+            "distance": 50.2,
+            "is_within": true,
+            "project_id": 1,
+            "project_name": "Project Alpha"
+        },
+        {
+            "id": 2,
+            "name": "Secondary Site",
+            "type": "polygon",
+            "distance": 250.8,
+            "is_within": false,
+            "project_id": 1,
+            "project_name": "Project Alpha"
+        }
+    ],
+    "current_location": {
+        "latitude": 40.7128,
+        "longitude": -74.006
     },
-    {
-      "id": 2,
-      "name": "Secondary Site",
-      "type": "polygon",
-      "distance": 250.8,
-      "is_within": false,
-      "project_id": 1,
-      "project_name": "Project Alpha"
-    }
-  ],
-  "current_location": {
-    "latitude": 40.7128,
-    "longitude": -74.0060
-  },
-  "search_radius": 1000
+    "search_radius": 1000
 }
 ```
 
@@ -451,15 +451,15 @@ POST /api/mobile/timesheets/location/validate
 
 ```json
 {
-  "latitude": 40.7128,
-  "longitude": -74.0060,
-  "accuracy": 5.2,
-  "project_id": 1,
-  "device_info": {
-    "device_id": "abc123",
-    "platform": "android",
-    "app_version": "1.0.0"
-  }
+    "latitude": 40.7128,
+    "longitude": -74.006,
+    "accuracy": 5.2,
+    "project_id": 1,
+    "device_info": {
+        "device_id": "abc123",
+        "platform": "android",
+        "app_version": "1.0.0"
+    }
 }
 ```
 
@@ -467,20 +467,20 @@ POST /api/mobile/timesheets/location/validate
 
 ```json
 {
-  "data": {
-    "is_valid": true,
-    "is_within_geofence": true,
-    "zones": [
-      {
-        "id": 1,
-        "name": "Main Office",
-        "is_within": true,
-        "distance": 0
-      }
-    ],
-    "warnings": [],
-    "location_quality": "good"
-  }
+    "data": {
+        "is_valid": true,
+        "is_within_geofence": true,
+        "zones": [
+            {
+                "id": 1,
+                "name": "Main Office",
+                "is_within": true,
+                "distance": 0
+            }
+        ],
+        "warnings": [],
+        "location_quality": "good"
+    }
 }
 ```
 
@@ -494,56 +494,56 @@ GET /api/geofences/statistics
 
 **Query Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `project_id` | integer | No | Filter by project |
-| `zone_id` | integer | No | Filter by specific zone |
-| `start_date` | date | No | Start date (YYYY-MM-DD) |
-| `end_date` | date | No | End date (YYYY-MM-DD) |
-| `period` | string | No | Predefined period (today, week, month, year) |
+| Parameter    | Type    | Required | Description                                  |
+| ------------ | ------- | -------- | -------------------------------------------- |
+| `project_id` | integer | No       | Filter by project                            |
+| `zone_id`    | integer | No       | Filter by specific zone                      |
+| `start_date` | date    | No       | Start date (YYYY-MM-DD)                      |
+| `end_date`   | date    | No       | End date (YYYY-MM-DD)                        |
+| `period`     | string  | No       | Predefined period (today, week, month, year) |
 
 **Response:**
 
 ```json
 {
-  "data": {
-    "overview": {
-      "total_zones": 15,
-      "active_zones": 12,
-      "total_entries": 1250,
-      "total_violations": 45,
-      "compliance_rate": 96.4,
-      "average_accuracy": 8.2
+    "data": {
+        "overview": {
+            "total_zones": 15,
+            "active_zones": 12,
+            "total_entries": 1250,
+            "total_violations": 45,
+            "compliance_rate": 96.4,
+            "average_accuracy": 8.2
+        },
+        "by_zone": [
+            {
+                "zone_id": 1,
+                "zone_name": "Main Office",
+                "entries": 450,
+                "violations": 12,
+                "compliance_rate": 97.3,
+                "average_distance": 25.5
+            }
+        ],
+        "by_day": [
+            {
+                "date": "2025-01-28",
+                "entries": 125,
+                "violations": 3,
+                "compliance_rate": 97.6
+            }
+        ],
+        "violation_types": {
+            "outside_zone": 30,
+            "accuracy_low": 10,
+            "time_restriction": 5
+        }
     },
-    "by_zone": [
-      {
-        "zone_id": 1,
-        "zone_name": "Main Office",
-        "entries": 450,
-        "violations": 12,
-        "compliance_rate": 97.3,
-        "average_distance": 25.5
-      }
-    ],
-    "by_day": [
-      {
-        "date": "2025-01-28",
-        "entries": 125,
-        "violations": 3,
-        "compliance_rate": 97.6
-      }
-    ],
-    "violation_types": {
-      "outside_zone": 30,
-      "accuracy_low": 10,
-      "time_restriction": 5
+    "period": {
+        "start_date": "2025-01-01",
+        "end_date": "2025-01-28",
+        "days": 28
     }
-  },
-  "period": {
-    "start_date": "2025-01-01",
-    "end_date": "2025-01-28",
-    "days": 28
-  }
 }
 ```
 
@@ -555,50 +555,50 @@ GET /api/geofences/violations
 
 **Query Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `status` | string | No | Filter by status (pending, resolved, dismissed) |
-| `severity` | string | No | Filter by severity (low, medium, high, critical) |
-| `zone_id` | integer | No | Filter by zone |
-| `employee_id` | integer | No | Filter by employee |
-| `start_date` | date | No | Start date |
-| `end_date` | date | No | End date |
-| `page` | integer | No | Page number |
-| `per_page` | integer | No | Items per page |
+| Parameter     | Type    | Required | Description                                      |
+| ------------- | ------- | -------- | ------------------------------------------------ |
+| `status`      | string  | No       | Filter by status (pending, resolved, dismissed)  |
+| `severity`    | string  | No       | Filter by severity (low, medium, high, critical) |
+| `zone_id`     | integer | No       | Filter by zone                                   |
+| `employee_id` | integer | No       | Filter by employee                               |
+| `start_date`  | date    | No       | Start date                                       |
+| `end_date`    | date    | No       | End date                                         |
+| `page`        | integer | No       | Page number                                      |
+| `per_page`    | integer | No       | Items per page                                   |
 
 **Response:**
 
 ```json
 {
-  "data": [
-    {
-      "id": 789,
-      "timesheet_id": 456,
-      "employee_id": 123,
-      "employee_name": "John Doe",
-      "zone_id": 1,
-      "zone_name": "Main Office",
-      "violation_type": "outside_zone",
-      "severity": "medium",
-      "distance_from_zone": 150.5,
-      "latitude": 40.7128,
-      "longitude": -74.0060,
-      "detected_at": "2025-01-28T10:00:00Z",
-      "status": "pending",
-      "resolved_at": null,
-      "resolved_by": null,
-      "notes": null,
-      "auto_resolved": false
+    "data": [
+        {
+            "id": 789,
+            "timesheet_id": 456,
+            "employee_id": 123,
+            "employee_name": "John Doe",
+            "zone_id": 1,
+            "zone_name": "Main Office",
+            "violation_type": "outside_zone",
+            "severity": "medium",
+            "distance_from_zone": 150.5,
+            "latitude": 40.7128,
+            "longitude": -74.006,
+            "detected_at": "2025-01-28T10:00:00Z",
+            "status": "pending",
+            "resolved_at": null,
+            "resolved_by": null,
+            "notes": null,
+            "auto_resolved": false
+        }
+    ],
+    "meta": {
+        "current_page": 1,
+        "from": 1,
+        "last_page": 3,
+        "per_page": 15,
+        "to": 15,
+        "total": 45
     }
-  ],
-  "meta": {
-    "current_page": 1,
-    "from": 1,
-    "last_page": 3,
-    "per_page": 15,
-    "to": 15,
-    "total": 45
-  }
 }
 ```
 
@@ -610,37 +610,37 @@ GET /api/geofences/work-area-coverage
 
 **Query Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `project_id` | integer | No | Filter by project |
-| `start_date` | date | No | Start date |
-| `end_date` | date | No | End date |
+| Parameter    | Type    | Required | Description       |
+| ------------ | ------- | -------- | ----------------- |
+| `project_id` | integer | No       | Filter by project |
+| `start_date` | date    | No       | Start date        |
+| `end_date`   | date    | No       | End date          |
 
 **Response:**
 
 ```json
 {
-  "data": {
-    "total_work_area": 50000,
-    "covered_area": 45000,
-    "coverage_percentage": 90.0,
-    "uncovered_areas": [
-      {
-        "description": "North parking lot",
-        "estimated_area": 2500,
-        "priority": "medium"
-      }
-    ],
-    "zone_coverage": [
-      {
-        "zone_id": 1,
-        "zone_name": "Main Office",
-        "area": 31416,
-        "utilization": 85.5,
-        "peak_hours": ["09:00", "13:00", "17:00"]
-      }
-    ]
-  }
+    "data": {
+        "total_work_area": 50000,
+        "covered_area": 45000,
+        "coverage_percentage": 90.0,
+        "uncovered_areas": [
+            {
+                "description": "North parking lot",
+                "estimated_area": 2500,
+                "priority": "medium"
+            }
+        ],
+        "zone_coverage": [
+            {
+                "zone_id": 1,
+                "zone_name": "Main Office",
+                "area": 31416,
+                "utilization": 85.5,
+                "peak_hours": ["09:00", "13:00", "17:00"]
+            }
+        ]
+    }
 }
 ```
 
@@ -656,9 +656,9 @@ PUT /api/geofences/violations/{id}/status
 
 ```json
 {
-  "status": "resolved",
-  "notes": "Employee was attending emergency meeting",
-  "resolution_type": "justified"
+    "status": "resolved",
+    "notes": "Employee was attending emergency meeting",
+    "resolution_type": "justified"
 }
 ```
 
@@ -666,15 +666,15 @@ PUT /api/geofences/violations/{id}/status
 
 ```json
 {
-  "data": {
-    "id": 789,
-    "status": "resolved",
-    "resolved_at": "2025-01-28T15:30:00Z",
-    "resolved_by": 456,
-    "notes": "Employee was attending emergency meeting",
-    "resolution_type": "justified"
-  },
-  "message": "Violation status updated successfully"
+    "data": {
+        "id": 789,
+        "status": "resolved",
+        "resolved_at": "2025-01-28T15:30:00Z",
+        "resolved_by": 456,
+        "notes": "Employee was attending emergency meeting",
+        "resolution_type": "justified"
+    },
+    "message": "Violation status updated successfully"
 }
 ```
 
@@ -688,8 +688,8 @@ POST /api/geofences/violations/{id}/notes
 
 ```json
 {
-  "note": "Follow-up required with employee",
-  "is_internal": true
+    "note": "Follow-up required with employee",
+    "is_internal": true
 }
 ```
 
@@ -697,15 +697,15 @@ POST /api/geofences/violations/{id}/notes
 
 ```json
 {
-  "data": {
-    "id": 123,
-    "violation_id": 789,
-    "note": "Follow-up required with employee",
-    "is_internal": true,
-    "created_by": 456,
-    "created_at": "2025-01-28T15:30:00Z"
-  },
-  "message": "Note added successfully"
+    "data": {
+        "id": 123,
+        "violation_id": 789,
+        "note": "Follow-up required with employee",
+        "is_internal": true,
+        "created_by": 456,
+        "created_at": "2025-01-28T15:30:00Z"
+    },
+    "message": "Note added successfully"
 }
 ```
 
@@ -719,10 +719,10 @@ POST /api/geofences/violations/{id}/notify
 
 ```json
 {
-  "notification_type": "email",
-  "recipients": ["manager@company.com"],
-  "message": "Custom notification message",
-  "include_location": true
+    "notification_type": "email",
+    "recipients": ["manager@company.com"],
+    "message": "Custom notification message",
+    "include_location": true
 }
 ```
 
@@ -730,13 +730,13 @@ POST /api/geofences/violations/{id}/notify
 
 ```json
 {
-  "data": {
-    "notification_id": "notif_123",
-    "sent_at": "2025-01-28T15:30:00Z",
-    "recipients": ["manager@company.com"],
-    "status": "sent"
-  },
-  "message": "Notification sent successfully"
+    "data": {
+        "notification_id": "notif_123",
+        "sent_at": "2025-01-28T15:30:00Z",
+        "recipients": ["manager@company.com"],
+        "status": "sent"
+    },
+    "message": "Notification sent successfully"
 }
 ```
 
@@ -750,25 +750,25 @@ GET /api/geofences/violations/export
 
 **Query Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `format` | string | No | Export format (csv, excel, pdf) |
-| `start_date` | date | No | Start date |
-| `end_date` | date | No | End date |
-| `zone_id` | integer | No | Filter by zone |
-| `status` | string | No | Filter by status |
+| Parameter    | Type    | Required | Description                     |
+| ------------ | ------- | -------- | ------------------------------- |
+| `format`     | string  | No       | Export format (csv, excel, pdf) |
+| `start_date` | date    | No       | Start date                      |
+| `end_date`   | date    | No       | End date                        |
+| `zone_id`    | integer | No       | Filter by zone                  |
+| `status`     | string  | No       | Filter by status                |
 
 **Response:**
 
 ```json
 {
-  "data": {
-    "download_url": "/storage/exports/violations_2025-01-28.csv",
-    "filename": "violations_2025-01-28.csv",
-    "size": 15420,
-    "expires_at": "2025-01-29T15:30:00Z"
-  },
-  "message": "Export generated successfully"
+    "data": {
+        "download_url": "/storage/exports/violations_2025-01-28.csv",
+        "filename": "violations_2025-01-28.csv",
+        "size": 15420,
+        "expires_at": "2025-01-29T15:30:00Z"
+    },
+    "message": "Export generated successfully"
 }
 ```
 
@@ -809,17 +809,17 @@ Triggered when a geofence violation is detected:
 
 ```json
 {
-  "event": "geofence.violation.detected",
-  "data": {
-    "violation_id": 789,
-    "timesheet_id": 456,
-    "employee_id": 123,
-    "zone_id": 1,
-    "violation_type": "outside_zone",
-    "severity": "medium",
-    "detected_at": "2025-01-28T10:00:00Z"
-  },
-  "timestamp": "2025-01-28T10:00:00Z"
+    "event": "geofence.violation.detected",
+    "data": {
+        "violation_id": 789,
+        "timesheet_id": 456,
+        "employee_id": 123,
+        "zone_id": 1,
+        "violation_type": "outside_zone",
+        "severity": "medium",
+        "detected_at": "2025-01-28T10:00:00Z"
+    },
+    "timestamp": "2025-01-28T10:00:00Z"
 }
 ```
 
@@ -829,15 +829,15 @@ Triggered when a zone's active status changes:
 
 ```json
 {
-  "event": "geofence.zone.status_changed",
-  "data": {
-    "zone_id": 1,
-    "previous_status": true,
-    "new_status": false,
-    "changed_by": 456,
-    "changed_at": "2025-01-28T10:00:00Z"
-  },
-  "timestamp": "2025-01-28T10:00:00Z"
+    "event": "geofence.zone.status_changed",
+    "data": {
+        "zone_id": 1,
+        "previous_status": true,
+        "new_status": false,
+        "changed_by": 456,
+        "changed_at": "2025-01-28T10:00:00Z"
+    },
+    "timestamp": "2025-01-28T10:00:00Z"
 }
 ```
 
@@ -850,23 +850,21 @@ import { geofencingApi } from './services/geofencingApi';
 
 // Create a zone
 const zone = await geofencingApi.zones.create({
-  name: 'Office Building',
-  type: 'circular',
-  latitude: 40.7128,
-  longitude: -74.0060,
-  radius: 100,
-  project_id: 1
+    name: 'Office Building',
+    type: 'circular',
+    latitude: 40.7128,
+    longitude: -74.006,
+    radius: 100,
+    project_id: 1,
 });
 
 // Validate location
-const validation = await geofencingApi.validation.validateLocation(
-  40.7128, -74.0060, 123, 1
-);
+const validation = await geofencingApi.validation.validateLocation(40.7128, -74.006, 123, 1);
 
 // Get statistics
 const stats = await geofencingApi.statistics.getStatistics({
-  project_id: 1,
-  period: 'month'
+    project_id: 1,
+    period: 'month',
 });
 ```
 
@@ -956,6 +954,7 @@ LOG_LEVEL=debug
 ### Support
 
 For API support:
+
 - Check the main documentation
 - Review the test files for usage examples
 - Examine the controller source code

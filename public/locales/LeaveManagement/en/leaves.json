@@ -1,42 +1,42 @@
 {
-  "title": "Leave Management",
-  "list": {
-    "title": "Leave Requests",
-    "description": "Manage employee leave requests",
-    "empty": "No leave requests found",
-    "search": "Search leave requests...",
-    "filter": "Filter leave requests"
-  },
-  "fields": {
-    "employee": "Employee",
-    "leave_type": "Leave Type",
-    "start_date": "Start Date",
-    "end_date": "End Date",
-    "duration": "Duration",
-    "reason": "Reason",
-    "status": "Status",
-    "notes": "Notes",
-    "created_at": "Created At",
-    "updated_at": "Updated At"
-  },
-  "status": {
-    "pending": "Pending",
-    "approved": "Approved",
-    "rejected": "Rejected",
-    "cancelled": "Cancelled"
-  },
-  "messages": {
-    "create_success": "Leave request created successfully",
-    "update_success": "Leave request updated successfully",
-    "delete_success": "Leave request deleted successfully",
-    "approve_success": "Leave request approved successfully",
-    "reject_success": "Leave request rejected successfully",
-    "cancel_success": "Leave request cancelled successfully",
-    "create_error": "Failed to create leave request",
-    "update_error": "Failed to update leave request",
-    "delete_error": "Failed to delete leave request",
-    "approve_error": "Failed to approve leave request",
-    "reject_error": "Failed to reject leave request",
-    "cancel_error": "Failed to cancel leave request"
-  }
-} 
+    "title": "Leave Management",
+    "list": {
+        "title": "Leave Requests",
+        "description": "Manage employee leave requests",
+        "empty": "No leave requests found",
+        "search": "Search leave requests...",
+        "filter": "Filter leave requests"
+    },
+    "fields": {
+        "employee": "Employee",
+        "leave_type": "Leave Type",
+        "start_date": "Start Date",
+        "end_date": "End Date",
+        "duration": "Duration",
+        "reason": "Reason",
+        "status": "Status",
+        "notes": "Notes",
+        "created_at": "Created At",
+        "updated_at": "Updated At"
+    },
+    "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "cancelled": "Cancelled"
+    },
+    "messages": {
+        "create_success": "Leave request created successfully",
+        "update_success": "Leave request updated successfully",
+        "delete_success": "Leave request deleted successfully",
+        "approve_success": "Leave request approved successfully",
+        "reject_success": "Leave request rejected successfully",
+        "cancel_success": "Leave request cancelled successfully",
+        "create_error": "Failed to create leave request",
+        "update_error": "Failed to update leave request",
+        "delete_error": "Failed to delete leave request",
+        "approve_error": "Failed to approve leave request",
+        "reject_error": "Failed to reject leave request",
+        "cancel_error": "Failed to cancel leave request"
+    }
+}

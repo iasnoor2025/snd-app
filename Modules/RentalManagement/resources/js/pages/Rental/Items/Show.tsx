@@ -1,12 +1,9 @@
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle } from '@/Core';
+import { RentalItem } from '@/Modules/RentalManagement/resources/js/Types/rental';
+import { Head } from '@inertiajs/react';
+import { ArrowLeft, Calendar, Edit, History } from 'lucide-react';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Head } from '@inertiajs/react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
-import { Button } from "@/Core";
-import { Badge } from "@/Core";
-import { ArrowLeft, Edit, History, Calendar } from 'lucide-react';
-import { RentalItem } from '@/Modules/RentalManagement/resources/js/Types/rental';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Props {
     item: RentalItem;
@@ -22,7 +19,7 @@ interface Props {
 
 export const Show: FC<Props> = ({ item, rentalHistory }) => {
     const getStatusColor = (status: string) => {
-  const { t } = useTranslation('rental');
+        const { t } = useTranslation('rental');
 
         switch (status) {
             case 'available':
@@ -58,12 +55,8 @@ export const Show: FC<Props> = ({ item, rentalHistory }) => {
             <Head title={item.name} />
 
             <div className="container mx-auto py-6">
-                <Button
-                    variant="ghost"
-                    className="mb-4"
-                    onClick={() => window.history.back()}
-                >
-                    <ArrowLeft className="w-4 h-4 mr-2" />
+                <Button variant="ghost" className="mb-4" onClick={() => window.history.back()}>
+                    <ArrowLeft className="mr-2 h-4 w-4" />
                     Back
                 </Button>
 
@@ -72,11 +65,8 @@ export const Show: FC<Props> = ({ item, rentalHistory }) => {
                         <CardHeader>
                             <div className="flex items-center justify-between">
                                 <CardTitle>{t('ttl_item_details')}</CardTitle>
-                                <Button
-                                    variant="outline"
-                                    onClick={() => window.location.href = route('rentals.items.edit', item.id)}
-                                >
-                                    <Edit className="w-4 h-4 mr-2" />
+                                <Button variant="outline" onClick={() => (window.location.href = route('rentals.items.edit', item.id))}>
+                                    <Edit className="mr-2 h-4 w-4" />
                                     Edit
                                 </Button>
                             </div>
@@ -95,16 +85,12 @@ export const Show: FC<Props> = ({ item, rentalHistory }) => {
 
                             <div>
                                 <h3 className="text-sm font-medium text-gray-500">Status</h3>
-                                <Badge className={`mt-1 ${getStatusColor(item.status)}`}>
-                                    {item.status}
-                                </Badge>
+                                <Badge className={`mt-1 ${getStatusColor(item.status)}`}>{item.status}</Badge>
                             </div>
 
                             <div>
                                 <h3 className="text-sm font-medium text-gray-500">Condition</h3>
-                                <Badge className={`mt-1 ${getConditionColor(item.condition)}`}>
-                                    {item.condition.replace('_', ' ')}
-                                </Badge>
+                                <Badge className={`mt-1 ${getConditionColor(item.condition)}`}>{item.condition.replace('_', ' ')}</Badge>
                             </div>
 
                             <div>
@@ -135,7 +121,7 @@ export const Show: FC<Props> = ({ item, rentalHistory }) => {
                         <CardHeader>
                             <div className="flex items-center justify-between">
                                 <CardTitle>{t('ttl_rental_history')}</CardTitle>
-                                <History className="w-5 h-5 text-gray-400" />
+                                <History className="h-5 w-5 text-gray-400" />
                             </div>
                         </CardHeader>
 
@@ -143,30 +129,23 @@ export const Show: FC<Props> = ({ item, rentalHistory }) => {
                             {rentalHistory.length > 0 ? (
                                 <div className="space-y-4">
                                     {rentalHistory.map((rental) => (
-                                        <div
-                                            key={rental.id}
-                                            className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-                                        >
+                                        <div key={rental.id} className="flex items-center justify-between rounded-lg bg-gray-50 p-4">
                                             <div className="space-y-1">
                                                 <p className="font-medium">{rental.customer_name}</p>
                                                 <div className="flex items-center text-sm text-gray-500">
-                                                    <Calendar className="w-4 h-4 mr-1" />
+                                                    <Calendar className="mr-1 h-4 w-4" />
                                                     {new Date(rental.start_date)} - {new Date(rental.end_date)}
                                                 </div>
                                             </div>
                                             <div className="text-right">
                                                 <p className="font-medium">${rental.total_amount.toFixed(2)}</p>
-                                                <Badge className={getStatusColor(rental.status)}>
-                                                    {rental.status}
-                                                </Badge>
+                                                <Badge className={getStatusColor(rental.status)}>{rental.status}</Badge>
                                             </div>
                                         </div>
                                     ))}
                                 </div>
                             ) : (
-                                <p className="text-center text-gray-500 py-4">
-                                    No rental history available
-                                </p>
+                                <p className="py-4 text-center text-gray-500">No rental history available</p>
                             )}
                         </CardContent>
                     </Card>
@@ -177,17 +156,3 @@ export const Show: FC<Props> = ({ item, rentalHistory }) => {
 };
 
 export default Show;
-
-
-
-
-
-
-
-
-
-
-
-
-
-

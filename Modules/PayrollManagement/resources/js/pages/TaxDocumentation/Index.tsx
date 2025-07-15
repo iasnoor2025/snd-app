@@ -1,35 +1,12 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Head, Link, router } from '@inertiajs/react';
-import { PageProps } from "@/Core/types";
-import { AppLayout } from '@/Core';
-import { Button } from "@/Core";
-import { Badge } from "@/Core";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/Core";
-import {
+    AppLayout,
+    Badge,
+    Button,
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from "@/Core";
-import { Input } from "@/Core";
-import { Label } from "@/Core";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/Core";
-import {
     Dialog,
     DialogContent,
     DialogDescription,
@@ -37,19 +14,25 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/Core";
-import {
-    FileText,
-    Download,
-    Eye,
-    Plus,
-    Filter,
-    Users,
-    DollarSign,
-    TrendingUp,
-    Calendar
-} from 'lucide-react';
+    Label,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/Core';
+import { PageProps } from '@/Core/types';
+import { Head, Link, router } from '@inertiajs/react';
 import { format } from 'date-fns';
+import { DollarSign, Download, Eye, FileText, Filter, Plus, TrendingUp } from 'lucide-react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { route } from 'ziggy-js';
 
 interface Employee {
@@ -95,14 +78,8 @@ interface Props extends PageProps {
     availableYears: number[];
 }
 
-export default function Index({
-    taxDocuments,
-    employees,
-    summary,
-    filters,
-    availableYears
-}: Props) {
-  const { t } = useTranslation('payroll');
+export default function Index({ taxDocuments, employees, summary, filters, availableYears }: Props) {
+    const { t } = useTranslation('payroll');
 
     const [selectedYear, setSelectedYear] = useState(filters.year?.toString() || '');
     const [selectedEmployee, setSelectedEmployee] = useState(filters.employee_id?.toString() || '');
@@ -134,7 +111,7 @@ export default function Index({
     const handleBulkGenerate = () => {
         router.post(route('payroll.tax-documentation.bulk-generate'), {
             tax_year: parseInt(bulkYear),
-            employee_ids: selectedEmployees.length > 0 ? selectedEmployees.map(id => parseInt(id)) : undefined,
+            employee_ids: selectedEmployees.length > 0 ? selectedEmployees.map((id) => parseInt(id)) : undefined,
         });
         setShowBulkDialog(false);
         setSelectedEmployees([]);
@@ -150,11 +127,16 @@ export default function Index({
 
     const getStatusColor = (status: string) => {
         switch (status) {
-            case 'draft': return 'bg-yellow-100 text-yellow-800';
-            case 'generated': return 'bg-blue-100 text-blue-800';
-            case 'sent': return 'bg-green-100 text-green-800';
-            case 'archived': return 'bg-gray-100 text-gray-800';
-            default: return 'bg-gray-100 text-gray-800';
+            case 'draft':
+                return 'bg-yellow-100 text-yellow-800';
+            case 'generated':
+                return 'bg-blue-100 text-blue-800';
+            case 'sent':
+                return 'bg-green-100 text-green-800';
+            case 'archived':
+                return 'bg-gray-100 text-gray-800';
+            default:
+                return 'bg-gray-100 text-gray-800';
         }
     };
 
@@ -171,29 +153,27 @@ export default function Index({
 
             <div className="space-y-6">
                 {/* Header */}
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">{t('tax_documentation')}</h1>
                         <p className="text-gray-600">{t('generate_and_manage_annual_tax_documents_for_emplo')}</p>
                     </div>
                     <div className="flex gap-2">
                         <Button onClick={handleExport} variant="outline">
-                            <Download className="h-4 w-4 mr-2" />
+                            <Download className="mr-2 h-4 w-4" />
                             Export
                         </Button>
                         <Dialog open={showBulkDialog} onOpenChange={setShowBulkDialog}>
                             <DialogTrigger asChild>
                                 <Button>
-                                    <Plus className="h-4 w-4 mr-2" />
+                                    <Plus className="mr-2 h-4 w-4" />
                                     Bulk Generate
                                 </Button>
                             </DialogTrigger>
                             <DialogContent>
                                 <DialogHeader>
                                     <DialogTitle>{t('ttl_bulk_generate_tax_documents')}</DialogTitle>
-                                    <DialogDescription>
-                                        Generate tax documents for multiple employees for a specific year.
-                                    </DialogDescription>
+                                    <DialogDescription>Generate tax documents for multiple employees for a specific year.</DialogDescription>
                                 </DialogHeader>
                                 <div className="space-y-4">
                                     <div>
@@ -234,9 +214,7 @@ export default function Index({
                                     <Button variant="outline" onClick={() => setShowBulkDialog(false)}>
                                         Cancel
                                     </Button>
-                                    <Button onClick={handleBulkGenerate}>
-                                        Generate Documents
-                                    </Button>
+                                    <Button onClick={handleBulkGenerate}>Generate Documents</Button>
                                 </DialogFooter>
                             </DialogContent>
                         </Dialog>
@@ -244,7 +222,7 @@ export default function Index({
                 </div>
 
                 {/* Summary Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">{t('ttl_total_documents')}</CardTitle>
@@ -292,7 +270,7 @@ export default function Index({
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                             <div>
                                 <Label htmlFor="year-filter">{t('lbl_tax_year')}</Label>
                                 <Select value={selectedYear} onValueChange={setSelectedYear}>
@@ -325,9 +303,7 @@ export default function Index({
                                 </Select>
                             </div>
                             <div className="flex items-end gap-2">
-                                <Button onClick={handleFilter}>
-                                    Apply Filters
-                                </Button>
+                                <Button onClick={handleFilter}>Apply Filters</Button>
                                 <Button variant="outline" onClick={handleClearFilters}>
                                     Clear
                                 </Button>
@@ -340,9 +316,7 @@ export default function Index({
                 <Card>
                     <CardHeader>
                         <CardTitle>{t('ttl_tax_documents')}</CardTitle>
-                        <CardDescription>
-                            Manage tax documents for employees
-                        </CardDescription>
+                        <CardDescription>Manage tax documents for employees</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <Table>
@@ -363,22 +337,18 @@ export default function Index({
                             <TableBody>
                                 {taxDocuments.data.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={10} className="text-center py-8">
+                                        <TableCell colSpan={10} className="py-8 text-center">
                                             <div className="flex flex-col items-center gap-2">
                                                 <FileText className="h-8 w-8 text-gray-400" />
                                                 <p className="text-gray-500">{t('no_tax_documents_found')}</p>
-                                                <p className="text-sm text-gray-400">
-                                                    Generate tax documents to get started
-                                                </p>
+                                                <p className="text-sm text-gray-400">Generate tax documents to get started</p>
                                             </div>
                                         </TableCell>
                                     </TableRow>
                                 ) : (
                                     taxDocuments.data.map((document) => (
                                         <TableRow key={document.id}>
-                                            <TableCell className="font-medium">
-                                                {document.document_number}
-                                            </TableCell>
+                                            <TableCell className="font-medium">{document.document_number}</TableCell>
                                             <TableCell>{document.employee.name}</TableCell>
                                             <TableCell>{document.tax_year}</TableCell>
                                             <TableCell>{formatCurrency(document.gross_income)}</TableCell>
@@ -386,28 +356,19 @@ export default function Index({
                                             <TableCell>{formatCurrency(document.net_income)}</TableCell>
                                             <TableCell>{document.effective_tax_rate.toFixed(2)}%</TableCell>
                                             <TableCell>
-                                                <Badge className={getStatusColor(document.status)}>
-                                                    {document.status}
-                                                </Badge>
+                                                <Badge className={getStatusColor(document.status)}>{document.status}</Badge>
                                             </TableCell>
                                             <TableCell>
-                                                {document.generated_at ?
-                                                    format(new Date(document.generated_at), 'MMM dd, yyyy') :
-                                                    '-'
-                                                }
+                                                {document.generated_at ? format(new Date(document.generated_at), 'MMM dd, yyyy') : '-'}
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex items-center gap-2">
-                                                    <Link
-                                                        href={route('payroll.tax-documentation.show', document.id)}
-                                                    >
+                                                    <Link href={route('payroll.tax-documentation.show', document.id)}>
                                                         <Button variant="outline" size="sm">
                                                             <Eye className="h-4 w-4" />
                                                         </Button>
                                                     </Link>
-                                                    <Link
-                                                        href={route('payroll.tax-documentation.download', document.id)}
-                                                    >
+                                                    <Link href={route('payroll.tax-documentation.download', document.id)}>
                                                         <Button variant="outline" size="sm">
                                                             <Download className="h-4 w-4" />
                                                         </Button>
@@ -430,28 +391,10 @@ export default function Index({
                         </Table>
 
                         {/* Pagination */}
-                        {taxDocuments.links && (
-                            <div className="flex justify-center mt-4">
-                                {/* Add pagination component here if needed */}
-                            </div>
-                        )}
+                        {taxDocuments.links && <div className="mt-4 flex justify-center">{/* Add pagination component here if needed */}</div>}
                     </CardContent>
                 </Card>
             </div>
         </AppLayout>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

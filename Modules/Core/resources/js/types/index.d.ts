@@ -1,4 +1,3 @@
-import { LucideIcon } from 'lucide-react';
 import type { Config } from 'ziggy-js';
 
 export interface Auth {
@@ -55,6 +54,3 @@ export interface PageProps {
     permissions?: string[];
     [key: string]: any;
 }
-
-
-

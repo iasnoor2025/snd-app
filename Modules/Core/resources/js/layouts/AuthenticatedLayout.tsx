@@ -1,8 +1,8 @@
-import React, { PropsWithChildren, useState } from 'react';
-import { ApplicationLogo, Dropdown, NavLink, ResponsiveNavLink } from "@/Core";
+import { ApplicationLogo, Dropdown, NavLink, ResponsiveNavLink } from '@/Core';
 import { Link, usePage } from '@inertiajs/react';
-import type { User } from '../types/index.d';
+import React, { PropsWithChildren, useState } from 'react';
 import { SmartAvatar } from '../components/ui/smart-avatar';
+import type { User } from '../types/index.d';
 
 interface PageProps {
     auth: {
@@ -25,11 +25,11 @@ export default function AuthenticatedLayout({ header, children }: PropsWithChild
 
     return (
         <div className="min-h-screen bg-gray-100">
-            <nav className="bg-white border-b border-gray-100">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16">
+            <nav className="border-b border-gray-100 bg-white">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="flex h-16 justify-between">
                         <div className="flex">
-                            <div className="shrink-0 flex items-center">
+                            <div className="flex shrink-0 items-center">
                                 <Link href="/">
                                     <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
                                 </Link>
@@ -42,20 +42,20 @@ export default function AuthenticatedLayout({ header, children }: PropsWithChild
                             </div>
                         </div>
 
-                        <div className="hidden sm:flex sm:items-center sm:ml-6">
-                            <div className="ml-3 relative">
+                        <div className="hidden sm:ml-6 sm:flex sm:items-center">
+                            <div className="relative ml-3">
                                 <Dropdown>
                                     <Dropdown.Trigger>
                                         <span className="inline-flex items-center gap-2 rounded-md">
                                             <SmartAvatar user={user} size="sm" />
                                             <button
                                                 type="button"
-                                                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
+                                                className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm leading-4 font-medium text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
                                             >
                                                 {user.name}
 
                                                 <svg
-                                                    className="ml-2 -mr-0.5 h-4 w-4"
+                                                    className="-mr-0.5 ml-2 h-4 w-4"
                                                     xmlns="http://www.w3.org/2000/svg"
                                                     viewBox="0 0 20 20"
                                                     fill="currentColor"
@@ -83,7 +83,7 @@ export default function AuthenticatedLayout({ header, children }: PropsWithChild
                         <div className="-mr-2 flex items-center sm:hidden">
                             <button
                                 onClick={() => setShowingNavigationDropdown((previousState) => !previousState)}
-                                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
+                                className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
                             >
                                 <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                     <path
@@ -107,25 +107,23 @@ export default function AuthenticatedLayout({ header, children }: PropsWithChild
                 </div>
 
                 <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'}>
-                    <div className="pt-2 pb-3 space-y-1">
+                    <div className="space-y-1 pt-2 pb-3">
                         <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
                             Dashboard
                         </ResponsiveNavLink>
                     </div>
 
-                    <div className="pt-4 pb-1 border-t border-gray-200">
-                        <div className="px-4 flex items-center gap-3">
+                    <div className="border-t border-gray-200 pt-4 pb-1">
+                        <div className="flex items-center gap-3 px-4">
                             <SmartAvatar user={user} size="sm" />
                             <div>
-                                <div className="font-medium text-base text-gray-800">{user.name}</div>
-                                <div className="font-medium text-sm text-gray-500">{user.email}</div>
+                                <div className="text-base font-medium text-gray-800">{user.name}</div>
+                                <div className="text-sm font-medium text-gray-500">{user.email}</div>
                             </div>
                         </div>
 
                         <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href="/profile">
-                                Profile
-                            </ResponsiveNavLink>
+                            <ResponsiveNavLink href="/profile">Profile</ResponsiveNavLink>
                             <ResponsiveNavLink method="post" href={route('logout')} as="button">
                                 Log Out
                             </ResponsiveNavLink>
@@ -136,9 +134,7 @@ export default function AuthenticatedLayout({ header, children }: PropsWithChild
 
             {header && (
                 <header className="bg-white shadow">
-                    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {header}
-                    </div>
+                    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">{header}</div>
                 </header>
             )}
 
@@ -146,23 +142,3 @@ export default function AuthenticatedLayout({ header, children }: PropsWithChild
         </div>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

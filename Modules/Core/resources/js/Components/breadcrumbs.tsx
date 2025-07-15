@@ -1,9 +1,9 @@
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "./ui/breadcrumb";
-import { ChevronRight, ChevronLeft } from "lucide-react";
-import { Link } from "@inertiajs/react";
+import { Link } from '@inertiajs/react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
-import { cn } from "../lib/utils";
+import { cn } from '../lib/utils';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from './ui/breadcrumb';
 
 interface BreadcrumbItem {
     title: string;
@@ -20,21 +20,17 @@ export function Breadcrumbs({ breadcrumbs }: BreadcrumbsProps) {
 
     return (
         <Breadcrumb>
-            <BreadcrumbList className={cn(isRTL && "flex-row-reverse")}>
+            <BreadcrumbList className={cn(isRTL && 'flex-row-reverse')}>
                 {breadcrumbs.map((breadcrumb, index) => (
                     <Fragment key={index}>
                         {index > 0 && (
                             <BreadcrumbSeparator>
-                                {isRTL ? (
-                                    <ChevronLeft className="h-4 w-4" />
-                                ) : (
-                                    <ChevronRight className="h-4 w-4" />
-                                )}
+                                {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                             </BreadcrumbSeparator>
                         )}
                         <BreadcrumbItem>
                             {breadcrumb.href ? (
-                                <Link href={breadcrumb.href} className="text-muted-foreground hover:text-foreground transition-colors">
+                                <Link href={breadcrumb.href} className="text-muted-foreground transition-colors hover:text-foreground">
                                     {breadcrumb.title}
                                 </Link>
                             ) : (
@@ -50,25 +46,3 @@ export function Breadcrumbs({ breadcrumbs }: BreadcrumbsProps) {
 
 // Default export for compatibility with index.ts
 export default Breadcrumbs;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

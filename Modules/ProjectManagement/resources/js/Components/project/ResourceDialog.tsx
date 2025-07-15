@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import { ErrorBoundary } from '@/Core';
 import { XIcon } from 'lucide-react';
-import ResourceForm from './ResourceForm';
-import { ErrorBoundary } from "@/Core";
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import ResourceForm from './ResourceForm';
 
 export type ResourceType = 'manpower' | 'equipment' | 'material' | 'fuel' | 'expense';
 
@@ -21,7 +21,7 @@ export default function ResourceDialog({
     onOpenChange = () => {},
     initialType = 'manpower',
     initialData = null,
-    onSuccess = () => {}
+    onSuccess = () => {},
 }: ResourceDialogProps) {
     const { t } = useTranslation(['projects']);
 
@@ -68,14 +68,8 @@ export default function ResourceDialog({
 
     return (
         <ErrorBoundary>
-            <div
-                className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto"
-                onClick={handleBackdropClick}
-            >
-                <div
-                    className="bg-white rounded-lg shadow-lg max-w-[500px] w-full relative"
-                    onClick={e => e.stopPropagation()}
-                >
+            <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/50 p-4" onClick={handleBackdropClick}>
+                <div className="relative w-full max-w-[500px] rounded-lg bg-white shadow-lg" onClick={(e) => e.stopPropagation()}>
                     {/* Close button */}
                     <button
                         className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none"
@@ -86,13 +80,9 @@ export default function ResourceDialog({
                     </button>
 
                     {/* Header */}
-                    <div className="p-6 border-b">
+                    <div className="border-b p-6">
                         <h2 className="text-lg font-semibold">{title}</h2>
-                        <p className="text-sm text-gray-500 mt-1">
-                            {initialData
-                                ? t('update_resource')
-                                : t('add_new_resource')}
-                        </p>
+                        <p className="mt-1 text-sm text-gray-500">{initialData ? t('update_resource') : t('add_new_resource')}</p>
                     </div>
 
                     {/* Body */}
@@ -112,18 +102,3 @@ export default function ResourceDialog({
         </ErrorBoundary>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

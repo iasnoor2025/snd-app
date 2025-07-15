@@ -1,15 +1,30 @@
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+    Button,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+    Input,
+    Label,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    Switch,
+    Textarea,
+} from '@/Core';
+import { Head, router, useForm } from '@inertiajs/react';
+import { ArrowLeftIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Head, useForm, router } from '@inertiajs/react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Core";
-import { Button } from "@/Core";
-import { Input } from "@/Core";
-import { Label } from "@/Core";
-import { Textarea } from "@/Core";
-import { Switch } from "@/Core";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/Core";
-import { ArrowLeftIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
 // Temporary inline permission hook
@@ -35,7 +50,7 @@ interface FormData {
 }
 
 export default function CreateLeaveType() {
-  const { t } = useTranslation('leave');
+    const { t } = useTranslation('leave');
 
     const { can } = usePermission();
 
@@ -118,18 +133,16 @@ export default function CreateLeaveType() {
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                         {/* Basic Information */}
                         <div className="lg:col-span-2">
                             <Card>
                                 <CardHeader>
                                     <CardTitle>{t('ttl_basic_information')}</CardTitle>
-                                    <CardDescription>
-                                        Enter the basic details for the leave type
-                                    </CardDescription>
+                                    <CardDescription>Enter the basic details for the leave type</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                         <div className="space-y-2">
                                             <Label htmlFor="name">Name *</Label>
                                             <Input
@@ -140,9 +153,7 @@ export default function CreateLeaveType() {
                                                 placeholder={t('ph_eg_annual_leave')}
                                                 className={errors.name ? 'border-red-500' : ''}
                                             />
-                                            {errors.name && (
-                                                <p className="text-sm text-red-500">{errors.name}</p>
-                                            )}
+                                            {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
                                         </div>
 
                                         <div className="space-y-2">
@@ -153,7 +164,7 @@ export default function CreateLeaveType() {
                                                     type="color"
                                                     value={data.color}
                                                     onChange={(e) => setData('color', e.target.value)}
-                                                    className="w-16 h-10 p-1 border rounded"
+                                                    className="h-10 w-16 rounded border p-1"
                                                 />
                                                 <Input
                                                     type="text"
@@ -163,9 +174,7 @@ export default function CreateLeaveType() {
                                                     className="flex-1"
                                                 />
                                             </div>
-                                            {errors.color && (
-                                                <p className="text-sm text-red-500">{errors.color}</p>
-                                            )}
+                                            {errors.color && <p className="text-sm text-red-500">{errors.color}</p>}
                                         </div>
                                     </div>
 
@@ -179,9 +188,7 @@ export default function CreateLeaveType() {
                                             rows={3}
                                             className={errors.description ? 'border-red-500' : ''}
                                         />
-                                        {errors.description && (
-                                            <p className="text-sm text-red-500">{errors.description}</p>
-                                        )}
+                                        {errors.description && <p className="text-sm text-red-500">{errors.description}</p>}
                                     </div>
                                 </CardContent>
                             </Card>
@@ -190,12 +197,10 @@ export default function CreateLeaveType() {
                             <Card>
                                 <CardHeader>
                                     <CardTitle>{t('ttl_leave_configuration')}</CardTitle>
-                                    <CardDescription>
-                                        Configure the leave type settings and rules
-                                    </CardDescription>
+                                    <CardDescription>Configure the leave type settings and rules</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                                         <div className="space-y-2">
                                             <Label htmlFor="max_days">Maximum Days *</Label>
                                             <Input
@@ -207,9 +212,7 @@ export default function CreateLeaveType() {
                                                 placeholder="0"
                                                 className={errors.max_days ? 'border-red-500' : ''}
                                             />
-                                            {errors.max_days && (
-                                                <p className="text-sm text-red-500">{errors.max_days}</p>
-                                            )}
+                                            {errors.max_days && <p className="text-sm text-red-500">{errors.max_days}</p>}
                                         </div>
 
                                         <div className="space-y-2">
@@ -223,9 +226,7 @@ export default function CreateLeaveType() {
                                                 placeholder="1"
                                                 className={errors.notice_days ? 'border-red-500' : ''}
                                             />
-                                            {errors.notice_days && (
-                                                <p className="text-sm text-red-500">{errors.notice_days}</p>
-                                            )}
+                                            {errors.notice_days && <p className="text-sm text-red-500">{errors.notice_days}</p>}
                                         </div>
 
                                         <div className="space-y-2">
@@ -247,10 +248,7 @@ export default function CreateLeaveType() {
 
                                     <div className="space-y-2">
                                         <Label htmlFor="gender_specific">{t('gender_specific')}</Label>
-                                        <Select
-                                            value={data.gender_specific}
-                                            onValueChange={(value) => setData('gender_specific', value)}
-                                        >
+                                        <Select value={data.gender_specific} onValueChange={(value) => setData('gender_specific', value)}>
                                             <SelectTrigger className={errors.gender_specific ? 'border-red-500' : ''}>
                                                 <SelectValue placeholder={t('ph_select_gender_applicability')} />
                                             </SelectTrigger>
@@ -260,13 +258,11 @@ export default function CreateLeaveType() {
                                                 <SelectItem value="female">{t('opt_female_only')}</SelectItem>
                                             </SelectContent>
                                         </Select>
-                                        {errors.gender_specific && (
-                                            <p className="text-sm text-red-500">{errors.gender_specific}</p>
-                                        )}
+                                        {errors.gender_specific && <p className="text-sm text-red-500">{errors.gender_specific}</p>}
                                     </div>
 
                                     {/* Carry Forward Settings */}
-                                    <div className="space-y-4 p-4 border rounded-lg">
+                                    <div className="space-y-4 rounded-lg border p-4">
                                         <div className="flex items-center justify-between">
                                             <div className="space-y-0.5">
                                                 <Label htmlFor="allow_carry_forward">{t('lbl_allow_carry_forward')}</Label>
@@ -308,17 +304,13 @@ export default function CreateLeaveType() {
                             <Card>
                                 <CardHeader>
                                     <CardTitle>Settings</CardTitle>
-                                    <CardDescription>
-                                        Configure leave type behavior and permissions
-                                    </CardDescription>
+                                    <CardDescription>Configure leave type behavior and permissions</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-6">
                                     <div className="flex items-center justify-between">
                                         <div className="space-y-0.5">
                                             <Label htmlFor="requires_approval">{t('lbl_requires_approval')}</Label>
-                                            <p className="text-sm text-muted-foreground">
-                                                Leave requests need manager approval
-                                            </p>
+                                            <p className="text-sm text-muted-foreground">Leave requests need manager approval</p>
                                         </div>
                                         <Switch
                                             id="requires_approval"
@@ -330,23 +322,15 @@ export default function CreateLeaveType() {
                                     <div className="flex items-center justify-between">
                                         <div className="space-y-0.5">
                                             <Label htmlFor="is_paid">{t('lbl_paid_leave')}</Label>
-                                            <p className="text-sm text-muted-foreground">
-                                                Employee receives salary during leave
-                                            </p>
+                                            <p className="text-sm text-muted-foreground">Employee receives salary during leave</p>
                                         </div>
-                                        <Switch
-                                            id="is_paid"
-                                            checked={data.is_paid}
-                                            onCheckedChange={(checked) => setData('is_paid', checked)}
-                                        />
+                                        <Switch id="is_paid" checked={data.is_paid} onCheckedChange={(checked) => setData('is_paid', checked)} />
                                     </div>
 
                                     <div className="flex items-center justify-between">
                                         <div className="space-y-0.5">
                                             <Label htmlFor="is_active">Active</Label>
-                                            <p className="text-sm text-muted-foreground">
-                                                Leave type is available for use
-                                            </p>
+                                            <p className="text-sm text-muted-foreground">Leave type is available for use</p>
                                         </div>
                                         <Switch
                                             id="is_active"
@@ -361,20 +345,10 @@ export default function CreateLeaveType() {
                             <Card>
                                 <CardContent className="pt-6">
                                     <div className="flex flex-col gap-2">
-                                        <Button
-                                            type="submit"
-                                            disabled={processing}
-                                            className="w-full"
-                                        >
+                                        <Button type="submit" disabled={processing} className="w-full">
                                             {processing ? 'Creating...' : 'Create Leave Type'}
                                         </Button>
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            onClick={handleCancel}
-                                            disabled={processing}
-                                            className="w-full"
-                                        >
+                                        <Button type="button" variant="outline" onClick={handleCancel} disabled={processing} className="w-full">
                                             Cancel
                                         </Button>
                                     </div>
@@ -387,17 +361,3 @@ export default function CreateLeaveType() {
         </>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

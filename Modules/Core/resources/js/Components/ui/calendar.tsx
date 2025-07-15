@@ -1,15 +1,13 @@
-import * as React from "react"
+import * as React from 'react';
 
 export interface CalendarProps extends React.HTMLAttributes<HTMLDivElement> {
-  children?: React.ReactNode
+    children?: React.ReactNode;
 }
 
-export const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
-  ({ children, className = '', ...props }, ref) => (
-    <div ref={ref} className={`border rounded-md p-4 ${className}`} {...props}>
-      {children || 'Calendar component placeholder'}
+export const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(({ children, className = '', ...props }, ref) => (
+    <div ref={ref} className={`rounded-md border p-4 ${className}`} {...props}>
+        {children || 'Calendar component placeholder'}
     </div>
-  )
-)
+));
 
-Calendar.displayName = "Calendar"
+Calendar.displayName = 'Calendar';

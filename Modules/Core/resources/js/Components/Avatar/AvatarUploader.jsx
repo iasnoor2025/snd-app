@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button, Input } from '../ui';
-import { Label } from "@/Core";
+import { Label } from '@/Core';
+import { Camera, Crop, RotateCw, Upload, X } from 'lucide-react';
+import { useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { Camera, Upload, X, Crop, RotateCw } from 'lucide-react';
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input } from '../ui';
 
 const AvatarUploader = ({ user, onAvatarUpdate }) => {
     const [preview, setPreview] = useState(null);
@@ -38,7 +38,7 @@ const AvatarUploader = ({ user, onAvatarUpdate }) => {
         setIsUploading(true);
         try {
             // Simulate upload delay
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            await new Promise((resolve) => setTimeout(resolve, 1500));
 
             // In a real implementation, you would upload to your server here
             // const formData = new FormData();
@@ -72,39 +72,24 @@ const AvatarUploader = ({ user, onAvatarUpdate }) => {
                     <Camera className="h-5 w-5" />
                     Upload Avatar
                 </CardTitle>
-                <CardDescription>
-                    Choose an image file to set as your profile picture
-                </CardDescription>
+                <CardDescription>Choose an image file to set as your profile picture</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
                 {/* Upload Area */}
                 <div className="space-y-2">
                     <Label htmlFor="avatar">Select Image</Label>
-                    <Input
-                        ref={fileInputRef}
-                        id="avatar"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileSelect}
-                        className="cursor-pointer"
-                    />
-                    <p className="text-sm text-muted-foreground">
-                        Supported formats: JPG, PNG, GIF (max. 5MB)
-                    </p>
+                    <Input ref={fileInputRef} id="avatar" type="file" accept="image/*" onChange={handleFileSelect} className="cursor-pointer" />
+                    <p className="text-sm text-muted-foreground">Supported formats: JPG, PNG, GIF (max. 5MB)</p>
                 </div>
 
                 {/* Preview Area */}
                 {preview && (
                     <div className="space-y-4">
-                        <div className="relative aspect-square w-full max-w-sm mx-auto overflow-hidden rounded-lg border">
-                            <img
-                                src={preview}
-                                alt="Avatar preview"
-                                className="h-full w-full object-cover"
-                            />
+                        <div className="relative mx-auto aspect-square w-full max-w-sm overflow-hidden rounded-lg border">
+                            <img src={preview} alt="Avatar preview" className="h-full w-full object-cover" />
                             <button
                                 onClick={handleClear}
-                                className="absolute right-2 top-2 rounded-full bg-gray-900/50 p-1 text-white hover:bg-gray-900/75"
+                                className="absolute top-2 right-2 rounded-full bg-gray-900/50 p-1 text-white hover:bg-gray-900/75"
                             >
                                 <X className="h-4 w-4" />
                             </button>
@@ -134,11 +119,7 @@ const AvatarUploader = ({ user, onAvatarUpdate }) => {
 
                         {/* Upload Button */}
                         <div className="flex justify-end">
-                            <Button
-                                onClick={handleUpload}
-                                disabled={isUploading}
-                                className="flex items-center gap-2"
-                            >
+                            <Button onClick={handleUpload} disabled={isUploading} className="flex items-center gap-2">
                                 <Upload className="h-4 w-4" />
                                 {isUploading ? 'Uploading...' : 'Upload Avatar'}
                             </Button>
@@ -148,8 +129,8 @@ const AvatarUploader = ({ user, onAvatarUpdate }) => {
 
                 {/* Guidelines */}
                 <div className="rounded-lg border p-4 text-sm text-muted-foreground">
-                    <h4 className="font-medium text-foreground mb-2">Upload Guidelines:</h4>
-                    <ul className="list-disc list-inside space-y-1">
+                    <h4 className="mb-2 font-medium text-foreground">Upload Guidelines:</h4>
+                    <ul className="list-inside list-disc space-y-1">
                         <li>Use a square image for best results</li>
                         <li>Keep the file size under 5MB</li>
                         <li>Use high-resolution images for better quality</li>

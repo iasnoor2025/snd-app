@@ -1,12 +1,12 @@
-import { useState } from 'react';
 import { Button } from '@/Core/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/Core/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/Core/components/ui/dialog';
 import { Input } from '@/Core/components/ui/input';
 import { Label } from '@/Core/components/ui/label';
 import { Switch } from '@/Core/components/ui/switch';
-import { toast } from 'sonner';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/Core/components/ui/dialog';
 import { QRCodeSVG } from 'qrcode.react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface MfaSettingsProps {
     isEnabled: boolean;
@@ -103,23 +103,15 @@ export default function MfaSettings({ isEnabled: initialEnabled }: MfaSettingsPr
             <Card>
                 <CardHeader>
                     <CardTitle>Two-Factor Authentication</CardTitle>
-                    <CardDescription>
-                        Add an extra layer of security to your account using Google Authenticator
-                    </CardDescription>
+                    <CardDescription>Add an extra layer of security to your account using Google Authenticator</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="flex items-center justify-between">
                         <div className="space-y-1">
                             <Label>Enable 2FA</Label>
-                            <p className="text-sm text-muted-foreground">
-                                Use an authenticator app to generate verification codes
-                            </p>
+                            <p className="text-sm text-muted-foreground">Use an authenticator app to generate verification codes</p>
                         </div>
-                        <Switch
-                            checked={isEnabled}
-                            onCheckedChange={handleToggle}
-                            disabled={isLoading}
-                        />
+                        <Switch checked={isEnabled} onCheckedChange={handleToggle} disabled={isLoading} />
                     </div>
                 </CardContent>
             </Card>
@@ -128,9 +120,7 @@ export default function MfaSettings({ isEnabled: initialEnabled }: MfaSettingsPr
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>Set up Two-Factor Authentication</DialogTitle>
-                        <DialogDescription>
-                            Scan the QR code with your authenticator app or enter the secret key manually
-                        </DialogDescription>
+                        <DialogDescription>Scan the QR code with your authenticator app or enter the secret key manually</DialogDescription>
                     </DialogHeader>
                     {setupData && (
                         <div className="space-y-4">
@@ -139,11 +129,7 @@ export default function MfaSettings({ isEnabled: initialEnabled }: MfaSettingsPr
                             </div>
                             <div className="space-y-2">
                                 <Label>Secret Key</Label>
-                                <Input
-                                    value={setupData.secret_key}
-                                    readOnly
-                                    onClick={(e) => e.currentTarget.select()}
-                                />
+                                <Input value={setupData.secret_key} readOnly onClick={(e) => e.currentTarget.select()} />
                             </div>
                             <div className="space-y-2">
                                 <Label>Verification Code</Label>
@@ -157,23 +143,21 @@ export default function MfaSettings({ isEnabled: initialEnabled }: MfaSettingsPr
                             <div className="space-y-2">
                                 <Label>Backup Codes</Label>
                                 <div className="rounded-md bg-muted p-4">
-                                    <div className="text-sm font-mono space-y-1">
+                                    <div className="space-y-1 font-mono text-sm">
                                         {setupData.backup_codes.map((code, index) => (
                                             <div key={index}>{code}</div>
                                         ))}
                                     </div>
                                 </div>
                                 <p className="text-sm text-muted-foreground">
-                                    Save these backup codes in a secure place. You can use them to access your account if you lose your authenticator device.
+                                    Save these backup codes in a secure place. You can use them to access your account if you lose your authenticator
+                                    device.
                                 </p>
                             </div>
                         </div>
                     )}
                     <DialogFooter>
-                        <Button
-                            onClick={handleVerifyAndEnable}
-                            disabled={!verificationCode || isLoading}
-                        >
+                        <Button onClick={handleVerifyAndEnable} disabled={!verificationCode || isLoading}>
                             {isLoading ? 'Verifying...' : 'Enable 2FA'}
                         </Button>
                     </DialogFooter>

@@ -1,4 +1,3 @@
 export function usePermission() {
-  return { hasPermission: () => true };
+    return { hasPermission: () => true };
 }
-

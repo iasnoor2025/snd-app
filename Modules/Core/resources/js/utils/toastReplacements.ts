@@ -1,9 +1,9 @@
 /**
  * Toast Replacement Guide
- * 
+ *
  * This file demonstrates how to replace all TODO toast comments
  * throughout the codebase with proper toast notifications using Sonner.
- * 
+ *
  * Usage: Replace all instances of "// TODO: Replace with toast('message')"
  * with the appropriate toast calls shown below.
  */
@@ -35,45 +35,45 @@ import { toast } from 'sonner';
 // ========================================
 
 export const toastReplacements = {
-  // Document operations
-  documentDeleted: () => toast.success('Document deleted successfully'),
-  documentDeleteFailed: () => toast.error('Failed to delete document'),
-  documentUploaded: () => toast.success('Document uploaded successfully'),
-  documentUploadFailed: () => toast.error('Failed to upload document'),
+    // Document operations
+    documentDeleted: () => toast.success('Document deleted successfully'),
+    documentDeleteFailed: () => toast.error('Failed to delete document'),
+    documentUploaded: () => toast.success('Document uploaded successfully'),
+    documentUploadFailed: () => toast.error('Failed to upload document'),
 
-  // Employee operations
-  employeeDeleted: () => toast.success('Employee deleted successfully'),
-  employeeDeleteFailed: () => toast.error('Failed to delete employee'),
-  employeeUpdated: () => toast.success('Employee updated successfully'),
-  employeeUpdateFailed: () => toast.error('Failed to update employee'),
+    // Employee operations
+    employeeDeleted: () => toast.success('Employee deleted successfully'),
+    employeeDeleteFailed: () => toast.error('Failed to delete employee'),
+    employeeUpdated: () => toast.success('Employee updated successfully'),
+    employeeUpdateFailed: () => toast.error('Failed to update employee'),
 
-  // Advance operations
-  advanceCreated: () => toast.success('Advance request created successfully'),
-  advanceCreateFailed: () => toast.error('Failed to create advance request'),
-  advanceApproved: () => toast.success('Advance approved successfully'),
-  advanceApproveFailed: () => toast.error('Failed to approve advance'),
-  advanceRejected: () => toast.success('Advance rejected successfully'),
-  advanceRejectFailed: () => toast.error('Failed to reject advance'),
+    // Advance operations
+    advanceCreated: () => toast.success('Advance request created successfully'),
+    advanceCreateFailed: () => toast.error('Failed to create advance request'),
+    advanceApproved: () => toast.success('Advance approved successfully'),
+    advanceApproveFailed: () => toast.error('Failed to approve advance'),
+    advanceRejected: () => toast.success('Advance rejected successfully'),
+    advanceRejectFailed: () => toast.error('Failed to reject advance'),
 
-  // Settlement operations
-  settlementApproved: () => toast.success('Settlement approved successfully'),
-  settlementApproveFailed: () => toast.error('Failed to approve settlement'),
-  settlementRejected: () => toast.success('Settlement rejected successfully'),
-  settlementRejectFailed: () => toast.error('Failed to reject settlement'),
+    // Settlement operations
+    settlementApproved: () => toast.success('Settlement approved successfully'),
+    settlementApproveFailed: () => toast.error('Failed to approve settlement'),
+    settlementRejected: () => toast.success('Settlement rejected successfully'),
+    settlementRejectFailed: () => toast.error('Failed to reject settlement'),
 
-  // Validation errors
-  invalidAmount: () => toast.error('Please enter a valid amount'),
-  invalidDeduction: () => toast.error('Please enter a valid monthly deduction'),
-  missingReason: () => toast.error('Please provide a reason'),
-  invalidInput: () => toast.error('Please check your input and try again'),
+    // Validation errors
+    invalidAmount: () => toast.error('Please enter a valid amount'),
+    invalidDeduction: () => toast.error('Please enter a valid monthly deduction'),
+    missingReason: () => toast.error('Please provide a reason'),
+    invalidInput: () => toast.error('Please check your input and try again'),
 
-  // General operations
-  saveSuccess: () => toast.success('Changes saved successfully'),
-  saveFailed: () => toast.error('Failed to save changes'),
-  loadFailed: () => toast.error('Failed to load data'),
-  networkError: () => toast.error('Network error. Please check your connection.'),
-  permissionDenied: () => toast.error('You do not have permission to perform this action'),
-  sessionExpired: () => toast.error('Your session has expired. Please log in again.'),
+    // General operations
+    saveSuccess: () => toast.success('Changes saved successfully'),
+    saveFailed: () => toast.error('Failed to save changes'),
+    loadFailed: () => toast.error('Failed to load data'),
+    networkError: () => toast.error('Network error. Please check your connection.'),
+    permissionDenied: () => toast.error('You do not have permission to perform this action'),
+    sessionExpired: () => toast.error('Your session has expired. Please log in again.'),
 };
 
 // ========================================
@@ -134,4 +134,4 @@ axios.delete(`/api/employee/${employeeId}/documents/${doc.id}`)
   });
 */
 
-export default toastReplacements; 
+export default toastReplacements;

@@ -5,6 +5,7 @@ This document provides detailed examples of requests and responses for common AP
 ## Authentication Examples
 
 ### Login
+
 ```http
 POST /api/auth/login
 Content-Type: application/json
@@ -16,6 +17,7 @@ Content-Type: application/json
 ```
 
 Success Response:
+
 ```json
 {
     "status": "success",
@@ -34,6 +36,7 @@ Success Response:
 ```
 
 Error Response (Invalid Credentials):
+
 ```json
 {
     "status": "error",
@@ -45,12 +48,14 @@ Error Response (Invalid Credentials):
 ```
 
 ### Logout
+
 ```http
 POST /api/auth/logout
 Authorization: Bearer {token}
 ```
 
 Success Response:
+
 ```json
 {
     "status": "success",
@@ -61,12 +66,14 @@ Success Response:
 ## Rental Management Examples
 
 ### List Rentals
+
 ```http
 GET /api/rentals?include=customer,equipment&filter[status]=active&sort=-created_at
 Authorization: Bearer {token}
 ```
 
 Success Response:
+
 ```json
 {
     "status": "success",
@@ -97,6 +104,7 @@ Success Response:
 ```
 
 ### Create Rental with Validation Error
+
 ```http
 POST /api/rentals
 Content-Type: application/json
@@ -111,6 +119,7 @@ Authorization: Bearer {token}
 ```
 
 Error Response:
+
 ```json
 {
     "status": "error",
@@ -123,6 +132,7 @@ Error Response:
 ```
 
 ### Process Rental Return with Damages
+
 ```http
 POST /api/rentals/1/return
 Content-Type: application/json
@@ -156,6 +166,7 @@ Authorization: Bearer {token}
 ```
 
 Success Response:
+
 ```json
 {
     "status": "success",
@@ -172,6 +183,7 @@ Success Response:
 ## Employee Management Examples
 
 ### Create Employee with Documents
+
 ```http
 POST /api/employees
 Content-Type: multipart/form-data
@@ -202,6 +214,7 @@ Authorization: Bearer {token}
 ```
 
 Success Response:
+
 ```json
 {
     "status": "success",
@@ -232,6 +245,7 @@ Success Response:
 ```
 
 ### Process Employee Transfer with Salary Adjustment
+
 ```http
 POST /api/employees/1/transfer
 Content-Type: application/json
@@ -252,6 +266,7 @@ Authorization: Bearer {token}
 ```
 
 Success Response:
+
 ```json
 {
     "status": "success",
@@ -277,6 +292,7 @@ Success Response:
 ## Project Management Examples
 
 ### Create Project with Phases
+
 ```http
 POST /api/projects
 Content-Type: application/json
@@ -320,6 +336,7 @@ Authorization: Bearer {token}
 ```
 
 Success Response:
+
 ```json
 {
     "status": "success",
@@ -358,6 +375,7 @@ Success Response:
 ```
 
 ### Submit and Process Change Request
+
 ```http
 POST /api/projects/1/changes
 Content-Type: application/json
@@ -382,6 +400,7 @@ Authorization: Bearer {token}
 ```
 
 Success Response:
+
 ```json
 {
     "status": "success",
@@ -408,6 +427,7 @@ Success Response:
 ## Equipment Management Examples
 
 ### Create Equipment with Specifications
+
 ```http
 POST /api/equipment
 Content-Type: application/json
@@ -447,6 +467,7 @@ Authorization: Bearer {token}
 ```
 
 Success Response:
+
 ```json
 {
     "status": "success",
@@ -473,6 +494,7 @@ Success Response:
 ```
 
 ### Record Equipment Maintenance
+
 ```http
 POST /api/equipment/1/maintenance
 Content-Type: application/json
@@ -506,6 +528,7 @@ Authorization: Bearer {token}
 ```
 
 Success Response:
+
 ```json
 {
     "status": "success",
@@ -529,6 +552,7 @@ Success Response:
 ## Error Response Examples
 
 ### Resource Not Found
+
 ```json
 {
     "status": "error",
@@ -542,6 +566,7 @@ Success Response:
 ```
 
 ### Permission Denied
+
 ```json
 {
     "status": "error",
@@ -555,24 +580,21 @@ Success Response:
 ```
 
 ### Validation Error
+
 ```json
 {
     "status": "error",
     "message": "Validation failed",
     "error_code": "E422",
     "errors": {
-        "start_date": [
-            "The start date must be a future date",
-            "The start date must be before end date"
-        ],
-        "budget": [
-            "The budget must be at least 1000"
-        ]
+        "start_date": ["The start date must be a future date", "The start date must be before end date"],
+        "budget": ["The budget must be at least 1000"]
     }
 }
 ```
 
 ### Rate Limit Exceeded
+
 ```json
 {
     "status": "error",
@@ -584,4 +606,4 @@ Success Response:
         "remaining": 0
     }
 }
-``` 
+```

@@ -1,39 +1,29 @@
-import * as React from "react";
-import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button, Calendar, Popover, PopoverContent, PopoverTrigger } from "@/Core";
+import { Button, Calendar, Popover, PopoverContent, PopoverTrigger } from '@/Core';
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+import { Calendar as CalendarIcon } from 'lucide-react';
 
 interface DatePickerProps {
-  value: Date | null;
-  onChange: (date: Date | null) => void;
-  className?: string;
+    value: Date | null;
+    onChange: (date: Date | null) => void;
+    className?: string;
 }
 
 export function DatePicker({ value, onChange, className }: DatePickerProps) {
-  return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          variant={"outline"}
-          className={cn(
-            "w-full justify-start text-left font-normal",
-            !value && "text-muted-foreground",
-            className
-          )}
-        >
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          {value ? format(value, "PPP") : <span>Pick a date</span>}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
-        <Calendar
-          mode="single"
-          selected={value}
-          onSelect={onChange}
-          initialFocus
-        />
-      </PopoverContent>
-    </Popover>
-  );
+    return (
+        <Popover>
+            <PopoverTrigger asChild>
+                <Button
+                    variant={'outline'}
+                    className={cn('w-full justify-start text-left font-normal', !value && 'text-muted-foreground', className)}
+                >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {value ? format(value, 'PPP') : <span>Pick a date</span>}
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+                <Calendar mode="single" selected={value} onSelect={onChange} initialFocus />
+            </PopoverContent>
+        </Popover>
+    );
 }

@@ -1,14 +1,8 @@
+import { Alert, AlertDescription, Button, Card, CardContent, CardHeader, CardTitle, Input, Label, Select, Textarea } from '@/Core';
+import { Head, useForm } from '@inertiajs/react';
+import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Head, useForm } from '@inertiajs/react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
-import { Button } from "@/Core";
-import { Input } from "@/Core";
-import { Select } from "@/Core";
-import { Textarea } from "@/Core";
-import { Label } from "@/Core";
-import { Alert, AlertDescription } from "@/Core";
-import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
 
 interface ItemTemplate {
     [key: string]: string;
@@ -31,12 +25,12 @@ export const BulkCreate: FC = () => {
             daily_rate: '',
             condition: 'new',
             serial_number: '',
-            notes: ''
-        }
+            notes: '',
+        },
     ]);
 
     const { post, processing, errors } = useForm({
-        items
+        items,
     });
 
     const addItem = () => {
@@ -49,8 +43,8 @@ export const BulkCreate: FC = () => {
                 daily_rate: '',
                 condition: 'new',
                 serial_number: '',
-                notes: ''
-            }
+                notes: '',
+            },
         ]);
     };
 
@@ -62,7 +56,7 @@ export const BulkCreate: FC = () => {
         const newItems = [...items];
         newItems[index] = {
             ...newItems[index],
-            [field]: value
+            [field]: value,
         };
         setItems(newItems);
     };
@@ -77,12 +71,8 @@ export const BulkCreate: FC = () => {
             <Head title={t('ttl_bulk_add_rental_items')} />
 
             <div className="container mx-auto py-6">
-                <Button
-                    variant="ghost"
-                    className="mb-4"
-                    onClick={() => window.history.back()}
-                >
-                    <ArrowLeft className="w-4 h-4 mr-2" />
+                <Button variant="ghost" className="mb-4" onClick={() => window.history.back()}>
+                    <ArrowLeft className="mr-2 h-4 w-4" />
                     Back
                 </Button>
 
@@ -90,12 +80,8 @@ export const BulkCreate: FC = () => {
                     <CardHeader>
                         <div className="flex items-center justify-between">
                             <CardTitle>{t('ttl_bulk_add_rental_items')}</CardTitle>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={addItem}
-                            >
-                                <Plus className="w-4 h-4 mr-2" />
+                            <Button type="button" variant="outline" onClick={addItem}>
+                                <Plus className="mr-2 h-4 w-4" />
                                 Add Another Item
                             </Button>
                         </div>
@@ -109,26 +95,21 @@ export const BulkCreate: FC = () => {
                                         <div className="flex items-center justify-between">
                                             <CardTitle>Item {index + 1}</CardTitle>
                                             {items.length > 1 && (
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => removeItem(index)}
-                                                >
-                                                    <Trash2 className="w-4 h-4 text-red-500" />
+                                                <Button type="button" variant="ghost" size="sm" onClick={() => removeItem(index)}>
+                                                    <Trash2 className="h-4 w-4 text-red-500" />
                                                 </Button>
                                             )}
                                         </div>
                                     </CardHeader>
 
                                     <CardContent>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                             <div className="space-y-2">
                                                 <Label htmlFor={`name-${index}`}>Name</Label>
                                                 <Input
                                                     id={`name-${index}`}
                                                     value={item.name}
-                                                    onChange={e => updateItem(index, 'name', e.target.value)}
+                                                    onChange={(e) => updateItem(index, 'name', e.target.value)}
                                                     required
                                                 />
                                                 {(errors as any)[`items.${index}.name`] && (
@@ -140,10 +121,7 @@ export const BulkCreate: FC = () => {
 
                                             <div className="space-y-2">
                                                 <Label htmlFor={`category-${index}`}>Category</Label>
-                                                <Select
-                                                    value={item.category}
-                                                    onValueChange={value => updateItem(index, 'category', value)}
-                                                >
+                                                <Select value={item.category} onValueChange={(value) => updateItem(index, 'category', value)}>
                                                     <option value="">{t('select_category')}</option>
                                                     <option value="equipment">Equipment</option>
                                                     <option value="tools">Tools</option>
@@ -164,7 +142,7 @@ export const BulkCreate: FC = () => {
                                                     step="0.01"
                                                     min="0"
                                                     value={item.daily_rate}
-                                                    onChange={e => updateItem(index, 'daily_rate', e.target.value)}
+                                                    onChange={(e) => updateItem(index, 'daily_rate', e.target.value)}
                                                     required
                                                 />
                                                 {(errors as any)[`items.${index}.daily_rate`] && (
@@ -176,10 +154,7 @@ export const BulkCreate: FC = () => {
 
                                             <div className="space-y-2">
                                                 <Label htmlFor={`condition-${index}`}>Condition</Label>
-                                                <Select
-                                                    value={item.condition}
-                                                    onValueChange={value => updateItem(index, 'condition', value)}
-                                                >
+                                                <Select value={item.condition} onValueChange={(value) => updateItem(index, 'condition', value)}>
                                                     <option value="new">New</option>
                                                     <option value="like_new">{t('like_new')}</option>
                                                     <option value="good">Good</option>
@@ -198,7 +173,7 @@ export const BulkCreate: FC = () => {
                                                 <Input
                                                     id={`serial_number-${index}`}
                                                     value={item.serial_number}
-                                                    onChange={e => updateItem(index, 'serial_number', e.target.value)}
+                                                    onChange={(e) => updateItem(index, 'serial_number', e.target.value)}
                                                 />
                                                 {(errors as any)[`items.${index}.serial_number`] && (
                                                     <Alert variant="destructive">
@@ -212,7 +187,7 @@ export const BulkCreate: FC = () => {
                                                 <Textarea
                                                     id={`description-${index}`}
                                                     value={item.description}
-                                                    onChange={e => updateItem(index, 'description', e.target.value)}
+                                                    onChange={(e) => updateItem(index, 'description', e.target.value)}
                                                     required
                                                 />
                                                 {(errors as any)[`items.${index}.description`] && (
@@ -227,7 +202,7 @@ export const BulkCreate: FC = () => {
                                                 <Textarea
                                                     id={`notes-${index}`}
                                                     value={item.notes}
-                                                    onChange={e => updateItem(index, 'notes', e.target.value)}
+                                                    onChange={(e) => updateItem(index, 'notes', e.target.value)}
                                                 />
                                                 {(errors as any)[`items.${index}.notes`] && (
                                                     <Alert variant="destructive">
@@ -241,17 +216,10 @@ export const BulkCreate: FC = () => {
                             ))}
 
                             <div className="flex justify-end space-x-4">
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    onClick={() => window.history.back()}
-                                >
+                                <Button type="button" variant="outline" onClick={() => window.history.back()}>
                                     Cancel
                                 </Button>
-                                <Button
-                                    type="submit"
-                                    disabled={processing}
-                                >
+                                <Button type="submit" disabled={processing}>
                                     Create Items
                                 </Button>
                             </div>
@@ -264,17 +232,3 @@ export const BulkCreate: FC = () => {
 };
 
 export default BulkCreate;
-
-
-
-
-
-
-
-
-
-
-
-
-
-

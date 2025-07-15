@@ -2,14 +2,11 @@ import { useForm } from '@inertiajs/react';
 import { FormEventHandler, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { Button, Input, Label } from '@/Core';
 
-import { Button } from "@/Core";
-import { Input } from "@/Core";
-import { Label } from "@/Core";
+import { HeadingSmall } from '@/Core';
 
-import { HeadingSmall } from "@/Core";
-
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from "@/Core";
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@/Core';
 
 export default function DeleteUser() {
     const { t } = useTranslation('profile');
@@ -47,9 +44,7 @@ export default function DeleteUser() {
                     </DialogTrigger>
                     <DialogContent>
                         <DialogTitle>{t('confirm_delete_account')}</DialogTitle>
-                        <DialogDescription>
-                            {t('delete_account_confirmation')}
-                        </DialogDescription>
+                        <DialogDescription>{t('delete_account_confirmation')}</DialogDescription>
                         <form className="space-y-6" onSubmit={deleteUser}>
                             <div className="grid gap-2">
                                 <Label htmlFor="password" className="sr-only">
@@ -66,8 +61,6 @@ export default function DeleteUser() {
                                     placeholder={t('password')}
                                     autoComplete="current-password"
                                 />
-
-                                
                             </div>
 
                             <DialogFooter className="gap-2">
@@ -88,24 +81,3 @@ export default function DeleteUser() {
         </div>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

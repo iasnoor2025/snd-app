@@ -11,21 +11,25 @@ The integration adds multi-language support to model attributes using the `spati
 The following models now support translatable attributes:
 
 ### 1. Category (Core Module)
+
 - **File**: `Modules/Core/Domain/Models/Category.php`
 - **Translatable Fields**: `name`, `description`
 - **Migration**: `2024_01_01_000003_add_translations_to_categories_table.php`
 
 ### 2. Department (EmployeeManagement Module)
+
 - **File**: `Modules/EmployeeManagement/Domain/Models/Department.php`
 - **Translatable Fields**: `name`, `description`
 - **Migration**: `2024_01_01_000003_add_translations_to_departments_table.php`
 
 ### 3. Position (EmployeeManagement Module)
+
 - **File**: `Modules/EmployeeManagement/Domain/Models/Position.php`
 - **Translatable Fields**: `name`, `description`
 - **Migration**: `2024_01_01_000004_add_translations_to_positions_table.php`
 
 ### 4. Equipment (EquipmentManagement Module)
+
 - **File**: `Modules/EquipmentManagement/Domain/Models/Equipment.php`
 - **Translatable Fields**: `name`, `description`
 - **Migration**: `2024_01_01_000003_add_translations_to_equipment_table.php`
@@ -36,17 +40,18 @@ Each model's table has been updated with JSON columns for storing translations:
 
 ```sql
 -- Example for categories table
-ALTER TABLE categories 
+ALTER TABLE categories
 ADD COLUMN name_translations JSON NULL,
 ADD COLUMN description_translations JSON NULL;
 ```
 
 The JSON structure stores translations like:
+
 ```json
 {
-  "en": "English Name",
-  "es": "Nombre en Español",
-  "fr": "Nom en Français"
+    "en": "English Name",
+    "es": "Nombre en Español",
+    "fr": "Nom en Français"
 }
 ```
 
@@ -107,6 +112,7 @@ $categories = Category::orderByRaw("JSON_UNQUOTE(JSON_EXTRACT(name_translations,
 **File**: `Modules/Localization/Services/SpatieTranslatableService.php`
 
 Provides methods for:
+
 - Getting translation statistics
 - Finding missing translations
 - Copying translations between languages
@@ -114,6 +120,7 @@ Provides methods for:
 - Cleaning up empty translations
 
 **Key Methods**:
+
 ```php
 // Get translation statistics for all models
 $stats = $service->getTranslationStatistics();
@@ -148,6 +155,7 @@ Provides API endpoints for managing model translations:
 **File**: `Modules/Localization/resources/js/components/ModelTranslationManager.jsx`
 
 A React component providing a user interface for:
+
 - Viewing translation statistics
 - Finding missing translations
 - Copying translations between languages
@@ -159,6 +167,7 @@ A React component providing a user interface for:
 ### Running Migrations
 
 1. Run the new migrations to add translation columns:
+
 ```bash
 php artisan migrate
 ```
@@ -196,6 +205,7 @@ The system uses the existing language configuration from the Localization module
 ### Fallback Behavior
 
 When a translation is not available:
+
 1. Falls back to the application's default locale
 2. If still not available, returns the original attribute value
 3. If no value exists, returns null
@@ -203,6 +213,7 @@ When a translation is not available:
 ## Best Practices
 
 ### 1. Always Set Default Locale
+
 ```php
 // When creating new records, always set the default locale
 $category = Category::create([
@@ -213,6 +224,7 @@ $category = Category::create([
 ```
 
 ### 2. Validate Translations
+
 ```php
 // In form requests, validate required translations
 public function rules()
@@ -225,6 +237,7 @@ public function rules()
 ```
 
 ### 3. Use Service Methods
+
 ```php
 // Use the service for bulk operations
 $service = app(SpatieTranslatableService::class);
@@ -232,6 +245,7 @@ $service->copyTranslations('Category', 'en', 'es');
 ```
 
 ### 4. Index Translation Columns
+
 ```php
 // For better query performance, consider adding indexes
 $table->index(DB::raw('(JSON_UNQUOTE(JSON_EXTRACT(name_translations, "$.en")))');

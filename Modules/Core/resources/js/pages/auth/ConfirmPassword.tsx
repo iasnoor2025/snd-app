@@ -1,10 +1,9 @@
-import { useEffect, FormEventHandler } from 'react';
+import { FormEventHandler, useEffect } from 'react';
 
-
-import { Label } from '../../components/ui/label';
+import { Head, useForm } from '@inertiajs/react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { Head, useForm } from '@inertiajs/react';
+import { Label } from '../../components/ui/label';
 
 export default function ConfirmPassword() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -24,7 +23,7 @@ export default function ConfirmPassword() {
     };
 
     return (
-        <div className='min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8'>
+        <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
             <Head title="Confirm Password" />
 
             <div className="mb-4 text-sm text-gray-600">
@@ -44,11 +43,9 @@ export default function ConfirmPassword() {
                         isFocused={true}
                         onChange={(e) => setData('password', e.target.value)}
                     />
-
-                    
                 </div>
 
-                <div className="flex items-center justify-end mt-4">
+                <div className="mt-4 flex items-center justify-end">
                     <Button className="ml-4" disabled={processing}>
                         Confirm
                     </Button>
@@ -57,7 +54,3 @@ export default function ConfirmPassword() {
         </div>
     );
 }
-
-
-
-

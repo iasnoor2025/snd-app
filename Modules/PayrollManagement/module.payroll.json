@@ -4,9 +4,7 @@
     "description": "Payroll management module for handling employee salaries, deductions, and payments",
     "keywords": ["payroll", "salary", "employee", "payment"],
     "priority": 0,
-    "providers": [
-        "Modules\\Payroll\\Providers\\PayrollServiceProvider"
-    ],
+    "providers": ["Modules\\Payroll\\Providers\\PayrollServiceProvider"],
     "files": [],
     "requires": ["Employee"],
     "minimumCoreVersion": "10.0",

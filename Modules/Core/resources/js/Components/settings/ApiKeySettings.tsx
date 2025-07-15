@@ -1,8 +1,27 @@
-import { useState } from 'react';
-import { Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Input } from '../ui';
-import { Label } from '../ui';
-import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, MultiSelect } from '../ui';
 import { formatDateTime } from '@/Core/utils/dateFormatter';
+import { useState } from 'react';
+import {
+    Button,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogTitle,
+    DialogTrigger,
+    Input,
+    Label,
+    MultiSelect,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '../ui';
 
 interface ApiKey {
     id: string;
@@ -68,7 +87,7 @@ export default function ApiKeySettings({ initialKeys }: ApiKeySettingsProps) {
             await fetch(`/api/api-keys/${id}`, {
                 method: 'DELETE',
             });
-            setKeys(keys.filter(key => key.id !== id));
+            setKeys(keys.filter((key) => key.id !== id));
             toast.success('API key revoked successfully');
         } catch (error) {
             toast.error('Failed to revoke API key');
@@ -92,9 +111,7 @@ export default function ApiKeySettings({ initialKeys }: ApiKeySettingsProps) {
             <Card>
                 <CardHeader>
                     <CardTitle>API Keys</CardTitle>
-                    <CardDescription>
-                        Manage API keys for accessing the application programmatically
-                    </CardDescription>
+                    <CardDescription>Manage API keys for accessing the application programmatically</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="flex justify-end">
@@ -104,13 +121,11 @@ export default function ApiKeySettings({ initialKeys }: ApiKeySettingsProps) {
                             </DialogTrigger>
                             <DialogContent className="sm:max-w-[425px]">
                                 <div>
-                                    <DialogTitle>
-                                        {createdKey ? 'API Key Created' : 'Create API Key'}
-                                    </DialogTitle>
+                                    <DialogTitle>{createdKey ? 'API Key Created' : 'Create API Key'}</DialogTitle>
                                     <DialogDescription>
                                         {createdKey
                                             ? "Copy your API key now. You won't be able to see it again!"
-                                            : "Create a new API key to access the API"}
+                                            : 'Create a new API key to access the API'}
                                     </DialogDescription>
                                 </div>
 
@@ -118,11 +133,7 @@ export default function ApiKeySettings({ initialKeys }: ApiKeySettingsProps) {
                                     <div className="space-y-4">
                                         <div className="space-y-2">
                                             <Label>API Key</Label>
-                                            <Input
-                                                value={createdKey}
-                                                readOnly
-                                                onClick={(e) => e.currentTarget.select()}
-                                            />
+                                            <Input value={createdKey} readOnly onClick={(e) => e.currentTarget.select()} />
                                             <p className="text-sm text-muted-foreground">
                                                 Make sure to copy this key now. You won't be able to see it again!
                                             </p>
@@ -137,9 +148,7 @@ export default function ApiKeySettings({ initialKeys }: ApiKeySettingsProps) {
                                             <Label>Name</Label>
                                             <Input
                                                 value={newKeyData.name}
-                                                onChange={(e) =>
-                                                    setNewKeyData({ ...newKeyData, name: e.target.value })
-                                                }
+                                                onChange={(e) => setNewKeyData({ ...newKeyData, name: e.target.value })}
                                                 placeholder="Enter a name for this API key"
                                             />
                                         </div>
@@ -148,9 +157,7 @@ export default function ApiKeySettings({ initialKeys }: ApiKeySettingsProps) {
                                             <MultiSelect
                                                 options={AVAILABLE_SCOPES}
                                                 value={newKeyData.scopes}
-                                                onChange={(value) =>
-                                                    setNewKeyData({ ...newKeyData, scopes: value })
-                                                }
+                                                onChange={(value) => setNewKeyData({ ...newKeyData, scopes: value })}
                                             />
                                         </div>
                                         <div className="space-y-2">
@@ -167,10 +174,7 @@ export default function ApiKeySettings({ initialKeys }: ApiKeySettingsProps) {
                                             />
                                         </div>
                                         <div className="flex justify-end gap-2">
-                                            <Button
-                                                onClick={handleCreate}
-                                                disabled={!newKeyData.name || isLoading}
-                                            >
+                                            <Button onClick={handleCreate} disabled={!newKeyData.name || isLoading}>
                                                 {isLoading ? 'Creating...' : 'Create'}
                                             </Button>
                                         </div>
@@ -193,17 +197,10 @@ export default function ApiKeySettings({ initialKeys }: ApiKeySettingsProps) {
                             {keys.map((key) => (
                                 <TableRow key={key.id}>
                                     <TableCell>{key.name}</TableCell>
-                                    <TableCell>
-                                        {key.last_used_at || 'Never'}
-                                    </TableCell>
+                                    <TableCell>{key.last_used_at || 'Never'}</TableCell>
                                     <TableCell>{formatDateTime(key.created_at)}</TableCell>
                                     <TableCell className="text-right">
-                                        <Button
-                                            variant="destructive"
-                                            size="sm"
-                                            onClick={() => handleRevoke(key.id)}
-                                            disabled={isLoading}
-                                        >
+                                        <Button variant="destructive" size="sm" onClick={() => handleRevoke(key.id)} disabled={isLoading}>
                                             Revoke
                                         </Button>
                                     </TableCell>

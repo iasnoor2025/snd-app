@@ -11,4 +11,4 @@ declare module 'laravel-vite-plugin' {
 
     function laravel(options: LaravelPluginOptions): Plugin;
     export = laravel;
-} 
+}

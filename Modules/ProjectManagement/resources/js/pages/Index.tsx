@@ -1,24 +1,35 @@
-import React, { useState, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link } from '@inertiajs/react';
-import { AppLayout } from '@/Core';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/Core";
-import { Button } from "@/Core";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/Core";
-import { Badge } from "@/Core";
-import { Separator } from "@/Core";
-import { Input } from "@/Core";
-import { format } from 'date-fns';
 import {
-    Eye, Edit, Plus, LayoutGrid, CheckCircle, Clock, AlertCircle, XCircle,
-    Filter, Search
-} from 'lucide-react';
-import { Link as RouterLink } from 'react-router-dom';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+    AppLayout,
+    Badge,
+    Button,
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+    Input,
+    Separator,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/Core';
+import { Link } from '@inertiajs/react';
+import { format } from 'date-fns';
+import { AlertCircle, CheckCircle, Clock, Edit, Eye, LayoutGrid, Plus, Search, XCircle } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 // Declare window.route for TypeScript
 // @ts-ignore
 // eslint-disable-next-line
-declare global { interface Window { route: any; } }
+declare global {
+    interface Window {
+        route: any;
+    }
+}
 
 interface Project {
     id: number;
@@ -38,32 +49,32 @@ interface Props {
 }
 
 export default function Index({ projects }: Props) {
-  const { t } = useTranslation('project');
+    const { t } = useTranslation('project');
 
     const [statusFilter, setStatusFilter] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
 
     const formatStatus = (status: string) => {
-        const statusMap: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; icon: React.ReactNode }> = {
+        const statusMap: Record<string, { variant: 'default' | 'secondary' | 'destructive' | 'outline'; icon: React.ReactNode }> = {
             active: {
-                variant: "outline",
-                icon: <Clock className="h-3.5 w-3.5 mr-1 text-blue-500" />
+                variant: 'outline',
+                icon: <Clock className="mr-1 h-3.5 w-3.5 text-blue-500" />,
             },
             completed: {
-                variant: "default",
-                icon: <CheckCircle className="h-3.5 w-3.5 mr-1 text-green-500" />
+                variant: 'default',
+                icon: <CheckCircle className="mr-1 h-3.5 w-3.5 text-green-500" />,
             },
             on_hold: {
-                variant: "secondary",
-                icon: <AlertCircle className="h-3.5 w-3.5 mr-1 text-amber-500" />
+                variant: 'secondary',
+                icon: <AlertCircle className="mr-1 h-3.5 w-3.5 text-amber-500" />,
             },
             cancelled: {
-                variant: "destructive",
-                icon: <XCircle className="h-3.5 w-3.5 mr-1 text-red-500" />
-            }
+                variant: 'destructive',
+                icon: <XCircle className="mr-1 h-3.5 w-3.5 text-red-500" />,
+            },
         };
 
-        return statusMap[status] || { variant: "outline", icon: null };
+        return statusMap[status] || { variant: 'outline', icon: null };
     };
 
     // Calculate project progress based on status and timeline
@@ -90,7 +101,7 @@ export default function Index({ projects }: Props) {
 
     // Filter projects based on search query and status filter
     const filteredProjects = useMemo(() => {
-        return projects.filter(project => {
+        return projects.filter((project) => {
             // Apply status filter if set
             if (statusFilter && project.status !== statusFilter) {
                 return false;
@@ -99,10 +110,7 @@ export default function Index({ projects }: Props) {
             // Apply search filter if query exists
             if (searchQuery) {
                 const query = searchQuery.toLowerCase();
-                return (
-                    project.name.toLowerCase().includes(query) ||
-                    project.client?.company_name.toLowerCase().includes(query)
-                );
+                return project.name.toLowerCase().includes(query) || project.client?.company_name.toLowerCase().includes(query);
             }
 
             return true;
@@ -116,16 +124,15 @@ export default function Index({ projects }: Props) {
 
     return (
         <AppLayout title={t('ttl_projects')} breadcrumbs={breadcrumbs} requiredPermission="projects.view">
-
-            <div className="container mx-auto py-6 space-y-6">
-                <div className="flex justify-between items-center">
+            <div className="container mx-auto space-y-6 py-6">
+                <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight">Projects</h1>
-                        <p className="text-muted-foreground mt-1">{t('manage_all_your_projects')}</p>
+                        <p className="mt-1 text-muted-foreground">{t('manage_all_your_projects')}</p>
                     </div>
                     <Link href={window.route('projects.create')}>
                         <Button className="flex items-center">
-                            <Plus className="h-4 w-4 mr-2" />
+                            <Plus className="mr-2 h-4 w-4" />
                             New Project
                         </Button>
                     </Link>
@@ -137,8 +144,8 @@ export default function Index({ projects }: Props) {
                     <CardHeader className="pb-3">
                         <div className="flex items-center justify-between">
                             <div className="space-y-1">
-                                <CardTitle className="text-xl flex items-center">
-                                    <LayoutGrid className="h-5 w-5 mr-2 text-blue-500" />
+                                <CardTitle className="flex items-center text-xl">
+                                    <LayoutGrid className="mr-2 h-5 w-5 text-blue-500" />
                                     Project List
                                 </CardTitle>
                                 <CardDescription>
@@ -147,7 +154,7 @@ export default function Index({ projects }: Props) {
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="relative">
-                                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                    <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
                                     <Input
                                         type="search"
                                         placeholder={t('ph_search_projects')}
@@ -157,29 +164,25 @@ export default function Index({ projects }: Props) {
                                     />
                                 </div>
                                 <div className="flex items-center space-x-1">
-                                    <Button
-                                        variant={statusFilter === null ? "default" : "outline"}
-                                        size="sm"
-                                        onClick={() => setStatusFilter(null)}
-                                    >
+                                    <Button variant={statusFilter === null ? 'default' : 'outline'} size="sm" onClick={() => setStatusFilter(null)}>
                                         All
                                     </Button>
                                     <Button
-                                        variant={statusFilter === "active" ? "default" : "outline"}
+                                        variant={statusFilter === 'active' ? 'default' : 'outline'}
                                         size="sm"
                                         className="flex items-center"
-                                        onClick={() => setStatusFilter("active")}
+                                        onClick={() => setStatusFilter('active')}
                                     >
-                                        <Clock className="h-3.5 w-3.5 mr-1" />
+                                        <Clock className="mr-1 h-3.5 w-3.5" />
                                         Active
                                     </Button>
                                     <Button
-                                        variant={statusFilter === "completed" ? "default" : "outline"}
+                                        variant={statusFilter === 'completed' ? 'default' : 'outline'}
                                         size="sm"
                                         className="flex items-center"
-                                        onClick={() => setStatusFilter("completed")}
+                                        onClick={() => setStatusFilter('completed')}
                                     >
-                                        <CheckCircle className="h-3.5 w-3.5 mr-1" />
+                                        <CheckCircle className="mr-1 h-3.5 w-3.5" />
                                         Completed
                                     </Button>
                                 </div>
@@ -204,14 +207,10 @@ export default function Index({ projects }: Props) {
                                     {filteredProjects.length > 0 ? (
                                         filteredProjects.map((project) => (
                                             <TableRow key={project.id}>
-                                                <TableCell className="font-medium">
-                                                    {project.name}
-                                                </TableCell>
+                                                <TableCell className="font-medium">{project.name}</TableCell>
                                                 <TableCell>{project.client?.company_name || 'No client assigned'}</TableCell>
                                                 <TableCell>{format(new Date(project.start_date), 'PPP')}</TableCell>
-                                                <TableCell>
-                                                    {project.end_date ? format(new Date(project.end_date), 'PPP') : '—'}
-                                                </TableCell>
+                                                <TableCell>{project.end_date ? format(new Date(project.end_date), 'PPP') : '—'}</TableCell>
                                                 <TableCell>
                                                     <div className="flex items-center gap-1">
                                                         <Badge variant={formatStatus(project.status).variant} className="flex items-center">
@@ -220,12 +219,17 @@ export default function Index({ projects }: Props) {
                                                         </Badge>
                                                         {project.status !== 'cancelled' && (
                                                             <div className="ml-2 w-16">
-                                                                <div className="text-xs text-muted-foreground mb-1">{calculateProgress(project)}%</div>
-                                                                <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
+                                                                <div className="mb-1 text-xs text-muted-foreground">
+                                                                    {calculateProgress(project)}%
+                                                                </div>
+                                                                <div className="h-1 w-full overflow-hidden rounded-full bg-slate-100">
                                                                     <div
                                                                         className={`h-full rounded-full ${
-                                                                            project.status === 'completed' ? 'bg-green-500' :
-                                                                            project.status === 'on_hold' ? 'bg-amber-500' : 'bg-blue-500'
+                                                                            project.status === 'completed'
+                                                                                ? 'bg-green-500'
+                                                                                : project.status === 'on_hold'
+                                                                                  ? 'bg-amber-500'
+                                                                                  : 'bg-blue-500'
                                                                         }`}
                                                                         style={{ width: `${calculateProgress(project)}%` }}
                                                                     />
@@ -235,7 +239,7 @@ export default function Index({ projects }: Props) {
                                                     </div>
                                                 </TableCell>
                                                 <TableCell>SAR {project.budget}</TableCell>
-                                                <TableCell className="text-right space-x-2">
+                                                <TableCell className="space-x-2 text-right">
                                                     <Link href={window.route('projects.show', project.id)}>
                                                         <Button variant="ghost" size="icon" className="h-8 w-8">
                                                             <Eye className="h-4 w-4" />
@@ -251,14 +255,12 @@ export default function Index({ projects }: Props) {
                                         ))
                                     ) : (
                                         <TableRow>
-                                            <TableCell colSpan={7} className="text-center py-6 text-muted-foreground">
+                                            <TableCell colSpan={7} className="py-6 text-center text-muted-foreground">
                                                 {statusFilter
                                                     ? `No ${statusFilter} projects found.`
-                                                    : (searchQuery
-                                                        ? 'No matching projects found. Try a different search term.'
-                                                        : 'No projects found. Click "New Project" to create one.'
-                                                    )
-                                                }
+                                                    : searchQuery
+                                                      ? 'No matching projects found. Try a different search term.'
+                                                      : 'No projects found. Click "New Project" to create one.'}
                                             </TableCell>
                                         </TableRow>
                                     )}
@@ -268,7 +270,7 @@ export default function Index({ projects }: Props) {
                     </CardContent>
                     {filteredProjects.length > 0 && projects.length !== filteredProjects.length && (
                         <CardFooter className="border-t bg-muted/10 py-3">
-                            <div className="flex justify-between w-full items-center">
+                            <div className="flex w-full items-center justify-between">
                                 <div className="text-sm text-muted-foreground">
                                     Showing {filteredProjects.length} of {projects.length} projects
                                 </div>
@@ -292,17 +294,3 @@ export default function Index({ projects }: Props) {
         </AppLayout>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

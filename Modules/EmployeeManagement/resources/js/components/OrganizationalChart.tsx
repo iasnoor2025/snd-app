@@ -1,9 +1,16 @@
-import { useState, useEffect, useRef } from 'react';
-import { Tree } from 'react-d3-tree';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/components/ui/card';
-import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/../../Modules/Core/resources/js/components/ui/dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/../../Modules/Core/resources/js/components/ui/avatar';
+import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/components/ui/card';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/../../Modules/Core/resources/js/components/ui/dialog';
+import { useEffect, useRef, useState } from 'react';
+import { Tree } from 'react-d3-tree';
 import { toast } from 'sonner';
 
 interface OrgNode {
@@ -76,19 +83,20 @@ export function OrganizationalChart({ initialData }: OrganizationalChartProps) {
                         <div className="font-medium">{node.name}</div>
                         <div className="text-sm text-gray-500">{node.type}</div>
                         {node.manager && (
-                            <div className="flex items-center mt-1">
+                            <div className="mt-1 flex items-center">
                                 <Avatar className="h-6 w-6">
                                     <AvatarImage src={node.manager.avatar} alt={node.manager.name} />
                                     <AvatarFallback>
-                                        {node.manager.name.split(' ').map(n => n[0]).join('')}
+                                        {node.manager.name
+                                            .split(' ')
+                                            .map((n) => n[0])
+                                            .join('')}
                                     </AvatarFallback>
                                 </Avatar>
                                 <span className="ml-1 text-xs">{node.manager.name}</span>
                             </div>
                         )}
-                        <div className="text-xs text-gray-400">
-                            {node.totalEmployees} employees
-                        </div>
+                        <div className="text-xs text-gray-400">{node.totalEmployees} employees</div>
                     </div>
                 </foreignObject>
             </g>
@@ -101,15 +109,13 @@ export function OrganizationalChart({ initialData }: OrganizationalChartProps) {
     };
 
     return (
-        <Card className="w-full h-[800px]">
+        <Card className="h-[800px] w-full">
             <CardHeader>
                 <CardTitle>Organizational Chart</CardTitle>
-                <CardDescription>
-                    View and manage the organizational structure
-                </CardDescription>
+                <CardDescription>View and manage the organizational structure</CardDescription>
             </CardHeader>
             <CardContent>
-                <div ref={containerRef} className="w-full h-[700px]">
+                <div ref={containerRef} className="h-[700px] w-full">
                     {data && dimensions.width > 0 && (
                         <Tree
                             data={data}
@@ -131,9 +137,7 @@ export function OrganizationalChart({ initialData }: OrganizationalChartProps) {
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Unit Details</DialogTitle>
-                        <DialogDescription>
-                            View details and manage this organizational unit
-                        </DialogDescription>
+                        <DialogDescription>View details and manage this organizational unit</DialogDescription>
                     </DialogHeader>
 
                     {selectedNode && (
@@ -145,12 +149,15 @@ export function OrganizationalChart({ initialData }: OrganizationalChartProps) {
 
                             {selectedNode.manager && (
                                 <div>
-                                    <h4 className="text-sm font-medium mb-2">Manager</h4>
+                                    <h4 className="mb-2 text-sm font-medium">Manager</h4>
                                     <div className="flex items-center">
                                         <Avatar>
                                             <AvatarImage src={selectedNode.manager.avatar} alt={selectedNode.manager.name} />
                                             <AvatarFallback>
-                                                {selectedNode.manager.name.split(' ').map(n => n[0]).join('')}
+                                                {selectedNode.manager.name
+                                                    .split(' ')
+                                                    .map((n) => n[0])
+                                                    .join('')}
                                             </AvatarFallback>
                                         </Avatar>
                                         <div className="ml-3">
@@ -162,17 +169,15 @@ export function OrganizationalChart({ initialData }: OrganizationalChartProps) {
                             )}
 
                             <div>
-                                <h4 className="text-sm font-medium mb-2">Statistics</h4>
+                                <h4 className="mb-2 text-sm font-medium">Statistics</h4>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div className="p-3 bg-gray-50 rounded-lg">
+                                    <div className="rounded-lg bg-gray-50 p-3">
                                         <div className="text-sm text-gray-500">Total Employees</div>
                                         <div className="text-lg font-medium">{selectedNode.totalEmployees}</div>
                                     </div>
-                                    <div className="p-3 bg-gray-50 rounded-lg">
+                                    <div className="rounded-lg bg-gray-50 p-3">
                                         <div className="text-sm text-gray-500">Direct Reports</div>
-                                        <div className="text-lg font-medium">
-                                            {selectedNode.children?.length || 0}
-                                        </div>
+                                        <div className="text-lg font-medium">{selectedNode.children?.length || 0}</div>
                                     </div>
                                 </div>
                             </div>
@@ -180,12 +185,10 @@ export function OrganizationalChart({ initialData }: OrganizationalChartProps) {
                     )}
 
                     <DialogFooter>
-                        <Button onClick={() => setShowNodeDialog(false)}>
-                            Close
-                        </Button>
+                        <Button onClick={() => setShowNodeDialog(false)}>Close</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
         </Card>
     );
-} 
+}

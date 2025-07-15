@@ -1,6 +1,5 @@
-import React from 'react';
-import { usePage } from '@inertiajs/react';
 import { PageProps } from '@/Core/types';
+import { usePage } from '@inertiajs/react';
 
 export default function ValidationErrors() {
     const { errors } = usePage<PageProps>().props;
@@ -12,7 +11,7 @@ export default function ValidationErrors() {
             <div className="mb-4">
                 <div className="font-medium text-red-600">Whoops! Something went wrong.</div>
 
-                <ul className="mt-3 list-disc list-inside text-sm text-red-600">
+                <ul className="mt-3 list-inside list-disc text-sm text-red-600">
                     {Object.keys(errors).map((key) => (
                         <li key={key}>{errors[key]}</li>
                     ))}
@@ -21,24 +20,3 @@ export default function ValidationErrors() {
         )
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

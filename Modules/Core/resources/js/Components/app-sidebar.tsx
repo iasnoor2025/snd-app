@@ -1,17 +1,13 @@
-import { NavFooter } from './nav-footer';
+import { type NavItem } from '../types';
 import { NavMain } from './nav-main';
 import { NavUser } from './nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger } from './ui/sidebar';
-import { type NavItem } from '../types';
 
-import AppLogo from './app-logo';
 import { usePermission } from '../hooks/usePermission';
+import AppLogo from './app-logo';
 
 import { useEffect, useState } from 'react';
-import { cn } from '../lib/utils';
 import { useTranslation } from 'react-i18next';
-import { Button } from "./ui/button";
-import { Icon } from "./icon";
 
 // Map module names to their respective icon, route, and required permission
 const moduleMap: Record<string, { icon: string; route: string; permission: string }> = {
@@ -34,7 +30,7 @@ const moduleMap: Record<string, { icon: string; route: string; permission: strin
     CustomerManagement: { icon: 'users', route: '/customers', permission: 'customers.view' },
     AuditCompliance: { icon: 'folder-check', route: '/audit', permission: 'audit.view' },
     API: { icon: 'file-digit', route: '/api', permission: 'api.view' },
-    SafetyManagement: { icon: 'alert-triangle', route: '/safety/incidents', permission: 'incidents.view' }
+    SafetyManagement: { icon: 'alert-triangle', route: '/safety/incidents', permission: 'incidents.view' },
 };
 
 // Map module keys to human-friendly display names
@@ -97,8 +93,8 @@ export function AppSidebar() {
         }));
 
     return (
-        <Sidebar collapsible="icon" className="bg-white border-r">
-            <SidebarHeader className="border-b p-4 flex items-center gap-2">
+        <Sidebar collapsible="icon" className="border-r bg-white">
+            <SidebarHeader className="flex items-center gap-2 border-b p-4">
                 <SidebarTrigger className="mr-2" />
                 <SidebarMenu>
                     <SidebarMenuItem>

@@ -1,10 +1,19 @@
-import { Icon } from "./icon";
-import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from "./ui/sidebar";
-import { router } from "@inertiajs/core";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
-import { useTranslation } from "react-i18next";
-import { type NavItem } from "@/Core/types";
-import { usePermission } from "../hooks/usePermission";
+import { type NavItem } from '@/Core/types';
+import { router } from '@inertiajs/core';
+import { useTranslation } from 'react-i18next';
+import { usePermission } from '../hooks/usePermission';
+import { Icon } from './icon';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
+import {
+    SidebarGroup,
+    SidebarGroupLabel,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    SidebarMenuSub,
+    SidebarMenuSubButton,
+    SidebarMenuSubItem,
+} from './ui/sidebar';
 
 interface NavMainProps {
     items: NavItem[];
@@ -32,7 +41,6 @@ export function NavMain({ items }: NavMainProps) {
             <SidebarGroupLabel>Navigation</SidebarGroupLabel>
             <SidebarMenu>
                 {items.map((item, index) => {
-
                     // Temporarily disable permission checks for debugging
                     // if (item.permission && !hasPermission(item.permission)) {
                     //     return null;
@@ -44,7 +52,7 @@ export function NavMain({ items }: NavMainProps) {
                                 <Collapsible>
                                     <CollapsibleTrigger>
                                         <SidebarMenuButton onClick={() => router.visit(item.href)} className="w-full text-left">
-                                            {item.icon && <Icon name={item.icon} className="h-4 w-4 mr-2" />}
+                                            {item.icon && <Icon name={item.icon} className="mr-2 h-4 w-4" />}
                                             {item.title}
                                         </SidebarMenuButton>
                                     </CollapsibleTrigger>
@@ -73,10 +81,13 @@ export function NavMain({ items }: NavMainProps) {
 
                     return (
                         <SidebarMenuItem key={index}>
-                            <SidebarMenuButton onClick={() => {
-                                router.visit(item.href);
-                            }} className="w-full text-left flex items-center">
-                                {item.icon && <Icon name={item.icon} className="h-4 w-4 mr-2" />}
+                            <SidebarMenuButton
+                                onClick={() => {
+                                    router.visit(item.href);
+                                }}
+                                className="flex w-full items-center text-left"
+                            >
+                                {item.icon && <Icon name={item.icon} className="mr-2 h-4 w-4" />}
                                 {item.title}
                             </SidebarMenuButton>
                         </SidebarMenuItem>
@@ -89,26 +100,3 @@ export function NavMain({ items }: NavMainProps) {
 
 // Default export for compatibility with index.ts
 export default NavMain;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

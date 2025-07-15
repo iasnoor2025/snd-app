@@ -15,9 +15,9 @@ This error occurs when a translatable field object is rendered directly in JSX i
 ```tsx
 // ❌ WRONG - This will cause the error
 const MyComponent = ({ item }) => (
-  <div>
-    <h1>{item.name}</h1> {/* If item.name is {en: "Title", ar: "عنوان"} */}
-  </div>
+    <div>
+        <h1>{item.name}</h1> {/* If item.name is {en: "Title", ar: "عنوان"} */}
+    </div>
 );
 
 // ❌ WRONG - Passing object to toast
@@ -33,11 +33,11 @@ import { TranslatableText } from '@/Core';
 
 // ✅ CORRECT
 const MyComponent = ({ item }) => (
-  <div>
-    <h1>
-      <TranslatableText>{item.name}</TranslatableText>
-    </h1>
-  </div>
+    <div>
+        <h1>
+            <TranslatableText>{item.name}</TranslatableText>
+        </h1>
+    </div>
 );
 ```
 
@@ -48,13 +48,13 @@ import { useTranslation } from '@/Core';
 
 // ✅ CORRECT
 const MyComponent = ({ item }) => {
-  const { t } = useTranslation();
-  
-  return (
-    <div>
-      <h1>{t(item.name)}</h1>
-    </div>
-  );
+    const { t } = useTranslation();
+
+    return (
+        <div>
+            <h1>{t(item.name)}</h1>
+        </div>
+    );
 };
 ```
 
@@ -65,9 +65,9 @@ import { safeRender } from '@/Core';
 
 // ✅ CORRECT
 const MyComponent = ({ item }) => (
-  <div>
-    <h1>{safeRender(item.name, 'en', 'Untitled')}</h1>
-  </div>
+    <div>
+        <h1>{safeRender(item.name, 'en', 'Untitled')}</h1>
+    </div>
 );
 ```
 
@@ -79,14 +79,14 @@ import { useTranslation } from '@/Core';
 
 // ✅ CORRECT
 const MyComponent = ({ item }) => {
-  const { t } = useTranslation();
-  
-  const handleSave = () => {
-    // Convert translatable object to string before passing to toast
-    toast.success(t(item.successMessage) || 'Saved successfully');
-  };
-  
-  return <button onClick={handleSave}>Save</button>;
+    const { t } = useTranslation();
+
+    const handleSave = () => {
+        // Convert translatable object to string before passing to toast
+        toast.success(t(item.successMessage) || 'Saved successfully');
+    };
+
+    return <button onClick={handleSave}>Save</button>;
 };
 ```
 
@@ -99,7 +99,7 @@ import { debugTranslationObject, isTranslatableObject } from '@/Core';
 
 // Check if a value might cause rendering issues
 if (isTranslatableObject(someValue)) {
-  debugTranslationObject(someValue, 'MyComponent');
+    debugTranslationObject(someValue, 'MyComponent');
 }
 ```
 
@@ -128,20 +128,20 @@ Define proper types for your components to catch these issues early:
 
 ```tsx
 interface ItemProps {
-  item: {
-    name: string | Record<string, string>; // Explicitly type translatable fields
-    description: string | Record<string, string>;
-  };
+    item: {
+        name: string | Record<string, string>; // Explicitly type translatable fields
+        description: string | Record<string, string>;
+    };
 }
 
 const MyComponent: React.FC<ItemProps> = ({ item }) => {
-  const { t } = useTranslation();
-  
-  return (
-    <div>
-      <h1>{t(item.name)}</h1>
-      <p>{t(item.description)}</p>
-    </div>
-  );
+    const { t } = useTranslation();
+
+    return (
+        <div>
+            <h1>{t(item.name)}</h1>
+            <p>{t(item.description)}</p>
+        </div>
+    );
 };
-``` 
+```

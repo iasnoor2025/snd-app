@@ -4,9 +4,7 @@
     "description": "Reporting module for the application",
     "keywords": [],
     "priority": 0,
-    "providers": [
-        "Modules\\Reporting\\Providers\\ReportingServiceProvider"
-    ],
+    "providers": ["Modules\\Reporting\\Providers\\ReportingServiceProvider"],
     "aliases": [],
     "files": [],
     "requires": []

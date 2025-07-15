@@ -18,7 +18,3 @@ jest.mock('@inertiajs/react', () => ({
         },
     }),
 }));
-
-
-
-

@@ -19,7 +19,3 @@ export const route = (name: keyof typeof routes, params?: Record<string, string 
 
     return url;
 };
-
-
-
-

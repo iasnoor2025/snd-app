@@ -1,10 +1,10 @@
-import React, { FC } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Head } from '@inertiajs/react';
 import FileUpload from '@/Core/components/ui/FileUpload';
 import { Button } from '@/Core/components/ui/button';
-import { toast } from 'sonner';
+import { Head } from '@inertiajs/react';
 import axios from 'axios';
+import React, { FC } from 'react';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 interface Props {
     payroll: any;
@@ -20,7 +20,10 @@ const { t } = useTranslation('payrolls');
 
 export const Edit: FC<Props> = ({ payroll, employee = {}, items = [], employees = [], created_at, updated_at, deleted_at }) => {
     const [uploadedFile, setUploadedFile] = React.useState<File | null>(null);
-    React.useEffect(() => { if (payroll) {} }, [payroll]);
+    React.useEffect(() => {
+        if (payroll) {
+        }
+    }, [payroll]);
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const formData = new FormData();
@@ -42,7 +45,7 @@ export const Edit: FC<Props> = ({ payroll, employee = {}, items = [], employees 
                 <form onSubmit={handleSubmit}>
                     {/* Payroll edit form will go here */}
                     <div className="mt-4">
-                        <label className="block font-medium mb-1">Upload Payroll Document</label>
+                        <label className="mb-1 block font-medium">Upload Payroll Document</label>
                         <FileUpload onFileSelect={setUploadedFile} accept=".pdf,.jpg,.jpeg,.png" maxSize={10 * 1024 * 1024} />
                     </div>
                     <Button type="submit">Save Changes</Button>
@@ -53,17 +56,3 @@ export const Edit: FC<Props> = ({ payroll, employee = {}, items = [], employees 
 };
 
 export default Edit;
-
-
-
-
-
-
-
-
-
-
-
-
-
-

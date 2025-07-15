@@ -1,50 +1,25 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
+    Alert,
+    AlertDescription,
+    Badge,
+    Button,
     Card,
     CardContent,
-    CardDescription,
     CardHeader,
     CardTitle,
-} from "@/Core";
-import { Button } from "@/Core";
-import { Input } from "@/Core";
-import { Label } from "@/Core";
-import { Textarea } from "@/Core";
-import { Badge } from "@/Core";
-import {
+    Label,
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/Core";
-import {
-    Alert,
-    AlertDescription,
-    AlertTitle,
-} from "@/Core";
-import {
-    MapPin,
-    Clock,
-    Play,
-    Square,
-    Pause,
-    CheckCircle,
-    AlertTriangle,
-    Wifi,
-    WifiOff,
-    Smartphone,
-    Navigation,
-    Shield,
-    Timer,
-    Calendar,
-    User,
-    Building,
-    Target
-} from 'lucide-react';
-import { toast } from 'sonner';
+    Textarea,
+} from '@/Core';
 import axios from 'axios';
+import { AlertTriangle, CheckCircle, MapPin, Navigation, Pause, Play, Shield, Smartphone, Square, Timer, Wifi, WifiOff } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 interface LocationData {
     latitude: number;
@@ -106,7 +81,7 @@ const MobileTimesheetLogger: React.FC = () => {
     const [formData, setFormData] = useState({
         project_id: '',
         description: '',
-        tasks: ''
+        tasks: '',
     });
 
     const watchIdRef = useRef<number | null>(null);
@@ -145,7 +120,7 @@ const MobileTimesheetLogger: React.FC = () => {
     useEffect(() => {
         if (isTracking && !isPaused) {
             timerRef.current = setInterval(() => {
-                setElapsedTime(prev => prev + 1);
+                setElapsedTime((prev) => prev + 1);
             }, 1000);
         } else {
             if (timerRef.current) {
@@ -179,7 +154,7 @@ const MobileTimesheetLogger: React.FC = () => {
                 navigator.geolocation.getCurrentPosition(resolve, reject, {
                     enableHighAccuracy: true,
                     timeout: 10000,
-                    maximumAge: 60000
+                    maximumAge: 60000,
                 });
             });
 
@@ -193,7 +168,7 @@ const MobileTimesheetLogger: React.FC = () => {
     };
 
     const startLocationTracking = () => {
-  const { t } = useTranslation('timesheet');
+        const { t } = useTranslation('timesheet');
 
         if (watchIdRef.current) {
             navigator.geolocation.clearWatch(watchIdRef.current);
@@ -208,8 +183,8 @@ const MobileTimesheetLogger: React.FC = () => {
             {
                 enableHighAccuracy: true,
                 timeout: 30000,
-                maximumAge: 60000
-            }
+                maximumAge: 60000,
+            },
         );
     };
 
@@ -218,18 +193,18 @@ const MobileTimesheetLogger: React.FC = () => {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
             accuracy: position.coords.accuracy,
-            timestamp: Date.now()
+            timestamp: Date.now(),
         };
 
         setCurrentLocation(locationData);
-        setLocationHistory(prev => [...prev.slice(-99), locationData]); // Keep last 100 locations
+        setLocationHistory((prev) => [...prev.slice(-99), locationData]); // Keep last 100 locations
 
         // Get address if online
         if (isOnline) {
             try {
                 const address = await reverseGeocode(locationData.latitude, locationData.longitude);
                 locationData.address = address;
-                setCurrentLocation({...locationData, address});
+                setCurrentLocation({ ...locationData, address });
             } catch (error) {
                 console.error('Reverse geocoding failed:', error);
             }
@@ -252,7 +227,7 @@ const MobileTimesheetLogger: React.FC = () => {
             const response = await axios.post('/api/geofences/validate-location', {
                 latitude: location.latitude,
                 longitude: location.longitude,
-                project_id: formData.project_id || null
+                project_id: formData.project_id || null,
             });
 
             setGeofenceStatus(response.data.data);
@@ -305,7 +280,7 @@ const MobileTimesheetLogger: React.FC = () => {
 
     const pauseTracking = () => {
         setIsPaused(true);
-        setPausedTime(prev => prev + elapsedTime);
+        setPausedTime((prev) => prev + elapsedTime);
         toast.info('Time tracking paused');
     };
 
@@ -330,11 +305,11 @@ const MobileTimesheetLogger: React.FC = () => {
             location: currentLocation,
             geofence_status: geofenceStatus || {
                 is_within_geofence: false,
-                violations: []
+                violations: [],
             },
             is_offline_entry: !isOnline,
             device_id: getDeviceId(),
-            app_version: '1.0.0'
+            app_version: '1.0.0',
         };
 
         if (isOnline) {
@@ -374,7 +349,7 @@ const MobileTimesheetLogger: React.FC = () => {
             device_id: entry.device_id,
             app_version: entry.app_version,
             is_offline_entry: entry.is_offline_entry,
-            geofence_status: entry.geofence_status
+            geofence_status: entry.geofence_status,
         };
 
         const response = await axios.post('/api/timesheets/mobile', payload);
@@ -440,8 +415,8 @@ const MobileTimesheetLogger: React.FC = () => {
     const getGeofenceStatusColor = () => {
         if (!geofenceStatus) return 'text-gray-500';
         if (geofenceStatus.is_within_geofence) return 'text-green-500';
-        if (geofenceStatus.violations.some(v => v.severity === 'high')) return 'text-red-500';
-        if (geofenceStatus.violations.some(v => v.severity === 'medium')) return 'text-yellow-500';
+        if (geofenceStatus.violations.some((v) => v.severity === 'high')) return 'text-red-500';
+        if (geofenceStatus.violations.some((v) => v.severity === 'medium')) return 'text-yellow-500';
         return 'text-gray-500';
     };
 
@@ -452,17 +427,13 @@ const MobileTimesheetLogger: React.FC = () => {
     };
 
     return (
-        <div className="max-w-md mx-auto space-y-4 p-4">
+        <div className="mx-auto max-w-md space-y-4 p-4">
             {/* Status Bar */}
             <Card>
                 <CardContent className="pt-4">
-                    <div className="flex justify-between items-center text-sm">
+                    <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center space-x-2">
-                            {isOnline ? (
-                                <Wifi className="h-4 w-4 text-green-500" />
-                            ) : (
-                                <WifiOff className="h-4 w-4 text-red-500" />
-                            )}
+                            {isOnline ? <Wifi className="h-4 w-4 text-green-500" /> : <WifiOff className="h-4 w-4 text-red-500" />}
                             <span>{isOnline ? 'Online' : 'Offline'}</span>
                         </div>
                         <div className="flex items-center space-x-2">
@@ -470,11 +441,7 @@ const MobileTimesheetLogger: React.FC = () => {
                             <span>{t('mobile_app')}</span>
                         </div>
                     </div>
-                    {offlineEntries.length > 0 && (
-                        <div className="mt-2 text-sm text-yellow-600">
-                            {offlineEntries.length} entries pending sync
-                        </div>
-                    )}
+                    {offlineEntries.length > 0 && <div className="mt-2 text-sm text-yellow-600">{offlineEntries.length} entries pending sync</div>}
                 </CardContent>
             </Card>
 
@@ -488,19 +455,19 @@ const MobileTimesheetLogger: React.FC = () => {
                                 <span className="font-medium">Location</span>
                             </div>
                             {isLocationEnabled ? (
-                                <Badge variant="secondary" className="text-green-700 bg-green-100">
+                                <Badge variant="secondary" className="bg-green-100 text-green-700">
                                     Enabled
                                 </Badge>
                             ) : (
-                                <Badge variant="destructive">
-                                    Disabled
-                                </Badge>
+                                <Badge variant="destructive">Disabled</Badge>
                             )}
                         </div>
 
                         {currentLocation && (
                             <div className="text-sm text-muted-foreground">
-                                <div>{currentLocation.address || `${currentLocation.latitude.toFixed(6)}, ${currentLocation.longitude.toFixed(6)}`}</div>
+                                <div>
+                                    {currentLocation.address || `${currentLocation.latitude.toFixed(6)}, ${currentLocation.longitude.toFixed(6)}`}
+                                </div>
                                 <div>Accuracy: ±{Math.round(currentLocation.accuracy)}m</div>
                             </div>
                         )}
@@ -527,9 +494,7 @@ const MobileTimesheetLogger: React.FC = () => {
                                 </div>
                                 <div className={`flex items-center space-x-1 ${getGeofenceStatusColor()}`}>
                                     {getGeofenceStatusIcon()}
-                                    <span className="text-sm">
-                                        {geofenceStatus.is_within_geofence ? 'Inside Zone' : 'Outside Zone'}
-                                    </span>
+                                    <span className="text-sm">{geofenceStatus.is_within_geofence ? 'Inside Zone' : 'Outside Zone'}</span>
                                 </div>
                             </div>
 
@@ -545,9 +510,7 @@ const MobileTimesheetLogger: React.FC = () => {
                                     {geofenceStatus.violations.map((violation, index) => (
                                         <Alert key={index} className="py-2">
                                             <AlertTriangle className="h-4 w-4" />
-                                            <AlertDescription className="text-sm">
-                                                {violation.message}
-                                            </AlertDescription>
+                                            <AlertDescription className="text-sm">{violation.message}</AlertDescription>
                                         </Alert>
                                     ))}
                                 </div>
@@ -568,12 +531,8 @@ const MobileTimesheetLogger: React.FC = () => {
                 <CardContent className="space-y-4">
                     {isTracking && (
                         <div className="text-center">
-                            <div className="text-3xl font-mono font-bold text-primary">
-                                {formatTime(pausedTime + elapsedTime)}
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                                {isPaused ? 'Paused' : 'Active'}
-                            </div>
+                            <div className="font-mono text-3xl font-bold text-primary">{formatTime(pausedTime + elapsedTime)}</div>
+                            <div className="text-sm text-muted-foreground">{isPaused ? 'Paused' : 'Active'}</div>
                         </div>
                     )}
 
@@ -582,7 +541,7 @@ const MobileTimesheetLogger: React.FC = () => {
                             <Label htmlFor="project">Project</Label>
                             <Select
                                 value={formData.project_id}
-                                onValueChange={(value) => setFormData({...formData, project_id: value})}
+                                onValueChange={(value) => setFormData({ ...formData, project_id: value })}
                                 disabled={isTracking}
                             >
                                 <SelectTrigger>
@@ -603,7 +562,7 @@ const MobileTimesheetLogger: React.FC = () => {
                             <Textarea
                                 id="description"
                                 value={formData.description}
-                                onChange={(e) => setFormData({...formData, description: e.target.value})}
+                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                 placeholder={t('ph_what_are_you_working_on')}
                                 disabled={isTracking}
                                 rows={3}
@@ -613,11 +572,7 @@ const MobileTimesheetLogger: React.FC = () => {
 
                     <div className="flex space-x-2">
                         {!isTracking ? (
-                            <Button
-                                onClick={startTracking}
-                                className="flex-1"
-                                disabled={!isLocationEnabled || !formData.project_id}
-                            >
+                            <Button onClick={startTracking} className="flex-1" disabled={!isLocationEnabled || !formData.project_id}>
                                 <Play className="mr-2 h-4 w-4" />
                                 Start
                             </Button>
@@ -662,17 +617,3 @@ const MobileTimesheetLogger: React.FC = () => {
 };
 
 export default MobileTimesheetLogger;
-
-
-
-
-
-
-
-
-
-
-
-
-
-

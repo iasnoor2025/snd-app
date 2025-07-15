@@ -4,8 +4,6 @@
     "description": "",
     "keywords": [],
     "priority": 0,
-    "providers": [
-        "Modules\\EmployeeManagement\\Providers\\EmployeeManagementServiceProvider"
-    ],
+    "providers": ["Modules\\EmployeeManagement\\Providers\\EmployeeManagementServiceProvider"],
     "files": []
 }

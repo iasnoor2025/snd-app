@@ -4,9 +4,7 @@
     "description": "Timesheet Management module for HR & Payroll system",
     "keywords": ["timesheet", "hr", "human-resources", "time-tracking"],
     "priority": 0,
-    "providers": [
-        "Modules\\TimesheetManagement\\Providers\\TimesheetManagementServiceProvider"
-    ],
+    "providers": ["Modules\\TimesheetManagement\\Providers\\TimesheetManagementServiceProvider"],
     "aliases": {},
     "files": [],
     "requires": ["Employee", "Project"]

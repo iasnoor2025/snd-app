@@ -1,16 +1,6 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/Core";
-import { Badge } from "@/Core";
+import { AppLayout, Badge, Button, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core';
 import { format } from 'date-fns';
-import { AppLayout, Button } from '@/Core';
+import { useTranslation } from 'react-i18next';
 
 interface SalaryRecord {
     id: number;
@@ -32,7 +22,7 @@ interface Props {
 }
 
 export default function SalaryHistory({ records = [] }: Props) {
-  const { t } = useTranslation('employees');
+    const { t } = useTranslation('employees');
 
     const calculateTotal = (record: SalaryRecord) => {
         return (
@@ -47,18 +37,20 @@ export default function SalaryHistory({ records = [] }: Props) {
 
     const breadcrumbs = [
         { title: 'Employees', href: '/employees' },
-        { title: 'Salary History', href: '#' }
+        { title: 'Salary History', href: '#' },
     ];
 
     return (
         <AppLayout title="Salary History" breadcrumbs={breadcrumbs} requiredPermission="employees.view">
-            <div className="flex items-center justify-between mb-6">
+            <div className="mb-6 flex items-center justify-between">
                 <h1 className="text-2xl font-bold text-gray-900">{t('lbl_salary_history')}</h1>
                 <a href="/employees">
-                    <Button variant="outline" size="sm">{t('btn_back')}</Button>
+                    <Button variant="outline" size="sm">
+                        {t('btn_back')}
+                    </Button>
                 </a>
             </div>
-            <div className="rounded-md border w-full">
+            <div className="w-full rounded-md border">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -75,60 +67,29 @@ export default function SalaryHistory({ records = [] }: Props) {
                     <TableBody>
                         {records.map((record) => (
                             <TableRow key={record.id}>
-                                <TableCell>
-                                    {format(new Date(record.salary_month), 'MMMM yyyy')}
-                                </TableCell>
-                                <TableCell>
-                                    SAR {record.basic_salary.toFixed(2)}
-                                </TableCell>
+                                <TableCell>{format(new Date(record.salary_month), 'MMMM yyyy')}</TableCell>
+                                <TableCell>SAR {record.basic_salary.toFixed(2)}</TableCell>
                                 <TableCell>
                                     <div className="space-y-1">
-                                        <div className="text-sm">
-                                            Food: SAR {record.food_allowance.toFixed(2)}
-                                        </div>
-                                        <div className="text-sm">
-                                            Housing: SAR {record.housing_allowance.toFixed(2)}
-                                        </div>
-                                        <div className="text-sm">
-                                            Transport: SAR {record.transport_allowance.toFixed(2)}
-                                        </div>
+                                        <div className="text-sm">Food: SAR {record.food_allowance.toFixed(2)}</div>
+                                        <div className="text-sm">Housing: SAR {record.housing_allowance.toFixed(2)}</div>
+                                        <div className="text-sm">Transport: SAR {record.transport_allowance.toFixed(2)}</div>
                                     </div>
                                 </TableCell>
+                                <TableCell>SAR {record.overtime_amount.toFixed(2)}</TableCell>
+                                <TableCell>SAR {record.deductions.toFixed(2)}</TableCell>
+                                <TableCell className="font-medium">SAR {calculateTotal(record).toFixed(2)}</TableCell>
                                 <TableCell>
-                                    SAR {record.overtime_amount.toFixed(2)}
-                                </TableCell>
-                                <TableCell>
-                                    SAR {record.deductions.toFixed(2)}
-                                </TableCell>
-                                <TableCell className="font-medium">
-                                    SAR {calculateTotal(record).toFixed(2)}
-                                </TableCell>
-                                <TableCell>
-                                    <Badge
-                                        variant={
-                                            record.status === 'paid'
-                                                ? 'default'
-                                                : record.status === 'approved'
-                                                ? 'outline'
-                                                : 'secondary'
-                                        }
-                                    >
+                                    <Badge variant={record.status === 'paid' ? 'default' : record.status === 'approved' ? 'outline' : 'secondary'}>
                                         {record.status}
                                     </Badge>
                                 </TableCell>
-                                <TableCell>
-                                    {record.paid_date
-                                        ? format(new Date(record.paid_date), 'MMM dd, yyyy')
-                                        : '-'}
-                                </TableCell>
+                                <TableCell>{record.paid_date ? format(new Date(record.paid_date), 'MMM dd, yyyy') : '-'}</TableCell>
                             </TableRow>
                         ))}
                         {records.length === 0 && (
                             <TableRow>
-                                <TableCell
-                                    colSpan={8}
-                                    className="h-24 text-center text-muted-foreground"
-                                >
+                                <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
                                     {t('msg_no_salary_records_found')}
                                 </TableCell>
                             </TableRow>
@@ -139,19 +100,3 @@ export default function SalaryHistory({ records = [] }: Props) {
         </AppLayout>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

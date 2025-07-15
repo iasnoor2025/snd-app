@@ -5,6 +5,7 @@ This guide provides step-by-step instructions for setting up the complete avatar
 ## Overview
 
 The avatar management system includes:
+
 - **Backend**: Laravel controllers, models, and API endpoints
 - **Frontend**: React components with ShadCN UI integration
 - **File Management**: Spatie Media Library integration
@@ -159,6 +160,7 @@ database/migrations/
 ### 1. Update User Model
 
 The User model has been updated to include:
+
 - `HasAvatar` trait
 - `HasMedia` interface implementation
 - Avatar field in fillable array
@@ -166,12 +168,14 @@ The User model has been updated to include:
 ### 2. Routes Configuration
 
 Avatar routes are automatically loaded via:
+
 - `routes/avatar.php` - Avatar management endpoints
 - `routes/profile.php` - Profile pages including avatar management
 
 ### 3. Middleware
 
 All avatar routes are protected by:
+
 - `auth` middleware - Requires authentication
 - `verified` middleware - Requires email verification
 
@@ -179,22 +183,22 @@ All avatar routes are protected by:
 
 ### Avatar Management
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/avatar` | Get current user avatar info |
-| POST | `/avatar/upload` | Upload avatar file |
-| POST | `/avatar/upload-media` | Upload using Media Library |
-| POST | `/avatar/set-url` | Set avatar from URL |
-| DELETE | `/avatar/remove` | Remove current avatar |
+| Method | Endpoint               | Description                  |
+| ------ | ---------------------- | ---------------------------- |
+| GET    | `/avatar`              | Get current user avatar info |
+| POST   | `/avatar/upload`       | Upload avatar file           |
+| POST   | `/avatar/upload-media` | Upload using Media Library   |
+| POST   | `/avatar/set-url`      | Set avatar from URL          |
+| DELETE | `/avatar/remove`       | Remove current avatar        |
 
 ### API Routes (for AJAX)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/avatar` | Get avatar info (API) |
-| POST | `/api/avatar/upload` | Upload avatar (API) |
-| POST | `/api/avatar/set-url` | Set from URL (API) |
-| DELETE | `/api/avatar/remove` | Remove avatar (API) |
+| Method | Endpoint              | Description           |
+| ------ | --------------------- | --------------------- |
+| GET    | `/api/avatar`         | Get avatar info (API) |
+| POST   | `/api/avatar/upload`  | Upload avatar (API)   |
+| POST   | `/api/avatar/set-url` | Set from URL (API)    |
+| DELETE | `/api/avatar/remove`  | Remove avatar (API)   |
 
 ## Frontend Components
 
@@ -205,14 +209,14 @@ import { SmartAvatar } from '@/Components/ui/smart-avatar';
 import AvatarUploader from '@/Components/Avatar/AvatarUploader';
 
 // Display user avatar
-<SmartAvatar 
-    user={user} 
-    size="md" 
-    status="online" 
+<SmartAvatar
+    user={user}
+    size="md"
+    status="online"
 />
 
 // Avatar upload component
-<AvatarUploader 
+<AvatarUploader
     user={user}
     onAvatarUpdate={(newUrl) => {
         // Handle avatar update
@@ -231,18 +235,21 @@ import AvatarUploader from '@/Components/Avatar/AvatarUploader';
 ## Features
 
 ### Image Processing
+
 - Automatic resizing to 300x300 pixels
 - Quality optimization (85% JPEG)
 - Multiple size conversions (thumb, small, large)
 - Format standardization
 
 ### Fallback System
+
 1. Custom uploaded avatar
 2. Gravatar (based on email)
 3. Generated initials
 4. Default placeholder
 
 ### Security Features
+
 - File type validation
 - File size limits (5MB max)
 - Image dimension validation
@@ -250,6 +257,7 @@ import AvatarUploader from '@/Components/Avatar/AvatarUploader';
 - CSRF protection
 
 ### Performance
+
 - Image optimization
 - Lazy loading support
 - Caching mechanisms
@@ -266,12 +274,7 @@ Visit `/profile/avatar` to access the complete avatar management interface.
 ```jsx
 import { SmartAvatar } from '@/Components/ui/smart-avatar';
 
-<SmartAvatar 
-    user={auth.user}
-    size="sm"
-    className="cursor-pointer"
-    onClick={() => router.visit('/profile/avatar')}
-/>
+<SmartAvatar user={auth.user} size="sm" className="cursor-pointer" onClick={() => router.visit('/profile/avatar')} />;
 ```
 
 ### 3. Team Member List
@@ -279,16 +282,13 @@ import { SmartAvatar } from '@/Components/ui/smart-avatar';
 ```jsx
 import { UserAvatar } from '@/Components/ui/smart-avatar';
 
-{teamMembers.map(member => (
-    <div key={member.id} className="flex items-center space-x-3">
-        <UserAvatar 
-            user={member}
-            size="md"
-            showName
-            showEmail
-        />
-    </div>
-))}
+{
+    teamMembers.map((member) => (
+        <div key={member.id} className="flex items-center space-x-3">
+            <UserAvatar user={member} size="md" showName showEmail />
+        </div>
+    ));
+}
 ```
 
 ### 4. Avatar Group
@@ -296,12 +296,7 @@ import { UserAvatar } from '@/Components/ui/smart-avatar';
 ```jsx
 import { TeamAvatar } from '@/Components/ui/smart-avatar';
 
-<TeamAvatar 
-    members={teamMembers}
-    maxVisible={4}
-    size="sm"
-    onMemberClick={(member) => console.log('Clicked:', member.name)}
-/>
+<TeamAvatar members={teamMembers} maxVisible={4} size="sm" onMemberClick={(member) => console.log('Clicked:', member.name)} />;
 ```
 
 ## Customization
@@ -319,10 +314,7 @@ Available statuses: `online`, `offline`, `away`, `busy`
 The system automatically generates unique colors based on user names, but you can override:
 
 ```jsx
-<SmartAvatar 
-    user={user}
-    style={{ '--avatar-color': '#custom-color' }}
-/>
+<SmartAvatar user={user} style={{ '--avatar-color': '#custom-color' }} />
 ```
 
 ### 4. Custom Badges
@@ -330,10 +322,7 @@ The system automatically generates unique colors based on user names, but you ca
 ```jsx
 import { Star } from 'lucide-react';
 
-<SmartAvatar 
-    user={user}
-    badge={<Star className="h-3 w-3 text-yellow-500" />}
-/>
+<SmartAvatar user={user} badge={<Star className="h-3 w-3 text-yellow-500" />} />;
 ```
 
 ## Troubleshooting

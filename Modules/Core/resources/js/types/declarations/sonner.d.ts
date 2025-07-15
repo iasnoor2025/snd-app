@@ -54,4 +54,4 @@ declare module 'sonner' {
     }
 
     export const toast: ToastFunction;
-} 
+}

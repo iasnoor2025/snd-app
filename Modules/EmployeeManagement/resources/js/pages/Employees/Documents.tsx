@@ -1,17 +1,7 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/Core";
-import { Badge } from "@/Core";
-import { Button } from "@/Core";
+import { Badge, Button, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core';
 import { format } from 'date-fns';
 import { Download, Eye } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface Document {
     id: number;
@@ -29,22 +19,10 @@ interface Props {
 }
 
 export default function Documents({ documents }: Props) {
-  const { t } = useTranslation('employee');
+    const { t } = useTranslation('employee');
 
     const getStatusBadge = (status: Document['status']) => {
-        return (
-            <Badge
-                variant={
-                    status === 'active'
-                        ? 'success'
-                        : status === 'expired'
-                        ? 'destructive'
-                        : 'secondary'
-                }
-            >
-                {status}
-            </Badge>
-        );
+        return <Badge variant={status === 'active' ? 'success' : status === 'expired' ? 'destructive' : 'secondary'}>{status}</Badge>;
     };
 
     const isExpired = (expiryDate?: string) => {
@@ -69,35 +47,15 @@ export default function Documents({ documents }: Props) {
                 <TableBody>
                     {documents.map((document) => (
                         <TableRow key={document.id}>
-                            <TableCell className="font-medium">
-                                {document.type}
-                            </TableCell>
+                            <TableCell className="font-medium">{document.type}</TableCell>
                             <TableCell>{document.name}</TableCell>
-                            <TableCell className="max-w-xs truncate">
-                                {document.description || '-'}
-                            </TableCell>
-                            <TableCell>
-                                {document.expiry_date
-                                    ? format(new Date(document.expiry_date), 'MMM dd, yyyy')
-                                    : '-'}
-                            </TableCell>
-                            <TableCell>
-                                {getStatusBadge(
-                                    isExpired(document.expiry_date)
-                                        ? 'expired'
-                                        : document.status
-                                )}
-                            </TableCell>
-                            <TableCell className="max-w-xs truncate">
-                                {document.notes || '-'}
-                            </TableCell>
+                            <TableCell className="max-w-xs truncate">{document.description || '-'}</TableCell>
+                            <TableCell>{document.expiry_date ? format(new Date(document.expiry_date), 'MMM dd, yyyy') : '-'}</TableCell>
+                            <TableCell>{getStatusBadge(isExpired(document.expiry_date) ? 'expired' : document.status)}</TableCell>
+                            <TableCell className="max-w-xs truncate">{document.notes || '-'}</TableCell>
                             <TableCell className="text-right">
                                 <div className="flex justify-end gap-2">
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => window.open(document.file_url, '_blank')}
-                                    >
+                                    <Button variant="ghost" size="icon" onClick={() => window.open(document.file_url, '_blank')}>
                                         <Eye className="h-4 w-4" />
                                     </Button>
                                     <Button
@@ -120,10 +78,7 @@ export default function Documents({ documents }: Props) {
                     ))}
                     {documents.length === 0 && (
                         <TableRow>
-                            <TableCell
-                                colSpan={7}
-                                className="h-24 text-center text-muted-foreground"
-                            >
+                            <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
                                 No documents found
                             </TableCell>
                         </TableRow>
@@ -133,19 +88,3 @@ export default function Documents({ documents }: Props) {
         </div>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -3,9 +3,11 @@
 ## 🎯 Core Architecture Principles
 
 ### Modular Domain-Driven Design ✅ IMPLEMENTED
+
 The system follows a strict modular architecture where each business domain is encapsulated in its own module with complete separation of concerns.
 
 ### ✅ File Organization Pattern (ESTABLISHED)
+
 ```
 Modules/
 ├── {ModuleName}/
@@ -23,6 +25,7 @@ resources/js/pages/                   # ✅ Global pages only
 ```
 
 ### ✅ Import Resolution Pattern (WORKING)
+
 ```typescript
 // Cross-module imports (from any module to Core)
 import { Button } from '../../../Core/resources/js/components/ui/button';
@@ -38,22 +41,25 @@ import { CoreComponent } from '../Modules/Core/resources/js/components/CoreCompo
 ## Frontend Architecture Patterns ✅
 
 ### ✅ Component Library Integration
+
 - **Shadcn UI**: Centralized in Core module (`Modules/Core/resources/js/components/ui/`)
 - **Cross-module access**: All modules can import Shadcn components from Core
 - **Legacy migration**: 100% complete - no legacy components remain
 
 ### ✅ Build System Pattern
+
 ```javascript
 // Vite configuration for modular structure
 const modulePages = {
-  ...import.meta.glob('/Modules/*/resources/js/pages/**/*.tsx', { eager: false }),
-  ...import.meta.glob('/resources/js/pages/**/*.tsx', { eager: false }),
+    ...import.meta.glob('/Modules/*/resources/js/pages/**/*.tsx', { eager: false }),
+    ...import.meta.glob('/resources/js/pages/**/*.tsx', { eager: false }),
 };
 
 // Result: 6742 modules successfully transformed
 ```
 
 ### ✅ TypeScript Integration
+
 - **Strict type checking**: Across all 6742 modules
 - **Cross-module types**: Shared interfaces in Core module
 - **Module-specific types**: Each module has its own type definitions
@@ -61,6 +67,7 @@ const modulePages = {
 ## Backend Architecture Patterns
 
 ### Module Structure Pattern
+
 ```php
 Modules/{ModuleName}/
 ├── Http/
@@ -78,6 +85,7 @@ Modules/{ModuleName}/
 ```
 
 ### Authentication & Authorization Pattern ✅ IMPLEMENTED
+
 ```php
 // Role-based access control
 class UserPolicy
@@ -95,6 +103,7 @@ Gate::define('access-equipment-module', function (User $user) {
 ```
 
 ### Database Migration Pattern
+
 ```php
 // Module-specific migrations
 database/migrations/
@@ -108,6 +117,7 @@ database/migrations/
 ## Frontend Component Patterns ✅
 
 ### ✅ Page Component Pattern
+
 ```typescript
 // Standard page structure
 export default function ModulePage({ data }: PageProps) {
@@ -123,6 +133,7 @@ export default function ModulePage({ data }: PageProps) {
 ```
 
 ### ✅ Form Component Pattern
+
 ```typescript
 // React Hook Form with Zod validation
 const form = useForm<FormData>({
@@ -149,6 +160,7 @@ const form = useForm<FormData>({
 ```
 
 ### ✅ Layout Pattern
+
 ```typescript
 // Consistent layout usage across modules
 import AdminLayout from '../../../Core/resources/js/layouts/AdminLayout';
@@ -164,15 +176,17 @@ import AdminLayout from '../../../Core/resources/js/layouts/AdminLayout';
 ## State Management Patterns
 
 ### Server State Pattern
+
 ```typescript
 // TanStack Query for server state
 const { data, isLoading, error } = useQuery({
     queryKey: ['module', 'entity', id],
-    queryFn: () => fetchEntity(id)
+    queryFn: () => fetchEntity(id),
 });
 ```
 
 ### Client State Pattern
+
 ```typescript
 // React Hook Form for form state
 // Zustand for complex client state (when needed)
@@ -182,6 +196,7 @@ const { data, isLoading, error } = useQuery({
 ## API Design Patterns
 
 ### RESTful Resource Pattern
+
 ```php
 // Standard CRUD endpoints
 Route::apiResource('customers', CustomerController::class);
@@ -191,6 +206,7 @@ Route::get('customers/{customer}/rentals', [CustomerController::class, 'rentals'
 ```
 
 ### Response Format Pattern
+
 ```php
 // Consistent API responses
 return response()->json([
@@ -203,15 +219,17 @@ return response()->json([
 ## Internationalization Patterns ✅
 
 ### ✅ Translation Key Pattern
+
 ```typescript
 // Hierarchical key structure
 const { t } = useTranslation();
-t('module.page.action.label')
-t('common.buttons.save')
-t('validation.required')
+t('module.page.action.label');
+t('common.buttons.save');
+t('validation.required');
 ```
 
 ### ✅ RTL Support Pattern
+
 ```typescript
 // Automatic direction switching
 <html dir={i18n.dir()} lang={i18n.language}>
@@ -221,6 +239,7 @@ t('validation.required')
 ## Security Patterns
 
 ### Authorization Pattern
+
 ```php
 // Policy-based authorization
 $this->authorize('view', $customer);
@@ -233,6 +252,7 @@ if (Gate::allows('access-admin-module')) {
 ```
 
 ### Input Validation Pattern
+
 ```php
 // Form Request validation
 class StoreCustomerRequest extends FormRequest
@@ -250,20 +270,22 @@ class StoreCustomerRequest extends FormRequest
 ## Testing Patterns
 
 ### Backend Testing Pattern
+
 ```php
 // Pest test structure
 test('can create customer', function () {
     $user = User::factory()->create();
-    
+
     $response = $this->actingAs($user)
         ->post('/api/customers', $customerData);
-        
+
     $response->assertStatus(201);
     $this->assertDatabaseHas('customers', $customerData);
 });
 ```
 
 ### Frontend Testing Pattern
+
 ```typescript
 // Jest + React Testing Library
 test('renders customer form', () => {
@@ -275,12 +297,14 @@ test('renders customer form', () => {
 ## Performance Patterns
 
 ### ✅ Build Optimization Pattern
+
 - **Code Splitting**: Automatic module-based splitting
 - **Lazy Loading**: Dynamic imports for pages
 - **Bundle Analysis**: 6742 modules optimized
 - **Asset Optimization**: Gzipped bundles for production
 
 ### Database Optimization Pattern
+
 ```php
 // Eager loading relationships
 Customer::with(['rentals.equipment'])->get();
@@ -295,6 +319,7 @@ Customer::select(['id', 'name', 'email'])
 ## Error Handling Patterns
 
 ### Frontend Error Pattern
+
 ```typescript
 // Error boundaries for React components
 <ErrorBoundary fallback={<ErrorFallback />}>
@@ -310,6 +335,7 @@ const { data, error, isError } = useQuery({
 ```
 
 ### Backend Error Pattern
+
 ```php
 // Custom exception handling
 class ModuleException extends Exception
@@ -327,6 +353,7 @@ class ModuleException extends Exception
 ## Deployment Patterns
 
 ### ✅ Build Pipeline Pattern
+
 ```bash
 # Development
 npm run dev          # Hot reload with 6742 modules
@@ -340,6 +367,7 @@ php artisan module:seed  # Module data seeding
 ```
 
 ### Asset Management Pattern
+
 ```javascript
 // Vite asset optimization
 {
@@ -360,6 +388,7 @@ php artisan module:seed  # Module data seeding
 ## Module Communication Patterns
 
 ### ✅ Cross-Module Integration
+
 ```typescript
 // Event-driven communication
 // Service layer integration
@@ -367,6 +396,7 @@ php artisan module:seed  # Module data seeding
 ```
 
 ### ✅ Dependency Management
+
 ```typescript
 // Core module provides shared resources
 // Modules depend on Core, not each other
@@ -376,6 +406,7 @@ php artisan module:seed  # Module data seeding
 ## Development Workflow Patterns ✅
 
 ### ✅ Module Development Pattern
+
 1. **Create Module**: `php artisan module:make ModuleName`
 2. **Implement Backend**: Models, Controllers, Services
 3. **Create Frontend**: Pages in `Modules/{Name}/resources/js/pages/`
@@ -384,6 +415,7 @@ php artisan module:seed  # Module data seeding
 6. **Build Verification**: Confirm module builds successfully
 
 ### ✅ File Organization Rules
+
 1. **Module Pages**: `Modules/{ModuleName}/resources/js/pages/`
 2. **Global Pages**: `resources/js/pages/` (dashboard, welcome, rtl-test only)
 3. **Shared Components**: `Modules/Core/resources/js/components/`
@@ -393,6 +425,7 @@ php artisan module:seed  # Module data seeding
 ## Success Metrics & KPIs ✅
 
 ### ✅ Technical Metrics (ACHIEVED)
+
 - **Module Count**: 6742 modules building successfully
 - **Build Time**: ~8.67s for full production build
 - **Bundle Size**: 649.49 kB main (192.67 kB gzipped)
@@ -401,6 +434,7 @@ php artisan module:seed  # Module data seeding
 - **Legacy Code**: 0% - Complete migration
 
 ### Quality Metrics (TARGET)
+
 - **Test Coverage**: 90%+ across all modules
 - **Performance**: Page load < 2 seconds
 - **Security**: Zero critical vulnerabilities

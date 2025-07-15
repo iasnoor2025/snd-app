@@ -1,6 +1,6 @@
-import { SidebarProvider } from './ui/sidebar';
-import { SharedData } from '../types';
 import { usePage } from '@inertiajs/react';
+import { SharedData } from '../types';
+import { SidebarProvider } from './ui/sidebar';
 // PWAWrapper component placeholder
 const PWAWrapper = ({ children }: { children: React.ReactNode }) => <>{children}</>;
 
@@ -26,26 +26,3 @@ export function AppShell({ children, variant = 'header' }: AppShellProps) {
         </SidebarProvider>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

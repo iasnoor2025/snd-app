@@ -1,52 +1,28 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
+    Badge,
+    Button,
     Card,
     CardContent,
-    CardDescription,
     CardHeader,
     CardTitle,
-} from "@/Core";
-import { Button } from "@/Core";
-import { Input } from "@/Core";
-import { Badge } from "@/Core";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/Core";
-import {
     Dialog,
     DialogContent,
     DialogDescription,
     DialogHeader,
     DialogTitle,
-} from "@/Core";
-import { Switch } from "@/Core";
-import { Label } from "@/Core";
-import {
-    MapPin,
-    Layers,
-    ZoomIn,
-    ZoomOut,
-    RotateCcw,
-    Navigation,
-    Eye,
-    EyeOff,
-    Filter,
-    Search,
-    Users,
-    Clock,
-    AlertTriangle,
-    CheckCircle,
-    Target,
-    Maximize,
-    Settings
-} from 'lucide-react';
-import { toast } from 'sonner';
+    Label,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    Switch,
+} from '@/Core';
 import axios from 'axios';
+import { AlertTriangle, Eye, Layers, MapPin, Maximize, Navigation, RotateCcw, Target, Users } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 interface GeofenceZone {
     id: number;
@@ -124,14 +100,14 @@ const GeofenceMapView: React.FC = () => {
         showPaths: false,
         zoneTypes: ['project_site', 'office', 'warehouse', 'restricted', 'custom'],
         employeeStatus: ['working', 'break', 'offline'],
-        timeRange: '1h'
+        timeRange: '1h',
     });
 
     const [mapLayers, setMapLayers] = useState({
         zones: new Map(),
         employees: new Map(),
         violations: new Map(),
-        paths: new Map()
+        paths: new Map(),
     });
 
     useEffect(() => {
@@ -167,7 +143,7 @@ const GeofenceMapView: React.FC = () => {
                 removeLayer: (layer: any) => {},
                 on: (event: string, callback: Function) => {},
                 fitBounds: (bounds: any) => {},
-                remove: () => {}
+                remove: () => {},
             };
 
             setMap(mockMap);
@@ -181,11 +157,7 @@ const GeofenceMapView: React.FC = () => {
     const fetchMapData = async () => {
         try {
             setLoading(true);
-            await Promise.all([
-                fetchZones(),
-                fetchEmployeeLocations(),
-                fetchLocationHistory()
-            ]);
+            await Promise.all([fetchZones(), fetchEmployeeLocations(), fetchLocationHistory()]);
         } catch (error) {
             console.error('Error fetching map data:', error);
             toast.error('Failed to load map data');
@@ -202,7 +174,7 @@ const GeofenceMapView: React.FC = () => {
     const fetchEmployeeLocations = async () => {
         const params = new URLSearchParams({
             time_range: filters.timeRange,
-            include_offline: 'true'
+            include_offline: 'true',
         });
 
         const response = await axios.get(`/api/employees/locations?${params}`);
@@ -214,7 +186,7 @@ const GeofenceMapView: React.FC = () => {
 
         const params = new URLSearchParams({
             time_range: filters.timeRange,
-            limit: '100'
+            limit: '100',
         });
 
         const response = await axios.get(`/api/employees/location-history?${params}`);
@@ -222,21 +194,21 @@ const GeofenceMapView: React.FC = () => {
     };
 
     const updateMapLayers = () => {
-  const { t } = useTranslation('timesheet');
+        const { t } = useTranslation('timesheet');
 
         if (!map) return;
 
         // Clear existing layers
-        Object.values(mapLayers).forEach(layerMap => {
-            layerMap.forEach(layer => map.removeLayer(layer));
+        Object.values(mapLayers).forEach((layerMap) => {
+            layerMap.forEach((layer) => map.removeLayer(layer));
             layerMap.clear();
         });
 
         // Add zone layers
         if (filters.showZones) {
             zones
-                .filter(zone => filters.zoneTypes.includes(zone.zone_type))
-                .forEach(zone => {
+                .filter((zone) => filters.zoneTypes.includes(zone.zone_type))
+                .forEach((zone) => {
                     const layer = createZoneLayer(zone);
                     mapLayers.zones.set(zone.id, layer);
                     map.addLayer(layer);
@@ -246,8 +218,8 @@ const GeofenceMapView: React.FC = () => {
         // Add employee layers
         if (filters.showEmployees) {
             employees
-                .filter(emp => filters.employeeStatus.includes(emp.status))
-                .forEach(employee => {
+                .filter((emp) => filters.employeeStatus.includes(emp.status))
+                .forEach((employee) => {
                     const layer = createEmployeeLayer(employee);
                     mapLayers.employees.set(employee.employee_id, layer);
                     map.addLayer(layer);
@@ -257,8 +229,8 @@ const GeofenceMapView: React.FC = () => {
         // Add violation markers
         if (filters.showViolations) {
             employees
-                .filter(emp => !emp.is_within_geofence)
-                .forEach(employee => {
+                .filter((emp) => !emp.is_within_geofence)
+                .forEach((employee) => {
                     const layer = createViolationLayer(employee);
                     mapLayers.violations.set(`violation_${employee.employee_id}`, layer);
                     map.addLayer(layer);
@@ -267,7 +239,7 @@ const GeofenceMapView: React.FC = () => {
 
         // Add location paths
         if (filters.showPaths) {
-            locationHistory.forEach(history => {
+            locationHistory.forEach((history) => {
                 const layer = createPathLayer(history);
                 mapLayers.paths.set(history.employee_id, layer);
                 map.addLayer(layer);
@@ -284,7 +256,7 @@ const GeofenceMapView: React.FC = () => {
             onClick: () => {
                 setSelectedZone(zone);
                 setIsDetailsOpen(true);
-            }
+            },
         };
     };
 
@@ -296,7 +268,7 @@ const GeofenceMapView: React.FC = () => {
             onClick: () => {
                 setSelectedEmployee(employee);
                 setIsDetailsOpen(true);
-            }
+            },
         };
     };
 
@@ -304,7 +276,7 @@ const GeofenceMapView: React.FC = () => {
         return {
             type: 'violation',
             id: `violation_${employee.employee_id}`,
-            data: employee
+            data: employee,
         };
     };
 
@@ -312,12 +284,12 @@ const GeofenceMapView: React.FC = () => {
         return {
             type: 'path',
             id: history.employee_id,
-            data: history
+            data: history,
         };
     };
 
     const handleFilterChange = (key: keyof MapFilters, value: any) => {
-        setFilters(prev => ({ ...prev, [key]: value }));
+        setFilters((prev) => ({ ...prev, [key]: value }));
     };
 
     const centerOnZone = (zone: GeofenceZone) => {
@@ -334,7 +306,7 @@ const GeofenceMapView: React.FC = () => {
 
     const fitAllZones = () => {
         if (map && zones.length > 0) {
-            const bounds = zones.map(zone => [zone.center_latitude, zone.center_longitude]);
+            const bounds = zones.map((zone) => [zone.center_latitude, zone.center_longitude]);
             map.fitBounds(bounds);
         }
     };
@@ -345,7 +317,7 @@ const GeofenceMapView: React.FC = () => {
             office: '#10B981',
             warehouse: '#F59E0B',
             restricted: '#EF4444',
-            custom: '#8B5CF6'
+            custom: '#8B5CF6',
         };
         return colors[type as keyof typeof colors] || '#6B7280';
     };
@@ -354,19 +326,17 @@ const GeofenceMapView: React.FC = () => {
         const colors = {
             working: '#10B981',
             break: '#F59E0B',
-            offline: '#6B7280'
+            offline: '#6B7280',
         };
         return colors[status as keyof typeof colors] || '#6B7280';
     };
 
     return (
         <div className="space-y-4">
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">{t('geofence_map')}</h1>
-                    <p className="text-muted-foreground">
-                        Real-time visualization of geofence zones and employee locations
-                    </p>
+                    <p className="text-muted-foreground">Real-time visualization of geofence zones and employee locations</p>
                 </div>
                 <div className="flex space-x-2">
                     <Button variant="outline" onClick={fitAllZones}>
@@ -460,21 +430,14 @@ const GeofenceMapView: React.FC = () => {
                         {/* Zone List */}
                         <div className="space-y-2">
                             <Label>Zones ({zones.length})</Label>
-                            <div className="max-h-40 overflow-y-auto space-y-1">
+                            <div className="max-h-40 space-y-1 overflow-y-auto">
                                 {zones.map((zone) => (
-                                    <div key={zone.id} className="flex items-center justify-between p-2 rounded border">
+                                    <div key={zone.id} className="flex items-center justify-between rounded border p-2">
                                         <div className="flex items-center space-x-2">
-                                            <div
-                                                className="w-3 h-3 rounded-full"
-                                                style={{ backgroundColor: getZoneTypeColor(zone.zone_type) }}
-                                            />
-                                            <span className="text-sm font-medium truncate">{zone.name}</span>
+                                            <div className="h-3 w-3 rounded-full" style={{ backgroundColor: getZoneTypeColor(zone.zone_type) }} />
+                                            <span className="truncate text-sm font-medium">{zone.name}</span>
                                         </div>
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={() => centerOnZone(zone)}
-                                        >
+                                        <Button variant="ghost" size="sm" onClick={() => centerOnZone(zone)}>
                                             <Eye className="h-3 w-3" />
                                         </Button>
                                     </div>
@@ -485,24 +448,18 @@ const GeofenceMapView: React.FC = () => {
                         {/* Employee List */}
                         <div className="space-y-2">
                             <Label>Employees ({employees.length})</Label>
-                            <div className="max-h-40 overflow-y-auto space-y-1">
+                            <div className="max-h-40 space-y-1 overflow-y-auto">
                                 {employees.map((employee) => (
-                                    <div key={employee.employee_id} className="flex items-center justify-between p-2 rounded border">
+                                    <div key={employee.employee_id} className="flex items-center justify-between rounded border p-2">
                                         <div className="flex items-center space-x-2">
                                             <div
-                                                className="w-3 h-3 rounded-full"
+                                                className="h-3 w-3 rounded-full"
                                                 style={{ backgroundColor: getEmployeeStatusColor(employee.status) }}
                                             />
-                                            <span className="text-sm font-medium truncate">{employee.employee_name}</span>
-                                            {!employee.is_within_geofence && (
-                                                <AlertTriangle className="h-3 w-3 text-red-500" />
-                                            )}
+                                            <span className="truncate text-sm font-medium">{employee.employee_name}</span>
+                                            {!employee.is_within_geofence && <AlertTriangle className="h-3 w-3 text-red-500" />}
                                         </div>
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={() => centerOnEmployee(employee)}
-                                        >
+                                        <Button variant="ghost" size="sm" onClick={() => centerOnEmployee(employee)}>
                                             <Eye className="h-3 w-3" />
                                         </Button>
                                     </div>
@@ -516,13 +473,10 @@ const GeofenceMapView: React.FC = () => {
                 <Card className="lg:col-span-3">
                     <CardContent className="p-0">
                         <div className="relative">
-                            <div
-                                ref={mapRef}
-                                className="w-full h-[600px] bg-gray-100 rounded-lg flex items-center justify-center"
-                            >
+                            <div ref={mapRef} className="flex h-[600px] w-full items-center justify-center rounded-lg bg-gray-100">
                                 {loading ? (
                                     <div className="flex flex-col items-center space-y-2">
-                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                                        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
                                         <span className="text-sm text-muted-foreground">Loading map...</span>
                                     </div>
                                 ) : (
@@ -535,27 +489,27 @@ const GeofenceMapView: React.FC = () => {
                             </div>
 
                             {/* Map Legend */}
-                            <div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-3 space-y-2">
-                                <div className="font-medium text-sm">Legend</div>
+                            <div className="absolute top-4 right-4 space-y-2 rounded-lg bg-white p-3 shadow-lg">
+                                <div className="text-sm font-medium">Legend</div>
                                 <div className="space-y-1 text-xs">
                                     <div className="flex items-center space-x-2">
-                                        <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                                        <div className="h-3 w-3 rounded-full bg-blue-500"></div>
                                         <span>{t('opt_project_site')}</span>
                                     </div>
                                     <div className="flex items-center space-x-2">
-                                        <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                                        <div className="h-3 w-3 rounded-full bg-green-500"></div>
                                         <span>Office/Working</span>
                                     </div>
                                     <div className="flex items-center space-x-2">
-                                        <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                        <div className="h-3 w-3 rounded-full bg-yellow-500"></div>
                                         <span>Warehouse/Break</span>
                                     </div>
                                     <div className="flex items-center space-x-2">
-                                        <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                                        <div className="h-3 w-3 rounded-full bg-red-500"></div>
                                         <span>Restricted/Violation</span>
                                     </div>
                                     <div className="flex items-center space-x-2">
-                                        <div className="w-3 h-3 rounded-full bg-gray-500"></div>
+                                        <div className="h-3 w-3 rounded-full bg-gray-500"></div>
                                         <span>Offline</span>
                                     </div>
                                 </div>
@@ -569,30 +523,21 @@ const GeofenceMapView: React.FC = () => {
             <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
                 <DialogContent className="max-w-md">
                     <DialogHeader>
-                        <DialogTitle>
-                            {selectedZone ? 'Zone Details' : 'Employee Details'}
-                        </DialogTitle>
-                        <DialogDescription>
-                            {selectedZone ? 'Geofence zone information' : 'Employee location information'}
-                        </DialogDescription>
+                        <DialogTitle>{selectedZone ? 'Zone Details' : 'Employee Details'}</DialogTitle>
+                        <DialogDescription>{selectedZone ? 'Geofence zone information' : 'Employee location information'}</DialogDescription>
                     </DialogHeader>
 
                     {selectedZone && (
                         <div className="space-y-4">
                             <div className="flex items-center space-x-2">
-                                <div
-                                    className="w-4 h-4 rounded-full"
-                                    style={{ backgroundColor: getZoneTypeColor(selectedZone.zone_type) }}
-                                />
+                                <div className="h-4 w-4 rounded-full" style={{ backgroundColor: getZoneTypeColor(selectedZone.zone_type) }} />
                                 <span className="font-medium">{selectedZone.name}</span>
                                 <Badge className={selectedZone.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
                                     {selectedZone.is_active ? 'Active' : 'Inactive'}
                                 </Badge>
                             </div>
 
-                            {selectedZone.description && (
-                                <p className="text-sm text-muted-foreground">{selectedZone.description}</p>
-                            )}
+                            {selectedZone.description && <p className="text-sm text-muted-foreground">{selectedZone.description}</p>}
 
                             <div className="grid grid-cols-2 gap-4 text-sm">
                                 <div>
@@ -625,10 +570,7 @@ const GeofenceMapView: React.FC = () => {
                     {selectedEmployee && (
                         <div className="space-y-4">
                             <div className="flex items-center space-x-2">
-                                <div
-                                    className="w-4 h-4 rounded-full"
-                                    style={{ backgroundColor: getEmployeeStatusColor(selectedEmployee.status) }}
-                                />
+                                <div className="h-4 w-4 rounded-full" style={{ backgroundColor: getEmployeeStatusColor(selectedEmployee.status) }} />
                                 <span className="font-medium">{selectedEmployee.employee_name}</span>
                                 <Badge className={selectedEmployee.is_within_geofence ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
                                     {selectedEmployee.is_within_geofence ? 'In Zone' : 'Out of Zone'}
@@ -669,17 +611,3 @@ const GeofenceMapView: React.FC = () => {
 };
 
 export default GeofenceMapView;
-
-
-
-
-
-
-
-
-
-
-
-
-
-

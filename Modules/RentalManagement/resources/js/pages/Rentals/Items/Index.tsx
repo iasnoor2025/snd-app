@@ -1,11 +1,20 @@
+import {
+    Button,
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+    formatCurrency,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/Core';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Head, Link, usePage } from '@inertiajs/react';
-import { Button } from "@/Core";
-import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/Core";
-import { formatCurrency } from "@/Core";
-import { getTranslation } from '@/Core/utils/translation';
 
 // Placeholder type for RentalItem
 type RentalItem = any;
@@ -27,7 +36,7 @@ export const Index: FC<Props> = ({ rental }) => {
             <Head title={t('rental_items')} />
 
             <div className="container mx-auto py-6">
-                <div className="flex justify-between items-center mb-6">
+                <div className="mb-6 flex items-center justify-between">
                     <h1 className="text-2xl font-bold">{t('rental_items')}</h1>
                     <div className="space-x-2">
                         <Link href={`/rentals/${rental.id}/items/bulk-create`}>
@@ -68,7 +77,9 @@ export const Index: FC<Props> = ({ rental }) => {
                                         <TableCell>
                                             <div className="space-x-2">
                                                 <Link href={`/rentals/${rental.id}/items/${item.id}/edit`}>
-                                                    <Button variant="outline" size="sm">Edit</Button>
+                                                    <Button variant="outline" size="sm">
+                                                        Edit
+                                                    </Button>
                                                 </Link>
                                             </div>
                                         </TableCell>
@@ -84,17 +95,3 @@ export const Index: FC<Props> = ({ rental }) => {
 };
 
 export default Index;
-
-
-
-
-
-
-
-
-
-
-
-
-
-

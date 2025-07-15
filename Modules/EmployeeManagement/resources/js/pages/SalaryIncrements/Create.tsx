@@ -1,16 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Head, Link, useForm } from '@inertiajs/react';
-import { Button } from "@/Core";
-import { Input } from "@/Core";
-import { Label } from "@/Core";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Core";
-import { Textarea } from "@/Core";
-import { RadioGroup, RadioGroupItem } from "@/Core";
-import { ArrowLeft, Calculator } from 'lucide-react';
-import { AppLayout } from '@/Core';
+import {
+    AppLayout,
+    Button,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+    Input,
+    Label,
+    RadioGroup,
+    RadioGroupItem,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    Textarea,
+} from '@/Core';
 import { PageProps } from '@/Core/types';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { ArrowLeft, Calculator } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Employee {
     id: number;
@@ -45,7 +56,7 @@ interface FormData {
 }
 
 export default function Create({ employees, incrementTypes }: Props) {
-  const { t } = useTranslation('employee');
+    const { t } = useTranslation('employee');
 
     const { data, setData, post, processing, errors } = useForm<FormData>({
         employee_id: '',
@@ -76,7 +87,7 @@ export default function Create({ employees, incrementTypes }: Props) {
 
     useEffect(() => {
         if (data.employee_id) {
-            const employee = employees.find(emp => emp.id.toString() === data.employee_id);
+            const employee = employees.find((emp) => emp.id.toString() === data.employee_id);
             setSelectedEmployee(employee || null);
         }
     }, [data.employee_id, employees]);
@@ -120,10 +131,10 @@ export default function Create({ employees, incrementTypes }: Props) {
                 const housingRatio = housingAllowance / currentTotal;
                 const transportRatio = transportAllowance / currentTotal;
 
-                newBase = baseSalary + (data.increment_amount * baseRatio);
-                newFood = foodAllowance + (data.increment_amount * foodRatio);
-                newHousing = housingAllowance + (data.increment_amount * housingRatio);
-                newTransport = transportAllowance + (data.increment_amount * transportRatio);
+                newBase = baseSalary + data.increment_amount * baseRatio;
+                newFood = foodAllowance + data.increment_amount * foodRatio;
+                newHousing = housingAllowance + data.increment_amount * housingRatio;
+                newTransport = transportAllowance + data.increment_amount * transportRatio;
                 increasePercentage = (data.increment_amount / currentTotal) * 100;
             }
         }
@@ -164,20 +175,16 @@ export default function Create({ employees, incrementTypes }: Props) {
     return (
         <AppLayout
             title={t('ttl_create_salary_increment')}
-            breadcrumbs={[
-                { label: 'Salary Increments', href: route('salary-increments.index') },
-                { label: 'Create' }
-            ]}>
-            <div className="flex items-center gap-4 mb-6">
+            breadcrumbs={[{ label: 'Salary Increments', href: route('salary-increments.index') }, { label: 'Create' }]}
+        >
+            <div className="mb-6 flex items-center gap-4">
                 <Link href={route('salary-increments.index')}>
                     <Button variant="outline" size="sm">
-                        <ArrowLeft className="h-4 w-4 mr-2" />
+                        <ArrowLeft className="mr-2 h-4 w-4" />
                         Back
                     </Button>
                 </Link>
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    {t('ttl_create_salary_increment')}
-                </h2>
+                <h2 className="text-xl leading-tight font-semibold text-gray-800">{t('ttl_create_salary_increment')}</h2>
             </div>
             <Head title={t('ttl_create_salary_increment')} />
 
@@ -188,9 +195,7 @@ export default function Create({ employees, incrementTypes }: Props) {
                         <Card>
                             <CardHeader>
                                 <CardTitle>{t('employee_information')}</CardTitle>
-                                <CardDescription>
-                                    Select the employee for salary increment
-                                </CardDescription>
+                                <CardDescription>Select the employee for salary increment</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div>
@@ -199,7 +204,7 @@ export default function Create({ employees, incrementTypes }: Props) {
                                         value={data.employee_id}
                                         onValueChange={(value) => {
                                             setData('employee_id', value);
-                                            const employee = employees.find(emp => emp.id.toString() === value);
+                                            const employee = employees.find((emp) => emp.id.toString() === value);
                                             setSelectedEmployee(employee || null);
                                         }}
                                     >
@@ -210,21 +215,19 @@ export default function Create({ employees, incrementTypes }: Props) {
                                             {employees.map((employee) => (
                                                 <SelectItem key={employee.id} value={employee.id.toString()}>
                                                     {employee.first_name} {employee.last_name} - {employee.employee_id}
-                                                    <span className="text-sm text-gray-500 ml-2">
+                                                    <span className="ml-2 text-sm text-gray-500">
                                                         ({employee.department?.name || 'No Department'})
                                                     </span>
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    {errors.employee_id && (
-                                        <p className="text-sm text-red-600 mt-1">{errors.employee_id}</p>
-                                    )}
+                                    {errors.employee_id && <p className="mt-1 text-sm text-red-600">{errors.employee_id}</p>}
                                 </div>
 
                                 {selectedEmployee && (
-                                    <div className="bg-gray-50 p-4 rounded-lg">
-                                        <h4 className="font-medium mb-2">{t('current_employee_details')}</h4>
+                                    <div className="rounded-lg bg-gray-50 p-4">
+                                        <h4 className="mb-2 font-medium">{t('current_employee_details')}</h4>
                                         <div className="grid grid-cols-2 gap-4 text-sm">
                                             <div>
                                                 <span className="text-gray-600">Name:</span>
@@ -254,9 +257,7 @@ export default function Create({ employees, incrementTypes }: Props) {
                         <Card>
                             <CardHeader>
                                 <CardTitle>{t('ttl_increment_details')}</CardTitle>
-                                <CardDescription>
-                                    Specify the increment type and amount
-                                </CardDescription>
+                                <CardDescription>Specify the increment type and amount</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div>
@@ -276,22 +277,20 @@ export default function Create({ employees, incrementTypes }: Props) {
                                             <SelectValue placeholder={t('ph_select_increment_type')} />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {incrementTypes && typeof incrementTypes === 'object' ?
+                                            {incrementTypes && typeof incrementTypes === 'object' ? (
                                                 Object.entries(incrementTypes).map(([key, value]) => (
                                                     <SelectItem key={key} value={key}>
                                                         {value}
                                                     </SelectItem>
-                                                )) : (
-                                                    <SelectItem value="no-types" disabled>
-                                                        No increment types available
-                                                    </SelectItem>
-                                                )
-                                            }
+                                                ))
+                                            ) : (
+                                                <SelectItem value="no-types" disabled>
+                                                    No increment types available
+                                                </SelectItem>
+                                            )}
                                         </SelectContent>
                                     </Select>
-                                    {errors.increment_type && (
-                                        <p className="text-sm text-red-600 mt-1">{errors.increment_type}</p>
-                                    )}
+                                    {errors.increment_type && <p className="mt-1 text-sm text-red-600">{errors.increment_type}</p>}
                                 </div>
 
                                 <div>
@@ -306,7 +305,7 @@ export default function Create({ employees, incrementTypes }: Props) {
                                                 setData('increment_percentage', undefined);
                                             }
                                         }}
-                                        className="flex gap-6 mt-2"
+                                        className="mt-2 flex gap-6"
                                     >
                                         <div className="flex items-center space-x-2">
                                             <RadioGroupItem value="percentage" id="percentage" />
@@ -332,9 +331,7 @@ export default function Create({ employees, incrementTypes }: Props) {
                                             onChange={(e) => setData('increment_percentage', parseFloat(e.target.value) || undefined)}
                                             placeholder={t('ph_enter_percentage_eg_105')}
                                         />
-                                        {errors.increment_percentage && (
-                                            <p className="text-sm text-red-600 mt-1">{errors.increment_percentage}</p>
-                                        )}
+                                        {errors.increment_percentage && <p className="mt-1 text-sm text-red-600">{errors.increment_percentage}</p>}
                                     </div>
                                 ) : (
                                     <div>
@@ -348,9 +345,7 @@ export default function Create({ employees, incrementTypes }: Props) {
                                             onChange={(e) => setData('increment_amount', parseFloat(e.target.value) || undefined)}
                                             placeholder={t('ph_enter_fixed_amount_eg_5000')}
                                         />
-                                        {errors.increment_amount && (
-                                            <p className="text-sm text-red-600 mt-1">{errors.increment_amount}</p>
-                                        )}
+                                        {errors.increment_amount && <p className="mt-1 text-sm text-red-600">{errors.increment_amount}</p>}
                                     </div>
                                 )}
 
@@ -363,9 +358,7 @@ export default function Create({ employees, incrementTypes }: Props) {
                                         onChange={(e) => setData('effective_date', e.target.value)}
                                         min={new Date().toISOString().split('T')[0]}
                                     />
-                                    {errors.effective_date && (
-                                        <p className="text-sm text-red-600 mt-1">{errors.effective_date}</p>
-                                    )}
+                                    {errors.effective_date && <p className="mt-1 text-sm text-red-600">{errors.effective_date}</p>}
                                 </div>
                             </CardContent>
                         </Card>
@@ -378,15 +371,13 @@ export default function Create({ employees, incrementTypes }: Props) {
                                         <Calculator className="h-5 w-5" />
                                         Salary Calculation Preview
                                     </CardTitle>
-                                    <CardDescription>
-                                        Preview of the new salary breakdown
-                                    </CardDescription>
+                                    <CardDescription>Preview of the new salary breakdown</CardDescription>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                                         {/* Current Salary */}
                                         <div>
-                                            <h4 className="font-medium text-gray-900 mb-3">{t('current_salary')}</h4>
+                                            <h4 className="mb-3 font-medium text-gray-900">{t('current_salary')}</h4>
                                             <div className="space-y-2 text-sm">
                                                 <div className="flex justify-between">
                                                     <span>Base Salary:</span>
@@ -404,7 +395,7 @@ export default function Create({ employees, incrementTypes }: Props) {
                                                     <span>Transport Allowance:</span>
                                                     <span>{formatCurrency(calculatedSalary.current_transport)}</span>
                                                 </div>
-                                                <div className="flex justify-between font-medium border-t pt-2">
+                                                <div className="flex justify-between border-t pt-2 font-medium">
                                                     <span>Total:</span>
                                                     <span>{formatCurrency(calculatedSalary.current_total)}</span>
                                                 </div>
@@ -415,7 +406,7 @@ export default function Create({ employees, incrementTypes }: Props) {
                                         {(data.increment_percentage || data.increment_amount) && (
                                             <>
                                                 <div>
-                                                    <h4 className="font-medium text-green-900 mb-3">{t('new_salary')}</h4>
+                                                    <h4 className="mb-3 font-medium text-green-900">{t('new_salary')}</h4>
                                                     <div className="space-y-2 text-sm">
                                                         <div className="flex justify-between">
                                                             <span>Base Salary:</span>
@@ -433,7 +424,7 @@ export default function Create({ employees, incrementTypes }: Props) {
                                                             <span>Transport Allowance:</span>
                                                             <span>{formatCurrency(calculatedSalary.new_transport)}</span>
                                                         </div>
-                                                        <div className="flex justify-between font-medium border-t pt-2">
+                                                        <div className="flex justify-between border-t pt-2 font-medium">
                                                             <span>Total:</span>
                                                             <span>{formatCurrency(calculatedSalary.new_total)}</span>
                                                         </div>
@@ -442,29 +433,34 @@ export default function Create({ employees, incrementTypes }: Props) {
 
                                                 {/* Increase Summary */}
                                                 <div>
-                                                    <h4 className="font-medium text-blue-900 mb-3">{t('increase_summary')}</h4>
+                                                    <h4 className="mb-3 font-medium text-blue-900">{t('increase_summary')}</h4>
                                                     <div className="space-y-2 text-sm">
                                                         <div className="flex justify-between">
                                                             <span>Increase Amount:</span>
-                                                            <span className="text-green-600 font-medium">
+                                                            <span className="font-medium text-green-600">
                                                                 +{formatCurrency(calculatedSalary.increase_amount)}
                                                             </span>
                                                         </div>
                                                         <div className="flex justify-between">
                                                             <span>Increase Percentage:</span>
-                                                            <span className="text-green-600 font-medium">
-                                                                +{(isNaN(calculatedSalary.increase_percentage) ? 0 : calculatedSalary.increase_percentage).toFixed(2)}%
+                                                            <span className="font-medium text-green-600">
+                                                                +
+                                                                {(isNaN(calculatedSalary.increase_percentage)
+                                                                    ? 0
+                                                                    : calculatedSalary.increase_percentage
+                                                                ).toFixed(2)}
+                                                                %
                                                             </span>
                                                         </div>
                                                         <div className="flex justify-between">
                                                             <span>Monthly Impact:</span>
-                                                            <span className="text-blue-600 font-medium">
+                                                            <span className="font-medium text-blue-600">
                                                                 +{formatCurrency(calculatedSalary.increase_amount)}
                                                             </span>
                                                         </div>
                                                         <div className="flex justify-between">
                                                             <span>Annual Impact:</span>
-                                                            <span className="text-blue-600 font-medium">
+                                                            <span className="font-medium text-blue-600">
                                                                 +{formatCurrency(calculatedSalary.increase_amount * 12)}
                                                             </span>
                                                         </div>
@@ -481,9 +477,7 @@ export default function Create({ employees, incrementTypes }: Props) {
                         <Card>
                             <CardHeader>
                                 <CardTitle>Justification</CardTitle>
-                                <CardDescription>
-                                    Provide reason and additional notes for this increment
-                                </CardDescription>
+                                <CardDescription>Provide reason and additional notes for this increment</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div>
@@ -495,9 +489,7 @@ export default function Create({ employees, incrementTypes }: Props) {
                                         placeholder={t('ph_explain_the_reason_for_this_salary_increment')}
                                         rows={3}
                                     />
-                                    {errors.reason && (
-                                        <p className="text-sm text-red-600 mt-1">{errors.reason}</p>
-                                    )}
+                                    {errors.reason && <p className="mt-1 text-sm text-red-600">{errors.reason}</p>}
                                 </div>
 
                                 <div>
@@ -509,9 +501,7 @@ export default function Create({ employees, incrementTypes }: Props) {
                                         placeholder={t('ph_any_additional_notes_or_comments')}
                                         rows={2}
                                     />
-                                    {errors.notes && (
-                                        <p className="text-sm text-red-600 mt-1">{errors.notes}</p>
-                                    )}
+                                    {errors.notes && <p className="mt-1 text-sm text-red-600">{errors.notes}</p>}
                                 </div>
                             </CardContent>
                         </Card>
@@ -533,19 +523,3 @@ export default function Create({ employees, incrementTypes }: Props) {
         </AppLayout>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

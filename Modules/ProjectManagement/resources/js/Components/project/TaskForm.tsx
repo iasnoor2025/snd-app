@@ -1,30 +1,27 @@
-import React, { useEffect, useRef, memo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { router } from '@inertiajs/react';
-import { Button } from "@/Core";
 import {
+    Button,
+    DatePicker,
     Form,
     FormControl,
     FormField,
     FormItem,
     FormLabel,
     FormMessage,
-} from "@/Core";
-import {
+    Input,
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/Core";
-import { Input } from "@/Core";
-import { Textarea } from "@/Core";
-import { DatePicker } from "@/Core";
-import { cn } from "@/Core";
+    Textarea,
+} from '@/Core';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { router } from '@inertiajs/react';
 import { format } from 'date-fns';
+import { memo, useEffect, useRef } from 'react';
+import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import * as z from 'zod';
 import { ProjectTask } from './TaskList';
 
 const formSchema = z.object({
@@ -37,18 +34,18 @@ const formSchema = z.object({
     due_date: z.date().optional().nullable(),
     completion_percentage: z.coerce.number().min(0).max(100),
     assigned_to_id: z.string(),
-})
+});
 
 interface TaskFormProps {
     projectId: number;
     initialData?: ProjectTask | null;
-    assignableUsers?: Array<{ id: number; name: string }>
+    assignableUsers?: Array<{ id: number; name: string }>;
     onSuccess: () => void;
 }
 
 // Wrap the component in memo to prevent unnecessary re-renders
 const TaskForm = memo(function TaskForm({ projectId, initialData = null, assignableUsers = [], onSuccess }: TaskFormProps) {
-  const { t } = useTranslation('project');
+    const { t } = useTranslation('project');
 
     // Use a ref to track submission state and prevent multiple state updates
     const isSubmitting = useRef(false);
@@ -73,7 +70,7 @@ const TaskForm = memo(function TaskForm({ projectId, initialData = null, assigna
             completion_percentage: initialData?.completion_percentage || 0,
             assigned_to_id: initialData?.assigned_to?.id?.toString() || 'none',
         },
-    })
+    });
 
     useEffect(() => {
         if (initialData) {
@@ -85,7 +82,7 @@ const TaskForm = memo(function TaskForm({ projectId, initialData = null, assigna
                 due_date: initialData.due_date ? new Date(initialData.due_date) : null,
                 completion_percentage: initialData.completion_percentage,
                 assigned_to_id: initialData.assigned_to?.id?.toString() || 'none',
-            })
+            });
         }
     }, [initialData, form]);
 
@@ -119,8 +116,8 @@ const TaskForm = memo(function TaskForm({ projectId, initialData = null, assigna
                 onError: (errors) => {
                     console.error('TaskForm: Task update failed with errors:', errors);
                     isSubmitting.current = false;
-                }
-            })
+                },
+            });
         } else {
             console.log('TaskForm: Creating new task');
             router.post(route('projects.tasks.store', { project: projectId }), formattedValues, {
@@ -135,29 +132,68 @@ const TaskForm = memo(function TaskForm({ projectId, initialData = null, assigna
 
                     // Display error messages to the user
                     if (errors) {
-                        Object.keys(errors).forEach(key => {
+                        Object.keys(errors).forEach((key) => {
                             form.setError(key as any, {
-                                type: "server",
-                                message: Array.isArray(errors[key]) ? errors[key][0] : errors[key]
-                            })
-                        })
+                                type: 'server',
+                                message: Array.isArray(errors[key]) ? errors[key][0] : errors[key],
+                            });
+                        });
                     }
-                }
-            })
+                },
+            });
         }
     };
 
     return (
         <Form data-resource-type="task" onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+                control={form.control}
+                name="title"
+                render={({ field }: { field: unknown }) => (
+                    <FormItem>
+                        <FormLabel>Title</FormLabel>
+                        <FormControl>
+                            <Input placeholder="Task title" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+
+            <FormField
+                control={form.control}
+                name="description"
+                render={({ field }: { field: unknown }) => (
+                    <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                            <Textarea placeholder={t('ph_task_description')} className="resize-none" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField
                     control={form.control}
-                    name="title"
+                    name="status"
                     render={({ field }: { field: unknown }) => (
                         <FormItem>
-                            <FormLabel>Title</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Task title" {...field} />
-                            </FormControl>
+                            <FormLabel>Status</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={t('ph_select_status')} />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    <SelectItem value="pending">Pending</SelectItem>
+                                    <SelectItem value="in_progress">{t('in_progress')}</SelectItem>
+                                    <SelectItem value="completed">Completed</SelectItem>
+                                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                                </SelectContent>
+                            </Select>
                             <FormMessage />
                         </FormItem>
                     )}
@@ -165,168 +201,91 @@ const TaskForm = memo(function TaskForm({ projectId, initialData = null, assigna
 
                 <FormField
                     control={form.control}
-                    name="description"
+                    name="priority"
                     render={({ field }: { field: unknown }) => (
                         <FormItem>
-                            <FormLabel>Description</FormLabel>
-                            <FormControl>
-                                <Textarea
-                                    placeholder={t('ph_task_description')}
-                                    className="resize-none"
-                                    {...field}
-                                />
-                            </FormControl>
+                            <FormLabel>Priority</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={t('ph_select_priority')} />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    <SelectItem value="low">Low</SelectItem>
+                                    <SelectItem value="medium">Medium</SelectItem>
+                                    <SelectItem value="high">High</SelectItem>
+                                </SelectContent>
+                            </Select>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
+            </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                        control={form.control}
-                        name="status"
-                        render={({ field }: { field: unknown }) => (
-                            <FormItem>
-                                <FormLabel>Status</FormLabel>
-                                <Select
-                                    onValueChange={field.onChange}
-                                    defaultValue={field.value}
-                                    value={field.value}
-                                >
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder={t('ph_select_status')} />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="pending">Pending</SelectItem>
-                                        <SelectItem value="in_progress">{t('in_progress')}</SelectItem>
-                                        <SelectItem value="completed">Completed</SelectItem>
-                                        <SelectItem value="cancelled">Cancelled</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    <FormField
-                        control={form.control}
-                        name="priority"
-                        render={({ field }: { field: unknown }) => (
-                            <FormItem>
-                                <FormLabel>Priority</FormLabel>
-                                <Select
-                                    onValueChange={field.onChange}
-                                    defaultValue={field.value}
-                                    value={field.value}
-                                >
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder={t('ph_select_priority')} />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="low">Low</SelectItem>
-                                        <SelectItem value="medium">Medium</SelectItem>
-                                        <SelectItem value="high">High</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <FormField
                     control={form.control}
                     name="due_date"
                     render={({ field }: { field: unknown }) => (
                         <FormItem className="flex flex-col">
                             <FormLabel>{t('lbl_due_date')}</FormLabel>
                             <FormControl>
-                                <DatePicker
-                                    date={field.value || undefined}
-                                    setDate={field.onChange}
-                                    placeholder={t('ph_select_due_date')}
-                                />
+                                <DatePicker date={field.value || undefined} setDate={field.onChange} placeholder={t('ph_select_due_date')} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
 
-                    <FormField
-                        control={form.control}
-                        name="completion_percentage"
-                        render={({ field }: { field: unknown }) => (
-                            <FormItem>
-                                <FormLabel>{t('lbl_completion_percentage')}</FormLabel>
+                <FormField
+                    control={form.control}
+                    name="completion_percentage"
+                    render={({ field }: { field: unknown }) => (
+                        <FormItem>
+                            <FormLabel>{t('lbl_completion_percentage')}</FormLabel>
+                            <FormControl>
+                                <Input type="number" min="0" max="100" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+            </div>
+
+            {assignableUsers.length > 0 && (
+                <FormField
+                    control={form.control}
+                    name="assigned_to_id"
+                    render={({ field }: { field: unknown }) => (
+                        <FormItem>
+                            <FormLabel>{t('lbl_assigned_to')}</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                                 <FormControl>
-                                    <Input type="number" min="0" max="100" {...field} />
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={t('ph_select_person')} />
+                                    </SelectTrigger>
                                 </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
+                                <SelectContent>
+                                    <SelectItem value="none">{t('opt_not_assigned')}</SelectItem>
+                                    {assignableUsers.map((user) => (
+                                        <SelectItem key={user.id} value={user.id.toString()}>
+                                            {user.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+            )}
 
-                {assignableUsers.length > 0 && (
-                    <FormField
-                        control={form.control}
-                        name="assigned_to_id"
-                        render={({ field }: { field: unknown }) => (
-                            <FormItem>
-                                <FormLabel>{t('lbl_assigned_to')}</FormLabel>
-                                <Select
-                                    onValueChange={field.onChange}
-                                    defaultValue={field.value}
-                                    value={field.value}
-                                >
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder={t('ph_select_person')} />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="none">{t('opt_not_assigned')}</SelectItem>
-                                        {assignableUsers.map((user) => (
-                                            <SelectItem key={user.id} value={user.id.toString()}>
-                                                {user.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                )}
-
-                <div className="flex justify-end">
-                    <Button type="submit">
-                        {initialData ? 'Save Changes' : 'Create Task'}
-                    </Button>
-                </div>
+            <div className="flex justify-end">
+                <Button type="submit">{initialData ? 'Save Changes' : 'Create Task'}</Button>
+            </div>
         </Form>
     );
-})
+});
 
 export default TaskForm;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

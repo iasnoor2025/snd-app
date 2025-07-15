@@ -17,23 +17,28 @@ The PWA implementation transforms the Laravel application into a Progressive Web
 ### Backend Components
 
 #### Controllers
+
 - `PWAController.php` - Main PWA functionality and management page
 - `PushNotificationController.php` - Push notification API endpoints
 
 #### Models
+
 - `PushSubscription.php` - Manages push notification subscriptions
 - `NotificationLog.php` - Tracks notification delivery and interactions
 
 #### Services
+
 - `NotificationService.php` - Business logic for push notifications
 - `SendPushNotificationJob.php` - Asynchronous notification delivery
 
 #### Commands
+
 - `NotificationMaintenanceCommand.php` - Cleanup and maintenance tasks
 
 ### Frontend Components
 
 #### React Components
+
 - `PWAWrapper.tsx` - Main PWA integration wrapper
 - `PWADashboard.tsx` - Central PWA management dashboard
 - `PWAInstallPrompt.tsx` - App installation prompts
@@ -41,13 +46,16 @@ The PWA implementation transforms the Laravel application into a Progressive Web
 - `OfflineSync.tsx` - Offline data synchronization status
 
 #### Hooks
+
 - `usePWA.ts` - PWA state management and functionality
 
 #### Services
+
 - `pushNotificationService.ts` - Client-side push notification handling
 - `offlineStorage.ts` - IndexedDB data persistence and sync
 
 #### Static Files
+
 - `sw.js` - Service worker for caching and background sync
 - `manifest.json` - PWA manifest configuration
 - `offline.blade.php` - Offline fallback page
@@ -75,6 +83,7 @@ The PWA implementation transforms the Laravel application into a Progressive Web
 ### 3. Push Notifications
 
 **Categories**: Configurable notification categories with priority levels:
+
 - System Notifications (High priority)
 - Transaction Alerts (High priority)
 - Reminders (Normal priority)
@@ -89,7 +98,8 @@ The PWA implementation transforms the Laravel application into a Progressive Web
 
 ### 4. Service Worker
 
-**Caching Strategies**: 
+**Caching Strategies**:
+
 - Cache First: For static assets
 - Network First: For API calls
 - Stale While Revalidate: For dynamic content
@@ -107,6 +117,7 @@ php artisan migrate
 ```
 
 This will create the necessary tables:
+
 - `push_subscriptions` - Store push notification subscriptions
 - `notification_logs` - Track notification delivery and interactions
 
@@ -121,6 +132,7 @@ VAPID_SUBJECT=mailto:your-email@example.com
 ```
 
 Generate VAPID keys using:
+
 ```bash
 npx web-push generate-vapid-keys
 ```
@@ -132,6 +144,7 @@ The service worker is automatically registered when users visit the application.
 ### 4. PWA Manifest
 
 The PWA manifest is automatically generated and served from `/manifest.json`. It includes:
+
 - App name and description
 - Icons for different sizes
 - Theme colors
@@ -143,6 +156,7 @@ The PWA manifest is automatically generated and served from `/manifest.json`. It
 ### Accessing PWA Management
 
 Visit `/pwa` to access the PWA management dashboard where you can:
+
 - View installation and usage statistics
 - Configure notification settings
 - Manage offline sync
@@ -171,12 +185,14 @@ Visit `/pwa` to access the PWA management dashboard where you can:
 ## API Endpoints
 
 ### PWA Management
+
 - `GET /pwa` - PWA management dashboard
 - `GET /manifest.json` - PWA manifest
 - `GET /sw.js` - Service worker
 - `GET /offline` - Offline fallback page
 
 ### Push Notifications
+
 - `GET /api/push-notifications/vapid-key` - Get VAPID public key
 - `POST /api/push-notifications/subscribe` - Subscribe to notifications
 - `DELETE /api/push-notifications/unsubscribe` - Unsubscribe from notifications
@@ -186,6 +202,7 @@ Visit `/pwa` to access the PWA management dashboard where you can:
 - `POST /api/push-notifications/test` - Send test notification
 
 ### PWA Features
+
 - `POST /api/pwa/install` - Track app installation
 - `GET /api/pwa/stats` - Get PWA statistics
 - `POST /api/pwa/update-check` - Check for app updates

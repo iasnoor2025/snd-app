@@ -1,18 +1,11 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Head } from '@inertiajs/react';
-import { router } from '@inertiajs/react';
+import { AppLayout, Badge, Button, Card, CardContent, CardHeader, CardTitle, getTranslation, Separator } from '@/Core';
 import Link from '@/Core/components/text-link';
-import { Button } from "@/Core";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Core";
-import { Badge } from "@/Core";
-import { Separator } from "@/Core";
-import { ArrowLeft, Check, X, Calendar, Edit, User, DollarSign, TrendingUp, FileText, Clock } from 'lucide-react';
-import { AppLayout } from '@/Core';
 import { PageProps } from '@/Core/types';
-import { getTranslation } from "@/Core";
+import { formatDateMedium } from '@/Core/utils/dateFormatter';
+import { Head, router } from '@inertiajs/react';
+import { ArrowLeft, Calendar, Check, Clock, DollarSign, Edit, FileText, TrendingUp, User, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { route } from 'ziggy-js';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Employee {
     id: number;
@@ -79,7 +72,7 @@ interface Props extends PageProps {
 }
 
 export default function Show({ increment }: Props) {
-  const { t } = useTranslation('employees');
+    const { t } = useTranslation('employees');
 
     const formatCurrency = (amount: number | null | undefined) => {
         // Handle null, undefined, or NaN values
@@ -101,11 +94,7 @@ export default function Show({ increment }: Props) {
             rejected: 'bg-red-100 text-red-800',
             applied: 'bg-blue-100 text-blue-800',
         };
-        return (
-            <Badge className={variants[status as keyof typeof variants]}>
-                {status.charAt(0).toUpperCase() + status.slice(1)}
-            </Badge>
-        );
+        return <Badge className={variants[status as keyof typeof variants]}>{status.charAt(0).toUpperCase() + status.slice(1)}</Badge>;
     };
 
     const handleApprove = () => {
@@ -130,29 +119,29 @@ export default function Show({ increment }: Props) {
     };
 
     const increaseAmount = (increment.new_total_salary || 0) - (increment.current_total_salary || 0);
-    const increasePercentage = increment.current_total_salary && increment.current_total_salary > 0
-        ? ((increaseAmount / increment.current_total_salary) * 100).toFixed(2)
-        : '0.00';
+    const increasePercentage =
+        increment.current_total_salary && increment.current_total_salary > 0
+            ? ((increaseAmount / increment.current_total_salary) * 100).toFixed(2)
+            : '0.00';
 
     return (
         <AppLayout
             title={t('ttl_salary_increment_details')}
             breadcrumbs={[
                 { title: 'Salary Increments', href: route('salary-increments.index') },
-                { title: `${increment.employee.first_name} ${increment.employee.last_name}` }
-            ]}>
-            <div className="flex items-center justify-between mb-6">
+                { title: `${increment.employee.first_name} ${increment.employee.last_name}` },
+            ]}
+        >
+            <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <Link href={route('salary-increments.index')}>
                         <Button variant="outline" size="sm">
-                            <ArrowLeft className="h-4 w-4 mr-2" />
+                            <ArrowLeft className="mr-2 h-4 w-4" />
                             Back
                         </Button>
                     </Link>
                     <div>
-                        <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                            {t('ttl_salary_increment_details')}
-                        </h2>
+                        <h2 className="text-xl leading-tight font-semibold text-gray-800">{t('ttl_salary_increment_details')}</h2>
                         <p className="text-sm text-gray-600">
                             {increment.employee.first_name} {increment.employee.last_name} - {increment.employee.employee_id}
                         </p>
@@ -164,38 +153,23 @@ export default function Show({ increment }: Props) {
                         <>
                             <Link href={route('salary-increments.edit', increment.id)}>
                                 <Button variant="outline" size="sm">
-                                    <Edit className="h-4 w-4 mr-2" />
+                                    <Edit className="mr-2 h-4 w-4" />
                                     Edit
                                 </Button>
                             </Link>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={handleApprove}
-                                className="text-green-600 hover:text-green-700"
-                            >
-                                <Check className="h-4 w-4 mr-2" />
+                            <Button variant="outline" size="sm" onClick={handleApprove} className="text-green-600 hover:text-green-700">
+                                <Check className="mr-2 h-4 w-4" />
                                 Approve
                             </Button>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={handleReject}
-                                className="text-red-600 hover:text-red-700"
-                            >
-                                <X className="h-4 w-4 mr-2" />
+                            <Button variant="outline" size="sm" onClick={handleReject} className="text-red-600 hover:text-red-700">
+                                <X className="mr-2 h-4 w-4" />
                                 Reject
                             </Button>
                         </>
                     )}
                     {increment.status === 'approved' && (
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={handleApply}
-                            className="text-blue-600 hover:text-blue-700"
-                        >
-                            <Calendar className="h-4 w-4 mr-2" />
+                        <Button variant="outline" size="sm" onClick={handleApply} className="text-blue-600 hover:text-blue-700">
+                            <Calendar className="mr-2 h-4 w-4" />
                             Apply Increment
                         </Button>
                     )}
@@ -204,10 +178,10 @@ export default function Show({ increment }: Props) {
             <Head title={`Salary Increment - ${increment.employee.first_name} ${increment.employee.last_name}`} />
 
             <div className="py-12">
-                <div className="sm:px-6 lg:px-8 w-full">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="w-full sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                         {/* Left Column - Employee & Increment Info */}
-                        <div className="lg:col-span-2 space-y-6">
+                        <div className="space-y-6 lg:col-span-2">
                             {/* Employee Information */}
                             <Card>
                                 <CardHeader>
@@ -217,7 +191,7 @@ export default function Show({ increment }: Props) {
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                         <div>
                                             <label className="text-sm font-medium text-gray-500">{t('full_name')}</label>
                                             <p className="text-lg font-medium">
@@ -257,13 +231,11 @@ export default function Show({ increment }: Props) {
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                         <div>
                                             <label className="text-sm font-medium text-gray-500">{t('lbl_increment_type')}</label>
                                             <p className="text-lg font-medium">
-                                                <Badge variant="outline">
-                                                    {increment.increment_type.replace('_', ' ').toUpperCase()}
-                                                </Badge>
+                                                <Badge variant="outline">{increment.increment_type.replace('_', ' ').toUpperCase()}</Badge>
                                             </p>
                                         </div>
                                         <div>
@@ -273,17 +245,13 @@ export default function Show({ increment }: Props) {
                                         {increment.increment_percentage && (
                                             <div>
                                                 <label className="text-sm font-medium text-gray-500">{t('lbl_increment_percentage')}</label>
-                                                <p className="text-lg font-medium text-green-600">
-                                                    +{increment.increment_percentage}%
-                                                </p>
+                                                <p className="text-lg font-medium text-green-600">+{increment.increment_percentage}%</p>
                                             </div>
                                         )}
                                         {increment.increment_amount && (
                                             <div>
                                                 <label className="text-sm font-medium text-gray-500">{t('lbl_increment_amount')}</label>
-                                                <p className="text-lg font-medium text-green-600">
-                                                    +{formatCurrency(increment.increment_amount)}
-                                                </p>
+                                                <p className="text-lg font-medium text-green-600">+{formatCurrency(increment.increment_amount)}</p>
                                             </div>
                                         )}
                                         <div>
@@ -294,9 +262,7 @@ export default function Show({ increment }: Props) {
                                         </div>
                                         <div>
                                             <label className="text-sm font-medium text-gray-500">{t('lbl_annual_impact')}</label>
-                                            <p className="text-lg font-medium text-blue-600">
-                                                +{formatCurrency(increaseAmount * 12)}
-                                            </p>
+                                            <p className="text-lg font-medium text-blue-600">+{formatCurrency(increaseAmount * 12)}</p>
                                         </div>
                                     </div>
                                 </CardContent>
@@ -311,10 +277,10 @@ export default function Show({ increment }: Props) {
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                         {/* Current Salary */}
                                         <div>
-                                            <h4 className="font-medium text-gray-900 mb-3">{t('current_salary')}</h4>
+                                            <h4 className="mb-3 font-medium text-gray-900">{t('current_salary')}</h4>
                                             <div className="space-y-2">
                                                 <div className="flex justify-between">
                                                     <span className="text-gray-600">Base Salary:</span>
@@ -342,7 +308,7 @@ export default function Show({ increment }: Props) {
 
                                         {/* New Salary */}
                                         <div>
-                                            <h4 className="font-medium text-green-900 mb-3">{t('new_salary')}</h4>
+                                            <h4 className="mb-3 font-medium text-green-900">{t('new_salary')}</h4>
                                             <div className="space-y-2">
                                                 <div className="flex justify-between">
                                                     <span className="text-gray-600">Base Salary:</span>
@@ -354,11 +320,15 @@ export default function Show({ increment }: Props) {
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <span className="text-gray-600">Housing Allowance:</span>
-                                                    <span className="font-medium text-green-600">{formatCurrency(increment.new_housing_allowance)}</span>
+                                                    <span className="font-medium text-green-600">
+                                                        {formatCurrency(increment.new_housing_allowance)}
+                                                    </span>
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <span className="text-gray-600">Transport Allowance:</span>
-                                                    <span className="font-medium text-green-600">{formatCurrency(increment.new_transport_allowance)}</span>
+                                                    <span className="font-medium text-green-600">
+                                                        {formatCurrency(increment.new_transport_allowance)}
+                                                    </span>
                                                 </div>
                                                 <Separator />
                                                 <div className="flex justify-between">
@@ -382,18 +352,18 @@ export default function Show({ increment }: Props) {
                                 <CardContent className="space-y-4">
                                     <div>
                                         <label className="text-sm font-medium text-gray-500">{t('lbl_reason_for_increment')}</label>
-                                        <p className="mt-1 text-gray-900 whitespace-pre-wrap">{increment.reason}</p>
+                                        <p className="mt-1 whitespace-pre-wrap text-gray-900">{increment.reason}</p>
                                     </div>
                                     {increment.notes && (
                                         <div>
                                             <label className="text-sm font-medium text-gray-500">{t('lbl_additional_notes')}</label>
-                                            <p className="mt-1 text-gray-900 whitespace-pre-wrap">{increment.notes}</p>
+                                            <p className="mt-1 whitespace-pre-wrap text-gray-900">{increment.notes}</p>
                                         </div>
                                     )}
                                     {increment.rejection_reason && (
                                         <div>
                                             <label className="text-sm font-medium text-red-600">{t('lbl_rejection_reason')}</label>
-                                            <p className="mt-1 text-red-900 whitespace-pre-wrap bg-red-50 p-3 rounded-md">
+                                            <p className="mt-1 rounded-md bg-red-50 p-3 whitespace-pre-wrap text-red-900">
                                                 {increment.rejection_reason}
                                             </p>
                                         </div>
@@ -413,16 +383,14 @@ export default function Show({ increment }: Props) {
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    <div className="text-center">
-                                        {getStatusBadge(increment.status)}
-                                    </div>
+                                    <div className="text-center">{getStatusBadge(increment.status)}</div>
 
                                     <Separator />
 
                                     {/* Timeline */}
                                     <div className="space-y-4">
                                         <div className="flex items-start gap-3">
-                                            <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                            <div className="mt-2 h-2 w-2 rounded-full bg-blue-500"></div>
                                             <div>
                                                 <p className="font-medium">{t('request_created')}</p>
                                                 <p className="text-sm text-gray-600">{formatDate(increment.created_at)}</p>
@@ -432,7 +400,7 @@ export default function Show({ increment }: Props) {
 
                                         {increment.approval_date && (
                                             <div className="flex items-start gap-3">
-                                                <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                                                <div className="mt-2 h-2 w-2 rounded-full bg-green-500"></div>
                                                 <div>
                                                     <p className="font-medium text-green-600">Approved</p>
                                                     <p className="text-sm text-gray-600">{formatDate(increment.approval_date)}</p>
@@ -445,7 +413,7 @@ export default function Show({ increment }: Props) {
 
                                         {increment.rejection_date && (
                                             <div className="flex items-start gap-3">
-                                                <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
+                                                <div className="mt-2 h-2 w-2 rounded-full bg-red-500"></div>
                                                 <div>
                                                     <p className="font-medium text-red-600">Rejected</p>
                                                     <p className="text-sm text-gray-600">{formatDate(increment.rejection_date)}</p>
@@ -458,13 +426,11 @@ export default function Show({ increment }: Props) {
 
                                         {increment.applied_date && (
                                             <div className="flex items-start gap-3">
-                                                <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                                <div className="mt-2 h-2 w-2 rounded-full bg-blue-500"></div>
                                                 <div>
                                                     <p className="font-medium text-blue-600">Applied</p>
                                                     <p className="text-sm text-gray-600">{formatDate(increment.applied_date)}</p>
-                                                    {increment.applied_by && (
-                                                        <p className="text-sm text-gray-500">by {increment.applied_by.name}</p>
-                                                    )}
+                                                    {increment.applied_by && <p className="text-sm text-gray-500">by {increment.applied_by.name}</p>}
                                                 </div>
                                             </div>
                                         )}
@@ -480,19 +446,19 @@ export default function Show({ increment }: Props) {
                                 <CardContent className="space-y-2">
                                     <Link href={route('employees.show', increment.employee.id)} className="block">
                                         <Button variant="outline" className="w-full justify-start">
-                                            <User className="h-4 w-4 mr-2" />
+                                            <User className="mr-2 h-4 w-4" />
                                             {t('view_employee_profile')}
                                         </Button>
                                     </Link>
                                     <Link href={route('employees.salary-history', increment.employee.id)} className="block">
                                         <Button variant="outline" className="w-full justify-start">
-                                            <DollarSign className="h-4 w-4 mr-2" />
+                                            <DollarSign className="mr-2 h-4 w-4" />
                                             {t('view_salary_history')}
                                         </Button>
                                     </Link>
                                     <Link href={route('salary-increments.index')} className="block">
                                         <Button variant="outline" className="w-full justify-start">
-                                            <TrendingUp className="h-4 w-4 mr-2" />
+                                            <TrendingUp className="mr-2 h-4 w-4" />
                                             {t('all_salary_increments')}
                                         </Button>
                                     </Link>
@@ -505,19 +471,3 @@ export default function Show({ increment }: Props) {
         </AppLayout>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

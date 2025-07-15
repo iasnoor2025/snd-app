@@ -1,27 +1,15 @@
-import React, { useState } from 'react';
-import { Head, usePage } from '@inertiajs/react';
-import AppLayout from '../../layouts/AppLayout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-import { Badge } from '../../components/ui/badge';
-import { Separator } from '../../components/ui/separator';
-import AvatarUploader from '../../components/Avatar/AvatarUploader';
-import { SmartAvatar, UserAvatar, TeamAvatar } from '../../components/ui/smart-avatar';
-import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
-import { Button } from '../../components/ui/button';
+import { Camera, Globe, Heart, Palette, Settings, Shield, Star, User, Users, Zap } from 'lucide-react';
+import { useState } from 'react';
 import { toast } from 'sonner';
-import {
-    User,
-    Settings,
-    Camera,
-    Palette,
-    Globe,
-    Shield,
-    Users,
-    Star,
-    Heart,
-    Zap
-} from 'lucide-react';
+import AvatarUploader from '../../components/Avatar/AvatarUploader';
+import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
+import { Badge } from '../../components/ui/badge';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { Separator } from '../../components/ui/separator';
+import { SmartAvatar } from '../../components/ui/smart-avatar';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
+import AppLayout from '../../layouts/AppLayout';
 
 const AvatarPage = ({ auth }) => {
     const [currentUser, setCurrentUser] = useState(auth.user);
@@ -36,9 +24,9 @@ const AvatarPage = ({ auth }) => {
     ];
 
     const handleAvatarUpdate = (newAvatarUrl) => {
-        setCurrentUser(prev => ({
+        setCurrentUser((prev) => ({
             ...prev,
-            avatar: newAvatarUrl
+            avatar: newAvatarUrl,
         }));
 
         toast.success('Avatar updated successfully');
@@ -53,14 +41,11 @@ const AvatarPage = ({ auth }) => {
 
     const breadcrumbs = [
         { title: 'Profile', href: route('profile.index') },
-        { title: 'Avatar', href: route('profile.avatar') }
+        { title: 'Avatar', href: route('profile.avatar') },
     ];
 
     return (
-        <AppLayout
-            title="Avatar Management"
-            breadcrumbs={breadcrumbs}
-        >
+        <AppLayout title="Avatar Management" breadcrumbs={breadcrumbs}>
             <div className="py-6">
                 <div className="mx-auto max-w-7xl space-y-6">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
@@ -87,13 +72,10 @@ const AvatarPage = ({ auth }) => {
 
                                 {/* Upload Tab */}
                                 <TabsContent value="upload" className="space-y-6">
-                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                                         {/* Avatar Uploader */}
                                         <div>
-                                            <AvatarUploader
-                                                user={currentUser}
-                                                onAvatarUpdate={handleAvatarUpdate}
-                                            />
+                                            <AvatarUploader user={currentUser} onAvatarUpdate={handleAvatarUpdate} />
                                         </div>
 
                                         {/* Current Avatar Info */}
@@ -103,17 +85,13 @@ const AvatarPage = ({ auth }) => {
                                                     <User className="h-5 w-5" />
                                                     Current Avatar
                                                 </CardTitle>
-                                                <CardDescription>
-                                                    Your current avatar information and fallback options
-                                                </CardDescription>
+                                                <CardDescription>Your current avatar information and fallback options</CardDescription>
                                             </CardHeader>
                                             <CardContent className="space-y-4">
                                                 <div className="flex items-center space-x-4">
                                                     <Avatar className="h-16 w-16">
                                                         <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
-                                                        <AvatarFallback className="text-lg">
-                                                            {getInitials(currentUser.name)}
-                                                        </AvatarFallback>
+                                                        <AvatarFallback className="text-lg">{getInitials(currentUser.name)}</AvatarFallback>
                                                     </Avatar>
                                                     <div>
                                                         <p className="font-medium">{currentUser.name}</p>
@@ -134,15 +112,13 @@ const AvatarPage = ({ auth }) => {
                                                                 src={`https://www.gravatar.com/avatar/${btoa(currentUser.email.toLowerCase())}?s=80&d=mp`}
                                                                 alt="Gravatar"
                                                             />
-                                                            <AvatarFallback className="text-xs">
-                                                                {getInitials(currentUser.name)}
-                                                            </AvatarFallback>
+                                                            <AvatarFallback className="text-xs">{getInitials(currentUser.name)}</AvatarFallback>
                                                         </Avatar>
                                                         <span className="text-sm text-muted-foreground">Gravatar</span>
                                                     </div>
                                                     <div className="flex items-center space-x-2">
                                                         <Avatar className="h-8 w-8">
-                                                            <AvatarFallback className="text-xs bg-primary text-primary-foreground">
+                                                            <AvatarFallback className="bg-primary text-xs text-primary-foreground">
                                                                 {getInitials(currentUser.name)}
                                                             </AvatarFallback>
                                                         </Avatar>
@@ -156,7 +132,7 @@ const AvatarPage = ({ auth }) => {
 
                                 {/* Examples Tab */}
                                 <TabsContent value="examples" className="space-y-6">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                                         {/* Size Variants */}
                                         <Card>
                                             <CardHeader>
@@ -221,35 +197,19 @@ const AvatarPage = ({ auth }) => {
                                             </CardHeader>
                                             <CardContent className="space-y-4">
                                                 <div className="flex items-center space-x-2">
-                                                    <SmartAvatar
-                                                        user={currentUser}
-                                                        size="md"
-                                                        badge={<Star className="h-3 w-3 text-yellow-500" />}
-                                                    />
+                                                    <SmartAvatar user={currentUser} size="md" badge={<Star className="h-3 w-3 text-yellow-500" />} />
                                                     <span className="text-sm">Star Member</span>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
-                                                    <SmartAvatar
-                                                        user={currentUser}
-                                                        size="md"
-                                                        badge={<Shield className="h-3 w-3 text-blue-500" />}
-                                                    />
+                                                    <SmartAvatar user={currentUser} size="md" badge={<Shield className="h-3 w-3 text-blue-500" />} />
                                                     <span className="text-sm">Admin</span>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
-                                                    <SmartAvatar
-                                                        user={currentUser}
-                                                        size="md"
-                                                        badge={<Heart className="h-3 w-3 text-red-500" />}
-                                                    />
+                                                    <SmartAvatar user={currentUser} size="md" badge={<Heart className="h-3 w-3 text-red-500" />} />
                                                     <span className="text-sm">VIP</span>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
-                                                    <SmartAvatar
-                                                        user={currentUser}
-                                                        size="md"
-                                                        badge={<Zap className="h-3 w-3 text-amber-500" />}
-                                                    />
+                                                    <SmartAvatar user={currentUser} size="md" badge={<Zap className="h-3 w-3 text-amber-500" />} />
                                                     <span className="text-sm">Premium</span>
                                                 </div>
                                             </CardContent>
@@ -265,19 +225,13 @@ const AvatarPage = ({ auth }) => {
                                                 <Users className="h-5 w-5" />
                                                 Team Members
                                             </CardTitle>
-                                            <CardDescription>
-                                                View and manage team member avatars
-                                            </CardDescription>
+                                            <CardDescription>View and manage team member avatars</CardDescription>
                                         </CardHeader>
                                         <CardContent>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                                 {teamMembers.map((member) => (
                                                     <div key={member.id} className="flex items-center space-x-4">
-                                                        <SmartAvatar
-                                                            user={member}
-                                                            size="lg"
-                                                            status={member.id === 1 ? 'online' : undefined}
-                                                        />
+                                                        <SmartAvatar user={member} size="lg" status={member.id === 1 ? 'online' : undefined} />
                                                         <div>
                                                             <p className="font-medium">{member.name}</p>
                                                             <p className="text-sm text-muted-foreground">{member.role}</p>
@@ -297,20 +251,18 @@ const AvatarPage = ({ auth }) => {
                                                 <Settings className="h-5 w-5" />
                                                 Avatar Settings
                                             </CardTitle>
-                                            <CardDescription>
-                                                Configure your avatar preferences and defaults
-                                            </CardDescription>
+                                            <CardDescription>Configure your avatar preferences and defaults</CardDescription>
                                         </CardHeader>
                                         <CardContent className="space-y-4">
                                             <div className="space-y-4">
                                                 <h4 className="font-medium">Default Fallback</h4>
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                                     <Button variant="outline" className="justify-start">
-                                                        <Globe className="h-4 w-4 mr-2" />
+                                                        <Globe className="mr-2 h-4 w-4" />
                                                         Use Gravatar
                                                     </Button>
                                                     <Button variant="outline" className="justify-start">
-                                                        <User className="h-4 w-4 mr-2" />
+                                                        <User className="mr-2 h-4 w-4" />
                                                         Use Initials
                                                     </Button>
                                                 </div>
@@ -320,13 +272,13 @@ const AvatarPage = ({ auth }) => {
 
                                             <div className="space-y-4">
                                                 <h4 className="font-medium">Privacy Settings</h4>
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                                     <Button variant="outline" className="justify-start">
-                                                        <Shield className="h-4 w-4 mr-2" />
+                                                        <Shield className="mr-2 h-4 w-4" />
                                                         Make Avatar Public
                                                     </Button>
                                                     <Button variant="outline" className="justify-start">
-                                                        <Users className="h-4 w-4 mr-2" />
+                                                        <Users className="mr-2 h-4 w-4" />
                                                         Team Only
                                                     </Button>
                                                 </div>
@@ -344,6 +296,3 @@ const AvatarPage = ({ auth }) => {
 };
 
 export default AvatarPage;
-
-
-

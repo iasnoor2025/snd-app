@@ -3,7 +3,6 @@ import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
-
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
@@ -43,8 +42,6 @@ export default function ConfirmPassword() {
                             autoFocus
                             onChange={(e) => setData('password', e.target.value)}
                         />
-
-                        
                     </div>
 
                     <div className="flex items-center">
@@ -58,10 +55,3 @@ export default function ConfirmPassword() {
         </AuthLayout>
     );
 }
-
-
-
-
-
-
-

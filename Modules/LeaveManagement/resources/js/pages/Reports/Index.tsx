@@ -1,25 +1,55 @@
-import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import {
+    AppLayout,
+    Badge,
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+    Button,
+    Calendar,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+    cn,
+    Label,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/Core';
+import { formatDateMedium } from '@/Core/utils/dateFormatter';
 import { Head, router, usePage } from '@inertiajs/react';
-import { route } from 'ziggy-js';
-import { AppLayout } from '@/Core';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Core";
-import { Button } from "@/Core";
-import { Input } from "@/Core";
-import { Label } from "@/Core";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
-import { Badge } from "@/Core";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/Core";
-import { CalendarIcon, DownloadIcon, FilterIcon, TrendingUpIcon, UsersIcon, ClockIcon, CheckCircleIcon, XCircleIcon, AlertCircleIcon, BarChart3Icon } from 'lucide-react';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/Core";
-import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { cn } from "@/Core";
-import { Calendar } from "@/Core";
-import { Popover, PopoverContent, PopoverTrigger } from "@/Core";
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import {
+    AlertCircleIcon,
+    BarChart3Icon,
+    CalendarIcon,
+    CheckCircleIcon,
+    ClockIcon,
+    DownloadIcon,
+    FilterIcon,
+    TrendingUpIcon,
+    XCircleIcon,
+} from 'lucide-react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { toast } from 'sonner';
+import { route } from 'ziggy-js';
 
 // Temporary inline permission hook
 const usePermission = () => {
@@ -191,7 +221,7 @@ const statusColors = {
 const renderSummaryReport = (summaryData: SummaryData) => (
     <div className="space-y-6">
         {/* Key Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">{t('th_total_requests')}</CardTitle>
@@ -240,7 +270,7 @@ const renderSummaryReport = (summaryData: SummaryData) => (
         </div>
 
         {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* Leave Type Distribution */}
             <Card>
                 <CardHeader>
@@ -317,9 +347,7 @@ const renderDetailedReport = (detailedData: DetailedData) => (
     <Card>
         <CardHeader>
             <CardTitle>{t('ttl_detailed_leave_requests')}</CardTitle>
-            <CardDescription>
-                Showing {detailedData.pagination?.total || 0} total requests
-            </CardDescription>
+            <CardDescription>Showing {detailedData.pagination?.total || 0} total requests</CardDescription>
         </CardHeader>
         <CardContent>
             <Table>
@@ -361,9 +389,7 @@ const renderDetailedReport = (detailedData: DetailedData) => (
                             </TableCell>
                             <TableCell>{leave.total_days}</TableCell>
                             <TableCell>
-                                <Badge className={statusColors[leave.status as keyof typeof statusColors]}>
-                                    {leave.status}
-                                </Badge>
+                                <Badge className={statusColors[leave.status as keyof typeof statusColors]}>{leave.status}</Badge>
                             </TableCell>
                             <TableCell className="text-sm">{leave.applied_at}</TableCell>
                             <TableCell>
@@ -388,9 +414,7 @@ const renderBalanceReport = (balanceData: BalanceData) => (
     <Card>
         <CardHeader>
             <CardTitle>{t('ttl_leave_balance_report')}</CardTitle>
-            <CardDescription>
-                Current leave balances for all employees
-            </CardDescription>
+            <CardDescription>Current leave balances for all employees</CardDescription>
         </CardHeader>
         <CardContent>
             <Table>
@@ -417,16 +441,14 @@ const renderBalanceReport = (balanceData: BalanceData) => (
                                         </div>
                                     </TableCell>
                                 )}
-                                {index === 0 && (
-                                    <TableCell rowSpan={employee.balances.length}>{employee.department}</TableCell>
-                                )}
+                                {index === 0 && <TableCell rowSpan={employee.balances.length}>{employee.department}</TableCell>}
                                 <TableCell>{balance.leave_type}</TableCell>
                                 <TableCell>{balance.allocated}</TableCell>
                                 <TableCell>{balance.used}</TableCell>
                                 <TableCell>{balance.remaining}</TableCell>
                                 <TableCell>{balance.carried_forward}</TableCell>
                             </TableRow>
-                        ))
+                        )),
                     )}
                 </TableBody>
             </Table>
@@ -437,7 +459,7 @@ const renderBalanceReport = (balanceData: BalanceData) => (
 const renderTrendsReport = (trendsData: TrendsData) => (
     <div className="space-y-6">
         {/* Yearly Comparison */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Card>
                 <CardHeader>
                     <CardTitle>{trendsData.yearly_comparison.current_year.year} (Current)</CardTitle>
@@ -518,9 +540,7 @@ const renderDepartmentReport = (departmentData: DepartmentData) => (
     <Card>
         <CardHeader>
             <CardTitle>{t('ttl_department_report')}</CardTitle>
-            <CardDescription>
-                Leave statistics by department
-            </CardDescription>
+            <CardDescription>Leave statistics by department</CardDescription>
         </CardHeader>
         <CardContent>
             <Table>
@@ -554,18 +574,18 @@ const renderDepartmentReport = (departmentData: DepartmentData) => (
 );
 
 export default function ReportsIndex() {
-  const { t } = useTranslation('leave');
+    const { t } = useTranslation('leave');
 
     const {
         filters = {
             date_from: '',
             date_to: '',
-            report_type: 'summary'
+            report_type: 'summary',
         },
         data = null,
         employees = [],
         departments = [],
-        leaveTypes = []
+        leaveTypes = [],
     } = usePage<PageProps>().props;
     const { can } = usePermission();
 
@@ -643,13 +663,11 @@ export default function ReportsIndex() {
             return (
                 <Card>
                     <CardContent className="flex flex-col items-center justify-center py-16">
-                        <div className="text-center space-y-4">
-                            <FilterIcon className="h-12 w-12 text-muted-foreground mx-auto" />
+                        <div className="space-y-4 text-center">
+                            <FilterIcon className="mx-auto h-12 w-12 text-muted-foreground" />
                             <div>
                                 <h3 className="text-lg font-medium">No Data Available</h3>
-                                <p className="text-sm text-muted-foreground">
-                                    Please select filters and click "Apply Filters" to generate a report.
-                                </p>
+                                <p className="text-sm text-muted-foreground">Please select filters and click "Apply Filters" to generate a report.</p>
                             </div>
                             <Button onClick={applyFilters} className="mt-4">
                                 <FilterIcon className="mr-2 h-4 w-4" />
@@ -699,7 +717,7 @@ export default function ReportsIndex() {
                 </Breadcrumb>
 
                 {/* Header */}
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight">{t('leave_reports')}</h1>
                         <p className="text-muted-foreground">{t('comprehensive_leave_analytics_and_insights')}</p>
@@ -711,19 +729,11 @@ export default function ReportsIndex() {
                     <div className="flex gap-2">
                         {can('leave-reports.export') && (
                             <>
-                                <Button
-                                    variant="outline"
-                                    onClick={() => exportReport('xlsx')}
-                                    disabled={isExporting}
-                                >
+                                <Button variant="outline" onClick={() => exportReport('xlsx')} disabled={isExporting}>
                                     <DownloadIcon className="mr-2 h-4 w-4" />
                                     Export Excel
                                 </Button>
-                                <Button
-                                    variant="outline"
-                                    onClick={() => exportReport('csv')}
-                                    disabled={isExporting}
-                                >
+                                <Button variant="outline" onClick={() => exportReport('csv')} disabled={isExporting}>
                                     <DownloadIcon className="mr-2 h-4 w-4" />
                                     Export CSV
                                 </Button>
@@ -741,14 +751,11 @@ export default function ReportsIndex() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                             {/* Report Type */}
                             <div className="space-y-2">
                                 <Label htmlFor="report_type">{t('lbl_report_type')}</Label>
-                                <Select
-                                    value={localFilters.report_type}
-                                    onValueChange={(value) => handleFilterChange('report_type', value)}
-                                >
+                                <Select value={localFilters.report_type} onValueChange={(value) => handleFilterChange('report_type', value)}>
                                     <SelectTrigger>
                                         <SelectValue placeholder={t('ph_select_report_type')} />
                                     </SelectTrigger>
@@ -769,22 +776,18 @@ export default function ReportsIndex() {
                                     <PopoverTrigger asChild>
                                         <Button
                                             variant="outline"
-                                            className={cn(
-                                                "w-full justify-start text-left font-normal",
-                                                !dateFrom && "text-muted-foreground"
-                                            )}
+                                            className={cn('w-full justify-start text-left font-normal', !dateFrom && 'text-muted-foreground')}
                                         >
-                                                                        <CalendarIcon className="mr-2 h-4 w-4" />
-                            {dateFrom && !isNaN(dateFrom.getTime()) ? format(dateFrom, "PPP") : <span>{t('project:pick_a_date')}</span>}
+                                            <CalendarIcon className="mr-2 h-4 w-4" />
+                                            {dateFrom && !isNaN(dateFrom.getTime()) ? (
+                                                format(dateFrom, 'PPP')
+                                            ) : (
+                                                <span>{t('project:pick_a_date')}</span>
+                                            )}
                                         </Button>
                                     </PopoverTrigger>
                                     <PopoverContent className="w-auto p-0">
-                                        <Calendar
-                                            mode="single"
-                                            selected={dateFrom}
-                                            onSelect={setDateFrom}
-                                            initialFocus
-                                        />
+                                        <Calendar mode="single" selected={dateFrom} onSelect={setDateFrom} initialFocus />
                                     </PopoverContent>
                                 </Popover>
                             </div>
@@ -796,22 +799,14 @@ export default function ReportsIndex() {
                                     <PopoverTrigger asChild>
                                         <Button
                                             variant="outline"
-                                            className={cn(
-                                                "w-full justify-start text-left font-normal",
-                                                !dateTo && "text-muted-foreground"
-                                            )}
+                                            className={cn('w-full justify-start text-left font-normal', !dateTo && 'text-muted-foreground')}
                                         >
-                                                                        <CalendarIcon className="mr-2 h-4 w-4" />
-                            {dateTo && !isNaN(dateTo.getTime()) ? format(dateTo, "PPP") : <span>{t('project:pick_a_date')}</span>}
+                                            <CalendarIcon className="mr-2 h-4 w-4" />
+                                            {dateTo && !isNaN(dateTo.getTime()) ? format(dateTo, 'PPP') : <span>{t('project:pick_a_date')}</span>}
                                         </Button>
                                     </PopoverTrigger>
                                     <PopoverContent className="w-auto p-0">
-                                        <Calendar
-                                            mode="single"
-                                            selected={dateTo}
-                                            onSelect={setDateTo}
-                                            initialFocus
-                                        />
+                                        <Calendar mode="single" selected={dateTo} onSelect={setDateTo} initialFocus />
                                     </PopoverContent>
                                 </Popover>
                             </div>
@@ -899,10 +894,8 @@ export default function ReportsIndex() {
                             </div>
                         </div>
 
-                        <div className="flex gap-2 mt-4">
-                            <Button onClick={applyFilters}>
-                                Apply Filters
-                            </Button>
+                        <div className="mt-4 flex gap-2">
+                            <Button onClick={applyFilters}>Apply Filters</Button>
                             <Button variant="outline" onClick={resetFilters}>
                                 Reset
                             </Button>
@@ -916,17 +909,3 @@ export default function ReportsIndex() {
         </AppLayout>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

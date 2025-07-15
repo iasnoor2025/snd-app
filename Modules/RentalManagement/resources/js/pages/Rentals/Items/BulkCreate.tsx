@@ -1,14 +1,23 @@
+import {
+    Button,
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+    Input,
+    Label,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    Textarea,
+} from '@/Core';
+import { Head, useForm } from '@inertiajs/react';
+import { Plus, Trash2 } from 'lucide-react';
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Head, useForm } from '@inertiajs/react';
 import { RentalToastService } from '../../../services/RentalToastService';
-import { Button } from "@/Core";
-import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
-import { Input } from "@/Core";
-import { Label } from "@/Core";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
-import { Textarea } from "@/Core";
-import { Plus, Trash2 } from 'lucide-react';
 
 interface Props {
     rental: {
@@ -38,12 +47,14 @@ interface RentalItem {
 
 export const BulkCreate: FC<Props> = ({ rental, equipment, operators }) => {
     const { t } = useTranslation('rental');
-    const [items, setItems] = useState<RentalItem[]>([{
-        equipment_id: '',
-        operator_ids: [],
-        quantity: 1,
-        notes: ''
-    }]);
+    const [items, setItems] = useState<RentalItem[]>([
+        {
+            equipment_id: '',
+            operator_ids: [],
+            quantity: 1,
+            notes: '',
+        },
+    ]);
 
     const { processing, post } = useForm();
 
@@ -60,7 +71,7 @@ export const BulkCreate: FC<Props> = ({ rental, equipment, operators }) => {
                 },
                 onError: (error) => {
                     RentalToastService.bulkOperationFailed('creation', error?.message);
-                }
+                },
             });
         } catch (error) {
             RentalToastService.bulkOperationFailed('creation', error?.message);
@@ -68,12 +79,15 @@ export const BulkCreate: FC<Props> = ({ rental, equipment, operators }) => {
     };
 
     const addItem = () => {
-        setItems([...items, {
-            equipment_id: '',
-            operator_ids: [],
-            quantity: 1,
-            notes: ''
-        }]);
+        setItems([
+            ...items,
+            {
+                equipment_id: '',
+                operator_ids: [],
+                quantity: 1,
+                notes: '',
+            },
+        ]);
     };
 
     const removeItem = (index: number) => {
@@ -84,7 +98,7 @@ export const BulkCreate: FC<Props> = ({ rental, equipment, operators }) => {
         const newItems = [...items];
         newItems[index] = {
             ...newItems[index],
-            [field]: value
+            [field]: value,
         };
         setItems(newItems);
     };
@@ -100,28 +114,22 @@ export const BulkCreate: FC<Props> = ({ rental, equipment, operators }) => {
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {items.map((item, index) => (
-                            <div key={index} className="p-4 border rounded-lg space-y-4">
-                                <div className="flex justify-between items-center">
-                                    <h3 className="text-lg font-medium">{t('item')} #{index + 1}</h3>
+                            <div key={index} className="space-y-4 rounded-lg border p-4">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-lg font-medium">
+                                        {t('item')} #{index + 1}
+                                    </h3>
                                     {items.length > 1 && (
-                                        <Button
-                                            type="button"
-                                            variant="destructive"
-                                            size="icon"
-                                            onClick={() => removeItem(index)}
-                                        >
+                                        <Button type="button" variant="destructive" size="icon" onClick={() => removeItem(index)}>
                                             <Trash2 className="h-4 w-4" />
                                         </Button>
                                     )}
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                     <div>
                                         <Label htmlFor={`equipment_${index}`}>{t('equipment')}</Label>
-                                        <Select
-                                            value={item.equipment_id}
-                                            onValueChange={(value) => updateItem(index, 'equipment_id', value)}
-                                        >
+                                        <Select value={item.equipment_id} onValueChange={(value) => updateItem(index, 'equipment_id', value)}>
                                             <SelectTrigger>
                                                 <SelectValue placeholder={t('select_equipment')} />
                                             </SelectTrigger>
@@ -167,30 +175,19 @@ export const BulkCreate: FC<Props> = ({ rental, equipment, operators }) => {
 
                                     <div>
                                         <Label htmlFor={`notes_${index}`}>{t('notes')}</Label>
-                                        <Textarea
-                                            value={item.notes}
-                                            onChange={(e) => updateItem(index, 'notes', e.target.value)}
-                                        />
+                                        <Textarea value={item.notes} onChange={(e) => updateItem(index, 'notes', e.target.value)} />
                                     </div>
                                 </div>
                             </div>
                         ))}
 
                         <div className="flex justify-between">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={addItem}
-                                disabled={processing}
-                            >
-                                <Plus className="h-4 w-4 mr-2" />
+                            <Button type="button" variant="outline" onClick={addItem} disabled={processing}>
+                                <Plus className="mr-2 h-4 w-4" />
                                 {t('add_item')}
                             </Button>
 
-                            <Button
-                                type="submit"
-                                disabled={processing}
-                            >
+                            <Button type="submit" disabled={processing}>
                                 {t('create_items')}
                             </Button>
                         </div>
@@ -200,17 +197,3 @@ export const BulkCreate: FC<Props> = ({ rental, equipment, operators }) => {
         </>
     );
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,2 +1,2 @@
 // Export all maintenance-related components
-export { default as MaintenanceRecordList } from './MaintenanceRecordList'; 
+export { default as MaintenanceRecordList } from './MaintenanceRecordList';

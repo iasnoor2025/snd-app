@@ -1,35 +1,30 @@
-import React, { useState } from 'react';
-import { Head, Link } from '@inertiajs/react';
-import { useForm } from '@inertiajs/react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Core";
-import { Button } from "@/Core";
-import { Badge } from "@/Core";
-import { Input } from "@/Core";
-import { Label } from "@/Core";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
-import { Textarea } from "@/Core";
-import { Switch } from "@/Core";
-import { Separator } from "@/Core";
-import { Alert, AlertDescription } from "@/Core";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
 import {
-    ArrowLeft,
-    Save,
-    Settings as SettingsIcon,
-    Globe,
-    Languages,
-    Calendar,
-    Clock,
-    DollarSign,
-    Users,
-    Shield,
-    Zap,
-    AlertCircle,
-    CheckCircle,
-    Info,
-    RefreshCw
-} from 'lucide-react';
+    Alert,
+    AlertDescription,
+    Button,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+    Input,
+    Label,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    Separator,
+    Switch,
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from '@/Core';
 import { useTranslation } from '@/Core/hooks/useTranslation';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { ArrowLeft, Calendar, CheckCircle, Clock, DollarSign, Globe, Info, Languages, RefreshCw, Save, Shield, Zap } from 'lucide-react';
+import { useState } from 'react';
 
 interface LocalizationSettings {
     default_language: string;
@@ -58,14 +53,7 @@ interface SettingsProps {
     timeFormats: string[];
 }
 
-export default function Settings({
-    settings,
-    languages,
-    currencies,
-    timezones,
-    dateFormats,
-    timeFormats
-}: SettingsProps) {
+export default function Settings({ settings, languages, currencies, timezones, dateFormats, timeFormats }: SettingsProps) {
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState('general');
     const [isSaving, setIsSaving] = useState(false);
@@ -80,7 +68,7 @@ export default function Settings({
             },
             onError: () => {
                 setIsSaving(false);
-            }
+            },
         });
     };
 
@@ -90,39 +78,37 @@ export default function Settings({
 
     const languageOptions = Object.entries(languages).map(([code, lang]) => ({
         value: code,
-        label: `${lang.name} (${code.toUpperCase()})`
+        label: `${lang.name} (${code.toUpperCase()})`,
     }));
 
     return (
         <>
             <Head title={t('localization:localization_settings')} />
 
-            <div className="container mx-auto py-6 space-y-6">
+            <div className="container mx-auto space-y-6 py-6">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                         <Link href={route('localization.index')}>
                             <Button variant="outline" size="sm">
-                                <ArrowLeft className="h-4 w-4 mr-2" />
+                                <ArrowLeft className="mr-2 h-4 w-4" />
                                 Back
                             </Button>
                         </Link>
                         <div>
                             <h1 className="text-3xl font-bold tracking-tight">{t('localization:localization_settings')}</h1>
-                            <p className="text-muted-foreground">
-                                {t('localization:configure_global_localization')}
-                            </p>
+                            <p className="text-muted-foreground">{t('localization:configure_global_localization')}</p>
                         </div>
                     </div>
                     <div className="flex items-center space-x-2">
                         {isDirty && (
                             <Button variant="outline" onClick={handleReset}>
-                                <RefreshCw className="h-4 w-4 mr-2" />
+                                <RefreshCw className="mr-2 h-4 w-4" />
                                 {t('localization:reset')}
                             </Button>
                         )}
                         <Button onClick={handleSave} disabled={processing || isSaving || !isDirty}>
-                            <Save className="h-4 w-4 mr-2" />
+                            <Save className="mr-2 h-4 w-4" />
                             {processing || isSaving ? t('localization:saving') : t('localization:save_changes')}
                         </Button>
                     </div>
@@ -154,21 +140,16 @@ export default function Settings({
                         <Card>
                             <CardHeader>
                                 <CardTitle className="flex items-center">
-                                    <Languages className="h-5 w-5 mr-2" />
+                                    <Languages className="mr-2 h-5 w-5" />
                                     {t('localization:language_configuration')}
                                 </CardTitle>
-                                <CardDescription>
-                                    {t('localization:configure_default_fallback_languages')}
-                                </CardDescription>
+                                <CardDescription>{t('localization:configure_default_fallback_languages')}</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                     <div className="space-y-2">
                                         <Label htmlFor="default_language">{t('localization:default_language')}</Label>
-                                        <Select
-                                            value={data.default_language}
-                                            onValueChange={(value) => setData('default_language', value)}
-                                        >
+                                        <Select value={data.default_language} onValueChange={(value) => setData('default_language', value)}>
                                             <SelectTrigger>
                                                 <SelectValue placeholder={t('localization:select_default_language')} />
                                             </SelectTrigger>
@@ -180,20 +161,13 @@ export default function Settings({
                                                 ))}
                                             </SelectContent>
                                         </Select>
-                                        <p className="text-sm text-muted-foreground">
-                                            {t('localization:primary_language')}
-                                        </p>
-                                        {errors.default_language && (
-                                            <p className="text-sm text-red-600">{errors.default_language}</p>
-                                        )}
+                                        <p className="text-sm text-muted-foreground">{t('localization:primary_language')}</p>
+                                        {errors.default_language && <p className="text-sm text-red-600">{errors.default_language}</p>}
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label htmlFor="fallback_language">{t('localization:fallback_language')}</Label>
-                                        <Select
-                                            value={data.fallback_language}
-                                            onValueChange={(value) => setData('fallback_language', value)}
-                                        >
+                                        <Select value={data.fallback_language} onValueChange={(value) => setData('fallback_language', value)}>
                                             <SelectTrigger>
                                                 <SelectValue placeholder={t('localization:select_fallback_language')} />
                                             </SelectTrigger>
@@ -205,12 +179,8 @@ export default function Settings({
                                                 ))}
                                             </SelectContent>
                                         </Select>
-                                        <p className="text-sm text-muted-foreground">
-                                            {t('localization:used_when_translations_missing')}
-                                        </p>
-                                        {errors.fallback_language && (
-                                            <p className="text-sm text-red-600">{errors.fallback_language}</p>
-                                        )}
+                                        <p className="text-sm text-muted-foreground">{t('localization:used_when_translations_missing')}</p>
+                                        {errors.fallback_language && <p className="text-sm text-red-600">{errors.fallback_language}</p>}
                                     </div>
                                 </div>
 
@@ -220,9 +190,7 @@ export default function Settings({
                                     <div className="flex items-center justify-between">
                                         <div className="space-y-0.5">
                                             <Label>{t('localization:auto_detect_language')}</Label>
-                                            <p className="text-sm text-muted-foreground">
-                                                {t('localization:auto_detect_language_desc')}
-                                            </p>
+                                            <p className="text-sm text-muted-foreground">{t('localization:auto_detect_language_desc')}</p>
                                         </div>
                                         <Switch
                                             checked={data.auto_detect_language}
@@ -233,9 +201,7 @@ export default function Settings({
                                     <div className="flex items-center justify-between">
                                         <div className="space-y-0.5">
                                             <Label>{t('localization:user_language_preference')}</Label>
-                                            <p className="text-sm text-muted-foreground">
-                                                {t('localization:user_language_preference_desc')}
-                                            </p>
+                                            <p className="text-sm text-muted-foreground">{t('localization:user_language_preference_desc')}</p>
                                         </div>
                                         <Switch
                                             checked={data.enable_user_language_preference}
@@ -246,9 +212,7 @@ export default function Settings({
                                     <div className="flex items-center justify-between">
                                         <div className="space-y-0.5">
                                             <Label>{t('localization:browser_language_detection')}</Label>
-                                            <p className="text-sm text-muted-foreground">
-                                                {t('localization:browser_language_detection_desc')}
-                                            </p>
+                                            <p className="text-sm text-muted-foreground">{t('localization:browser_language_detection_desc')}</p>
                                         </div>
                                         <Switch
                                             checked={data.enable_browser_language_detection}
@@ -262,24 +226,19 @@ export default function Settings({
 
                     {/* Regional Settings */}
                     <TabsContent value="regional" className="space-y-6">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                             <Card>
                                 <CardHeader>
                                     <CardTitle className="flex items-center">
-                                        <DollarSign className="h-5 w-5 mr-2" />
+                                        <DollarSign className="mr-2 h-5 w-5" />
                                         {t('localization:currency_timezone')}
                                     </CardTitle>
-                                    <CardDescription>
-                                        {t('localization:configure_currency_timezone')}
-                                    </CardDescription>
+                                    <CardDescription>{t('localization:configure_currency_timezone')}</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="space-y-2">
                                         <Label htmlFor="default_currency">{t('localization:default_currency')}</Label>
-                                        <Select
-                                            value={data.default_currency}
-                                            onValueChange={(value) => setData('default_currency', value)}
-                                        >
+                                        <Select value={data.default_currency} onValueChange={(value) => setData('default_currency', value)}>
                                             <SelectTrigger>
                                                 <SelectValue placeholder={t('localization:select_currency')} />
                                             </SelectTrigger>
@@ -291,17 +250,12 @@ export default function Settings({
                                                 ))}
                                             </SelectContent>
                                         </Select>
-                                        {errors.default_currency && (
-                                            <p className="text-sm text-red-600">{errors.default_currency}</p>
-                                        )}
+                                        {errors.default_currency && <p className="text-sm text-red-600">{errors.default_currency}</p>}
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label htmlFor="default_timezone">{t('localization:default_timezone')}</Label>
-                                        <Select
-                                            value={data.default_timezone}
-                                            onValueChange={(value) => setData('default_timezone', value)}
-                                        >
+                                        <Select value={data.default_timezone} onValueChange={(value) => setData('default_timezone', value)}>
                                             <SelectTrigger>
                                                 <SelectValue placeholder={t('localization:select_timezone')} />
                                             </SelectTrigger>
@@ -313,9 +267,7 @@ export default function Settings({
                                                 ))}
                                             </SelectContent>
                                         </Select>
-                                        {errors.default_timezone && (
-                                            <p className="text-sm text-red-600">{errors.default_timezone}</p>
-                                        )}
+                                        {errors.default_timezone && <p className="text-sm text-red-600">{errors.default_timezone}</p>}
                                     </div>
                                 </CardContent>
                             </Card>
@@ -323,20 +275,15 @@ export default function Settings({
                             <Card>
                                 <CardHeader>
                                     <CardTitle className="flex items-center">
-                                        <Calendar className="h-5 w-5 mr-2" />
+                                        <Calendar className="mr-2 h-5 w-5" />
                                         {t('localization:date_time_formats')}
                                     </CardTitle>
-                                    <CardDescription>
-                                        {t('localization:configure_date_time_formats')}
-                                    </CardDescription>
+                                    <CardDescription>{t('localization:configure_date_time_formats')}</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="space-y-2">
                                         <Label htmlFor="default_date_format">{t('localization:date_format')}</Label>
-                                        <Select
-                                            value={data.default_date_format}
-                                            onValueChange={(value) => setData('default_date_format', value)}
-                                        >
+                                        <Select value={data.default_date_format} onValueChange={(value) => setData('default_date_format', value)}>
                                             <SelectTrigger>
                                                 <SelectValue placeholder={t('localization:select_date_format')} />
                                             </SelectTrigger>
@@ -348,17 +295,12 @@ export default function Settings({
                                                 ))}
                                             </SelectContent>
                                         </Select>
-                                        {errors.default_date_format && (
-                                            <p className="text-sm text-red-600">{errors.default_date_format}</p>
-                                        )}
+                                        {errors.default_date_format && <p className="text-sm text-red-600">{errors.default_date_format}</p>}
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label htmlFor="default_time_format">{t('localization:time_format')}</Label>
-                                        <Select
-                                            value={data.default_time_format}
-                                            onValueChange={(value) => setData('default_time_format', value)}
-                                        >
+                                        <Select value={data.default_time_format} onValueChange={(value) => setData('default_time_format', value)}>
                                             <SelectTrigger>
                                                 <SelectValue placeholder={t('localization:select_time_format')} />
                                             </SelectTrigger>
@@ -370,9 +312,7 @@ export default function Settings({
                                                 ))}
                                             </SelectContent>
                                         </Select>
-                                        {errors.default_time_format && (
-                                            <p className="text-sm text-red-600">{errors.default_time_format}</p>
-                                        )}
+                                        {errors.default_time_format && <p className="text-sm text-red-600">{errors.default_time_format}</p>}
                                     </div>
                                 </CardContent>
                             </Card>
@@ -384,12 +324,10 @@ export default function Settings({
                         <Card>
                             <CardHeader>
                                 <CardTitle className="flex items-center">
-                                    <Zap className="h-5 w-5 mr-2" />
+                                    <Zap className="mr-2 h-5 w-5" />
                                     {t('localization:translation_behavior')}
                                 </CardTitle>
-                                <CardDescription>
-                                    {t('localization:configure_translation_behavior')}
-                                </CardDescription>
+                                <CardDescription>{t('localization:configure_translation_behavior')}</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-6">
                                 <div className="space-y-2">
@@ -409,9 +347,7 @@ export default function Settings({
                                             <SelectItem value="show_empty">{t('localization:show_empty_string')}</SelectItem>
                                         </SelectContent>
                                     </Select>
-                                    <p className="text-sm text-muted-foreground">
-                                        {t('localization:what_to_display_when_missing')}
-                                    </p>
+                                    <p className="text-sm text-muted-foreground">{t('localization:what_to_display_when_missing')}</p>
                                     {errors.translation_missing_key_behavior && (
                                         <p className="text-sm text-red-600">{errors.translation_missing_key_behavior}</p>
                                     )}
@@ -423,22 +359,15 @@ export default function Settings({
                                     <div className="flex items-center justify-between">
                                         <div className="space-y-0.5">
                                             <Label>{t('localization:rtl_language_support')}</Label>
-                                            <p className="text-sm text-muted-foreground">
-                                                {t('localization:rtl_language_support_desc')}
-                                            </p>
+                                            <p className="text-sm text-muted-foreground">{t('localization:rtl_language_support_desc')}</p>
                                         </div>
-                                        <Switch
-                                            checked={data.rtl_support}
-                                            onCheckedChange={(checked) => setData('rtl_support', checked)}
-                                        />
+                                        <Switch checked={data.rtl_support} onCheckedChange={(checked) => setData('rtl_support', checked)} />
                                     </div>
 
                                     <div className="flex items-center justify-between">
                                         <div className="space-y-0.5">
                                             <Label>{t('localization:pluralization_rules')}</Label>
-                                            <p className="text-sm text-muted-foreground">
-                                                {t('localization:pluralization_rules_desc')}
-                                            </p>
+                                            <p className="text-sm text-muted-foreground">{t('localization:pluralization_rules_desc')}</p>
                                         </div>
                                         <Switch
                                             checked={data.pluralization_rules}
@@ -449,9 +378,7 @@ export default function Settings({
                                     <div className="flex items-center justify-between">
                                         <div className="space-y-0.5">
                                             <Label>{t('localization:translation_logging')}</Label>
-                                            <p className="text-sm text-muted-foreground">
-                                                {t('localization:translation_logging_desc')}
-                                            </p>
+                                            <p className="text-sm text-muted-foreground">{t('localization:translation_logging_desc')}</p>
                                         </div>
                                         <Switch
                                             checked={data.enable_translation_logging}
@@ -468,25 +395,18 @@ export default function Settings({
                         <Card>
                             <CardHeader>
                                 <CardTitle className="flex items-center">
-                                    <Shield className="h-5 w-5 mr-2" />
+                                    <Shield className="mr-2 h-5 w-5" />
                                     {t('localization:performance_caching')}
                                 </CardTitle>
-                                <CardDescription>
-                                    {t('localization:advanced_settings_performance')}
-                                </CardDescription>
+                                <CardDescription>{t('localization:advanced_settings_performance')}</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-6">
                                 <div className="flex items-center justify-between">
                                     <div className="space-y-0.5">
                                         <Label>{t('localization:cache_translations')}</Label>
-                                        <p className="text-sm text-muted-foreground">
-                                            {t('localization:cache_translations_desc')}
-                                        </p>
+                                        <p className="text-sm text-muted-foreground">{t('localization:cache_translations_desc')}</p>
                                     </div>
-                                    <Switch
-                                        checked={data.cache_translations}
-                                        onCheckedChange={(checked) => setData('cache_translations', checked)}
-                                    />
+                                    <Switch checked={data.cache_translations} onCheckedChange={(checked) => setData('cache_translations', checked)} />
                                 </div>
 
                                 {data.cache_translations && (
@@ -500,19 +420,15 @@ export default function Settings({
                                             min="0"
                                             max="10080"
                                         />
-                                        <p className="text-sm text-muted-foreground">
-                                            {t('localization:cache_duration_desc')}
-                                        </p>
-                                        {errors.cache_duration && (
-                                            <p className="text-sm text-red-600">{errors.cache_duration}</p>
-                                        )}
+                                        <p className="text-sm text-muted-foreground">{t('localization:cache_duration_desc')}</p>
+                                        {errors.cache_duration && <p className="text-sm text-red-600">{errors.cache_duration}</p>}
                                     </div>
                                 )}
                             </CardContent>
                         </Card>
 
                         {/* Status Information */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                             <Card>
                                 <CardContent className="p-4">
                                     <div className="flex items-center justify-between">
@@ -561,17 +477,3 @@ export default function Settings({
         </>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

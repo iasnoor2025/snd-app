@@ -1,19 +1,17 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { ColumnDef } from '@tanstack/react-table';
-import { Employee } from '@/Modules/EmployeeManagement/resources/js/types';
-import { Badge } from "@/Core";
-import { Button } from "@/Core";
-import { MoreHorizontal, Pencil, Trash } from 'lucide-react';
 import {
+    Badge,
+    Button,
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/Core";
+} from '@/Core';
+import { Employee } from '@/Modules/EmployeeManagement/resources/js/types';
 import { Link } from '@inertiajs/react';
+import { ColumnDef } from '@tanstack/react-table';
+import { MoreHorizontal, Pencil, Trash } from 'lucide-react';
 
 export const columns: ColumnDef<Employee>[] = [
     {
@@ -50,12 +48,12 @@ export const columns: ColumnDef<Employee>[] = [
                     variant="outline"
                     className={
                         status === 'active'
-                            ? 'bg-green-50 text-green-700 border-green-200'
+                            ? 'border-green-200 bg-green-50 text-green-700'
                             : status === 'inactive'
-                            ? 'bg-red-50 text-red-700 border-red-200'
-                            : status === 'on_leave'
-                            ? 'bg-yellow-50 text-yellow-700 border-yellow-200'
-                            : 'bg-gray-50 text-gray-700 border-gray-200'
+                              ? 'border-red-200 bg-red-50 text-red-700'
+                              : status === 'on_leave'
+                                ? 'border-yellow-200 bg-yellow-50 text-yellow-700'
+                                : 'border-gray-200 bg-gray-50 text-gray-700'
                     }
                 >
                     {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -84,9 +82,7 @@ export const columns: ColumnDef<Employee>[] = [
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
-                            <Link href={route('employees.show', employee.id)}>
-                                {t('ttl_view_details')}
-                            </Link>
+                            <Link href={route('employees.show', employee.id)}>{t('ttl_view_details')}</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                             <Link href={route('employees.edit', employee.id)}>
@@ -113,19 +109,3 @@ export const columns: ColumnDef<Employee>[] = [
 ];
 
 export default columns;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

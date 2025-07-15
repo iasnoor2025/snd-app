@@ -1,8 +1,8 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Button } from "@/Core";
+import { Button } from '@/Core';
 import { RentalStatus } from '@/Core/types/models';
 import { router } from '@inertiajs/react';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 interface RentalWorkflowActionsProps {
@@ -14,12 +14,8 @@ interface RentalWorkflowActionsProps {
     canManageDocuments?: boolean;
 }
 
-export function RentalWorkflowActions({
-    rental,
-    className,
-    canManageDocuments = false,
-}: RentalWorkflowActionsProps) {
-  const { t } = useTranslation('rental');
+export function RentalWorkflowActions({ rental, className, canManageDocuments = false }: RentalWorkflowActionsProps) {
+    const { t } = useTranslation('rental');
 
     const [isProcessing, setIsProcessing] = React.useState(false);
 
@@ -40,48 +36,56 @@ export function RentalWorkflowActions({
         }
 
         // For other actions, use Inertia post
-        router.post(`/rentals/${rental.id}/${action}`, {}, {
-            preserveState: true,
-            preserveScroll: true,
-            onSuccess: () => {
-                toast.dismiss(loadingToast);
-                toast.success('Action completed successfully');
-                router.get(window.location.pathname);
+        router.post(
+            `/rentals/${rental.id}/${action}`,
+            {},
+            {
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess: () => {
+                    toast.dismiss(loadingToast);
+                    toast.success('Action completed successfully');
+                    router.get(window.location.pathname);
+                },
+                onError: () => {
+                    toast.dismiss(loadingToast);
+                    toast.error('Failed to complete action');
+                    setIsProcessing(false);
+                },
+                onFinish: () => {
+                    toast.dismiss(loadingToast);
+                    setIsProcessing(false);
+                },
             },
-            onError: () => {
-                toast.dismiss(loadingToast);
-                toast.error('Failed to complete action');
-                setIsProcessing(false);
-            },
-            onFinish: () => {
-                toast.dismiss(loadingToast);
-                setIsProcessing(false);
-            }
-        })
+        );
     };
 
     const handleCancel = () => {
         if (isProcessing) return;
         setIsProcessing(true);
         const loadingToast = toast.loading('Cancelling rental...');
-        router.post(`/rentals/${rental.id}/cancel`, {}, {
-            preserveState: true,
-            preserveScroll: true,
-            onSuccess: () => {
-                toast.dismiss(loadingToast);
-                toast.success('Rental cancelled');
-                router.get(window.location.pathname);
+        router.post(
+            `/rentals/${rental.id}/cancel`,
+            {},
+            {
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess: () => {
+                    toast.dismiss(loadingToast);
+                    toast.success('Rental cancelled');
+                    router.get(window.location.pathname);
+                },
+                onError: () => {
+                    toast.dismiss(loadingToast);
+                    toast.error('Failed to cancel rental');
+                    setIsProcessing(false);
+                },
+                onFinish: () => {
+                    toast.dismiss(loadingToast);
+                    setIsProcessing(false);
+                },
             },
-            onError: () => {
-                toast.dismiss(loadingToast);
-                toast.error('Failed to cancel rental');
-                setIsProcessing(false);
-            },
-            onFinish: () => {
-                toast.dismiss(loadingToast);
-                setIsProcessing(false);
-            }
-        });
+        );
     };
 
     const getAvailableActions = () => {
@@ -184,12 +188,12 @@ export function RentalWorkflowActions({
     const actions = getAvailableActions();
 
     // Add Cancel button for allowed statuses
-    if (["active", "mobilization", "quotation", "pending"].includes(rental.status)) {
+    if (['active', 'mobilization', 'quotation', 'pending'].includes(rental.status)) {
         actions.push({
             label: 'Cancel Rental',
             action: 'cancel',
             variant: 'destructive' as const,
-            onClick: handleCancel
+            onClick: handleCancel,
         });
     }
 
@@ -201,12 +205,7 @@ export function RentalWorkflowActions({
         <div className={className}>
             <div className="flex flex-wrap gap-2">
                 {actions.map(({ label, action, variant }) => (
-                    <Button
-                        key={action}
-                        variant={variant}
-                        onClick={() => handleAction(action)}
-                        disabled={isProcessing}
-                    >
+                    <Button key={action} variant={variant} onClick={() => handleAction(action)} disabled={isProcessing}>
                         {label}
                     </Button>
                 ))}
@@ -214,17 +213,3 @@ export function RentalWorkflowActions({
         </div>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

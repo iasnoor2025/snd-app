@@ -1,47 +1,50 @@
+import { AlertCircle, Calendar, CheckCircle, Plus } from 'lucide-react';
 import React, { useState } from 'react';
-import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from '../ui/dialog';
-import { Calendar, AlertCircle, CheckCircle, Plus } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '../ui/dialog';
 import DashboardWidgetCard from './DashboardWidgetCard';
-import { formatDateMedium } from '../../utils/dateFormatter';
-import { formatDateTime, formatDateShort } from '../../utils/dateFormatter';
 
 interface CalendarEvent {
-  id: string;
-  date: string; // e.g. '2024-07-10'
-  title: string;
-  description?: string;
-  type?: 'meeting' | 'deadline' | 'alert';
+    id: string;
+    date: string; // e.g. '2024-07-10'
+    title: string;
+    description?: string;
+    type?: 'meeting' | 'deadline' | 'alert';
 }
 
 interface CalendarWidgetProps {
-  events: CalendarEvent[];
-  className?: string;
-  onRemove: () => void;
+    events: CalendarEvent[];
+    className?: string;
+    onRemove: () => void;
 }
 
 const typeMap = {
-  meeting: { color: 'bg-blue-500', icon: <Calendar className="h-4 w-4 text-blue-500" /> },
-  deadline: { color: 'bg-green-500', icon: <CheckCircle className="h-4 w-4 text-green-500" /> },
-  alert: { color: 'bg-red-500', icon: <AlertCircle className="h-4 w-4 text-red-500" /> },
+    meeting: { color: 'bg-blue-500', icon: <Calendar className="h-4 w-4 text-blue-500" /> },
+    deadline: { color: 'bg-green-500', icon: <CheckCircle className="h-4 w-4 text-green-500" /> },
+    alert: { color: 'bg-red-500', icon: <AlertCircle className="h-4 w-4 text-red-500" /> },
 };
 
 const CalendarWidget: React.FC<CalendarWidgetProps> = ({ events, className = '', onRemove }) => {
-  const [open, setOpen] = useState(false);
-  return (
-    <>
-      <DashboardWidgetCard title="Calendar" summary={events.length === 0 ? 'No upcoming events' : `Upcoming events: ${events.length}`} onRemove={onRemove} className={className} />
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <button className="ml-2 p-1 rounded-full bg-primary text-primary-foreground hover:bg-primary/80" title="Create Event">
-            <Plus className="h-4 w-4" />
-          </button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogTitle>Create Event</DialogTitle>
-          <DialogDescription>Event creation form coming soon...</DialogDescription>
-        </DialogContent>
-      </Dialog>
-      {/*
+    const [open, setOpen] = useState(false);
+    return (
+        <>
+            <DashboardWidgetCard
+                title="Calendar"
+                summary={events.length === 0 ? 'No upcoming events' : `Upcoming events: ${events.length}`}
+                onRemove={onRemove}
+                className={className}
+            />
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger asChild>
+                    <button className="ml-2 rounded-full bg-primary p-1 text-primary-foreground hover:bg-primary/80" title="Create Event">
+                        <Plus className="h-4 w-4" />
+                    </button>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogTitle>Create Event</DialogTitle>
+                    <DialogDescription>Event creation form coming soon...</DialogDescription>
+                </DialogContent>
+            </Dialog>
+            {/*
       <CardContent>
         <ul className="space-y-2">
           {events.length === 0 ? (
@@ -59,9 +62,9 @@ const CalendarWidget: React.FC<CalendarWidgetProps> = ({ events, className = '',
         </ul>
       </CardContent>
       */}
-    </>
-  );
+        </>
+    );
 };
 
 export default CalendarWidget;
-export type { CalendarWidgetProps, CalendarEvent };
+export type { CalendarEvent, CalendarWidgetProps };

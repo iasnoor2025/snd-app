@@ -1,17 +1,10 @@
-import React, { useState } from 'react';
+import { AppLayout, Button, Dialog, DialogContent, DialogHeader, DialogTitle } from '@/Core';
 import { Head } from '@inertiajs/react';
-import { AppLayout } from '@/Core';
-import { ProjectList } from '../components/ProjectList';
-import { ProjectForm } from '../components/ProjectForm';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-} from "@/Core";
-import { Button } from "@/Core";
 import { PlusIcon } from 'lucide-react';
+import { useState } from 'react';
 import { toast } from 'sonner';
+import { ProjectForm } from '../components/ProjectForm';
+import { ProjectList } from '../components/ProjectList';
 
 interface Project {
     id: number;
@@ -85,7 +78,7 @@ export default function Projects({ projects: initialProjects, managers }: Projec
             }
 
             const updatedProject = await response.json();
-            setProjects(projects.map(p => p.id === updatedProject.id ? updatedProject : p));
+            setProjects(projects.map((p) => (p.id === updatedProject.id ? updatedProject : p)));
             setIsEditDialogOpen(false);
             setSelectedProject(null);
             toast.success(t('projects:project_updated_success'));
@@ -106,7 +99,7 @@ export default function Projects({ projects: initialProjects, managers }: Projec
                 throw new Error('Failed to delete project');
             }
 
-            setProjects(projects.filter(p => p.id !== projectId));
+            setProjects(projects.filter((p) => p.id !== projectId));
             toast.success(t('projects:project_deleted_success'));
         } catch (error) {
             toast.error(t('projects:error_deleting_project'));
@@ -118,21 +111,18 @@ export default function Projects({ projects: initialProjects, managers }: Projec
             title={t('ttl_projects')}
             breadcrumbs={[
                 { title: 'Dashboard', href: '/dashboard' },
-                { title: 'Projects', href: '/projects' }
+                { title: 'Projects', href: '/projects' },
             ]}
         >
             <Head title={t('ttl_projects')} />
 
             <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6">
-                            <div className="flex justify-between items-center mb-6">
+                            <div className="mb-6 flex items-center justify-between">
                                 <h2 className="text-2xl font-semibold">Projects</h2>
-                                <Button
-                                    onClick={() => setIsCreateDialogOpen(true)}
-                                    className="flex items-center gap-2"
-                                >
+                                <Button onClick={() => setIsCreateDialogOpen(true)} className="flex items-center gap-2">
                                     <PlusIcon className="h-4 w-4" />
                                     New Project
                                 </Button>
@@ -156,10 +146,7 @@ export default function Projects({ projects: initialProjects, managers }: Projec
                     <DialogHeader>
                         <DialogTitle>{t('create_new_project')}</DialogTitle>
                     </DialogHeader>
-                    <ProjectForm
-                        onSubmit={handleCreate}
-                        managers={managers}
-                    />
+                    <ProjectForm onSubmit={handleCreate} managers={managers} />
                 </DialogContent>
             </Dialog>
 
@@ -168,29 +155,9 @@ export default function Projects({ projects: initialProjects, managers }: Projec
                     <DialogHeader>
                         <DialogTitle>{t('edit_project')}</DialogTitle>
                     </DialogHeader>
-                    {selectedProject && (
-                        <ProjectForm
-                            initialData={selectedProject}
-                            onSubmit={handleEdit}
-                            managers={managers}
-                        />
-                    )}
+                    {selectedProject && <ProjectForm initialData={selectedProject} onSubmit={handleEdit} managers={managers} />}
                 </DialogContent>
             </Dialog>
         </AppLayout>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
