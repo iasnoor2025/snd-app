@@ -1,19 +1,4 @@
-import {
-    Alert,
-    AlertDescription,
-    AlertTitle,
-    Button,
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-    Input,
-} from '@/Core';
+import { Alert, Button, Card, CardContent, CardHeader, CardTitle, FormControl, FormField, FormItem, FormLabel, FormMessage, Input } from '@/Core';
 import { Info, Upload, X } from 'lucide-react';
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
@@ -43,7 +28,6 @@ export default function DocumentsTab({ form, files, setFiles }: DocumentsTabProp
             <CardContent>
                 <Alert className="mb-6">
                     <Info className="h-4 w-4" />
-                    <AlertTitle>{t('information')}</AlertTitle>
                     <AlertDescription>{t('documents_optional_info')}</AlertDescription>
                 </Alert>
 

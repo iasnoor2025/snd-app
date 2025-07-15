@@ -11,9 +11,9 @@ import { Button, Card, CardContent, CardHeader, CardTitle, FormControl, FormFiel
 
 // Define the form schema with validation
 const timesheetSchema = z.object({
-    date: z.string().min(1, { message: 'Date is required' }),
-    clock_in: z.string().min(1, { message: 'Clock in time is required' }),
-    clock_out: z.string().min(1, { message: 'Clock out time is required' }),
+    date: z.string().min(1, { message: t('EmployeeManagement:employee.err_date_required', 'Date is required') }),
+    clock_in: z.string().min(1, { message: t('EmployeeManagement:employee.err_clock_in_required', 'Clock in time is required') }),
+    clock_out: z.string().min(1, { message: t('EmployeeManagement:employee.err_clock_out_required', 'Clock out time is required') }),
     break_start: z.string().optional(),
     break_end: z.string().optional(),
     project_id: z.string().optional(),
@@ -69,8 +69,8 @@ export const TimesheetForm: React.FC<TimesheetFormProps> = ({ employeeId, timesh
                 .catch((error) => {
                     console.error('Error loading timesheet:', error);
                     toast({
-                        title: 'Error',
-                        description: 'Failed to load timesheet data',
+                        title: t('EmployeeManagement:employee.toast_error', 'Error'),
+                        description: t('EmployeeManagement:employee.toast_failed_load_timesheet', 'Failed to load timesheet data'),
                         variant: 'destructive',
                     });
                 })
@@ -96,15 +96,15 @@ export const TimesheetForm: React.FC<TimesheetFormProps> = ({ employeeId, timesh
                 // Update existing timesheet
                 response = await axios.put(`/employees/${employeeId}/timesheets/${timesheetId}`, formattedData);
                 toast({
-                    title: 'Success',
-                    description: 'Timesheet updated successfully',
+                    title: t('EmployeeManagement:employee.toast_success', 'Success'),
+                    description: t('EmployeeManagement:employee.toast_timesheet_updated', 'Timesheet updated successfully'),
                 });
             } else {
                 // Create new timesheet
                 response = await axios.post(`/api/v1/timesheets`, { ...formattedData, employee_id: employeeId });
                 toast({
-                    title: 'Success',
-                    description: 'Timesheet created successfully',
+                    title: t('EmployeeManagement:employee.toast_success', 'Success'),
+                    description: t('EmployeeManagement:employee.toast_timesheet_created', 'Timesheet created successfully'),
                 });
                 form.reset({
                     date: format(new Date(), 'yyyy-MM-dd'),
@@ -123,8 +123,8 @@ export const TimesheetForm: React.FC<TimesheetFormProps> = ({ employeeId, timesh
         } catch (error) {
             console.error('Error saving timesheet:', error);
             toast({
-                title: 'Error',
-                description: 'Failed to save timesheet',
+                title: t('EmployeeManagement:employee.toast_error', 'Error'),
+                description: t('EmployeeManagement:employee.toast_failed_save_timesheet', 'Failed to save timesheet'),
                 variant: 'destructive',
             });
         } finally {
@@ -149,7 +149,7 @@ export const TimesheetForm: React.FC<TimesheetFormProps> = ({ employeeId, timesh
                             name="date"
                             render={({ field }: { field: ControllerRenderProps<TimesheetFormValues, any> }) => (
                                 <FormItem>
-                                    <FormLabel>Date</FormLabel>
+                                    <FormLabel>{t('EmployeeManagement:employee.lbl_date', 'Date')}</FormLabel>
                                     <FormControl>
                                         <Input type="date" {...field} disabled={isLoading} className="w-full" />
                                     </FormControl>
@@ -262,10 +262,14 @@ export const TimesheetForm: React.FC<TimesheetFormProps> = ({ employeeId, timesh
 
                     <div className="flex justify-end space-x-2">
                         <Button type="button" variant="outline" onClick={() => form.reset()} disabled={isLoading}>
-                            Reset
+                            {t('EmployeeManagement:employee.btn_reset', 'Reset')}
                         </Button>
                         <Button type="submit" disabled={isLoading}>
-                            {isLoading ? 'Saving...' : timesheetId ? 'Update Timesheet' : 'Add Timesheet'}
+                            {isLoading
+                                ? t('EmployeeManagement:employee.btn_saving', 'Saving...')
+                                : timesheetId
+                                  ? t('EmployeeManagement:employee.btn_update_timesheet', 'Update Timesheet')
+                                  : t('EmployeeManagement:employee.btn_add_timesheet', 'Add Timesheet')}
                         </Button>
                     </div>
                 </form>

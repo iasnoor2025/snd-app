@@ -134,7 +134,7 @@ export const TimesheetSummary: React.FC<TimesheetSummaryProps> = ({ employeeId, 
                     setDailyRecords(records);
                 } else {
                     console.error('Error fetching timesheet data:', error);
-                    toast('Failed to load timesheet data');
+                    toast(t('msg_failed_load_timesheet_data'));
                 }
             } finally {
                 setIsLoading(false);
@@ -148,18 +148,18 @@ export const TimesheetSummary: React.FC<TimesheetSummaryProps> = ({ employeeId, 
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: 5 }, (_, i) => currentYear - 2 + i); // 2 years back, 2 years forward
     const months = [
-        { value: 0, label: t('January', 'January') },
-        { value: 1, label: t('February', 'February') },
-        { value: 2, label: t('March', 'March') },
-        { value: 3, label: t('April', 'April') },
-        { value: 4, label: t('May', 'May') },
-        { value: 5, label: t('June', 'June') },
-        { value: 6, label: t('July', 'July') },
-        { value: 7, label: t('August', 'August') },
-        { value: 8, label: t('September', 'September') },
-        { value: 9, label: t('October', 'October') },
-        { value: 10, label: t('November', 'November') },
-        { value: 11, label: t('December', 'December') },
+        { value: 0, label: t('month_january') },
+        { value: 1, label: t('month_february') },
+        { value: 2, label: t('month_march') },
+        { value: 3, label: t('month_april') },
+        { value: 4, label: t('month_may') },
+        { value: 5, label: t('month_june') },
+        { value: 6, label: t('month_july') },
+        { value: 7, label: t('month_august') },
+        { value: 8, label: t('month_september') },
+        { value: 9, label: t('month_october') },
+        { value: 10, label: t('month_november') },
+        { value: 11, label: t('month_december') },
     ];
 
     const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -224,7 +224,7 @@ export const TimesheetSummary: React.FC<TimesheetSummaryProps> = ({ employeeId, 
                     <div className="h-8 w-8 animate-spin rounded-full border-t-2 border-b-2 border-primary"></div>
                 </div>
             ) : !selectedEmployeeId ? (
-                <div className="py-8 text-center text-muted-foreground">Please select an employee to view timesheet data.</div>
+                <div className="py-8 text-center text-muted-foreground">{t('msg_select_employee_to_view_timesheet')}</div>
             ) : (
                 <>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -266,7 +266,7 @@ export const TimesheetSummary: React.FC<TimesheetSummaryProps> = ({ employeeId, 
                                     showSummary={true}
                                 />
                             ) : (
-                                <div className="text-muted-foreground italic">DailyTimesheetRecords component not found.</div>
+                                <div className="text-muted-foreground italic">{t('msg_daily_timesheet_component_not_found')}</div>
                             )}
                         </CardContent>
                     </Card>

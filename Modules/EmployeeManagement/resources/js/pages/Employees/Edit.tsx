@@ -14,15 +14,15 @@ import {
     getTranslation,
     Input,
     Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
     Tabs,
     TabsContent,
     TabsList,
     TabsTrigger,
     ToastService,
+    SelectTrigger,
+    SelectContent,
+    SelectItem,
+    SelectValue,
 } from '@/Core';
 import { PageProps, User } from '@/Core/types';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -462,38 +462,23 @@ export default function Edit({ auth, employee, users, designations }: Props) {
                                             <FormField
                                                 control={form.control}
                                                 name="nationality"
-                                                render={({ field }) => (
+                                                render={({ field }: any) => (
                                                     <FormItem>
                                                         <FormLabel>Nationality</FormLabel>
-                                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                            <FormControl>
-                                                                <SelectTrigger>
-                                                                    <SelectValue placeholder={t('ph_select_nationality')} />
+                                                        <FormControl>
+                                                            <Select value={field.value || ''} onValueChange={field.onChange}>
+                                                                <SelectTrigger className="w-full">
+                                                                    <SelectValue placeholder="Select nationality" />
                                                                 </SelectTrigger>
-                                                            </FormControl>
-                                                            <SelectContent className="max-h-[200px]">
-                                                                {[
-                                                                    { value: 'Saudi Arabia', label: 'Saudi Arabia' },
-                                                                    { value: 'Kuwait', label: 'Kuwait' },
-                                                                    { value: 'Bahrain', label: 'Bahrain' },
-                                                                    { value: 'Qatar', label: 'Qatar' },
-                                                                    { value: 'Oman', label: 'Oman' },
-                                                                    { value: 'Yemen', label: 'Yemen' },
-                                                                    { value: 'Egypt', label: 'Egypt' },
-                                                                    { value: 'India', label: 'India' },
-                                                                    { value: 'Pakistan', label: 'Pakistan' },
-                                                                    { value: 'Bangladesh', label: 'Bangladesh' },
-                                                                    { value: 'Philippines', label: 'Philippines' },
-                                                                    { value: 'Sri Lanka', label: 'Sri Lanka' },
-                                                                    { value: 'Nepal', label: 'Nepal' },
-                                                                    { value: 'Sudan', label: 'Sudan' },
-                                                                ].map((country) => (
-                                                                    <SelectItem key={`country-${country.value}`} value={country.value}>
-                                                                        {country.label}
-                                                                    </SelectItem>
-                                                                ))}
-                                                            </SelectContent>
-                                                        </Select>
+                                                                <SelectContent>
+                                                                    {[
+                                                                        'Saudi Arabia', 'Kuwait', 'Bahrain', 'Qatar', 'Oman', 'Yemen', 'Egypt', 'India', 'Pakistan', 'Bangladesh', 'Philippines', 'Sri Lanka', 'Nepal', 'Sudan',
+                                                                    ].map((country) => (
+                                                                        <SelectItem key={country} value={country}>{country}</SelectItem>
+                                                                    ))}
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
                                                 )}
@@ -548,20 +533,18 @@ export default function Edit({ auth, employee, users, designations }: Props) {
                                                 render={({ field }) => (
                                                     <FormItem>
                                                         <FormLabel>Designation</FormLabel>
-                                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                            <FormControl>
-                                                                <SelectTrigger>
+                                                        <FormControl>
+                                                            <Select value={field.value || ''} onValueChange={field.onChange}>
+                                                                <SelectTrigger className="w-full">
                                                                     <SelectValue placeholder="Select designation" />
                                                                 </SelectTrigger>
-                                                            </FormControl>
-                                                            <SelectContent>
-                                                                {designations.map((designation) => (
-                                                                    <SelectItem key={designation.id} value={designation.id.toString()}>
-                                                                        {getTranslation(designation.name)}
-                                                                    </SelectItem>
-                                                                ))}
-                                                            </SelectContent>
-                                                        </Select>
+                                                                <SelectContent>
+                                                                    {designations.map((designation) => (
+                                                                        <SelectItem key={designation.id} value={designation.id.toString()}>{getTranslation(designation.name)}</SelectItem>
+                                                                    ))}
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
                                                 )}
@@ -601,28 +584,20 @@ export default function Edit({ auth, employee, users, designations }: Props) {
                                                 render={({ field }: any) => (
                                                     <FormItem>
                                                         <FormLabel>Status</FormLabel>
-                                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                            <FormControl>
-                                                                <SelectTrigger>
+                                                        <FormControl>
+                                                            <Select value={field.value || ''} onValueChange={field.onChange}>
+                                                                <SelectTrigger className="w-full">
                                                                     <SelectValue placeholder="Select status" />
                                                                 </SelectTrigger>
-                                                            </FormControl>
-                                                            <SelectContent>
-                                                                {EMPLOYEE_STATUSES.map((status) => (
-                                                                    <SelectItem key={status} value={status}>
-                                                                        {status === 'active'
-                                                                            ? 'Active'
-                                                                            : status === 'inactive'
-                                                                              ? 'Inactive'
-                                                                              : status === 'on_leave'
-                                                                                ? 'On Leave'
-                                                                                : status === 'exit'
-                                                                                  ? 'Exit'
-                                                                                  : status.charAt(0).toUpperCase() + status.slice(1)}
-                                                                    </SelectItem>
-                                                                ))}
-                                                            </SelectContent>
-                                                        </Select>
+                                                                <SelectContent>
+                                                                    {['active', 'inactive', 'on_leave', 'exit'].map((status) => (
+                                                                        <SelectItem key={status} value={status}>
+                                                                            {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
+                                                                        </SelectItem>
+                                                                    ))}
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
                                                 )}

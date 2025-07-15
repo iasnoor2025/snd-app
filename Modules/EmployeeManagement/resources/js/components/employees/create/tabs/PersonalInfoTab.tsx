@@ -12,9 +12,9 @@ import {
     FormMessage,
     Input,
     Select,
+    SelectTrigger,
     SelectContent,
     SelectItem,
-    SelectTrigger,
     SelectValue,
 } from '@/Core';
 import axios from 'axios';
@@ -150,10 +150,8 @@ export default function PersonalInfoTab({ form }: PersonalInfoTabProps) {
             <CardContent>
                 <Alert className="mb-6">
                     <Info className="h-4 w-4" />
-                    <AlertTitle>Important!</AlertTitle>
-                    <AlertDescription>
-                        Fields marked with an asterisk (*) are required. Please fill in all required fields to create an employee.
-                    </AlertDescription>
+                    <div className="font-semibold">Important!</div>
+                    <div>Fields marked with an asterisk (*) are required. Please fill in all required fields to create an employee.</div>
                 </Alert>
 
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -162,7 +160,7 @@ export default function PersonalInfoTab({ form }: PersonalInfoTabProps) {
                         name="file_number"
                         render={({ field }: any) => (
                             <FormItem>
-                                <FormLabel className="flex items-center">
+                                <FormLabel>
                                     {t('file_number')} <span className="ml-1 text-red-500">*</span>
                                 </FormLabel>
                                 <div className="flex space-x-2">
@@ -190,7 +188,7 @@ export default function PersonalInfoTab({ form }: PersonalInfoTabProps) {
                         name="first_name"
                         render={({ field }: any) => (
                             <FormItem>
-                                <FormLabel className="flex items-center">
+                                <FormLabel>
                                     {t('lbl_first_name')} <span className="ml-1 text-red-500">*</span>
                                 </FormLabel>
                                 <FormControl>
@@ -206,7 +204,7 @@ export default function PersonalInfoTab({ form }: PersonalInfoTabProps) {
                         name="last_name"
                         render={({ field }: any) => (
                             <FormItem>
-                                <FormLabel className="flex items-center">
+                                <FormLabel>
                                     {t('lbl_last_name')} <span className="ml-1 text-red-500">*</span>
                                 </FormLabel>
                                 <FormControl>
@@ -222,7 +220,7 @@ export default function PersonalInfoTab({ form }: PersonalInfoTabProps) {
                         name="email"
                         render={({ field }: any) => (
                             <FormItem>
-                                <FormLabel className="flex items-center">
+                                <FormLabel>
                                     {t('email')} <span className="ml-1 text-red-500">*</span>
                                 </FormLabel>
                                 <FormControl>
@@ -238,7 +236,7 @@ export default function PersonalInfoTab({ form }: PersonalInfoTabProps) {
                         name="phone"
                         render={({ field }: any) => (
                             <FormItem>
-                                <FormLabel className="flex items-center">
+                                <FormLabel>
                                     {t('phone')} <span className="ml-1 text-red-500">*</span>
                                 </FormLabel>
                                 <FormControl>
@@ -254,29 +252,21 @@ export default function PersonalInfoTab({ form }: PersonalInfoTabProps) {
                         name="nationality"
                         render={({ field }: any) => (
                             <FormItem>
-                                <FormLabel className="flex items-center">
+                                <FormLabel>
                                     {t('nationality')} <span className="ml-1 text-red-500">*</span>
                                 </FormLabel>
-                                <Select onValueChange={field.onChange} value={field.value || ''} defaultValue={field.value || ''}>
-                                    <FormControl>
-                                        <SelectTrigger>
+                                <FormControl>
+                                    <Select value={field.value || ''} onValueChange={field.onChange}>
+                                        <SelectTrigger className="w-full">
                                             <SelectValue placeholder={t('ph_select_nationality')} />
                                         </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        {/* Always show the current value if not in the list */}
-                                        {field.value && !countries.some((c) => c.value === field.value) && (
-                                            <SelectItem key={field.value} value={field.value}>
-                                                {field.value}
-                                            </SelectItem>
-                                        )}
-                                        {countries.map((country: any) => (
-                                            <SelectItem key={country.value} value={country.value}>
-                                                {country.label}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                        <SelectContent>
+                                            {countries.map((country) => (
+                                                <SelectItem key={country.value} value={country.value}>{country.label}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -287,7 +277,7 @@ export default function PersonalInfoTab({ form }: PersonalInfoTabProps) {
                         name="date_of_birth"
                         render={({ field }: any) => (
                             <FormItem>
-                                <FormLabel className="flex items-center">
+                                <FormLabel>
                                     {t('date_of_birth')} <span className="ml-1 text-red-500">*</span>
                                 </FormLabel>
                                 <FormControl>

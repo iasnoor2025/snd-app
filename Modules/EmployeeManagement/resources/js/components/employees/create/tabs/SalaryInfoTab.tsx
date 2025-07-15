@@ -1,19 +1,4 @@
-import {
-    Alert,
-    AlertDescription,
-    AlertTitle,
-    Button,
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-    Input,
-} from '@/Core';
+import { Alert, Button, Card, CardContent, CardHeader, CardTitle, FormControl, FormField, FormItem, FormLabel, FormMessage, Input } from '@/Core';
 import { ChevronDown, ChevronUp, Info } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
@@ -136,8 +121,8 @@ export default function SalaryInfoTab<TFormValues extends FieldValues = SalaryIn
             <CardContent>
                 <Alert className="mb-6">
                     <Info className="h-4 w-4" />
-                    <AlertTitle>Information</AlertTitle>
-                    <AlertDescription>These fields are optional. You can update them later after creating the employee.</AlertDescription>
+                    <div>Information</div>
+                    <div>These fields are optional. You can update them later after creating the employee.</div>
                 </Alert>
 
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">

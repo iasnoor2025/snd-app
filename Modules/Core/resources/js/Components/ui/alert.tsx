@@ -13,3 +13,11 @@ export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(({ className =
 });
 
 Alert.displayName = 'Alert';
+
+export const AlertTitle = ({ children, className = '', ...props }: any) => (
+  <div className={`font-semibold text-base mb-1 ${className}`} {...props}>{children}</div>
+);
+
+export const AlertDescription = ({ children, className = '', ...props }: any) => (
+  <div className={`text-sm opacity-80 ${className}`} {...props}>{children}</div>
+);

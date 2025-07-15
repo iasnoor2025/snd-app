@@ -12,10 +12,6 @@ import {
     Input,
     Permission,
     Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
     Table,
     TableBody,
     TableCell,
@@ -267,47 +263,36 @@ export default function Index({ auth, employees, filters, departments, designati
                                     className="pl-8"
                                 />
                             </div>
-                            <Select value={status} onValueChange={(value) => handleFilter('status', value)}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder={t('ph_filter_by_status')} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">{t('opt_all_statuses')}</SelectItem>
-                                    <SelectItem value="active">Active</SelectItem>
-                                    <SelectItem value="inactive">Inactive</SelectItem>
-                                    <SelectItem value="on_leave">On Leave</SelectItem>
-                                    <SelectItem value="exit">Exit</SelectItem>
-                                </SelectContent>
-                            </Select>
-                            <Select value={department} onValueChange={(value) => handleFilter('department', value)}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder={t('ph_filter_by_department')} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">{t('opt_all_departments')}</SelectItem>
-                                    {departments?.map(
-                                        (dept) =>
-                                            dept && (
-                                                <SelectItem key={dept.id} value={dept.id.toString()}>
-                                                    {typeof dept.name === 'string' ? dept.name : JSON.stringify(dept.name)}
-                                                </SelectItem>
-                                            ),
-                                    )}
-                                </SelectContent>
-                            </Select>
-                            <Select value={designation} onValueChange={(value) => handleFilter('designation', value)}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder={t('ph_filter_by_designation')} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">{t('opt_all_designations')}</SelectItem>
-                                    {designations?.map((designation) => (
-                                        <SelectItem key={designation.id} value={designation.id.toString()}>
-                                            {typeof designation.name === 'string' ? designation.name : JSON.stringify(designation.name)}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <Select
+                                value={status}
+                                onValueChange={(value) => handleFilter('status', value)}
+                                options={[
+                                    { value: 'all', label: t('opt_all_statuses') },
+                                    { value: 'active', label: 'Active' },
+                                    { value: 'inactive', label: 'Inactive' },
+                                    { value: 'on_leave', label: 'On Leave' },
+                                    { value: 'exit', label: 'Exit' },
+                                ]}
+                                placeholder={t('ph_filter_by_status')}
+                            />
+                            <Select
+                                value={department}
+                                onValueChange={(value) => handleFilter('department', value)}
+                                options={[
+                                    { value: 'all', label: t('opt_all_departments') },
+                                    ...departments?.map((dept) => ({ value: dept.id.toString(), label: typeof dept.name === 'string' ? dept.name : JSON.stringify(dept.name) }))
+                                ]}
+                                placeholder={t('ph_filter_by_department')}
+                            />
+                            <Select
+                                value={designation}
+                                onValueChange={(value) => handleFilter('designation', value)}
+                                options={[
+                                    { value: 'all', label: t('opt_all_designations') },
+                                    ...designations?.map((designation) => ({ value: designation.id.toString(), label: typeof designation.name === 'string' ? designation.name : JSON.stringify(designation.name) }))
+                                ]}
+                                placeholder={t('ph_filter_by_designation')}
+                            />
                         </div>
 
                         <div className="overflow-x-auto rounded-md border">

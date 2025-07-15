@@ -1,7 +1,5 @@
 import {
     Alert,
-    AlertDescription,
-    AlertTitle,
     Button,
     Card,
     CardContent,
@@ -15,9 +13,9 @@ import {
     getTranslation,
     Input,
     Select,
+    SelectTrigger,
     SelectContent,
     SelectItem,
-    SelectTrigger,
     SelectValue,
 } from '@/Core';
 import axios from 'axios';
@@ -299,8 +297,7 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
             <CardContent>
                 <Alert className="mb-6">
                     <Info className="h-4 w-4" />
-                    <AlertTitle>{t('information')}</AlertTitle>
-                    <AlertDescription>{t('employment_optional_info')}</AlertDescription>
+                    <div>{t('employment_optional_info')}</div>
                 </Alert>
 
                 <div className="space-y-6">
@@ -327,28 +324,16 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
                                     <FormLabel>{t('position')}</FormLabel>
                                     <div className="flex items-center gap-1">
                                         <div className="flex-1">
-                                            <Select onValueChange={field.onChange} value={field.value || ''} defaultValue={''}>
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder={t('ph_select_position')} />
-                                                    </SelectTrigger>
-                                                </FormControl>
+                                            <Select value={field.value || ''} onValueChange={field.onChange}>
+                                                <SelectTrigger className="w-full">
+                                                    <SelectValue placeholder="Select position" />
+                                                </SelectTrigger>
                                                 <SelectContent>
-                                                    {/* Always show the current value if not in the list */}
-                                                    {field.value && !positionsState.some((p) => String(p.id) === String(field.value)) && (
-                                                        <SelectItem key={field.value} value={field.value}>
-                                                            {form.getValues('position')?.name || field.value}
+                                                    {positionsState.map((pos) => (
+                                                        <SelectItem key={pos.id} value={String(pos.id)}>
+                                                            {typeof pos.name === 'object' ? pos.name.en || Object.values(pos.name)[0] : pos.name}
                                                         </SelectItem>
-                                                    )}
-                                                    {positionsState
-                                                        .filter((p) => p && typeof p.id === 'number')
-                                                        .map((position) => (
-                                                            <SelectItem key={position.id} value={String(position.id)}>
-                                                                {typeof position.name === 'object'
-                                                                    ? position.name.en || Object.values(position.name)[0]
-                                                                    : position.name}
-                                                            </SelectItem>
-                                                        ))}
+                                                    ))}
                                                 </SelectContent>
                                             </Select>
                                         </div>
@@ -371,9 +356,9 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
                                             className="ml-1"
                                             disabled={!field.value}
                                             onClick={handleDeletePositionClick}
-                                            title={t('delete_position')}
+                                            title={t('ttl_delete_position')}
                                         >
-                                            <Trash className="h-4 w-4 text-red-500" />
+                                            <Trash className="h-4 w-4 text-destructive" />
                                         </Button>
                                         <Button
                                             type="button"
@@ -411,12 +396,10 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
                             render={({ field }: any) => (
                                 <FormItem>
                                     <FormLabel>{t('status')}</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder={t('ph_select_status')} />
-                                            </SelectTrigger>
-                                        </FormControl>
+                                    <Select value={field.value || ''} onValueChange={field.onChange}>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Select status" />
+                                        </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="active">Active</SelectItem>
                                             <SelectItem value="inactive">Inactive</SelectItem>
@@ -434,12 +417,10 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
                             render={({ field }: any) => (
                                 <FormItem>
                                     <FormLabel>{t('role')}</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder={t('ph_select_role')} />
-                                            </SelectTrigger>
-                                        </FormControl>
+                                    <Select value={field.value || ''} onValueChange={field.onChange}>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Select role" />
+                                        </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="admin">Admin</SelectItem>
                                             <SelectItem value="manager">Manager</SelectItem>
@@ -459,23 +440,13 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
                             render={({ field }: any) => (
                                 <FormItem>
                                     <FormLabel>{t('supervisor')}</FormLabel>
-                                    <Select onValueChange={field.onChange} value={field.value || ''} defaultValue={field.value || ''}>
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder={t('ph_select_supervisor')} />
-                                            </SelectTrigger>
-                                        </FormControl>
+                                    <Select value={field.value || ''} onValueChange={field.onChange}>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Select supervisor" />
+                                        </SelectTrigger>
                                         <SelectContent>
-                                            {/* Always show the current value if not in the list */}
-                                            {field.value && !users.some((u) => String(u.id) === String(field.value)) && (
-                                                <SelectItem key={field.value} value={field.value}>
-                                                    {form.getValues('supervisor_name') || field.value}
-                                                </SelectItem>
-                                            )}
                                             {users.map((user) => (
-                                                <SelectItem key={user.id} value={String(user.id)}>
-                                                    {user.name}
-                                                </SelectItem>
+                                                <SelectItem key={user.id} value={String(user.id)}>{user.name}</SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
@@ -532,26 +503,16 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>{t('department')}</FormLabel>
-                                    <Select
-                                        value={field.value ? field.value.toString() : ''}
-                                        onValueChange={(value) => field.onChange(Number(value))}
-                                        disabled={departments.length === 0}
-                                    >
-                                        <FormControl>
-                                            <SelectTrigger id="department_id">
-                                                <SelectValue placeholder={t('ph_select_department')} />
-                                            </SelectTrigger>
-                                        </FormControl>
+                                    <Select value={field.value ? field.value.toString() : ''} onValueChange={(value) => field.onChange(Number(value))}>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Select department" />
+                                        </SelectTrigger>
                                         <SelectContent>
                                             {departments.length === 0 ? (
-                                                <SelectItem value="0" disabled>
-                                                    {t('No departments found')}
-                                                </SelectItem>
+                                                <SelectItem value="0">{t('No departments found')}</SelectItem>
                                             ) : (
                                                 departments.map((dept) => (
-                                                    <SelectItem key={dept.id} value={dept.id.toString()}>
-                                                        {getTranslation(dept.name)}
-                                                    </SelectItem>
+                                                    <SelectItem key={dept.id} value={dept.id.toString()}>{getTranslation(dept.name)}</SelectItem>
                                                 ))
                                             )}
                                         </SelectContent>

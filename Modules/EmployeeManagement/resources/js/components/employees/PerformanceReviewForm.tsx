@@ -1,7 +1,5 @@
 import {
     Alert,
-    AlertDescription,
-    AlertTitle,
     Badge,
     Button,
     Card,
@@ -255,8 +253,7 @@ const PerformanceReviewForm: React.FC<PerformanceReviewFormProps> = ({ review, e
                 {error && (
                     <Alert variant="destructive" className="mb-6">
                         <AlertCircle className="h-4 w-4" />
-                        <AlertTitle>Error</AlertTitle>
-                        <AlertDescription>{error}</AlertDescription>
+                        <p className="text-sm">{error}</p>
                     </Alert>
                 )}
 
