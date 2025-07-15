@@ -35,7 +35,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 const ToastService = { success: (msg: string) => alert(msg), error: (msg: string) => alert(msg) };
 import { PageProps } from '@/Core/types/index.d';
-import FileUpload from '@/components/FileUpload';
+import FileUpload from '@/Core/components/ui/FileUpload';
 
 // Define a simple usePermission hook for this component
 function usePermission() {

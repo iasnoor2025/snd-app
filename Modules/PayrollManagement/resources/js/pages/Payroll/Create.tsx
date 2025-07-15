@@ -9,7 +9,7 @@ import { Label } from "@/Core";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Core";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Core";
 import { format } from 'date-fns';
-import FileUpload from '@/components/FileUpload';
+import FileUpload from '@/Core/components/ui/FileUpload';
 
 interface Employee {
     id: number;

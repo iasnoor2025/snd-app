@@ -1,7 +1,5 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head } from '@inertiajs/react';
-import { PageProps, BreadcrumbItem } from '@/Core/types';
 import { AppLayout } from '@/Core';
 import { Button } from "@/Core";
 import {
@@ -21,7 +19,6 @@ import {
   Check as CheckIcon,
   X as XIcon,
   Calendar as CalendarIcon,
-  Briefcase as BriefcaseIcon,
   User as UserIcon
 } from 'lucide-react';
 import { useToast } from "@/Core";
@@ -34,26 +31,7 @@ import {
   TooltipTrigger,
 } from "@/Core";
 import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/components/ui/button';
 import { ApprovalDialog } from '../../components/ApprovalDialog';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
-
-interface Timesheet {
-  id: number;
-  employee_id: number;
-  date: string;
-  hours_worked: number;
-  overtime_hours: number;
-  status: string;
-  employee?: {
-    first_name: string;
-    last_name: string;
-  };
-  project?: {
-    name: string;
-  };
-}
 
 interface Props {
   timesheet: any;
@@ -72,7 +50,7 @@ export default function TimesheetShow({ timesheet, employee = {}, project = {}, 
   const { toast } = useToast();
   const { hasPermission } = usePermission();
 
-  const breadcrumbs: BreadcrumbItem[] = [
+  const breadcrumbs = [
     { title: t('dashboard', 'Dashboard'), href: '/dashboard' },
     { title: t('view', 'View'), href: '#' }
   ];
@@ -123,52 +101,6 @@ export default function TimesheetShow({ timesheet, employee = {}, project = {}, 
         toast({ description: error.message || t('delete_failed', 'Failed to delete timesheet') });
       });
     }
-  };
-
-  const handleApprove = () => {
-    fetch(route('timesheets.approve', timesheet.id), {
-      method: 'PUT',
-      headers: {
-        'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '',
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({}),
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        toast({ description: t('success', 'Timesheet approved successfully') });
-      } else {
-        toast({ description: data.error || t('approve_failed', 'Failed to approve timesheet') });
-      }
-    })
-    .catch(error => {
-      toast({ description: error.message || t('approve_failed', 'Failed to approve timesheet') });
-    });
-  };
-
-  const handleReject = () => {
-    fetch(route('timesheets.reject', timesheet.id), {
-      method: 'PUT',
-      headers: {
-        'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '',
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({}),
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        toast({ description: t('success', 'Success') });
-      } else {
-        toast({ description: data.error || t('reject_failed', 'Failed to reject timesheet') });
-      }
-    })
-    .catch(error => {
-      toast({ description: error.message || t('reject_failed', 'Failed to reject timesheet') });
-    });
   };
 
   // Calculate total hours

@@ -191,5 +191,22 @@
   "lbl_notes": "Notes",
   "optional": "Optional",
   "btn_saving": "Saving...",
-  "btn_save_timesheet": "Save Timesheet"
+  "btn_save_timesheet": "Save Timesheet",
+  "status_foreman_approved": "Foreman Approved",
+  "status_incharge_approved": "Incharge Approved",
+  "status_checking_approved": "Checking Approved",
+  "status_pending": "Pending",
+  "lbl_timesheet": "timesheet",
+  "lbl_selected": "selected",
+  "btn_approve_selected": "Approve Selected",
+  "btn_delete_selected": "Delete Selected",
+  "msg_loading_timesheets": "Loading timesheets...",
+  "lbl_regular": "Regular",
+  "lbl_ot": "OT",
+  "msg_reject_reason_notify": "Please provide a reason for rejecting this timesheet. The employee will be notified.",
+  "btn_rejecting": "Rejecting...",
+  "btn_reject_timesheet": "Reject Timesheet",
+  "msg_confirm_delete_timesheets": "Are you sure you want to delete the selected timesheets? This action cannot be undone.",
+  "btn_deleting": "Deleting...",
+  "btn_delete_timesheets": "Delete Timesheets"
 }

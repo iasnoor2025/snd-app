@@ -39,7 +39,7 @@ import { CalendarIcon } from "lucide-react";
 // Our components
 import RentalForm from "../../Components/rentals/RentalForm";
 import { route } from 'ziggy-js';
-import FileUpload from '@/components/FileUpload';
+import FileUpload from '@/Core/components/ui/FileUpload';
 
 interface Customer {
     id: number;

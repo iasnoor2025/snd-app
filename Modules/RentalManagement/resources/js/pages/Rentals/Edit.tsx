@@ -16,7 +16,7 @@ import { ArrowLeft, Plus, Edit as EditIcon, Trash2 } from "lucide-react";
 
 // Our components
 import { RentalForm } from '../../Components/rentals/RentalForm';
-import FileUpload from '@/components/FileUpload';
+import FileUpload from '@/Core/components/ui/FileUpload';
 import RentalItemsTable from '../../Components/rentals/RentalItemsTable';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/Core';
 import { Input, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Textarea } from '@/Core';

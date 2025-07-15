@@ -1,9 +1,9 @@
 import { Head } from '@inertiajs/react'
 import { useTranslation } from 'react-i18next'
 import { AppLayout } from '@/Core'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/Core/components/ui/button'
 import { cn } from '@/lib/utils'
-import { buttonVariants } from '@/components/ui/button'
+import { buttonVariants } from '@/Core/components/ui/button'
 
 export default function SalaryAdvancesIndex({ advances }) {
   const { t } = useTranslation()

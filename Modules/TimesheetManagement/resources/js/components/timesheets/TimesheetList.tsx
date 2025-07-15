@@ -159,21 +159,21 @@ const TimesheetList: React.FC<TimesheetListProps> = ({
     switch (status?.toLowerCase()) {
       case 'approved':
       case 'manager_approved':
-        return <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300">Approved</Badge>
+        return <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300">{t('status_approved')}</Badge>;
       case 'foreman_approved':
-        return <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-300">Foreman Approved</Badge>
+        return <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-300">{t('status_foreman_approved')}</Badge>; /* TODO: Add 'status_foreman_approved' */
       case 'incharge_approved':
-        return <Badge variant="outline" className="bg-orange-100 text-orange-800 border-orange-300">Incharge Approved</Badge>
+        return <Badge variant="outline" className="bg-orange-100 text-orange-800 border-orange-300">{t('status_incharge_approved')}</Badge>; /* TODO: Add 'status_incharge_approved' */
       case 'checking_approved':
-        return <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-300">Checking Approved</Badge>
+        return <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-300">{t('status_checking_approved')}</Badge>; /* TODO: Add 'status_checking_approved' */
       case 'submitted':
-        return <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-300">Submitted</Badge>
+        return <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-300">{t('status_submitted')}</Badge>;
       case 'rejected':
-        return <Badge variant="outline" className="bg-red-100 text-red-800 border-red-300">Rejected</Badge>
+        return <Badge variant="outline" className="bg-red-100 text-red-800 border-red-300">{t('status_rejected')}</Badge>;
       case 'draft':
-        return <Badge variant="outline" className="bg-gray-100 text-gray-800 border-gray-300">Draft</Badge>
+        return <Badge variant="outline" className="bg-gray-100 text-gray-800 border-gray-300">{t('status_draft')}</Badge>;
       default:
-        return <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-300">Pending</Badge>
+        return <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-300">{t('status_pending')}</Badge>; /* TODO: Add 'status_pending' */
     }
   };
 
@@ -182,8 +182,8 @@ const TimesheetList: React.FC<TimesheetListProps> = ({
       {selectedTimesheets.length > 0 && (
         <div className="flex justify-between items-center p-2 bg-gray-50 rounded-md">
           <span className="text-sm">
-            {selectedTimesheets.length} timesheet{selectedTimesheets.length > 1 ? 's' : ''} selected
-          </span>
+            {selectedTimesheets.length} {t('lbl_timesheet', { count: selectedTimesheets.length })} {t('lbl_selected')}
+          </span> {/* TODO: Add 'lbl_timesheet' (with plural support) and 'lbl_selected' */}
           <div className="flex gap-2">
             <Button
               size="sm"
@@ -194,12 +194,12 @@ const TimesheetList: React.FC<TimesheetListProps> = ({
               {processing ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Approve Selected
+                  {t('btn_approve_selected')}
                 </>
               ) : (
                 <>
                   <Check className="h-4 w-4" />
-                  Approve Selected
+                  {t('btn_approve_selected')}
                 </>
               )}
             </Button>
@@ -212,7 +212,7 @@ const TimesheetList: React.FC<TimesheetListProps> = ({
                 className="flex items-center gap-1"
               >
                 <XCircle className="h-4 w-4" />
-                Delete Selected
+                {t('btn_delete_selected')}
               </Button>
             )}
           </div>
@@ -231,12 +231,12 @@ const TimesheetList: React.FC<TimesheetListProps> = ({
                   onCheckedChange={handleSelectAll}
                 />
               </TableHead>
-              <TableHead>Employee</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Hours</TableHead>
-              <TableHead>Project</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t('lbl_employee')}</TableHead>
+              <TableHead>{t('lbl_date')}</TableHead>
+              <TableHead>{t('lbl_hours')}</TableHead>
+              <TableHead>{t('lbl_project')}</TableHead>
+              <TableHead>{t('lbl_status')}</TableHead>
+              <TableHead className="text-right">{t('lbl_actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -244,13 +244,13 @@ const TimesheetList: React.FC<TimesheetListProps> = ({
               <TableRow>
                 <TableCell colSpan={7} className="h-24 text-center">
                   <Loader2 className="h-6 w-6 animate-spin mx-auto" />
-                  <span className="text-sm text-gray-500 mt-2 block">Loading timesheets...</span>
+                  <span className="text-sm text-gray-500 mt-2 block">{t('msg_loading_timesheets')}</span> {/* TODO: Add 'msg_loading_timesheets' */}
                 </TableCell>
               </TableRow>
             ) : timesheets.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="h-24 text-center">
-                  <span className="text-sm text-gray-500">No timesheets found.</span>
+                  <span className="text-sm text-gray-500">{t('msg_no_timesheets_found')}</span>
                 </TableCell>
               </TableRow>
             ) : (
@@ -269,10 +269,11 @@ const TimesheetList: React.FC<TimesheetListProps> = ({
                   <TableCell>{format(parseISO((timesheet as any).date), 'MMM dd, yyyy')}</TableCell>
                   <TableCell>
                     <div className="flex flex-col">
-                      <span>Regular: {(timesheet as any).regular_hours}h</span>
+                      <span>{t('lbl_regular')}: {(timesheet as any).regular_hours}h</span> {/* TODO: Add 'lbl_regular' */}
                       {(timesheet as any).overtime_hours > 0 && (
-                        <span className="text-xs text-orange-600">OT: {(timesheet as any).overtime_hours}h</span>
+                        <span className="text-xs text-orange-600">{t('lbl_ot')}: {(timesheet as any).overtime_hours}h</span>
                       )}
+                      {/* TODO: Add 'lbl_ot' */}
                     </div>
                   </TableCell>
                   <TableCell>
@@ -303,18 +304,18 @@ const TimesheetList: React.FC<TimesheetListProps> = ({
                         <Link href={route('timesheets.edit', (timesheet as any).id)}>
                           <DropdownMenuItem>
                             <Edit className="mr-2 h-4 w-4" />
-                            Edit
+                            {t('btn_edit')}
                           </DropdownMenuItem>
                         </Link>
                         {(timesheet as any).status === 'pending' && (
                           <>
                             <DropdownMenuItem onClick={() => handleApprove((timesheet as any).id)}>
                               <CheckCircle className="mr-2 h-4 w-4" />
-                              Approve
+                              {t('btn_approve')}
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => openRejectDialog((timesheet as any).id)}>
                               <XCircle className="mr-2 h-4 w-4" />
-                              Reject
+                              {t('btn_reject')}
                             </DropdownMenuItem>
                           </>
                         )}
@@ -334,8 +335,8 @@ const TimesheetList: React.FC<TimesheetListProps> = ({
           <DialogHeader>
             <DialogTitle>{t('reject_timesheet')}</DialogTitle>
             <DialogDescription>
-              Please provide a reason for rejecting this timesheet. The employee will be notified.
-            </DialogDescription>
+              {t('msg_reject_reason_notify')}
+            </DialogDescription> {/* TODO: Add 'msg_reject_reason_notify' */}
           </DialogHeader>
           <div className="py-4">
             <Label htmlFor="reject-reason">{t('lbl_reason_for_rejection')}</Label>
@@ -354,7 +355,7 @@ const TimesheetList: React.FC<TimesheetListProps> = ({
               onClick={() => setShowRejectDialog(false)}
               disabled={processing}
             >
-              Cancel
+              {t('btn_cancel')}
             </Button>
             <Button
               variant="destructive"
@@ -364,10 +365,10 @@ const TimesheetList: React.FC<TimesheetListProps> = ({
               {processing ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Rejecting...
+                  {t('btn_rejecting')}
                 </>
               ) : (
-                'Reject Timesheet'
+                t('btn_reject_timesheet')
               )}
             </Button>
           </DialogFooter>
@@ -380,8 +381,8 @@ const TimesheetList: React.FC<TimesheetListProps> = ({
           <DialogHeader>
             <DialogTitle>{t('delete_timesheets')}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete the selected timesheets? This action cannot be undone.
-            </DialogDescription>
+              {t('msg_confirm_delete_timesheets')}
+            </DialogDescription> {/* TODO: Add 'msg_confirm_delete_timesheets' */}
           </DialogHeader>
           <DialogFooter>
             <Button
@@ -389,7 +390,7 @@ const TimesheetList: React.FC<TimesheetListProps> = ({
               onClick={() => setShowDeleteDialog(false)}
               disabled={processing}
             >
-              Cancel
+              {t('btn_cancel')}
             </Button>
             <Button
               variant="destructive"
@@ -399,10 +400,10 @@ const TimesheetList: React.FC<TimesheetListProps> = ({
               {processing ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Deleting...
+                  {t('btn_deleting')}
                 </>
               ) : (
-                'Delete Timesheets'
+                t('btn_delete_timesheets')
               )}
             </Button>
           </DialogFooter>
@@ -413,6 +414,14 @@ const TimesheetList: React.FC<TimesheetListProps> = ({
 };
 
 export default TimesheetList;
+
+
+
+
+
+
+
+
 
 
 

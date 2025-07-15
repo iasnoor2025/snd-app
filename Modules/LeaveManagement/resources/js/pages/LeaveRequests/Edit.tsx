@@ -31,7 +31,7 @@ import { useForm as useReactHookForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { PageProps } from '@/Modules/LeaveManagement/resources/js/types';
-import FileUpload from '@/components/FileUpload';
+import FileUpload from '@/Core/components/ui/FileUpload';
 
 // Temporary inline implementation of usePermission hook
 function usePermission() {

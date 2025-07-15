@@ -1,0 +1,19 @@
+{
+  "toast_error": "خطأ",
+  "toast_failed_load_pending": "فشل في تحميل سجلات الدوام المعلقة",
+  "toast_warning": "تحذير",
+  "toast_select_at_least_one": "يرجى تحديد سجل دوام واحد على الأقل للموافقة",
+  "toast_success": "نجاح",
+  "toast_bulk_approve_success": "تمت الموافقة على {{count}} من سجلات الدوام بنجاح",
+  "toast_failed_bulk_approve": "فشل في الموافقة على سجلات الدوام",
+  "toast_approve_success": "تمت الموافقة على سجل الدوام بنجاح",
+  "toast_failed_approve": "فشل في الموافقة على سجل الدوام",
+  "toast_reject_success": "تم رفض سجل الدوام بنجاح",
+  "toast_failed_reject": "فشل في رفض سجل الدوام",
+  "desc_approve_or_reject_timesheet": "الموافقة أو رفض سجلات دوام الموظفين",
+  "btn_approve_selected": "الموافقة على المحدد ({{count}})",
+  "msg_no_pending_timesheets": "لا توجد سجلات دوام معلقة للموافقة.",
+  "lbl_position": "الوظيفة",
+  "lbl_clock_in_out": "الدخول/الخروج",
+  "lbl_total": "الإجمالي"
+}

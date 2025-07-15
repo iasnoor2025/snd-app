@@ -3,41 +3,22 @@ import { useTranslation } from 'react-i18next';
 import { Head } from '@inertiajs/react';
 import { PageProps, BreadcrumbItem } from "@/Core/types";
 import { AppLayout } from '@/Core';
-import { Button } from "@/Core";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardDescription
-} from "@/Core";
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage
-} from "@/Core";
-import { Input } from "@/Core";
-import { Textarea } from "@/Core";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/Core";
+import { Button } from '@/Core/components/ui/button';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/Core/components/ui/card';
+import { Form, FormField, FormItem, FormLabel } from '@/Core/components/ui/form';
+import { Input } from '@/Core/components/ui/input';
+import { Textarea } from '@/Core/components/ui/textarea';
+import { Select } from '@/Core/components/Common/Select';
 import {
   ArrowLeft as ArrowLeftIcon,
-  Calendar as CalendarIcon,
-  Clock as ClockIcon,
   Save as SaveIcon
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { formatDate, formatCurrency } from "@/Core";
 import { useForm as useReactHookForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Popover, PopoverContent, PopoverTrigger } from "@/Core";
-import { Calendar } from "@/Core";
 import { format } from 'date-fns';
 import { route } from 'ziggy-js';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 // Define interfaces
 interface Employee {
@@ -49,20 +30,6 @@ interface Employee {
 interface Project {
   id: number;
   name: string;
-}
-
-interface Timesheet {
-  id: number;
-  employee_id: number;
-  employee?: Employee;
-  date: string;
-  hours_worked: number;
-  overtime_hours: number;
-  project_id?: number;
-  project?: Project;
-  description?: string;
-  tasks_completed?: string;
-  status: string;
 }
 
 interface Props {
@@ -99,7 +66,7 @@ interface AssignmentBlock {
   description?: string;
 }
 
-export default function TimesheetEdit({ timesheet, employee = {}, project = {}, rental = {}, user = {}, created_at, updated_at, deleted_at, employees = [], projects = [] }: Props) {
+export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, employees = [], projects = [] }: Props) {
   const { t } = useTranslation('TimesheetManagement');
 
   const [processing, setProcessing] = useState(false);
@@ -274,25 +241,6 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
     setDailyNormalHours(newDailyNormalHours);
   };
 
-  const onStartDateSelect = (date: Date | undefined) => {
-    setStartDate(date);
-    if (date) {
-      const formattedDate = format(date, 'yyyy-MM-dd');
-      if (isBulkMode) {
-        const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-        setEndDate(lastDay);
-        generateDailyOvertimeHours(new Date(date.getFullYear(), date.getMonth(), date.getDate()), new Date(lastDay.getFullYear(), lastDay.getMonth(), lastDay.getDate()));
-      }
-    }
-  };
-
-  const onEndDateSelect = (date: Date | undefined) => {
-    setEndDate(date);
-    if (date && startDate && isBulkMode) {
-      generateDailyOvertimeHours(startDate, date);
-    }
-  };
-
   const handleDailyOvertimeChange = (date: string, value: string) => {
     setDailyOvertimeHours(prev => ({ ...prev, [date]: value }));
   };
@@ -404,36 +352,31 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
                     {/* Employee Selection */}
                     <div>
                       <FormLabel>Employee</FormLabel>
-                      <Select value={String(timesheet.employee_id)} disabled>
-                        <SelectTrigger><SelectValue placeholder="Select employee" /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value={String(timesheet.employee_id)}>{employee?.first_name} {employee?.last_name}</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Select
+                        value={String(timesheet.employee_id)}
+                        disabled
+                        options={[
+                          { value: String(timesheet.employee_id), label: `${employee?.first_name} ${employee?.last_name}` }
+                        ]}
+                      />
                     </div>
                     {/* Project Selection */}
                     <div>
                       <FormLabel>Project</FormLabel>
-                      <Select value={assignmentBlocks[0].project_id} onValueChange={v => updateAssignmentBlock(assignmentBlocks[0].id, 'project_id', v)}>
-                        <SelectTrigger><SelectValue placeholder="Select project" /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="none">None</SelectItem>
-                          {projects.map((project) => (
-                            <SelectItem key={project.id} value={project.id.toString()}>{project.name}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <Select
+                        value={assignmentBlocks[0].project_id}
+                        onValueChange={v => updateAssignmentBlock(assignmentBlocks[0].id, 'project_id', v)}
+                        options={projects.map((p: any) => ({ value: p.id.toString(), label: p.name }))}
+                      />
                     </div>
                     {/* Rental Selection */}
                     <div className="md:col-span-2">
                       <FormLabel>Rental</FormLabel>
-                      <Select value={assignmentBlocks[0].rental_id} onValueChange={v => updateAssignmentBlock(assignmentBlocks[0].id, 'rental_id', v)}>
-                        <SelectTrigger><SelectValue placeholder="Select rental" /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="none">None</SelectItem>
-                          {rental && rental.map((r: any) => <SelectItem key={r.id} value={r.id.toString()}>{r.rental_number} - {r.equipment?.name || 'Unknown Equipment'}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
+                      <Select
+                        value={assignmentBlocks[0].rental_id}
+                        onValueChange={v => updateAssignmentBlock(assignmentBlocks[0].id, 'rental_id', v)}
+                        options={rental.map((r: any) => ({ value: r.id.toString(), label: `${r.rental_number} - ${r.equipment?.name || 'Unknown Equipment'}` }))}
+                      />
                     </div>
                   </div>
                 </div>
@@ -548,23 +491,19 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
                   <div key={block.id} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end border p-4 rounded mb-2 bg-gray-50">
                     <div>
                       <FormLabel>Project</FormLabel>
-                      <Select value={block.project_id} onValueChange={v => updateAssignmentBlock(block.id, 'project_id', v)}>
-                        <SelectTrigger><SelectValue placeholder="Select project" /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="none">None</SelectItem>
-                          {projects.map(p => <SelectItem key={p.id} value={p.id.toString()}>{p.name}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
+                      <Select
+                        value={block.project_id}
+                        onValueChange={v => updateAssignmentBlock(block.id, 'project_id', v)}
+                        options={projects.map((p: any) => ({ value: p.id.toString(), label: p.name }))}
+                      />
                     </div>
                     <div>
                       <FormLabel>Rental</FormLabel>
-                      <Select value={block.rental_id} onValueChange={v => updateAssignmentBlock(block.id, 'rental_id', v)}>
-                        <SelectTrigger><SelectValue placeholder="Select rental" /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="none">None</SelectItem>
-                          {rental && rental.map((r: any) => <SelectItem key={r.id} value={r.id.toString()}>{r.rental_number} - {r.equipment?.name || 'Unknown Equipment'}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
+                      <Select
+                        value={block.rental_id}
+                        onValueChange={v => updateAssignmentBlock(block.id, 'rental_id', v)}
+                        options={rental.map((r: any) => ({ value: r.id.toString(), label: `${r.rental_number} - ${r.equipment?.name || 'Unknown Equipment'}` }))}
+                      />
                     </div>
                     <div>
                       <FormLabel>Start Date</FormLabel>
@@ -639,21 +578,8 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder={t('ph_select_employee')} />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {employees.map((employee) => (
-                              <SelectItem key={employee.id} value={employee.id.toString()}>
-                                {employee.first_name} {employee.last_name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
+                          options={employees.map(employee => ({ value: employee.id.toString(), label: `${employee.first_name} ${employee.last_name}` }))}
+                        />
                       </FormItem>
                     )}
                   />
@@ -662,31 +588,17 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
                     control={form.control}
                     name="date"
                     render={({ field }: any) => (
-                      <FormItem className="flex flex-col">
+                      <div className="flex flex-col">
                         <FormLabel>Date</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                className="w-full pl-3 text-left font-normal"
-                              >
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                {selectedDate ? format(selectedDate, 'PPP') : <span>{t('project:pick_a_date')}</span>}
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={selectedDate}
-                              onSelect={onDateSelect}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage />
-                      </FormItem>
+                        <Input
+                          type="date"
+                          value={selectedDate ? format(selectedDate, 'yyyy-MM-dd') : ''}
+                          onChange={e => onDateSelect(e.target.value ? new Date(e.target.value) : undefined)}
+                          min={format(new Date(), 'yyyy-MM-01')}
+                          max={format(new Date(), 'yyyy-MM-dd')}
+                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                        />
+                      </div>
                     )}
                   />
 
@@ -696,13 +608,10 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
                     render={({ field }: any) => (
                       <FormItem>
                         <FormLabel>{t('lbl_hours_worked')}</FormLabel>
-                        <FormControl>
-                          <Input type="number" step="0.5" min="0" max="24" placeholder="8" {...field} />
-                        </FormControl>
+                        <Input type="number" step="0.5" min="0" max="24" placeholder="8" {...field} />
                         <CardDescription>
                           Regular hours worked (excluding overtime)
                         </CardDescription>
-                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -713,13 +622,10 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
                     render={({ field }: any) => (
                       <FormItem>
                         <FormLabel>{t('lbl_overtime_hours')}</FormLabel>
-                        <FormControl>
-                          <Input type="number" step="0.5" min="0" max="24" placeholder="0" {...field} />
-                        </FormControl>
+                        <Input type="number" step="0.5" min="0" max="24" placeholder="0" {...field} />
                         <CardDescription>
                           Additional hours beyond regular schedule
                         </CardDescription>
-                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -733,22 +639,8 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder={t('ph_select_project')} />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="none">None</SelectItem>
-                            {projects.map((project) => (
-                              <SelectItem key={project.id} value={project.id.toString()}>
-                                {project.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
+                          options={projects.map(project => ({ value: project.id.toString(), label: project.name }))}
+                        />
                       </FormItem>
                     )}
                   />
@@ -762,23 +654,16 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder={t('ph_select_status')} />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="draft">Draft</SelectItem>
-                            <SelectItem value="submitted">Submitted</SelectItem>
-                            <SelectItem value="foreman_approved">Foreman Approved</SelectItem>
-                            <SelectItem value="incharge_approved">Incharge Approved</SelectItem>
-                            <SelectItem value="checking_approved">Checking Approved</SelectItem>
-                            <SelectItem value="manager_approved">Manager Approved</SelectItem>
-                            <SelectItem value="rejected">Rejected</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
+                          options={[
+                            { value: 'draft', label: 'Draft' },
+                            { value: 'submitted', label: 'Submitted' },
+                            { value: 'foreman_approved', label: 'Foreman Approved' },
+                            { value: 'incharge_approved', label: 'Incharge Approved' },
+                            { value: 'checking_approved', label: 'Checking Approved' },
+                            { value: 'manager_approved', label: 'Manager Approved' },
+                            { value: 'rejected', label: 'Rejected' },
+                          ]}
+                        />
                       </FormItem>
                     )}
                   />
@@ -790,14 +675,11 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
                   render={({ field }: any) => (
                     <FormItem>
                       <FormLabel>Description (Optional)</FormLabel>
-                      <FormControl>
-                        <Textarea
+                      <Textarea
                           placeholder={t('ph_brief_description_of_work_performed')}
                           className="min-h-[80px]"
                           {...field}
                         />
-                      </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -808,14 +690,11 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
                   render={({ field }: any) => (
                     <FormItem>
                       <FormLabel>Tasks Completed (Optional)</FormLabel>
-                      <FormControl>
-                        <Textarea
+                      <Textarea
                           placeholder={t('ph_list_of_tasks_completed_during_this_time')}
                           className="min-h-[120px]"
                           {...field}
                         />
-                      </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -837,18 +716,3 @@ export default function TimesheetEdit({ timesheet, employee = {}, project = {}, 
     </AppLayout>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

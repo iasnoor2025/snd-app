@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Head } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
 import AppLayout from '@/Core/layouts/AppLayout';
-import { Button } from '@/Components/ui/button';
+import { Button } from '@/Core/components/ui/button';
 import {
   Card,
   CardContent,

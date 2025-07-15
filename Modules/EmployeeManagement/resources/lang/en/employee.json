@@ -650,5 +650,22 @@
   "view_and_manage_employee_leave_records": "View and manage employee leave records",
   "view_and_manage_employee_timesheet_records": "View and manage employee timesheet records",
   "view_and_manage_key_employee_documents": "View and manage key employee documents",
-  "view_and_manage_resignation_requests": "View and manage resignation requests"
+  "view_and_manage_resignation_requests": "View and manage resignation requests",
+  "toast_error": "Error",
+  "toast_failed_load_pending": "Failed to load pending timesheets",
+  "toast_warning": "Warning",
+  "toast_select_at_least_one": "Please select at least one timesheet to approve",
+  "toast_success": "Success",
+  "toast_bulk_approve_success": "{{count}} timesheets approved successfully",
+  "toast_failed_bulk_approve": "Failed to approve timesheets",
+  "toast_approve_success": "Timesheet approved successfully",
+  "toast_failed_approve": "Failed to approve timesheet",
+  "toast_reject_success": "Timesheet rejected successfully",
+  "toast_failed_reject": "Failed to reject timesheet",
+  "desc_approve_or_reject_timesheet": "Approve or reject employee timesheet entries",
+  "btn_approve_selected": "Approve Selected ({{count}})",
+  "msg_no_pending_timesheets": "No pending timesheets to approve.",
+  "lbl_position": "Position",
+  "lbl_clock_in_out": "Clock In/Out",
+  "lbl_total": "Total"
 }

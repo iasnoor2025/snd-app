@@ -46,7 +46,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/Core";
 import { Calendar } from "@/Core";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Core";
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/components/ui/button';
+import { buttonVariants } from '@/Core/components/ui/button';
 import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
 interface Employee {

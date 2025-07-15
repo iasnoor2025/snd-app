@@ -80,8 +80,8 @@ export const TimesheetApproval: React.FC = () => {
     } catch (error) {
       console.error('Error fetching pending timesheets:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to load pending timesheets',
+        title: t('toast_error'), // TODO: Add 'toast_error'
+        description: t('toast_failed_load_pending'), // TODO: Add 'toast_failed_load_pending'
         variant: 'destructive',
       })
     } finally {
@@ -112,8 +112,8 @@ export const TimesheetApproval: React.FC = () => {
   const handleApproveSelected = async () => {
     if (selectedTimesheets.length === 0) {
       toast({
-        title: 'Warning',
-        description: 'Please select at least one timesheet to approve',
+        title: t('toast_warning'), // TODO: Add 'toast_warning'
+        description: t('toast_select_at_least_one'), // TODO: Add 'toast_select_at_least_one'
         variant: 'destructive',
       })
       return;
@@ -125,16 +125,16 @@ export const TimesheetApproval: React.FC = () => {
         timesheet_ids: selectedTimesheets
       })
       toast({
-        title: 'Success',
-        description: `${selectedTimesheets.length} timesheets approved successfully`,
+        title: t('toast_success'), // TODO: Add 'toast_success'
+        description: t('toast_bulk_approve_success', { count: selectedTimesheets.length }), // TODO: Add 'toast_bulk_approve_success'
       })
       fetchPendingTimesheets();
       setSelectedTimesheets([]);
     } catch (error) {
       console.error('Error approving timesheets:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to approve timesheets',
+        title: t('toast_error'),
+        description: t('toast_failed_bulk_approve'), // TODO: Add 'toast_failed_bulk_approve'
         variant: 'destructive',
       })
     } finally {
@@ -152,15 +152,15 @@ export const TimesheetApproval: React.FC = () => {
 
       await axios.post(`/employees/${employeeId}/timesheets/${timesheetId}/approve`);
       toast({
-        title: 'Success',
-        description: 'Timesheet approved successfully',
+        title: t('toast_success'),
+        description: t('toast_approve_success'), // TODO: Add 'toast_approve_success'
       })
       fetchPendingTimesheets();
     } catch (error) {
       console.error('Error approving timesheet:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to approve timesheet',
+        title: t('toast_error'),
+        description: t('toast_failed_approve'), // TODO: Add 'toast_failed_approve'
         variant: 'destructive',
       })
     } finally {
@@ -188,16 +188,16 @@ export const TimesheetApproval: React.FC = () => {
         reason: rejectReason
       })
       toast({
-        title: 'Success',
-        description: 'Timesheet rejected successfully',
+        title: t('toast_success'),
+        description: t('toast_reject_success'), // TODO: Add 'toast_reject_success'
       })
       setShowRejectDialog(false);
       fetchPendingTimesheets();
     } catch (error) {
       console.error('Error rejecting timesheet:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to reject timesheet',
+        title: t('toast_error'),
+        description: t('toast_failed_reject'), // TODO: Add 'toast_failed_reject'
         variant: 'destructive',
       })
     } finally {
@@ -226,13 +226,13 @@ export const TimesheetApproval: React.FC = () => {
             <div>
               <CardTitle>{t('ttl_pending_timesheet_approvals')}</CardTitle>
               <CardDescription>
-                Approve or reject employee timesheet entries
+                {t('desc_approve_or_reject_timesheet')} {/* TODO: Add 'desc_approve_or_reject_timesheet' */}
               </CardDescription>
             </div>
             {selectedTimesheets.length > 0 && (
               <Button onClick={handleApproveSelected} disabled={isLoading}>
                 <Check className="mr-2 h-4 w-4" />
-                Approve Selected ({selectedTimesheets.length})
+                {t('btn_approve_selected', { count: selectedTimesheets.length })} {/* TODO: Add 'btn_approve_selected' with count */}
               </Button>
             )}
           </div>
@@ -244,7 +244,7 @@ export const TimesheetApproval: React.FC = () => {
             </div>
           ) : timesheets.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              No pending timesheets to approve.
+              {t('msg_no_pending_timesheets')}
             </div>
           ) : (
             <div className="overflow-auto">
@@ -257,14 +257,14 @@ export const TimesheetApproval: React.FC = () => {
                         onChange={(e) => handleSelectAllChange(e.target.checked)}
                       />
                     </TableHead>
-                    <TableHead>Employee</TableHead>
-                    <TableHead>Position</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Clock In/Out</TableHead>
-                    <TableHead>Hours</TableHead>
-                    <TableHead>Project</TableHead>
-                    <TableHead>Notes</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead>{t('lbl_employee')}</TableHead>
+                    <TableHead>{t('lbl_position')}</TableHead> {/* TODO: Add 'lbl_position' */}
+                    <TableHead>{t('lbl_date')}</TableHead>
+                    <TableHead>{t('lbl_clock_in_out')}</TableHead> {/* TODO: Add 'lbl_clock_in_out' */}
+                    <TableHead>{t('lbl_hours')}</TableHead>
+                    <TableHead>{t('lbl_project')}</TableHead>
+                    <TableHead>{t('lbl_notes')}</TableHead>
+                    <TableHead className="text-right">{t('lbl_actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -286,9 +286,9 @@ export const TimesheetApproval: React.FC = () => {
                         <div>{formatDateTime(timesheet.clock_out)}</div>
                       </TableCell>
                       <TableCell>
-                        <div>Regular: {formatHours(timesheet.regular_hours)}</div>
-                        <div>OT: {formatHours(timesheet.overtime_hours)}</div>
-                        <div className="font-bold">Total: {formatHours(timesheet.total_hours)}</div>
+                        <div>{t('lbl_regular')}: {formatHours(timesheet.regular_hours)}</div>
+                        <div>{t('lbl_ot')}: {formatHours(timesheet.overtime_hours)}</div>
+                        <div className="font-bold">{t('lbl_total')}: {formatHours(timesheet.total_hours)}</div> {/* TODO: Add 'lbl_total' */}
                       </TableCell>
                       <TableCell>
                         {timesheet.project ? timesheet.project.name : '-'}

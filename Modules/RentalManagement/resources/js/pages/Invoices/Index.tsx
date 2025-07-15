@@ -1,7 +1,7 @@
 import React from 'react';
 import { usePage, Link } from '@inertiajs/react';
 import { Table, TableHead, TableRow, TableCell, TableBody } from '@/Core/components/ui/table';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/Core/components/ui/button';
 import { toast } from 'sonner';
 
 interface Invoice {
