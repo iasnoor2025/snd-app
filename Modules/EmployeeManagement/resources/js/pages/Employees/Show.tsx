@@ -3020,150 +3020,115 @@ export default function Show({
                                     </div>
                                 </div>
 
-                                {/* Advance History Section */}
-                                <div className="space-y-4">
-                                    <div className="flex items-center justify-between">
-                                        <h3 className="text-lg font-semibold">{t('advance_history')}</h3>
-                                        <div className="flex items-center gap-2">
-                                            <Input type="text" placeholder={t('ph_search_advances')} className="w-64" />
-                                            <Button variant="outline" size="sm">
-                                                Filter
-                                            </Button>
-                                        </div>
-                                    </div>
-
-                                    <div className="overflow-hidden rounded-lg border">
-                                        <table className="min-w-full rounded-lg border border-gray-200 bg-white">
-                                            <thead>
-                                                <tr className="bg-muted/50">
-                                                    <th className="px-4 py-2 text-left">Amount</th>
-                                                    <th className="px-4 py-2 text-left">{t('reason')}</th>
-                                                    <th className="px-4 py-2 text-left">Date</th>
-                                                    <th className="px-4 py-2 text-left">Status</th>
-                                                    <th className="px-4 py-2 text-left">Type</th>
-                                                    <th className="px-4 py-2 text-right">{t('actions')}</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {advances?.data && advances.data.length > 0 ? (
-                                                    advances.data
-                                                        .sort(
-                                                            (a: Advance, b: Advance) =>
-                                                                new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-                                                        )
-                                                        .map((advance: Advance) => (
-                                                            <tr key={`${advance.type}-${advance.id}`}>
-                                                                <td className="font-medium">
-                                                                    <div className="flex items-center gap-2">
-                                                                        {advance.type === 'advance_payment' && advance.amount < 0 ? (
-                                                                            <span className="text-red-600">
-                                                                                SAR {Math.abs(Number(advance.amount)).toFixed(2)}
-                                                                            </span>
-                                                                        ) : (
-                                                                            <span>SAR {Number(advance.amount).toFixed(2)}</span>
-                                                                        )}
-                                                                    </div>
-                                                                </td>
-                                                                <td className="max-w-[200px] truncate">{advance.reason}</td>
-                                                                <td>{format(new Date(advance.created_at), 'PP')}</td>
-                                                                <td>{getRepaymentStatus(advance)}</td>
-                                                                <td className="capitalize">
-                                                                    {advance.type === 'advance'
-                                                                        ? t('request')
-                                                                        : Number(advance.amount) < 0
-                                                                          ? t('repayment')
-                                                                          : t('payment')}
-                                                                </td>
-                                                                <td className="text-right">
-                                                                    <div className="flex justify-end gap-2">
-                                                                        {advance.status === 'pending' && (
-                                                                            <>
-                                                                                <TooltipProvider>
-                                                                                    <Tooltip>
-                                                                                        <TooltipTrigger asChild>
-                                                                                            <Button
-                                                                                                variant="outline"
-                                                                                                size="icon"
-                                                                                                className="h-8 w-8 text-green-600 hover:bg-green-50 hover:text-green-700"
-                                                                                                onClick={() => handleAdvanceApproval(advance.id)}
-                                                                                            >
-                                                                                                <Check className="h-4 w-4" />
-                                                                                            </Button>
-                                                                                        </TooltipTrigger>
-                                                                                        <TooltipContent>
-                                                                                            <p>{t('approve')}</p>
-                                                                                        </TooltipContent>
-                                                                                    </Tooltip>
-                                                                                </TooltipProvider>
-                                                                                <TooltipProvider>
-                                                                                    <Tooltip>
-                                                                                        <TooltipTrigger asChild>
-                                                                                            <Button
-                                                                                                variant="outline"
-                                                                                                size="icon"
-                                                                                                className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
-                                                                                                onClick={() =>
-                                                                                                    handleAdvanceRejection(advance.id, advance.reason)
-                                                                                                }
-                                                                                            >
-                                                                                                <X className="h-4 w-4" />
-                                                                                            </Button>
-                                                                                        </TooltipTrigger>
-                                                                                        <TooltipContent>
-                                                                                            <p>{t('reject')}</p>
-                                                                                        </TooltipContent>
-                                                                                    </Tooltip>
-                                                                                </TooltipProvider>
-                                                                            </>
-                                                                        )}
-                                                                        <TooltipProvider>
-                                                                            <Tooltip>
-                                                                                <TooltipTrigger asChild>
-                                                                                    <Button
-                                                                                        variant="outline"
-                                                                                        size="icon"
-                                                                                        className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
-                                                                                        onClick={() => {
-                                                                                            setSelectedAdvance(advance.id);
-                                                                                            setIsDeleteDialogOpen(true);
-                                                                                        }}
-                                                                                    >
-                                                                                        <Trash2 className="h-4 w-4" />
-                                                                                    </Button>
-                                                                                </TooltipTrigger>
-                                                                                <TooltipContent>
-                                                                                    <p>{t('delete')}</p>
-                                                                                </TooltipContent>
-                                                                            </Tooltip>
-                                                                        </TooltipProvider>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        ))
-                                                ) : (
+                                {/* Modern Advance History Card */}
+                                <Card className="mt-6 shadow-sm border border-gray-200 bg-white rounded-lg">
+                                    <CardHeader className="bg-muted/50 rounded-t-lg p-4 flex flex-row items-center gap-2">
+                                        <History className="h-5 w-5 text-primary" />
+                                        <CardTitle className="text-lg font-semibold">Advance History</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="p-0">
+                                        <div className="overflow-x-auto">
+                                            <table className="min-w-full divide-y divide-gray-200">
+                                                <thead className="bg-muted/50">
                                                     <tr>
-                                                        <td colSpan={6} className="py-8 text-center">
-                                                            <div className="flex flex-col items-center gap-2">
-                                                                <CreditCard className="h-8 w-8 text-muted-foreground" />
-                                                                <p className="text-sm text-muted-foreground">{t('no_advance_records_found')}</p>
-                                                            </div>
-                                                        </td>
+                                                        <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Amount</th>
+                                                        <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Reason</th>
+                                                        <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Date</th>
+                                                        <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
+                                                        <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Type</th>
+                                                        <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
                                                     </tr>
-                                                )}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <PaymentHistory employeeId={Number(employee.id) || 0} />
-                                </div>
-
-                                {/* Payment History Section */}
-                                <div className="mt-8 space-y-4">
-                                    {/* <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">{t('payment_history')}</h3>
-                  </div> */}
-
-                            
-                                </div>
+                                                </thead>
+                                                <tbody className="bg-white divide-y divide-gray-100">
+                                                    {advances?.data && advances.data.length > 0 ? (
+                                                        advances.data
+                                                            .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                                                            .map((advance: Advance) => (
+                                                                <tr key={`${advance.type}-${advance.id}`} className="hover:bg-muted/20 transition-colors">
+                                                                    <td className="px-6 py-4 whitespace-nowrap font-medium text-primary">SAR {Number(advance.amount).toFixed(2)}</td>
+                                                                    <td className="px-6 py-4 max-w-[200px] truncate">{advance.reason}</td>
+                                                                    <td className="px-6 py-4 whitespace-nowrap">{format(new Date(advance.created_at), 'PP')}</td>
+                                                                    <td className="px-6 py-4">{getRepaymentStatus(advance)}</td>
+                                                                    <td className="px-6 py-4 capitalize">{advance.type === 'advance' ? t('request') : Number(advance.amount) < 0 ? t('repayment') : t('payment')}</td>
+                                                                    <td className="px-6 py-4 text-right">
+                                                                        <div className="flex justify-end gap-2">
+                                                                            {advance.status === 'pending' && (
+                                                                                <>
+                                                                                    <TooltipProvider>
+                                                                                        <Tooltip>
+                                                                                            <TooltipTrigger asChild>
+                                                                                                <Button
+                                                                                                    variant="outline"
+                                                                                                    size="icon"
+                                                                                                    className="h-8 w-8 text-green-600 hover:bg-green-50 hover:text-green-700"
+                                                                                                    onClick={() => handleAdvanceApproval(advance.id)}
+                                                                                                >
+                                                                                                    <Check className="h-4 w-4" />
+                                                                                                </Button>
+                                                                                            </TooltipTrigger>
+                                                                                            <TooltipContent>
+                                                                                                <p>{t('approve')}</p>
+                                                                                            </TooltipContent>
+                                                                                        </Tooltip>
+                                                                                    </TooltipProvider>
+                                                                                    <TooltipProvider>
+                                                                                        <Tooltip>
+                                                                                            <TooltipTrigger asChild>
+                                                                                                <Button
+                                                                                                    variant="outline"
+                                                                                                    size="icon"
+                                                                                                    className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                                                                                    onClick={() =>
+                                                                                                        handleAdvanceRejection(advance.id, advance.reason)
+                                                                                                    }
+                                                                                                >
+                                                                                                    <X className="h-4 w-4" />
+                                                                                                </Button>
+                                                                                            </TooltipTrigger>
+                                                                                            <TooltipContent>
+                                                                                                <p>{t('reject')}</p>
+                                                                                            </TooltipContent>
+                                                                                        </Tooltip>
+                                                                                    </TooltipProvider>
+                                                                                </>
+                                                                            )}
+                                                                            <TooltipProvider>
+                                                                                <Tooltip>
+                                                                                    <TooltipTrigger asChild>
+                                                                                        <Button
+                                                                                            variant="outline"
+                                                                                            size="icon"
+                                                                                            className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                                                                            onClick={() => {
+                                                                                                setSelectedAdvance(advance.id);
+                                                                                                setIsDeleteDialogOpen(true);
+                                                                                            }}
+                                                                                        >
+                                                                                            <Trash2 className="h-4 w-4" />
+                                                                                        </Button>
+                                                                                    </TooltipTrigger>
+                                                                                    <TooltipContent>
+                                                                                        <p>{t('delete')}</p>
+                                                                                    </TooltipContent>
+                                                                                </Tooltip>
+                                                                            </TooltipProvider>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            ))
+                                                    ) : (
+                                                        <tr>
+                                                            <td colSpan={6} className="px-6 py-8 text-center text-muted-foreground italic">
+                                                                No advance records found.
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                                <PaymentHistory employeeId={Number(employee.id) || 0} />
                             </CardContent>
                         </Card>
                     </TabsContent>
