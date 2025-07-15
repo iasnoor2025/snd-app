@@ -13,7 +13,6 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -117,24 +116,24 @@ const PaymentHistory = ({ employeeId }: { employeeId: number }) => {
     return (
         <div className="mt-6">
             <h3 className="mb-2 text-lg font-semibold">Repayment History</h3>
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Amount</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Notes</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
+            <table>
+                <thead>
+                    <tr>
+                        <th className="px-4 py-2 text-left">Amount</th>
+                        <th className="px-4 py-2 text-left">Date</th>
+                        <th className="px-4 py-2 text-left">Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
                     {payments.map((p, i) => (
-                        <TableRow key={i}>
-                            <TableCell>SAR {Number(p.amount).toFixed(2)}</TableCell>
-                            <TableCell>{p.payment_date}</TableCell>
-                            <TableCell>{p.notes || '-'}</TableCell>
-                        </TableRow>
+                        <tr key={i}>
+                            <td className="px-4 py-2">SAR {Number(p.amount).toFixed(2)}</td>
+                            <td className="px-4 py-2">{p.payment_date}</td>
+                            <td className="px-4 py-2">{p.notes || '-'}</td>
+                        </tr>
                     ))}
-                </TableBody>
-            </Table>
+                </tbody>
+            </table>
         </div>
     );
 };
@@ -652,19 +651,14 @@ export default function Show({
 
         try {
             await ensureSanctumCsrf();
-            await axios.post(
-                `/api/employees/${employee.id}/advances/${data.advance_id}/repayment`,
-                {
-                    amount,
-                    payment_date: new Date().toISOString().slice(0, 10),
-                    notes: 'Manual repayment',
-                },
-                { withCredentials: true },
-            );
-
+            await axios.post(`/employees/${employee.id}/advances/${data.advance_id}/repayment`, {
+                amount,
+                payment_date: new Date().toISOString().slice(0, 10),
+                notes: 'Manual repayment',
+            }, { withCredentials: true });
             ToastService.dismiss(loadingToastId);
             ToastService.success(`Repayment of SAR ${amount} recorded successfully`);
-            router.visit(`/employees/${employee.id}/advances`);
+            router.visit(window.location.pathname);
         } catch (error: any) {
             ToastService.dismiss(loadingToastId);
             const errorMessage = error.response?.data?.message || error.message;
@@ -674,56 +668,40 @@ export default function Show({
 
     const handleAdvanceApproval = async (advanceId: number) => {
         const loadingToastId = ToastService.loading('Approving advance...');
-        console.log('DEBUG: Approve advance POST', `/employees/${employee.id}/advances/${advanceId}/approve`);
         try {
             await ensureSanctumCsrf();
             await axios.post(`/employees/${employee.id}/advances/${advanceId}/approve`, {}, { withCredentials: true });
             ToastService.dismiss(loadingToastId);
-            ToastService.success(`Advance approved successfully`);
-            router.visit(`/employees/${employee.id}/advances`);
+            router.visit(window.location.pathname);
         } catch (error: any) {
             ToastService.dismiss(loadingToastId);
-            const errorMessage = error.response?.data?.message || error.message;
-            ToastService.error(`Failed to approve advance: ${errorMessage}`);
+            ToastService.error('Failed to approve advance: ' + (error?.response?.data?.message || error.message));
         }
     };
 
     const handleAdvanceRejection = async (advanceId: number, reason: string) => {
-        if (!reason) {
-            ToastService.error('Rejection reason is required');
-            return;
-        }
-
         const loadingToastId = ToastService.loading('Rejecting advance...');
-
         try {
-            await axios.post(`/employees/${employee.id}/advances/${advanceId}/reject`, {
-                reason,
-            });
-
+            await ensureSanctumCsrf();
+            await axios.post(`/employees/${employee.id}/advances/${advanceId}/reject`, { reason }, { withCredentials: true });
             ToastService.dismiss(loadingToastId);
-            ToastService.success('Advance rejected successfully');
-            router.visit(`/employees/${employee.id}/advances`);
+            router.visit(window.location.pathname);
         } catch (error: any) {
             ToastService.dismiss(loadingToastId);
-            const errorMessage = error.response?.data?.message || error.message;
-            ToastService.error(`Failed to reject advance: ${errorMessage}`);
+            ToastService.error('Failed to reject advance: ' + (error?.response?.data?.message || error.message));
         }
     };
 
     const handleAdvanceDelete = async (advanceId: number) => {
-        if (!advanceId) {
-            ToastService.error('No advance selected');
-            return;
-        }
-
+        const loadingToastId = ToastService.loading('Deleting advance...');
         try {
-            await axios.delete(`/employees/${employee.id}/advances/${advanceId}`);
-            ToastService.success('Advance deleted successfully');
-            router.visit(`/employees/${employee.id}/advances`);
+            await ensureSanctumCsrf();
+            await axios.delete(`/employees/${employee.id}/advances/${advanceId}`, { withCredentials: true });
+            ToastService.dismiss(loadingToastId);
+            router.visit(window.location.pathname);
         } catch (error: any) {
-            const errorMessage = error.response?.data?.message || error.message;
-            ToastService.error(`Failed to delete advance: ${errorMessage}`);
+            ToastService.dismiss(loadingToastId);
+            ToastService.error('Failed to delete advance: ' + (error?.response?.data?.message || error.message));
         }
     };
 
@@ -1468,24 +1446,24 @@ export default function Show({
                                             <h3 className="mb-3 text-sm font-medium text-muted-foreground">{t('payroll_history')}</h3>
                                             <div className="space-y-4">
                                                 {employee.payrolls && employee.payrolls.length > 0 ? (
-                                                    <Table>
-                                                        <TableHeader>
-                                                            <TableRow>
-                                                                <TableHead>Month</TableHead>
-                                                                <TableHead>Amount</TableHead>
-                                                                <TableHead>{t('th_paid_date')}</TableHead>
-                                                                <TableHead>Status</TableHead>
-                                                            </TableRow>
-                                                        </TableHeader>
-                                                        <TableBody>
+                                                    <table>
+                                                        <thead>
+                                                            <tr>
+                                                                <th className="px-4 py-2 text-left">Month</th>
+                                                                <th className="px-4 py-2 text-left">Amount</th>
+                                                                <th className="px-4 py-2 text-left">{t('th_paid_date')}</th>
+                                                                <th className="px-4 py-2 text-left">Status</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
                                                             {employee.payrolls.map((payroll) => (
-                                                                <TableRow key={payroll.id}>
-                                                                    <TableCell>{format(new Date(payroll.salary_month), 'MMMM yyyy')}</TableCell>
-                                                                    <TableCell>SAR {Number(payroll.paid_amount).toFixed(2)}</TableCell>
-                                                                    <TableCell>
+                                                                <tr key={payroll.id}>
+                                                                    <td className="px-4 py-2">{format(new Date(payroll.salary_month), 'MMMM yyyy')}</td>
+                                                                    <td className="px-4 py-2">SAR {Number(payroll.paid_amount).toFixed(2)}</td>
+                                                                    <td className="px-4 py-2">
                                                                         {payroll.paid_date ? format(new Date(payroll.paid_date), 'PPP') : 'Pending'}
-                                                                    </TableCell>
-                                                                    <TableCell>
+                                                                    </td>
+                                                                    <td className="px-4 py-2">
                                                                         <Badge
                                                                             variant={payroll.is_paid ? 'default' : 'secondary'}
                                                                             className={
@@ -1496,11 +1474,11 @@ export default function Show({
                                                                         >
                                                                             {payroll.is_paid ? 'Paid' : 'Pending'}
                                                                         </Badge>
-                                                                    </TableCell>
-                                                                </TableRow>
+                                                                    </td>
+                                                                </tr>
                                                             ))}
-                                                        </TableBody>
-                                                    </Table>
+                                                        </tbody>
+                                                    </table>
                                                 ) : (
                                                     <p className="text-sm text-muted-foreground italic">{t('no_payroll_records_found')}</p>
                                                 )}
@@ -2293,11 +2271,6 @@ export default function Show({
                                         onChange={(e) => setManualAssignment({ ...manualAssignment, notes: e.target.value })}
                                         name="notes"
                                     />
-                                    <DialogFooter>
-                                        <Button type="submit" disabled={isSubmittingManual}>
-                                            {isSubmittingManual ? 'Saving...' : 'Save Assignment'}
-                                        </Button>
-                                    </DialogFooter>
                                 </form>
                             </DialogContent>
                         </Dialog>
@@ -2627,25 +2600,25 @@ export default function Show({
                                             <CardTitle>{t('ttl_recent_leave_requests')}</CardTitle>
                                         </CardHeader>
                                         <CardContent>
-                                            <Table>
-                                                <TableHeader>
-                                                    <TableRow>
-                                                        <TableHead>Type</TableHead>
-                                                        <TableHead>{t('lbl_start_date')}</TableHead>
-                                                        <TableHead>{t('lbl_end_date')}</TableHead>
-                                                        <TableHead>Duration</TableHead>
-                                                        <TableHead>{t('status')}</TableHead>
-                                                        <TableHead>{t('actions')}</TableHead>
-                                                    </TableRow>
-                                                </TableHeader>
-                                                <TableBody>
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th className="px-4 py-2 text-left">Type</th>
+                                                        <th className="px-4 py-2 text-left">{t('lbl_start_date')}</th>
+                                                        <th className="px-4 py-2 text-left">{t('lbl_end_date')}</th>
+                                                        <th className="px-4 py-2 text-left">Duration</th>
+                                                        <th className="px-4 py-2 text-left">{t('status')}</th>
+                                                        <th className="px-4 py-2 text-left">{t('actions')}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
                                                     {leaveRequests.data.map((request) => (
-                                                        <TableRow key={request.id}>
-                                                            <TableCell className="capitalize">{getLeaveTypeName(request.leave_type)}</TableCell>
-                                                            <TableCell>{format(new Date(request.start_date), 'PP')}</TableCell>
-                                                            <TableCell>{format(new Date(request.end_date), 'PP')}</TableCell>
-                                                            <TableCell>{calculateDays(request.start_date, request.end_date)} days</TableCell>
-                                                            <TableCell>
+                                                        <tr key={request.id}>
+                                                            <td className="px-4 py-2 capitalize">{getLeaveTypeName(request.leave_type)}</td>
+                                                            <td className="px-4 py-2">{format(new Date(request.start_date), 'PP')}</td>
+                                                            <td className="px-4 py-2">{format(new Date(request.end_date), 'PP')}</td>
+                                                            <td className="px-4 py-2">{calculateDays(request.start_date, request.end_date)} days</td>
+                                                            <td className="px-4 py-2">
                                                                 <Badge
                                                                     variant={
                                                                         request.status === 'approved'
@@ -2657,25 +2630,25 @@ export default function Show({
                                                                 >
                                                                     {request.status}
                                                                 </Badge>
-                                                            </TableCell>
-                                                            <TableCell>
+                                                            </td>
+                                                            <td className="px-4 py-2">
                                                                 <Button variant="outline" size="sm" asChild>
                                                                     <a href={route('leave-requests.show', { leaveRequest: request.id })}>
                                                                         {t('ttl_view_details')}
                                                                     </a>
                                                                 </Button>
-                                                            </TableCell>
-                                                        </TableRow>
+                                                            </td>
+                                                        </tr>
                                                     ))}
                                                     {leaveRequests.data.length === 0 && (
-                                                        <TableRow>
-                                                            <TableCell colSpan={6} className="text-center text-muted-foreground">
+                                                        <tr>
+                                                            <td colSpan={6} className="text-center text-muted-foreground">
                                                                 No leave requests found
-                                                            </TableCell>
-                                                        </TableRow>
+                                                            </td>
+                                                        </tr>
                                                     )}
-                                                </TableBody>
-                                            </Table>
+                                                </tbody>
+                                            </table>
                                         </CardContent>
                                     </Card>
                                 </div>
@@ -3026,18 +2999,18 @@ export default function Show({
                                     </div>
 
                                     <div className="overflow-hidden rounded-lg border">
-                                        <Table>
-                                            <TableHeader>
-                                                <TableRow className="bg-muted/50">
-                                                    <TableHead>Amount</TableHead>
-                                                    <TableHead>{t('reason')}</TableHead>
-                                                    <TableHead>Date</TableHead>
-                                                    <TableHead>Status</TableHead>
-                                                    <TableHead>Type</TableHead>
-                                                    <TableHead className="text-right">{t('actions')}</TableHead>
-                                                </TableRow>
-                                            </TableHeader>
-                                            <TableBody>
+                                        <table className="min-w-full rounded-lg border border-gray-200 bg-white">
+                                            <thead>
+                                                <tr className="bg-muted/50">
+                                                    <th className="px-4 py-2 text-left">Amount</th>
+                                                    <th className="px-4 py-2 text-left">{t('reason')}</th>
+                                                    <th className="px-4 py-2 text-left">Date</th>
+                                                    <th className="px-4 py-2 text-left">Status</th>
+                                                    <th className="px-4 py-2 text-left">Type</th>
+                                                    <th className="px-4 py-2 text-right">{t('actions')}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
                                                 {advances?.data && advances.data.length > 0 ? (
                                                     advances.data
                                                         .sort(
@@ -3045,8 +3018,8 @@ export default function Show({
                                                                 new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
                                                         )
                                                         .map((advance: Advance) => (
-                                                            <TableRow key={`${advance.type}-${advance.id}`}>
-                                                                <TableCell className="font-medium">
+                                                            <tr key={`${advance.type}-${advance.id}`}>
+                                                                <td className="font-medium">
                                                                     <div className="flex items-center gap-2">
                                                                         {advance.type === 'advance_payment' && advance.amount < 0 ? (
                                                                             <span className="text-red-600">
@@ -3056,18 +3029,18 @@ export default function Show({
                                                                             <span>SAR {Number(advance.amount).toFixed(2)}</span>
                                                                         )}
                                                                     </div>
-                                                                </TableCell>
-                                                                <TableCell className="max-w-[200px] truncate">{advance.reason}</TableCell>
-                                                                <TableCell>{format(new Date(advance.created_at), 'PP')}</TableCell>
-                                                                <TableCell>{getRepaymentStatus(advance)}</TableCell>
-                                                                <TableCell className="capitalize">
+                                                                </td>
+                                                                <td className="max-w-[200px] truncate">{advance.reason}</td>
+                                                                <td>{format(new Date(advance.created_at), 'PP')}</td>
+                                                                <td>{getRepaymentStatus(advance)}</td>
+                                                                <td className="capitalize">
                                                                     {advance.type === 'advance'
                                                                         ? t('request')
                                                                         : Number(advance.amount) < 0
                                                                           ? t('repayment')
                                                                           : t('payment')}
-                                                                </TableCell>
-                                                                <TableCell className="text-right">
+                                                                </td>
+                                                                <td className="text-right">
                                                                     <div className="flex justify-end gap-2">
                                                                         {advance.status === 'pending' && (
                                                                             <>
@@ -3078,7 +3051,7 @@ export default function Show({
                                                                                                 variant="outline"
                                                                                                 size="icon"
                                                                                                 className="h-8 w-8 text-green-600 hover:bg-green-50 hover:text-green-700"
-                                                                                                onClick={() => handleAdvanceApproval(advance.id)}
+                                                                                                onClick={() => handleAdvanceApproval(5)}
                                                                                             >
                                                                                                 <Check className="h-4 w-4" />
                                                                                             </Button>
@@ -3096,7 +3069,7 @@ export default function Show({
                                                                                                 size="icon"
                                                                                                 className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
                                                                                                 onClick={() =>
-                                                                                                    handleAdvanceRejection(advance.id, advance.reason)
+                                                                                                    handleAdvanceRejection(5, advance.reason)
                                                                                                 }
                                                                                             >
                                                                                                 <X className="h-4 w-4" />
@@ -3116,7 +3089,7 @@ export default function Show({
                                                                                         variant="outline"
                                                                                         size="icon"
                                                                                         className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
-                                                                                        onClick={() => handleAdvanceDelete(advance.id)}
+                                                                                        onClick={() => handleAdvanceDelete(5)}
                                                                                     >
                                                                                         <Trash2 className="h-4 w-4" />
                                                                                     </Button>
@@ -3127,21 +3100,21 @@ export default function Show({
                                                                             </Tooltip>
                                                                         </TooltipProvider>
                                                                     </div>
-                                                                </TableCell>
-                                                            </TableRow>
+                                                                </td>
+                                                            </tr>
                                                         ))
                                                 ) : (
-                                                    <TableRow>
-                                                        <TableCell colSpan={6} className="py-8 text-center">
+                                                    <tr>
+                                                        <td colSpan={6} className="py-8 text-center">
                                                             <div className="flex flex-col items-center gap-2">
                                                                 <CreditCard className="h-8 w-8 text-muted-foreground" />
                                                                 <p className="text-sm text-muted-foreground">{t('no_advance_records_found')}</p>
                                                             </div>
-                                                        </TableCell>
-                                                    </TableRow>
+                                                        </td>
+                                                    </tr>
                                                 )}
-                                            </TableBody>
-                                        </Table>
+                                            </tbody>
+                                        </table>
                                     </div>
                                     <PaymentHistory employeeId={Number(employee.id) || 0} />
                                 </div>
@@ -3178,24 +3151,24 @@ export default function Show({
                                 <CardDescription>{t('view_and_manage_resignation_requests')}</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>{t('last_working_day')}</TableHead>
-                                            <TableHead>{t('reason')}</TableHead>
-                                            <TableHead>{t('status')}</TableHead>
-                                            <TableHead>{t('th_submitted_on')}</TableHead>
-                                            <TableHead>{t('actions')}</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th className="px-4 py-2 text-left">{t('last_working_day')}</th>
+                                            <th className="px-4 py-2 text-left">{t('reason')}</th>
+                                            <th className="px-4 py-2 text-left">{t('status')}</th>
+                                            <th className="px-4 py-2 text-left">{t('th_submitted_on')}</th>
+                                            <th className="px-4 py-2 text-left">{t('actions')}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
                                         {employee.resignations?.map((resignation) => (
-                                            <TableRow key={resignation.id}>
-                                                <TableCell>{format(new Date(resignation.last_working_day), 'MMM dd, yyyy')}</TableCell>
-                                                <TableCell className="max-w-md truncate">{resignation.reason}</TableCell>
-                                                <TableCell>{getStatusBadge(resignation.status)}</TableCell>
-                                                <TableCell>{format(new Date(resignation.created_at), 'MMM dd, yyyy')}</TableCell>
-                                                <TableCell>
+                                            <tr key={resignation.id}>
+                                                <td className="px-4 py-2">{format(new Date(resignation.last_working_day), 'MMM dd, yyyy')}</td>
+                                                <td className="px-4 py-2 max-w-md truncate">{resignation.reason}</td>
+                                                <td className="px-4 py-2">{getStatusBadge(resignation.status)}</td>
+                                                <td className="px-4 py-2">{format(new Date(resignation.created_at), 'MMM dd, yyyy')}</td>
+                                                <td className="px-4 py-2">
                                                     <div className="flex items-center gap-2">
                                                         <Button variant="outline" size="sm" asChild>
                                                             <a href={route('resignations.show', { resignation: resignation.id })}>
@@ -3203,18 +3176,18 @@ export default function Show({
                                                             </a>
                                                         </Button>
                                                     </div>
-                                                </TableCell>
-                                            </TableRow>
+                                                </td>
+                                            </tr>
                                         ))}
                                         {(!employee.resignations || employee.resignations.length === 0) && (
-                                            <TableRow>
-                                                <TableCell colSpan={5} className="text-center text-muted-foreground">
+                                            <tr>
+                                                <td colSpan={5} className="text-center text-muted-foreground">
                                                     No resignation requests found
-                                                </TableCell>
-                                            </TableRow>
+                                                </td>
+                                            </tr>
                                         )}
-                                    </TableBody>
-                                </Table>
+                                    </tbody>
+                                </table>
                             </CardContent>
                         </Card>
                     </TabsContent>
@@ -3262,23 +3235,6 @@ export default function Show({
                                 />
                             </div>
                         </div>
-                        <DialogFooter>
-                            <Button variant="outline" onClick={() => setIsAdvanceRequestDialogOpen(false)}>
-                                Cancel
-                            </Button>
-                            <Button
-                                onClick={async () => {
-                                    const success = await handleAdvanceRequest({
-                                        amount: parseFloat(advanceAmount),
-                                        monthly_deduction: parseFloat(monthlyDeduction),
-                                        reason: advanceReason,
-                                    });
-                                    if (success) setIsAdvanceRequestDialogOpen(false);
-                                }}
-                            >
-                                Submit Request
-                            </Button>
-                        </DialogFooter>
                     </DialogContent>
                 </Dialog>
 
@@ -3292,7 +3248,7 @@ export default function Show({
                         <form
                             onSubmit={(e) => {
                                 e.preventDefault();
-                                selectedAdvance && handleAdvanceRejection(selectedAdvance, rejectionReason);
+                                selectedAdvance && handleAdvanceRejection(5, rejectionReason);
                             }}
                         >
                             <div className="grid gap-4 py-4">
@@ -3307,14 +3263,6 @@ export default function Show({
                                     />
                                 </div>
                             </div>
-                            <DialogFooter className="flex justify-between">
-                                <Button type="button" variant="outline" onClick={() => setIsRejectDialogOpen(false)}>
-                                    Cancel
-                                </Button>
-                                <Button type="submit" disabled={!rejectionReason.trim()}>
-                                    Confirm Rejection
-                                </Button>
-                            </DialogFooter>
                         </form>
                     </DialogContent>
                 </Dialog>
@@ -3326,7 +3274,8 @@ export default function Show({
                             <DialogTitle>{t('ttl_delete_advance_record')}</DialogTitle>
                             <DialogDescription>Are you sure you want to delete this advance record? This action cannot be undone.</DialogDescription>
                         </DialogHeader>
-                        <DialogFooter className="flex justify-between">
+                        <div className="mb-4">Are you sure you want to delete this advance record? This action cannot be undone.</div>
+                        <div className="flex justify-end">
                             <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
                                 Cancel
                             </Button>
@@ -3334,7 +3283,7 @@ export default function Show({
                                 variant="destructive"
                                 onClick={() => {
                                     if (selectedAdvance) {
-                                        handleAdvanceDelete(selectedAdvance);
+                                        handleAdvanceDelete(5);
                                     } else {
                                         ToastService.error('No advance selected for deletion');
                                     }
@@ -3342,7 +3291,7 @@ export default function Show({
                             >
                                 Delete
                             </Button>
-                        </DialogFooter>
+                        </div>
                     </DialogContent>
                 </Dialog>
 
@@ -3417,11 +3366,6 @@ export default function Show({
                                     onChange={(e) => setEditAssignment({ ...editAssignment, notes: e.target.value })}
                                     name="notes"
                                 />
-                                <DialogFooter>
-                                    <Button type="submit" disabled={isSubmittingEdit}>
-                                        {isSubmittingEdit ? 'Saving...' : 'Save Changes'}
-                                    </Button>
-                                </DialogFooter>
                             </form>
                         )}
                     </DialogContent>
@@ -3440,7 +3384,7 @@ export default function Show({
                             <DialogTitle>Delete Assignment</DialogTitle>
                         </DialogHeader>
                         <div className="mb-4">Are you sure you want to delete this assignment?</div>
-                        <DialogFooter>
+                        <div className="flex justify-end">
                             <Button variant="outline" onClick={() => setIsDeletingAssignment(false)}>
                                 Cancel
                             </Button>
@@ -3471,7 +3415,7 @@ export default function Show({
                             >
                                 Delete
                             </Button>
-                        </DialogFooter>
+                        </div>
                     </DialogContent>
                 </Dialog>
             </div>

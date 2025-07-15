@@ -62,60 +62,59 @@ class ShowEmployeeAction
             $totalRepaid = 0;
             $pagination = [];
 
-            if (class_exists('Modules\PayrollManagement\Domain\Models\AdvancePayment')) {
-                // Only real advances from the database are included below
-                $allAdvances = \Modules\PayrollManagement\Domain\Models\AdvancePayment::where('employee_id', $employee->id)
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-
-                $advances = [
-                    'data' => $allAdvances->map(function ($advance) {
-                        return [
-                            'id' => $advance->id,
-                            'amount' => $advance->amount,
-                            'reason' => $advance->reason,
-                            'status' => $advance->status,
-                            'created_at' => $advance->created_at,
-                            'rejection_reason' => $advance->rejection_reason,
-                            'repayment_date' => $advance->repayment_date,
-                            'type' => 'advance_payment',
-                            'monthly_deduction' => $advance->monthly_deduction,
-                            'repaid_amount' => $advance->repaid_amount,
-                            'remaining_balance' => $advance->remaining_balance,
-                        ];
-                    })->toArray()
+            // Always include EmployeeAdvance records
+            $employeeAdvances = \Modules\EmployeeManagement\Domain\Models\EmployeeAdvance::where('employee_id', $employee->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+            $advances['data'] = array_merge($advances['data'], $employeeAdvances->map(function ($advance) {
+                // Fetch repayments for this advance if a repayments table/model exists
+                $repayments = [];
+                if (method_exists($advance, 'repayments')) {
+                    $repayments = $advance->repayments()->get(['amount', 'payment_date', 'notes'])->toArray();
+                }
+                return [
+                    'id' => $advance->id,
+                    'amount' => $advance->amount,
+                    'reason' => $advance->reason,
+                    'status' => $advance->status,
+                    'created_at' => $advance->created_at,
+                    'rejection_reason' => $advance->rejection_reason,
+                    'repayment_date' => $advance->repayment_date ?? null,
+                    'type' => 'advance',
+                    'monthly_deduction' => $advance->deduction_amount,
+                    'repaid_amount' => $advance->repaid_amount ?? 0,
+                    'remaining_balance' => $advance->remaining_amount ?? 0,
+                    'repayments' => $repayments,
                 ];
+            })->toArray());
 
-                // Calculate current balance from all advances
-                $currentBalance = $allAdvances->sum(function ($advance) {
-                    return $advance->amount - $advance->repaid_amount;
-                });
+            // Calculate current balance from all advances
+            $currentBalance = $employeeAdvances->sum(function ($advance) {
+                return $advance->amount - $advance->repaid_amount;
+            });
 
-                // Calculate total repaid amount (simplified implementation)
-                $totalRepaid = $allAdvances->filter(function ($advance) {
-                    return isset($advance->type) && $advance->type === 'repayment';
-                })->sum('amount');
+            // Calculate total repaid amount (simplified implementation)
+            $totalRepaid = $employeeAdvances->filter(function ($advance) {
+                return isset($advance->type) && $advance->type === 'repayment';
+            })->sum('amount');
 
-                // Sample monthly history for now (you can replace with actual logic)
-                $monthlyHistory = [
-                    'data' => [],
-                    'meta' => [
-                        'current_page' => 1,
-                        'last_page' => 1,
-                        'per_page' => 10,
-                        'total' => 0
-                    ]
-                ];
-
-                $pagination = [
+            // Sample monthly history for now (you can replace with actual logic)
+            $monthlyHistory = [
+                'data' => [],
+                'meta' => [
                     'current_page' => 1,
                     'last_page' => 1,
                     'per_page' => 10,
                     'total' => 0
-                ];
-            } else {
-                $currentBalance = 0;
-            }
+                ]
+            ];
+
+            $pagination = [
+                'current_page' => 1,
+                'last_page' => 1,
+                'per_page' => 10,
+                'total' => 0
+            ];
 
             // Get assignments (EmployeeAssignment + project manpower + rental assignments)
             $assignments = ['data' => []];

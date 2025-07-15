@@ -50,6 +50,7 @@ interface TimesheetListProps {
 }
 
 export const TimesheetList: React.FC<TimesheetListProps> = ({ employeeId, onAddNew, onEdit }) => {
+    const { t } = useTranslation('employees');
     const [timesheets, setTimesheets] = useState<Timesheet[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const currentYear = new Date().getFullYear();
@@ -75,7 +76,6 @@ export const TimesheetList: React.FC<TimesheetListProps> = ({ employeeId, onAddN
     ];
     const [selectedMonth, setSelectedMonth] = useState(currentMonth);
     const [selectedYear, setSelectedYear] = useState(currentYear);
-    const { t } = useTranslation('employees');
 
     const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newMonth = parseInt(e.target.value, 10);

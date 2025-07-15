@@ -119,5 +119,16 @@ class AdminUserSeeder extends Seeder
         if (!$accountant->hasRole($accountantRole)) {
             $accountant->assignRole($accountantRole);
         }
+
+        // Ensure 'approve employee advances' permission exists and is assigned to admin role and user
+        $permission = \Spatie\Permission\Models\Permission::firstOrCreate(['name' => 'approve employee advances']);
+        $adminRole = \Spatie\Permission\Models\Role::where('name', 'admin')->first();
+        if ($adminRole) {
+            $adminRole->givePermissionTo($permission);
+        }
+        $adminUser = \App\Models\User::where('email', 'admin@snd-app.test')->first();
+        if ($adminUser) {
+            $adminUser->givePermissionTo($permission);
+        }
     }
 }

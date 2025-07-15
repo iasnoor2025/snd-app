@@ -23,6 +23,10 @@ import {
     TooltipProvider,
     TooltipTrigger,
     usePermission,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectItem,
 } from '@/Core';
 import { Head } from '@inertiajs/react';
 import { format } from 'date-fns';
@@ -266,60 +270,91 @@ export default function Index({ auth, employees, filters, departments, designati
                             <Select
                                 value={status}
                                 onValueChange={(value) => handleFilter('status', value)}
-                                options={[
-                                    { value: 'all', label: t('opt_all_statuses') },
-                                    { value: 'active', label: 'Active' },
-                                    { value: 'inactive', label: 'Inactive' },
-                                    { value: 'on_leave', label: 'On Leave' },
-                                    { value: 'exit', label: 'Exit' },
-                                ]}
-                                placeholder={t('ph_filter_by_status')}
-                            />
+                            >
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder={t('ph_filter_by_status')} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">{t('opt_all_statuses')}</SelectItem>
+                                    <SelectItem value="active">Active</SelectItem>
+                                    <SelectItem value="inactive">Inactive</SelectItem>
+                                    <SelectItem value="on_leave">On Leave</SelectItem>
+                                    <SelectItem value="exit">Exit</SelectItem>
+                                </SelectContent>
+                            </Select>
                             <Select
                                 value={department}
                                 onValueChange={(value) => handleFilter('department', value)}
-                                options={[
-                                    { value: 'all', label: t('opt_all_departments') },
-                                    ...departments?.map((dept) => ({ value: dept.id.toString(), label: typeof dept.name === 'string' ? dept.name : JSON.stringify(dept.name) }))
-                                ]}
-                                placeholder={t('ph_filter_by_department')}
-                            />
+                            >
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder={t('ph_filter_by_department')} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">{t('opt_all_departments')}</SelectItem>
+                                    {departments?.map((dept) => (
+                                        <SelectItem key={dept.id} value={dept.id.toString()}>
+                                            {typeof dept.name === 'string' ? dept.name : JSON.stringify(dept.name)}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                             <Select
                                 value={designation}
                                 onValueChange={(value) => handleFilter('designation', value)}
-                                options={[
-                                    { value: 'all', label: t('opt_all_designations') },
-                                    ...designations?.map((designation) => ({ value: designation.id.toString(), label: typeof designation.name === 'string' ? designation.name : JSON.stringify(designation.name) }))
-                                ]}
-                                placeholder={t('ph_filter_by_designation')}
-                            />
+                            >
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder={t('ph_filter_by_designation')} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">{t('opt_all_designations')}</SelectItem>
+                                    {designations?.map((designation) => (
+                                        <SelectItem key={designation.id} value={designation.id.toString()}>
+                                            {typeof designation.name === 'string' ? designation.name : JSON.stringify(designation.name)}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </div>
 
                         <div className="overflow-x-auto rounded-md border">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>File Number</TableHead>
-                                        <TableHead>Employee</TableHead>
-                                        <TableHead>Status & Designation</TableHead>
-                                        <TableHead>{t('current_assignment')}</TableHead>
-                                        <TableHead>{t('th_salary_info')}</TableHead>
-                                        <TableHead>{t('th_contact_details')}</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
+                            <table className="min-w-full divide-y divide-gray-200">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            File Number
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Employee
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Status & Designation
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Current Assignment
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Salary Info
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Contact Details
+                                        </th>
+                                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Actions
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200">
                                     {sortedEmployees.map((employee) => (
-                                        <TableRow key={employee.id} className="align-top">
-                                            <TableCell className="min-w-[100px]">
-                                                <span className="font-semibold">{employee.file_number}</span>
-                                            </TableCell>
-                                            <TableCell className="min-w-[200px]">
+                                        <tr key={employee.id} className="align-top">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                <span>{employee.file_number}</span>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                 <span>
                                                     {employee.first_name} {employee.middle_name} {employee.last_name}
                                                 </span>
-                                            </TableCell>
-                                            <TableCell className="min-w-[150px]">
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                 <div className="flex flex-col gap-1">
                                                     <div>{getStatusBadge(employee.status)}</div>
                                                     <div className="text-sm">
@@ -339,8 +374,8 @@ export default function Index({ auth, employees, filters, departments, designati
                                                               : 'N/A'}
                                                     </div>
                                                 </div>
-                                            </TableCell>
-                                            <TableCell className="min-w-[200px]">
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                 <div className="flex flex-col gap-1">
                                                     {getAssignmentBadge(employee.current_assignment)}
                                                     {employee.current_assignment ? (
@@ -378,8 +413,8 @@ export default function Index({ auth, employees, filters, departments, designati
                                                         <span className="text-sm text-muted-foreground">{t('no_current_assignment')}</span>
                                                     )}
                                                 </div>
-                                            </TableCell>
-                                            <TableCell className="min-w-[120px]">
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                 <div className="flex flex-col gap-1">
                                                     <div className="flex items-center text-sm">
                                                         <Banknote className="mr-1 inline-block h-3 w-3" />
@@ -397,8 +432,8 @@ export default function Index({ auth, employees, filters, departments, designati
                             Advance: {formatCurrency(Number(employee.current_balance) || 0)}
                           </Badge> */}
                                                 </div>
-                                            </TableCell>
-                                            <TableCell className="min-w-[150px]">
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                 <div className="flex flex-col gap-1">
                                                     <a href={`mailto:${employee.email}`} className="text-sm hover:underline">
                                                         {employee.email}
@@ -408,26 +443,26 @@ export default function Index({ auth, employees, filters, departments, designati
                                                     </a>
                                                     <span className="text-xs text-muted-foreground">{employee.nationality}</span>
                                                 </div>
-                                            </TableCell>
-                                            <TableCell className="text-right">
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                 <CrudButtons
                                                     resourceType="employees"
                                                     resourceId={employee.id}
                                                     resourceName={`${employee.first_name} ${employee.last_name}`}
                                                     className="justify-end"
                                                 />
-                                            </TableCell>
-                                        </TableRow>
+                                            </td>
+                                        </tr>
                                     ))}
                                     {employees.data.length === 0 && (
-                                        <TableRow>
-                                            <TableCell colSpan={6} className="py-4 text-center">
+                                        <tr>
+                                            <td colSpan={7} className="py-4 text-center">
                                                 No employees found.
-                                            </TableCell>
-                                        </TableRow>
+                                            </td>
+                                        </tr>
                                     )}
-                                </TableBody>
-                            </Table>
+                                </tbody>
+                            </table>
                         </div>
 
                         {/* Enhanced Pagination - Always show if there are employees */}

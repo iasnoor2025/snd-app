@@ -25,6 +25,7 @@ import { route } from 'ziggy-js';
 import * as z from 'zod';
 import useLoadingState from '../../hooks/useLoadingState';
 import { Employee } from '../../types/employee';
+import { I18nextProvider } from 'react-i18next';
 // Placeholder types
 type TimesheetFormData = any;
 type Project = any;

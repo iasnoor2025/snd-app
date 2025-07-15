@@ -259,3 +259,19 @@ Route::middleware(['auth', 'permission:advances.approve'])->group(function () {
     )->name('employees.advances.web.destroy');
 });
 
+Route::middleware(['auth', 'permission:advances.edit'])->group(function () {
+    Route::post('/employees/{employee}/advances/{advance}/repayment', [EmployeeAdvanceController::class, 'repayment'])->name('employees.advances.web.repayment');
+});
+
+Route::middleware(['auth', 'permission:advances.view'])->group(function () {
+    Route::get('/employees/{employee}/advances', function ($employee) {
+        $advances = \Modules\EmployeeManagement\Domain\Models\EmployeeAdvance::where('employee_id', $employee)->get([
+            'id', 'amount', 'status', 'reason', 'payment_date'
+        ]);
+        return Inertia::render('Employees/AdvancesList', [
+            'employeeId' => $employee,
+            'advances' => $advances,
+        ]);
+    })->name('employees.advances.web.index');
+});
+

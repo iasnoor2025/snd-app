@@ -28,6 +28,8 @@ class EmployeeAdvance extends BaseModel
         'deduction_amount',
         'deduction_frequency',
         'notes',
+        'repaid_amount',
+        'remaining_amount',
     ];
 
     protected $casts = [

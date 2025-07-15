@@ -9,30 +9,30 @@ import { z } from 'zod';
 
 import { Button, Card, CardContent, CardHeader, CardTitle, FormControl, FormField, FormItem, FormLabel, FormMessage, Input, Textarea } from '@/Core';
 
-// Define the form schema with validation
-const timesheetSchema = z.object({
-    date: z.string().min(1, { message: t('EmployeeManagement:employee.err_date_required', 'Date is required') }),
-    clock_in: z.string().min(1, { message: t('EmployeeManagement:employee.err_clock_in_required', 'Clock in time is required') }),
-    clock_out: z.string().min(1, { message: t('EmployeeManagement:employee.err_clock_out_required', 'Clock out time is required') }),
-    break_start: z.string().optional(),
-    break_end: z.string().optional(),
-    project_id: z.string().optional(),
-    notes: z.string().max(1000).optional(),
-});
-
-type TimesheetFormValues = z.infer<typeof timesheetSchema>;
-
-interface TimesheetFormProps {
-    employeeId: number;
-    timesheetId?: number;
-    onSuccess?: () => void;
-    defaultValues?: Partial<TimesheetFormValues>;
-    projects?: { id: string; name: string }[];
-}
-
 export const TimesheetForm: React.FC<TimesheetFormProps> = ({ employeeId, timesheetId, onSuccess, defaultValues, projects = [] }) => {
     const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
+
+    // Define the form schema with validation (move inside component)
+    const timesheetSchema = z.object({
+        date: z.string().min(1, { message: t('EmployeeManagement:employee.err_date_required', 'Date is required') }),
+        clock_in: z.string().min(1, { message: t('EmployeeManagement:employee.err_clock_in_required', 'Clock in time is required') }),
+        clock_out: z.string().min(1, { message: t('EmployeeManagement:employee.err_clock_out_required', 'Clock out time is required') }),
+        break_start: z.string().optional(),
+        break_end: z.string().optional(),
+        project_id: z.string().optional(),
+        notes: z.string().max(1000).optional(),
+    });
+
+    type TimesheetFormValues = z.infer<typeof timesheetSchema>;
+
+    interface TimesheetFormProps {
+        employeeId: number;
+        timesheetId?: number;
+        onSuccess?: () => void;
+        defaultValues?: Partial<TimesheetFormValues>;
+        projects?: { id: string; name: string }[];
+    }
 
     // Initialize form with default values
     const form = useForm<TimesheetFormValues>({
