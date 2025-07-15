@@ -124,8 +124,8 @@ const sizeClasses = {
   lg: "text-lg",
 };
 
-const Tabs = forwardRef<HTMLDivElement, TabsProps>(;
-  (;
+const Tabs = forwardRef<HTMLDivElement, TabsProps>(
+  (
     {
       className,
       items,
@@ -245,10 +245,6 @@ const Tabs = forwardRef<HTMLDivElement, TabsProps>(;
 Tabs.displayName = "Tabs";
 
 export { Tabs };
-
-
-
-</div>
 
 
 

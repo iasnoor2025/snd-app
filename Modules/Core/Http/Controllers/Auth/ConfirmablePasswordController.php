@@ -30,7 +30,7 @@ class ConfirmablePasswordController extends Controller
             'password' => $request->password,
         ])) {
             throw ValidationException::withMessages([
-                'password' => __('auth.password'),
+                'password' => __('Core::auth.password'),
             ]);
         }
 
@@ -38,4 +38,4 @@ class ConfirmablePasswordController extends Controller
 
         return redirect()->intended(route('dashboard', absolute: false));
     }
-} 
+}
