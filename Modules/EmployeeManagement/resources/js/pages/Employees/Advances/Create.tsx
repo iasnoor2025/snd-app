@@ -1,6 +1,5 @@
 import { AppLayout, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label, Textarea, ToastService } from '@/Core';
-import { PageProps } from '@/Modules/EmployeeManagement/resources/js/types';
-import { Head, router } from '@inertiajs/react';
+import { router } from '@inertiajs/core';
 import { ArrowLeft, Plus } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,11 +12,11 @@ interface Employee {
     employee_id: string;
 }
 
-interface Props extends PageProps {
+interface Props {
     employee: Employee;
 }
 
-export default function Create({ auth, employee }: Props) {
+export default function Create({ employee }: Props) {
     const { t } = useTranslation('employee');
 
     const [amount, setAmount] = useState('');
@@ -78,7 +77,7 @@ export default function Create({ auth, employee }: Props) {
         )
             .then(() => {
                 ToastService.success('Advance payment request created successfully');
-                router.visit(`/employees/${employee.id}/advances`);
+                router.visit(`/employees/${employee.id}?tab=advances`);
             })
             .catch((error) => {
                 setIsSubmitting(false);
@@ -88,8 +87,6 @@ export default function Create({ auth, employee }: Props) {
 
     return (
         <AppLayout title={t('ttl_create_advance_payment')} breadcrumbs={breadcrumbs} requiredPermission="employees.edit">
-            <Head title={t('ttl_create_advance_payment')} />
-
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:gap-8 md:p-8">
                 <div className="flex items-center gap-4">
                     <Button

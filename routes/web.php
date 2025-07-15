@@ -152,10 +152,8 @@ Route::get('/api/v1/equipment', function () {
 // Employee ERPNext sync (admin only)
 Route::post('/employees/sync-erpnext', [\Modules\EmployeeManagement\Http\Controllers\EmployeeController::class, 'syncToERPNext'])->middleware('auth');
 
-// Web route for approving employee advances (session-based auth)
-Route::post('/employees/{employee}/advances/{advance}/approve', [\Modules\EmployeeManagement\Http\Controllers\EmployeeAdvanceController::class, 'approve'])
-    ->middleware(['auth', 'permission:advances.approve'])
-    ->name('employees.advances.web.approve');
+// All EmployeeAdvance routes are deprecated. Use PayrollManagement advance routes instead.
+// Advance-related routes are now handled in Modules/PayrollManagement/Routes/web.php and api.php
 
 // Debug endpoint for session/cookie/csrf debugging
 Route::get('/debug/session-debug', function (\Illuminate\Http\Request $request) {

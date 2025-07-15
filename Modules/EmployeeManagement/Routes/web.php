@@ -225,20 +225,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('permission:salary-increments.apply')
         ->name('salary-increments.apply');
 
-    // Add API endpoint for advance payment history
+    // Employee Advances (EmployeeManagement, not salary advances)
     Route::get('/employees/{employee}/advances/history/api', [\Modules\EmployeeManagement\Http\Controllers\AdvancePaymentController::class, 'apiPaymentHistory'])
         ->middleware('permission:employees.view')
         ->name('employees.advances.history.api');
 
-    // Add DELETE endpoint for advance payment
     Route::delete('/employees/{employee}/advances/{advance}', [\Modules\EmployeeManagement\Http\Controllers\AdvancePaymentController::class, 'destroy'])
         ->middleware('permission:employees.edit')
         ->name('employees.advances.destroy');
 
-    // Add POST endpoint for advance repayment
     Route::post('/employees/{employee}/advances/{advance}/repayment', [\Modules\EmployeeManagement\Http\Controllers\AdvancePaymentController::class, 'recordRepayment'])
         ->middleware('permission:employees.edit')
         ->name('employees.advances.repayment');
+
+    Route::post('/employees/{employee}/advances', [\Modules\EmployeeManagement\Http\Controllers\AdvancePaymentController::class, 'store'])
+        ->middleware('permission:employees.edit')
+        ->name('employees.advances.store');
 });
 
 // Add access restriction update route
@@ -260,4 +262,5 @@ Route::middleware(['auth', 'permission:employees.edit'])->group(function () {
 Route::post('/employees/sync-from-erpnext', [\Modules\EmployeeManagement\Http\Controllers\EmployeeController::class, 'syncFromERPNext'])->middleware('auth');
 
 // All EmployeeAdvance routes are deprecated. Use PayrollManagement advance routes instead.
+// Advance-related routes are now handled in Modules/PayrollManagement/Routes/web.php and api.php
 

@@ -44,6 +44,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
             ->header('Content-Type', 'application/json');
     });
     Route::get('employees/{employee}/documents', [EmployeeController::class, 'documents']);
+    // Employee Advances (EmployeeManagement, not salary advances)
     Route::get('employees/{employee}/advances', [EmployeeController::class, 'advances']);
 
     // Timesheet routes
@@ -70,6 +71,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     });
 
     // All EmployeeAdvance API routes are deprecated. Use PayrollManagement advance routes instead.
+    // Advance-related API routes are now handled in Modules/PayrollManagement/Routes/api.php
 
     // Resignations
     Route::apiResource('resignations', ResignationController::class);

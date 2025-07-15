@@ -492,6 +492,16 @@ export default function Show({
     const [isDeletingAssignment, setIsDeletingAssignment] = useState(false);
     const [deleteAssignmentId, setDeleteAssignmentId] = useState<number | null>(null);
 
+    // On mount, check for ?tab=advances and set advances tab active
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('tab') === 'advances') {
+                setActiveTab('advances');
+            }
+        }
+    }, []);
+
     // Early return if no valid employee data
     if (!employee || !employee.id) {
         return (
@@ -1086,7 +1096,7 @@ export default function Show({
 
                 <Separator />
 
-                <Tabs defaultValue="personal-info" className="w-full" onValueChange={handleTabChange}>
+                <Tabs value={activeTab} onValueChange={handleTabChange} defaultValue="personal-info" className="w-full">
                     <TabsList className="flex w-full justify-between rounded-lg border bg-muted/30 p-1 shadow-sm">
                         <TabsTrigger
                             value="personal-info"
