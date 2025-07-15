@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card } from '@/../../Modules/Core/resources/js/components/ui/card';
 import { Table } from '@/../../Modules/Core/resources/js/components/ui/table';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/Core/components/ui/button';
 import { useTranslation } from 'react-i18next';
 
 interface Risk {

@@ -128,11 +128,11 @@ const PaymentHistory = ({ employeeId }: { employeeId: number }) => {
 
 const getBreadcrumbs = (t: any): BreadcrumbItem[] => [
   {
-    title: t('common:dashboard'),
+    title: t('dashboard'),
     href: '/dashboard',
   },
   {
-    title: t('common:employees'),
+    title: t('employees'),
     href: '/employees',
   },
   {
@@ -426,7 +426,7 @@ export default function Show({
   pagination: initialPagination = {},
   current_balance = 0
 }: Props) {
-  const { t } = useTranslation(['EmployeeManagement', 'common']);
+  const { t } = useTranslation(['EmployeeManagement', 'common', 'employees']);
   const breadcrumbs = getBreadcrumbs(t);
 
   // Add console log for debugging

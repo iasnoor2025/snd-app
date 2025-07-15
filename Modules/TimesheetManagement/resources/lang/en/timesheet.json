@@ -183,5 +183,13 @@
     "create_success": "Timesheet entry created successfully",
     "update_success": "Timesheet entry updated successfully",
     "delete_success": "Timesheet entry deleted successfully"
-  }
+  },
+  "lbl_location": "Location",
+  "lbl_use_time_clock": "Use time clock (clock in/out)",
+  "lbl_calculated_regular_hours": "Calculated Regular Hours",
+  "lbl_calculated_overtime_hours": "Calculated Overtime Hours",
+  "lbl_notes": "Notes",
+  "optional": "Optional",
+  "btn_saving": "Saving...",
+  "btn_save_timesheet": "Save Timesheet"
 }

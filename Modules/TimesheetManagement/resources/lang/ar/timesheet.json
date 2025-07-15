@@ -23,5 +23,13 @@
     "create_success": "تم إنشاء سجل الدوام بنجاح",
     "update_success": "تم تحديث سجل الدوام بنجاح",
     "delete_success": "تم حذف سجل الدوام بنجاح"
-  }
-} 
+  },
+  "lbl_location": "الموقع",
+  "lbl_use_time_clock": "استخدم ساعة الدوام (تسجيل الدخول/الخروج)",
+  "lbl_calculated_regular_hours": "ساعات العمل العادية المحسوبة",
+  "lbl_calculated_overtime_hours": "ساعات العمل الإضافية المحسوبة",
+  "lbl_notes": "ملاحظات",
+  "optional": "اختياري",
+  "btn_saving": "جارٍ الحفظ...",
+  "btn_save_timesheet": "حفظ الجدول الزمني"
+}

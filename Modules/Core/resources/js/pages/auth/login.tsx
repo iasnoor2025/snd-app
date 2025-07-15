@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
 import { Label } from "@/Core";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../components/ui/card';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { FaGoogle } from 'react-icons/fa';

@@ -15,10 +15,11 @@ export * from './multi-select';
 export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./table";
 export { Button } from './button';
 export { Input } from './input';
-export { FileUpload } from "./FileUpload";
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./tooltip";
 export { DatePicker } from "./date-picker";
 export { Sheet, SheetTrigger, SheetClose, SheetContent, SheetHeader, SheetFooter, SheetTitle, SheetDescription } from "./sheet";
 export { Skeleton } from "./skeleton";
-export { Tabs, TabsList, TabsTrigger, TabsContent } from "./tabs"; 
+export { Tabs, TabsList, TabsTrigger, TabsContent } from "./tabs";
 export { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "./dropdown-menu";
+export { Select } from '../Common/Select';
+

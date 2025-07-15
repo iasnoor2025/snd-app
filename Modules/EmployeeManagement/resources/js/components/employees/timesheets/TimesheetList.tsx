@@ -86,7 +86,7 @@ export const TimesheetList: React.FC<TimesheetListProps> = ({
   ];
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
   const [selectedYear, setSelectedYear] = useState(currentYear);
-  const { t } = useTranslation();
+  const { t } = useTranslation('employees');
 
   const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newMonth = parseInt(e.target.value, 10);
@@ -167,11 +167,11 @@ export const TimesheetList: React.FC<TimesheetListProps> = ({
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'approved':
-        return <Badge className="bg-green-500">Approved</Badge>
+        return <Badge className="bg-green-500">{t('status_approved')}</Badge>
       case 'pending':
-        return <Badge className="bg-yellow-500">Pending</Badge>
+        return <Badge className="bg-yellow-500">{t('status_pending')}</Badge>
       case 'rejected':
-        return <Badge className="bg-red-500">Rejected</Badge>
+        return <Badge className="bg-red-500">{t('status_rejected')}</Badge>
       default:
         return <Badge>{status}</Badge>
     }
@@ -180,7 +180,7 @@ export const TimesheetList: React.FC<TimesheetListProps> = ({
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Timesheets</CardTitle>
+        <CardTitle>{t('timesheets_title')}</CardTitle>
         <div className="flex space-x-2">
           <div className="flex items-center gap-2">
             <select value={selectedMonth} onChange={handleMonthChange} className="rounded-md border border-input bg-background px-2 py-1">
@@ -209,23 +209,23 @@ export const TimesheetList: React.FC<TimesheetListProps> = ({
           </div>
         ) : timesheets.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
-            No timesheets found for the selected period.
+            {t('no_timesheets_found')}
           </div>
         ) : (
           <div className="overflow-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
+                  <TableHead>{t('th_date')}</TableHead>
                   <TableHead>{t('th_clock_in')}</TableHead>
                   <TableHead>{t('th_clock_out')}</TableHead>
-                  <TableHead>Break</TableHead>
-                  <TableHead>{t('regular_hours')}</TableHead>
-                  <TableHead>Overtime</TableHead>
-                  <TableHead>Total</TableHead>
-                  <TableHead>Project</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>{t('th_break')}</TableHead>
+                  <TableHead>{t('th_regular_hours')}</TableHead>
+                  <TableHead>{t('th_overtime')}</TableHead>
+                  <TableHead>{t('th_total')}</TableHead>
+                  <TableHead>{t('th_project')}</TableHead>
+                  <TableHead>{t('th_status')}</TableHead>
+                  <TableHead className="text-right">{t('th_actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -264,14 +264,14 @@ export const TimesheetList: React.FC<TimesheetListProps> = ({
                             onClick={() => onEdit && onEdit(timesheet.id)}
                             disabled={timesheet.status === 'approved'}
                           >
-                            Edit
+                            {t('btn_edit')}
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => deleteTimesheet(timesheet.id)}
                             disabled={timesheet.status === 'approved'}
                             className="text-red-600"
                           >
-                            Delete
+                            {t('btn_delete')}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>

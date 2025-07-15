@@ -32,7 +32,7 @@ interface Props {
 }
 
 export default function SalaryHistory({ records = [] }: Props) {
-  const { t } = useTranslation('employee');
+  const { t } = useTranslation('employees');
 
     const calculateTotal = (record: SalaryRecord) => {
         return (
@@ -53,25 +53,23 @@ export default function SalaryHistory({ records = [] }: Props) {
     return (
         <AppLayout title="Salary History" breadcrumbs={breadcrumbs} requiredPermission="employees.view">
             <div className="flex items-center justify-between mb-6">
-                <h1 className="text-2xl font-bold text-gray-900">{t('salary_history', 'Salary History')}</h1>
+                <h1 className="text-2xl font-bold text-gray-900">{t('lbl_salary_history')}</h1>
                 <a href="/employees">
-                    <Button variant="outline" size="sm">
-                        Back
-                    </Button>
+                    <Button variant="outline" size="sm">{t('btn_back')}</Button>
                 </a>
             </div>
             <div className="rounded-md border w-full">
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Month</TableHead>
-                            <TableHead>{t('basic_salary')}</TableHead>
-                            <TableHead>Allowances</TableHead>
-                            <TableHead>Overtime</TableHead>
-                            <TableHead>Deductions</TableHead>
-                            <TableHead>{t('th_net_salary')}</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>{t('th_paid_date')}</TableHead>
+                            <TableHead>{t('lbl_month')}</TableHead>
+                            <TableHead>{t('lbl_basic_salary')}</TableHead>
+                            <TableHead>{t('lbl_allowances')}</TableHead>
+                            <TableHead>{t('lbl_overtime')}</TableHead>
+                            <TableHead>{t('lbl_deductions')}</TableHead>
+                            <TableHead>{t('lbl_net_salary')}</TableHead>
+                            <TableHead>{t('lbl_status')}</TableHead>
+                            <TableHead>{t('lbl_paid_date')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -131,7 +129,7 @@ export default function SalaryHistory({ records = [] }: Props) {
                                     colSpan={8}
                                     className="h-24 text-center text-muted-foreground"
                                 >
-                                    No salary records found
+                                    {t('msg_no_salary_records_found')}
                                 </TableCell>
                             </TableRow>
                         )}

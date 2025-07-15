@@ -239,7 +239,7 @@ const TimesheetFormInner: React.FC<TimesheetFormProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-4">
           <div>
-            <Label htmlFor="employee_id">Employee</Label>
+            <Label htmlFor="employee_id">{t('lbl_employee')}</Label>
             <Controller
               name="employee_id"
               control={control}
@@ -267,13 +267,13 @@ const TimesheetFormInner: React.FC<TimesheetFormProps> = ({
             />
             {errors.employee_id && (
               <p className="mt-1 text-sm text-red-500">
-                {errors.employee_id.message}
+                {t(String(errors.employee_id.message))}
               </p>
             )}
           </div>
 
           <div>
-            <Label htmlFor="date">Date</Label>
+            <Label htmlFor="date">{t('lbl_date')}</Label>
             <Controller
               name="date"
               control={control}
@@ -284,12 +284,12 @@ const TimesheetFormInner: React.FC<TimesheetFormProps> = ({
               )}
             />
             {errors.date && (
-              <p className="mt-1 text-sm text-red-500">{errors.date.message}</p>
+              <p className="mt-1 text-sm text-red-500">{t(String(errors.date.message))}</p>
             )}
           </div>
 
           <div>
-            <Label htmlFor="project_id">Project (Optional)</Label>
+            <Label htmlFor="project_id">{t('lbl_project')} ({t('optional')})</Label> {/* TODO: Add 'optional' key if missing */}
             <Controller
               name="project_id"
               control={control}
@@ -319,7 +319,7 @@ const TimesheetFormInner: React.FC<TimesheetFormProps> = ({
           </div>
 
           <div>
-            <Label htmlFor="location">Location (Optional)</Label>
+            <Label htmlFor="location">{t('lbl_location')} ({t('optional')})</Label> {/* TODO: Add 'lbl_location' and 'optional' keys if missing */}
             <Input
               id="location"
               {...register('location')}
@@ -338,8 +338,8 @@ const TimesheetFormInner: React.FC<TimesheetFormProps> = ({
               disabled={isLoading}
             />
             <Label htmlFor="use-time-clock" className="cursor-pointer">
-              Use time clock (clock in/out)
-            </Label>
+              {t('lbl_use_time_clock')}
+            </Label> {/* TODO: Add 'lbl_use_time_clock' key if missing */}
           </div>
 
           {useTimeClock ? (
@@ -354,7 +354,7 @@ const TimesheetFormInner: React.FC<TimesheetFormProps> = ({
                     className="w-full"
                     disabled={isLoading}
                   />
-                  {typeof errors.clock_in?.message === 'string' ? <div style={{ color: 'red' }}>{t(errors.clock_in.message)}</div> : null}
+                  {typeof errors.clock_in?.message === 'string' ? <div style={{ color: 'red' }}>{t(String(errors.clock_in.message))}</div> : null}
                 </div>
                 <div>
                   <Label htmlFor="clock_out">{t('lbl_clock_out')}</Label>
@@ -365,7 +365,7 @@ const TimesheetFormInner: React.FC<TimesheetFormProps> = ({
                     className="w-full"
                     disabled={isLoading}
                   />
-                  {typeof errors.clock_out?.message === 'string' ? <div style={{ color: 'red' }}>{t(errors.clock_out.message)}</div> : null}
+                  {typeof errors.clock_out?.message === 'string' ? <div style={{ color: 'red' }}>{t(String(errors.clock_out.message))}</div> : null}
                 </div>
               </div>
 
@@ -396,13 +396,13 @@ const TimesheetFormInner: React.FC<TimesheetFormProps> = ({
 
               <div className="grid grid-cols-2 gap-4 pt-4 border-t">
                 <div>
-                  <Label>{t('lbl_calculated_regular_hours')}</Label>
+                  <Label>{t('lbl_calculated_regular_hours')}</Label> {/* TODO: Add 'lbl_calculated_regular_hours' key if missing */}
                   <p className="text-lg font-medium">
                     {watch('regular_hours') || 0}
                   </p>
                 </div>
                 <div>
-                  <Label>{t('lbl_calculated_overtime_hours')}</Label>
+                  <Label>{t('lbl_calculated_overtime_hours')}</Label> {/* TODO: Add 'lbl_calculated_overtime_hours' key if missing */}
                   <p className="text-lg font-medium">
                     {watch('overtime_hours') || 0}
                   </p>
@@ -439,7 +439,7 @@ const TimesheetFormInner: React.FC<TimesheetFormProps> = ({
           )}
 
           <div>
-            <Label htmlFor="notes">Notes (Optional)</Label>
+            <Label htmlFor="notes">{t('lbl_notes')} ({t('optional')})</Label> {/* TODO: Add 'lbl_notes' and 'optional' keys if missing */}
             <Textarea
               id="notes"
               {...register('notes')}
@@ -458,16 +458,16 @@ const TimesheetFormInner: React.FC<TimesheetFormProps> = ({
           onClick={onCancel}
           disabled={isLoading}
         >
-          Cancel
+          {t('btn_cancel')}
         </Button>
         <Button type="submit" disabled={isLoading}>
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Saving...
+              {t('btn_saving')}
             </>
           ) : (
-            'Save Timesheet'
+            t('btn_save_timesheet')
           )}
         </Button>
       </div>

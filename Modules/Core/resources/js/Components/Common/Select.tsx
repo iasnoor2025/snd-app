@@ -1,11 +1,4 @@
 import React, { SelectHTMLAttributes, forwardRef } from "react";
-import {
-  Select as ShadcnSelect,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select"; 
 import { cn } from "../../lib/utils";
 import { Label } from "../ui/label";
 import { HelpCircle } from "lucide-react";
@@ -86,6 +79,8 @@ export interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement
   value?: string;
   /** Callback when value changes */
   onChange?: (value: string) => void;
+  /** Callback when value changes */
+  onValueChange?: (value: string) => void;
   /** Placeholder text when no option is selected */
   placeholder?: string;
   /** Whether the select is required */
@@ -109,6 +104,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
       options,
       value,
       onChange,
+      onValueChange,
       placeholder = "Select an option",
       id,
       required,
@@ -147,61 +143,50 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
             )}
           </div>
         )}
-        <ShadcnSelect
+        <select
+          id={selectId}
+          className={cn(
+            className,
+            error && "border-destructive focus:ring-destructive"
+          )}
+          aria-invalid={error ? "true" : "false"}
+          aria-describedby={cn(
+            error && errorId,
+            helperText && helperId
+          )}
+          aria-required={required}
           value={value}
-          onValueChange={onChange}
-          disabled={props.disabled}
+          onChange={e => {
+            onChange?.(e.target.value);
+            onValueChange?.(e.target.value);
+          }}
+          {...props}
         >
-          <SelectTrigger
-            id={selectId}
-            className={cn(
-              className,
-              error && "border-destructive focus:ring-destructive"
-            )}
-            aria-invalid={error ? "true" : "false"}
-            aria-describedby={cn(
-              error && errorId,
-              helperText && helperId
-            )}
-            aria-required={required}
-          >
-            <SelectValue placeholder={placeholder} />
-          </SelectTrigger>
-          <SelectContent>
-            {searchable && (
-              <div className="px-2 pb-2">
-                <input
-                  type="search"
-                  placeholder="Search..."
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                />
-              </div>
-            )}
-            {options.filter(option => option.value !== '').map((option) => (
-              <SelectItem
-                key={option.value}
-                value={option.value}
-                disabled={option.disabled}
-                className={cn(
-                  "flex items-center gap-2",
-                  option.description && "flex-col items-start"
-                )}
-              >
-                {option.icon && (
-                  <span className="h-4 w-4">{option.icon}</span>
-                )}
-                <div>
-                  <div>{option.label}</div>
-                  {showDescriptions && option.description && (
-                    <div className="text-xs text-muted-foreground">
-                      {option.description}
-                    </div>
-                  )}
+          {placeholder && <option value="" disabled>{placeholder}</option>}
+          {options.filter(option => option.value !== '').map((option) => (
+            <option
+              key={option.value}
+              value={option.value}
+              disabled={option.disabled}
+            >
+              {option.label}
+              {showDescriptions && option.description && (
+                <div className="text-xs text-muted-foreground">
+                  {option.description}
                 </div>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </ShadcnSelect>
+              )}
+            </option>
+          ))}
+        </select>
+        {searchable && (
+          <div className="px-2 pb-2">
+            <input
+              type="search"
+              placeholder="Search..."
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            />
+          </div>
+        )}
         {error && (
           <p
             id={errorId}

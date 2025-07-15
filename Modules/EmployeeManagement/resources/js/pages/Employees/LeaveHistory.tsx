@@ -27,7 +27,7 @@ interface Props {
 }
 
 export default function LeaveHistory({ records }: Props) {
-  const { t } = useTranslation('employee');
+  const { t } = useTranslation('employees');
 
     const getStatusBadge = (status: LeaveRecord['status']) => {
         return (
@@ -59,12 +59,11 @@ export default function LeaveHistory({ records }: Props) {
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Type</TableHead>
-                        <TableHead>{t('th_date_range')}</TableHead>
-                        <TableHead>{t('th_total_days')}</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Reason</TableHead>
-                        <TableHead>Notes</TableHead>
+                        <TableHead>{t('lbl_leave_type')}</TableHead>
+                        <TableHead>{t('lbl_start_date')}</TableHead>
+                        <TableHead>{t('lbl_end_date')}</TableHead>
+                        <TableHead>{t('lbl_status')}</TableHead>
+                        <TableHead>{t('lbl_actions')}</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>

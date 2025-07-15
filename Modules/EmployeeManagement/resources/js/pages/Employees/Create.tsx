@@ -136,7 +136,7 @@ type FormValues = z.infer<typeof formSchema>;
 type FileRecord = Record<string, File | null>;
 
 export default function Create({ users, designations, employee, isEditing = false }: Props) {
-  const { t } = useTranslation('employee');
+  const { t } = useTranslation('employees');
 
   const [activeTab, setActiveTab] = useState('personal');
   const [isSubmitting, setIsSubmitting] = useState(false);

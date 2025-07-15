@@ -5,75 +5,40 @@ import { router } from '@inertiajs/core';
 import { PageProps, BreadcrumbItem } from "@/Core/types";
 import { AppLayout } from '@/Core';
 import { usePermission } from "@/Core";
-import { Button } from "@/Core";
+import { Button } from "@/Core/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from "@/Core";
-import { Input } from "@/Core";
-import { Badge } from "@/Core";
-import { Checkbox } from "@/Core";
+} from "@/Core/components/ui/card";
+import { Input } from "@/Core/components/ui/input";
+import { Badge } from "@/Core/components/ui/badge";
 import {
   Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/Core";
+} from "@/Core/components/Common/Select";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/Core";
-import {
-  Plus as PlusIcon,
-  Eye as EyeIcon,
-  Pencil as PencilIcon,
-  Trash as TrashIcon,
-  RotateCw as ArrowPathIcon,
-  Check as CheckIcon,
-  X as XIcon,
-  Calendar as CalendarIcon,
-  MoreHorizontal as MoreHorizontalIcon,
-  FileText as FileTextIcon
-} from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/Core";
-import { Popover, PopoverContent, PopoverTrigger } from "@/Core";
-import { Calendar } from "@/Core";
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/Core/components/ui/tooltip';
 import { format } from 'date-fns';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/Core";
 import { CreateButton } from "@/Core";
 import { CrudButtons } from "@/Core";
 import { route } from 'ziggy-js';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/components/ui/button';
 import { ApprovalDialog } from '../../components/ApprovalDialog';
-import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 import {
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogAction,
-  AlertDialogCancel,
-} from '@/Core/components/ui/alert-dialog';
+  Dialog as AlertDialog,
+  DialogTrigger as AlertDialogTrigger,
+  DialogContent as AlertDialogContent,
+  DialogTitle as AlertDialogTitle,
+  DialogDescription as AlertDialogDescription,
+} from '@/Core/components/ui/dialog';
+import { Table as ReactTable } from '@/Core/components/ui/table';
+import { Check as CheckIcon, X as XIcon, Trash as TrashIcon } from 'lucide-react';
 
 // Define the Timesheet interface here to ensure it has all required properties
 interface Project {
@@ -123,7 +88,7 @@ interface Props extends PageProps {
   };
 }
 
-export default function TimesheetsIndex({ auth, timesheets, filters = { status: 'all', search: '', date_from: '', date_to: '', per_page: 15 } }: Props) {
+export default function TimesheetsIndex({ timesheets, filters = { status: 'all', search: '', date_from: '', date_to: '', per_page: 15 } }: Props) {
   const { t } = useTranslation('TimesheetManagement');
 
   const breadcrumbs: BreadcrumbItem[] = [
@@ -133,7 +98,6 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
 
   const { hasPermission, hasRole } = usePermission();
   const canBulkSubmit = hasPermission('timesheets.submit') || ['admin', 'hr', 'foreman', 'timesheet_incharge', 'manager'].some(role => hasRole(role));
-  const [processing, setProcessing] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState(filters.search || '');
   const [selectedStatus, setSelectedStatus] = useState(filters.status || 'all');
   const [startDate, setStartDate] = useState<Date | undefined>(
@@ -176,19 +140,17 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
     return 0;
   });
 
-  const handleSort = (field: 'date') => {
-    if (sortField === field) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortField(field);
-      setSortOrder('asc');
-    }
+  // Fix: Table expects sortKey as string, not null
+  const tableSortKey = sortField || 'date';
+
+  // Fix: Table expects onSort as (key: string, direction: 'asc' | 'desc') => void
+  const handleTableSort = (key: string, direction: 'asc' | 'desc') => {
+    setSortField(key as 'date');
+    setSortOrder(direction);
   };
 
-  const canCreateTimesheet = hasPermission('timesheets.create');
-  const canEditTimesheet = hasPermission('timesheets.edit');
-  const canDeleteTimesheet = hasPermission('timesheets.delete');
   const canApproveTimesheet = hasPermission('timesheets.approve');
+  const canDeleteTimesheet = hasPermission('timesheets.delete');
 
   // Determine if user is admin
   // const isAdmin = auth?.user?.roles?.includes('admin');
@@ -338,6 +300,103 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
     }
   };
 
+  // Define columns for Table
+  const columns = [
+    {
+      key: 'employee',
+      header: t('lbl_employee_column'),
+      accessor: (row: Timesheet) => row.employee ? `${row.employee.first_name} ${row.employee.last_name}` : `Employee ID: ${row.employee_id}`,
+    },
+    {
+      key: 'date',
+      header: t('lbl_date_column'),
+      accessor: (row: Timesheet) => format(new Date(row.date), 'PP'),
+      sortable: true,
+    },
+    {
+      key: 'hours_worked',
+      header: t('lbl_hours_column'),
+      accessor: (row: Timesheet) => row.hours_worked,
+    },
+    {
+      key: 'overtime_hours',
+      header: t('lbl_overtime_column'),
+      accessor: (row: Timesheet) => row.overtime_hours,
+    },
+    {
+      key: 'project',
+      header: t('lbl_project_column'),
+      accessor: (row: Timesheet) => (row.project?.name && row.rental?.equipment?.name)
+        ? `${row.project.name} / ${row.rental.equipment.name}`
+        : row.project?.name
+          ? row.project.name
+          : row.rental?.equipment?.name
+            ? row.rental.equipment.name
+            : t('not_assigned'),
+    },
+    {
+      key: 'status',
+      header: t('lbl_status_column'),
+      accessor: (row: Timesheet) => getStatusBadge(row.status),
+    },
+    {
+      key: 'actions',
+      header: t('lbl_actions_column'),
+      accessor: (row: Timesheet) => (
+        <div className="flex items-center justify-end space-x-2">
+          <CrudButtons
+            resourceType="timesheets"
+            resourceId={row.id}
+            resourceName={`Timesheet from ${format(new Date(row.date), "PP")}`}
+          />
+          {canApproveTimesheet && row.status === 'submitted' && (
+            <>
+              <ApprovalDialog
+                timesheet={row}
+                action="approve"
+                onSuccess={reloadPage}
+                trigger={
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button variant="outline" size="icon">
+                          <CheckIcon className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{t('approve_timesheet', 'Approve Timesheet')}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                }
+              />
+              <ApprovalDialog
+                timesheet={row}
+                action="reject"
+                onSuccess={reloadPage}
+                trigger={
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button variant="outline" size="icon">
+                          <XIcon className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{t('reject_timesheet', 'Reject Timesheet')}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                }
+              />
+            </>
+          )}
+        </div>
+      ),
+      className: 'text-right',
+    },
+  ];
+
   return (
     <AppLayout title={t('ttl_timesheets')} breadcrumbs={breadcrumbs} requiredPermission="timesheets.view">
       <Head title={t('ttl_timesheets')} />
@@ -434,50 +493,45 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Approve Timesheets</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Are you sure you want to approve {selectedTimesheets.length} selected timesheets?
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel disabled={bulkProcessing}>Cancel</AlertDialogCancel>
-                      <AlertDialogAction asChild>
-                        <Button
-                          onClick={() => {
-                            setBulkProcessing(true);
-                            router.post(route('timesheets.bulk-approve'), {
-                              timesheet_ids: selectedTimesheets
-                            }, {
-                              onSuccess: () => {
-                                toast(`${selectedTimesheets.length} timesheets approved successfully`);
-                                setSelectedTimesheets([]);
-                                setBulkProcessing(false);
-                                setShowBulkApproveDialog(false);
-                              },
-                              onError: (errors: any) => {
-                                toast(errors.error || 'Failed to approve timesheets');
-                                setBulkProcessing(false);
-                                setShowBulkApproveDialog(false);
-                              },
-                            });
-                          }}
-                          disabled={bulkProcessing}
-                        >
-                          {bulkProcessing ? (
-                            <>
-                              <ArrowPathIcon className="mr-2 h-4 w-4 animate-spin" />
-                              {t('btn_processing')}
-                            </>
-                          ) : (
-                            <>
-                              <CheckIcon className="mr-2 h-4 w-4" />
-                              Approve
-                            </>
-                          )}
-                        </Button>
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
+                    <AlertDialogTitle>Approve Timesheets</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to approve {selectedTimesheets.length} selected timesheets?
+                    </AlertDialogDescription>
+                    <div className="flex justify-end gap-2 mt-4">
+                      <Button onClick={() => setShowBulkApproveDialog(false)} disabled={bulkProcessing}>Cancel</Button>
+                      <Button
+                        onClick={() => {
+                          setBulkProcessing(true);
+                          router.post(route('timesheets.bulk-approve'), {
+                            timesheet_ids: selectedTimesheets
+                          }, {
+                            onSuccess: () => {
+                              toast(`${selectedTimesheets.length} timesheets approved successfully`);
+                              setSelectedTimesheets([]);
+                              setBulkProcessing(false);
+                              setShowBulkApproveDialog(false);
+                            },
+                            onError: (errors: any) => {
+                              toast(errors.error || 'Failed to approve timesheets');
+                              setBulkProcessing(false);
+                              setShowBulkApproveDialog(false);
+                            },
+                          });
+                        }}
+                        disabled={bulkProcessing}
+                      >
+                        {bulkProcessing ? (
+                          <>
+                            {t('btn_processing')}
+                          </>
+                        ) : (
+                          <>
+                            <CheckIcon className="mr-2 h-4 w-4" />
+                            Approve
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </AlertDialogContent>
                 </AlertDialog>
               )}
@@ -494,64 +548,57 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Submit Timesheets</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Are you sure you want to submit {selectedTimesheets.length} selected timesheets?
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel disabled={bulkProcessing}>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        asChild
-                      >
-                        <Button
-                          onClick={async () => {
-                            setBulkProcessing(true);
-                            try {
-                              const res = await fetch(route('timesheets.bulk-submit'), {
-                                method: 'POST',
-                                headers: {
-                                  'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '',
-                                  'Accept': 'application/json',
-                                  'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({ timesheet_ids: selectedTimesheets }),
-                              });
-                              const data = await res.json();
-                              if (res.ok && data.success) {
-                                toast.success(`${data.submitted ?? selectedTimesheets.length} timesheets submitted successfully`);
-                                setSelectedTimesheets([]);
-                                reloadPage();
-                              } else if (res.ok && data.submitted === 0) {
-                                toast.error(data.error || 'No timesheets were submitted. Please check the status of selected timesheets.');
-                              } else {
-                                toast.error((data && data.error) ? data.error : `Failed to submit timesheets. Response: ${JSON.stringify(data)}`);
-                              }
-                            } catch (e: any) {
-                              toast.error(e.message || 'Failed to submit timesheets');
-                            } finally {
-                              setBulkProcessing(false);
-                              setShowBulkSubmitDialog(false);
+                    <AlertDialogTitle>Submit Timesheets</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to submit {selectedTimesheets.length} selected timesheets?
+                    </AlertDialogDescription>
+                    <div className="flex justify-end gap-2 mt-4">
+                      <Button onClick={() => setShowBulkSubmitDialog(false)} disabled={bulkProcessing}>Cancel</Button>
+                      <Button
+                        onClick={async () => {
+                          setBulkProcessing(true);
+                          try {
+                            const res = await fetch(route('timesheets.bulk-submit'), {
+                              method: 'POST',
+                              headers: {
+                                'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '',
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                              },
+                              body: JSON.stringify({ timesheet_ids: selectedTimesheets }),
+                            });
+                            const data = await res.json();
+                            if (res.ok && data.success) {
+                              toast.success(`${data.submitted ?? selectedTimesheets.length} timesheets submitted successfully`);
+                              setSelectedTimesheets([]);
+                              reloadPage();
+                            } else if (res.ok && data.submitted === 0) {
+                              toast.error(data.error || 'No timesheets were submitted. Please check the status of selected timesheets.');
+                            } else {
+                              toast.error((data && data.error) ? data.error : `Failed to submit timesheets. Response: ${JSON.stringify(data)}`);
                             }
-                          }}
-                          disabled={bulkProcessing}
-                          className="bg-blue-600 hover:bg-blue-700"
-                        >
-                          {bulkProcessing ? (
-                            <>
-                              <ArrowPathIcon className="mr-2 h-4 w-4 animate-spin" />
-                              {t('btn_processing')}
-                            </>
-                          ) : (
-                            <>
-                              <CheckIcon className="mr-2 h-4 w-4" />
-                              Submit
-                            </>
-                          )}
-                        </Button>
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
+                          } catch (e: any) {
+                            toast.error(e.message || 'Failed to submit timesheets');
+                          } finally {
+                            setBulkProcessing(false);
+                            setShowBulkSubmitDialog(false);
+                          }
+                        }}
+                        disabled={bulkProcessing}
+                        className="bg-blue-600 hover:bg-blue-700"
+                      >
+                        {bulkProcessing ? (
+                          <>
+                            {t('btn_processing')}
+                          </>
+                        ) : (
+                          <>
+                            <CheckIcon className="mr-2 h-4 w-4" />
+                            Submit
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </AlertDialogContent>
                 </AlertDialog>
               )}
@@ -567,56 +614,51 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                   </Button>
                   <AlertDialog open={showBulkDeleteDialog} onOpenChange={setShowBulkDeleteDialog}>
                     <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>{t('delete_confirm', 'Are you sure you want to delete the selected timesheets?')}</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          {t('delete_warning', 'This action cannot be undone.')}
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel disabled={bulkProcessing}>{t('btn_cancel', 'Cancel')}</AlertDialogCancel>
-                        <AlertDialogAction asChild>
-                          <Button
-                            variant="destructive"
-                            onClick={async () => {
-                              setBulkProcessing(true);
-                              try {
-                                const res = await fetch('/api/timesheets/bulk-delete', {
-                                  method: 'DELETE',
-                                  headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({ ids: selectedTimesheets }),
-                                });
-                                if (res.ok) {
-                                  toast.success(t('bulk_delete_success', 'Timesheets deleted successfully'));
-                                  reloadPage();
-                                  setSelectedTimesheets([]);
-                                } else {
-                                  const data = await res.json();
-                                  toast.error(data.error || t('bulk_delete_failed', 'Failed to delete timesheets'));
-                                }
-                              } catch (e) {
-                                toast.error(t('bulk_delete_failed', 'Failed to delete timesheets'));
-                              } finally {
-                                setBulkProcessing(false);
-                                setShowBulkDeleteDialog(false);
+                      <AlertDialogTitle>{t('delete_confirm', 'Are you sure you want to delete the selected timesheets?')}</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        {t('delete_warning', 'This action cannot be undone.')}
+                      </AlertDialogDescription>
+                      <div className="flex justify-end gap-2 mt-4">
+                        <Button onClick={() => setShowBulkDeleteDialog(false)} disabled={bulkProcessing}>{t('btn_cancel', 'Cancel')}</Button>
+                        <Button
+                          variant="destructive"
+                          onClick={async () => {
+                            setBulkProcessing(true);
+                            try {
+                              const res = await fetch('/api/timesheets/bulk-delete', {
+                                method: 'DELETE',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ ids: selectedTimesheets }),
+                              });
+                              if (res.ok) {
+                                toast.success(t('bulk_delete_success', 'Timesheets deleted successfully'));
+                                reloadPage();
+                                setSelectedTimesheets([]);
+                              } else {
+                                const data = await res.json();
+                                toast.error(data.error || t('bulk_delete_failed', 'Failed to delete timesheets'));
                               }
-                            }}
-                            disabled={bulkProcessing}
-                          >
-                            {bulkProcessing ? (
-                              <>
-                                <ArrowPathIcon className="mr-2 h-4 w-4 animate-spin" />
-                                {t('btn_processing')}
-                              </>
-                            ) : (
-                              <>
-                                <TrashIcon className="mr-2 h-4 w-4" />
-                                {t('btn_delete_selected', 'Delete Selected')}
-                              </>
-                            )}
-                          </Button>
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
+                            } catch (e) {
+                              toast.error(t('bulk_delete_failed', 'Failed to delete timesheets'));
+                            } finally {
+                              setBulkProcessing(false);
+                              setShowBulkDeleteDialog(false);
+                            }
+                          }}
+                          disabled={bulkProcessing}
+                        >
+                          {bulkProcessing ? (
+                            <>
+                              {t('btn_processing')}
+                            </>
+                          ) : (
+                            <>
+                              <TrashIcon className="mr-2 h-4 w-4" />
+                              {t('btn_delete_selected', 'Delete Selected')}
+                            </>
+                          )}
+                        </Button>
+                      </div>
                     </AlertDialogContent>
                   </AlertDialog>
                 </>
@@ -637,58 +679,23 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
                     />
                   </div>
                   <div className="w-full md:w-40">
-                    <Select value={selectedStatus} onValueChange={(value) => {
-                      setSelectedStatus(value);
-                      handleSearchWithStatus(value);
-                    }}>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder={t('ph_status')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">{t('opt_all_statuses_1')}</SelectItem>
-                        <SelectItem value="draft">Draft</SelectItem>
-                        <SelectItem value="submitted">Submitted</SelectItem>
-                        <SelectItem value="foreman_approved">Foreman Approved</SelectItem>
-                        <SelectItem value="incharge_approved">Incharge Approved</SelectItem>
-                        <SelectItem value="checking_approved">Checking Approved</SelectItem>
-                        <SelectItem value="manager_approved">Manager Approved</SelectItem>
-                        <SelectItem value="rejected">Rejected</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex gap-2">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="outline" className="w-full md:w-auto">
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {startDate ? format(startDate, 'PP') : t('from_date')}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={startDate}
-                          onSelect={setStartDate}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="outline" className="w-full md:w-auto">
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {endDate ? format(endDate, 'PP') : t('to_date')}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={endDate}
-                          onSelect={setEndDate}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <Select
+                      value={selectedStatus}
+                      onValueChange={(value) => {
+                        setSelectedStatus(value);
+                        handleSearchWithStatus(value);
+                      }}
+                      options={[
+                        { value: 'all', label: t('opt_all_statuses_1') },
+                        { value: 'draft', label: 'Draft' },
+                        { value: 'submitted', label: 'Submitted' },
+                        { value: 'foreman_approved', label: 'Foreman Approved' },
+                        { value: 'incharge_approved', label: 'Incharge Approved' },
+                        { value: 'checking_approved', label: 'Checking Approved' },
+                        { value: 'manager_approved', label: 'Manager Approved' },
+                        { value: 'rejected', label: 'Rejected' },
+                      ]}
+                    />
                   </div>
                   <div className="flex gap-2">
                     <Button onClick={handleSearch}>{t('btn_search')}</Button>
@@ -703,157 +710,20 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
             </div>
 
             <div className="rounded-md border mt-6">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    {((canApproveTimesheet && !canBulkSubmit) || canBulkSubmit) && (
-                      <TableHead className="w-[60px]">
-                        <Checkbox
-                          onChange={(e) => toggleSelectAll(e.target.checked)}
-                          checked={
-                            canBulkSubmit
-                              ? timesheetsData.length > 0 && timesheetsData.every(
-                                  timesheet => selectedTimesheets.includes(timesheet.id)
-                                )
-                              : timesheetsData.filter(t => t.status === 'submitted').length > 0 &&
-                                timesheetsData.filter(t => t.status === 'submitted').every(
-                                  timesheet => selectedTimesheets.includes(timesheet.id)
-                                )
-                          }
-                        />
-                      </TableHead>
-                    )}
-                    <TableHead>{t('lbl_employee_column')}</TableHead>
-                    <TableHead onClick={() => handleSort('date')} className="cursor-pointer select-none">
-                      {t('lbl_date_column')}
-                      {sortField === 'date' && (
-                        <span className="ml-1">{sortOrder === 'asc' ? '▲' : '▼'}</span>
-                      )}
-                    </TableHead>
-                    <TableHead>{t('lbl_hours_column')}</TableHead>
-                    <TableHead>{t('lbl_overtime_column')}</TableHead>
-                    <TableHead>{t('lbl_project_column')}</TableHead>
-                    <TableHead>{t('lbl_status_column')}</TableHead>
-                    <TableHead className="text-right">{t('lbl_actions_column')}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {sortedTimesheetsData.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={canApproveTimesheet ? 8 : 7} className="h-24 text-center">
-                        <div className="flex flex-col items-center justify-center space-y-2">
-                          <div className="text-lg font-medium">{t('no_timesheets_found')}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {t('no_timesheets_message')}
-                          </div>
-                          {canCreateTimesheet && (
-                            <CreateButton
-                              resourceType="timesheets"
-                              text={t('btn_create_timesheet')}
-                              href="/hr/timesheets/create"
-                              buttonVariant="default"
-                              className="mt-2"
-                            />
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    sortedTimesheetsData.map((timesheet) => (
-                      <TableRow key={timesheet.id}>
-                        {((canApproveTimesheet && !canBulkSubmit) || canBulkSubmit) && (
-                          <TableCell>
-                            <Checkbox
-                              checked={selectedTimesheets.includes(timesheet.id)}
-                              onChange={(e) => toggleTimesheetSelection(timesheet.id, e.target.checked)}
-                              disabled={canBulkSubmit ? !['draft', 'rejected', 'submitted'].includes(timesheet.status) : timesheet.status !== 'submitted'}
-                            />
-                          </TableCell>
-                        )}
-                        <TableCell>
-                          {timesheet.employee
-                            ? `${timesheet.employee.first_name} ${timesheet.employee.last_name}`
-                            : `Employee ID: ${timesheet.employee_id}`
-                          }
-                        </TableCell>
-                        <TableCell>{format(new Date(timesheet.date), "PP")}</TableCell>
-                        <TableCell>{timesheet.hours_worked}</TableCell>
-                        <TableCell>{timesheet.overtime_hours}</TableCell>
-                        <TableCell>
-                          {(timesheet.project?.name && timesheet.rental?.equipment?.name)
-                            ? `${timesheet.project.name} / ${timesheet.rental.equipment.name}`
-                            : timesheet.project?.name
-                              ? timesheet.project.name
-                              : timesheet.rental?.equipment?.name
-                                ? timesheet.rental.equipment.name
-                                : t('not_assigned')
-                          }
-                        </TableCell>
-                        <TableCell>{getStatusBadge(timesheet.status)}</TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex items-center justify-end space-x-2">
-                            <CrudButtons
-                              resourceType="timesheets"
-                              resourceId={timesheet.id}
-                              resourceName={`Timesheet from ${format(new Date(timesheet.date), "PP")}`}
-                            />
-
-                            {canApproveTimesheet && timesheet.status === 'submitted' && (
-                              <>
-                                <ApprovalDialog
-                                  timesheet={timesheet}
-                                  action="approve"
-                                  onSuccess={() => {
-                                    // Reload the page to show updated data
-                                    reloadPage();
-                                  }}
-                                  trigger={
-                                    <TooltipProvider>
-                                      <Tooltip>
-                                        <TooltipTrigger asChild>
-                                          <Button variant="outline" size="icon">
-                                            <CheckIcon className="h-4 w-4" />
-                                          </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                          <p>{t('approve_timesheet', 'Approve Timesheet')}</p>
-                                        </TooltipContent>
-                                      </Tooltip>
-                                    </TooltipProvider>
-                                  }
-                                />
-
-                                <ApprovalDialog
-                                  timesheet={timesheet}
-                                  action="reject"
-                                  onSuccess={() => {
-                                    // Reload the page to show updated data
-                                    reloadPage();
-                                  }}
-                                  trigger={
-                                    <TooltipProvider>
-                                      <Tooltip>
-                                        <TooltipTrigger asChild>
-                                          <Button variant="outline" size="icon">
-                                            <XIcon className="h-4 w-4" />
-                                          </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                          <p>{t('reject_timesheet', 'Reject Timesheet')}</p>
-                                        </TooltipContent>
-                                      </Tooltip>
-                                    </TooltipProvider>
-                                  }
-                                />
-                              </>
-                            )}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
+              <ReactTable
+                data={sortedTimesheetsData}
+                columns={columns}
+                sortKey={tableSortKey}
+                sortDirection={sortOrder}
+                onSort={handleTableSort}
+                emptyMessage={t('no_timesheets_found')}
+                showRowNumbers={false}
+                showHeaders={true}
+                showBorders={true}
+                showHover={true}
+                striped={false}
+                compact={false}
+              />
             </div>
 
             {/* Pagination Controls */}
@@ -899,6 +769,59 @@ export default function TimesheetsIndex({ auth, timesheets, filters = { status: 
     </AppLayout>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

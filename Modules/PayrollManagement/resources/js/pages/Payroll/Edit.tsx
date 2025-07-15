@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Head } from '@inertiajs/react';
-import FileUpload from '@/components/FileUpload';
-import { Button } from '@/components/ui/button';
+import FileUpload from '@/Core/components/ui/FileUpload';
+import { Button } from '@/Core/components/ui/button';
 import { toast } from 'sonner';
 import axios from 'axios';
 

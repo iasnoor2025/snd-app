@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/Core/components/ui/button';
+import { Input } from '@/Core/components/ui/input';
 import { Dialog, DialogContent, DialogTitle } from '@/Core/components/ui/dialog';
 import { toast } from 'sonner';
 import axios from 'axios';
