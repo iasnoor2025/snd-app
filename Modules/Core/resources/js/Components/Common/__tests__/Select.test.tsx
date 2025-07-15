@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Select } from "../Select";
 
-const options = [;
+const options = [
   { value: "1", label: "Option 1" },
   { value: "2", label: "Option 2" },
   { value: "3", label: "Option 3", disabled: true },
@@ -72,17 +72,6 @@ describe("Select", () => {
     expect(screen.getByRole("combobox")).toHaveClass("custom-class");
   });
 });
-
-
-</Select>
-</Select>
-</Select>
-</Select>
-</Select>
-</Select>
-</Select>
-</Select>
-</Select>
 
 
 

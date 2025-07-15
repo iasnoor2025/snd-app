@@ -4,7 +4,7 @@ import { Accordion } from "../Accordion";
 import { User, Settings, Bell } from "lucide-react";
 
 describe("Accordion", () => {
-  const mockItems = [;
+  const mockItems = [
     {
       value: "profile",
       label: "Profile",

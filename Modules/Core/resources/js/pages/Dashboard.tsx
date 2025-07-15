@@ -391,7 +391,7 @@ export default function Dashboard() {
             })
             .catch(() => setLoadingWidgets(false));
         // Rentals
-        fetch('/api/rentals/analytics', { credentials: 'include' })
+        fetch('/api/v1/rentals/analytics', { credentials: 'include' })
             .then(res => res.json())
             .then((data) => {
                 setRentals({
@@ -421,7 +421,7 @@ export default function Dashboard() {
             })
             .catch(() => {});
         // Equipment
-        fetch('/api/equipment', { credentials: 'include' })
+        fetch('/api/v1/equipment', { credentials: 'include' })
             .then(res => res.json())
             .then((result) => {
                 const equipment = result.data || [];
@@ -437,21 +437,21 @@ export default function Dashboard() {
             })
             .catch(() => {});
         // Files
-        fetch('/api/files/recent', { credentials: 'include' })
-            .then(res => res.json())
-            .then((result) => {
-                const files = result.data || [];
-                setFiles(files.map((file: any) => ({
-                    id: String(file.id),
-                    name: file.name,
-                    uploader: file.uploader || 'Unknown',
-                    date: file.created_at || file.date,
-                    type: file.type || 'other',
-                    url: file.url,
-                })));
-                setLoadingFiles(false);
-            })
-            .catch(() => setLoadingFiles(false));
+        // fetch('/api/files/recent', { credentials: 'include' })
+        //     .then(res => res.json())
+        //     .then((result) => {
+        //         const files = result.data || [];
+        //         setFiles(files.map((file: any) => ({
+        //             id: String(file.id),
+        //             name: file.name,
+        //             uploader: file.uploader || 'Unknown',
+        //             date: file.created_at || file.date,
+        //             type: file.type || 'other',
+        //             url: file.url,
+        //         })));
+        //         setLoadingFiles(false);
+        //     })
+        //     .catch(() => setLoadingFiles(false));
         // Calendar
         fetch('/api/calendar/events', { credentials: 'include' })
             .then(res => res.json())

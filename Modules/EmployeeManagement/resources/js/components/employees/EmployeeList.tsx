@@ -94,7 +94,7 @@ export const EmployeeList: React.FC<EmployeeListProps> = ({ initialEmployees = [
   };
 
   const applyFilters = () => {
-  const { t } = useTranslation('employee');
+  const { t } = useTranslation('employees');
 
     let filtered = [...employees];
 

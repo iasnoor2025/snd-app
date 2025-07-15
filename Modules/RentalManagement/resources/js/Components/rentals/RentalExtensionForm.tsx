@@ -261,6 +261,7 @@ const RentalExtensionForm = ({
                       'justify-start text-left font-normal',
                       !newEndDate && 'text-muted-foreground'
                     )}
+                  >
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {newEndDate ? format(newEndDate, 'MMMM d, yyyy') : <span>{t('pick_a_date')}</span>}
                   </Button>

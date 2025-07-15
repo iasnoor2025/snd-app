@@ -43,7 +43,7 @@ interface CalculationResult {
 }
 
 export const FinalSettlementCalculator: React.FC = () => {
-  const { t } = useTranslation(['employees', 'common']);
+  const { t } = useTranslation('employees');
   const [loading, setLoading] = useState(false);
   const [calculating, setCalculating] = useState(false);
   const [generating, setGenerating] = useState(false);

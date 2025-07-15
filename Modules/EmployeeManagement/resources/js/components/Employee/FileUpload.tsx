@@ -14,10 +14,9 @@ interface FileUploadProps {
 export const FileUpload: FC<FileUploadProps> = ({ field, name, onFileSelect }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { t } = useTranslation('employees');
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  const { t } = useTranslation('employee');
-
     const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file);
@@ -49,7 +48,7 @@ export const FileUpload: FC<FileUploadProps> = ({ field, name, onFileSelect }) =
         className="flex-1"
       >
         <Upload className="mr-2 h-4 w-4" />
-        {selectedFile ? selectedFile.name : 'Upload File'}
+        {selectedFile ? selectedFile.name : t('upload_file')}
       </Button>
       {selectedFile && (
         <Button

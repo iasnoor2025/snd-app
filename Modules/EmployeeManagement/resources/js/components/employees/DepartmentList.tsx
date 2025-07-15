@@ -90,7 +90,7 @@ export const DepartmentList: React.FC<DepartmentListProps> = ({ initialDepartmen
   };
 
   const applyFilters = () => {
-  const { t } = useTranslation('employee');
+  const { t } = useTranslation('employees');
 
     let filtered = [...departments];
 
@@ -242,12 +242,12 @@ export const DepartmentList: React.FC<DepartmentListProps> = ({ initialDepartmen
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Code</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Manager</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>{t('lbl_name')}</TableHead>
+                <TableHead>{t('lbl_code')}</TableHead>
+                <TableHead>{t('lbl_description')}</TableHead>
+                <TableHead>{t('lbl_manager')}</TableHead>
+                <TableHead>{t('lbl_status')}</TableHead>
+                <TableHead className="text-right">{t('lbl_actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -276,7 +276,7 @@ export const DepartmentList: React.FC<DepartmentListProps> = ({ initialDepartmen
                     <TableCell>{department.manager ? `${department.manager.first_name} ${department.manager.last_name}` : '-'}</TableCell>
                     <TableCell>
                       <Badge variant="outline" className={getStatusBadgeColor(department.is_active)}>
-                        {department.is_active ? 'Active' : 'Inactive'}
+                        {department.is_active ? t('status_active') : t('status_inactive')}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">

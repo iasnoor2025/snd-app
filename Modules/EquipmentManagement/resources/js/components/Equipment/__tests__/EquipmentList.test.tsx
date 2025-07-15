@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { EquipmentList } from '../EquipmentList';
 
-const mockEquipment = [;
+const mockEquipment = [
     {
         id: 1,
         name: 'Test Equipment 1',

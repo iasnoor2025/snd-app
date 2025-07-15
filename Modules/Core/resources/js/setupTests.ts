@@ -1,9 +1,13 @@
 import '@testing-library/jest-dom';
 import '@testing-library/jest-dom/extend-expect';
+import React from 'react';
 
 // Mock Inertia.js
 jest.mock('@inertiajs/react', () => ({
-    Link: ({ children, ...props }: any) => <a {...props}>{children}</a>,
+    Link: (props: any) => {
+        const { children, ...rest } = props;
+        return React.createElement('a', rest, children);
+    },
     useForm: () => ({
         post: jest.fn(),
         processing: false,
@@ -14,11 +18,6 @@ jest.mock('@inertiajs/react', () => ({
         },
     }),
 }));
-</$tagName>
-
-</$tagName>
-
-</$tagName>
 
 
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '../../../../../resources/js/components/ui/button';
+import { Button } from './ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,

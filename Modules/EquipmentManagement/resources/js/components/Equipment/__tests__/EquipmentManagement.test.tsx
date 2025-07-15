@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { EquipmentManagement } from '../EquipmentManagement';
 import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
 
-const mockEquipment = [;
+const mockEquipment = [
     {
         id: 1,
         name: 'Test Equipment 1',

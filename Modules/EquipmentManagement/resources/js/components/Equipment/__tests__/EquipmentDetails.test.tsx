@@ -70,7 +70,7 @@ describe('EquipmentDetails', () => {
     })
 
     it('displays correct status badge colors for different statuses', () => {
-        const statuses = [;
+        const statuses = [
             { status: 'available', classes: ['bg-green-100', 'text-green-800'] },
             { status: 'rented', classes: ['bg-blue-100', 'text-blue-800'] },
             { status: 'maintenance', classes: ['bg-yellow-100', 'text-yellow-800'] },

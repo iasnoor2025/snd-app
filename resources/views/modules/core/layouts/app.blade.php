@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }} - @yield('title', 'Core Module')</title>
+    <title>{{ config('app.name', 'Laravel') }} - @yield('title', __('Core::layout.core_module'))</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -31,7 +31,7 @@
                         <!-- Navigation Links -->
                         <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                             <x-nav-link :href="route('home')" :active="request()->routeIs('home')">
-                                {{ __('Home') }}
+                                {{ __('Core::layout.home') }}
                             </x-nav-link>
                         </div>
                     </div>

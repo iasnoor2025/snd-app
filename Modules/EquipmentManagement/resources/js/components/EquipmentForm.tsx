@@ -1,5 +1,6 @@
 import { EquipmentLocationMap } from './EquipmentLocationMap';
 
+<>
   <Input
     label="Latitude"
     type="number"
@@ -21,3 +22,4 @@ import { EquipmentLocationMap } from './EquipmentLocationMap';
     longitude={form.longitude || 0}
     onChange={(lat, lng) => setForm({ ...form, latitude: lat, longitude: lng })}
   />
+</>

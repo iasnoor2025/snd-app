@@ -14,7 +14,7 @@ describe("Table", () => {
     { id: 2, name: "Jane Smith", age: 25 },
   ];
 
-  const columns = [;
+  const columns = [
     {
       key: "name",
       header: "Name",
@@ -125,7 +125,7 @@ describe("Table", () => {
   });
 
   it("applies column className", () => {
-    const columnsWithClassName = [;
+    const columnsWithClassName = [
       {
         ...columns[0],
         className: "name-column",
@@ -285,11 +285,6 @@ describe("Table", () => {
     });
   });
 });
-
-
-</Table>
-</Table>
-</Table>
 
 
 

@@ -4,6 +4,7 @@ import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
 import { Input } from '@/../../Modules/Core/resources/js/components/ui/input';
 import { toast } from 'sonner';
 import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
+import { useTranslation } from 'react-i18next';
 
 interface Training {
   id: number;
@@ -18,6 +19,7 @@ interface Training {
 export function TrainingList() {
   const [trainings, setTrainings] = useState<Training[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation('employees');
 
   useEffect(() => {
     fetchTrainings();
@@ -39,17 +41,17 @@ export function TrainingList() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Trainings</CardTitle>
+        <CardTitle>{t('lbl_trainings')}</CardTitle>
       </CardHeader>
       <CardContent>
         <table className="min-w-full border text-sm">
           <thead>
             <tr>
-              <th className="border px-2 py-1">Title</th>
-              <th className="border px-2 py-1">Start</th>
-              <th className="border px-2 py-1">End</th>
-              <th className="border px-2 py-1">Location</th>
-              <th className="border px-2 py-1">Actions</th>
+              <th className="border px-2 py-1">{t('lbl_title')}</th>
+              <th className="border px-2 py-1">{t('lbl_start')}</th>
+              <th className="border px-2 py-1">{t('lbl_end')}</th>
+              <th className="border px-2 py-1">{t('lbl_location')}</th>
+              <th className="border px-2 py-1">{t('lbl_actions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -66,7 +68,7 @@ export function TrainingList() {
             ))}
             {trainings.length === 0 && (
               <tr>
-                <td colSpan={5} className="text-center py-2">No trainings found</td>
+                <td colSpan={5} className="text-center py-2">{t('msg_no_trainings_found')}</td>
               </tr>
             )}
           </tbody>

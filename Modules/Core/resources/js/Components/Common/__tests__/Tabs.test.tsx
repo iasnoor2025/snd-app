@@ -4,7 +4,7 @@ import { Tabs } from "../Tabs";
 import { User, Settings, Bell } from "lucide-react";
 
 describe("Tabs", () => {
-  const mockItems = [;
+  const mockItems = [
     {
       value: "profile",
       label: "Profile",

@@ -5,7 +5,7 @@ import { RentalStatus } from '../RentalStatus';
 import { RentalWorkflowActions } from './RentalWorkflowActions';
 import { CustomerFilters } from '../CustomerFilters';
 import { CustomersDataTable } from '../CustomersDataTable';
-import { EquipmentDataTable } from '../EquipmentDataTable'; 
+import { EquipmentDataTable } from '../EquipmentDataTable';
 import { DocumentManager } from '../DocumentManager';
 
 interface Props {
@@ -44,6 +44,7 @@ export const RentalManagement: FC<Props> = ({ initialRentals = [], customers = [
                                                 ? 'bg-gray-900 text-white'
                                                 : 'text-gray-500 hover:text-gray-700'
                                         }`}
+                                    >
                                         Rentals
                                     </button>
                                     <button
@@ -53,6 +54,7 @@ export const RentalManagement: FC<Props> = ({ initialRentals = [], customers = [
                                                 ? 'bg-gray-900 text-white'
                                                 : 'text-gray-500 hover:text-gray-700'
                                         }`}
+                                    >
                                         Customers
                                     </button>
                                     <button
@@ -62,6 +64,7 @@ export const RentalManagement: FC<Props> = ({ initialRentals = [], customers = [
                                                 ? 'bg-gray-900 text-white'
                                                 : 'text-gray-500 hover:text-gray-700'
                                         }`}
+                                    >
                                         Equipment
                                     </button>
                                 </nav>

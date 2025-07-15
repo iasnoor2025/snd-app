@@ -10,7 +10,7 @@ import { Button } from "@/Core";
 import { Plus, ArrowLeft } from 'lucide-react';
 
 export default function PerformanceManagement({ employeeId }: { employeeId?: string }) {
-  const { t } = useTranslation('employee');
+  const { t } = useTranslation('employees');
 
   const [activeTab, setActiveTab] = useState('list');
   const [currentReview, setCurrentReview] = useState<PerformanceReview | undefined>(undefined);

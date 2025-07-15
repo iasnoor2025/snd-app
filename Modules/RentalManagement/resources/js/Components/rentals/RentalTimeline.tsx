@@ -3,17 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { format, isBefore, isAfter, isSameDay, differenceInDays } from 'date-fns';
 import { Rental } from '@/Core/types/models';
 import { Separator } from "@/Core";
-import { 
 import { formatDateTime, formatDateMedium, formatDateShort } from '@/Core/utils/dateFormatter';
-  Calendar, 
-  FileText, 
-  Truck, 
-  PackageCheck, 
-  CheckCircle, 
-  AlertCircle, 
-  Clock, 
-  Receipt 
-} from 'lucide-react';
+import { Calendar, FileText, Truck, PackageCheck, CheckCircle, AlertCircle, Clock, Receipt } from 'lucide-react';
 
 interface RentalTimelineProps {
   rental: Rental;
@@ -28,7 +19,7 @@ const RentalTimeline = ({ rental }: RentalTimelineProps) => {
   // Format date for display
   const formatDate = (dateString: string | undefined | null) => {
     if (!dateString) return '';
-    
+
     try {
       const date = new Date(dateString);
       return format(date, 'MMMM dd, yyyy');
@@ -41,7 +32,7 @@ const RentalTimeline = ({ rental }: RentalTimelineProps) => {
   const getTimelineSteps = () => {
     const steps = [];
     const today = new Date();
-    
+
     // Creation step is always present
     steps.push({
       title: 'Rental Created',
@@ -50,7 +41,7 @@ const RentalTimeline = ({ rental }: RentalTimelineProps) => {
       status: 'completed',
       description: 'Rental request created and registered'
     })
-    
+
     // Quotation step
     if (rental.quotation_id) {
       steps.push({
@@ -61,7 +52,7 @@ const RentalTimeline = ({ rental }: RentalTimelineProps) => {
         description: 'Quotation sent to customer for approval'
       })
     }
-    
+
     // Mobilization step
     if (rental.status === 'mobilization' || ['active', 'completed', 'overdue'].includes(rental.status)) {
       steps.push({
@@ -72,7 +63,7 @@ const RentalTimeline = ({ rental }: RentalTimelineProps) => {
         description: 'Equipment transported to customer location'
       })
     }
-    
+
     // Active step
     if (['active', 'completed', 'overdue'].includes(rental.status)) {
       steps.push({
@@ -91,7 +82,7 @@ const RentalTimeline = ({ rental }: RentalTimelineProps) => {
         description: 'Equipment in use by customer'
       })
     }
-    
+
     // Completion step
     if (rental.status === 'completed') {
       steps.push({
@@ -101,7 +92,7 @@ const RentalTimeline = ({ rental }: RentalTimelineProps) => {
         status: 'completed',
         description: 'Equipment returned in good condition'
       })
-      
+
       // Invoice step if we have an invoice date
       if (rental.invoice_date) {
         steps.push({
@@ -130,10 +121,10 @@ const RentalTimeline = ({ rental }: RentalTimelineProps) => {
         description: 'Scheduled equipment return date'
       })
     }
-    
+
     return steps;
   };
-  
+
   const timelineSteps = getTimelineSteps();
 
   return (
@@ -142,30 +133,30 @@ const RentalTimeline = ({ rental }: RentalTimelineProps) => {
         <div key={index} className="relative">
           {/* Vertical connecting line between steps */}
           {index < timelineSteps.length - 1 && (
-            <div 
+            <div
               className={`absolute left-5 top-10 bottom-0 w-0.5 ${
                 step.status === 'completed' ? 'bg-primary' : 'bg-muted'
               }`}
             />
           )}
-          
+
           {/* The step itself */}
           <div className="flex gap-4">
             <div className={`w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center ${
-              step.status === 'completed' 
-                ? 'bg-primary/10' 
-                : step.status === 'current' 
-                ? 'bg-red-100 animate-pulse' 
+              step.status === 'completed'
+                ? 'bg-primary/10'
+                : step.status === 'current'
+                ? 'bg-red-100 animate-pulse'
                 : 'bg-muted'
             }`}>
               {step.icon}
             </div>
-            
+
             <div>
               <div className="flex items-baseline gap-2">
                 <h4 className="text-sm font-medium">{step.title}</h4>
-                {formatDateMedium(step.date && (
-                  <span className="text-xs text-muted-foreground">{step.date)}</span>
+                {step.date && (
+                  <span className="text-xs text-muted-foreground">{step.date}</span>
                 )}
               </div>
               {step.description && (
@@ -179,7 +170,7 @@ const RentalTimeline = ({ rental }: RentalTimelineProps) => {
   );
 };
 
-export default RentalTimeline; 
+export default RentalTimeline;
 
 
 

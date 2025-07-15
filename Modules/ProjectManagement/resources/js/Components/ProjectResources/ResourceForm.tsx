@@ -64,6 +64,7 @@ export function ResourceSelect({ form, name, label, options, placeholder }: Reso
             <Select
                 onValueChange={(value) => form.setValue(name, value)}
                 defaultValue={form.getValues(name)}
+            >
                 <SelectTrigger>
                     <SelectValue placeholder={placeholder} />
                 </SelectTrigger>
