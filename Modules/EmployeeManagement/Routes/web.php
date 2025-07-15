@@ -234,6 +234,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/employees/{employee}/advances/{advance}', [\Modules\EmployeeManagement\Http\Controllers\AdvancePaymentController::class, 'destroy'])
         ->middleware('permission:employees.edit')
         ->name('employees.advances.destroy');
+
+    // Add POST endpoint for advance repayment
+    Route::post('/employees/{employee}/advances/{advance}/repayment', [\Modules\EmployeeManagement\Http\Controllers\AdvancePaymentController::class, 'recordRepayment'])
+        ->middleware('permission:employees.edit')
+        ->name('employees.advances.repayment');
 });
 
 // Add access restriction update route

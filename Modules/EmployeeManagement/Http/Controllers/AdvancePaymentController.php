@@ -145,11 +145,11 @@ class AdvancePaymentController extends Controller
     /**
      * Record a repayment against an advance.
      */
-    public function recordRepayment(Request $request, $advance)
+    public function recordRepayment(Request $request, Employee $employee, AdvancePayment $advance)
     {
         try {
-            // Find the advance payment (include soft-deleted in case it's visible in UI)
-            $advancePayment = AdvancePayment::withTrashed()->find($advance);
+            // $advance is already the correct AdvancePayment model instance
+            $advancePayment = $advance;
             if (!$advancePayment) {
                 return response()->json([
                     'success' => false,
@@ -167,24 +167,11 @@ class AdvancePaymentController extends Controller
             ]);
 
             // Get all active advances for this employee, ordered by remaining balance (lowest first)
-            $activeAdvances = AdvancePayment::where('employee_id', $advancePayment->employee_id)
+            $activeAdvances = AdvancePayment::where('employee_id', $employee->id)
                 ->whereNull('deleted_at')
                 ->whereIn('status', ['approved', 'partially_repaid'])
                 ->orderByRaw('(amount - repaid_amount) asc')
                 ->get();
-
-            Log::info('Found active advances', [
-                'count' => $activeAdvances->count(),
-                'advances' => $activeAdvances->map(function($advance) {
-                    return [
-                        'id' => $advance->id,
-                        'amount' => $advance->amount,
-                        'repaid_amount' => $advance->repaid_amount,
-                        'remaining_balance' => $advance->remaining_balance,
-                        'status' => $advance->status
-                    ];
-                })
-            ]);
 
             // Calculate total remaining balance and monthly deduction
             $totalRemainingBalance = $activeAdvances->sum(function ($advance) {
@@ -228,33 +215,33 @@ class AdvancePaymentController extends Controller
             DB::beginTransaction();
 
             $remainingRepaymentAmount = $request->amount;
-            $employeeId = $advancePayment->employee_id;
+            $employeeId = $employee->id;
             $paymentDate = $request->payment_date;
             $notes = $request->notes ?? 'Payment recorded manually';
 
             // Distribute repayment across advances (smallest balance first)
-            foreach ($activeAdvances as $advance) {
+            foreach ($activeAdvances as $adv) {
                 if ($remainingRepaymentAmount <= 0) {
                     break;
                 }
 
-                $amountForThisAdvance = min($remainingRepaymentAmount, $advance->remaining_balance);
+                $amountForThisAdvance = min($remainingRepaymentAmount, $adv->remaining_balance);
 
                 // Update the advance payment
-                $advance->repaid_amount += $amountForThisAdvance;
+                $adv->repaid_amount += $amountForThisAdvance;
 
-                if ($advance->repaid_amount >= $advance->amount) {
-                    $advance->status = 'fully_repaid';
-                } else if ($advance->repaid_amount > 0) {
-                    $advance->status = 'partially_repaid';
+                if ($adv->repaid_amount >= $adv->amount) {
+                    $adv->status = 'fully_repaid';
+                } else if ($adv->repaid_amount > 0) {
+                    $adv->status = 'partially_repaid';
                 }
 
-                $advance->save();
+                $adv->save();
 
                 // Create a payment history record for tracking
                 AdvancePaymentHistory::create([
                     'employee_id' => $employeeId,
-                    'advance_payment_id' => $advance->id,
+                    'advance_payment_id' => $adv->id,
                     'amount' => $amountForThisAdvance,
                     'payment_date' => $paymentDate,
                     'notes' => $notes,
@@ -264,15 +251,6 @@ class AdvancePaymentController extends Controller
                 $remainingRepaymentAmount -= $amountForThisAdvance;
             }
 
-            // Update the employee's advance_payment field for backward compatibility
-            // Ensure ID is numeric
-        if (!is_numeric($employeeId)) {
-            abort(404, 'Invalid ID provided');
-        }
-        // Ensure ID is numeric
-        if (!is_numeric($employeeId)) {
-            abort(404, 'Invalid ID provided');
-        }
             DB::commit();
 
             // Return a success response
@@ -283,9 +261,8 @@ class AdvancePaymentController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Error processing repayment: ' . $e->getMessage(), [
-                'advance_id' => $advance ?? null,
+                'advance_id' => $advance->id ?? null,
                 'amount' => $request->amount ?? null,
-                'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
 
@@ -571,6 +548,11 @@ class AdvancePaymentController extends Controller
         // Get the payment history grouped by month
         $history = $this->getMonthlyHistory($employee);
 
+        // Flatten all payments from all months
+        $payments = collect($history)->flatMap(function ($month) {
+            return $month['payments'] ?? [];
+        })->values();
+
         // Get active advances
         $activeAdvances = $employee->advancePayments()
             ->whereIn('status', ['approved', 'partially_repaid'])
@@ -593,7 +575,7 @@ class AdvancePaymentController extends Controller
         $totalRemainingBalance = $activeAdvances->sum('balance');
 
         return response()->json([
-            'history' => $history,
+            'payments' => $payments,
             'active_advances' => $activeAdvances,
             'employee' => [
                 'id' => $employee->id,
