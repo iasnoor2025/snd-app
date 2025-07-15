@@ -697,6 +697,40 @@ class AdvancePaymentController extends Controller
 
         return Inertia::render('Payroll/Advances/Receipt', $data);
     }
+
+    /**
+     * Delete a repayment (AdvancePaymentHistory) for an employee
+     */
+    public function deleteRepayment($employeeId, $paymentId)
+    {
+        $user = auth()->user();
+        if (!$user || !$user->can('employees.edit')) {
+            return response()->json(['success' => false, 'message' => 'You do not have permission to delete repayments.'], 403);
+        }
+
+        $payment = \Modules\EmployeeManagement\Domain\Models\AdvancePaymentHistory::find($paymentId);
+        if (!$payment) {
+            return response()->json(['success' => false, 'message' => 'Repayment record not found.'], 404);
+        }
+        if ($payment->employee_id != $employeeId) {
+            return response()->json(['success' => false, 'message' => 'Repayment does not belong to this employee.'], 403);
+        }
+        $advance = $payment->advancePayment;
+        if ($advance) {
+            $advance->repaid_amount -= $payment->amount;
+            if ($advance->repaid_amount <= 0) {
+                $advance->repaid_amount = 0;
+                $advance->status = 'approved';
+            } else if ($advance->repaid_amount < $advance->amount) {
+                $advance->status = 'partially_repaid';
+            } else {
+                $advance->status = 'fully_repaid';
+            }
+            $advance->save();
+        }
+        $payment->delete();
+        return response()->json(['success' => true, 'message' => 'Repayment deleted successfully.']);
+    }
 }
 
 

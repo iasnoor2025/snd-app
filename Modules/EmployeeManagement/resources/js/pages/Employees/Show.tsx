@@ -100,17 +100,35 @@ const DailyTimesheetRecords = ({ employeeId }: { employeeId: number }) => (
 const PaymentHistory = ({ employeeId }: { employeeId: number }) => {
     const [payments, setPayments] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [deletingId, setDeletingId] = useState<number|null>(null);
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [selectedPaymentId, setSelectedPaymentId] = useState<number|null>(null);
     useEffect(() => {
         setLoading(true);
         fetch(`/employees/${employeeId}/advances/history/api`)
             .then((res) => res.json())
             .then((data) => {
-                // Try to support both {data: []} and {payments: []} API responses
                 setPayments(data?.data || data?.payments || []);
                 setLoading(false);
             })
             .catch(() => setLoading(false));
     }, [employeeId]);
+
+    const handleRepaymentDelete = async (paymentId: number) => {
+        setDeletingId(paymentId);
+        try {
+            await axios.delete(`/employees/${employeeId}/advances/repayment/${paymentId}`);
+            ToastService.success('Repayment deleted successfully');
+            // Refresh only the advances tab
+            router.visit(`/employees/${employeeId}?tab=advances`);
+        } catch (error: any) {
+            ToastService.error(error?.response?.data?.message || 'Failed to delete repayment');
+        } finally {
+            setDeletingId(null);
+            setShowDeleteDialog(false);
+        }
+    };
+
     if (loading) return <div className="p-4 text-center text-muted-foreground">Loading payment history...</div>;
     if (!payments.length) return <div className="p-4 text-center text-muted-foreground">No repayments found.</div>;
     return (
@@ -127,27 +145,59 @@ const PaymentHistory = ({ employeeId }: { employeeId: number }) => {
                                 <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Amount</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Date</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Notes</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-100">
-                            {payments.length === 0 ? (
-                                <tr>
-                                    <td colSpan={3} className="px-6 py-8 text-center text-muted-foreground italic">
-                                        No repayments found.
+                            {payments.map((p: any, i: number) => (
+                                <tr key={p.id || i} className="hover:bg-muted/20 transition-colors">
+                                    <td className="px-6 py-4 whitespace-nowrap font-medium text-primary">SAR {Number(p.amount).toFixed(2)}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">{p.payment_date}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">{p.notes || '-'}</td>
+                                    <td className="px-6 py-4 text-right flex gap-2 justify-end">
+                                        <Button
+                                            variant="outline"
+                                            size="icon"
+                                            className="h-8 w-8 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                                            onClick={() => window.open(`/employees/${employeeId}/advances/repayment/${p.id}/receipt`, '_blank')}
+                                        >
+                                            <FileText className="h-4 w-4" />
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="icon"
+                                            className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                            onClick={() => { setSelectedPaymentId(p.id); setShowDeleteDialog(true); }}
+                                            disabled={deletingId === p.id}
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
                                     </td>
                                 </tr>
-                            ) : (
-                                payments.map((p, i) => (
-                                    <tr key={i} className="hover:bg-muted/20 transition-colors">
-                                        <td className="px-6 py-4 whitespace-nowrap font-medium text-primary">SAR {Number(p.amount).toFixed(2)}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">{p.payment_date}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">{p.notes || '-'}</td>
-                                    </tr>
-                                ))
-                            )}
+                            ))}
                         </tbody>
                     </table>
                 </div>
+                <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Delete Repayment</DialogTitle>
+                            <DialogDescription>Are you sure you want to delete this repayment? This action cannot be undone.</DialogDescription>
+                        </DialogHeader>
+                        <div className="flex justify-end gap-2">
+                            <Button variant="outline" onClick={() => setShowDeleteDialog(false)}>
+                                Cancel
+                            </Button>
+                            <Button
+                                variant="destructive"
+                                disabled={deletingId === selectedPaymentId}
+                                onClick={() => selectedPaymentId && handleRepaymentDelete(selectedPaymentId)}
+                            >
+                                Delete
+                            </Button>
+                        </div>
+                    </DialogContent>
+                </Dialog>
             </CardContent>
         </Card>
     );

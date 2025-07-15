@@ -245,6 +245,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/employees/{employee}/advances/{advance}/approve', [\Modules\EmployeeManagement\Http\Controllers\AdvancePaymentController::class, 'approve'])
         ->middleware('permission:employees.edit')
         ->name('employees.advances.approve');
+
+    Route::delete('/employees/{employee}/advances/repayment/{payment}', [\Modules\EmployeeManagement\Http\Controllers\AdvancePaymentController::class, 'deleteRepayment'])
+        ->middleware('permission:employees.edit')
+        ->name('employees.advances.repayment.delete');
+
+    Route::get('/employees/{employee}/advances/repayment/{payment}/receipt', [\Modules\EmployeeManagement\Http\Controllers\AdvancePaymentController::class, 'receipt'])
+        ->middleware('permission:employees.view')
+        ->name('employees.advances.repayment.receipt');
 });
 
 // Add access restriction update route
