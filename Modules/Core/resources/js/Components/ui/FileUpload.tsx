@@ -28,7 +28,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    
+
     if (!file) return;
 
     // Validate file size
@@ -87,7 +87,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         className="hidden"
         disabled={disabled}
       />
-      
+
       <Button
         type="button"
         variant="outline"
@@ -115,4 +115,4 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   );
 };
 
-export default FileUpload; 
+export default FileUpload;

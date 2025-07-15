@@ -5,9 +5,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../components/ui/select";
+} from "../ui/select"; 
 import { cn } from "../../lib/utils";
-import { Label } from "../../components/ui/label";
+import { Label } from "../ui/label";
 import { HelpCircle } from "lucide-react";
 import {
   Tooltip,
@@ -98,8 +98,8 @@ export interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement
   showDescriptions?: boolean;
 }
 
-const Select = forwardRef<HTMLSelectElement, SelectProps>(;
-  (;
+const Select = forwardRef<HTMLSelectElement, SelectProps>(
+  (
     {
       className,
       label,
@@ -227,13 +227,6 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(;
 Select.displayName = "Select";
 
 export { Select };
-
-
-
-</Select>
-</Select>
-</Select>
-</Select>
 
 
 

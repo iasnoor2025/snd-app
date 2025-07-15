@@ -540,25 +540,26 @@ export const TimesheetApproval: React.FC<TimesheetApprovalProps> = ({
                             </Button>
 
                             {entry.status === 'pending' && (
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  title={t('ttl_approve')}
-                                  onClick={() => approveEntry(entry.id)}
-                                  className="text-green-600"
-                                >
-                                  {<Check className="h-4 w-4" />}
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  title={t('ttl_reject')}
-                                  onClick={() => openRejectDialog(entry)}
-                                  className="text-red-600"
-                                >
-                                  {<X className="h-4 w-4" />}
-                                </Button>
-                              </>
+                                <>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    title={t('ttl_approve')}
+                                    onClick={() => approveEntry(entry.id)}
+                                    className="text-green-600"
+                                  >
+                                    <Check className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    title={t('ttl_reject')}
+                                    onClick={() => openRejectDialog(entry)}
+                                    className="text-red-600"
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </>
                             )}
                           </div>
                         </TableCell>

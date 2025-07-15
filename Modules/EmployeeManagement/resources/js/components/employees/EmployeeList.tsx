@@ -64,7 +64,7 @@ export const EmployeeList: React.FC<EmployeeListProps> = ({ initialEmployees = [
     } else {
       // Extract unique departments from employees
       const uniqueDepartments = Array.from(
-        new Set(initialEmployees.map(emp => emp.department?.name || 'Unassigned'));
+        new Set(initialEmployees.map(emp => emp.department?.name || 'Unassigned'))
       );
       setDepartments(uniqueDepartments);
     }
@@ -83,7 +83,7 @@ export const EmployeeList: React.FC<EmployeeListProps> = ({ initialEmployees = [
 
       // Extract unique departments
       const uniqueDepartments = Array.from(
-        new Set(response.data.data.map((emp: Employee) => emp.department?.name || 'Unassigned'));
+        new Set(response.data.data.map((emp: Employee) => emp.department?.name || 'Unassigned'))
       );
       setDepartments(uniqueDepartments);
     } catch (error) {
@@ -177,6 +177,7 @@ export const EmployeeList: React.FC<EmployeeListProps> = ({ initialEmployees = [
             <Select
               value={statusFilter}
               onValueChange={setStatusFilter}
+            >
               <SelectTrigger className="w-[130px]">
                 <SelectValue placeholder={t('ph_status')} />
               </SelectTrigger>
@@ -192,6 +193,7 @@ export const EmployeeList: React.FC<EmployeeListProps> = ({ initialEmployees = [
             <Select
               value={departmentFilter}
               onValueChange={setDepartmentFilter}
+            >
               <SelectTrigger className="w-[160px]">
                 <SelectValue placeholder={t('ph_department')} />
               </SelectTrigger>

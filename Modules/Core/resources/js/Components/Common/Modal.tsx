@@ -3,8 +3,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
 } from "../../components/ui/dialog";
 import { cn } from "../../lib/utils";
@@ -101,8 +99,8 @@ const sizeClasses = {
   full: "sm:max-w-full sm:m-4",
 };
 
-const Modal = forwardRef<HTMLDivElement, ModalProps>(;
-  (;
+const Modal = forwardRef<HTMLDivElement, ModalProps>(
+  (
     {
       className,
       isOpen,
@@ -132,7 +130,6 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(;
         open={isOpen}
         onOpenChange={closeOnOutsideClick ? onClose : undefined}
         modal={showBackdrop}
-        onEscapeKeyDown={closeOnEscape ? onClose : undefined}
       >
         <DialogContent
           ref={ref}
@@ -148,7 +145,7 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(;
           {...props}
         >
           {(title || description || showCloseButton) && (
-            <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <div className="flex flex-row items-center justify-between space-y-0 pb-2">
               <div className="space-y-1">
                 {title && (
                   <DialogTitle id="dialog-title" className="text-lg font-semibold">
@@ -173,7 +170,7 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(;
                   <span className="sr-only">Close</span>
                 </Button>
               )}
-            </DialogHeader>
+            </div>
           )}
           <div
             className={cn(
@@ -197,7 +194,7 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(;
               children
             )}
           </div>
-          {footer && <DialogFooter>{footer}</DialogFooter>}
+          {footer && <div>{footer}</div>}
         </DialogContent>
       </Dialog>
     );

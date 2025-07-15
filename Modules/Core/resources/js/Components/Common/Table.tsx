@@ -128,8 +128,8 @@ export interface TableProps<T> extends React.HTMLAttributes<HTMLDivElement> {
   compact?: boolean;
 }
 
-const Table = forwardRef<HTMLDivElement, TableProps<any>>(;
-  (;
+const Table = forwardRef<HTMLDivElement, TableProps<any>>(
+  (
     {
       data,
       columns,
@@ -327,10 +327,6 @@ const Table = forwardRef<HTMLDivElement, TableProps<any>>(;
 Table.displayName = "Table";
 
 export { Table };
-
-
-
-</Table>
 
 
 

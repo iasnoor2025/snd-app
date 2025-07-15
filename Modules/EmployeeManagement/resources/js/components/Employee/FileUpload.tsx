@@ -47,6 +47,7 @@ export const FileUpload: FC<FileUploadProps> = ({ field, name, onFileSelect }) =
         variant="outline"
         onClick={() => fileInputRef.current?.click()}
         className="flex-1"
+      >
         <Upload className="mr-2 h-4 w-4" />
         {selectedFile ? selectedFile.name : 'Upload File'}
       </Button>
@@ -56,12 +57,13 @@ export const FileUpload: FC<FileUploadProps> = ({ field, name, onFileSelect }) =
           variant="ghost"
           size="icon"
           onClick={handleRemoveFile}
+        >
           <X className="h-4 w-4" />
         </Button>
       )}
     </div>
   );
-}; 
+};
 
 
 

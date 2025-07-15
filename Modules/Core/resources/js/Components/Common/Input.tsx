@@ -64,8 +64,8 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   showRequiredIndicator?: boolean;
 }
 
-const Input = forwardRef<HTMLInputElement, InputProps>(;
-  (;
+const Input = forwardRef<HTMLInputElement, InputProps>(
+  (
     {
       className,
       label,
@@ -163,13 +163,6 @@ const Input = forwardRef<HTMLInputElement, InputProps>(;
 Input.displayName = "Input";
 
 export { Input };
-
-
-
-</Input>
-</Input>
-</Input>
-</Input>
 
 
 

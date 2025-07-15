@@ -484,6 +484,7 @@ export const FinalSettlementCalculator: React.FC = () => {
               </div>
 
               {calculationResult.deductions.length > 0 || calculationResult.advance_repayments.length > 0 ? (
+                <>
                   <Separator />
                   <div>
                     <h3 className="font-medium mb-3">Deductions</h3>
@@ -516,7 +517,8 @@ export const FinalSettlementCalculator: React.FC = () => {
                       </tbody>
                     </table>
                   </div>
-                ) : null}
+                </>
+              ) : null}
 
               <Separator />
 

@@ -94,8 +94,8 @@ const variantClasses = {
   ghost: "bg-transparent hover:bg-muted/50",
 };
 
-const Card = forwardRef<HTMLDivElement, CardProps>(;
-  (;
+const Card = forwardRef<HTMLDivElement, CardProps>(
+  (
     {
       className,
       title,
@@ -210,10 +210,6 @@ const Card = forwardRef<HTMLDivElement, CardProps>(;
 Card.displayName = "Card";
 
 export { Card };
-
-
-
-</div>
 
 
 

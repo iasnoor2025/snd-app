@@ -45,8 +45,8 @@ export interface ButtonProps
   useSpinner?: boolean;
 }
 
-const Button = forwardRef<HTMLButtonElement, ButtonProps>(;
-  (;
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  (
     {
       className,
       variant,
