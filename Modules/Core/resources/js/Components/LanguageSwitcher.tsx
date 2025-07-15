@@ -6,7 +6,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from '../../../../../resources/js/components/ui/dropdown-menu';
+} from './ui/dropdown-menu';
 import { Globe } from 'lucide-react';
 
 interface Language {

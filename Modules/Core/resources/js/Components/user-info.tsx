@@ -6,7 +6,8 @@ import { type SharedData } from "@/Core/types";
 
 export function UserInfo() {
     const { auth } = usePage<SharedData>().props;
-    const initials = useInitials(auth.user.name);
+    const getInitials = useInitials();
+    const initials = getInitials(auth.user.name);
 
     return (
         <div className="flex items-center gap-2">

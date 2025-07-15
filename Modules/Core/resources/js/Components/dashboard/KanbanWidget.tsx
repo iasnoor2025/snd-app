@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import DashboardWidgetCard from './DashboardWidgetCard';
+import { useInitials } from '../hooks/use-initials';
 
 interface Task {
   id: string;

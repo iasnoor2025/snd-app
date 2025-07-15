@@ -71,6 +71,8 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
 
     // Employee advances
     Route::apiResource('employee-advances', EmployeeAdvanceController::class);
+    // Add explicit approve route for employee advances
+    Route::post('employees/{employee}/advances/{advance}/approve', [EmployeeAdvanceController::class, 'approve']);
 
     // Resignations
     Route::apiResource('resignations', ResignationController::class);

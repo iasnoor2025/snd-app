@@ -34,9 +34,9 @@ export function Breadcrumbs({ breadcrumbs }: BreadcrumbsProps) {
                         )}
                         <BreadcrumbItem>
                             {breadcrumb.href ? (
-                                <BreadcrumbLink asChild>
-                                    <Link href={breadcrumb.href}>{breadcrumb.title}</Link>
-                                </BreadcrumbLink>
+                                <Link href={breadcrumb.href} className="text-muted-foreground hover:text-foreground transition-colors">
+                                    {breadcrumb.title}
+                                </Link>
                             ) : (
                                 <BreadcrumbPage>{breadcrumb.title}</BreadcrumbPage>
                             )}

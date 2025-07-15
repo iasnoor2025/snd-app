@@ -3,6 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Calendar, CheckCircle, AlertCircle } from 'lucide-react';
 import DashboardWidgetCard from './DashboardWidgetCard';
+import { useInitials } from '../hooks/use-initials';
 
 interface TimelineEvent {
   id: string;

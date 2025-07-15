@@ -3,7 +3,7 @@ import { AppLayout } from '@/Core';
 import { Head, Link, router } from '@inertiajs/react';
 import { Page } from '@inertiajs/core';
 import { BreadcrumbItem } from '../../types';
-import { Button } from '../../components/ui/button';
+import { Button } from '../../../../resources/js/components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import {
     Table,
