@@ -11,10 +11,10 @@ use Modules\Core\Domain\Models\User;
 class EmployeeLeave extends BaseModel
 {
     use SoftDeletes;
-use protected $fillable = [
-        'employee_id';
-use 'type';
-use 'start_date',
+    protected $fillable = [
+        'employee_id',
+        'type',
+        'start_date',
         'end_date',
         'total_days',
         'reason',
@@ -30,9 +30,9 @@ use 'start_date',
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
-        'total_days' => 'integer',;
-        'approved_at' => 'datetime',;
-        'rejected_at' => 'datetime',;
+        'total_days' => 'integer',
+        'approved_at' => 'datetime',
+        'rejected_at' => 'datetime',
     ];
 
     public function employee(): BelongsTo
@@ -76,20 +76,20 @@ use 'start_date',
 
     public function isActive(): bool
     {
-        return $this->isApproved() &&;
+        return $this->isApproved() &&
             $this->start_date <= now() &&
             $this->end_date >= now();
     }
 
     public function isUpcoming(): bool
     {
-        return $this->isApproved() &&;
+        return $this->isApproved() &&
             $this->start_date > now();
     }
 
     public function isPast(): bool
     {
-        return $this->isApproved() &&;
+        return $this->isApproved() &&
             $this->end_date < now();
     }
 

@@ -18,6 +18,14 @@ class RouteServiceProvider extends ServiceProvider
     public function boot(): void
     {
         parent::boot();
+
+        // Custom binding for nested EmployeeAdvance
+        \Illuminate\Support\Facades\Route::bind('advance', function ($value) {
+            $employeeId = request()->route('employee');
+            return \Modules\EmployeeManagement\Domain\Models\EmployeeAdvance::where('id', $value)
+                ->where('employee_id', $employeeId)
+                ->firstOrFail();
+        });
     }
 
     /**

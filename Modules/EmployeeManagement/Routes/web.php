@@ -10,6 +10,7 @@ use Modules\EmployeeManagement\Http\Controllers\SalaryIncrementController;
 use Modules\EmployeeManagement\Http\Controllers\EmployeeNumberController;
 use Modules\EmployeeManagement\Http\Controllers\PublicDesignationController;
 use Inertia\Inertia;
+use Modules\EmployeeManagement\Http\Controllers\EmployeeAdvanceController;
 
 // Public routes
 Route::get('/api/employees/simple-file-number', [EmployeeNumberController::class, 'generateUniqueFileNumber'])
@@ -242,4 +243,19 @@ Route::middleware(['auth', 'permission:employees.edit'])->group(function () {
 
 // Employee ERPNext sync (admin only)
 Route::post('/employees/sync-from-erpnext', [\Modules\EmployeeManagement\Http\Controllers\EmployeeController::class, 'syncFromERPNext'])->middleware('auth');
+
+Route::middleware(['auth', 'permission:advances.approve'])->group(function () {
+    Route::post(
+        '/employees/{employee}/advances/{advance}/approve',
+        [EmployeeAdvanceController::class, 'approve']
+    )->name('employees.advances.web.approve');
+    Route::post(
+        '/employees/{employee}/advances/{advance}/reject',
+        [EmployeeAdvanceController::class, 'reject']
+    )->name('employees.advances.web.reject');
+    Route::delete(
+        '/employees/{employee}/advances/{advance}',
+        [EmployeeAdvanceController::class, 'destroy']
+    )->name('employees.advances.web.destroy');
+});
 

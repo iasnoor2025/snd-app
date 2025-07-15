@@ -9,7 +9,7 @@ use Modules\EmployeeManagement\Http\Requests\ProcessDeductionRequest;
 use Modules\EmployeeManagement\Http\Requests\RejectAdvanceRequest;
 use Modules\EmployeeManagement\Http\Requests\StoreEmployeeAdvanceRequest;
 use Modules\EmployeeManagement\Services\EmployeeAdvanceService;
-use Modules\EmployeeManagement\Models\EmployeeAdvance;
+use Modules\EmployeeManagement\Domain\Models\EmployeeAdvance;
 
 class EmployeeAdvanceController extends Controller
 {
