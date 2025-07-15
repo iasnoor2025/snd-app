@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import { ArrowLeft, Save } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
 
 interface User {
     id: number;
@@ -71,29 +72,28 @@ export default function Edit({ auth, employee, advance }: Props) {
         },
     ];
 
+    // Update advance update to use PayrollManagement endpoint
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-
-        router.patch(
-            route('advances.update', { employee: employee.id, advance: advance.id }),
+        axios.patch(
+            `/employees/${employee.id}/advances/${advance.id}`,
             {
                 amount: parseFloat(amount),
                 reason,
                 payment_date: paymentDate,
                 monthly_deduction: monthlyDeduction ? parseFloat(monthlyDeduction) : null,
             },
-            {
-                onSuccess: () => {
-                    ToastService.success('Advance payment updated successfully');
-                    router.visit(`/employees/${employee.id}/advances`);
-                },
-                onError: (errors) => {
-                    setIsSubmitting(false);
-                    ToastService.error(errors?.message || 'Failed to update advance payment');
-                },
-            },
-        );
+            { withCredentials: true }
+        )
+            .then(() => {
+                ToastService.success('Advance payment updated successfully');
+                router.visit(`/employees/${employee.id}/advances`);
+            })
+            .catch((error) => {
+                setIsSubmitting(false);
+                ToastService.error(error?.response?.data?.message || 'Failed to update advance payment');
+            });
     };
 
     return (

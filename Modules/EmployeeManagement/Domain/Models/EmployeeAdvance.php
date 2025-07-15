@@ -115,6 +115,12 @@ class EmployeeAdvance extends BaseModel
                 return null;
         }
     }
+
+    public function __call(
+        $method, $parameters
+    ) {
+        throw new \Exception('This model is deprecated. Use PayrollManagement AdvancePayment model.');
+    }
 }
 
 

@@ -57,10 +57,7 @@ This module handles all employee-related functionality for SND Rental, including
 
 ### Advance Payment
 
-- Request and approve advance payments
-- Track payment deductions
-- Manage payment schedules
-- Monitor outstanding advances
+- All advance payment logic is now handled by PayrollManagement's advance_payments and advance_payment_histories tables. The old employee_advances table and related code are deprecated and removed.
 
 ## Installation
 

@@ -102,7 +102,7 @@ const PaymentHistory = ({ employeeId }: { employeeId: number }) => {
     const [loading, setLoading] = useState(true);
     useEffect(() => {
         setLoading(true);
-        fetch(`/hr/payroll/employees/${employeeId}/advances/history/api`)
+        fetch(`/employees/${employeeId}/advances/history/api`)
             .then((res) => res.json())
             .then((data) => {
                 // Try to support both {data: []} and {payments: []} API responses
@@ -572,7 +572,7 @@ export default function Show({
         const loadingToastId = ToastService.loading('Processing advance request...');
 
         try {
-            await axios.post(`/hr/payroll/employees/${employee.id}/advances`, {
+            await axios.post(`/employees/${employee.id}/advances`, {
                 amount,
                 monthly_deduction,
                 reason,
@@ -666,11 +666,16 @@ export default function Show({
         }
     };
 
-    const handleAdvanceApproval = async (advanceId: number) => {
+    const handleAdvanceApproval = async (advanceId?: number) => {
+        const idToApprove = advanceId || (advances?.data?.[0]?.id ?? null);
+        if (!idToApprove) {
+            ToastService.error('No advances available to approve.');
+            return;
+        }
         const loadingToastId = ToastService.loading('Approving advance...');
         try {
             await ensureSanctumCsrf();
-            await axios.post(`/employees/${employee.id}/advances/${advanceId}/approve`, {}, { withCredentials: true });
+            await axios.post(`/employees/${employee.id}/advances/${idToApprove}/approve`, {}, { withCredentials: true });
             ToastService.dismiss(loadingToastId);
             router.visit(window.location.pathname);
         } catch (error: any) {
@@ -692,16 +697,30 @@ export default function Show({
         }
     };
 
-    const handleAdvanceDelete = async (advanceId: number) => {
+    const handleAdvanceDelete = async (advanceId?: number) => {
+        if (!advanceId) {
+            ToastService.error('No valid advance selected for deletion.');
+            return;
+        }
         const loadingToastId = ToastService.loading('Deleting advance...');
         try {
+            const url = `/employees/${employee.id}/advances/${advanceId}`;
+            console.log('Deleting advance with URL:', url);
             await ensureSanctumCsrf();
-            await axios.delete(`/employees/${employee.id}/advances/${advanceId}`, { withCredentials: true });
+            const response = await axios.delete(url, {
+                headers: { 'Accept': 'application/json' },
+            });
             ToastService.dismiss(loadingToastId);
-            router.visit(window.location.pathname);
+            if (response.data?.success) {
+                ToastService.success(response.data.message || 'Advance deleted successfully');
+                router.visit(window.location.pathname);
+            } else {
+                ToastService.error(response.data?.message || 'Failed to delete advance');
+            }
         } catch (error: any) {
             ToastService.dismiss(loadingToastId);
-            ToastService.error('Failed to delete advance: ' + (error?.response?.data?.message || error.message));
+            const msg = error?.response?.data?.message || error.message;
+            ToastService.error('Failed to delete advance: ' + msg);
         }
     };
 
@@ -1034,7 +1053,7 @@ export default function Show({
                             </Button>
                         )}
                         <Button size="sm" asChild>
-                            <a href={route('payroll.employees.advances.index', { employee: employee.id })}>
+                            <a href={`/employees/${employee.id}/advances`}>
                                 <CreditCard className="mr-2 h-4 w-4" />
                                 View Advances
                             </a>
@@ -3051,7 +3070,7 @@ export default function Show({
                                                                                                 variant="outline"
                                                                                                 size="icon"
                                                                                                 className="h-8 w-8 text-green-600 hover:bg-green-50 hover:text-green-700"
-                                                                                                onClick={() => handleAdvanceApproval(5)}
+                                                                                                onClick={() => handleAdvanceApproval(advance.id)}
                                                                                             >
                                                                                                 <Check className="h-4 w-4" />
                                                                                             </Button>
@@ -3069,7 +3088,7 @@ export default function Show({
                                                                                                 size="icon"
                                                                                                 className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
                                                                                                 onClick={() =>
-                                                                                                    handleAdvanceRejection(5, advance.reason)
+                                                                                                    handleAdvanceRejection(advance.id, advance.reason)
                                                                                                 }
                                                                                             >
                                                                                                 <X className="h-4 w-4" />
@@ -3089,7 +3108,10 @@ export default function Show({
                                                                                         variant="outline"
                                                                                         size="icon"
                                                                                         className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
-                                                                                        onClick={() => handleAdvanceDelete(5)}
+                                                                                        onClick={() => {
+                                                                                            setSelectedAdvance(advance.id);
+                                                                                            setIsDeleteDialogOpen(true);
+                                                                                        }}
                                                                                     >
                                                                                         <Trash2 className="h-4 w-4" />
                                                                                     </Button>
@@ -3248,7 +3270,11 @@ export default function Show({
                         <form
                             onSubmit={(e) => {
                                 e.preventDefault();
-                                selectedAdvance && handleAdvanceRejection(5, rejectionReason);
+                                if (selectedAdvance) {
+                                    handleAdvanceRejection(selectedAdvance, rejectionReason);
+                                } else {
+                                    ToastService.error('No advance selected for rejection');
+                                }
                             }}
                         >
                             <div className="grid gap-4 py-4">
@@ -3281,9 +3307,10 @@ export default function Show({
                             </Button>
                             <Button
                                 variant="destructive"
+                                disabled={!selectedAdvance}
                                 onClick={() => {
                                     if (selectedAdvance) {
-                                        handleAdvanceDelete(5);
+                                        handleAdvanceDelete(selectedAdvance);
                                     } else {
                                         ToastService.error('No advance selected for deletion');
                                     }

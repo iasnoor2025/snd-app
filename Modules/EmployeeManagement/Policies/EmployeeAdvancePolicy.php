@@ -82,6 +82,12 @@ class EmployeeAdvancePolicy
         return $user->hasPermissionTo('view employee advances') &&
             ($user->id === $advance->employee->user_id || $user->hasRole('admin'));
     }
+
+    public function __call(
+        $method, $parameters
+    ) {
+        return false;
+    }
 }
 
 

@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use Modules\PayrollManagement\Http\Controllers\PayrollController;
 use Modules\PayrollManagement\Http\Controllers\SalaryAdvanceController;
 use Modules\PayrollManagement\Http\Controllers\FinalSettlementController;
-use Modules\PayrollManagement\Http\Controllers\AdvancePaymentController;
 use Modules\PayrollManagement\Http\Controllers\TaxDocumentationController;
 
 /*
@@ -128,58 +127,6 @@ Route::prefix('hr/payroll')->name('payroll.')->middleware(['auth', 'verified'])-
             ->middleware('permission:final-settlements.view')
             ->name('pdf');
     });
-    // Advance Payment Routes
-    Route::prefix('employees/{employee}/advances')->group(function () {
-        Route::get('/', [AdvancePaymentController::class, 'index'])
-            ->middleware('permission:advances.view')
-            ->name('employees.advances.index');
-        Route::post('/', [AdvancePaymentController::class, 'store'])
-            ->middleware('permission:advances.create')
-            ->name('employees.advances.store');
-        Route::get('/create', [AdvancePaymentController::class, 'create'])
-            ->middleware('permission:advances.create')
-            ->name('employees.advances.create');
-        Route::get('/history', [AdvancePaymentController::class, 'paymentHistory'])
-            ->middleware('permission:advances.view')
-            ->name('employees.advances.payment-history');
-        Route::get('/history/api', [AdvancePaymentController::class, 'apiPaymentHistory'])
-            ->middleware('permission:advances.view')
-            ->name('employees.advances.payment-history.api');
-        Route::delete('/history/{payment}', [AdvancePaymentController::class, 'deletePaymentHistory'])
-            ->middleware('permission:advances.delete')
-            ->name('employees.advances.payment-history.delete');
-        Route::patch('/monthly-deduction', [AdvancePaymentController::class, 'updateMonthlyDeduction'])
-            ->middleware('permission:advances.edit')
-            ->name('employees.advances.monthly-deduction');
-        Route::get('/{advance}', [AdvancePaymentController::class, 'show'])
-            ->middleware('permission:advances.view')
-            ->name('employees.advances.show');
-        Route::get('/{advance}/edit', [AdvancePaymentController::class, 'edit'])
-            ->middleware('permission:advances.edit')
-            ->name('employees.advances.edit');
-        Route::patch('/{advance}', [AdvancePaymentController::class, 'update'])
-            ->middleware('permission:advances.edit')
-            ->name('employees.advances.update');
-        Route::delete('/{advance}', [AdvancePaymentController::class, 'destroy'])
-            ->middleware('permission:advances.delete')
-            ->name('employees.advances.destroy');
-        Route::post('/{advance}/repayment', [AdvancePaymentController::class, 'recordRepayment'])
-            ->middleware('permission:advances.edit')
-            ->name('employees.advances.repayment');
-        Route::post('/{advance}/approve', [AdvancePaymentController::class, 'approve'])
-            ->middleware('permission:advances.approve')
-            ->name('employees.advances.approve');
-        Route::post('/{advance}/reject', [AdvancePaymentController::class, 'reject'])
-            ->middleware('permission:advances.approve')
-            ->name('employees.advances.reject');
-        Route::get('/payment/{payment}/receipt', [AdvancePaymentController::class, 'receipt'])
-            ->middleware('permission:advances.view')
-            ->name('employees.advances.payment.receipt');
-    });
-    // All Advance Payments Route
-    Route::get('/advance-payments', [AdvancePaymentController::class, 'allAdvances'])
-        ->middleware('permission:advances.view')
-        ->name('advance-payments.index');
 });
 
 

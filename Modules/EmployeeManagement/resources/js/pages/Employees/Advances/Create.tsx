@@ -4,6 +4,7 @@ import { Head, router } from '@inertiajs/react';
 import { ArrowLeft, Plus } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
 
 interface Employee {
     id: number;
@@ -64,9 +65,8 @@ export default function Create({ auth, employee }: Props) {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-
-        router.post(
-            route('advances.store', { employee: employee.id }),
+        axios.post(
+            `/employees/${employee.id}/advances`,
             {
                 amount: parseFloat(amount),
                 reason,
@@ -74,17 +74,16 @@ export default function Create({ auth, employee }: Props) {
                 monthly_deduction: parseFloat(monthlyDeduction),
                 estimated_months: parseInt(estimatedMonths) || 1,
             },
-            {
-                onSuccess: () => {
-                    ToastService.success('Advance payment request created successfully');
-                    router.visit(`/employees/${employee.id}/advances`);
-                },
-                onError: (errors) => {
-                    setIsSubmitting(false);
-                    ToastService.error(errors?.message || 'Failed to create advance payment request');
-                },
-            },
-        );
+            { withCredentials: true }
+        )
+            .then(() => {
+                ToastService.success('Advance payment request created successfully');
+                router.visit(`/employees/${employee.id}/advances`);
+            })
+            .catch((error) => {
+                setIsSubmitting(false);
+                ToastService.error(error?.response?.data?.message || 'Failed to create advance payment request');
+            });
     };
 
     return (

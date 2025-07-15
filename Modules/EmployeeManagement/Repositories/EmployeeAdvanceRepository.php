@@ -79,6 +79,12 @@ class EmployeeAdvanceRepository extends BaseRepository implements EmployeeAdvanc
     }
 
     // Inherited create, update, delete methods from BaseRepository
+
+    public function __call(
+        $method, $parameters
+    ) {
+        throw new \Exception('This repository is deprecated. Use PayrollManagement AdvancePayment logic.');
+    }
 }
 
 

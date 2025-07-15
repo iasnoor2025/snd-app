@@ -19,10 +19,10 @@ class RouteServiceProvider extends ServiceProvider
     {
         parent::boot();
 
-        // Custom binding for nested EmployeeAdvance
+        // Bind {advance} to AdvancePayment, constrained by employee_id
         \Illuminate\Support\Facades\Route::bind('advance', function ($value) {
             $employeeId = request()->route('employee');
-            return \Modules\EmployeeManagement\Domain\Models\EmployeeAdvance::where('id', $value)
+            return \Modules\EmployeeManagement\Domain\Models\AdvancePayment::where('id', $value)
                 ->where('employee_id', $employeeId)
                 ->firstOrFail();
         });

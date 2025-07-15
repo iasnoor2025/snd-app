@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use Modules\PayrollManagement\Http\Controllers\PayrollController;
 use Modules\PayrollManagement\Http\Controllers\SalaryAdvanceController;
 use Modules\PayrollManagement\Http\Controllers\FinalSettlementController;
-use Modules\PayrollManagement\Http\Controllers\AdvancePaymentController;
 use Modules\PayrollManagement\Http\Controllers\ComplianceReportController;
 
 /*
@@ -119,33 +118,6 @@ Route::prefix('final-settlements')
             ->middleware('permission:final-settlements.view')
             ->name('report');
     });
-
-// Advance Payment API Routes
-Route::get('/employees/{employee}/advance-payments/history', [AdvancePaymentController::class, 'apiPaymentHistory'])
-    ->middleware(['auth:sanctum', 'permission:advances.view'])
-    ->name('employees.advance-payments.history');
-
-Route::get('/employees/{employee}/advance-payments', [AdvancePaymentController::class, 'getEmployeeAdvances'])
-    ->middleware(['auth:sanctum', 'permission:advances.view'])
-    ->name('employees.advance-payments');
-
-// Add approve advance API route
-Route::post('/employees/{employee}/advances/{advance}/approve', [AdvancePaymentController::class, 'approve'])
-    ->middleware(['auth:sanctum', 'permission:advances.approve'])
-    ->name('employees.advances.api.approve');
-
-Route::post('/employees/{employee}/advances/{advance}/reject', [AdvancePaymentController::class, 'reject'])
-    ->middleware(['auth:sanctum', 'permission:advances.approve'])
-    ->name('employees.advances.api.reject');
-
-Route::delete('/employees/{employee}/advances/{advance}', [AdvancePaymentController::class, 'destroy'])
-    ->middleware(['auth:sanctum', 'permission:advances.delete'])
-    ->name('employees.advances.api.destroy');
-
-// Add repayment API route for advances
-Route::post('/employees/{employee}/advances/{advance}/repayment', [AdvancePaymentController::class, 'recordRepayment'])
-    ->middleware(['auth:sanctum', 'permission:advances.edit'])
-    ->name('employees.advances.api.repayment');
 
 
 

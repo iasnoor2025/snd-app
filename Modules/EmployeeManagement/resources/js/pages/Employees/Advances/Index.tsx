@@ -31,6 +31,7 @@ import { format } from 'date-fns';
 import { ArrowLeft, History, Trash2 } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
 
 interface Advance {
     id: number;
@@ -97,18 +98,19 @@ export default function Index({ auth, employee, advances, total_balance }: Props
             : []),
     ];
 
+    // Update all advance actions to use PayrollManagement endpoints
+    // Example for delete:
     const handleDeleteAdvance = (advanceId: number) => {
-        const routeParams = employee ? { employee: employee.id, advance: advanceId } : { advance: advanceId };
-
-        router.delete(route('advances.destroy', routeParams), {
-            onSuccess: () => {
+        if (!employee) return;
+        axios.delete(`/employees/${employee.id}/advances/${advanceId}`, { withCredentials: true })
+            .then(() => {
                 ToastService.success('Advance record deleted successfully');
                 setIsDeleteDialogOpen(false);
-            },
-            onError: (errors) => {
-                ToastService.error(errors?.message || 'Failed to delete advance record');
-            },
-        });
+                router.reload();
+            })
+            .catch((error) => {
+                ToastService.error(error?.response?.data?.message || 'Failed to delete advance record');
+            });
     };
 
     // Add console log to debug permissions

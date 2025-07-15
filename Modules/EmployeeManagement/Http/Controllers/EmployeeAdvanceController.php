@@ -128,5 +128,11 @@ class EmployeeAdvanceController extends Controller
             return redirect()->back()->with('error', 'Failed to record repayment: ' . $e->getMessage());
         }
     }
+
+    public function __call(
+        $method, $parameters
+    ) {
+        abort(410, 'This endpoint is deprecated. Use PayrollManagement AdvancePaymentController.');
+    }
 }
 

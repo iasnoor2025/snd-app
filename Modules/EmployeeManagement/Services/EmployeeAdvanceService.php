@@ -172,6 +172,12 @@ class EmployeeAdvanceService extends BaseService
 
         return $schedule;
     }
+
+    public function __call(
+        $method, $parameters
+    ) {
+        throw new \Exception('This service is deprecated. Use PayrollManagement AdvancePayment logic.');
+    }
 }
 
 

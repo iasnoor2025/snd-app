@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\PayrollManagement\Http\Controllers;
+namespace Modules\EmployeeManagement\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Modules\PayrollManagement\Domain\Models\AdvancePayment;
-use Modules\PayrollManagement\Domain\Models\AdvancePaymentHistory;
+use Modules\EmployeeManagement\Domain\Models\AdvancePayment;
+use Modules\EmployeeManagement\Domain\Models\AdvancePaymentHistory;
 use Modules\EmployeeManagement\Domain\Models\Employee;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -273,10 +273,6 @@ class AdvancePaymentController extends Controller
         if (!is_numeric($employeeId)) {
             abort(404, 'Invalid ID provided');
         }
-        $employee = Employee::find($employeeId);
-            $employee->total_advance_balance = $employee->total_advance_balance;
-            $employee->save();
-
             DB::commit();
 
             // Return a success response
@@ -453,41 +449,48 @@ class AdvancePaymentController extends Controller
     /**
      * Delete an advance payment
      */
-    public function destroy(Employee $employee, AdvancePayment $advance)
+    public function destroy(Employee $employee, AdvancePayment $advance, Request $request)
     {
         if ($advance->status !== 'pending' && !Auth::user()->hasRole('admin')) {
+            $msg = 'This advance payment request cannot be deleted.';
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json(['success' => false, 'message' => $msg], 403);
+            }
             return Inertia::render('Payroll/Advances/Index', [
                 'employee' => $employee,
-                'error' => 'This advance payment request cannot be deleted.',
+                'error' => $msg,
             ]);
         }
 
         if ($advance->repaid_amount > 0) {
+            $msg = 'This advance payment has repayments recorded against it and cannot be deleted.';
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json(['success' => false, 'message' => $msg], 403);
+            }
             return Inertia::render('Payroll/Advances/Index', [
                 'employee' => $employee,
-                'error' => 'This advance payment has repayments recorded against it and cannot be deleted.',
+                'error' => $msg,
             ]);
         }
 
         DB::beginTransaction();
         try {
-            // Delete associated histories
             AdvancePaymentHistory::where('advance_payment_id', $advance->id)->delete();
-
-            // Delete the advance
             $advance->delete();
-
-            // Update employee balance
-            $employee->total_advance_balance = $employee->total_advance_balance;
-            $employee->save();
-
+            // Do NOT set or save total_advance_balance, as it is a computed property
             DB::commit();
-
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json(['success' => true, 'message' => 'Advance payment deleted successfully.']);
+            }
             return redirect()->route('payroll.employees.advances.index', $employee->id)
                 ->with('success', 'Advance payment deleted successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => 'Failed to delete advance payment: ' . $e->getMessage()]);
+            $msg = 'Failed to delete advance payment: ' . $e->getMessage();
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json(['success' => false, 'message' => $msg], 500);
+            }
+            return back()->withErrors(['error' => $msg]);
         }
     }
 
@@ -645,10 +648,6 @@ class AdvancePaymentController extends Controller
 
             // Delete the payment history record
             $payment->delete();
-
-            // Update employee balance
-            $employee->total_advance_balance = $employee->total_advance_balance;
-            $employee->save();
 
             DB::commit();
 

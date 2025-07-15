@@ -224,6 +224,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/salary-increments/{salaryIncrement}/apply', [SalaryIncrementController::class, 'apply'])
         ->middleware('permission:salary-increments.apply')
         ->name('salary-increments.apply');
+
+    // Add API endpoint for advance payment history
+    Route::get('/employees/{employee}/advances/history/api', [\Modules\EmployeeManagement\Http\Controllers\AdvancePaymentController::class, 'apiPaymentHistory'])
+        ->middleware('permission:employees.view')
+        ->name('employees.advances.history.api');
+
+    // Add DELETE endpoint for advance payment
+    Route::delete('/employees/{employee}/advances/{advance}', [\Modules\EmployeeManagement\Http\Controllers\AdvancePaymentController::class, 'destroy'])
+        ->middleware('permission:employees.edit')
+        ->name('employees.advances.destroy');
 });
 
 // Add access restriction update route
@@ -244,34 +254,5 @@ Route::middleware(['auth', 'permission:employees.edit'])->group(function () {
 // Employee ERPNext sync (admin only)
 Route::post('/employees/sync-from-erpnext', [\Modules\EmployeeManagement\Http\Controllers\EmployeeController::class, 'syncFromERPNext'])->middleware('auth');
 
-Route::middleware(['auth', 'permission:advances.approve'])->group(function () {
-    Route::post(
-        '/employees/{employee}/advances/{advance}/approve',
-        [EmployeeAdvanceController::class, 'approve']
-    )->name('employees.advances.web.approve');
-    Route::post(
-        '/employees/{employee}/advances/{advance}/reject',
-        [EmployeeAdvanceController::class, 'reject']
-    )->name('employees.advances.web.reject');
-    Route::delete(
-        '/employees/{employee}/advances/{advance}',
-        [EmployeeAdvanceController::class, 'destroy']
-    )->name('employees.advances.web.destroy');
-});
-
-Route::middleware(['auth', 'permission:advances.edit'])->group(function () {
-    Route::post('/employees/{employee}/advances/{advance}/repayment', [EmployeeAdvanceController::class, 'repayment'])->name('employees.advances.web.repayment');
-});
-
-Route::middleware(['auth', 'permission:advances.view'])->group(function () {
-    Route::get('/employees/{employee}/advances', function ($employee) {
-        $advances = \Modules\EmployeeManagement\Domain\Models\EmployeeAdvance::where('employee_id', $employee)->get([
-            'id', 'amount', 'status', 'reason', 'payment_date'
-        ]);
-        return Inertia::render('Employees/AdvancesList', [
-            'employeeId' => $employee,
-            'advances' => $advances,
-        ]);
-    })->name('employees.advances.web.index');
-});
+// All EmployeeAdvance routes are deprecated. Use PayrollManagement advance routes instead.
 

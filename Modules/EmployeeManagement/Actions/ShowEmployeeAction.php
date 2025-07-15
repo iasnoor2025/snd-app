@@ -62,16 +62,12 @@ class ShowEmployeeAction
             $totalRepaid = 0;
             $pagination = [];
 
-            // Always include EmployeeAdvance records
-            $employeeAdvances = \Modules\EmployeeManagement\Domain\Models\EmployeeAdvance::where('employee_id', $employee->id)
+            // Use AdvancePayment records only
+            $advancePayments = \Modules\EmployeeManagement\Domain\Models\AdvancePayment::where('employee_id', $employee->id)
                 ->orderBy('created_at', 'desc')
                 ->get();
-            $advances['data'] = array_merge($advances['data'], $employeeAdvances->map(function ($advance) {
-                // Fetch repayments for this advance if a repayments table/model exists
-                $repayments = [];
-                if (method_exists($advance, 'repayments')) {
-                    $repayments = $advance->repayments()->get(['amount', 'payment_date', 'notes'])->toArray();
-                }
+            $advances['data'] = $advancePayments->map(function ($advance) {
+                $repayments = method_exists($advance, 'paymentHistories') ? $advance->paymentHistories()->get(['amount', 'payment_date', 'notes'])->toArray() : [];
                 return [
                     'id' => $advance->id,
                     'amount' => $advance->amount,
@@ -80,21 +76,21 @@ class ShowEmployeeAction
                     'created_at' => $advance->created_at,
                     'rejection_reason' => $advance->rejection_reason,
                     'repayment_date' => $advance->repayment_date ?? null,
-                    'type' => 'advance',
-                    'monthly_deduction' => $advance->deduction_amount,
+                    'type' => 'advance_payment',
+                    'monthly_deduction' => $advance->monthly_deduction,
                     'repaid_amount' => $advance->repaid_amount ?? 0,
-                    'remaining_balance' => $advance->remaining_amount ?? 0,
+                    'remaining_balance' => $advance->remaining_balance ?? 0,
                     'repayments' => $repayments,
                 ];
-            })->toArray());
+            })->toArray();
 
             // Calculate current balance from all advances
-            $currentBalance = $employeeAdvances->sum(function ($advance) {
+            $currentBalance = $advancePayments->sum(function ($advance) {
                 return $advance->amount - $advance->repaid_amount;
             });
 
             // Calculate total repaid amount (simplified implementation)
-            $totalRepaid = $employeeAdvances->filter(function ($advance) {
+            $totalRepaid = $advancePayments->filter(function ($advance) {
                 return isset($advance->type) && $advance->type === 'repayment';
             })->sum('amount');
 

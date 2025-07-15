@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\PayrollManagement\Observers;
+namespace Modules\EmployeeManagement\Observers;
 
-use Modules\PayrollManagement\Domain\Models\AdvancePayment;
+use Modules\EmployeeManagement\Domain\Models\AdvancePayment;
 use Illuminate\Support\Facades\Log;
 
 class AdvancePaymentObserver

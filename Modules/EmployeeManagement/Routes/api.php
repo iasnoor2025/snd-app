@@ -69,10 +69,7 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
         Route::get('/{document}/download', [EmployeeDocumentController::class, 'download']);
     });
 
-    // Employee advances
-    Route::apiResource('employee-advances', EmployeeAdvanceController::class);
-    // Add explicit approve route for employee advances
-    Route::post('employees/{employee}/advances/{advance}/approve', [EmployeeAdvanceController::class, 'approve']);
+    // All EmployeeAdvance API routes are deprecated. Use PayrollManagement advance routes instead.
 
     // Resignations
     Route::apiResource('resignations', ResignationController::class);
