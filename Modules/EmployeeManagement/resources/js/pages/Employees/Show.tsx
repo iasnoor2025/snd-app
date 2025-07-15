@@ -668,9 +668,14 @@ export default function Show({
 
   const handleAdvanceApproval = async (advanceId: number) => {
     const loadingToastId = ToastService.loading('Approving advance...');
-    console.log('DEBUG: Approve advance POST', `/api/employees/${employee.id}/advances/${advanceId}/approve`);
+    console.log('DEBUG: Approve advance POST', `/employees/${employee.id}/advances/${advanceId}/approve`);
     try {
-      await axios.post(`/api/employees/${employee.id}/advances/${advanceId}/approve`);
+      await ensureSanctumCsrf();
+      await axios.post(
+        `/employees/${employee.id}/advances/${advanceId}/approve`,
+        {},
+        { withCredentials: true }
+      );
       ToastService.dismiss(loadingToastId);
       ToastService.success(`Advance approved successfully`);
       router.visit(`/employees/${employee.id}/advances`);
@@ -690,7 +695,7 @@ export default function Show({
     const loadingToastId = ToastService.loading('Rejecting advance...');
 
     try {
-      await axios.post(`/api/employees/${employee.id}/advances/${advanceId}/reject`, {
+      await axios.post(`/employees/${employee.id}/advances/${advanceId}/reject`, {
         reason,
       });
 
@@ -711,7 +716,7 @@ export default function Show({
     }
 
     try {
-      await axios.delete(`/api/employees/${employee.id}/advances/${advanceId}`);
+      await axios.delete(`/employees/${employee.id}/advances/${advanceId}`);
       ToastService.success('Advance deleted successfully');
       router.visit(`/employees/${employee.id}/advances`);
     } catch (error: any) {

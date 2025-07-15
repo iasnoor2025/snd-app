@@ -9,6 +9,7 @@ use Modules\EmployeeManagement\Http\Requests\ProcessDeductionRequest;
 use Modules\EmployeeManagement\Http\Requests\RejectAdvanceRequest;
 use Modules\EmployeeManagement\Http\Requests\StoreEmployeeAdvanceRequest;
 use Modules\EmployeeManagement\Services\EmployeeAdvanceService;
+use Modules\EmployeeManagement\Models\EmployeeAdvance;
 
 class EmployeeAdvanceController extends Controller
 {
@@ -31,43 +32,42 @@ class EmployeeAdvanceController extends Controller
         return response()->json($advance, 201);
     }
 
-    public function show(int $employeeId, int $advanceId): JsonResponse
+    public function show(int $employeeId, EmployeeAdvance $advance): JsonResponse
     {
-        $advance = $this->advanceService->getAdvance($advanceId);
         return response()->json($advance);
     }
 
-    public function approve(ApproveAdvanceRequest $request, int $employeeId, int $advanceId): JsonResponse
+    public function approve(ApproveAdvanceRequest $request, int $employeeId, EmployeeAdvance $advance): JsonResponse
     {
-        $advance = $this->advanceService->approveAdvance(
-            $advanceId,
+        $approvedAdvance = $this->advanceService->approveAdvance(
+            $advance->id,
             $request->user(),
             $request->validated('notes')
         );
 
-        return response()->json($advance);
+        return response()->json($approvedAdvance);
     }
 
-    public function reject(RejectAdvanceRequest $request, int $employeeId, int $advanceId): JsonResponse
+    public function reject(RejectAdvanceRequest $request, int $employeeId, EmployeeAdvance $advance): JsonResponse
     {
-        $advance = $this->advanceService->rejectAdvance(
-            $advanceId,
+        $rejectedAdvance = $this->advanceService->rejectAdvance(
+            $advance->id,
             $request->user(),
             $request->validated('reason')
         );
 
-        return response()->json($advance);
+        return response()->json($rejectedAdvance);
     }
 
-    public function processDeduction(ProcessDeductionRequest $request, int $employeeId, int $advanceId): JsonResponse
+    public function processDeduction(ProcessDeductionRequest $request, int $employeeId, EmployeeAdvance $advance): JsonResponse
     {
-        $advance = $this->advanceService->processDeduction(
-            $advanceId,
+        $deductedAdvance = $this->advanceService->processDeduction(
+            $advance->id,
             $request->validated('amount'),
             $request->validated('notes')
         );
 
-        return response()->json($advance);
+        return response()->json($deductedAdvance);
     }
 
     public function pending(): JsonResponse
@@ -94,9 +94,8 @@ class EmployeeAdvanceController extends Controller
         return response()->json($advances);
     }
 
-    public function deductionSchedule(int $employeeId, int $advanceId): JsonResponse
+    public function deductionSchedule(int $employeeId, EmployeeAdvance $advance): JsonResponse
     {
-        $advance = $this->advanceService->getAdvance($advanceId);
         $schedule = $this->advanceService->calculateDeductionSchedule($advance);
         return response()->json($schedule);
     }

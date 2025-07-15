@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
-import { Label } from '../../components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import InputLabel from '../../components/InputLabel';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { FaGoogle } from 'react-icons/fa';
@@ -79,7 +79,7 @@ export default function Login() {
                     {!showMfa ? (
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="email">Email</Label>
+                                <InputLabel htmlFor="email">Email</InputLabel>
                                 <Input
                                     id="email"
                                     type="email"
@@ -90,7 +90,7 @@ export default function Login() {
                                 )}
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="password">Password</Label>
+                                <InputLabel htmlFor="password">Password</InputLabel>
                                 <Input
                                     id="password"
                                     type="password"
@@ -107,7 +107,7 @@ export default function Login() {
                     ) : (
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="mfa-code">Authentication Code</Label>
+                                <InputLabel htmlFor="mfa-code">Authentication Code</InputLabel>
                                 <Input
                                     id="mfa-code"
                                     type="text"

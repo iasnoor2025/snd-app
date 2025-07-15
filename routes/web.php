@@ -151,3 +151,20 @@ Route::get('/api/v1/equipment', function () {
 
 // Employee ERPNext sync (admin only)
 Route::post('/employees/sync-erpnext', [\Modules\EmployeeManagement\Http\Controllers\EmployeeController::class, 'syncToERPNext'])->middleware('auth');
+
+// Web route for approving employee advances (session-based auth)
+Route::post('/employees/{employee}/advances/{advance}/approve', [\Modules\EmployeeManagement\Http\Controllers\EmployeeAdvanceController::class, 'approve'])
+    ->middleware(['auth', 'permission:advances.approve'])
+    ->name('employees.advances.web.approve');
+
+// Debug endpoint for session/cookie/csrf debugging
+Route::get('/debug/session-debug', function (\Illuminate\Http\Request $request) {
+    return response()->json([
+        'session_id' => session_id(),
+        'session_status' => session_status() == PHP_SESSION_ACTIVE ? 'active' : 'not active',
+        'all_session' => $request->session()->all(),
+        'cookies' => $request->cookies->all(),
+        'headers' => $request->headers->all(),
+        'user' => $request->user(),
+    ]);
+});
