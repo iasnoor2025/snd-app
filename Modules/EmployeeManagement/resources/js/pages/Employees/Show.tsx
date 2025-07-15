@@ -3032,6 +3032,7 @@ export default function Show({
                                                 <thead className="bg-muted/50">
                                                     <tr>
                                                         <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Amount</th>
+                                                        <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Monthly Deduction</th>
                                                         <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Reason</th>
                                                         <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Date</th>
                                                         <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
@@ -3046,6 +3047,7 @@ export default function Show({
                                                             .map((advance: Advance) => (
                                                                 <tr key={`${advance.type}-${advance.id}`} className="hover:bg-muted/20 transition-colors">
                                                                     <td className="px-6 py-4 whitespace-nowrap font-medium text-primary">SAR {Number(advance.amount).toFixed(2)}</td>
+                                                                    <td className="px-6 py-4 whitespace-nowrap">SAR {Number(advance.monthly_deduction || 0).toFixed(2)}</td>
                                                                     <td className="px-6 py-4 max-w-[200px] truncate">{advance.reason}</td>
                                                                     <td className="px-6 py-4 whitespace-nowrap">{format(new Date(advance.created_at), 'PP')}</td>
                                                                     <td className="px-6 py-4">{getRepaymentStatus(advance)}</td>
@@ -3118,7 +3120,7 @@ export default function Show({
                                                             ))
                                                     ) : (
                                                         <tr>
-                                                            <td colSpan={6} className="px-6 py-8 text-center text-muted-foreground italic">
+                                                            <td colSpan={7} className="px-6 py-8 text-center text-muted-foreground italic">
                                                                 No advance records found.
                                                             </td>
                                                         </tr>
