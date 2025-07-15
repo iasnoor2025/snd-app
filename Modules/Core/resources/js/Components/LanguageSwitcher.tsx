@@ -1,12 +1,12 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '../components/ui/button';
+import { Button } from '../../../../../resources/js/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '../components/ui/dropdown-menu';
+  DropdownMenuTrigger
+} from '../../../../../resources/js/components/ui/dropdown-menu';
 import { Globe } from 'lucide-react';
 
 interface Language {
@@ -37,10 +37,10 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ variant = 'default'
   const storeLanguagePreference = (languageCode: string) => {
     // Store in localStorage
     localStorage.setItem('i18nextLng', languageCode);
-    
+
     // Store in sessionStorage
     sessionStorage.setItem('i18nextLng', languageCode);
-    
+
     // Store in cookie (expires in 1 year)
     document.cookie = `i18next=${languageCode}; path=/; max-age=${365 * 24 * 60 * 60}`;
   };
@@ -64,7 +64,7 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ variant = 'default'
 
       // Store language preference
       storeLanguagePreference(languageCode);
-      
+
       // Force reload the page to ensure all components update properly
       window.location.reload();
     }
