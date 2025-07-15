@@ -3239,6 +3239,20 @@ export default function Show({
                                 />
                             </div>
                         </div>
+                        <Button
+                            type="button"
+                            className="w-full mt-2"
+                            onClick={async () => {
+                                const success = await handleAdvanceRequest({
+                                    amount: advanceAmount,
+                                    monthly_deduction: monthlyDeduction,
+                                    reason: advanceReason,
+                                });
+                                if (success) setIsAdvanceRequestDialogOpen(false);
+                            }}
+                        >
+                            {t('btn_submit', 'Submit')}
+                        </Button>
                     </DialogContent>
                 </Dialog>
 
