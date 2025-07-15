@@ -114,27 +114,42 @@ const PaymentHistory = ({ employeeId }: { employeeId: number }) => {
     if (loading) return <div className="p-4 text-center text-muted-foreground">Loading payment history...</div>;
     if (!payments.length) return <div className="p-4 text-center text-muted-foreground">No repayments found.</div>;
     return (
-        <div className="mt-6">
-            <h3 className="mb-2 text-lg font-semibold">Repayment History</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th className="px-4 py-2 text-left">Amount</th>
-                        <th className="px-4 py-2 text-left">Date</th>
-                        <th className="px-4 py-2 text-left">Notes</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {payments.map((p, i) => (
-                        <tr key={i}>
-                            <td className="px-4 py-2">SAR {Number(p.amount).toFixed(2)}</td>
-                            <td className="px-4 py-2">{p.payment_date}</td>
-                            <td className="px-4 py-2">{p.notes || '-'}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
+        <Card className="mt-6 shadow-sm border border-gray-200 bg-white rounded-lg">
+            <CardHeader className="bg-muted/50 rounded-t-lg p-4 flex flex-row items-center gap-2">
+                <CreditCard className="h-5 w-5 text-primary" />
+                <CardTitle className="text-lg font-semibold">Repayment History</CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+                <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-muted/50">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Amount</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Date</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-100">
+                            {payments.length === 0 ? (
+                                <tr>
+                                    <td colSpan={3} className="px-6 py-8 text-center text-muted-foreground italic">
+                                        No repayments found.
+                                    </td>
+                                </tr>
+                            ) : (
+                                payments.map((p, i) => (
+                                    <tr key={i} className="hover:bg-muted/20 transition-colors">
+                                        <td className="px-6 py-4 whitespace-nowrap font-medium text-primary">SAR {Number(p.amount).toFixed(2)}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap">{p.payment_date}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap">{p.notes || '-'}</td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </CardContent>
+        </Card>
     );
 };
 
@@ -3147,7 +3162,7 @@ export default function Show({
                     <h3 className="text-lg font-semibold">{t('payment_history')}</h3>
                   </div> */}
 
-                                    <PaymentHistory employeeId={Number(employee.id) || 0} />
+                            
                                 </div>
                             </CardContent>
                         </Card>
