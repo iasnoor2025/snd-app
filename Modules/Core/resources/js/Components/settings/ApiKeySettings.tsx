@@ -1,9 +1,7 @@
 import { useState } from 'react';
-import { Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Input } from '../../ui';
-import { Label } from '../../ui/label';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../../ui/dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
-import { MultiSelect } from '../../ui/multi-select';
+import { Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Input } from '../ui';
+import { Label } from '../ui';
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, MultiSelect } from '../ui';
 import { formatDateTime } from '@/Core/utils/dateFormatter';
 
 interface ApiKey {
@@ -105,7 +103,7 @@ export default function ApiKeySettings({ initialKeys }: ApiKeySettingsProps) {
                                 <Button>Create API Key</Button>
                             </DialogTrigger>
                             <DialogContent className="sm:max-w-[425px]">
-                                <DialogHeader>
+                                <div>
                                     <DialogTitle>
                                         {createdKey ? 'API Key Created' : 'Create API Key'}
                                     </DialogTitle>
@@ -114,7 +112,7 @@ export default function ApiKeySettings({ initialKeys }: ApiKeySettingsProps) {
                                             ? "Copy your API key now. You won't be able to see it again!"
                                             : "Create a new API key to access the API"}
                                     </DialogDescription>
-                                </DialogHeader>
+                                </div>
 
                                 {createdKey ? (
                                     <div className="space-y-4">
@@ -129,9 +127,9 @@ export default function ApiKeySettings({ initialKeys }: ApiKeySettingsProps) {
                                                 Make sure to copy this key now. You won't be able to see it again!
                                             </p>
                                         </div>
-                                        <DialogFooter>
+                                        <div className="flex justify-end gap-2">
                                             <Button onClick={handleCloseDialog}>Done</Button>
-                                        </DialogFooter>
+                                        </div>
                                     </div>
                                 ) : (
                                     <div className="space-y-4">
@@ -168,14 +166,14 @@ export default function ApiKeySettings({ initialKeys }: ApiKeySettingsProps) {
                                                 }
                                             />
                                         </div>
-                                        <DialogFooter>
+                                        <div className="flex justify-end gap-2">
                                             <Button
                                                 onClick={handleCreate}
                                                 disabled={!newKeyData.name || isLoading}
                                             >
                                                 {isLoading ? 'Creating...' : 'Create'}
                                             </Button>
-                                        </DialogFooter>
+                                        </div>
                                     </div>
                                 )}
                             </DialogContent>

@@ -37,6 +37,7 @@ export const OrganizationChart: React.FC<OrganizationChartProps> = ({ initialDat
           className={`border rounded-lg p-4 mb-2 ${
             level === 0 ? 'bg-blue-50 border-blue-200' : 'bg-white border-gray-200'
           }`}
+        >
           <div className="font-medium">{node.name}</div>
           {node.code && <div className="text-xs text-gray-500">Code: {node.code}</div>}
           {node.manager && (

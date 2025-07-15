@@ -215,6 +215,7 @@ export const DepartmentList: React.FC<DepartmentListProps> = ({ initialDepartmen
             <Select
               value={statusFilter}
               onValueChange={setStatusFilter}
+            >
               <SelectTrigger className="w-[130px]">
                 <SelectValue placeholder={t('ph_status')} />
               </SelectTrigger>
@@ -367,6 +368,7 @@ export const DepartmentList: React.FC<DepartmentListProps> = ({ initialDepartmen
                     ...currentDepartment,
                     is_active: value === 'active'
                   })}
+                >
                   <SelectTrigger id="is_active">
                     <SelectValue placeholder={t('ph_select_status')} />
                   </SelectTrigger>

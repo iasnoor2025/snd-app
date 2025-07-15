@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import InputLabel from '../../components/InputLabel';
+import { Label } from "@/Core";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/Modules/Core/resources/js/components/ui/card';
 import { toast } from 'sonner';
 import axios from 'axios';
@@ -79,7 +79,7 @@ export default function Login() {
                     {!showMfa ? (
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                             <div className="space-y-2">
-                                <InputLabel htmlFor="email">Email</InputLabel>
+                                <Label htmlFor="email">Email</Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -90,7 +90,7 @@ export default function Login() {
                                 )}
                             </div>
                             <div className="space-y-2">
-                                <InputLabel htmlFor="password">Password</InputLabel>
+                                <Label htmlFor="password">Password</Label>
                                 <Input
                                     id="password"
                                     type="password"
@@ -107,7 +107,7 @@ export default function Login() {
                     ) : (
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <InputLabel htmlFor="mfa-code">Authentication Code</InputLabel>
+                                <Label htmlFor="mfa-code">Authentication Code</Label>
                                 <Input
                                     id="mfa-code"
                                     type="text"

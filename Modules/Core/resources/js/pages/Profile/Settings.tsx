@@ -5,7 +5,7 @@ import { AppLayout } from '@/Core';
 import { ProfileNav } from '../../components/profile-nav';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button, Input, Separator } from '../../components/ui';
-import InputLabel from '../../components/InputLabel';
+import { Label } from "@/Core";
 import { AppearanceTabs } from '../../components/index';
 import { toast } from 'sonner';
 import {
@@ -234,7 +234,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                     <form onSubmit={handleProfileSubmit} className="space-y-6">
                         <div className="grid grid-cols-1 gap-4">
                             <div className="space-y-2">
-                                <InputLabel htmlFor="name">Full Name</InputLabel>
+                                <Label htmlFor="name">Full Name</Label>
                                 <Input
                                     id="name"
                                     type="text"
@@ -245,7 +245,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                             </div>
 
                             <div className="space-y-2">
-                                <InputLabel htmlFor="email">Email Address</InputLabel>
+                                <Label htmlFor="email">Email Address</Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -256,7 +256,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                             </div>
 
                             <div className="space-y-2">
-                                <InputLabel htmlFor="phone">Phone Number</InputLabel>
+                                <Label htmlFor="phone">Phone Number</Label>
                                 <Input
                                     id="phone"
                                     type="tel"
@@ -266,7 +266,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                             </div>
 
                             <div className="space-y-2">
-                                <InputLabel htmlFor="department">Department</InputLabel>
+                                <Label htmlFor="department">Department</Label>
                                 <Input
                                     id="department"
                                     type="text"
@@ -275,7 +275,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                                 />
                             </div>
                             <div className="space-y-2">
-                                <InputLabel htmlFor="address">Address</InputLabel>
+                                <Label htmlFor="address">Address</Label>
                                 <Input
                                     id="address"
                                     type="text"
@@ -284,7 +284,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                                 />
                             </div>
                             <div className="space-y-2">
-                                <InputLabel htmlFor="birthday">Birthday</InputLabel>
+                                <Label htmlFor="birthday">Birthday</Label>
                                 <Input
                                     id="birthday"
                                     type="date"
@@ -293,7 +293,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                                 />
                             </div>
                             <div className="space-y-2">
-                                <InputLabel htmlFor="timezone">Timezone</InputLabel>
+                                <Label htmlFor="timezone">Timezone</Label>
                                 <select
                                     id="timezone"
                                     className="input"
@@ -309,7 +309,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                                 </select>
                             </div>
                             <div className="space-y-2">
-                                <InputLabel htmlFor="locale">Locale</InputLabel>
+                                <Label htmlFor="locale">Locale</Label>
                                 <select
                                     id="locale"
                                     className="input"
@@ -407,13 +407,13 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                 <CardContent>
                     <div className="space-y-4">
                         <div className="flex items-center justify-between">
-                            <InputLabel>New device login detected</InputLabel>
+                            <Label>New device login detected</Label>
                             <p className="text-sm text-muted-foreground">
                                 Your account was accessed from a new device on 2024-06-01 14:23 UTC (IP: 192.168.1.10).
                             </p>
                         </div>
                         <div className="flex items-center justify-between">
-                            <InputLabel>Password changed</InputLabel>
+                            <Label>Password changed</Label>
                             <p className="text-sm text-muted-foreground">
                                 Your password was changed on 2024-05-30 09:12 UTC. If this wasn't you, please contact support immediately.
                             </p>
@@ -449,7 +449,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                     <form onSubmit={handlePasswordSubmit} className="space-y-6">
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <InputLabel htmlFor="current_password">Current Password</InputLabel>
+                                <Label htmlFor="current_password">Current Password</Label>
                                 <div className="relative">
                                     <Input
                                         id="current_password"
@@ -473,7 +473,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                             </div>
 
                             <div className="space-y-2">
-                                <InputLabel htmlFor="password">New Password</InputLabel>
+                                <Label htmlFor="password">New Password</Label>
                                 <div className="relative">
                                     <Input
                                         id="password"
@@ -497,7 +497,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                             </div>
 
                             <div className="space-y-2">
-                                <InputLabel htmlFor="password_confirmation">Confirm Password</InputLabel>
+                                <Label htmlFor="password_confirmation">Confirm Password</Label>
                                 <div className="relative">
                                     <Input
                                         id="password_confirmation"
@@ -592,7 +592,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
             <CardContent>
                 <div className="space-y-6">
                     <div className="space-y-2">
-                        <InputLabel>Theme Preference</InputLabel>
+                        <Label>Theme Preference</Label>
                         <p className="text-sm text-muted-foreground">
                             Choose how you want the application to look.
                         </p>
@@ -685,15 +685,15 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                 <CardContent>
                     <div className="space-y-4">
                         <div className="flex items-center justify-between">
-                            <InputLabel>Email Notifications</InputLabel>
+                            <Label>Email Notifications</Label>
                             <input type="checkbox" checked={!!settings?.email_notifications} onChange={() => setSettings((s: typeof settings) => ({...s, email_notifications: !s.email_notifications}))} />
                         </div>
                         <div className="flex items-center justify-between">
-                            <InputLabel>SMS Notifications</InputLabel>
+                            <Label>SMS Notifications</Label>
                             <input type="checkbox" checked={!!settings?.sms_notifications} onChange={() => setSettings((s: typeof settings) => ({...s, sms_notifications: !s.sms_notifications}))} />
                         </div>
                         <div className="flex items-center justify-between">
-                            <InputLabel>Push Notifications</InputLabel>
+                            <Label>Push Notifications</Label>
                             <input type="checkbox" checked={!!settings?.push_notifications} onChange={() => setSettings((s: typeof settings) => ({...s, push_notifications: !s.push_notifications}))} />
                         </div>
                         <div className="flex justify-end gap-2">
@@ -721,11 +721,11 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
             <CardContent>
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                        <InputLabel>Show profile to others</InputLabel>
+                        <Label>Show profile to others</Label>
                         <input type="checkbox" defaultChecked />
                     </div>
                     <div className="flex items-center justify-between">
-                        <InputLabel>Export my data</InputLabel>
+                        <Label>Export my data</Label>
                         <Button variant="outline" onClick={() => toast.success('Data export started!')}>Export</Button>
                     </div>
                     <Card className="mb-4">
@@ -744,7 +744,7 @@ export default function Settings({ auth, mustVerifyEmail, status, tab = 'profile
                     </Card>
                     <Separator />
                     <div className="flex items-center justify-between">
-                        <InputLabel className="text-red-600">Delete Account</InputLabel>
+                        <Label className="text-red-600">Delete Account</Label>
                         <Button variant="destructive">Delete Account</Button>
                     </div>
                 </div>

@@ -1,8 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/card';
-import { Button } from '../../ui/button';
-import { Input } from '../../ui/input';
-import InputLabel from '../../InputLabel';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button, Input } from '../ui';
+import { Label } from "@/Core";
 import { toast } from 'sonner';
 import { Camera, Upload, X, Crop, RotateCw } from 'lucide-react';
 
@@ -81,7 +79,7 @@ const AvatarUploader = ({ user, onAvatarUpdate }) => {
             <CardContent className="space-y-4">
                 {/* Upload Area */}
                 <div className="space-y-2">
-                    <InputLabel htmlFor="avatar">Select Image</InputLabel>
+                    <Label htmlFor="avatar">Select Image</Label>
                     <Input
                         ref={fileInputRef}
                         id="avatar"

@@ -269,6 +269,7 @@ export const TimesheetEntry: React.FC<TimesheetEntryProps> = ({
                     <Select
                       value={currentEntry.project_id?.toString() || ""}
                       onValueChange={(value) => handleInputChange('project_id', parseInt(value))}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder={t('ph_select_a_project')} />
                       </SelectTrigger>
@@ -292,6 +293,7 @@ export const TimesheetEntry: React.FC<TimesheetEntryProps> = ({
                             "w-full justify-start text-left font-normal",
                             !selectedDate && "text-muted-foreground"
                           )}
+                        >
                           <CalendarIcon className="mr-2 h-4 w-4" />
                           {selectedDate ? format(selectedDate, "PPP") : "Select a date"}
                         </Button>
@@ -373,6 +375,7 @@ export const TimesheetEntry: React.FC<TimesheetEntryProps> = ({
                   <Button
                     onClick={handleSubmit}
                     disabled={formatDateMedium(!currentEntry.project_id || !currentEntry.date)}
+                  >
                     <Save className="h-4 w-4 mr-2" />
                     Save Entry
                   </Button>
@@ -410,6 +413,7 @@ export const TimesheetEntry: React.FC<TimesheetEntryProps> = ({
                 <Select
                   value={filter.status}
                   onValueChange={(value) => handleFilterChange('status', value)}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder={t('opt_all_status')} />
                   </SelectTrigger>
@@ -427,6 +431,7 @@ export const TimesheetEntry: React.FC<TimesheetEntryProps> = ({
                 <Select
                   value={filter.project_id}
                   onValueChange={(value) => handleFilterChange('project_id', value)}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder={t('opt_all_projects')} />
                   </SelectTrigger>
@@ -510,6 +515,7 @@ export const TimesheetEntry: React.FC<TimesheetEntryProps> = ({
                             size="icon"
                             title={t('ttl_view_details')}
                             disabled={true} // Implement details dialog in future
+                          >
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </TableCell>

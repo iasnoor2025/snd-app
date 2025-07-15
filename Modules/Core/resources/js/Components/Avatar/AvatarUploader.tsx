@@ -4,7 +4,7 @@ import { Button } from '../../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Upload, Camera, User } from 'lucide-react';
 import { Input } from '../../ui/input';
-import InputLabel from '../../InputLabel';
+import { Label } from "@/Core";
 
 interface AvatarUploaderProps {
   user: {

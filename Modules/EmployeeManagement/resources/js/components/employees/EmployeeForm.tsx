@@ -233,6 +233,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onSave, onCancel 
                   <Select
                     value={watch('status')}
                     onValueChange={(value) => setValue('status', value as any)}
+                  >
                     <SelectTrigger id="status">
                       <SelectValue placeholder={t('ph_select_status')} />
                     </SelectTrigger>
@@ -383,6 +384,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onSave, onCancel 
                   <Select
                     value={watch('position_id')?.toString() || ''}
                     onValueChange={(value) => setValue('position_id', parseInt(value))}
+                  >
                     <SelectTrigger id="position_id">
                       <SelectValue placeholder={t('ph_select_position')} />
                     </SelectTrigger>
@@ -402,6 +404,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onSave, onCancel 
                   <Select
                     value={watch('department_id')?.toString() || ''}
                     onValueChange={(value) => setValue('department_id', parseInt(value))}
+                  >
                     <SelectTrigger id="department_id">
                       <SelectValue placeholder={t('ph_select_department')} />
                     </SelectTrigger>
@@ -662,6 +665,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onSave, onCancel 
                 type="button"
                 variant="outline"
                 onClick={onCancel}
+              >
                 Cancel
               </Button>
             )}
@@ -669,11 +673,14 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onSave, onCancel 
             <Button
               type="submit"
               disabled={isLoading}
+            >
               {isLoading ? (
+                <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Saving...
                 </>
               ) : (
+                <>
                   <Save className="mr-2 h-4 w-4" />
                   {employee ? 'Update Employee' : 'Create Employee'}
                 </>
