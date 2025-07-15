@@ -156,119 +156,21 @@ export default function CertificationsTab({ form, files, setFiles, onTotalCostCh
                 <CardTitle>{t('certifications')}</CardTitle>
             </CardHeader>
             <CardContent>
-                <Form>
-                    <div className="space-y-6">
-                        {/* Standard Certifications Section */}
-                        <div className="space-y-4">
-                            <h3 className="text-lg font-medium">{t('standard_certifications')}</h3>
+                <div className="space-y-6">
+                    {/* Standard Certifications Section */}
+                    <div className="space-y-4">
+                        <h3 className="text-lg font-medium">{t('standard_certifications')}</h3>
 
-                            {/* Driving License */}
-                            <div className="space-y-2">
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    className="flex w-full items-center justify-between"
-                                    onClick={() => setShowDrivingLicense(!showDrivingLicense)}
-                                >
-                                    <span>{t('driving_license')}</span>
-                                    {showDrivingLicense ? (
-                                        <>
-                                            <EyeOff className="h-4 w-4" />
-                                            <span>{t('hide_details')}</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Eye className="h-4 w-4" />
-                                            <span>{t('show_details')}</span>
-                                        </>
-                                    )}
-                                </Button>
-                                {showDrivingLicense && renderStandardCertification('Driving License', 'driving_license')}
-                            </div>
-
-                            {/* Operator License */}
-                            <div className="space-y-2">
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    className="flex w-full items-center justify-between"
-                                    onClick={() => setShowOperatorLicense(!showOperatorLicense)}
-                                >
-                                    <span>{t('lbl_operator_license')}</span>
-                                    {showOperatorLicense ? (
-                                        <>
-                                            <EyeOff className="h-4 w-4" />
-                                            <span>{t('hide_details')}</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Eye className="h-4 w-4" />
-                                            <span>{t('show_details')}</span>
-                                        </>
-                                    )}
-                                </Button>
-                                {showOperatorLicense && renderStandardCertification('Operator License', 'operator_license')}
-                            </div>
-
-                            {/* TUV Certification */}
-                            <div className="space-y-2">
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    className="flex w-full items-center justify-between"
-                                    onClick={() => setShowTuvCertification(!showTuvCertification)}
-                                >
-                                    <span>{t('tuv_certification')}</span>
-                                    {showTuvCertification ? (
-                                        <>
-                                            <EyeOff className="h-4 w-4" />
-                                            <span>{t('hide_details')}</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Eye className="h-4 w-4" />
-                                            <span>{t('show_details')}</span>
-                                        </>
-                                    )}
-                                </Button>
-                                {showTuvCertification && renderStandardCertification('TUV Certification', 'tuv_certification')}
-                            </div>
-
-                            {/* SPSP License */}
-                            <div className="space-y-2">
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    className="flex w-full items-center justify-between"
-                                    onClick={() => setShowSpspLicense(!showSpspLicense)}
-                                >
-                                    <span>{t('spsp_license')}</span>
-                                    {showSpspLicense ? (
-                                        <>
-                                            <EyeOff className="h-4 w-4" />
-                                            <span>{t('hide_details')}</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Eye className="h-4 w-4" />
-                                            <span>{t('show_details')}</span>
-                                        </>
-                                    )}
-                                </Button>
-                                {showSpspLicense && renderStandardCertification('SPSP License', 'spsp_license')}
-                            </div>
-                        </div>
-
-                        {/* Custom Certifications Section */}
-                        <div className="space-y-4">
+                        {/* Driving License */}
+                        <div className="space-y-2">
                             <Button
                                 type="button"
                                 variant="outline"
                                 className="flex w-full items-center justify-between"
-                                onClick={() => setShowCustomCertifications(!showCustomCertifications)}
+                                onClick={() => setShowDrivingLicense(!showDrivingLicense)}
                             >
-                                <span>{t('additional_certifications')}</span>
-                                {showCustomCertifications ? (
+                                <span>{t('driving_license')}</span>
+                                {showDrivingLicense ? (
                                     <>
                                         <EyeOff className="h-4 w-4" />
                                         <span>{t('hide_details')}</span>
@@ -280,146 +182,242 @@ export default function CertificationsTab({ form, files, setFiles, onTotalCostCh
                                     </>
                                 )}
                             </Button>
+                            {showDrivingLicense && renderStandardCertification('Driving License', 'driving_license')}
+                        </div>
 
-                            {showCustomCertifications && (
-                                <div className="space-y-4">
-                                    {fields.map((field, index) => (
-                                        <div key={field.id} className="space-y-4 rounded-lg border p-4">
-                                            <div className="flex items-center justify-between">
-                                                <h4 className="text-md font-medium">
-                                                    {t('certification')} {index + 1}
-                                                </h4>
-                                                <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}>
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
-                                            </div>
+                        {/* Operator License */}
+                        <div className="space-y-2">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="flex w-full items-center justify-between"
+                                onClick={() => setShowOperatorLicense(!showOperatorLicense)}
+                            >
+                                <span>{t('lbl_operator_license')}</span>
+                                {showOperatorLicense ? (
+                                    <>
+                                        <EyeOff className="h-4 w-4" />
+                                        <span>{t('hide_details')}</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Eye className="h-4 w-4" />
+                                        <span>{t('show_details')}</span>
+                                    </>
+                                )}
+                            </Button>
+                            {showOperatorLicense && renderStandardCertification('Operator License', 'operator_license')}
+                        </div>
 
-                                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                                <FormField
-                                                    control={form.control}
-                                                    name={`custom_certifications.${index}.name`}
-                                                    render={({ field }: any) => (
-                                                        <FormItem>
-                                                            <FormLabel>{t('lbl_certification_name')}</FormLabel>
-                                                            <FormControl>
-                                                                <Input {...field} placeholder="Enter certification name" />
-                                                            </FormControl>
-                                                        </FormItem>
-                                                    )}
-                                                />
+                        {/* TUV Certification */}
+                        <div className="space-y-2">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="flex w-full items-center justify-between"
+                                onClick={() => setShowTuvCertification(!showTuvCertification)}
+                            >
+                                <span>{t('tuv_certification')}</span>
+                                {showTuvCertification ? (
+                                    <>
+                                        <EyeOff className="h-4 w-4" />
+                                        <span>{t('hide_details')}</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Eye className="h-4 w-4" />
+                                        <span>{t('show_details')}</span>
+                                    </>
+                                )}
+                            </Button>
+                            {showTuvCertification && renderStandardCertification('TUV Certification', 'tuv_certification')}
+                        </div>
 
-                                                <FormField
-                                                    control={form.control}
-                                                    name={`custom_certifications.${index}.issuing_organization`}
-                                                    render={({ field }: any) => (
-                                                        <FormItem>
-                                                            <FormLabel>{t('lbl_issuing_organization')}</FormLabel>
-                                                            <FormControl>
-                                                                <Input {...field} placeholder="Enter organization name" />
-                                                            </FormControl>
-                                                        </FormItem>
-                                                    )}
-                                                />
-
-                                                <FormField
-                                                    control={form.control}
-                                                    name={`custom_certifications.${index}.issue_date`}
-                                                    render={({ field }: any) => (
-                                                        <FormItem>
-                                                            <FormLabel>{t('lbl_issue_date')}</FormLabel>
-                                                            <FormControl>
-                                                                <Input type="date" {...field} />
-                                                            </FormControl>
-                                                        </FormItem>
-                                                    )}
-                                                />
-
-                                                <FormField
-                                                    control={form.control}
-                                                    name={`custom_certifications.${index}.expiry_date`}
-                                                    render={({ field }: any) => (
-                                                        <FormItem>
-                                                            <FormLabel>{t('expiry_date')}</FormLabel>
-                                                            <FormControl>
-                                                                <Input type="date" {...field} />
-                                                            </FormControl>
-                                                        </FormItem>
-                                                    )}
-                                                />
-
-                                                <FormField
-                                                    control={form.control}
-                                                    name={`custom_certifications.${index}.credential_id`}
-                                                    render={({ field }: any) => (
-                                                        <FormItem>
-                                                            <FormLabel>{t('lbl_credential_id')}</FormLabel>
-                                                            <FormControl>
-                                                                <Input {...field} placeholder="Enter credential ID" />
-                                                            </FormControl>
-                                                        </FormItem>
-                                                    )}
-                                                />
-
-                                                <FormField
-                                                    control={form.control}
-                                                    name={`custom_certifications.${index}.credential_url`}
-                                                    render={({ field }: any) => (
-                                                        <FormItem>
-                                                            <FormLabel>{t('lbl_credential_url')}</FormLabel>
-                                                            <FormControl>
-                                                                <Input {...field} placeholder="Enter credential URL" />
-                                                            </FormControl>
-                                                        </FormItem>
-                                                    )}
-                                                />
-
-                                                <FormField
-                                                    control={form.control}
-                                                    name={`custom_certifications.${index}.cost`}
-                                                    render={({ field }: any) => (
-                                                        <FormItem>
-                                                            <FormLabel>{t('cost')}</FormLabel>
-                                                            <FormControl>
-                                                                <Input
-                                                                    type="number"
-                                                                    {...field}
-                                                                    onChange={(e) => {
-                                                                        const value = e.target.value === '' ? 0 : Number(e.target.value);
-                                                                        field.onChange(value);
-                                                                    }}
-                                                                    value={field.value || 0}
-                                                                />
-                                                            </FormControl>
-                                                        </FormItem>
-                                                    )}
-                                                />
-                                            </div>
-                                        </div>
-                                    ))}
-
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={() =>
-                                            append({
-                                                name: '',
-                                                issuing_organization: '',
-                                                issue_date: '',
-                                                expiry_date: '',
-                                                credential_id: '',
-                                                credential_url: '',
-                                                cost: 0,
-                                            })
-                                        }
-                                    >
-                                        <Plus className="mr-2 h-4 w-4" />
-                                        {t('add_custom_certification')}
-                                    </Button>
-                                </div>
-                            )}
+                        {/* SPSP License */}
+                        <div className="space-y-2">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="flex w-full items-center justify-between"
+                                onClick={() => setShowSpspLicense(!showSpspLicense)}
+                            >
+                                <span>{t('spsp_license')}</span>
+                                {showSpspLicense ? (
+                                    <>
+                                        <EyeOff className="h-4 w-4" />
+                                        <span>{t('hide_details')}</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Eye className="h-4 w-4" />
+                                        <span>{t('show_details')}</span>
+                                    </>
+                                )}
+                            </Button>
+                            {showSpspLicense && renderStandardCertification('SPSP License', 'spsp_license')}
                         </div>
                     </div>
-                </Form>
+
+                    {/* Custom Certifications Section */}
+                    <div className="space-y-4">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            className="flex w-full items-center justify-between"
+                            onClick={() => setShowCustomCertifications(!showCustomCertifications)}
+                        >
+                            <span>{t('additional_certifications')}</span>
+                            {showCustomCertifications ? (
+                                <>
+                                    <EyeOff className="h-4 w-4" />
+                                    <span>{t('hide_details')}</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Eye className="h-4 w-4" />
+                                    <span>{t('show_details')}</span>
+                                </>
+                            )}
+                        </Button>
+
+                        {showCustomCertifications && (
+                            <div className="space-y-4">
+                                {fields.map((field, index) => (
+                                    <div key={field.id} className="space-y-4 rounded-lg border p-4">
+                                        <div className="flex items-center justify-between">
+                                            <h4 className="text-md font-medium">
+                                                {t('certification')} {index + 1}
+                                            </h4>
+                                            <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}>
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                            <FormField
+                                                control={form.control}
+                                                name={`custom_certifications.${index}.name`}
+                                                render={({ field }: any) => (
+                                                    <FormItem>
+                                                        <FormLabel>{t('lbl_certification_name')}</FormLabel>
+                                                        <FormControl>
+                                                            <Input {...field} placeholder="Enter certification name" />
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+
+                                            <FormField
+                                                control={form.control}
+                                                name={`custom_certifications.${index}.issuing_organization`}
+                                                render={({ field }: any) => (
+                                                    <FormItem>
+                                                        <FormLabel>{t('lbl_issuing_organization')}</FormLabel>
+                                                        <FormControl>
+                                                            <Input {...field} placeholder="Enter organization name" />
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+
+                                            <FormField
+                                                control={form.control}
+                                                name={`custom_certifications.${index}.issue_date`}
+                                                render={({ field }: any) => (
+                                                    <FormItem>
+                                                        <FormLabel>{t('lbl_issue_date')}</FormLabel>
+                                                        <FormControl>
+                                                            <Input type="date" {...field} />
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+
+                                            <FormField
+                                                control={form.control}
+                                                name={`custom_certifications.${index}.expiry_date`}
+                                                render={({ field }: any) => (
+                                                    <FormItem>
+                                                        <FormLabel>{t('expiry_date')}</FormLabel>
+                                                        <FormControl>
+                                                            <Input type="date" {...field} />
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+
+                                            <FormField
+                                                control={form.control}
+                                                name={`custom_certifications.${index}.credential_id`}
+                                                render={({ field }: any) => (
+                                                    <FormItem>
+                                                        <FormLabel>{t('lbl_credential_id')}</FormLabel>
+                                                        <FormControl>
+                                                            <Input {...field} placeholder="Enter credential ID" />
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+
+                                            <FormField
+                                                control={form.control}
+                                                name={`custom_certifications.${index}.credential_url`}
+                                                render={({ field }: any) => (
+                                                    <FormItem>
+                                                        <FormLabel>{t('lbl_credential_url')}</FormLabel>
+                                                        <FormControl>
+                                                            <Input {...field} placeholder="Enter credential URL" />
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+
+                                            <FormField
+                                                control={form.control}
+                                                name={`custom_certifications.${index}.cost`}
+                                                render={({ field }: any) => (
+                                                    <FormItem>
+                                                        <FormLabel>{t('cost')}</FormLabel>
+                                                        <FormControl>
+                                                            <Input
+                                                                type="number"
+                                                                {...field}
+                                                                onChange={(e) => {
+                                                                    const value = e.target.value === '' ? 0 : Number(e.target.value);
+                                                                    field.onChange(value);
+                                                                }}
+                                                                value={field.value || 0}
+                                                            />
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
+
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() =>
+                                        append({
+                                            name: '',
+                                            issuing_organization: '',
+                                            issue_date: '',
+                                            expiry_date: '',
+                                            credential_id: '',
+                                            credential_url: '',
+                                            cost: 0,
+                                        })
+                                    }
+                                >
+                                    <Plus className="mr-2 h-4 w-4" />
+                                    {t('add_custom_certification')}
+                                </Button>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </CardContent>
         </Card>
     );

@@ -20,7 +20,7 @@ import { format } from 'date-fns';
 import { Loader2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { I18nextProvider, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { route } from 'ziggy-js';
 import * as z from 'zod';
 import useLoadingState from '../../hooks/useLoadingState';
