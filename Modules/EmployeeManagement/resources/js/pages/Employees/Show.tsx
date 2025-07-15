@@ -683,7 +683,7 @@ export default function Show({
             }, { withCredentials: true });
             ToastService.dismiss(loadingToastId);
             ToastService.success(`Repayment of SAR ${amount} recorded successfully`);
-            router.visit(window.location.pathname);
+            router.visit(`/employees/${employee.id}?tab=advances`);
         } catch (error: any) {
             ToastService.dismiss(loadingToastId);
             const errorMessage = error.response?.data?.message || error.message;
@@ -702,7 +702,8 @@ export default function Show({
             await ensureSanctumCsrf();
             await axios.post(`/employees/${employee.id}/advances/${idToApprove}/approve`, {}, { withCredentials: true });
             ToastService.dismiss(loadingToastId);
-            router.visit(window.location.pathname);
+            ToastService.success('Advance approved successfully');
+            router.visit(`/employees/${employee.id}?tab=advances`);
         } catch (error: any) {
             ToastService.dismiss(loadingToastId);
             ToastService.error('Failed to approve advance: ' + (error?.response?.data?.message || error.message));

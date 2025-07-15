@@ -241,6 +241,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/employees/{employee}/advances', [\Modules\EmployeeManagement\Http\Controllers\AdvancePaymentController::class, 'store'])
         ->middleware('permission:employees.edit')
         ->name('employees.advances.store');
+
+    Route::post('/employees/{employee}/advances/{advance}/approve', [\Modules\EmployeeManagement\Http\Controllers\AdvancePaymentController::class, 'approve'])
+        ->middleware('permission:employees.edit')
+        ->name('employees.advances.approve');
 });
 
 // Add access restriction update route
