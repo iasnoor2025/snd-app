@@ -2366,6 +2366,11 @@ export default function Show({
                                         onChange={(e) => setManualAssignment({ ...manualAssignment, notes: e.target.value })}
                                         name="notes"
                                     />
+                                    <div className="flex justify-end">
+                                        <Button type="submit" disabled={isSubmittingManual}>
+                                            {isSubmittingManual ? 'Saving...' : 'Save'}
+                                        </Button>
+                                    </div>
                                 </form>
                             </DialogContent>
                         </Dialog>

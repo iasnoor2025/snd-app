@@ -30,7 +30,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import * as z from 'zod';
-const ToastService = { success: (msg: string) => alert(msg), error: (msg: string) => alert(msg) };
+import { toast } from 'sonner';
 
 // Define a simple usePermission hook for this component
 function usePermission() {
@@ -156,12 +156,12 @@ export default function LeaveRequestCreate({ employees = [], currentUserOnly = f
         router.post(route('leaves.requests.store'), formData, {
             forceFormData: true,
             onSuccess: () => {
-                ToastService.success('Leave request created successfully');
+                toast.success('Leave request created successfully');
                 form.reset();
                 router.visit('/leaves');
             },
             onError: (errors) => {
-                ToastService.error('Failed to create leave request');
+                toast.error('Failed to create leave request');
                 if (errors && typeof errors === 'object') {
                     Object.keys(errors).forEach((key) => {
                         form.setError(key as any, {

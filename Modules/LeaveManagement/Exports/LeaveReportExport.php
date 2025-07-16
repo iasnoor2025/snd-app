@@ -212,7 +212,22 @@ class LeaveReportExport implements FromCollection, WithHeadings, WithMapping, Wi
 
         $this->applyFilters($query);
 
-        return $query->orderBy('created_at', 'desc')->get();
+        return $query->orderBy('created_at', 'desc')->get()->map(function ($leave) {
+            return [
+                'employee_id' => $leave->employee->employee_id,
+                'employee_name' => $leave->employee->full_name,
+                'department' => $leave->employee->department->name ?? 'N/A',
+                'leave_type' => $leave->leaveType->name,
+                'start_date' => ($leave->start_date instanceof \Carbon\Carbon ? $leave->start_date : \Carbon\Carbon::parse($leave->start_date))->format('Y-m-d'),
+                'end_date' => ($leave->end_date instanceof \Carbon\Carbon ? $leave->end_date : \Carbon\Carbon::parse($leave->end_date))->format('Y-m-d'),
+                'total_days' => $leave->total_days,
+                'status' => ucfirst($leave->status),
+                'reason' => $leave->reason,
+                'created_at' => $leave->created_at->format('Y-m-d H:i'),
+                'approved_at' => $leave->approved_at?->format('Y-m-d H:i') ?? 'N/A',
+                'approver' => $leave->approver?->full_name ?? 'N/A',
+            ];
+        });
     }
 
     /**

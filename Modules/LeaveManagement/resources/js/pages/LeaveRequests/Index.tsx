@@ -43,6 +43,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Permission } from '@/Core';
 
 // Define the LeaveRequest interface here to ensure it has all required properties
 interface Employee {
@@ -110,9 +111,11 @@ export default function LeaveRequestsIndex({
     const [selectedStatus, setSelectedStatus] = useState(filters.status || 'all');
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [leaveRequestToDelete, setLeaveRequestToDelete] = useState<number | null>(null);
-
-    // Ensure leaveRequests.data is always an array
     const leaveRequestsData = leaveRequests?.data || [];
+    const perPage = leaveRequests?.per_page || 10;
+    const currentPage = leaveRequests?.current_page || 1;
+    const totalPages = leaveRequests?.last_page || 1;
+    const paginatedLeaveRequests = leaveRequestsData;
 
     const canCreateLeaveRequest = hasPermission('leave-requests.create');
     const canEditLeaveRequest = hasPermission('leave-requests.edit');
@@ -287,132 +290,139 @@ export default function LeaveRequestsIndex({
                             </div>
 
                             {/* Table */}
-                            <div className="rounded-md border">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>Employee</TableHead>
-                                            <TableHead>Leave Type</TableHead>
-                                            <TableHead>Start Date</TableHead>
-                                            <TableHead>End Date</TableHead>
-                                            <TableHead>Status</TableHead>
-                                            <TableHead className="text-right">Actions</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {leaveRequestsData.length > 0 ? (
-                                            leaveRequestsData.map((request: LeaveRequest) => (
-                                                <TableRow key={request.id}>
-                                                    <TableCell className="font-medium">
-                                                        {request.employee ? `${request.employee.first_name} ${request.employee.last_name}` : 'N/A'}
-                                                    </TableCell>
-                                                    <TableCell>{request.leave_type}</TableCell>
-                                                    <TableCell>{formatDate(request.start_date)}</TableCell>
-                                                    <TableCell>{formatDate(request.end_date)}</TableCell>
-                                                    <TableCell>{getStatusBadge(request.status)}</TableCell>
-                                                    <TableCell className="text-right">
-                                                        <div className="flex items-center justify-end space-x-1">
-                                                            {canViewLeaveRequest && (
-                                                                <Tooltip>
-                                                                    <TooltipTrigger asChild>
-                                                                        <Button
-                                                                            variant="ghost"
-                                                                            size="sm"
-                                                                            onClick={() => router.get(route('leaves.requests.show', request.id))}
-                                                                        >
-                                                                            <EyeIcon className="h-4 w-4" />
-                                                                        </Button>
-                                                                    </TooltipTrigger>
-                                                                    <TooltipContent>View Details</TooltipContent>
-                                                                </Tooltip>
-                                                            )}
-                                                            {canEditLeaveRequest && request.status.toLowerCase() === 'pending' && (
-                                                                <Tooltip>
-                                                                    <TooltipTrigger asChild>
-                                                                        <Button
-                                                                            variant="ghost"
-                                                                            size="sm"
-                                                                            onClick={() => router.get(route('leaves.requests.edit', request.id))}
-                                                                        >
-                                                                            <PencilIcon className="h-4 w-4" />
-                                                                        </Button>
-                                                                    </TooltipTrigger>
-                                                                    <TooltipContent>Edit Request</TooltipContent>
-                                                                </Tooltip>
-                                                            )}
-                                                            {canApproveLeaveRequest && request.status.toLowerCase() === 'pending' && (
-                                                                <>
-                                                                    <Tooltip>
-                                                                        <TooltipTrigger asChild>
-                                                                            <Button
-                                                                                variant="ghost"
-                                                                                size="sm"
-                                                                                onClick={() => handleApprove(request.id)}
-                                                                                disabled={processing === request.id}
-                                                                                className="text-green-600 hover:bg-green-50 hover:text-green-700"
-                                                                            >
-                                                                                <CheckIcon className="h-4 w-4" />
-                                                                            </Button>
-                                                                        </TooltipTrigger>
-                                                                        <TooltipContent>Approve</TooltipContent>
-                                                                    </Tooltip>
-                                                                    <Tooltip>
-                                                                        <TooltipTrigger asChild>
-                                                                            <Button
-                                                                                variant="ghost"
-                                                                                size="sm"
-                                                                                onClick={() => handleReject(request.id)}
-                                                                                disabled={processing === request.id}
-                                                                                className="text-red-600 hover:bg-red-50 hover:text-red-700"
-                                                                            >
-                                                                                <XIcon className="h-4 w-4" />
-                                                                            </Button>
-                                                                        </TooltipTrigger>
-                                                                        <TooltipContent>Reject</TooltipContent>
-                                                                    </Tooltip>
-                                                                </>
-                                                            )}
-                                                            {canDeleteLeaveRequest && (
-                                                                <Tooltip>
-                                                                    <TooltipTrigger asChild>
-                                                                        <Button
-                                                                            variant="ghost"
-                                                                            size="sm"
-                                                                            onClick={() => handleDelete(request.id)}
-                                                                            className="text-red-600 hover:bg-red-50 hover:text-red-700"
-                                                                        >
-                                                                            <TrashIcon className="h-4 w-4" />
-                                                                        </Button>
-                                                                    </TooltipTrigger>
-                                                                    <TooltipContent>Delete Request</TooltipContent>
-                                                                </Tooltip>
-                                                            )}
-                                                        </div>
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))
-                                        ) : (
-                                            <TableRow>
-                                                <TableCell colSpan={6} className="h-24 text-center">
-                                                    <div className="flex flex-col items-center justify-center space-y-2">
-                                                        <div className="text-muted-foreground">No leave requests found.</div>
-                                                        {canCreateLeaveRequest && (
-                                                            <Button asChild variant="outline" size="sm">
-                                                                <Link href={route('leaves.requests.create')}>
-                                                                    <PlusIcon className="mr-2 h-4 w-4" />
-                                                                    Create First Request
-                                                                </Link>
+                            <div className="overflow-x-auto rounded-md border">
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Employee</th>
+                                            <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Leave Type</th>
+                                            <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Start Date</th>
+                                            <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">End Date</th>
+                                            <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Status</th>
+                                            <th className="px-2 py-2 text-right text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200 text-sm">
+                                        {paginatedLeaveRequests.length > 0 ? (
+                                            paginatedLeaveRequests.map((leave: any) => (
+                                                <tr key={leave.id} className="align-top">
+                                                    <td className="px-2 py-2 whitespace-nowrap text-sm font-medium">{leave.employee ? `${leave.employee.first_name} ${leave.employee.last_name}` : leave.employee_id}</td>
+                                                    <td className="px-2 py-2 whitespace-nowrap text-sm">{leave.leave_type}</td>
+                                                    <td className="px-2 py-2 whitespace-nowrap text-sm">{leave.start_date}</td>
+                                                    <td className="px-2 py-2 whitespace-nowrap text-sm">{leave.end_date}</td>
+                                                    <td className="px-2 py-2 whitespace-nowrap text-sm">{getStatusBadge(leave.status)}</td>
+                                                    <td className="px-2 py-2 whitespace-nowrap text-right text-sm font-medium">
+                                                        <a href={window.route('leaves.requests.show', leave.id)}>
+                                                            <Button variant="ghost" size="icon" className="h-7 w-7">
+                                                                <EyeIcon className="h-4 w-4" />
+                                                            </Button>
+                                                        </a>
+                                                        {canEditLeaveRequest && (
+                                                            <a href={window.route('leaves.requests.edit', leave.id)}>
+                                                                <Button variant="ghost" size="icon" className="h-7 w-7">
+                                                                    <PencilIcon className="h-4 w-4" />
+                                                                </Button>
+                                                            </a>
+                                                        )}
+                                                        {canDeleteLeaveRequest && (
+                                                            <Button variant="destructive" size="icon" className="h-7 w-7" onClick={() => handleDelete(leave.id)}>
+                                                                <TrashIcon className="h-4 w-4" />
                                                             </Button>
                                                         )}
-                                                    </div>
-                                                </TableCell>
-                                            </TableRow>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan={6} className="py-4 text-center">No leave requests found.</td>
+                                            </tr>
                                         )}
-                                    </TableBody>
-                                </Table>
+                                    </tbody>
+                                </table>
                             </div>
                         </CardContent>
                     </Card>
+
+                    {leaveRequestsData.length > 0 && (
+                        <div className="mt-6 border-t pt-4">
+                            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                                <div className="text-sm text-muted-foreground">
+                                    Showing {(leaveRequests.current_page - 1) * leaveRequests.per_page + 1} to {Math.min(leaveRequests.current_page * leaveRequests.per_page, leaveRequests.total)} of {leaveRequests.total} results
+                                    <div className="mt-1 text-xs opacity-60">
+                                        Page {leaveRequests.current_page} of {leaveRequests.last_page}
+                                    </div>
+                                </div>
+                                <div className="flex flex-col items-center gap-4 sm:flex-row">
+                                    {/* Per Page Selector */}
+                                    <div className="flex items-center space-x-2">
+                                        <span className="text-sm text-muted-foreground">Show:</span>
+                                        <Select value={perPage.toString()} onValueChange={(v) => {
+                                            setPerPage(Number(v));
+                                            router.get(route('leaves.requests.index'), { page: 1, perPage: Number(v), search: searchTerm, status: selectedStatus }, { preserveState: true, replace: true });
+                                        }}>
+                                            <SelectTrigger className="w-20">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="10">10</SelectItem>
+                                                <SelectItem value="25">25</SelectItem>
+                                                <SelectItem value="50">50</SelectItem>
+                                                <SelectItem value="100">100</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    {/* Page Navigation */}
+                                    <div className="flex items-center space-x-1">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            disabled={leaveRequests.current_page === 1}
+                                            onClick={() => router.get(route('leaves.requests.index'), { page: leaveRequests.current_page - 1, perPage, search: searchTerm, status: selectedStatus }, { preserveState: true, replace: true })}
+                                        >
+                                            Previous
+                                        </Button>
+                                        {leaveRequests.last_page > 1 && (
+                                            <div className="flex items-center space-x-1">
+                                                {Array.from({ length: Math.min(5, leaveRequests.last_page) }, (_, i) => {
+                                                    let pageNumber;
+                                                    if (leaveRequests.last_page <= 5) {
+                                                        pageNumber = i + 1;
+                                                    } else {
+                                                        if (leaveRequests.current_page <= 3) {
+                                                            pageNumber = i + 1;
+                                                        } else if (leaveRequests.current_page >= leaveRequests.last_page - 2) {
+                                                            pageNumber = leaveRequests.last_page - 4 + i;
+                                                        } else {
+                                                            pageNumber = leaveRequests.current_page - 2 + i;
+                                                        }
+                                                    }
+                                                    return (
+                                                        <Button
+                                                            key={pageNumber}
+                                                            variant={pageNumber === leaveRequests.current_page ? 'default' : 'outline'}
+                                                            size="sm"
+                                                            className="h-8 w-8 p-0"
+                                                            onClick={() => router.get(route('leaves.requests.index'), { page: pageNumber, perPage, search: searchTerm, status: selectedStatus }, { preserveState: true, replace: true })}
+                                                        >
+                                                            {pageNumber}
+                                                        </Button>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            disabled={leaveRequests.current_page === leaveRequests.last_page}
+                                            onClick={() => router.get(route('leaves.requests.index'), { page: leaveRequests.current_page + 1, perPage, search: searchTerm, status: selectedStatus }, { preserveState: true, replace: true })}
+                                        >
+                                            Next
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </AppLayout>
 

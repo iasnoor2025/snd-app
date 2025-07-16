@@ -86,12 +86,19 @@ class LeaveRequestController extends Controller
             }
         }
 
+        // Map leave_type string to leave_type_id
+        $leaveType = \Modules\LeaveManagement\Domain\Models\LeaveType::where('name', $request->leave_type)->first();
+        if (!$leaveType) {
+            return redirect()->back()->withErrors(['leave_type' => 'Invalid leave type'])->withInput();
+        }
+
         try {
             // Use the CreateLeaveAction for better business logic handling
             $leave = $createLeaveAction->execute([
                 'employee_id' => $request->employee_id,
-                'start_date' => $request->start_date?->format('Y-m-d'),
-                'end_date' => $request->end_date?->format('Y-m-d'),
+                'leave_type_id' => $leaveType->id,
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
                 'leave_type' => $request->leave_type,
                 'reason' => $request->reason,
                 'requested_by' => $user->id,
@@ -198,8 +205,8 @@ class LeaveRequestController extends Controller
         try {
             // Use the UpdateLeaveAction for better business logic handling
             $updatedLeave = $updateLeaveAction->execute($leaveRequest, [
-                'start_date' => $request->start_date?->format('Y-m-d'),
-                'end_date' => $request->end_date?->format('Y-m-d'),
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
                 'leave_type' => $request->leave_type,
                 'reason' => $request->reason,
                 'updated_by' => $user->id,

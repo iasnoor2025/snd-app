@@ -68,10 +68,10 @@ const QuotationsIndex: React.FC<PageProps> = ({ quotations }) => {
                                                 <Button variant="ghost" size="icon" className="h-7 w-7">
                                                     <Eye className="h-4 w-4" />
                                                 </Button>
-                                            </a>
+                    </a>
                                             <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleDownload(row.id)}>
                                                 <Download className="h-4 w-4" />
-                                            </Button>
+                    </Button>
                                         </td>
                                     </tr>
                                 ))
@@ -137,7 +137,7 @@ const QuotationsIndex: React.FC<PageProps> = ({ quotations }) => {
                                                         pageNumber = currentPage - 2 + i;
                                                     }
                                                 }
-                                                return (
+    return (
                                                     <Button
                                                         key={pageNumber}
                                                         variant={pageNumber === currentPage ? 'default' : 'outline'}
@@ -164,7 +164,7 @@ const QuotationsIndex: React.FC<PageProps> = ({ quotations }) => {
                         </div>
                     </div>
                 )}
-            </div>
+        </div>
         </AppLayout>
     );
 };

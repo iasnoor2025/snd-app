@@ -63,8 +63,8 @@ class UpdateLeaveAction
 
                 // Update duration if dates changed
                 $data['duration_days'] = $startDate->diffInDays($endDate) + 1;
-                $data['start_date'] = $startDate;
-                $data['end_date'] = $endDate;
+                $data['start_date'] = $startDate instanceof \Carbon\Carbon ? $startDate : \Carbon\Carbon::parse($startDate);
+                $data['end_date'] = $endDate instanceof \Carbon\Carbon ? $endDate : \Carbon\Carbon::parse($endDate);
             }
 
             // Update allowed fields

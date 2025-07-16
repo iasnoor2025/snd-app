@@ -12,7 +12,8 @@ use Illuminate\Support\Carbon;
 class LeaveTest extends TestCase
 {
     use RefreshDatabase;
-use public function setUp(): void
+
+    public function setUp(): void
     {
         parent::setUp();
 
