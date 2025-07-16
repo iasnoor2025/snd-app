@@ -21,9 +21,9 @@ class RoleController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        $roles = Role::with('permissions')->get();
+        $roles = \Spatie\Permission\Models\Role::with('permissions')->withCount('users')->get();
 
-        return Inertia::render('Roles/Index', [
+        return \Inertia\Inertia::render('Roles/Index', [
             'roles' => $roles,
         ]);
     }

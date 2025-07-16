@@ -53,7 +53,7 @@ class LeaveTypeSeeder extends Seeder
             [
                 'name' => 'unpaid',
                 'description' => 'Unpaid leave for emergencies or other reasons',
-                'days_allowed' => null,
+                'days_allowed' => 0,
                 'requires_approval' => true,
                 'is_paid' => false,
                 'is_active' => true,

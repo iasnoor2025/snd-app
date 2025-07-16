@@ -23,6 +23,8 @@ import { Edit, Eye, Plus, Search, Shield, Trash2, Users } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/ui/select';
+import { Table, Column } from '../../components/Common/Table';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -54,6 +56,8 @@ export default function Index({ auth, roles }: Props) {
     const { t } = useTranslation(['roles', 'common']);
     const [search, setSearch] = useState('');
     const { hasPermission } = usePermission();
+    const [perPage, setPerPage] = useState(15);
+    const [currentPage, setCurrentPage] = useState(1);
 
     const filteredRoles = roles.filter(
         (role) =>
@@ -61,6 +65,10 @@ export default function Index({ auth, roles }: Props) {
             role.display_name?.toLowerCase().includes(search.toLowerCase()) ||
             role.description?.toLowerCase().includes(search.toLowerCase()),
     );
+
+    // Pagination logic
+    const totalPages = Math.ceil(filteredRoles.length / perPage);
+    const paginatedRoles = filteredRoles.slice((currentPage - 1) * perPage, currentPage * perPage);
 
     const handleDelete = (roleId: number, roleName: string) => {
         if (confirm(`${t('common:are_you_sure_delete', { item: 'role' })}: "${roleName}"?`)) {
@@ -78,7 +86,6 @@ export default function Index({ auth, roles }: Props) {
     const getPermissionsBadge = (permissions: Role['permissions']) => {
         const count = permissions.length;
         if (count === 0) return <Badge variant="outline">{t('common:no_items', { items: t('common:permissions').toLowerCase() })}</Badge>;
-
         return (
             <Badge variant="secondary">
                 {count} {count === 1 ? t('permission_singular') : t('permission_count')}
@@ -86,10 +93,83 @@ export default function Index({ auth, roles }: Props) {
         );
     };
 
+    const columns: Column<Role>[] = [
+        {
+            key: 'name',
+            header: t('role_name'),
+            accessor: (role) => (
+                <div className="flex items-center gap-2">
+                    <Badge variant="outline">{role.name}</Badge>
+                </div>
+            ),
+        },
+        {
+            key: 'display_name',
+            header: t('display_name'),
+            accessor: (role) => role.display_name || t('no_display_name'),
+        },
+        {
+            key: 'description',
+            header: t('description'),
+            accessor: (role) => (
+                <div className="truncate max-w-xs" title={role.description}>
+                    {role.description || t('no_description')}
+                </div>
+            ),
+        },
+        {
+            key: 'permissions',
+            header: t('permissions'),
+            accessor: (role) => getPermissionsBadge(role.permissions),
+        },
+        {
+            key: 'users',
+            header: t('users'),
+            accessor: (role) => (
+                <div className="flex items-center gap-1">
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <span>{role.users_count || 0}</span>
+                </div>
+            ),
+        },
+        {
+            key: 'actions',
+            header: t('actions'),
+            accessor: (role) => (
+                <div className="flex items-center justify-end gap-2">
+                    <Permission permission="roles.view">
+                        <Button variant="ghost" size="sm" asChild>
+                            <Link href={`/settings/roles/${role.id}`}>
+                                <Eye className="h-4 w-4" />
+                            </Link>
+                        </Button>
+                    </Permission>
+                    <Permission permission="roles.edit">
+                        <Button variant="ghost" size="sm" asChild>
+                            <Link href={`/settings/roles/${role.id}/edit`}>
+                                <Edit className="h-4 w-4" />
+                            </Link>
+                        </Button>
+                    </Permission>
+                    <Permission permission="roles.delete">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDelete(role.id, role.name)}
+                            className="text-destructive hover:text-destructive"
+                        >
+                            <Trash2 className="h-4 w-4" />
+                        </Button>
+                    </Permission>
+                </div>
+            ),
+            className: 'text-right',
+        },
+    ];
+
     return (
         <AppLayout title={t('title')} breadcrumbs={breadcrumbs} requiredPermission="roles.view">
             <Head title={t('title')} />
-
             <div className="flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -112,92 +192,34 @@ export default function Index({ auth, roles }: Props) {
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="mb-6">
-                            <div className="relative w-full md:w-96">
+                        <div className="flex flex-col md:flex-row md:items-center md:gap-4 mb-6 gap-2">
+                            <div className="relative w-full md:w-64">
                                 <Search className="absolute top-2.5 left-2 h-4 w-4 text-muted-foreground" />
-                                <Input placeholder={t('search_roles')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-8" />
+                                <Input placeholder={t('search_roles')} value={search} onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }} className="pl-8" />
                             </div>
+                            <Select value={perPage.toString()} onValueChange={v => { setPerPage(Number(v)); setCurrentPage(1); }}>
+                                <SelectTrigger className="w-28">
+                                    <SelectValue>{perPage} / page</SelectValue>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {[10, 15, 25, 50, 100].map(n => (
+                                        <SelectItem key={n} value={n.toString()}>{n} / page</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </div>
-
-                        <div className="rounded-md border">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>{t('role_name')}</TableHead>
-                                        <TableHead>{t('display_name')}</TableHead>
-                                        <TableHead>{t('description')}</TableHead>
-                                        <TableHead>{t('permissions')}</TableHead>
-                                        <TableHead>{t('users')}</TableHead>
-                                        <TableHead className="text-right">{t('actions')}</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {filteredRoles.length === 0 ? (
-                                        <TableRow>
-                                            <TableCell colSpan={6} className="py-8 text-center">
-                                                <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                                                    <Shield className="h-8 w-8" />
-                                                    <p>{t('common:no_items_found', { items: t('common:roles').toLowerCase() })}</p>
-                                                    {search && <p className="text-sm">{t('common:try_adjusting_search')}</p>}
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ) : (
-                                        filteredRoles.map((role) => (
-                                            <TableRow key={role.id}>
-                                                <TableCell className="font-medium">
-                                                    <div className="flex items-center gap-2">
-                                                        <Badge variant="outline">{role.name}</Badge>
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell>{role.display_name || t('no_display_name')}</TableCell>
-                                                <TableCell className="max-w-xs">
-                                                    <div className="truncate" title={role.description}>
-                                                        {role.description || t('no_description')}
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell>{getPermissionsBadge(role.permissions)}</TableCell>
-                                                <TableCell>
-                                                    <div className="flex items-center gap-1">
-                                                        <Users className="h-4 w-4 text-muted-foreground" />
-                                                        <span>{role.users_count || 0}</span>
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell className="text-right">
-                                                    <div className="flex items-center justify-end gap-2">
-                                                        <Permission permission="roles.view">
-                                                            <Button variant="ghost" size="sm" asChild>
-                                                                <Link href={`/settings/roles/${role.id}`}>
-                                                                    <Eye className="h-4 w-4" />
-                                                                </Link>
-                                                            </Button>
-                                                        </Permission>
-                                                        <Permission permission="roles.edit">
-                                                            <Button variant="ghost" size="sm" asChild>
-                                                                <Link href={`/settings/roles/${role.id}/edit`}>
-                                                                    <Edit className="h-4 w-4" />
-                                                                </Link>
-                                                            </Button>
-                                                        </Permission>
-                                                        <Permission permission="roles.delete">
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="sm"
-                                                                onClick={() => handleDelete(role.id, role.name)}
-                                                                className="text-destructive hover:text-destructive"
-                                                            >
-                                                                <Trash2 className="h-4 w-4" />
-                                                            </Button>
-                                                        </Permission>
-                                                    </div>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))
-                                    )}
-                                </TableBody>
-                            </Table>
-                        </div>
-
+                        <Table
+                            data={paginatedRoles}
+                            columns={columns}
+                            pageSize={perPage}
+                            currentPage={currentPage}
+                            totalItems={filteredRoles.length}
+                            onPageChange={setCurrentPage}
+                            showPagination={totalPages > 1}
+                            showBorders
+                            showHover
+                            emptyMessage={search ? t('common:no_items_found', { items: t('common:roles').toLowerCase() }) : t('common:no_items', { items: t('common:roles').toLowerCase() })}
+                        />
                         <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
                             <p>
                                 {t('showing')} {filteredRoles.length} {t('of')} {roles.length} {t('roles')}
