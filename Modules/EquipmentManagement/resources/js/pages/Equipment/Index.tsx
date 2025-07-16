@@ -37,6 +37,7 @@ export default function Index({ equipment, categories = [], statuses = {}, filte
     const [category, setCategory] = useState(filters.category || 'all');
     const [perPage, setPerPage] = useState<number>(filters.per_page || 10);
     const safeEquipment = Array.isArray(equipment.data) ? equipment.data : [];
+    const meta = equipment.meta || { current_page: 1, per_page: 10, last_page: 1, total: 0 };
 
     const getStatusBadge = (status: string) => {
         const label = t(status);
@@ -196,9 +197,9 @@ export default function Index({ equipment, categories = [], statuses = {}, filte
                             <div className="mt-6 border-t pt-4">
                                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                                     <div className="text-sm text-muted-foreground">
-                                        Showing {(equipment.meta.current_page - 1) * equipment.meta.per_page + 1} to {Math.min(equipment.meta.current_page * equipment.meta.per_page, equipment.meta.total)} of {equipment.meta.total} results
+                                        Showing {(meta.current_page - 1) * meta.per_page + 1} to {Math.min(meta.current_page * meta.per_page, meta.total)} of {meta.total} results
                                         <div className="mt-1 text-xs opacity-60">
-                                            Page {equipment.meta.current_page} of {equipment.meta.last_page}
+                                            Page {meta.current_page} of {meta.last_page}
                                         </div>
                                     </div>
                                     <div className="flex flex-col items-center gap-4 sm:flex-row">
@@ -225,30 +226,30 @@ export default function Index({ equipment, categories = [], statuses = {}, filte
                                             <Button
                                                 variant="outline"
                                                 size="sm"
-                                                disabled={equipment.meta.current_page === 1}
-                                                onClick={() => router.get('/equipment', { page: equipment.meta.current_page - 1, perPage, search, status, category }, { preserveState: true, replace: true })}
+                                                disabled={meta.current_page === 1}
+                                                onClick={() => router.get('/equipment', { page: meta.current_page - 1, perPage, search, status, category }, { preserveState: true, replace: true })}
                                             >
                                                 Previous
                                             </Button>
-                                            {equipment.meta.last_page > 1 && (
+                                            {meta.last_page > 1 && (
                                                 <div className="flex items-center space-x-1">
-                                                    {Array.from({ length: Math.min(5, equipment.meta.last_page) }, (_, i) => {
+                                                    {Array.from({ length: Math.min(5, meta.last_page) }, (_, i) => {
                                                         let pageNumber;
-                                                        if (equipment.meta.last_page <= 5) {
+                                                        if (meta.last_page <= 5) {
                                                             pageNumber = i + 1;
                                                         } else {
-                                                            if (equipment.meta.current_page <= 3) {
+                                                            if (meta.current_page <= 3) {
                                                                 pageNumber = i + 1;
-                                                            } else if (equipment.meta.current_page >= equipment.meta.last_page - 2) {
-                                                                pageNumber = equipment.meta.last_page - 4 + i;
+                                                            } else if (meta.current_page >= meta.last_page - 2) {
+                                                                pageNumber = meta.last_page - 4 + i;
                                                             } else {
-                                                                pageNumber = equipment.meta.current_page - 2 + i;
+                                                                pageNumber = meta.current_page - 2 + i;
                                                             }
                                                         }
                                                         return (
                                                             <Button
                                                                 key={pageNumber}
-                                                                variant={pageNumber === equipment.meta.current_page ? 'default' : 'outline'}
+                                                                variant={pageNumber === meta.current_page ? 'default' : 'outline'}
                                                                 size="sm"
                                                                 className="h-8 w-8 p-0"
                                                                 onClick={() => router.get('/equipment', { page: pageNumber, perPage, search, status, category }, { preserveState: true, replace: true })}
@@ -262,8 +263,8 @@ export default function Index({ equipment, categories = [], statuses = {}, filte
                                             <Button
                                                 variant="outline"
                                                 size="sm"
-                                                disabled={equipment.meta.current_page === equipment.meta.last_page}
-                                                onClick={() => router.get('/equipment', { page: equipment.meta.current_page + 1, perPage, search, status, category }, { preserveState: true, replace: true })}
+                                                disabled={meta.current_page === meta.last_page}
+                                                onClick={() => router.get('/equipment', { page: meta.current_page + 1, perPage, search, status, category }, { preserveState: true, replace: true })}
                                             >
                                                 Next
                                             </Button>

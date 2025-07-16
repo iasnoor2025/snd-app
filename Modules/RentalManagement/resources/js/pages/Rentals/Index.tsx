@@ -44,6 +44,9 @@ import { CreateButton } from '@/Core';
 // Icons
 import { formatDateMedium } from '@/Core/utils/dateFormatter';
 import { CalendarClock, Eye, FileSpreadsheet, Pencil, RefreshCw, Search, Trash, X } from 'lucide-react';
+import { Edit } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
+import { Permission } from '@/Core';
 
 // Types
 interface RentalItem {
@@ -162,35 +165,46 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
                             </Select>
                         </div>
                         <div className="overflow-x-auto rounded-md border">
-                            <table className="min-w-full">
-                                <thead>
+                            <table className="min-w-full divide-y divide-gray-200">
+                                <thead className="bg-gray-50">
                                     <tr>
-                                        <th>{t('rental_number')}</th>
-                                        <th>{t('customer')}</th>
-                                        <th>{t('start_date')}</th>
-                                        <th>{t('end_date')}</th>
-                                        <th>{t('status')}</th>
-                                        <th>{t('total_amount')}</th>
-                                        <th className="text-right">{t('actions')}</th>
+                                        <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Rental #</th>
+                                        <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Customer</th>
+                                        <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Start Date</th>
+                                        <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">End Date</th>
+                                        <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Status</th>
+                                        <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Total</th>
+                                        <th className="px-2 py-2 text-right text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody className="bg-white divide-y divide-gray-200 text-sm">
                                     {filteredRentals.length > 0 ? (
                                         filteredRentals.slice(0, perPage).map((rental) => (
-                                            <tr key={rental.id}>
-                                                <td>{rental.rental_number}</td>
-                                                <td>{rental.customer_name}</td>
-                                                <td>{rental.start_date}</td>
-                                                <td>{rental.expected_end_date}</td>
-                                                <td>{getStatusBadge(rental.status)}</td>
-                                                <td>{rental.total_amount}</td>
-                                                <td className="text-right">
-                                                    <Button asChild size="sm" variant="secondary" className="mr-2">
-                                                        <Link href={route('rentals.show', rental.id)}>{t('btn_show')}</Link>
-                                                    </Button>
-                                                    <Button asChild size="sm" variant="outline">
-                                                        <Link href={route('rentals.edit', rental.id)}>{t('btn_edit')}</Link>
-                                                    </Button>
+                                            <tr key={rental.id} className="align-top">
+                                                <td className="px-2 py-2 whitespace-nowrap text-sm font-medium">{rental.rental_number}</td>
+                                                <td className="px-2 py-2 whitespace-nowrap text-sm">{rental.customer_name}</td>
+                                                <td className="px-2 py-2 whitespace-nowrap text-sm">{rental.start_date}</td>
+                                                <td className="px-2 py-2 whitespace-nowrap text-sm">{rental.expected_end_date}</td>
+                                                <td className="px-2 py-2 whitespace-nowrap text-sm">{getStatusBadge(rental.status)}</td>
+                                                <td className="px-2 py-2 whitespace-nowrap text-sm">{rental.total_amount}</td>
+                                                <td className="px-2 py-2 whitespace-nowrap text-right text-sm font-medium">
+                                                    <a href={window.route('rentals.show', rental.id)}>
+                                                        <Button variant="ghost" size="icon" className="h-7 w-7">
+                                                            <Eye className="h-4 w-4" />
+                                                        </Button>
+                                                    </a>
+                                                    <a href={window.route('rentals.edit', rental.id)}>
+                                                        <Button variant="ghost" size="icon" className="h-7 w-7">
+                                                            <Edit className="h-4 w-4" />
+                                                        </Button>
+                                                    </a>
+                                                    <Permission permission="rentals.delete">
+                                                        <a href={window.route('rentals.destroy', rental.id)} data-method="delete" data-confirm={t('delete_confirm', 'Are you sure you want to delete this rental?')}>
+                                                            <Button variant="destructive" size="icon" className="h-7 w-7">
+                                                                <Trash2 className="h-4 w-4" />
+                                                            </Button>
+                                                        </a>
+                                                    </Permission>
                                                 </td>
                                             </tr>
                                         ))
@@ -205,17 +219,86 @@ export default function Index({ auth, rentals, filters = {} }: Props) {
                             </table>
                         </div>
                         {/* Pagination Controls */}
-                        <div className="mt-4 flex items-center justify-between">
-                            <Button asChild size="sm" variant="outline" disabled={!rentals?.current_page || rentals.current_page === 1}>
-                                <Link href={route('rentals.index', { page: (rentals?.current_page || 1) - 1 })}>{t('Previous')}</Link>
-                            </Button>
-                            <span>
-                                {t('Page')} {rentals?.current_page || 1} {t('of')} {rentals?.last_page || 1}
-                            </span>
-                            <Button asChild size="sm" variant="outline" disabled={!rentals?.current_page || rentals.current_page === rentals?.last_page}>
-                                <Link href={route('rentals.index', { page: (rentals?.current_page || 1) + 1 })}>{t('Next')}</Link>
-                            </Button>
-                        </div>
+                        {filteredRentals.length > 0 && rentals && (
+                            <div className="mt-6 border-t pt-4">
+                                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                                    <div className="text-sm text-muted-foreground">
+                                        Showing {(rentals.current_page - 1) * rentals.per_page + 1} to {Math.min(rentals.current_page * rentals.per_page, rentals.total)} of {rentals.total} results
+                                        <div className="mt-1 text-xs opacity-60">
+                                            Page {rentals.current_page} of {rentals.last_page}
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col items-center gap-4 sm:flex-row">
+                                        {/* Per Page Selector */}
+                                        <div className="flex items-center space-x-2">
+                                            <span className="text-sm text-muted-foreground">Show:</span>
+                                            <Select value={perPage.toString()} onValueChange={(v) => {
+                                                setPerPage(Number(v));
+                                                router.get(route('rentals.index'), { page: 1, perPage: Number(v), search, status }, { preserveState: true, replace: true });
+                                            }}>
+                                                <SelectTrigger className="w-20">
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="10">10</SelectItem>
+                                                    <SelectItem value="25">25</SelectItem>
+                                                    <SelectItem value="50">50</SelectItem>
+                                                    <SelectItem value="100">100</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        {/* Page Navigation */}
+                                        <div className="flex items-center space-x-1">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                disabled={rentals.current_page === 1}
+                                                onClick={() => router.get(route('rentals.index'), { page: rentals.current_page - 1, perPage, search, status }, { preserveState: true, replace: true })}
+                                            >
+                                                Previous
+                                            </Button>
+                                            {rentals.last_page > 1 && (
+                                                <div className="flex items-center space-x-1">
+                                                    {Array.from({ length: Math.min(5, rentals.last_page) }, (_, i) => {
+                                                        let pageNumber;
+                                                        if (rentals.last_page <= 5) {
+                                                            pageNumber = i + 1;
+                                                        } else {
+                                                            if (rentals.current_page <= 3) {
+                                                                pageNumber = i + 1;
+                                                            } else if (rentals.current_page >= rentals.last_page - 2) {
+                                                                pageNumber = rentals.last_page - 4 + i;
+                                                            } else {
+                                                                pageNumber = rentals.current_page - 2 + i;
+                                                            }
+                                                        }
+                                                        return (
+                                                            <Button
+                                                                key={pageNumber}
+                                                                variant={pageNumber === rentals.current_page ? 'default' : 'outline'}
+                                                                size="sm"
+                                                                className="h-8 w-8 p-0"
+                                                                onClick={() => router.get(route('rentals.index'), { page: pageNumber, perPage, search, status }, { preserveState: true, replace: true })}
+                                                            >
+                                                                {pageNumber}
+                                                            </Button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            )}
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                disabled={rentals.current_page === rentals.last_page}
+                                                onClick={() => router.get(route('rentals.index'), { page: rentals.current_page + 1, perPage, search, status }, { preserveState: true, replace: true })}
+                                            >
+                                                Next
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
             </div>
