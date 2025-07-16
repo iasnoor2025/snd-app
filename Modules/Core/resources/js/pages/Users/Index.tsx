@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../components/ui/dropdown-menu';
 import { Input } from '../../components/ui/input';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/ui/select';
-import { Table, Column } from '../../components/Common/Table';
+import { Table } from '../../components/Common/Table';
 import { BreadcrumbItem } from '../../types';
 
 interface User {
@@ -28,7 +28,14 @@ interface User {
 interface Role {
     id: number;
     name: string;
-    guard_name: string;
+    display_name?: string;
+    description?: string;
+    permissions: Array<{
+        id: number;
+        name: string;
+        display_name?: string;
+    }>;
+    users_count?: number;
     created_at: string;
     updated_at: string;
 }
@@ -101,68 +108,68 @@ export default function Index({ users, roles, can }: Props) {
         </Badge>
     );
 
-    const columns: Column<User>[] = [
+    const columns = [
         {
             key: 'name',
             header: t('users:fields.name'),
-            accessor: (user) => <span className="font-medium">{user.name}</span>,
+            accessor: (user: User) => <span className="font-medium">{user.name}</span>,
         },
         {
             key: 'email',
             header: t('users:fields.email'),
-            accessor: (user) => user.email,
+            accessor: (user: User) => user.email,
         },
         {
             key: 'roles',
             header: t('users:fields.roles'),
-            accessor: (user) => (
+            accessor: (user: User) => (
                 <div className="flex flex-wrap gap-1">
-                    {user.roles.map((role) => (
-                        <Badge key={role.id} variant="secondary">{role.name}</Badge>
+                    {user.roles.map((role: Role) => (
+                        <Badge key={role.id} variant="outline">{role.name}</Badge>
                     ))}
                 </div>
             ),
         },
         {
-            key: 'status',
+            key: 'email_verified_at',
             header: t('users:fields.status'),
-            accessor: (user) => getStatusBadge(user.email_verified_at),
+            accessor: (user: User) => (
+                user.email_verified_at ? (
+                    <Badge variant="secondary">{t('users:fields.verified')}</Badge>
+                ) : (
+                    <Badge variant="destructive">{t('users:fields.unverified')}</Badge>
+                )
+            ),
         },
         {
             key: 'created_at',
             header: t('users:fields.created_at'),
-            accessor: (user) => formatDateMedium(new Date(user.created_at)),
+            accessor: (user: User) => formatDateMedium(user.created_at),
         },
         {
             key: 'actions',
-            header: t('users:fields.actions'),
-            accessor: (user) => (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">{t('users:view')}</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                            <Link href={route('users.show', user.id)} className="flex items-center">
-                                <Eye className="mr-2 h-4 w-4" />
-                                {t('users:view')}
-                            </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <Link href={route('users.edit', user.id)} className="flex items-center">
-                                <Edit className="mr-2 h-4 w-4" />
-                                {t('users:edit')}
-                            </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => openDeleteDialog(user)} className="text-red-600">
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            {t('users:delete')}
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+            header: t('actions'),
+            accessor: (user: User) => (
+                <div className="flex items-center gap-2 justify-end">
+                    <Button variant="ghost" size="sm" asChild>
+                        <Link href={route('users.show', user.id)}>
+                            <Eye className="h-4 w-4" />
+                        </Link>
+                    </Button>
+                    <Button variant="ghost" size="sm" asChild>
+                        <Link href={route('users.edit', user.id)}>
+                            <Edit className="h-4 w-4" />
+                        </Link>
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openDeleteDialog(user)}
+                        className="text-destructive hover:text-destructive"
+                    >
+                        <Trash2 className="h-4 w-4" />
+                    </Button>
+                </div>
             ),
             className: 'text-right',
         },

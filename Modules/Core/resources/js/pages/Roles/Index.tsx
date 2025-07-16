@@ -9,7 +9,6 @@ import {
     CardTitle,
     Input,
     Permission,
-    Table,
     TableBody,
     TableCell,
     TableHead,
@@ -19,12 +18,13 @@ import {
 } from '@/Core';
 import { type BreadcrumbItem } from '@/Core/types';
 import { Head, Link, router } from '@inertiajs/react';
+import { useEffect } from 'react';
 import { Edit, Eye, Plus, Search, Shield, Trash2, Users } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/ui/select';
-import { Table, Column } from '../../components/Common/Table';
+import { Table } from '../../components/Common/Table';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -47,17 +47,25 @@ interface Role {
     updated_at: string;
 }
 
-interface Props {
-    roles: Role[];
-    auth: any;
-}
-
-export default function Index({ auth, roles }: Props) {
+export default function Index() {
     const { t } = useTranslation(['roles', 'common']);
     const [search, setSearch] = useState('');
     const { hasPermission } = usePermission();
     const [perPage, setPerPage] = useState(15);
     const [currentPage, setCurrentPage] = useState(1);
+    const [roles, setRoles] = useState<Role[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        setIsLoading(true);
+        fetch('/api/v1/roles', { credentials: 'include' })
+            .then(res => res.json())
+            .then(data => {
+                setRoles(data.data || data.roles || []);
+                setIsLoading(false);
+            })
+            .catch(() => setIsLoading(false));
+    }, []);
 
     const filteredRoles = roles.filter(
         (role) =>
@@ -76,7 +84,7 @@ export default function Index({ auth, roles }: Props) {
                 onSuccess: () => {
                     toast.success(t('common:deleted_successfully', { item: 'role' }));
                 },
-                onError: (errors) => {
+                onError: (errors: any) => {
                     toast.error(errors.message || t('common:failed_to_delete', { item: 'role' }));
                 },
             });
@@ -93,11 +101,11 @@ export default function Index({ auth, roles }: Props) {
         );
     };
 
-    const columns: Column<Role>[] = [
+    const columns = [
         {
             key: 'name',
             header: t('role_name'),
-            accessor: (role) => (
+            accessor: (role: Role) => (
                 <div className="flex items-center gap-2">
                     <Badge variant="outline">{role.name}</Badge>
                 </div>
@@ -106,12 +114,12 @@ export default function Index({ auth, roles }: Props) {
         {
             key: 'display_name',
             header: t('display_name'),
-            accessor: (role) => role.display_name || t('no_display_name'),
+            accessor: (role: Role) => role.display_name || t('no_display_name'),
         },
         {
             key: 'description',
             header: t('description'),
-            accessor: (role) => (
+            accessor: (role: Role) => (
                 <div className="truncate max-w-xs" title={role.description}>
                     {role.description || t('no_description')}
                 </div>
@@ -120,12 +128,12 @@ export default function Index({ auth, roles }: Props) {
         {
             key: 'permissions',
             header: t('permissions'),
-            accessor: (role) => getPermissionsBadge(role.permissions),
+            accessor: (role: Role) => getPermissionsBadge(role.permissions),
         },
         {
             key: 'users',
             header: t('users'),
-            accessor: (role) => (
+            accessor: (role: Role) => (
                 <div className="flex items-center gap-1">
                     <Users className="h-4 w-4 text-muted-foreground" />
                     <span>{role.users_count || 0}</span>
@@ -135,7 +143,7 @@ export default function Index({ auth, roles }: Props) {
         {
             key: 'actions',
             header: t('actions'),
-            accessor: (role) => (
+            accessor: (role: Role) => (
                 <div className="flex items-center justify-end gap-2">
                     <Permission permission="roles.view">
                         <Button variant="ghost" size="sm" asChild>
@@ -218,7 +226,8 @@ export default function Index({ auth, roles }: Props) {
                             showPagination={totalPages > 1}
                             showBorders
                             showHover
-                            emptyMessage={search ? t('common:no_items_found', { items: t('common:roles').toLowerCase() }) : t('common:no_items', { items: t('common:roles').toLowerCase() })}
+                            isLoading={isLoading}
+                            emptyMessage={isLoading ? t('common:loading') : (search ? t('common:no_items_found', { items: t('common:roles').toLowerCase() }) : t('common:no_items', { items: t('common:roles').toLowerCase() }))}
                         />
                         <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
                             <p>
