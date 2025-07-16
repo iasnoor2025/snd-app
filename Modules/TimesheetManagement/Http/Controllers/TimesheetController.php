@@ -1397,7 +1397,7 @@ class TimesheetController extends Controller
         $startDate = "$year-$monthNum-01";
         $endDate = date('Y-m-t', strtotime($startDate));
 
-        // Get timesheets for the month
+        // Get timesheets for the month (all statuses)
         $timesheets = \Modules\TimesheetManagement\Domain\Models\Timesheet::where('employee_id', $employee->id)
             ->whereBetween('date', [$startDate, $endDate])
             ->orderBy('date')
@@ -1410,8 +1410,8 @@ class TimesheetController extends Controller
         $daysWorked = $timesheets->count();
 
         // Create calendar data for the month
+        // Fill all days in the month with default values first
         $calendar = [];
-        // Fill all days in the month with default values
         $daysInMonth = (int)date('t', strtotime($startDate));
         for ($d = 1; $d <= $daysInMonth; $d++) {
             $dateStr = sprintf('%04d-%02d-%02d', $year, str_pad($monthNum, 2, '0', STR_PAD_LEFT), str_pad($d, 2, '0', STR_PAD_LEFT));
@@ -1425,16 +1425,10 @@ class TimesheetController extends Controller
             ];
         }
         // Overwrite with actual timesheet data
-        $grouped = $timesheets->groupBy(function($t) { return date('Y-m-d', strtotime($t->date)); });
-        foreach ($grouped as $date => $items) {
-            $dayOfWeek = date('w', strtotime($date));
-            $calendar[$date] = [
-                'date' => $date,
-                'day_of_week' => $dayOfWeek,
-                'day_name' => date('l', strtotime($date)),
-                'regular_hours' => $items->sum('hours_worked'),
-                'overtime_hours' => $items->sum('overtime_hours'),
-            ];
+        foreach ($timesheets as $timesheet) {
+            $date = date('Y-m-d', strtotime($timesheet->date));
+            $calendar[$date]['regular_hours'] = $timesheet->hours_worked;
+            $calendar[$date]['overtime_hours'] = $timesheet->overtime_hours;
         }
 
         // Calculate absent days (not Friday, no hours)

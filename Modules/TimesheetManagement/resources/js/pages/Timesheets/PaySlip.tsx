@@ -8,12 +8,6 @@ import {
     CardHeader,
     CardTitle,
     Separator,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
 } from '@/Core';
 import { BreadcrumbItem, PageProps } from '@/Core/types';
 import { Head } from '@inertiajs/react';
@@ -21,6 +15,7 @@ import { format, parseISO } from 'date-fns';
 import { ArrowLeft, Building, Calendar, Clock, DollarSign, Download, MapPin, Printer, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/components/ui/table';
 
 interface DayData {
     date: string;
@@ -231,6 +226,9 @@ export default function PaySlip({
     // Format dates
     const formattedStartDate = start_date ? format(parseISO(start_date), 'MM/dd/yyyy') : '';
     const formattedEndDate = end_date ? format(parseISO(end_date), 'MM/dd/yyyy') : '';
+
+    // Calculate number of days in the month
+    const daysInMonth = new Date(Number(year), Number(month), 0).getDate();
 
     // Handle print
     const handlePrint = () => {
@@ -486,39 +484,38 @@ export default function PaySlip({
                             </div>
 
                             <div className="overflow-x-auto rounded-md border">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            {Array.from({ length: 31 }, (_, i) => i + 1).map((day, idx, arr) => (
-                                                <TableHead
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day, idx, arr) => (
+                                                <th
                                                     key={day}
                                                     className={`border bg-black text-center align-middle text-xs font-bold text-white ${idx === 0 ? 'rounded-l-md' : ''} ${idx === arr.length - 1 ? 'rounded-r-md' : ''}`}
                                                 >
                                                     {day.toString().padStart(2, '0')}
-                                                </TableHead>
+                                                </th>
                                             ))}
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        <TableRow className="bg-gray-50">
-                                            {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => {
-                                                const dayDate = new Date(parseInt(year), parseInt(month) - 1, day);
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr className="bg-gray-50">
+                                            {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => {
+                                                const dayDate = new Date(Number(year), Number(month) - 1, day);
                                                 const dayName = dayDate.toString() !== 'Invalid Date' ? format(dayDate, 'E') : '';
                                                 const isFriday = dayName === 'Fri';
                                                 let bgColor = isFriday ? 'bg-blue-100' : '';
-
                                                 return (
-                                                    <TableCell key={`day-${day}`} className={`text-center ${bgColor} border p-1 text-xs`}>
+                                                    <td key={`day-${day}`} className={`text-center ${bgColor} border p-1 text-xs`}>
                                                         <div className="text-xs text-gray-600">{dayName.substring(0, 1)}</div>
-                                                    </TableCell>
+                                                    </td>
                                                 );
                                             })}
-                                        </TableRow>
-                                        <TableRow>
-                                            {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => {
+                                        </tr>
+                                        <tr>
+                                            {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => {
                                                 const dayDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
                                                 const dayData = calendar[dayDate];
-                                                const checkDate = new Date(parseInt(year), parseInt(month) - 1, day);
+                                                const checkDate = new Date(Number(year), Number(month) - 1, day);
                                                 const dayName = checkDate.toString() !== 'Invalid Date' ? format(checkDate, 'E') : '';
                                                 const isFriday = dayName === 'Fri';
                                                 let content = '';
@@ -541,7 +538,7 @@ export default function PaySlip({
                                                         }
                                                     }
                                                 } else {
-                                                    if (checkDate.getMonth() !== parseInt(month) - 1) {
+                                                    if (checkDate.getMonth() !== Number(month) - 1) {
                                                         content = '-';
                                                     } else if (isFriday) {
                                                         content = 'F';
@@ -550,21 +547,21 @@ export default function PaySlip({
                                                     }
                                                 }
                                                 return (
-                                                    <TableCell
+                                                    <td
                                                         key={`data-${day}`}
                                                         className={`text-center ${bgColor} ${textColor} border p-1 text-xs`}
                                                     >
                                                         {content}
-                                                    </TableCell>
+                                                    </td>
                                                 );
                                             })}
-                                        </TableRow>
+                                        </tr>
                                         {/* Overtime row */}
-                                        <TableRow>
-                                            {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => {
+                                        <tr>
+                                            {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => {
                                                 const dayDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
                                                 const dayData = calendar[dayDate];
-                                                const checkDate = new Date(parseInt(year), parseInt(month) - 1, day);
+                                                const checkDate = new Date(Number(year), Number(month) - 1, day);
                                                 const dayName = checkDate.toString() !== 'Invalid Date' ? format(checkDate, 'E') : '';
                                                 const isFriday = dayName === 'Fri';
                                                 let content = '0';
@@ -575,14 +572,14 @@ export default function PaySlip({
                                                     textColor = 'text-blue-600';
                                                 }
                                                 return (
-                                                    <TableCell key={`ot-${day}`} className={`text-center ${bgColor} ${textColor} border p-1 text-xs`}>
+                                                    <td key={`ot-${day}`} className={`text-center ${bgColor} ${textColor} border p-1 text-xs`}>
                                                         {content}
-                                                    </TableCell>
+                                                    </td>
                                                 );
                                             })}
-                                        </TableRow>
-                                    </TableBody>
-                                </Table>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                             <div className="mt-1 text-xs text-gray-500">
                                 <span className="font-semibold text-green-600">8</span> = regular hours,&nbsp;
