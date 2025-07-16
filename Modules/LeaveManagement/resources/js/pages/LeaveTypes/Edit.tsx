@@ -18,7 +18,6 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-    Switch,
     Textarea,
 } from '@/Core';
 import { Head, router, useForm } from '@inertiajs/react';
@@ -295,11 +294,11 @@ export default function EditLeaveType({ leaveType }: Props) {
                                                     Allow unused leave days to be carried forward to next year
                                                 </p>
                                             </div>
-                                            <Switch
+                                            {/* <Switch
                                                 id="allow_carry_forward"
                                                 checked={data.allow_carry_forward}
                                                 onCheckedChange={(checked) => setData('allow_carry_forward', checked)}
-                                            />
+                                            /> */}
                                         </div>
 
                                         {data.allow_carry_forward && (
@@ -337,11 +336,11 @@ export default function EditLeaveType({ leaveType }: Props) {
                                             <Label htmlFor="requires_approval">{t('lbl_requires_approval')}</Label>
                                             <p className="text-sm text-muted-foreground">Leave requests need manager approval</p>
                                         </div>
-                                        <Switch
+                                        {/* <Switch
                                             id="requires_approval"
                                             checked={data.requires_approval}
                                             onCheckedChange={(checked) => setData('requires_approval', checked)}
-                                        />
+                                        /> */}
                                     </div>
 
                                     <div className="flex items-center justify-between">
@@ -349,7 +348,7 @@ export default function EditLeaveType({ leaveType }: Props) {
                                             <Label htmlFor="is_paid">{t('lbl_paid_leave')}</Label>
                                             <p className="text-sm text-muted-foreground">Employee receives salary during leave</p>
                                         </div>
-                                        <Switch id="is_paid" checked={data.is_paid} onCheckedChange={(checked) => setData('is_paid', checked)} />
+                                        {/* <Switch id="is_paid" checked={data.is_paid} onCheckedChange={(checked) => setData('is_paid', checked)} /> */}
                                     </div>
 
                                     <div className="flex items-center justify-between">
@@ -357,11 +356,11 @@ export default function EditLeaveType({ leaveType }: Props) {
                                             <Label htmlFor="is_active">Active</Label>
                                             <p className="text-sm text-muted-foreground">Leave type is available for use</p>
                                         </div>
-                                        <Switch
+                                        {/* <Switch
                                             id="is_active"
                                             checked={data.is_active}
                                             onCheckedChange={(checked) => setData('is_active', checked)}
-                                        />
+                                        /> */}
                                     </div>
                                 </CardContent>
                             </Card>

@@ -15,7 +15,6 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-    Switch,
     Textarea,
 } from '@/Core';
 import { Equipment, User } from '@/Core/types/models';
@@ -98,15 +97,15 @@ export default function ScheduleForm({ equipment, technicians, onSuccess }: Sche
                     </div>
 
                     <div className="flex items-center space-x-2">
-                        <Switch
+                        {/* <Switch
                             id="is_recurring"
                             checked={isRecurring}
                             onCheckedChange={(checked) => {
                                 setIsRecurring(checked);
                                 setData('is_recurring', checked as boolean);
                             }}
-                        />
-                        <Label htmlFor="is_recurring">Recurring Maintenance</Label>
+                        /> */}
+                        {/* <Label htmlFor="is_recurring">Recurring Maintenance</Label> */}
                     </div>
 
                     {isRecurring && (

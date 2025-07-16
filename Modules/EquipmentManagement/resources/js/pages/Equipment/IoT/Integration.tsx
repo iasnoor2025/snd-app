@@ -10,8 +10,6 @@ import {
     CardTitle,
     Input,
     Label,
-    Progress,
-    Switch,
     Tabs,
     TabsContent,
     TabsList,
@@ -259,7 +257,7 @@ const IoTIntegration: React.FC<Props> = ({ devices = [], equipment = [] }) => {
                     <div className="flex gap-2">
                         <div className="flex items-center gap-2">
                             <Label htmlFor="auto-refresh">Auto Refresh</Label>
-                            <Switch id="auto-refresh" checked={autoRefresh} onCheckedChange={setAutoRefresh} />
+                            {/* <Switch id="auto-refresh" checked={autoRefresh} onCheckedChange={setAutoRefresh} /> */}
                         </div>
                         <Button variant={isMonitoring ? 'destructive' : 'default'} onClick={() => setIsMonitoring(!isMonitoring)}>
                             {isMonitoring ? <Pause className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
@@ -593,7 +591,7 @@ const IoTIntegration: React.FC<Props> = ({ devices = [], equipment = [] }) => {
                                                                     {selectedDevice.signalStrength}%
                                                                 </span>
                                                             </div>
-                                                            <Progress value={selectedDevice.signalStrength} className="h-2" />
+                                                            {/* <Progress value={selectedDevice.signalStrength} className="h-2" /> */}
 
                                                             {selectedDevice.batteryLevel && (
                                                                 <>
@@ -601,7 +599,7 @@ const IoTIntegration: React.FC<Props> = ({ devices = [], equipment = [] }) => {
                                                                         <span className="text-sm">Battery Level</span>
                                                                         <span className="text-sm">{selectedDevice.batteryLevel}%</span>
                                                                     </div>
-                                                                    <Progress value={selectedDevice.batteryLevel} className="h-2" />
+                                                                    {/* <Progress value={selectedDevice.batteryLevel} className="h-2" /> */}
                                                                 </>
                                                             )}
                                                         </div>

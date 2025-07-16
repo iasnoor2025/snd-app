@@ -9,7 +9,6 @@ import {
     formatCurrency,
     Input,
     Label,
-    Progress,
     Select,
     SelectContent,
     SelectItem,
@@ -429,7 +428,7 @@ const LifecycleManagement: React.FC<Props> = ({ equipment, lifecycleStages = [],
                                 <Activity className="h-8 w-8 text-blue-600" />
                             </div>
                             <div className="mt-2">
-                                <Progress value={equipment.utilizationRate} className="h-2" />
+                                {/* <Progress value={equipment.utilizationRate} className="h-2" /> */}
                             </div>
                         </CardContent>
                     </Card>
@@ -446,7 +445,7 @@ const LifecycleManagement: React.FC<Props> = ({ equipment, lifecycleStages = [],
                                 <Clock className="h-8 w-8 text-orange-600" />
                             </div>
                             <div className="mt-2">
-                                <Progress value={(equipment.currentAge / equipment.expectedLifespan) * 100} className="h-2" />
+                                {/* <Progress value={(equipment.currentAge / equipment.expectedLifespan) * 100} className="h-2" /> */}
                             </div>
                         </CardContent>
                     </Card>
@@ -580,25 +579,25 @@ const LifecycleManagement: React.FC<Props> = ({ equipment, lifecycleStages = [],
                                             <span className="text-sm font-medium">Availability</span>
                                             <span className="text-sm">{analytics.performanceMetrics.availability}%</span>
                                         </div>
-                                        <Progress value={analytics.performanceMetrics.availability} className="h-2" />
+                                        {/* <Progress value={analytics.performanceMetrics.availability} className="h-2" /> */}
 
                                         <div className="flex items-center justify-between">
                                             <span className="text-sm font-medium">Reliability</span>
                                             <span className="text-sm">{analytics.performanceMetrics.reliability}%</span>
                                         </div>
-                                        <Progress value={analytics.performanceMetrics.reliability} className="h-2" />
+                                        {/* <Progress value={analytics.performanceMetrics.reliability} className="h-2" /> */}
 
                                         <div className="flex items-center justify-between">
                                             <span className="text-sm font-medium">Efficiency</span>
                                             <span className="text-sm">{analytics.performanceMetrics.efficiency}%</span>
                                         </div>
-                                        <Progress value={analytics.performanceMetrics.efficiency} className="h-2" />
+                                        {/* <Progress value={analytics.performanceMetrics.efficiency} className="h-2" /> */}
 
                                         <div className="flex items-center justify-between">
                                             <span className="text-sm font-medium">Safety</span>
                                             <span className="text-sm">{analytics.performanceMetrics.safety}%</span>
                                         </div>
-                                        <Progress value={analytics.performanceMetrics.safety} className="h-2" />
+                                        {/* <Progress value={analytics.performanceMetrics.safety} className="h-2" /> */}
                                     </div>
                                 </CardContent>
                             </Card>

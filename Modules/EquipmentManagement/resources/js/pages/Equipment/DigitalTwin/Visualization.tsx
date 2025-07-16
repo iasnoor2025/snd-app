@@ -1,4 +1,4 @@
-import { AppLayout, Badge, Button, Card, CardContent, CardHeader, CardTitle, Label, Progress, Slider, Switch } from '@/Core';
+import { AppLayout, Badge, Button, Card, CardContent, CardHeader, CardTitle, Label, Slider } from '@/Core';
 import { Head } from '@inertiajs/react';
 import {
     Activity,

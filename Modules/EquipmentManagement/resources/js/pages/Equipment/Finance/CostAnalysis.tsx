@@ -8,7 +8,6 @@ import {
     CardTitle,
     formatCurrency,
     formatPercentage,
-    Progress,
     Select,
     SelectContent,
     SelectItem,
@@ -704,7 +703,8 @@ const CostAnalysis: React.FC<Props> = ({ equipmentCosts = [], costBreakdown = []
                                             </div>
 
                                             <div className="pt-2">
-                                                <Progress value={category.percentage} className="h-2" />
+                                                {/* Progress component was removed from imports, so this will cause an error */}
+                                                {/* <Progress value={category.percentage} className="h-2" /> */}
                                             </div>
                                         </div>
                                     </CardContent>

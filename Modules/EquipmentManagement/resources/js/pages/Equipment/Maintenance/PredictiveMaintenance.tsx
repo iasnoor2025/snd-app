@@ -8,7 +8,6 @@ import {
     CardTitle,
     formatCurrency,
     Label,
-    Progress,
     Tabs,
     TabsContent,
     TabsList,
@@ -345,14 +344,12 @@ const PredictiveMaintenance: React.FC<Props> = ({ equipment = [], predictions = 
                                                             <div>
                                                                 <p className="text-sm font-medium">Failure Probability</p>
                                                                 <div className="flex items-center gap-2">
-                                                                    <Progress value={prediction.failureProbability} className="flex-1" />
                                                                     <span className="text-sm">{prediction.failureProbability}%</span>
                                                                 </div>
                                                             </div>
                                                             <div>
                                                                 <p className="text-sm font-medium">Confidence Level</p>
                                                                 <div className="flex items-center gap-2">
-                                                                    <Progress value={prediction.confidenceLevel} className="flex-1" />
                                                                     <span className="text-sm">{prediction.confidenceLevel}%</span>
                                                                 </div>
                                                             </div>
@@ -457,8 +454,7 @@ const PredictiveMaintenance: React.FC<Props> = ({ equipment = [], predictions = 
                                                                         </div>
                                                                     </div>
                                                                     <div className="mt-2">
-                                                                        <Progress
-                                                                            value={metric.current}
+                                                                        <div
                                                                             className={`h-2 ${metric.current < metric.threshold ? 'bg-red-100' : 'bg-green-100'}`}
                                                                         />
                                                                     </div>

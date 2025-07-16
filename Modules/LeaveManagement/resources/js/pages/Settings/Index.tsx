@@ -20,7 +20,6 @@ import {
     SelectTrigger,
     SelectValue,
     Separator,
-    Switch,
     Tabs,
     TabsContent,
     TabsList,
@@ -320,10 +319,10 @@ export default function Index({ settings }: Props) {
                                                     Whether public holidays should be excluded from leave calculations
                                                 </p>
                                             </div>
-                                            <Switch
+                                            {/* <Switch
                                                 checked={data.public_holidays_affect_leave}
                                                 onCheckedChange={(checked) => setData('public_holidays_affect_leave', checked)}
-                                            />
+                                            /> */}
                                         </div>
 
                                         <div className="flex items-center justify-between">
@@ -331,10 +330,10 @@ export default function Index({ settings }: Props) {
                                                 <Label>{t('lbl_allow_half_day_leave')}</Label>
                                                 <p className="text-sm text-muted-foreground">Allow employees to request half-day leave</p>
                                             </div>
-                                            <Switch
+                                            {/* <Switch
                                                 checked={data.allow_half_day_leave}
                                                 onCheckedChange={(checked) => setData('allow_half_day_leave', checked)}
-                                            />
+                                            /> */}
                                         </div>
 
                                         <div className="flex items-center justify-between">
@@ -344,10 +343,10 @@ export default function Index({ settings }: Props) {
                                                     Allow employees to take leave even with insufficient balance
                                                 </p>
                                             </div>
-                                            <Switch
+                                            {/* <Switch
                                                 checked={data.allow_negative_balance}
                                                 onCheckedChange={(checked) => setData('allow_negative_balance', checked)}
-                                            />
+                                            /> */}
                                         </div>
 
                                         {data.allow_negative_balance && (
@@ -387,10 +386,10 @@ export default function Index({ settings }: Props) {
                                             <Label>{t('lbl_auto_approve_sick_leave')}</Label>
                                             <p className="text-sm text-muted-foreground">Automatically approve sick leave requests</p>
                                         </div>
-                                        <Switch
+                                        {/* <Switch
                                             checked={data.auto_approve_sick_leave}
                                             onCheckedChange={(checked) => setData('auto_approve_sick_leave', checked)}
-                                        />
+                                        /> */}
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-4">
@@ -476,10 +475,10 @@ export default function Index({ settings }: Props) {
                                             <Label>{t('lbl_enable_global_carry_forward')}</Label>
                                             <p className="text-sm text-muted-foreground">Allow unused leave to be carried forward to next year</p>
                                         </div>
-                                        <Switch
+                                        {/* <Switch
                                             checked={data.global_carry_forward_enabled}
                                             onCheckedChange={(checked) => setData('global_carry_forward_enabled', checked)}
-                                        />
+                                        /> */}
                                     </div>
 
                                     {data.global_carry_forward_enabled && (
@@ -577,10 +576,10 @@ export default function Index({ settings }: Props) {
                                                 <Label>{t('lbl_notify_employee_on_approval')}</Label>
                                                 <p className="text-sm text-muted-foreground">Send notification when leave is approved</p>
                                             </div>
-                                            <Switch
+                                            {/* <Switch
                                                 checked={data.notify_employee_on_approval}
                                                 onCheckedChange={(checked) => setData('notify_employee_on_approval', checked)}
-                                            />
+                                            /> */}
                                         </div>
 
                                         <div className="flex items-center justify-between">
@@ -588,10 +587,10 @@ export default function Index({ settings }: Props) {
                                                 <Label>{t('lbl_notify_employee_on_rejection')}</Label>
                                                 <p className="text-sm text-muted-foreground">Send notification when leave is rejected</p>
                                             </div>
-                                            <Switch
+                                            {/* <Switch
                                                 checked={data.notify_employee_on_rejection}
                                                 onCheckedChange={(checked) => setData('notify_employee_on_rejection', checked)}
-                                            />
+                                            /> */}
                                         </div>
 
                                         <div className="flex items-center justify-between">
@@ -599,10 +598,10 @@ export default function Index({ settings }: Props) {
                                                 <Label>{t('lbl_notify_manager_on_request')}</Label>
                                                 <p className="text-sm text-muted-foreground">Send notification to manager when leave is requested</p>
                                             </div>
-                                            <Switch
+                                            {/* <Switch
                                                 checked={data.notify_manager_on_request}
                                                 onCheckedChange={(checked) => setData('notify_manager_on_request', checked)}
-                                            />
+                                            /> */}
                                         </div>
 
                                         <div className="flex items-center justify-between">
@@ -610,10 +609,10 @@ export default function Index({ settings }: Props) {
                                                 <Label>{t('lbl_notify_hr_on_long_leave')}</Label>
                                                 <p className="text-sm text-muted-foreground">Send notification to HR for long leave requests</p>
                                             </div>
-                                            <Switch
+                                            {/* <Switch
                                                 checked={data.notify_hr_on_long_leave}
                                                 onCheckedChange={(checked) => setData('notify_hr_on_long_leave', checked)}
-                                            />
+                                            /> */}
                                         </div>
                                     </div>
 
@@ -667,10 +666,10 @@ export default function Index({ settings }: Props) {
                                             <Label>{t('lbl_allow_probation_leave')}</Label>
                                             <p className="text-sm text-muted-foreground">Allow employees on probation to take leave</p>
                                         </div>
-                                        <Switch
+                                        {/* <Switch
                                             checked={data.probation_leave_allowed}
                                             onCheckedChange={(checked) => setData('probation_leave_allowed', checked)}
-                                        />
+                                        /> */}
                                     </div>
 
                                     {data.probation_leave_allowed && (
@@ -727,10 +726,10 @@ export default function Index({ settings }: Props) {
                                                 <Label>{t('lbl_enable_leave_encashment')}</Label>
                                                 <p className="text-sm text-muted-foreground">Allow employees to encash unused leave</p>
                                             </div>
-                                            <Switch
+                                            {/* <Switch
                                                 checked={data.leave_encashment_enabled}
                                                 onCheckedChange={(checked) => setData('leave_encashment_enabled', checked)}
-                                            />
+                                            /> */}
                                         </div>
 
                                         {data.leave_encashment_enabled && (
@@ -792,10 +791,10 @@ export default function Index({ settings }: Props) {
                                                 <Label>{t('lbl_leave_calendar_integration')}</Label>
                                                 <p className="text-sm text-muted-foreground">Integrate with external calendar systems</p>
                                             </div>
-                                            <Switch
+                                            {/* <Switch
                                                 checked={data.leave_calendar_integration}
                                                 onCheckedChange={(checked) => setData('leave_calendar_integration', checked)}
-                                            />
+                                            /> */}
                                         </div>
 
                                         <div className="flex items-center justify-between">
@@ -803,10 +802,10 @@ export default function Index({ settings }: Props) {
                                                 <Label>{t('lbl_manager_override_balance')}</Label>
                                                 <p className="text-sm text-muted-foreground">Allow managers to override leave balance restrictions</p>
                                             </div>
-                                            <Switch
+                                            {/* <Switch
                                                 checked={data.manager_override_balance}
                                                 onCheckedChange={(checked) => setData('manager_override_balance', checked)}
-                                            />
+                                            /> */}
                                         </div>
 
                                         <div className="space-y-2">

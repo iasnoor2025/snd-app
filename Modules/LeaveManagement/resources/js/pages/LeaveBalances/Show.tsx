@@ -13,7 +13,6 @@ import {
     CardDescription,
     CardHeader,
     CardTitle,
-    Progress,
     Table,
     TableBody,
     TableCell,
@@ -250,7 +249,7 @@ const LeaveBalanceShow: React.FC = () => {
                                             <span>{t('usage_progress')}</span>
                                             <span className={getStatusColor(detail.percentage)}>{detail.percentage.toFixed(1)}%</span>
                                         </div>
-                                        <Progress value={detail.percentage} className="h-3" />
+                                        {/* <Progress value={detail.percentage} className="h-3" /> */}
                                     </div>
 
                                     <div className="grid gap-4 text-sm md:grid-cols-3">

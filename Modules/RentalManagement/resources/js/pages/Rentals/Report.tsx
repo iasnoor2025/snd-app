@@ -30,10 +30,8 @@ import {
     Table,
     TableBody,
     TableCell,
-    TableFooter,
     TableHead,
     TableHeader,
-    TableRow,
     Tabs,
     TabsContent,
     TabsList,
@@ -667,14 +665,6 @@ export default function Report({ auth, rentals, customers, filters }: Props) {
                                                             ))
                                                         )}
                                                     </TableBody>
-                                                    <TableFooter>
-                                                        <TableRow>
-                                                            <TableCell colSpan={6} className="text-right font-bold">
-                                                                Total:
-                                                            </TableCell>
-                                                            <TableCell className="text-right font-bold">{formatCurrency(totalAmount)}</TableCell>
-                                                        </TableRow>
-                                                    </TableFooter>
                                                 </Table>
                                             </div>
                                         </CardContent>
@@ -753,14 +743,6 @@ export default function Report({ auth, rentals, customers, filters }: Props) {
                                                                 ))
                                                             )}
                                                         </TableBody>
-                                                        <TableFooter>
-                                                            <TableRow>
-                                                                <TableCell colSpan={6} className="text-right">
-                                                                    Total:
-                                                                </TableCell>
-                                                                <TableCell className="text-right">{formatCurrency(totalAmount)}</TableCell>
-                                                            </TableRow>
-                                                        </TableFooter>
                                                     </Table>
                                                 </div>
                                             </div>
@@ -845,14 +827,6 @@ export default function Report({ auth, rentals, customers, filters }: Props) {
                                                 ))
                                             )}
                                         </TableBody>
-                                        <TableFooter>
-                                            <TableRow>
-                                                <TableCell colSpan={6} className="text-right">
-                                                    Total:
-                                                </TableCell>
-                                                <TableCell className="text-right">{formatCurrency(totalAmount)}</TableCell>
-                                            </TableRow>
-                                        </TableFooter>
                                     </Table>
                                 </div>
                             </div>

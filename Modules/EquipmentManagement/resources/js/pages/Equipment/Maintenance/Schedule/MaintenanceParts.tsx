@@ -6,7 +6,6 @@ import {
     CardHeader,
     CardTitle,
     Label,
-    Numeric,
     Separator,
     Table,
     TableBody,
@@ -103,12 +102,20 @@ export function MaintenanceParts({ maintenanceId, parts, availableParts, onSucce
 
                             <div>
                                 <Label htmlFor="quantity">Quantity</Label>
-                                <Numeric
+                                {/* <Numeric
                                     id="quantity"
                                     value={data.quantity}
                                     onValueChange={(value) => setData('quantity', value)}
                                     min={1}
                                     className="w-full"
+                                /> */}
+                                <input
+                                    type="number"
+                                    id="quantity"
+                                    value={data.quantity}
+                                    onChange={(e) => setData('quantity', parseInt(e.target.value) || 1)}
+                                    min="1"
+                                    className="w-full rounded-md border p-2"
                                 />
                                 {errors.quantity && <p className="mt-1 text-sm text-red-500">{errors.quantity}</p>}
                             </div>

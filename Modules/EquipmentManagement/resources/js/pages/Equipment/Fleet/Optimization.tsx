@@ -8,7 +8,6 @@ import {
     CardTitle,
     formatCurrency,
     Input,
-    Progress,
     Select,
     SelectContent,
     SelectItem,
@@ -475,7 +474,7 @@ const FleetOptimization: React.FC<Props> = ({ fleet = [], metrics, scenarios = [
                                 <Gauge className="h-8 w-8 text-green-600" />
                             </div>
                             <div className="mt-2">
-                                <Progress value={76} className="h-2" />
+                                {/* <Progress value={76} className="h-2" /> */}
                             </div>
                         </CardContent>
                     </Card>
@@ -558,7 +557,7 @@ const FleetOptimization: React.FC<Props> = ({ fleet = [], metrics, scenarios = [
                                 <span className="font-medium">Running Fleet Optimization</span>
                                 <span className="text-sm">{optimizationProgress}%</span>
                             </div>
-                            <Progress value={optimizationProgress} className="h-2" />
+                            {/* <Progress value={optimizationProgress} className="h-2" /> */}
                             <p className="mt-2 text-sm text-muted-foreground">Analyzing fleet data and generating optimization recommendations...</p>
                         </CardContent>
                     </Card>
@@ -734,13 +733,13 @@ const FleetOptimization: React.FC<Props> = ({ fleet = [], metrics, scenarios = [
                                                 <span>Utilization:</span>
                                                 <span className="font-medium">{equipment.utilization}%</span>
                                             </div>
-                                            <Progress value={equipment.utilization} className="h-2" />
+                                            {/* <Progress value={equipment.utilization} className="h-2" /> */}
 
                                             <div className="flex justify-between text-sm">
                                                 <span>Efficiency:</span>
                                                 <span className="font-medium">{equipment.efficiency}%</span>
                                             </div>
-                                            <Progress value={equipment.efficiency} className="h-2" />
+                                            {/* <Progress value={equipment.efficiency} className="h-2" /> */}
 
                                             <div className="grid grid-cols-2 gap-2 text-xs">
                                                 <div>
@@ -1051,7 +1050,7 @@ const FleetOptimization: React.FC<Props> = ({ fleet = [], metrics, scenarios = [
                                             <div className="flex items-center justify-between">
                                                 <span className="text-sm font-medium">Confidence Level:</span>
                                                 <div className="flex items-center gap-2">
-                                                    <Progress value={insight.confidence} className="h-2 w-20" />
+                                                    {/* <Progress value={insight.confidence} className="h-2 w-20" /> */}
                                                     <span className="text-sm">{insight.confidence}%</span>
                                                 </div>
                                             </div>

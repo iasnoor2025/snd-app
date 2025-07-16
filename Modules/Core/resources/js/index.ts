@@ -55,6 +55,7 @@ export * as z from 'zod';
 // Export UI components
 export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './components/ui/table';
 export * from './components/ui';
+export { Progress, Switch, Toggle, TimePicker, ErrorAlert, Pagination, ToggleGroup, ToggleGroupItem } from './components/ui';
 
 // Export layouts
 export { default as AppLayout } from './layouts/AppLayout';

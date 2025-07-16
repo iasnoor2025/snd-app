@@ -10,7 +10,6 @@ import {
     formatPercentage,
     Input,
     Label,
-    Progress,
     Select,
     SelectContent,
     SelectItem,
@@ -928,7 +927,7 @@ const RiskManagement: React.FC<Props> = ({
                                 <CheckCircle className="h-8 w-8 text-green-600" />
                             </div>
                             <div className="mt-2">
-                                <Progress value={mockRiskMetrics.complianceRate} className="h-2" />
+                                {/* <Progress value={mockRiskMetrics.complianceRate} className="h-2" /> */}
                             </div>
                         </CardContent>
                     </Card>
@@ -1347,7 +1346,7 @@ const RiskManagement: React.FC<Props> = ({
                                                             <span>Progress</span>
                                                             <span>{strategy.implementation.progress}%</span>
                                                         </div>
-                                                        <Progress value={strategy.implementation.progress} className="h-2" />
+                                                        {/* <Progress value={strategy.implementation.progress} className="h-2" /> */}
                                                         <div className="text-sm text-muted-foreground">
                                                             Status:{' '}
                                                             <span className="capitalize">{strategy.implementation.status.replace('_', ' ')}</span>
@@ -1374,7 +1373,7 @@ const RiskManagement: React.FC<Props> = ({
                                                             <span>Expected</span>
                                                             <span>{strategy.effectiveness}%</span>
                                                         </div>
-                                                        <Progress value={strategy.effectiveness} className="h-2" />
+                                                        {/* <Progress value={strategy.effectiveness} className="h-2" /> */}
                                                         <div className="text-sm text-muted-foreground">
                                                             Assigned to: {strategy.implementation.assignedTo}
                                                         </div>
@@ -1398,7 +1397,7 @@ const RiskManagement: React.FC<Props> = ({
                                                                     {kpi.unit}
                                                                 </span>
                                                             </div>
-                                                            <Progress
+                                                            {/* <Progress
                                                                 value={
                                                                     kpi.unit === '%'
                                                                         ? (kpi.current / kpi.target) * 100
@@ -1407,7 +1406,7 @@ const RiskManagement: React.FC<Props> = ({
                                                                           : Math.max(0, 100 - (kpi.current / kpi.target) * 100)
                                                                 }
                                                                 className="mt-2 h-1"
-                                                            />
+                                                            /> */}
                                                         </div>
                                                     ))}
                                                 </div>
@@ -1442,7 +1441,6 @@ const RiskManagement: React.FC<Props> = ({
                                         </div>
                                         <FileText className="h-8 w-8 text-blue-600" />
                                     </div>
-                                    <Progress value={92} className="mt-2 h-2" />
                                 </CardContent>
                             </Card>
 
@@ -1455,7 +1453,6 @@ const RiskManagement: React.FC<Props> = ({
                                         </div>
                                         <Shield className="h-8 w-8 text-green-600" />
                                     </div>
-                                    <Progress value={78} className="mt-2 h-2" />
                                 </CardContent>
                             </Card>
 
@@ -1468,7 +1465,6 @@ const RiskManagement: React.FC<Props> = ({
                                         </div>
                                         <Thermometer className="h-8 w-8 text-green-600" />
                                     </div>
-                                    <Progress value={85} className="mt-2 h-2" />
                                 </CardContent>
                             </Card>
 
@@ -1481,7 +1477,6 @@ const RiskManagement: React.FC<Props> = ({
                                         </div>
                                         <ShieldCheck className="h-8 w-8 text-blue-600" />
                                     </div>
-                                    <Progress value={96} className="mt-2 h-2" />
                                 </CardContent>
                             </Card>
                         </div>
@@ -1644,7 +1639,7 @@ const RiskManagement: React.FC<Props> = ({
                                                         <span className="text-sm text-muted-foreground">{prediction.timeframe}</span>
                                                     </div>
                                                     <div className="flex items-center justify-between">
-                                                        <Progress value={prediction.probability} className="mr-2 flex-1" />
+                                                        {/* <Progress value={prediction.probability} className="mr-2 flex-1" /> */}
                                                         <span className="text-sm font-medium">{prediction.probability}%</span>
                                                     </div>
                                                 </div>

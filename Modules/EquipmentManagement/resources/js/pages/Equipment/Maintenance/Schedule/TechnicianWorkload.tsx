@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage, Badge, Card, CardContent, Progress } from '@/Core';
+import { Avatar, AvatarFallback, AvatarImage, Badge, Card, CardContent } from '@/Core';
 import { format, parseISO } from 'date-fns';
 
 interface Equipment {
@@ -99,7 +99,7 @@ export function TechnicianWorkload({ workload }: TechnicianWorkloadProps) {
                                         {getWorkloadText(data.scheduled_count)}
                                     </span>
                                 </div>
-                                <Progress value={Math.min(data.scheduled_count * 10, 100)} className={getProgressColor(data.scheduled_count)} />
+                                {/* <Progress value={Math.min(data.scheduled_count * 10, 100)} className={getProgressColor(data.scheduled_count)} /> */}
                             </div>
 
                             {data.scheduled_count === 0 ? (

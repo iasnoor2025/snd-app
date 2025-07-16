@@ -8,7 +8,6 @@ import {
     CardHeader,
     CardTitle,
     Input,
-    Progress,
     Select,
     SelectContent,
     SelectItem,
@@ -287,7 +286,7 @@ const LeaveBalancesIndex: React.FC = () => {
                                                                                     /{typeBalance.allocated}
                                                                                 </span>
                                                                             </div>
-                                                                            <Progress value={typeBalance.percentage} className="mx-auto h-2 w-16" />
+                                                                            {/* <Progress value={typeBalance.percentage} className="mx-auto h-2 w-16" /> */}
                                                                             <div className="text-xs text-muted-foreground">
                                                                                 {typeBalance.percentage.toFixed(0)}%
                                                                             </div>

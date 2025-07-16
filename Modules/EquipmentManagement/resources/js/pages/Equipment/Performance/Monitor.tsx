@@ -8,7 +8,6 @@ import {
     CardContent,
     CardHeader,
     CardTitle,
-    Progress,
     Tabs,
     TabsContent,
     TabsList,
@@ -332,22 +331,22 @@ const EquipmentPerformanceMonitor: React.FC<Props> = ({ equipment, selectedEquip
                                                                     <span className="text-sm font-medium">Fuel Level</span>
                                                                     <span className="text-sm">{selectedEquipment.fuelLevel || 0}%</span>
                                                                 </div>
-                                                                <Progress value={selectedEquipment.fuelLevel || 0} className="h-2" />
+                                                                {/* <Progress value={selectedEquipment.fuelLevel || 0} className="h-2" /> */}
 
                                                                 <div className="flex items-center justify-between">
                                                                     <span className="text-sm font-medium">Temperature</span>
                                                                     <span className="text-sm">{selectedEquipment.temperature || 0}°C</span>
                                                                 </div>
-                                                                <Progress
+                                                                {/* <Progress
                                                                     value={((selectedEquipment.temperature || 0) / 120) * 100}
                                                                     className="h-2"
-                                                                />
+                                                                /> */}
 
                                                                 <div className="flex items-center justify-between">
                                                                     <span className="text-sm font-medium">Efficiency</span>
                                                                     <span className="text-sm">{selectedEquipment.efficiency}%</span>
                                                                 </div>
-                                                                <Progress value={selectedEquipment.efficiency} className="h-2" />
+                                                                {/* <Progress value={selectedEquipment.efficiency} className="h-2" /> */}
                                                             </div>
                                                         </div>
                                                     </div>
