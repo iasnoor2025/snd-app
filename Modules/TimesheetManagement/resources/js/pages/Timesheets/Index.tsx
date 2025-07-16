@@ -59,6 +59,8 @@ interface Timesheet {
     description?: string;
     tasks_completed?: string;
     status: string;
+    start_address?: string;
+    end_address?: string;
 }
 
 interface Props extends PageProps {
@@ -790,7 +792,11 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                                                             ? `Rental: ${row.rental.equipment.name}`
                                                             : row.location
                                                                 ? `Location: ${row.location}`
-                                                                : t('not_assigned')}
+                                                                : row.start_address
+                                                                    ? `Location: ${row.start_address}`
+                                                                    : row.end_address
+                                                                        ? `Location: ${row.end_address}`
+                                                                        : t('not_assigned')}
                                                 </td>
                                                 <td className="px-2 py-2 whitespace-nowrap text-sm">{getStatusBadge(row.status)}</td>
                                                 <td className="px-2 py-2 whitespace-nowrap text-right text-sm font-medium">

@@ -102,6 +102,10 @@ class TimesheetController extends Controller
                 }
                 $timesheet->rental->equipment = [ 'name' => $equipmentName ];
             }
+            // Ensure location fields are present for manual assignments
+            $timesheet->start_address = $timesheet->start_address ?? null;
+            $timesheet->end_address = $timesheet->end_address ?? null;
+            $timesheet->location = $timesheet->location ?? null;
             return $timesheet;
         });
 
