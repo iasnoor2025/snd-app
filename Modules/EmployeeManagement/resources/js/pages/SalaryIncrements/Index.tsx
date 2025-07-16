@@ -8,7 +8,6 @@ import {
     CardHeader,
     CardTitle,
     Input,
-    Pagination,
     Select,
     SelectContent,
     SelectItem,

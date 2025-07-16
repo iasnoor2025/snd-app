@@ -31,47 +31,38 @@ const breadcrumbs = [
 
 export default function Index({ equipment, categories = [], statuses = {}, filters = {} }: Props) {
     const { t } = useTranslation('equipment');
-    const [searchQuery, setSearchQuery] = useState(filters.search || '');
-    const [selectedCategory, setSelectedCategory] = useState(filters.category || 'all');
-    const [selectedStatus, setSelectedStatus] = useState(filters.status || 'all');
-    const [isLoading, setIsLoading] = useState(false);
+    const [search, setSearch] = useState(filters.search || '');
+    const [status, setStatus] = useState(filters.status || 'all');
+    const [category, setCategory] = useState(filters.category || 'all');
+    const [perPage, setPerPage] = useState<number>(filters.per_page || 10);
+    const safeEquipment = Array.isArray(equipment.data) ? equipment.data : [];
 
-    const handleSearch = (e: React.FormEvent) => {
-        e.preventDefault();
-        applyFilters({ search: searchQuery });
+    const getStatusBadge = (status: string) => {
+        const label = t(status);
+        switch (status.toLowerCase()) {
+            case 'available':
+                return <Badge variant="default">{label}</Badge>;
+            case 'rented':
+                return <Badge variant="secondary">{label}</Badge>;
+            case 'maintenance':
+                return <Badge variant="outline">{label}</Badge>;
+            case 'out_of_service':
+                return <Badge variant="destructive">{label}</Badge>;
+            default:
+                return <Badge variant="outline">{label}</Badge>;
+        }
     };
 
-    const applyFilters = (newFilters: Record<string, any>) => {
-        const updatedFilters = {
-            ...(selectedCategory !== 'all' ? { category: selectedCategory } : {}),
-            ...(selectedStatus !== 'all' ? { status: selectedStatus } : {}),
-            ...(searchQuery ? { search: searchQuery } : {}),
-            ...newFilters,
-        };
-
-        setIsLoading(true);
-        router.get(window.route('equipment.index'), updatedFilters, {
-            preserveState: true,
-            replace: true,
-            onFinish: () => setIsLoading(false),
-        });
-    };
-
-    const resetFilters = () => {
-        setSearchQuery('');
-        setSelectedCategory('all');
-        setSelectedStatus('all');
-        setIsLoading(true);
-        router.get(
-            window.route('equipment.index'),
-            {},
-            {
-                preserveState: true,
-                replace: true,
-                onFinish: () => setIsLoading(false),
-            },
-        );
-    };
+    const filteredEquipment = safeEquipment.filter((item) => {
+        const matchesSearch =
+            !search ||
+            item.name?.toLowerCase().includes(search.toLowerCase()) ||
+            item.model?.toLowerCase().includes(search.toLowerCase()) ||
+            item.serial_number?.toLowerCase().includes(search.toLowerCase());
+        const matchesStatus = status === 'all' || item.status === status;
+        const matchesCategory = category === 'all' || item.category === category;
+        return matchesSearch && matchesStatus && matchesCategory;
+    });
 
     const handleSync = async () => {
         try {
@@ -96,238 +87,121 @@ export default function Index({ equipment, categories = [], statuses = {}, filte
         }
     };
 
-    const getStatusBadge = (status: string) => {
-        const label = forceString(t(status), status);
-        switch (status.toLowerCase()) {
-            case 'available':
-                return <Badge variant="default">{label}</Badge>;
-            case 'rented':
-                return <Badge variant="secondary">{label}</Badge>;
-            case 'maintenance':
-                return <Badge variant="outline">{label}</Badge>;
-            case 'out_of_service':
-                return <Badge variant="destructive">{label}</Badge>;
-            default:
-                return <Badge variant="outline">{label}</Badge>;
-        }
-    };
-
-    function renderCategory(category: any): string {
-        if (!category) return '—';
-        let translated = category;
-        if (typeof category === 'string') translated = t(category);
-        if (typeof category === 'object') {
-            if (category.name) translated = t(category.name);
-            else if (category.en) translated = t(category.en);
-            else {
-                const first = Object.values(category).find((v) => typeof v === 'string');
-                if (first) translated = t(first);
-            }
-        }
-        if (typeof translated === 'object' && translated !== null) {
-            const firstString = Object.values(translated).find((v) => typeof v === 'string');
-            if (firstString) return firstString;
-            return '—';
-        }
-        if (typeof translated === 'string') return translated;
-        return '—';
-    }
-
-    // Helper to render any value safely as a string
-    function renderValue(val: any): string {
-        if (!val) return '—';
-        let translated = val;
-        if (typeof val === 'string' || typeof val === 'number') translated = String(val);
-        if (typeof val === 'object') {
-            if (val.name) translated = t(val.name);
-            else if (val.en) translated = t(val.en);
-            else {
-                const first = Object.values(val).find((v) => typeof v === 'string' || typeof v === 'number');
-                if (first) translated = String(first);
-            }
-        }
-        if (typeof translated === 'object' && translated !== null) {
-            const firstString = Object.values(translated).find((v) => typeof v === 'string' || typeof v === 'number');
-            if (firstString) return String(firstString);
-            return '—';
-        }
-        if (typeof translated === 'string' || typeof translated === 'number') return String(translated);
-        return '—';
-    }
-
-    // Helper to force string output for any label or value
-    function forceString(val: any, fallback: string): string {
-        if (!val) return fallback;
-        let translated = val;
-        if (typeof val === 'string') translated = t(val);
-        if (typeof val === 'object') {
-            if (val.en && typeof val.en === 'string') translated = t(val.en);
-            else {
-                const first = Object.values(val).find((v) => typeof v === 'string');
-                if (first) translated = t(first);
-            }
-        }
-        if (typeof translated === 'object' && translated !== null) {
-            const firstString = Object.values(translated).find((v) => typeof v === 'string');
-            if (firstString) return firstString;
-            return fallback;
-        }
-        if (typeof translated === 'string') return translated;
-        return fallback;
-    }
-
     return (
-        <AppLayout title={forceString(t('equipment'), 'equipment')} breadcrumbs={breadcrumbs} requiredPermission="equipment.view">
-            <Head title={forceString(t('equipment'), 'equipment')} />
-
+        <AppLayout title={t('equipment')} breadcrumbs={breadcrumbs} requiredPermission="equipment.view">
+            <Head title={t('equipment')} />
             <div className="flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-2xl font-bold">{forceString(t('equipment'), 'equipment')}</CardTitle>
+                        <CardTitle className="text-2xl font-bold">{t('equipment')}</CardTitle>
                         <div className="flex gap-2">
                             <CreateButton
                                 resourceType="equipment"
                                 permission="equipment.create"
-                                text={forceString(t('add_equipment'), 'Add Equipment')}
+                                text={t('add_equipment')}
                             />
                             <Button onClick={handleSync} type="button" variant="default">
-                                {forceString(t('sync_erpnext'), 'Sync ERPNext')}
+                                {t('sync_erpnext')}
                             </Button>
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <form onSubmit={handleSearch} className="mb-6">
-                            <div className="grid items-end gap-4 md:grid-cols-4">
-                                <div>
-                                    <Input
-                                        type="text"
-                                        placeholder={forceString(t('ph_search_equipment'), 'ph_search_equipment')}
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        className="w-full"
-                                    />
-                                </div>
-                                <div>
-                                    <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder={forceString(t('ph_filter_by_category'), 'ph_filter_by_category')} />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="all">{forceString(t('opt_all_categories'), 'opt_all_categories')}</SelectItem>
-                                            {categories.map((category) => (
-                                                <SelectItem key={category} value={category}>
-                                                    {forceString(t(category), category)}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div>
-                                    <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder={forceString(t('ph_filter_by_status'), 'ph_filter_by_status')} />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="all">{forceString(t('opt_all_statuses'), 'opt_all_statuses')}</SelectItem>
-                                            {Object.entries(statuses).map(([value, label]) => (
-                                                <SelectItem key={value} value={value}>
-                                                    {forceString(t(label), label)}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="flex items-center justify-between space-x-2 md:justify-end">
-                                    <div className="flex space-x-2">
-                                        <Button type="submit" disabled={isLoading}>
-                                            <Search className="mr-2 h-4 w-4" />
-                                            {forceString(t('search'), 'search')}
-                                        </Button>
-                                        <Button type="button" variant="outline" onClick={resetFilters} disabled={isLoading}>
-                                            {forceString(t('clear_filters'), 'clear_filters')}
-                                        </Button>
-                                    </div>
-                                    {/* <CreateButton
-                    resourceType="equipment"
-                    text={forceString(t('add_equipment'), 'add_equipment')}
-                  /> */}
-                                </div>
-                            </div>
-                        </form>
-
-                        <div className="rounded-md border">
+                        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
+                            <Input
+                                placeholder={t('ph_search_equipment')}
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                className="pl-8"
+                            />
+                            <Select value={category} onValueChange={setCategory}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder={t('all_categories')} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">{t('all_categories')}</SelectItem>
+                                    {categories.map((cat) => (
+                                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <Select value={status} onValueChange={setStatus}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder={t('all_statuses')} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">{t('all_statuses')}</SelectItem>
+                                    {Object.entries(statuses).map(([value, label]) => (
+                                        <SelectItem key={value} value={value}>{label}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <Select value={perPage.toString()} onValueChange={(v) => setPerPage(Number(v))}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder={t('Rows per page')} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {[10, 25, 50, 100].map((opt) => (
+                                        <SelectItem key={opt} value={opt.toString()}>{opt}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="overflow-x-auto rounded-md border">
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>{forceString(t('door_number'), 'door_number')}</TableHead>
-                                        <TableHead>{forceString(t('equipment_name'), 'equipment_name')}</TableHead>
-                                        <TableHead>{forceString(t('model'), 'model')}</TableHead>
-                                        <TableHead>{forceString(t('serial_number'), 'serial_number')}</TableHead>
-                                        <TableHead>{forceString(t('category'), 'category')}</TableHead>
-                                        <TableHead>{forceString(t('status'), 'status')}</TableHead>
-                                        <TableHead>{forceString(t('daily_rate'), 'daily_rate')}</TableHead>
-                                        <TableHead className="w-[100px] text-right">{forceString(t('actions'), 'actions')}</TableHead>
+                                        <TableHead>{t('door_number')}</TableHead>
+                                        <TableHead>{t('equipment_name')}</TableHead>
+                                        <TableHead>{t('model')}</TableHead>
+                                        <TableHead>{t('serial_number')}</TableHead>
+                                        <TableHead>{t('category')}</TableHead>
+                                        <TableHead>{t('status')}</TableHead>
+                                        <TableHead>{t('daily_rate')}</TableHead>
+                                        <TableHead className="w-[100px] text-right">{t('actions')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {equipment.data.length === 0 ? (
-                                        <TableRow>
-                                            <TableCell colSpan={8} className="text-center">
-                                                {forceString(t('no_equipment_found'), 'no_equipment_found')}
-                                            </TableCell>
-                                        </TableRow>
-                                    ) : (
-                                        equipment.data.map((item) => (
+                                    {filteredEquipment.length > 0 ? (
+                                        filteredEquipment.slice(0, perPage).map((item) => (
                                             <TableRow key={item.id}>
-                                                <TableCell>{renderValue(item.door_number)}</TableCell>
-                                                <TableCell>{renderValue(item.name)}</TableCell>
-                                                <TableCell>{renderValue(item.model)}</TableCell>
-                                                <TableCell>{renderValue(item.serial_number)}</TableCell>
-                                                <TableCell>{renderCategory(item.category)}</TableCell>
+                                                <TableCell>{item.door_number}</TableCell>
+                                                <TableCell>{item.name}</TableCell>
+                                                <TableCell>{item.model}</TableCell>
+                                                <TableCell>{item.serial_number}</TableCell>
+                                                <TableCell>{item.category}</TableCell>
                                                 <TableCell>{getStatusBadge(item.status)}</TableCell>
-                                                <TableCell>{renderValue(item.daily_rate)}</TableCell>
+                                                <TableCell>{item.daily_rate}</TableCell>
                                                 <TableCell className="flex justify-end">
                                                     <CrudButtons
                                                         resourceType="equipment"
                                                         resourceId={item.id}
-                                                        resourceName={forceString(item.name, 'equipment')}
+                                                        resourceName={item.name}
                                                     />
                                                 </TableCell>
                                             </TableRow>
                                         ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell colSpan={8} className="py-4 text-center">
+                                                {t('no_equipment_found', 'No equipment found.')}
+                                            </TableCell>
+                                        </TableRow>
                                     )}
                                 </TableBody>
                             </Table>
                         </div>
-
-                        {equipment.last_page > 1 && (
-                            <div className="mt-4 flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm text-gray-500">
-                                        {forceString(t('showing'), 'showing')} {equipment.from} {forceString(t('to'), 'to')} {equipment.to}{' '}
-                                        {forceString(t('of'), 'of')} {equipment.total} {forceString(t('items'), 'items')}
-                                    </p>
-                                </div>
-                                <div className="flex space-x-2">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => applyFilters({ page: equipment.current_page - 1 })}
-                                        disabled={equipment.current_page === 1 || isLoading}
-                                    >
-                                        {forceString(t('previous'), 'previous')}
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => applyFilters({ page: equipment.current_page + 1 })}
-                                        disabled={equipment.current_page === equipment.last_page || isLoading}
-                                    >
-                                        {forceString(t('next'), 'next')}
-                                    </Button>
-                                </div>
-                            </div>
-                        )}
+                        {/* Pagination Controls */}
+                        <div className="mt-4 flex items-center justify-between">
+                            <Button asChild size="sm" variant="outline" disabled={!equipment.links.prev}>
+                                <a href={equipment.links.prev || '#'}>{t('Previous')}</a>
+                            </Button>
+                            <span>
+                                {t('Page')} {equipment.meta?.current_page || 1} {t('of')} {equipment.meta?.last_page || 1}
+                            </span>
+                            <Button asChild size="sm" variant="outline" disabled={!equipment.links.next}>
+                                <a href={equipment.links.next || '#'}>{t('Next')}</a>
+                            </Button>
+                        </div>
                     </CardContent>
                 </Card>
             </div>

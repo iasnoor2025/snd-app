@@ -53,6 +53,7 @@ export { zodResolver } from '@hookform/resolvers/zod';
 export * as z from 'zod';
 
 // Export UI components
+export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './components/ui/table';
 export * from './components/ui';
 
 // Export layouts

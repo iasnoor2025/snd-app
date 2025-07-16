@@ -16,7 +16,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::with(['manager', 'tasks', 'teamMembers'])->get();
+        $projects = Project::with(['manager', 'tasks', 'teamMembers'])->paginate(15);
         return Inertia::render('Modules/ProjectManagement/resources/js/pages/Index', [
             'projects' => $projects,
         ]);

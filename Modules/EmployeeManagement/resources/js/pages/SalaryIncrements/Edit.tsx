@@ -9,8 +9,6 @@ import {
     getTranslation,
     Input,
     Label,
-    RadioGroup,
-    RadioGroupItem,
     Select,
     SelectContent,
     SelectItem,
@@ -293,27 +291,16 @@ export default function Edit({ increment, employees, incrementTypes }: Props) {
 
                                 <div>
                                     <Label>{t('lbl_calculation_method')}</Label>
-                                    <RadioGroup
-                                        value={calculationMethod}
-                                        onValueChange={(value: 'percentage' | 'fixed') => {
-                                            setCalculationMethod(value);
-                                            if (value === 'percentage') {
-                                                setData('increment_amount', undefined);
-                                            } else {
-                                                setData('increment_percentage', undefined);
-                                            }
-                                        }}
-                                        className="mt-2 flex gap-6"
-                                    >
+                                    <div className="mt-2 flex gap-6">
                                         <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="percentage" id="percentage" />
+                                            <input type="radio" id="percentage" name="calculationMethod" value="percentage" checked={calculationMethod === 'percentage'} onChange={() => { setCalculationMethod('percentage'); setData('increment_amount', undefined); }} />
                                             <Label htmlFor="percentage">Percentage</Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="fixed" id="fixed" />
+                                            <input type="radio" id="fixed" name="calculationMethod" value="fixed" checked={calculationMethod === 'fixed'} onChange={() => { setCalculationMethod('fixed'); setData('increment_percentage', undefined); }} />
                                             <Label htmlFor="fixed">{t('lbl_fixed_amount')}</Label>
                                         </div>
-                                    </RadioGroup>
+                                    </div>
                                 </div>
 
                                 {calculationMethod === 'percentage' ? (

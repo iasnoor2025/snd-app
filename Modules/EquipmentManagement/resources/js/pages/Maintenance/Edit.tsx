@@ -11,8 +11,6 @@ import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-    RadioGroup,
-    RadioGroupItem,
     Select,
     SelectContent,
     SelectItem,
@@ -218,24 +216,24 @@ export default function Edit({ auth, maintenanceRecord, equipment, employees, in
                                     <Label htmlFor="type">
                                         Maintenance Type <span className="text-red-500">*</span>
                                     </Label>
-                                    <RadioGroup value={data.type} onValueChange={(value) => setData('type', value)} className="flex space-x-4">
+                                    <div className="flex space-x-4">
                                         <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="routine" id="routine" />
+                                            <input type="radio" id="routine" name="type" value="routine" checked={data.type === 'routine'} onChange={(e) => setData('type', e.target.value)} />
                                             <Label htmlFor="routine">Routine</Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="repair" id="repair" />
+                                            <input type="radio" id="repair" name="type" value="repair" checked={data.type === 'repair'} onChange={(e) => setData('type', e.target.value)} />
                                             <Label htmlFor="repair">Repair</Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="inspection" id="inspection" />
+                                            <input type="radio" id="inspection" name="type" value="inspection" checked={data.type === 'inspection'} onChange={(e) => setData('type', e.target.value)} />
                                             <Label htmlFor="inspection">Inspection</Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="other" id="other" />
+                                            <input type="radio" id="other" name="type" value="other" checked={data.type === 'other'} onChange={(e) => setData('type', e.target.value)} />
                                             <Label htmlFor="other">Other</Label>
                                         </div>
-                                    </RadioGroup>
+                                    </div>
                                     {errors.type && <p className="text-sm text-red-500">{errors.type}</p>}
                                 </div>
 
@@ -243,28 +241,24 @@ export default function Edit({ auth, maintenanceRecord, equipment, employees, in
                                     <Label htmlFor="status">
                                         Status <span className="text-red-500">*</span>
                                     </Label>
-                                    <RadioGroup
-                                        value={data.status}
-                                        onValueChange={(value) => setData('status', value)}
-                                        className="flex flex-wrap gap-4"
-                                    >
+                                    <div className="flex flex-wrap gap-4">
                                         <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="scheduled" id="scheduled" />
+                                            <input type="radio" id="scheduled" name="status" value="scheduled" checked={data.status === 'scheduled'} onChange={(e) => setData('status', e.target.value)} />
                                             <Label htmlFor="scheduled">Scheduled</Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="in_progress" id="in_progress" />
+                                            <input type="radio" id="in_progress" name="status" value="in_progress" checked={data.status === 'in_progress'} onChange={(e) => setData('status', e.target.value)} />
                                             <Label htmlFor="in_progress">In Progress</Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="completed" id="completed" />
+                                            <input type="radio" id="completed" name="status" value="completed" checked={data.status === 'completed'} onChange={(e) => setData('status', e.target.value)} />
                                             <Label htmlFor="completed">Completed</Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="cancelled" id="cancelled" />
+                                            <input type="radio" id="cancelled" name="status" value="cancelled" checked={data.status === 'cancelled'} onChange={(e) => setData('status', e.target.value)} />
                                             <Label htmlFor="cancelled">Cancelled</Label>
                                         </div>
-                                    </RadioGroup>
+                                    </div>
                                     {errors.status && <p className="text-sm text-red-500">{errors.status}</p>}
                                 </div>
 
