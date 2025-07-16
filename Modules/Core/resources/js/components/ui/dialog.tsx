@@ -51,4 +51,17 @@ DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
 const DialogHeader: React.FC<React.PropsWithChildren<{}>> = ({ children }) => <div className="dialog-header">{children}</div>;
 
-export { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger };
+const DialogFooter: React.FC<React.PropsWithChildren<{}>> = ({ children }) => (
+    <div className="flex flex-row-reverse gap-2 pt-4">{children}</div>
+);
+DialogFooter.displayName = 'DialogFooter';
+
+const DialogClose = React.forwardRef<
+    React.ElementRef<typeof DialogPrimitive.Close>,
+    React.ComponentPropsWithoutRef<typeof DialogPrimitive.Close>
+>(({ className, ...props }, ref) => (
+    <DialogPrimitive.Close ref={ref} className={cn('absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none', className)} {...props} />
+));
+DialogClose.displayName = DialogPrimitive.Close.displayName;
+
+export { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose };

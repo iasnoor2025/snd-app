@@ -11,3 +11,7 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(({ children, c
 ));
 
 Toast.displayName = 'Toast';
+
+export function useToast() {
+    return { toast: () => {}, dismiss: () => {} };
+}

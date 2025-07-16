@@ -69,9 +69,12 @@ const Table = forwardRef<HTMLDivElement, TableProps<any>>(
         },
         ref,
     ) => {
-        const totalPages = totalItems ? Math.ceil(totalItems / pageSize) : Math.ceil(data.length / pageSize);
+        // Defensive: always use arrays
+        const safeData = Array.isArray(data) ? data : [];
+        const safeColumns = Array.isArray(columns) ? columns : [];
+        const totalPages = totalItems ? Math.ceil(totalItems / pageSize) : Math.ceil(safeData.length / pageSize);
         const startItem = (currentPage - 1) * pageSize + 1;
-        const endItem = Math.min(currentPage * pageSize, totalItems || data.length);
+        const endItem = Math.min(currentPage * pageSize, totalItems || safeData.length);
 
         const handleSort = (key: string) => {
             if (!onSort) return;
@@ -85,7 +88,7 @@ const Table = forwardRef<HTMLDivElement, TableProps<any>>(
             }
         };
 
-        const visibleColumns = columns.filter((column) => !column.hideOnMobile);
+        const visibleColumns = safeColumns.filter((column) => !column.hideOnMobile);
 
         return (
             <div ref={ref} className={cn('space-y-4', className)} {...props}>
@@ -137,14 +140,14 @@ const Table = forwardRef<HTMLDivElement, TableProps<any>>(
                                         )}
                                     </td>
                                 </tr>
-                            ) : data.length === 0 ? (
+                            ) : safeData.length === 0 ? (
                                 <tr>
                                     <td colSpan={visibleColumns.length + (showRowNumbers ? 1 : 0)} className="h-24 text-center">
                                         {emptyMessage}
                                     </td>
                                 </tr>
                             ) : (
-                                data.map((item, index) => (
+                                safeData.map((item, index) => (
                                     <tr
                                         key={index}
                                         className={cn(
@@ -187,3 +190,4 @@ const TableHeader = ({ children, ...props }: React.HTMLAttributes<HTMLTableSecti
 const TableRow = ({ children, ...props }: React.HTMLAttributes<HTMLTableRowElement>) => <tr {...props}>{children}</tr>;
 
 export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow };
+export const TableComponent = Table;

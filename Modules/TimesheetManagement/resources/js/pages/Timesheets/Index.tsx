@@ -725,7 +725,7 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                         <div className="mt-6 rounded-md border">
                             <ReactTable
                                 data={sortedTimesheetsData}
-                                columns={columns}
+                                columns={Array.isArray(columns) ? columns : []}
                                 sortKey={tableSortKey}
                                 sortDirection={sortOrder}
                                 onSort={handleTableSort}

@@ -10,6 +10,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
     usePermission,
+    DialogClose,
 } from '@/Core';
 import { Link, router } from '@inertiajs/react';
 import { Eye, Loader2, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';

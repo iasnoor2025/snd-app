@@ -23,8 +23,6 @@ function AppLayout({ children, title, breadcrumbs, requiredPermission }: AppLayo
         title: t(item.title),
     }));
 
-    console.log('AppLayout - Rendering with title:', translatedTitle); // Debug log
-
     return (
         <>
             <AppShell variant="sidebar">
