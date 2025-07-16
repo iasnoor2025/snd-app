@@ -63,6 +63,9 @@ interface Props extends PageProps {
     absent_days: number;
     location?: string;
     month_name?: string;
+    assignment_type?: string;
+    assignment_name?: string;
+    assignment_location?: string;
 }
 
 // Add print styles
@@ -174,6 +177,9 @@ export default function PaySlip({
     absent_days,
     location,
     month_name,
+    assignment_type,
+    assignment_name,
+    assignment_location,
 }: Props) {
     const { t } = useTranslation('TimesheetManagement');
 
@@ -330,7 +336,7 @@ export default function PaySlip({
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4">
                                 <div className="flex h-16 w-16 items-center justify-center rounded-md bg-gray-100">
-                                    <img src="/logo.png" alt={t('company_logo')} className="h-14 w-14 object-contain" />
+                                    <img src="/snd%20logo.png" alt="SND Logo" className="h-14 w-14 object-contain bg-white border border-gray-200 rounded" />
                                 </div>
                                 <div>
                                     <CardTitle className="company-name text-xl">Samhan Naser Al-Dosri Est.</CardTitle>
@@ -382,21 +388,31 @@ export default function PaySlip({
                                     <div className="flex flex-col gap-2 border-r border-gray-200 pr-0 md:pr-4">
                                         <div className="mb-1 flex items-center gap-2">
                                             <Building className="h-5 w-5 text-primary" />
-                                            <span className="text-base font-semibold text-gray-800">{t('work_details')}</span>
+                                            <span className="text-base font-semibold text-gray-800">{t('work_details') || 'Work Details'}</span>
                                         </div>
                                         <div className="space-y-1 text-sm">
                                             <div className="flex justify-between">
-                                                <span className="font-medium text-gray-500">Location:</span>
-                                                <span className="font-semibold text-gray-800">{location || '-'}</span>
+                                                <span className="font-medium text-gray-500">Type:</span>
+                                                <span className="font-semibold text-gray-800">
+                                                    {assignment_type ? assignment_type.charAt(0).toUpperCase() + assignment_type.slice(1) : '-'}
+                                                </span>
                                             </div>
                                             <div className="flex justify-between">
-                                                <span className="font-medium text-gray-500">Project:</span>
-                                                <span className="font-semibold text-gray-800">-</span>
+                                                <span className="font-medium text-gray-500">Name:</span>
+                                                <span className="font-semibold text-gray-800">
+                                                    {assignment_name ? assignment_name.charAt(0).toUpperCase() + assignment_name.slice(1) : '-'}
+                                                </span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="font-medium text-gray-500">Location:</span>
+                                                <span className="font-semibold text-gray-800">
+                                                    {assignment_location ? assignment_location.charAt(0).toUpperCase() + assignment_location.slice(1) : '-'}
+                                                </span>
                                             </div>
                                             <div className="flex justify-between">
                                                 <span className="font-medium text-gray-500">Date Range:</span>
                                                 <span className="font-semibold text-gray-800">
-                                                    {formattedStartDate} to {formattedEndDate}
+                                                    {formattedStartDate} - {formattedEndDate}
                                                 </span>
                                             </div>
                                             <div className="flex justify-between">

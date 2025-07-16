@@ -1468,6 +1468,18 @@ class TimesheetController extends Controller
         }
         $displayLocation = $assignedLocation ?? $assignedProject ?? $assignedRental ?? '-';
 
+        // Fetch assignment for this employee for the selected month
+        $assignment = \Modules\EmployeeManagement\Domain\Models\EmployeeAssignment::where('employee_id', $employee->id)
+            ->where(function($q) use ($startDate, $endDate) {
+                $q->whereNull('end_date')->orWhere('end_date', '>=', $startDate);
+            })
+            ->where('start_date', '<=', $endDate)
+            ->orderByDesc('start_date')
+            ->first();
+        $assignmentType = $assignment->type ?? null;
+        $assignmentName = $assignment->name ?? null;
+        $assignmentLocation = $assignment->location ?? null;
+
         return Inertia::render('Timesheets/PaySlip', [
             'employee' => [
                 'id' => $employee->id,
@@ -1502,6 +1514,9 @@ class TimesheetController extends Controller
                 'advance_payment' => $advancePayment,
                 'net_salary' => $netSalary,
             ],
+            'assignment_type' => $assignmentType,
+            'assignment_name' => $assignmentName,
+            'assignment_location' => $assignmentLocation,
         ]);
     }
 

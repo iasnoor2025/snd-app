@@ -1,0 +1,9 @@
+<svg width="505" height="466" viewBox="0 0 505 466" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g>
+<polygon points="252,20 480,135 480,331 252,446 24,331 24,135" stroke="#000" stroke-width="20" fill="none"/>
+<path d="M120 120 L250 60 L250 220 L120 280 Z" fill="#111"/>
+<path d="M385 120 L255 60 L255 220 L385 280 Z" fill="#29585C"/>
+<text x="140" y="250" font-size="80" font-family="serif" fill="#111">D</text>
+<text x="320" y="120" font-size="80" font-family="serif" fill="#29585C">N</text>
+</g>
+</svg>
