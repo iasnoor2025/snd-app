@@ -1,5 +1,5 @@
 import { AppLayout, CreateButton, CrudButtons, usePermission } from '@/Core';
-import { Select } from '@/Core/components/Common/Select';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/Core/components/ui/select';
 import { Badge } from '@/Core/components/ui/badge';
 import { Button } from '@/Core/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
@@ -26,6 +26,7 @@ import { ApprovalDialog } from '../../components/ApprovalDialog';
 import { Eye, Edit } from 'lucide-react';
 import { Trash2 } from 'lucide-react';
 import { Permission } from '@/Core';
+import { Checkbox } from '@/Core/components/ui/checkbox';
 
 // Define the Timesheet interface here to ensure it has all required properties
 interface Project {
@@ -699,17 +700,21 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                                                 setSelectedStatus(value);
                                                 handleSearchWithStatus(value);
                                             }}
-                                            options={[
-                                                { value: 'all', label: t('opt_all_statuses_1') },
-                                                { value: 'draft', label: 'Draft' },
-                                                { value: 'submitted', label: 'Submitted' },
-                                                { value: 'foreman_approved', label: 'Foreman Approved' },
-                                                { value: 'incharge_approved', label: 'Incharge Approved' },
-                                                { value: 'checking_approved', label: 'Checking Approved' },
-                                                { value: 'manager_approved', label: 'Manager Approved' },
-                                                { value: 'rejected', label: 'Rejected' },
-                                            ]}
-                                        />
+                                        >
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="all">{t('opt_all_statuses_1')}</SelectItem>
+                                                <SelectItem value="draft">Draft</SelectItem>
+                                                <SelectItem value="submitted">Submitted</SelectItem>
+                                                <SelectItem value="foreman_approved">Foreman Approved</SelectItem>
+                                                <SelectItem value="incharge_approved">Incharge Approved</SelectItem>
+                                                <SelectItem value="checking_approved">Checking Approved</SelectItem>
+                                                <SelectItem value="manager_approved">Manager Approved</SelectItem>
+                                                <SelectItem value="rejected">Rejected</SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                     </div>
                                     <div className="flex gap-2">
                                         <Button onClick={handleSearch}>{t('btn_search')}</Button>
@@ -729,6 +734,13 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
+                                        <th className="px-2 py-2 text-left">
+                                            <Checkbox
+                                                checked={selectedTimesheets.length > 0 && selectedTimesheets.length === sortedTimesheetsData.length}
+                                                indeterminate={selectedTimesheets.length > 0 && selectedTimesheets.length < sortedTimesheetsData.length}
+                                                onChange={e => toggleSelectAll(e.target.checked)}
+                                            />
+                                        </th>
                                         <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Employee</th>
                                         <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Date</th>
                                         <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Hours</th>
@@ -742,6 +754,12 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                                     {sortedTimesheetsData.length > 0 ? (
                                         sortedTimesheetsData.map((row) => (
                                             <tr key={row.id} className="align-top">
+                                                <td className="px-2 py-2">
+                                                    <Checkbox
+                                                        checked={selectedTimesheets.includes(row.id)}
+                                                        onChange={e => toggleTimesheetSelection(row.id, e.target.checked)}
+                                                    />
+                                                </td>
                                                 <td className="px-2 py-2 whitespace-nowrap text-sm font-medium">{row.employee ? `${row.employee.first_name} ${row.employee.last_name}` : `Employee ID: ${row.employee_id}`}</td>
                                                 <td className="px-2 py-2 whitespace-nowrap text-sm">{format(new Date(row.date), 'dd MMM yyyy')}</td>
                                                 <td className="px-2 py-2 whitespace-nowrap text-sm">{row.hours_worked}</td>
@@ -771,7 +789,7 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                                         ))
                                     ) : (
                                         <tr>
-                                            <td colSpan={7} className="py-4 text-center">
+                                            <td colSpan={8} className="py-4 text-center">
                                                 {t('no_timesheets_found', 'No timesheets found.')}
                                             </td>
                                         </tr>
