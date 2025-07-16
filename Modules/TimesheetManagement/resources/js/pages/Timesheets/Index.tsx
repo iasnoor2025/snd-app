@@ -27,6 +27,7 @@ import { Eye, Edit } from 'lucide-react';
 import { Trash2 } from 'lucide-react';
 import { Permission } from '@/Core';
 import { Checkbox } from '@/Core/components/ui/checkbox';
+import { DatePicker } from '@/Core/components/ui/date-picker';
 
 // Define the Timesheet interface here to ensure it has all required properties
 interface Project {
@@ -718,6 +719,20 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                                                 <SelectItem value="rejected">Rejected</SelectItem>
                                             </SelectContent>
                                         </Select>
+                                    </div>
+                                    <div className="w-full md:w-48">
+                                        <DatePicker
+                                            value={startDate || null}
+                                            onChange={date => setStartDate(date || undefined)}
+                                            className="w-full"
+                                        />
+                                    </div>
+                                    <div className="w-full md:w-48">
+                                        <DatePicker
+                                            value={endDate || null}
+                                            onChange={date => setEndDate(date || undefined)}
+                                            className="w-full"
+                                        />
                                     </div>
                                     <div className="flex gap-2">
                                         <Button onClick={handleSearch}>{t('btn_search')}</Button>
