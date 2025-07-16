@@ -6,9 +6,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/components/ui/table';
 import AppLayout from '@/Core/layouts/AppLayout';
 import type { PageProps } from '@/Core/types';
-import { Head, router } from '@inertiajs/react';
+import { router } from '@inertiajs/core';
 import { Search } from 'lucide-react';
 import React, { useState } from 'react';
+import { Head } from '@inertiajs/react';
 // import { CreateButton } from '@/Core/components/ui/create-button';
 // import { CrudButtons } from '@/Core/components/ui/crud-buttons';
 import CreateButton from '@/Core/components/shared/CreateButton';
@@ -191,17 +192,86 @@ export default function Index({ equipment, categories = [], statuses = {}, filte
                             </Table>
                         </div>
                         {/* Pagination Controls */}
-                        <div className="mt-4 flex items-center justify-between">
-                            <Button asChild size="sm" variant="outline" disabled={!equipment.links.prev}>
-                                <a href={equipment.links.prev || '#'}>{t('Previous')}</a>
-                            </Button>
-                            <span>
-                                {t('Page')} {equipment.meta?.current_page || 1} {t('of')} {equipment.meta?.last_page || 1}
-                            </span>
-                            <Button asChild size="sm" variant="outline" disabled={!equipment.links.next}>
-                                <a href={equipment.links.next || '#'}>{t('Next')}</a>
-                            </Button>
-                        </div>
+                        {safeEquipment.length > 0 && (
+                            <div className="mt-6 border-t pt-4">
+                                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                                    <div className="text-sm text-muted-foreground">
+                                        Showing {(equipment.meta.current_page - 1) * equipment.meta.per_page + 1} to {Math.min(equipment.meta.current_page * equipment.meta.per_page, equipment.meta.total)} of {equipment.meta.total} results
+                                        <div className="mt-1 text-xs opacity-60">
+                                            Page {equipment.meta.current_page} of {equipment.meta.last_page}
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col items-center gap-4 sm:flex-row">
+                                        {/* Per Page Selector */}
+                                        <div className="flex items-center space-x-2">
+                                            <span className="text-sm text-muted-foreground">Show:</span>
+                                            <Select value={perPage.toString()} onValueChange={(v) => {
+                                                setPerPage(Number(v));
+                                                router.get('/equipment', { page: 1, perPage: Number(v), search, status, category }, { preserveState: true, replace: true });
+                                            }}>
+                                                <SelectTrigger className="w-20">
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="10">10</SelectItem>
+                                                    <SelectItem value="25">25</SelectItem>
+                                                    <SelectItem value="50">50</SelectItem>
+                                                    <SelectItem value="100">100</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        {/* Page Navigation */}
+                                        <div className="flex items-center space-x-1">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                disabled={equipment.meta.current_page === 1}
+                                                onClick={() => router.get('/equipment', { page: equipment.meta.current_page - 1, perPage, search, status, category }, { preserveState: true, replace: true })}
+                                            >
+                                                Previous
+                                            </Button>
+                                            {equipment.meta.last_page > 1 && (
+                                                <div className="flex items-center space-x-1">
+                                                    {Array.from({ length: Math.min(5, equipment.meta.last_page) }, (_, i) => {
+                                                        let pageNumber;
+                                                        if (equipment.meta.last_page <= 5) {
+                                                            pageNumber = i + 1;
+                                                        } else {
+                                                            if (equipment.meta.current_page <= 3) {
+                                                                pageNumber = i + 1;
+                                                            } else if (equipment.meta.current_page >= equipment.meta.last_page - 2) {
+                                                                pageNumber = equipment.meta.last_page - 4 + i;
+                                                            } else {
+                                                                pageNumber = equipment.meta.current_page - 2 + i;
+                                                            }
+                                                        }
+                                                        return (
+                                                            <Button
+                                                                key={pageNumber}
+                                                                variant={pageNumber === equipment.meta.current_page ? 'default' : 'outline'}
+                                                                size="sm"
+                                                                className="h-8 w-8 p-0"
+                                                                onClick={() => router.get('/equipment', { page: pageNumber, perPage, search, status, category }, { preserveState: true, replace: true })}
+                                                            >
+                                                                {pageNumber}
+                                                            </Button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            )}
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                disabled={equipment.meta.current_page === equipment.meta.last_page}
+                                                onClick={() => router.get('/equipment', { page: equipment.meta.current_page + 1, perPage, search, status, category }, { preserveState: true, replace: true })}
+                                            >
+                                                Next
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
             </div>

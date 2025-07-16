@@ -19,12 +19,16 @@ import {
     SelectContent,
     SelectItem,
 } from '@/Core';
-import { Head, Link } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { route } from 'ziggy-js';
 import type { Customer, PageProps } from '../../types/index.d';
+import { Eye, Edit } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
+import { Permission } from '@/Core';
+import { router } from '@inertiajs/core';
 
 interface Props extends PageProps {
     customers: {
@@ -101,7 +105,7 @@ export default function Index({ customers }: Props) {
                                 {t('Sync from ERPNext')}
                             </Button>
                             <Button asChild>
-                                <Link href={route('customers.create')}>{t('ttl_create_customer')}</Link>
+                                <a href={route('customers.create')}>{t('ttl_create_customer')}</a>
                             </Button>
                         </div>
                     </CardHeader>
@@ -113,7 +117,7 @@ export default function Index({ customers }: Props) {
                                 onChange={(e) => setSearch(e.target.value)}
                                 className="pl-8"
                             />
-                            <Select value={status} onValueChange={setStatus}>
+                            <Select value={status || ''} onValueChange={setStatus}>
                                 <SelectTrigger className="w-full">
                                     <SelectValue placeholder={t('all_statuses')} />
                                 </SelectTrigger>
@@ -123,7 +127,7 @@ export default function Index({ customers }: Props) {
                                     <SelectItem value="inactive">{t('status_inactive')}</SelectItem>
                                 </SelectContent>
                             </Select>
-                            <Select value={city} onValueChange={setCity}>
+                            <Select value={city || ''} onValueChange={setCity}>
                                 <SelectTrigger className="w-full">
                                     <SelectValue placeholder={t('all_cities')} />
                                 </SelectTrigger>
@@ -134,72 +138,138 @@ export default function Index({ customers }: Props) {
                                     ))}
                                 </SelectContent>
                             </Select>
-                            <Select value={perPage.toString()} onValueChange={(v) => setPerPage(Number(v))}>
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder={t('Rows per page')} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {[10, 25, 50, 100].map((opt) => (
-                                        <SelectItem key={opt} value={opt.toString()}>{opt}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
                         </div>
-                        <div className="overflow-x-auto rounded-md border">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>{t('lbl_name')}</TableHead>
-                                        <TableHead>{t('lbl_contact_person')}</TableHead>
-                                        <TableHead>{t('lbl_email')}</TableHead>
-                                        <TableHead>{t('lbl_phone')}</TableHead>
-                                        <TableHead>{t('lbl_city')}</TableHead>
-                                        <TableHead>{t('lbl_status')}</TableHead>
-                                        <TableHead>{t('lbl_actions')}</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {filteredCustomers.length > 0 ? (
-                                        filteredCustomers.slice(0, perPage).map((customer) => (
-                                            <TableRow key={customer.id}>
-                                                <TableCell>{customer.name}</TableCell>
-                                                <TableCell>{customer.contact_person}</TableCell>
-                                                <TableCell>{customer.email}</TableCell>
-                                                <TableCell>{customer.phone}</TableCell>
-                                                <TableCell>{customer.city}</TableCell>
-                                                <TableCell>{getStatusBadge(customer.status)}</TableCell>
-                                                <TableCell>
-                                                    <Button asChild size="sm" variant="secondary" className="mr-2">
-                                                        <Link href={route('customers.show', customer.id)}>{t('btn_show')}</Link>
-                                                    </Button>
-                                                    <Button asChild size="sm" variant="outline">
-                                                        <Link href={route('customers.edit', customer.id)}>{t('btn_edit')}</Link>
-                                                    </Button>
-                                                </TableCell>
-                                            </TableRow>
+                        <div className="mt-6 rounded-md border overflow-x-auto">
+                            <table className="min-w-full divide-y divide-gray-200">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Customer Name</th>
+                                        <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Email</th>
+                                        <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Phone</th>
+                                        <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Status</th>
+                                        <th className="px-2 py-2 text-right text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200 text-sm">
+                                    {safeCustomers.length > 0 ? (
+                                        safeCustomers.map((customer: Customer) => (
+                                            <tr key={customer.id} className="align-top">
+                                                <td className="px-2 py-2 whitespace-nowrap text-sm font-medium">{customer.name}</td>
+                                                <td className="px-2 py-2 whitespace-nowrap text-sm">{customer.email}</td>
+                                                <td className="px-2 py-2 whitespace-nowrap text-sm">{customer.phone}</td>
+                                                <td className="px-2 py-2 whitespace-nowrap text-sm">{typeof customer.status === 'string' ? <Badge variant={customer.status === 'active' ? 'default' : 'outline'}>{customer.status.charAt(0).toUpperCase() + customer.status.slice(1)}</Badge> : '—'}</td>
+                                                <td className="px-2 py-2 whitespace-nowrap text-right text-sm font-medium">
+                                                    <a href={window.route('customers.show', customer.id)}>
+                                                        <Button variant="ghost" size="icon" className="h-7 w-7">
+                                                            <Eye className="h-4 w-4" />
+                                                        </Button>
+                                                    </a>
+                                                    <a href={window.route('customers.edit', customer.id)}>
+                                                        <Button variant="ghost" size="icon" className="h-7 w-7">
+                                                            <Edit className="h-4 w-4" />
+                                                        </Button>
+                                                    </a>
+                                                    <Permission permission="customers.delete">
+                                                        <a href={window.route('customers.destroy', customer.id)} data-method="delete" data-confirm={t('delete_confirm', 'Are you sure you want to delete this customer?')}>
+                                                            <Button variant="destructive" size="icon" className="h-7 w-7">
+                                                                <Trash2 className="h-4 w-4" />
+                                                            </Button>
+                                                        </a>
+                                                    </Permission>
+                                                </td>
+                                            </tr>
                                         ))
                                     ) : (
-                                        <TableRow>
-                                            <TableCell colSpan={7} className="py-4 text-center">
+                                        <tr>
+                                            <td colSpan={5} className="py-4 text-center">
                                                 {t('no_customers_found', 'No customers found.')}
-                                            </TableCell>
-                                        </TableRow>
+                                            </td>
+                                        </tr>
                                     )}
-                                </TableBody>
-                            </Table>
+                                </tbody>
+                            </table>
                         </div>
                         {/* Pagination Controls */}
-                        <div className="mt-4 flex items-center justify-between">
-                            <Button asChild size="sm" variant="outline" disabled={!customers.prev_page_url}>
-                                <Link href={customers.prev_page_url || '#'}>{t('Previous')}</Link>
-                            </Button>
-                            <span>
-                                {t('Page')} {customers.current_page} {t('of')} {customers.last_page}
-                            </span>
-                            <Button asChild size="sm" variant="outline" disabled={!customers.next_page_url}>
-                                <Link href={customers.next_page_url || '#'}>{t('Next')}</Link>
-                            </Button>
-                        </div>
+                        {safeCustomers.length > 0 && (
+                            <div className="mt-6 border-t pt-4">
+                                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                                    <div className="text-sm text-muted-foreground">
+                                        Showing {(customers.current_page - 1) * customers.per_page + 1} to {Math.min(customers.current_page * customers.per_page, customers.total)} of {customers.total} results
+                                        <div className="mt-1 text-xs opacity-60">
+                                            Page {customers.current_page} of {customers.last_page}
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col items-center gap-4 sm:flex-row">
+                                        {/* Per Page Selector */}
+                                        <div className="flex items-center space-x-2">
+                                            <span className="text-sm text-muted-foreground">Show:</span>
+                                            <Select value={perPage.toString()} onValueChange={(v) => {
+                                                setPerPage(Number(v));
+                                                router.get(route('customers.index'), { page: 1, perPage: Number(v), search, status, city }, { preserveState: true, replace: true });
+                                            }}>
+                                                <SelectTrigger className="w-20">
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="10">10</SelectItem>
+                                                    <SelectItem value="25">25</SelectItem>
+                                                    <SelectItem value="50">50</SelectItem>
+                                                    <SelectItem value="100">100</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        {/* Page Navigation */}
+                                        <div className="flex items-center space-x-1">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                disabled={customers.current_page === 1}
+                                                onClick={() => router.get(route('customers.index'), { page: customers.current_page - 1, perPage, search, status, city }, { preserveState: true, replace: true })}
+                                            >
+                                                Previous
+                                            </Button>
+                                            {customers.last_page > 1 && (
+                                                <div className="flex items-center space-x-1">
+                                                    {Array.from({ length: Math.min(5, customers.last_page) }, (_, i) => {
+                                                        let pageNumber;
+                                                        if (customers.last_page <= 5) {
+                                                            pageNumber = i + 1;
+                                                        } else {
+                                                            if (customers.current_page <= 3) {
+                                                                pageNumber = i + 1;
+                                                            } else if (customers.current_page >= customers.last_page - 2) {
+                                                                pageNumber = customers.last_page - 4 + i;
+                                                            } else {
+                                                                pageNumber = customers.current_page - 2 + i;
+                                                            }
+                                                        }
+                                                        return (
+                                                            <Button
+                                                                key={pageNumber}
+                                                                variant={pageNumber === customers.current_page ? 'default' : 'outline'}
+                                                                size="sm"
+                                                                className="h-8 w-8 p-0"
+                                                                onClick={() => router.get(route('customers.index'), { page: pageNumber, perPage, search, status, city }, { preserveState: true, replace: true })}
+                                                            >
+                                                                {pageNumber}
+                                                            </Button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            )}
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                disabled={customers.current_page === customers.last_page}
+                                                onClick={() => router.get(route('customers.index'), { page: customers.current_page + 1, perPage, search, status, city }, { preserveState: true, replace: true })}
+                                            >
+                                                Next
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
             </div>

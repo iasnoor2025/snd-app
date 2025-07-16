@@ -23,6 +23,9 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { route } from 'ziggy-js';
 import { ApprovalDialog } from '../../components/ApprovalDialog';
+import { Eye, Edit } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
+import { Permission } from '@/Core';
 
 // Define the Timesheet interface here to ensure it has all required properties
 interface Project {
@@ -722,21 +725,59 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                             </div>
                         </div>
 
-                        <div className="mt-6 rounded-md border">
-                            <ReactTable
-                                data={sortedTimesheetsData}
-                                columns={Array.isArray(columns) ? columns : []}
-                                sortKey={tableSortKey}
-                                sortDirection={sortOrder}
-                                onSort={handleTableSort}
-                                emptyMessage={t('no_timesheets_found')}
-                                showRowNumbers={false}
-                                showHeaders={true}
-                                showBorders={true}
-                                showHover={true}
-                                striped={false}
-                                compact={false}
-                            />
+                        <div className="mt-6 rounded-md border overflow-x-auto">
+                            <table className="min-w-full divide-y divide-gray-200">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Employee</th>
+                                        <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Date</th>
+                                        <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Hours</th>
+                                        <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Overtime</th>
+                                        <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Project/Equipment</th>
+                                        <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Status</th>
+                                        <th className="px-2 py-2 text-right text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200 text-sm">
+                                    {sortedTimesheetsData.length > 0 ? (
+                                        sortedTimesheetsData.map((row) => (
+                                            <tr key={row.id} className="align-top">
+                                                <td className="px-2 py-2 whitespace-nowrap text-sm font-medium">{row.employee ? `${row.employee.first_name} ${row.employee.last_name}` : `Employee ID: ${row.employee_id}`}</td>
+                                                <td className="px-2 py-2 whitespace-nowrap text-sm">{format(new Date(row.date), 'dd MMM yyyy')}</td>
+                                                <td className="px-2 py-2 whitespace-nowrap text-sm">{row.hours_worked}</td>
+                                                <td className="px-2 py-2 whitespace-nowrap text-sm">{row.overtime_hours}</td>
+                                                <td className="px-2 py-2 whitespace-nowrap text-sm">{row.project?.name || row.rental?.equipment?.name || t('not_assigned')}</td>
+                                                <td className="px-2 py-2 whitespace-nowrap text-sm">{getStatusBadge(row.status)}</td>
+                                                <td className="px-2 py-2 whitespace-nowrap text-right text-sm font-medium">
+                                                    <a href={window.route('timesheets.show', row.id)}>
+                                                        <Button variant="ghost" size="icon" className="h-7 w-7">
+                                                            <Eye className="h-4 w-4" />
+                                                        </Button>
+                                                    </a>
+                                                    <a href={window.route('timesheets.edit', row.id)}>
+                                                        <Button variant="ghost" size="icon" className="h-7 w-7">
+                                                            <Edit className="h-4 w-4" />
+                                                        </Button>
+                                                    </a>
+                                                    <Permission permission="timesheets.delete">
+                                                        <a href={window.route('timesheets.destroy', row.id)} data-method="delete" data-confirm={t('delete_confirm', 'Are you sure you want to delete this timesheet?')}>
+                                                            <Button variant="destructive" size="icon" className="h-7 w-7">
+                                                                <Trash2 className="h-4 w-4" />
+                                                            </Button>
+                                                        </a>
+                                                    </Permission>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan={7} className="py-4 text-center">
+                                                {t('no_timesheets_found', 'No timesheets found.')}
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
                         </div>
 
                         {/* Pagination Controls */}
