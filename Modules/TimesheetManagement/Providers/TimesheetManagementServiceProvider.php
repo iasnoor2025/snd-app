@@ -29,6 +29,7 @@ class TimesheetManagementServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'TimesheetManagement');
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();

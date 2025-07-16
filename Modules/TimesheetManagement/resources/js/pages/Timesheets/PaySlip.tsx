@@ -16,6 +16,7 @@ import { ArrowLeft, Building, Calendar, Clock, DollarSign, Download, MapPin, Pri
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/components/ui/table';
+import { toast } from 'sonner';
 
 interface DayData {
     date: string;
@@ -261,7 +262,17 @@ export default function PaySlip({
                     Accept: 'application/pdf',
                 },
             });
-            if (!response.ok) throw new Error('Failed to download PDF');
+            if (!response.ok) {
+                const text = await response.text();
+                toast.error('Failed to download PDF', { description: text });
+                throw new Error('Failed to download PDF');
+            }
+            const contentType = response.headers.get('content-type') || '';
+            if (!contentType.includes('application/pdf')) {
+                const text = await response.text();
+                toast.warning('PDF downloaded, but response was not a PDF.', { description: text });
+                return;
+            }
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -272,7 +283,7 @@ export default function PaySlip({
             a.remove();
             window.URL.revokeObjectURL(url);
         } catch (e) {
-            alert('Failed to download PDF');
+            toast.error('Failed to download PDF');
         } finally {
             setIsLoading(false);
         }

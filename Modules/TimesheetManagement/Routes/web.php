@@ -22,6 +22,9 @@ use Modules\TimesheetManagement\Http\Controllers\TimesheetProjectController;
 use Modules\TimesheetManagement\Http\Controllers\TimesheetSettingController;
 use Inertia\Inertia;
 
+// Payslip PDF download (public, no auth required)
+Route::get('/timesheets/payslip/pdf', [\Modules\TimesheetManagement\Http\Controllers\PaySlipPdfController::class, 'download'])->name('timesheets.payslip.pdf');
+
 Route::prefix('timesheets')->name('timesheets.')->middleware(['auth', 'verified'])->group(function () {
     // Dashboard
     Route::get('/', [TimesheetController::class, 'index'])
@@ -233,11 +236,6 @@ Route::prefix('timesheets')->name('timesheets.')->middleware(['auth', 'verified'
                 'calendar' => $calendar,
             ]);
         })->name('direct-pay-slip');
-
-        // Payslip PDF download
-        Route::get('/payslip/pdf', [\Modules\TimesheetManagement\Http\Controllers\PaySlipPdfController::class, 'download'])
-            ->middleware('permission:timesheets.view')
-            ->name('payslip.pdf');
     });
 });
 
