@@ -55,6 +55,7 @@ interface Timesheet {
             name?: string;
         };
     };
+    location?: string;
     description?: string;
     tasks_completed?: string;
     status: string;
@@ -782,7 +783,15 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                                                 <td className="px-2 py-2 whitespace-nowrap text-sm">{format(new Date(row.date), 'dd MMM yyyy')}</td>
                                                 <td className="px-2 py-2 whitespace-nowrap text-sm">{row.hours_worked}</td>
                                                 <td className="px-2 py-2 whitespace-nowrap text-sm">{row.overtime_hours}</td>
-                                                <td className="px-2 py-2 whitespace-nowrap text-sm">{row.project?.name || row.rental?.equipment?.name || t('not_assigned')}</td>
+                                                <td className="px-2 py-2 whitespace-nowrap text-sm">
+                                                    {row.project?.name
+                                                        ? `Project: ${row.project.name}`
+                                                        : row.rental?.equipment?.name
+                                                            ? `Rental: ${row.rental.equipment.name}`
+                                                            : row.location
+                                                                ? `Location: ${row.location}`
+                                                                : t('not_assigned')}
+                                                </td>
                                                 <td className="px-2 py-2 whitespace-nowrap text-sm">{getStatusBadge(row.status)}</td>
                                                 <td className="px-2 py-2 whitespace-nowrap text-right text-sm font-medium">
                                                     <a href={window.route('timesheets.show', row.id)}>

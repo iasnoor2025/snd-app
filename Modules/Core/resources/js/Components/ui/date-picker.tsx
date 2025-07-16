@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Button, Calendar, Popover, PopoverContent, PopoverTrigger } from '@/Core';
 import { cn } from '../../lib/utils';
 import { format } from 'date-fns';
@@ -10,8 +11,9 @@ interface DatePickerProps {
 }
 
 export function DatePicker({ value, onChange, className }: DatePickerProps) {
+    const [open, setOpen] = useState(false);
     return (
-        <Popover>
+        <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button
                     variant={'outline'}
@@ -22,7 +24,15 @@ export function DatePicker({ value, onChange, className }: DatePickerProps) {
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
-                <Calendar mode="single" selected={value} onSelect={onChange} initialFocus />
+                <Calendar
+                    mode="single"
+                    selected={value}
+                    onSelect={(date) => {
+                        onChange(date ?? null);
+                        setOpen(false);
+                    }}
+                    initialFocus
+                />
             </PopoverContent>
         </Popover>
     );
