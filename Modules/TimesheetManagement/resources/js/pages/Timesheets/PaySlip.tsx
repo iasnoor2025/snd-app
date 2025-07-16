@@ -508,7 +508,7 @@ export default function PaySlip({
                                             {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day, idx, arr) => (
                                                 <th
                                                     key={day}
-                                                    className={`border bg-black text-center align-middle text-xs font-bold text-white ${idx === 0 ? 'rounded-l-md' : ''} ${idx === arr.length - 1 ? 'rounded-r-md' : ''}`}
+                                                    className={`border bg-black text-center align-middle text-xs font-bold text-white h-10 ${idx === 0 ? 'rounded-l-md' : ''} ${idx === arr.length - 1 ? 'rounded-r-md' : ''}`}
                                                 >
                                                     {day.toString().padStart(2, '0')}
                                                 </th>
