@@ -61,6 +61,8 @@ interface Props extends PageProps {
     calendar: Record<string, DayData>;
     salary_details?: SalaryDetails;
     absent_days: number;
+    location?: string;
+    month_name?: string;
 }
 
 // Add print styles
@@ -170,6 +172,8 @@ export default function PaySlip({
     calendar,
     salary_details,
     absent_days,
+    location,
+    month_name,
 }: Props) {
     const { t } = useTranslation('TimesheetManagement');
 
@@ -383,7 +387,7 @@ export default function PaySlip({
                                         <div className="space-y-1 text-sm">
                                             <div className="flex justify-between">
                                                 <span className="font-medium text-gray-500">Location:</span>
-                                                <span className="font-semibold text-gray-800">-</span>
+                                                <span className="font-semibold text-gray-800">{location || '-'}</span>
                                             </div>
                                             <div className="flex justify-between">
                                                 <span className="font-medium text-gray-500">Project:</span>
@@ -397,9 +401,7 @@ export default function PaySlip({
                                             </div>
                                             <div className="flex justify-between">
                                                 <span className="font-medium text-gray-500">Month:</span>
-                                                <span className="font-semibold text-gray-800">
-                                                    {month} {year}
-                                                </span>
+                                                <span className="font-semibold text-gray-800">{month_name}</span>
                                             </div>
                                         </div>
                                     </div>

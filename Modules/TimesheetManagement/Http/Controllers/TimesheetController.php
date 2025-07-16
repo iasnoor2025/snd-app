@@ -1454,6 +1454,20 @@ class TimesheetController extends Controller
         $advancePayment = $employee->total_advance_balance ?? 0;
         $netSalary = $basicSalary + $totalAllowances + $overtimePay - $absentDeduction - $advancePayment;
 
+        // Add month name
+        $monthName = date('F Y', strtotime($startDate));
+        // Find assigned location/project/rental for the month
+        $assignedLocation = null;
+        $assignedProject = null;
+        $assignedRental = null;
+        foreach ($timesheets as $ts) {
+            if (!$assignedLocation && $ts->location) $assignedLocation = $ts->location;
+            if (!$assignedProject && $ts->project && $ts->project->name) $assignedProject = $ts->project->name;
+            if (!$assignedRental && $ts->rental && $ts->rental->equipment && $ts->rental->equipment->name) $assignedRental = $ts->rental->equipment->name;
+            if ($assignedLocation || $assignedProject || $assignedRental) break;
+        }
+        $displayLocation = $assignedLocation ?? $assignedProject ?? $assignedRental ?? '-';
+
         return Inertia::render('Timesheets/PaySlip', [
             'employee' => [
                 'id' => $employee->id,
@@ -1469,7 +1483,9 @@ class TimesheetController extends Controller
                 'advance_payment' => $employee->total_advance_balance,
             ],
             'month' => str_pad($monthNum, 2, '0', STR_PAD_LEFT),
+            'month_name' => $monthName,
             'year' => $year,
+            'location' => $displayLocation,
             'start_date' => $startDate,
             'end_date' => $endDate,
             'total_regular_hours' => $totalRegularHours,
