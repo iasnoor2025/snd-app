@@ -419,6 +419,9 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
         },
     ];
 
+    const from = (timesheets.current_page - 1) * timesheets.per_page + 1;
+    const to = Math.min(timesheets.current_page * timesheets.per_page, timesheets.total);
+
     return (
         <AppLayout title={t('ttl_timesheets')} breadcrumbs={breadcrumbs} requiredPermission="timesheets.view">
             <Head title={t('ttl_timesheets')} />
@@ -798,41 +801,88 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                             </table>
                         </div>
 
-                        {/* Pagination Controls */}
-                        {timesheets.last_page > 1 && (
-                            <div className="mt-4 flex items-center justify-between">
-                                <div className="text-sm text-muted-foreground">
-                                    Showing {(timesheets.current_page - 1) * timesheets.per_page + 1} to{' '}
-                                    {Math.min(timesheets.current_page * timesheets.per_page, timesheets.total)} of {timesheets.total} results
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => {
-                                            if (timesheets.current_page > 1) {
-                                                reloadPage(timesheets.current_page - 1);
-                                            }
-                                        }}
-                                        disabled={timesheets.current_page <= 1}
-                                    >
-                                        {t('btn_previous')}
-                                    </Button>
-                                    <span className="text-sm">
-                                        Page {timesheets.current_page} of {timesheets.last_page}
-                                    </span>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => {
-                                            if (timesheets.current_page < timesheets.last_page) {
-                                                reloadPage(timesheets.current_page + 1);
-                                            }
-                                        }}
-                                        disabled={timesheets.current_page >= timesheets.last_page}
-                                    >
-                                        {t('btn_next')}
-                                    </Button>
+                        {timesheets.data && timesheets.data.length > 0 && (
+                            <div className="mt-6 border-t pt-4">
+                                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                                    <div className="text-sm text-muted-foreground">
+                                        Showing {from} to {to} of {timesheets.total || timesheets.data.length} results
+                                        <div className="mt-1 text-xs opacity-60">
+                                            Page {timesheets.current_page || 1} of {timesheets.last_page || 1}
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col items-center gap-4 sm:flex-row">
+                                        {/* Per Page Selector */}
+                                        <div className="flex items-center space-x-2">
+                                            <span className="text-sm text-muted-foreground">Show:</span>
+                                            <Select value={perPage.toString()} onValueChange={value => { setPerPage(Number(value)); reloadPage(1); }}>
+                                                <SelectTrigger className="w-20">
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="10">10</SelectItem>
+                                                    <SelectItem value="15">15</SelectItem>
+                                                    <SelectItem value="25">25</SelectItem>
+                                                    <SelectItem value="50">50</SelectItem>
+                                                    <SelectItem value="100">100</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        {/* Page Navigation */}
+                                        <div className="flex items-center space-x-1">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                disabled={!timesheets.current_page || timesheets.current_page === 1}
+                                                onClick={() => {
+                                                    if (timesheets.current_page > 1) reloadPage(timesheets.current_page - 1);
+                                                }}
+                                            >
+                                                Previous
+                                            </Button>
+                                            {/* Page Numbers */}
+                                            {timesheets.last_page && timesheets.last_page > 1 && (
+                                                <div className="flex items-center space-x-1">
+                                                    {Array.from({ length: Math.min(5, timesheets.last_page) }, (_, i) => {
+                                                        let pageNumber;
+                                                        const lastPage = timesheets.last_page;
+                                                        const currentPage = timesheets.current_page;
+                                                        if (lastPage <= 5) {
+                                                            pageNumber = i + 1;
+                                                        } else {
+                                                            if (currentPage <= 3) {
+                                                                pageNumber = i + 1;
+                                                            } else if (currentPage >= lastPage - 2) {
+                                                                pageNumber = lastPage - 4 + i;
+                                                            } else {
+                                                                pageNumber = currentPage - 2 + i;
+                                                            }
+                                                        }
+                                                        return (
+                                                            <Button
+                                                                key={pageNumber}
+                                                                variant={pageNumber === currentPage ? 'default' : 'outline'}
+                                                                size="sm"
+                                                                className="h-8 w-8 p-0"
+                                                                onClick={() => reloadPage(pageNumber)}
+                                                            >
+                                                                {pageNumber}
+                                                            </Button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            )}
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                disabled={!timesheets.current_page || !timesheets.last_page || timesheets.current_page >= timesheets.last_page}
+                                                onClick={() => {
+                                                    if (timesheets.current_page < timesheets.last_page) reloadPage(timesheets.current_page + 1);
+                                                }}
+                                            >
+                                                Next
+                                            </Button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         )}
