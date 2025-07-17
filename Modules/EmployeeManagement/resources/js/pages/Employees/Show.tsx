@@ -70,6 +70,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Employee as BaseEmployee } from '../../types/models/index';
+import { toast } from 'sonner';
 axios.defaults.withCredentials = true;
 // Replace static imports with React.lazy for large components
 const DocumentManager = React.lazy(() => import('../../components/employees/EmployeeDocumentManager'));
@@ -1065,6 +1066,21 @@ export default function Show({
     // All others go to history (exclude current assignment)
     const strictAssignmentHistory = sortedAssignments.filter((a) => !currentAssignment || a.id !== currentAssignment.id);
 
+    // Add a handler for updating documents
+    function handleUpdateDocument(documentType: string, employeeId: number) {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.pdf,.jpg,.jpeg,.png';
+      input.onchange = (e: any) => {
+        const file = e.target.files?.[0];
+        if (file) {
+          toast.success(`Selected file for ${documentType}: ${file.name}`);
+          // TODO: Implement actual upload logic here
+        }
+      };
+      input.click();
+    }
+
     return (
         <AppLayout
             title={employee ? `${employee.first_name || ''} ${employee.last_name || ''}` : 'Employee Details'}
@@ -1841,111 +1857,134 @@ export default function Show({
                         </Card>
 
                         {/* Legal Documents Section */}
-                        <DocumentSection
-              title={t('ttl_legal_documents')}
-              description="Official identification and legal documents"
-              badgeText="Required Documents"
-              badgeClassName="bg-blue-50 text-blue-700 border-blue-200"
-            >
-              <DocumentCard
-                title={t('ttl_iqama')}
-                documentNumber={employee.iqama_number}
-                documentType="iqama"
-                employeeId={employee.id}
-                icon={<IdCard className="h-4 w-4 text-muted-foreground" />}
-                previewSize="id_card"
-                documentName="IQAMA"
-              />
-              <DocumentCard
-                title={t('ttl_passport')}
-                documentNumber={employee.passport_number}
-                documentType="passport"
-                employeeId={employee.id}
-                icon={<IdCard className="h-4 w-4 text-muted-foreground" />}
-                previewSize="id_card"
-                documentName="Passport"
-              />
-            </DocumentSection>
+                        <Card className="mt-10">
+                          <CardHeader>
+                            <CardTitle>{t('ttl_legal_documents')}</CardTitle>
+                            <CardDescription>Official identification and legal documents for this employee.</CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <DocumentSection
+                              title={t('ttl_legal_documents')}
+                              description="Official identification and legal documents"
+                              badgeText="Required Documents"
+                              badgeClassName="bg-blue-50 text-blue-700 border-blue-200"
+                            >
+                              <DocumentCard
+                                title={t('ttl_iqama')}
+                                documentNumber={employee.iqama_number}
+                                documentType="iqama"
+                                employeeId={employee.id}
+                                icon={<IdCard className="h-4 w-4 text-muted-foreground" />}
+                                previewSize="id_card"
+                                documentName="IQAMA"
+                              />
+                              <DocumentCard
+                                title={t('ttl_passport')}
+                                documentNumber={employee.passport_number}
+                                documentType="passport"
+                                employeeId={employee.id}
+                                icon={<IdCard className="h-4 w-4 text-muted-foreground" />}
+                                previewSize="id_card"
+                                documentName="Passport"
+                              />
+                            </DocumentSection>
+                          </CardContent>
+                        </Card>
 
                         {/* Licenses Section */}
-                        <DocumentSection
-              title={t('ttl_licenses_certifications')}
-              description="Professional licenses and certifications"
-              badgeText="Professional Documents"
-              badgeClassName="bg-purple-50 text-purple-700 border-purple-200"
-            >
-              <DocumentCard
-                title={t('driving_license')}
-                documentNumber={employee.driving_license_number}
-                documentType="driving_license"
-                employeeId={employee.id}
-                icon={<Car className="h-4 w-4" />}
-                previewSize="id_card"
-                documentName="Driving License"
-              />
-              <DocumentCard
-                title={t('lbl_operator_license')}
-                documentNumber={employee.operator_license_number}
-                documentType="operator_license"
-                employeeId={employee.id}
-                icon={<Truck className="h-4 w-4" />}
-                previewSize="id_card"
-                documentName="Operator License"
-              />
-              <DocumentCard
-                title={t('ttl_tuv_certification')}
-                documentNumber={employee.tuv_certification_number}
-                documentType="tuv_certification"
-                employeeId={employee.id}
-                icon={<Award className="h-4 w-4" />}
-                previewSize="id_card"
-                documentName="TUV Certification"
-              />
-              <DocumentCard
-                title={t('ttl_spsp_license')}
-                documentNumber={employee.spsp_license_number}
-                documentType="spsp_license"
-                employeeId={employee.id}
-                icon={<Award className="h-4 w-4" />}
-                previewSize="id_card"
-                documentName="SPSP License"
-              />
-            </DocumentSection>
+                        <Card className="mt-10">
+                          <CardHeader>
+                            <CardTitle>{t('ttl_licenses_certifications')}</CardTitle>
+                            <CardDescription>Professional licenses and certifications for this employee.</CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <DocumentSection
+                              title={t('ttl_licenses_certifications')}
+                              description="Professional licenses and certifications"
+                              badgeText="Professional Documents"
+                              badgeClassName="bg-purple-50 text-purple-700 border-purple-200"
+                            >
+                              <DocumentCard
+                                title={t('driving_license')}
+                                documentNumber={employee.driving_license_number}
+                                documentType="driving_license"
+                                employeeId={employee.id}
+                                icon={<Car className="h-4 w-4" />}
+                                previewSize="id_card"
+                                documentName="Driving License"
+                              />
+                              <DocumentCard
+                                title={t('lbl_operator_license')}
+                                documentNumber={employee.operator_license_number}
+                                documentType="operator_license"
+                                employeeId={employee.id}
+                                icon={<Truck className="h-4 w-4" />}
+                                previewSize="id_card"
+                                documentName="Operator License"
+                              />
+                              <DocumentCard
+                                title={t('ttl_tuv_certification')}
+                                documentNumber={employee.tuv_certification_number}
+                                documentType="tuv_certification"
+                                employeeId={employee.id}
+                                icon={<Award className="h-4 w-4" />}
+                                previewSize="id_card"
+                                documentName="TUV Certification"
+                              />
+                              <DocumentCard
+                                title={t('ttl_spsp_license')}
+                                documentNumber={employee.spsp_license_number}
+                                documentType="spsp_license"
+                                employeeId={employee.id}
+                                icon={<Award className="h-4 w-4" />}
+                                previewSize="id_card"
+                                documentName="SPSP License"
+                              />
+                            </DocumentSection>
+                          </CardContent>
+                        </Card>
 
                         {/* Additional Documents Section */}
-                        <Card>
-              <CardHeader>
-                <CardTitle>{t('ttl_additional_documents')}</CardTitle>
-                <CardDescription>
-                  Upload and manage additional documents for this employee.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <AdditionalDocumentsList
-                  employeeId={employee.id}
-                  onUploadSuccess={() => {
-                    // Refresh the page data if needed
-                    window.location.reload();
-                  }}
-                  onDeleteSuccess={() => {
-                    // Refresh the page data if needed
-                    window.location.reload();
-                  }}
-                />
-              </CardContent>
-            </Card>
+                        <Card className="mt-10">
+                          <CardHeader>
+                            <CardTitle>{t('ttl_additional_documents')}</CardTitle>
+                            <CardDescription>
+                              Upload and manage additional documents for this employee.
+                            </CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <AdditionalDocumentsList
+                              employeeId={employee.id}
+                              documents={[]}
+                              onUploadSuccess={() => {
+                                window.location.reload();
+                              }}
+                              onDeleteSuccess={() => {
+                                window.location.reload();
+                              }}
+                            />
+                          </CardContent>
+                        </Card>
 
                         {/* Document Expiry Tracker */}
-                        <DocumentExpiryTracker
-              documents={[
-                { name: 'Iqama', expiry: employee.iqama_expiry, number: employee.iqama_number },
-                { name: 'Passport', expiry: employee.passport_expiry, number: employee.passport_number },
-                { name: 'Driving License', expiry: employee.driving_license_expiry, number: employee.driving_license_number },
-                { name: 'Operator License', expiry: employee.operator_license_expiry, number: employee.operator_license_number },
-                { name: 'TÜV Certification', expiry: employee.tuv_certification_expiry, number: employee.tuv_certification_number },
-                { name: 'SPSP License', expiry: employee.spsp_license_expiry, number: employee.spsp_license_number },
-              ]}
-            />
+                        <Card className="mt-10">
+                          <CardHeader>
+                            <CardTitle>Document Expiry Tracker</CardTitle>
+                            <CardDescription>Only documents that are expiring soon or already expired are shown below.</CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <DocumentExpiryTracker
+                              documents={[
+                                { name: 'Iqama', expiry: employee.iqama_expiry, number: employee.iqama_number },
+                                { name: 'Passport', expiry: employee.passport_expiry, number: employee.passport_number },
+                                { name: 'Driving License', expiry: employee.driving_license_expiry, number: employee.driving_license_number },
+                                { name: 'Operator License', expiry: employee.operator_license_expiry, number: employee.operator_license_number },
+                                { name: 'TÜV Certification', expiry: employee.tuv_certification_expiry, number: employee.tuv_certification_number },
+                                { name: 'SPSP License', expiry: employee.spsp_license_expiry, number: employee.spsp_license_number },
+                              ]}
+                            />
+                          </CardContent>
+                        </Card>
                     </TabsContent>
 
                     <TabsContent value="assignments" className="mt-6 space-y-6">
@@ -3206,6 +3245,7 @@ const DocumentCard = ({
   const previewUrl = `/api/employee/${employeeId}/documents/${documentType}/preview`;
   const isImage = ["jpg", "jpeg", "png", "gif"].some((ext) => (previewUrl || '').toLowerCase().endsWith(ext));
   const isPdf = (previewUrl || '').toLowerCase().endsWith("pdf");
+  const hasDocument = !!documentNumber; // or use a real check for document existence
 
   return (
     <div className="rounded-2xl border bg-white shadow-lg p-6 flex flex-col items-center w-full max-w-sm min-w-[340px] mx-auto min-h-[420px]">
@@ -3236,91 +3276,153 @@ const DocumentCard = ({
         </div>
         <div className="text-base text-muted-foreground mb-3">{documentNumber || 'Not set'}</div>
         <div className="flex justify-center gap-3 mt-3">
-          <Button
-            variant="outline"
-            size="sm"
-            asChild
-            className="text-sm px-3 py-2"
-          >
-            <a href={`/api/employee/${employeeId}/documents/${documentType}/download`} target="_blank" rel="noopener noreferrer">
-              <Download className="h-5 w-5 mr-1" /> Download
-            </a>
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            asChild
-            className="text-sm px-3 py-2"
-          >
-            <a href={previewUrl} target="_blank" rel="noopener noreferrer">
-              <Eye className="h-5 w-5 mr-1" /> Preview
-            </a>
-          </Button>
+          {hasDocument ? (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                asChild
+                className="text-sm px-3 py-2"
+              >
+                <a href={`/api/employee/${employeeId}/documents/${documentType}/download`} target="_blank" rel="noopener noreferrer">
+                  <Download className="h-5 w-5 mr-1" /> Download
+                </a>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                asChild
+                className="text-sm px-3 py-2"
+              >
+                <a href={previewUrl} target="_blank" rel="noopener noreferrer">
+                  <Eye className="h-5 w-5 mr-1" /> Preview
+                </a>
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                className="text-sm px-3 py-2"
+                onClick={() => handleUpdateDocument(documentType, employeeId)}
+              >
+                Update
+              </Button>
+            </>
+          ) : (
+            <Button
+              variant="default"
+              size="sm"
+              className="text-sm px-3 py-2"
+              onClick={() => handleUpdateDocument(documentType, employeeId)}
+            >
+              Upload
+            </Button>
+          )}
         </div>
       </div>
     </div>
   );
 };
-const AdditionalDocumentsList = (props: any) => (
-  <div className="flex flex-row gap-10 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-muted-foreground/30 scrollbar-track-transparent">
-    {[1, 2, 3, 4].map((i) => (
-      <div key={i} className="rounded-2xl border bg-white shadow-lg p-6 flex flex-col items-center w-full max-w-sm min-w-[340px] mx-auto min-h-[420px]">
-        <div className="mb-5 flex items-center justify-center w-full h-72 bg-muted/30 rounded-xl overflow-hidden">
-          <FileText className="h-20 w-20 text-blue-500 mb-2" />
-          <span className="text-base text-muted-foreground">No Preview</span>
-        </div>
-        <div className="w-full text-center">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <FileText className="h-5 w-5 text-muted-foreground" />
-            <span className="font-bold text-lg truncate">Additional Document {i}</span>
-          </div>
-          <div className="text-base text-muted-foreground mb-3">Not set</div>
-          <div className="flex justify-center gap-3 mt-3">
-            <Button
-              variant="outline"
-              size="sm"
-              asChild
-              className="text-sm px-3 py-2"
-            >
-              <a href="#" target="_blank" rel="noopener noreferrer">
-                <Download className="h-5 w-5 mr-1" /> Download
-              </a>
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              asChild
-              className="text-sm px-3 py-2"
-            >
-              <a href="#" target="_blank" rel="noopener noreferrer">
-                <Eye className="h-5 w-5 mr-1" /> Preview
-              </a>
-            </Button>
-          </div>
-        </div>
+const AdditionalDocumentsList = ({ documents = [], employeeId }: any) => {
+  if (!documents.length) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[220px] py-10">
+        <Button
+          variant="default"
+          size="lg"
+          className="text-base px-6 py-3"
+          onClick={() => handleUpdateDocument('additional', employeeId)}
+        >
+          Upload Document
+        </Button>
+        <div className="mt-2 text-muted-foreground text-sm">No additional documents uploaded yet.</div>
       </div>
-    ))}
-  </div>
-);
+    );
+  }
+  return (
+    <div className="flex flex-row gap-10 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-muted-foreground/30 scrollbar-track-transparent">
+      {documents.map((doc: any, i: number) => (
+        <div key={i} className="rounded-2xl border bg-white shadow-lg p-6 flex flex-col items-center w-full max-w-sm min-w-[340px] mx-auto min-h-[420px]">
+          <div className="mb-5 flex items-center justify-center w-full h-72 bg-muted/30 rounded-xl overflow-hidden">
+            {doc.previewUrl ? (
+              <img
+                src={doc.previewUrl}
+                alt={doc.name}
+                className="object-contain h-full w-full"
+                style={{ maxHeight: 280, maxWidth: 360 }}
+              />
+            ) : (
+              <FileText className="h-20 w-20 text-blue-500 mb-2" />
+            )}
+            <span className="text-base text-muted-foreground">{doc.previewUrl ? '' : 'No Preview'}</span>
+          </div>
+          <div className="w-full text-center">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <FileText className="h-5 w-5 text-muted-foreground" />
+              <span className="font-bold text-lg truncate">{doc.name || 'Additional Document'}</span>
+            </div>
+            <div className="text-base text-muted-foreground mb-3">{doc.description || '—'}</div>
+            <div className="flex justify-center gap-3 mt-3">
+              <Button
+                variant="outline"
+                size="sm"
+                asChild
+                className="text-sm px-3 py-2"
+              >
+                <a href={doc.downloadUrl || '#'} target="_blank" rel="noopener noreferrer">
+                  <Download className="h-5 w-5 mr-1" /> Download
+                </a>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                asChild
+                className="text-sm px-3 py-2"
+              >
+                <a href={doc.previewUrl || '#'} target="_blank" rel="noopener noreferrer">
+                  <Eye className="h-5 w-5 mr-1" /> Preview
+                </a>
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                className="text-sm px-3 py-2"
+                onClick={() => handleUpdateDocument('additional', employeeId)}
+              >
+                Update
+              </Button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
 const DocumentExpiryTracker = ({ documents }: any) => {
   // Helper to determine status and color
   const getStatus = (expiry: string | undefined) => {
-    if (!expiry) return { label: 'No Expiry', color: 'bg-gray-200 text-gray-600' };
+    if (!expiry) return { label: 'No Expiry', color: 'bg-gray-200 text-gray-600', days: null };
     const now = new Date();
     const exp = new Date(expiry);
     const days = Math.ceil((exp.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-    if (days < 0) return { label: 'Expired', color: 'bg-red-100 text-red-700' };
-    if (days <= 30) return { label: 'Expiring Soon', color: 'bg-yellow-100 text-yellow-800' };
-    return { label: 'Valid', color: 'bg-green-100 text-green-800' };
+    if (days < 0) return { label: 'Expired', color: 'bg-red-100 text-red-700', days };
+    if (days <= 30) return { label: 'Expiring Soon', color: 'bg-yellow-100 text-yellow-800', days };
+    return { label: 'Valid', color: 'bg-green-100 text-green-800', days };
   };
+
+  // Only show expiring soon or expired
+  const filtered = documents.filter((doc: any) => {
+    const status = getStatus(doc.expiry);
+    return status.label === 'Expired' || status.label === 'Expiring Soon';
+  });
+
+  if (filtered.length === 0) {
+    return <div className="text-center text-muted-foreground py-8">No documents are expiring soon or expired.</div>;
+  }
 
   return (
     <div className="flex flex-row gap-10 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-muted-foreground/30 scrollbar-track-transparent">
-      {documents.map((doc: any, i: number) => {
+      {filtered.map((doc: any, i: number) => {
         const status = getStatus(doc.expiry);
-        const now = new Date();
-        const exp = doc.expiry ? new Date(doc.expiry) : null;
-        const days = exp ? Math.ceil((exp.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : null;
         return (
           <div key={i} className="rounded-2xl border bg-white shadow-lg p-6 flex flex-col items-center w-full max-w-xs min-w-[260px] mx-auto min-h-[220px]">
             <div className="mb-3 flex items-center gap-2">
@@ -3331,7 +3433,7 @@ const DocumentExpiryTracker = ({ documents }: any) => {
               Expiry: {doc.expiry ? new Date(doc.expiry).toLocaleDateString() : 'N/A'}
             </div>
             <div className="text-lg font-semibold mb-2">
-              {days !== null ? (days < 0 ? 'Expired' : `${days} days left`) : '—'}
+              {status.days !== null ? (status.days < 0 ? 'Expired' : `${status.days} days left`) : '—'}
             </div>
           </div>
         );
