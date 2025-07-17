@@ -1521,57 +1521,102 @@ class TimesheetController extends Controller
     }
 
     /**
-     * Create missing timesheets for all active assignments (for current user or all users if admin)
+     * Create missing timesheets for employees with assignments (same logic as auto-generate but only missing days)
      */
     public function createMissingTimesheets(Request $request)
     {
         $user = auth()->user();
         $isAdmin = $user->hasRole(['admin', 'hr']);
-        // Fetch both active and completed assignments
-        $query = \Modules\EmployeeManagement\Domain\Models\EmployeeAssignment::query();
-        // Remove ->active() to include all assignments
+
+        // Get employee assignments (same as auto-generate)
+        $query = \Modules\EmployeeManagement\Domain\Models\EmployeeAssignment::query()->whereNull('deleted_at');
+
         if (!$isAdmin) {
             if (!$user->employee) {
                 return response()->json(['error' => 'No employee record found'], 400);
             }
-            $query->forEmployee($user->employee->id);
+            $query->where('employee_id', $user->employee->id);
         }
+
         $assignments = $query->get();
         $created = 0;
+        $today = Carbon::today();
+
         foreach ($assignments as $assignment) {
             $employeeId = $assignment->employee_id;
-            $start = $assignment->start_date ? $assignment->start_date->toDateString() : now()->toDateString();
-            $end = $assignment->end_date ? $assignment->end_date->toDateString() : $start;
-            // Always use the full assignment range, not just from today
-            $from = $start;
-            $today = now()->toDateString();
-            // Only create up to today, not in the future
-            $to = min($end, $today);
-            $period = new \DatePeriod(new \DateTime($from), new \DateInterval('P1D'), (new \DateTime($to))->modify('+1 day'));
+
+            if (!$assignment->start_date) {
+                continue;
+            }
+
+            $start = Carbon::parse($assignment->start_date);
+            // Use assignment's end_date if set, otherwise today (never after today)
+            $end = $assignment->end_date ? Carbon::parse($assignment->end_date) : $today;
+            if ($end->greaterThan($today)) {
+                $end = $today;
+            }
+
+            // If start is after end, skip
+            if ($start->greaterThan($end)) {
+                continue;
+            }
+
+            $period = new \DatePeriod(
+                new \DateTime($start->toDateString()),
+                new \DateInterval('P1D'),
+                (new \DateTime($end->toDateString()))->modify('+1 day')
+            );
+
             foreach ($period as $date) {
                 $dateStr = $date->format('Y-m-d');
+
+                if (Carbon::parse($dateStr)->greaterThan($today)) {
+                    continue;
+                }
+
+                // Check for existing timesheet (same logic as auto-generate)
+                $projectId = $assignment->type === 'project' ? $assignment->project_id : null;
+                $rentalId = $assignment->type === 'rental' ? $assignment->rental_id : null;
+
+                $overlap = Timesheet::where('employee_id', $employeeId)
+                    ->whereDate('date', $dateStr);
+
+                if ($projectId !== null) {
+                    $overlap->where('project_id', $projectId);
+                }
+                if ($rentalId !== null) {
+                    $overlap->where('rental_id', $rentalId);
+                }
+
+                if ($overlap->exists()) {
+                    continue; // Skip if timesheet already exists
+                }
+
+                // Create missing timesheet with 0 hours (draft status)
                 $data = [
                     'employee_id' => $employeeId,
                     'date' => $dateStr,
-                    'status' => \Modules\TimesheetManagement\Domain\Models\Timesheet::STATUS_DRAFT,
+                    'status' => Timesheet::STATUS_DRAFT,
                     'hours_worked' => 0,
                     'overtime_hours' => 0,
                     'start_time' => '08:00',
                     'end_time' => null,
                 ];
+
+                // Add project or rental assignment
                 if ($assignment->type === 'project' && $assignment->project_id) {
                     $data['project_id'] = $assignment->project_id;
                 }
                 if ($assignment->type === 'rental' && $assignment->rental_id) {
                     $data['rental_id'] = $assignment->rental_id;
                 }
-                if (!\Modules\TimesheetManagement\Domain\Models\Timesheet::hasOverlap($employeeId, $dateStr, null, $data['project_id'] ?? null, $data['rental_id'] ?? null)) {
-                    \Modules\TimesheetManagement\Domain\Models\Timesheet::create($data);
-                    $created++;
-                }
+
+                Timesheet::create($data);
+                $created++;
             }
         }
-        return response()->json(['success' => true, 'created' => $created]);
+
+        return response()->json(['success' => true, 'created' => $created, 'message' => "Created {$created} missing timesheets for assigned employees"]);
     }
 
     /**

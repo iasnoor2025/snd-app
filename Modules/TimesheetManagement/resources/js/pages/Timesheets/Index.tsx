@@ -454,7 +454,7 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                                             try {
                                                 const response = await axios.post('/timesheets/create-missing');
                                                 if (response.data.success) {
-                                                    toast.success(t('Created missing timesheets'));
+                                                    toast.success(response.data.message || `Created ${response.data.created} missing timesheets`);
                                                     reloadPage();
                                                 } else {
                                                     toast.error(response.data.message || t('Failed to create missing timesheets'));
