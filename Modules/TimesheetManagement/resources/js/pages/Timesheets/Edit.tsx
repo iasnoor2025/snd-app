@@ -29,6 +29,7 @@ interface Props {
     deleted_at?: string;
     employees?: any[];
     projects?: any[];
+    rentals?: any[];
 }
 
 // Define form validation schema
@@ -52,7 +53,7 @@ interface AssignmentBlock {
     description?: string;
 }
 
-export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, employees = [], projects = [] }: Props) {
+export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, employees = [], projects = [], rentals = [] }: Props) {
     const { t } = useTranslation('TimesheetManagement');
 
     const [processing, setProcessing] = useState(false);
@@ -368,7 +369,7 @@ export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, e
                                             <Select
                                                 value={assignmentBlocks[0].rental_id}
                                                 onValueChange={(v) => updateAssignmentBlock(assignmentBlocks[0].id, 'rental_id', v)}
-                                                options={rental.map((r: any) => ({
+                                                options={rentals.map((r: any) => ({
                                                     value: r.id.toString(),
                                                     label: `${r.rental_number} - ${r.equipment?.name || 'Unknown Equipment'}`,
                                                 }))}
@@ -535,7 +536,7 @@ export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, e
                                             <Select
                                                 value={block.rental_id}
                                                 onValueChange={(v) => updateAssignmentBlock(block.id, 'rental_id', v)}
-                                                options={rental.map((r: any) => ({
+                                                options={rentals.map((r: any) => ({
                                                     value: r.id.toString(),
                                                     label: `${r.rental_number} - ${r.equipment?.name || 'Unknown Equipment'}`,
                                                 }))}

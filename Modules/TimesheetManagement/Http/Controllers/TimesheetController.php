@@ -397,6 +397,24 @@ class TimesheetController extends Controller
     {
         $employees = Employee::orderBy('first_name')->get(['id', 'first_name', 'last_name']);
         $projects = Project::orderBy('name')->get(['id', 'name']);
+
+        // Get all rentals for the dropdown
+        $rentals = Rental::with('rentalItems.equipment')
+            ->get()
+            ->map(function ($rental) {
+                $equipmentName = null;
+                if ($rental->rentalItems->isNotEmpty() && $rental->rentalItems->first()->equipment) {
+                    $equipmentName = $rental->rentalItems->first()->equipment->name;
+                }
+                return [
+                    'id' => $rental->id,
+                    'equipment' => [
+                        'name' => $equipmentName
+                    ],
+                    'rental_number' => $rental->rental_number,
+                ];
+            });
+
         $timesheet->load(['employee.user', 'project', 'rental']);
         return Inertia::render('Timesheets/Edit', [
             'timesheet' => $timesheet,
@@ -409,6 +427,7 @@ class TimesheetController extends Controller
             'deleted_at' => $timesheet->deleted_at,
             'employees' => $employees,
             'projects' => $projects,
+            'rentals' => $rentals,
         ]);
     }
 
@@ -1109,7 +1128,7 @@ class TimesheetController extends Controller
             'user_permissions' => $user ? $user->getAllPermissions()->pluck('name') : null,
             'request_ids' => $request->input('ids'),
         ]);
-        if (!$user || (!$user->hasRole('admin') && !$user->can('admin'))) {
+        if (!$user || (!$user->hasRole('admin') && !$user->can('timesheets.delete'))) {
             \Log::warning('Bulk delete unauthorized', [
                 'user_id' => $user ? $user->id : null,
                 'user_roles' => $user ? $user->getRoleNames() : null,

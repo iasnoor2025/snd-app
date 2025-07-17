@@ -79,8 +79,8 @@ class AutoGenerateTimesheets extends Command
                         'status' => \Modules\TimesheetManagement\Domain\Models\Timesheet::STATUS_DRAFT,
                         'hours_worked' => 0,
                         'overtime_hours' => 0,
-                        'start_time' => null,
-                        'end_time' => null,
+                        'start_time' => '06:00',
+                        'end_time' => '16:00',
                     ];
                 } else {
                     // Saturday–Thursday: regular workday

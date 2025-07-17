@@ -81,7 +81,7 @@ Route::prefix('timesheets')->name('timesheets.')->middleware(['auth', 'verified'
         ->middleware('permission:timesheets.create')
         ->name('store-bulk-split');
     Route::post('/bulk-delete', [TimesheetController::class, 'bulkDelete'])
-        ->middleware('permission:admin')
+        ->middleware('permission:timesheets.delete')
         ->name('bulk-delete');
     Route::post('/create-missing', [TimesheetController::class, 'createMissingTimesheets'])->name('timesheets.create-missing')->middleware('permission:timesheets.create');
     Route::post('/auto-generate', [TimesheetController::class, 'autoGenerate'])
