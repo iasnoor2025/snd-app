@@ -310,18 +310,52 @@ export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, e
         setProcessing(true);
         try {
             const updates = [];
-            for (const block of assignmentBlocks) {
-                if (!block.start_date || !block.end_date || (!block.project_id && !block.rental_id)) continue;
+            console.log('Assignment blocks:', assignmentBlocks);
+            console.log('Start date:', startDate, 'End date:', endDate);
+
+            // If assignment blocks are empty or invalid, create a default block using bulk date range
+            let blocksToProcess = assignmentBlocks;
+            if (assignmentBlocks.length === 0 || assignmentBlocks.every(block => !block.start_date || !block.end_date)) {
+                console.log('Using bulk date range as fallback');
+                blocksToProcess = [{
+                    id: 1,
+                    start_date: startDate ? format(startDate, 'yyyy-MM-dd') : '',
+                    end_date: endDate ? format(endDate, 'yyyy-MM-dd') : '',
+                    project_id: assignmentBlocks[0]?.project_id || '',
+                    rental_id: assignmentBlocks[0]?.rental_id || '',
+                    description: assignmentBlocks[0]?.description || ''
+                }];
+            }
+
+            for (const block of blocksToProcess) {
+                console.log('Processing block:', block);
+                if (!block.start_date || !block.end_date) {
+                    console.log('Skipping block due to validation:', {
+                        start_date: block.start_date,
+                        end_date: block.end_date,
+                        project_id: block.project_id,
+                        rental_id: block.rental_id
+                    });
+                    continue;
+                }
                 let current = new Date(block.start_date);
                 const end = new Date(block.end_date);
                 while (current <= end) {
                     const dateStr = format(current, 'yyyy-MM-dd');
+                    // Clean and validate the data
+                    const normalHours = dailyNormalHours[dateStr] || '8';
+                    const overtimeHours = dailyOvertimeHours[dateStr] || '0';
+
+                    // Convert 'A' and invalid values to '0'
+                    const cleanNormalHours = (normalHours === 'A' || normalHours === '' || isNaN(parseFloat(normalHours))) ? '0' : normalHours;
+                    const cleanOvertimeHours = (overtimeHours === 'A' || overtimeHours === '' || isNaN(parseFloat(overtimeHours))) ? '0' : overtimeHours;
+
                     updates.push({
                         id: timesheet.id, // or find by date/employee if needed
                         employee_id: timesheet.employee_id,
                         date: dateStr,
-                        hours_worked: dailyNormalHours[dateStr] || '8',
-                        overtime_hours: dailyOvertimeHours[dateStr] || '0',
+                        hours_worked: cleanNormalHours,
+                        overtime_hours: cleanOvertimeHours,
                         project_id: block.project_id !== 'none' ? block.project_id : '',
                         rental_id: block.rental_id !== 'none' ? block.rental_id : '',
                         description: '',
@@ -329,6 +363,9 @@ export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, e
                     current.setDate(current.getDate() + 1);
                 }
             }
+            // Log the data being sent for debugging
+            console.log('Sending bulk update data:', { updates });
+
             const res = await fetch(route('timesheets.update-bulk'), {
                 method: 'POST',
                 headers: {
@@ -343,10 +380,12 @@ export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, e
                 setProcessing(false);
                 window.location.href = route('timesheets.index');
             } else {
+                console.error('Bulk update failed:', data);
                 toast.error(data.error || 'Failed to update timesheets');
                 setProcessing(false);
             }
         } catch (e) {
+            console.error('Bulk update error:', e);
             toast.error('Failed to update timesheets');
             setProcessing(false);
         }
