@@ -1260,7 +1260,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                 <label className="text-sm font-medium">{t('lbl_date_used')}</label>
                                 <DatePicker
                                     date={data.date_used ? new Date(data.date_used) : undefined}
-                                    setDate={(date: Date | undefined) => handleInputChange('date_used', date?.toISOString().split('T')[0])}
+                                    setDate={(date: Date | undefined) => handleInputChange('date_used', date?.toISOString().split('T')[0] || '')}
                                     placeholder={t('ph_select_date_used')}
                                 />
                                 {errors.date_used && <p className="text-sm text-red-500">{errors.date_used}</p>}
@@ -1375,7 +1375,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                 <label className="text-sm font-medium">{t('lbl_date_used')}</label>
                                 <DatePicker
                                     date={data.date_used ? new Date(data.date_used) : undefined}
-                                    setDate={(date: Date | undefined) => handleInputChange('date_used', date?.toISOString().split('T')[0])}
+                                    setDate={(date: Date | undefined) => handleInputChange('date_used', date?.toISOString().split('T')[0] || '')}
                                     placeholder={t('ph_select_date_used')}
                                 />
                                 {errors.date_used && <p className="text-sm text-red-500">{errors.date_used}</p>}
@@ -1476,7 +1476,7 @@ function ResourceFormContent({ type, projectId, projectEndDate, onSuccess, initi
                                         </Label>
                                         <DatePicker
                                             date={data.date ? new Date(data.date) : undefined}
-                                            setDate={(date: Date | undefined) => handleInputChange('date', date?.toISOString().split('T')[0])}
+                                            setDate={(date: Date | undefined) => handleInputChange('date', date?.toISOString().split('T')[0] || '')}
                                             placeholder={t('ph_select_date')}
                                         />
                                         {errors.date && <p className="text-sm text-red-500">{errors.date}</p>}
