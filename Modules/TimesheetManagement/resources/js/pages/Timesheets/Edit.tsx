@@ -23,6 +23,7 @@ interface Props {
     employee?: any;
     project?: any;
     rental?: any;
+    assignment?: any;
     user?: any;
     created_at?: string;
     updated_at?: string;
@@ -35,10 +36,12 @@ interface Props {
 // Define form validation schema
 const formSchema = z.object({
     employee_id: z.string().min(1, { message: 'Employee is required' }),
+    assignment_id: z.string().optional(),
     date: z.string().min(1, { message: 'Date is required' }),
     hours_worked: z.string().min(1, { message: 'Hours worked is required' }),
     overtime_hours: z.string().optional(),
     project_id: z.string().optional(),
+    rental_id: z.string().optional(),
     description: z.string().optional(),
     tasks_completed: z.string().optional(),
     status: z.string().optional(),
@@ -53,7 +56,7 @@ interface AssignmentBlock {
     description?: string;
 }
 
-export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, employees = [], projects = [], rentals = [] }: Props) {
+export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, assignment, employees = [], projects = [], rentals = [] }: Props) {
     const { t } = useTranslation('TimesheetManagement');
 
     const [processing, setProcessing] = useState(false);
@@ -161,10 +164,12 @@ export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, e
         resolver: zodResolver(formSchema),
         defaultValues: {
             employee_id: timesheet.employee_id.toString(),
+            assignment_id: timesheet.assignment_id?.toString() || '',
             date: timesheet.date || new Date().toISOString().split('T')[0],
             hours_worked: timesheet.hours_worked?.toString() || '',
             overtime_hours: timesheet.overtime_hours?.toString() || '0',
             project_id: timesheet.project_id?.toString() || '',
+            rental_id: timesheet.rental_id?.toString() || '',
             description: timesheet.description || '',
             tasks_completed: timesheet.tasks_completed || '',
             status: timesheet.status || 'submitted',
@@ -809,6 +814,22 @@ export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, e
                                         )}
                                     />
 
+                                    {/* Current Assignment Display */}
+                                    {assignment && (
+                                        <div className="rounded-lg border p-4 bg-blue-50">
+                                            <h4 className="font-medium text-sm text-blue-800 mb-2">Current Assignment</h4>
+                                            <div className="text-sm text-blue-700">
+                                                {assignment.project ? (
+                                                    <div>Project: {assignment.project.name}</div>
+                                                ) : assignment.rental ? (
+                                                    <div>Rental: {assignment.rental.rental_number || assignment.rental.project_name}</div>
+                                                ) : (
+                                                    <div>{assignment.type}: {assignment.name}</div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+
                                     <FormField
                                         control={form.control}
                                         name="project_id"
@@ -818,7 +839,31 @@ export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, e
                                                 <Select
                                                     onValueChange={field.onChange}
                                                     defaultValue={field.value}
-                                                    options={projects.map((project) => ({ value: project.id.toString(), label: project.name }))}
+                                                    options={[
+                                                        { value: '', label: 'No Project' },
+                                                        ...projects.map((project) => ({ value: project.id.toString(), label: project.name }))
+                                                    ]}
+                                                />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="rental_id"
+                                        render={({ field }: any) => (
+                                            <FormItem>
+                                                <FormLabel>Rental (Optional)</FormLabel>
+                                                <Select
+                                                    onValueChange={field.onChange}
+                                                    defaultValue={field.value}
+                                                    options={[
+                                                        { value: '', label: 'No Rental' },
+                                                        ...rentals.map((rental) => ({
+                                                            value: rental.id.toString(),
+                                                            label: `${rental.rental_number} - ${rental.equipment?.name || 'Equipment'}`
+                                                        }))
+                                                    ]}
                                                 />
                                             </FormItem>
                                         )}

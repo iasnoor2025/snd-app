@@ -23,13 +23,14 @@ interface Props {
     employee?: any;
     project?: any;
     rental?: any;
+    assignment?: any;
     user?: any;
     created_at?: string;
     updated_at?: string;
     deleted_at?: string;
 }
 
-export default function TimesheetShow({ timesheet }: Props) {
+export default function TimesheetShow({ timesheet, assignment }: Props) {
     const { t } = useTranslation('TimesheetManagement');
 
     const { hasPermission } = usePermission();
@@ -89,6 +90,27 @@ export default function TimesheetShow({ timesheet }: Props) {
 
     // Calculate total hours
     const totalHours = (parseFloat(timesheet.hours_worked?.toString() || '0') + parseFloat(timesheet.overtime_hours?.toString() || '0')).toFixed(1);
+
+    // Get assignment display text
+    const getAssignmentDisplay = () => {
+        if (assignment) {
+            if (assignment.type === 'project' && assignment.project) {
+                return `Project: ${assignment.project.name}`;
+            } else if (assignment.type === 'rental' && assignment.rental) {
+                return `Rental: ${assignment.rental.rental_number || assignment.rental.project_name}`;
+            } else {
+                return `${assignment.type}: ${assignment.name}`;
+            }
+        }
+        // Fallback to legacy project/rental data
+        if (timesheet.project?.name) {
+            return `Project: ${timesheet.project.name}`;
+        }
+        if (timesheet.rental?.equipment?.name) {
+            return `Rental: ${timesheet.rental.equipment.name}`;
+        }
+        return null;
+    };
 
     return (
         <AppLayout title={t('ttl_view_timesheet')} breadcrumbs={breadcrumbs} requiredPermission="timesheets.view">
@@ -161,11 +183,28 @@ export default function TimesheetShow({ timesheet }: Props) {
                             </CardTitle>
                             <CardDescription>
                                 {timesheet.date && format(new Date(timesheet.date), 'PPP')}
-                                {timesheet.project?.name && ` • ${timesheet.project.name}`}
+                                {getAssignmentDisplay() && ` • ${getAssignmentDisplay()}`}
                             </CardDescription>
                         </CardHeader>
 
                         <CardContent>
+                            {/* Assignment Information Display */}
+                            {assignment && (
+                                <div className="mb-6 rounded-lg border p-4 bg-blue-50">
+                                    <h4 className="font-medium text-sm text-blue-800 mb-2">Assignment Details</h4>
+                                    <div className="text-sm text-blue-700 space-y-1">
+                                        <div><strong>Type:</strong> {assignment.type.charAt(0).toUpperCase() + assignment.type.slice(1)}</div>
+                                        <div><strong>Name:</strong> {assignment.name}</div>
+                                        {assignment.project && (
+                                            <div><strong>Project:</strong> {assignment.project.name}</div>
+                                        )}
+                                        {assignment.rental && (
+                                            <div><strong>Rental:</strong> {assignment.rental.rental_number || assignment.rental.project_name}</div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
                             <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
                                 <div className="flex flex-col space-y-1">
                                     <span className="text-sm text-muted-foreground">{t('lbl_regular_hours')}</span>

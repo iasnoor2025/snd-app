@@ -34,7 +34,13 @@ class TimesheetController extends Controller
             'has_admin_hr_role' => $user->hasRole(['admin', 'hr']),
             'user_employee_id' => $user->employee ? $user->employee->id : null,
         ]);
-        $query = Timesheet::with(['employee:id,first_name,last_name', 'project', 'rental.rentalItems.equipment'])
+        $query = Timesheet::with(['employee:id,first_name,last_name', 'employee.assignments' => function($query) {
+            $query->with(['project', 'rental'])
+                  ->where('status', 'active')
+                  ->whereNull('end_date')
+                  ->orWhere('end_date', '>=', now())
+                  ->orderBy('start_date', 'desc');
+        }, 'project', 'rental.rentalItems.equipment'])
             ->when($request->month, function ($query, $month) {
                 return $query->whereMonth('date', Carbon::parse($month)->month)
                     ->whereYear('date', Carbon::parse($month)->year);
@@ -142,8 +148,15 @@ class TimesheetController extends Controller
     {
         $this->authorize('create', Timesheet::class);
 
-        // Get employees with user relation
-        $employees = Employee::with('user')
+        // Get employees with user relation and current assignments
+        $employees = Employee::with(['user', 'assignments' => function($query) {
+            $query->with(['project', 'rental'])
+                  ->where('status', 'active')
+                  ->where(function($q) {
+                      $q->whereNull('end_date')
+                        ->orWhere('end_date', '>=', now());
+                  });
+        }])
             ->orderBy('first_name')
             ->get()
             ->map(function ($employee) {
@@ -152,10 +165,29 @@ class TimesheetController extends Controller
                     'first_name' => $employee->first_name,
                     'last_name' => $employee->last_name,
                     'email' => $employee->user ? $employee->user->email : null,
+                    'current_assignment' => $employee->current_assignment,
+                    'assignments' => $employee->assignments->map(function($assignment) {
+                        return [
+                            'id' => $assignment->id,
+                            'type' => $assignment->type,
+                            'name' => $assignment->name,
+                            'project_id' => $assignment->project_id,
+                            'rental_id' => $assignment->rental_id,
+                            'project' => $assignment->project ? [
+                                'id' => $assignment->project->id,
+                                'name' => $assignment->project->name,
+                            ] : null,
+                            'rental' => $assignment->rental ? [
+                                'id' => $assignment->rental->id,
+                                'project_name' => $assignment->rental->project_name,
+                                'rental_number' => $assignment->rental->rental_number,
+                            ] : null,
+                        ];
+                    }),
                 ];
             });
 
-        // Get projects
+        // Get projects (for backward compatibility)
         $projects = Project::select('id', 'name')->get();
 
         // Check if rental data should be included
@@ -212,6 +244,7 @@ class TimesheetController extends Controller
 
             $validated = $request->validate([
                 'employee_id' => 'required|exists:employees,id',
+                'assignment_id' => 'nullable|exists:employee_assignments,id',
                 'date' => [
                     'required',
                     'date',
@@ -269,6 +302,35 @@ class TimesheetController extends Controller
             DB::beginTransaction();
 
             try {
+                // If no assignment_id but project_id or rental_id provided, create assignment
+                if (!$validated['assignment_id'] && ($validated['project_id'] || $validated['rental_id'])) {
+                    $assignmentData = [
+                        'employee_id' => $validated['employee_id'],
+                        'status' => 'active',
+                        'start_date' => $validated['date'],
+                        'end_date' => null,
+                        'assigned_by' => auth()->id(),
+                    ];
+
+                    if ($validated['project_id']) {
+                        $project = \Modules\ProjectManagement\Domain\Models\Project::find($validated['project_id']);
+                        $assignmentData['type'] = 'project';
+                        $assignmentData['name'] = $project ? $project->name : 'Project Assignment';
+                        $assignmentData['project_id'] = $validated['project_id'];
+                        $assignmentData['location'] = $project ? $project->location : null;
+                    } elseif ($validated['rental_id']) {
+                        $rental = \Modules\RentalManagement\Domain\Models\Rental::find($validated['rental_id']);
+                        $assignmentData['type'] = 'rental';
+                        $assignmentData['name'] = $rental ? $rental->project_name : 'Rental Assignment';
+                        $assignmentData['rental_id'] = $validated['rental_id'];
+                        $assignmentData['location'] = $rental && $rental->location ? $rental->location->name : null;
+                    }
+
+                    // Create the assignment
+                    $assignment = \Modules\EmployeeManagement\Domain\Models\EmployeeAssignment::create($assignmentData);
+                    $validated['assignment_id'] = $assignment->id;
+                }
+
                 $timesheet = Timesheet::create($validated);
 
                 // Log successful creation
@@ -377,12 +439,28 @@ class TimesheetController extends Controller
      */
     public function show(Timesheet $timesheet)
     {
-        $timesheet->load(['employee.user', 'project', 'rental']);
+        $timesheet->load(['employee.user', 'project', 'rental', 'assignment.project', 'assignment.rental']);
+
+        // Load assignment information for display
+        $assignmentInfo = null;
+        if ($timesheet->assignment) {
+            $assignmentInfo = [
+                'id' => $timesheet->assignment->id,
+                'type' => $timesheet->assignment->type,
+                'name' => $timesheet->assignment->name,
+                'project_id' => $timesheet->assignment->project_id,
+                'rental_id' => $timesheet->assignment->rental_id,
+                'project' => $timesheet->assignment->project,
+                'rental' => $timesheet->assignment->rental,
+            ];
+        }
+
         return Inertia::render('Timesheets/Show', [
             'timesheet' => $timesheet,
             'employee' => $timesheet->employee,
             'project' => $timesheet->project,
             'rental' => $timesheet->rental,
+            'assignment' => $assignmentInfo,
             'user' => $timesheet->employee?->user,
             'created_at' => $timesheet->created_at,
             'updated_at' => $timesheet->updated_at,
@@ -395,7 +473,43 @@ class TimesheetController extends Controller
      */
     public function edit(Timesheet $timesheet)
     {
-        $employees = Employee::orderBy('first_name')->get(['id', 'first_name', 'last_name']);
+        // Get employees with assignments
+        $employees = Employee::with(['assignments' => function($query) {
+            $query->with(['project', 'rental'])
+                  ->where('status', 'active')
+                  ->where(function($q) {
+                      $q->whereNull('end_date')
+                        ->orWhere('end_date', '>=', now());
+                  });
+        }])
+            ->orderBy('first_name')
+            ->get(['id', 'first_name', 'last_name'])
+            ->map(function ($employee) {
+                return [
+                    'id' => $employee->id,
+                    'first_name' => $employee->first_name,
+                    'last_name' => $employee->last_name,
+                    'assignments' => $employee->assignments->map(function($assignment) {
+                        return [
+                            'id' => $assignment->id,
+                            'type' => $assignment->type,
+                            'name' => $assignment->name,
+                            'project_id' => $assignment->project_id,
+                            'rental_id' => $assignment->rental_id,
+                            'project' => $assignment->project ? [
+                                'id' => $assignment->project->id,
+                                'name' => $assignment->project->name,
+                            ] : null,
+                            'rental' => $assignment->rental ? [
+                                'id' => $assignment->rental->id,
+                                'project_name' => $assignment->rental->project_name,
+                                'rental_number' => $assignment->rental->rental_number,
+                            ] : null,
+                        ];
+                    }),
+                ];
+            });
+
         $projects = Project::orderBy('name')->get(['id', 'name']);
 
         // Get all rentals for the dropdown
@@ -415,12 +529,29 @@ class TimesheetController extends Controller
                 ];
             });
 
-        $timesheet->load(['employee.user', 'project', 'rental']);
+        $timesheet->load(['employee.user', 'project', 'rental', 'assignment']);
+
+        // Load assignment information for display
+        $assignmentInfo = null;
+        if ($timesheet->assignment) {
+            $timesheet->assignment->load(['project', 'rental']);
+            $assignmentInfo = [
+                'id' => $timesheet->assignment->id,
+                'type' => $timesheet->assignment->type,
+                'name' => $timesheet->assignment->name,
+                'project_id' => $timesheet->assignment->project_id,
+                'rental_id' => $timesheet->assignment->rental_id,
+                'project' => $timesheet->assignment->project,
+                'rental' => $timesheet->assignment->rental,
+            ];
+        }
+
         return Inertia::render('Timesheets/Edit', [
             'timesheet' => $timesheet,
             'employee' => $timesheet->employee,
             'project' => $timesheet->project,
             'rental' => $timesheet->rental,
+            'assignment' => $assignmentInfo,
             'user' => $timesheet->employee?->user,
             'created_at' => $timesheet->created_at,
             'updated_at' => $timesheet->updated_at,
@@ -443,6 +574,7 @@ class TimesheetController extends Controller
 
         $validated = $request->validate([
             'employee_id' => 'required|exists:employees,id',
+            'assignment_id' => 'nullable|exists:employee_assignments,id',
             'date' => [
                 'required',
                 'date',
@@ -495,6 +627,7 @@ class TimesheetController extends Controller
                 },
             ],
             'project_id' => 'nullable|exists:projects,id',
+            'rental_id' => 'nullable|exists:rentals,id',
             'description' => 'nullable|string|max:1000',
             'tasks_completed' => 'nullable|string|max:1000',
             'status' => 'required|string|in:draft,submitted,foreman_approved,incharge_approved,checking_approved,manager_approved,rejected',
@@ -949,6 +1082,7 @@ class TimesheetController extends Controller
 
             $validated = $request->validate([
                 'employee_id' => 'required|exists:employees,id',
+                'assignment_id' => 'nullable|exists:employee_assignments,id',
                 'start_date' => 'required|date',
                 'end_date' => 'required|date|after_or_equal:start_date',
                 'hours_worked' => 'required|numeric|min:0|max:24',
@@ -976,6 +1110,35 @@ class TimesheetController extends Controller
             try {
                 $createdTimesheets = [];
                 $currentDate = $startDate->copy();
+                $assignmentId = $validated['assignment_id'];
+
+                // Create assignment if needed (only once for bulk creation)
+                if (!$assignmentId && ($validated['project_id'] || $validated['rental_id'])) {
+                    $assignmentData = [
+                        'employee_id' => $validated['employee_id'],
+                        'status' => 'active',
+                        'start_date' => $validated['start_date'],
+                        'end_date' => null,
+                        'assigned_by' => auth()->id(),
+                    ];
+
+                    if ($validated['project_id']) {
+                        $project = \Modules\ProjectManagement\Domain\Models\Project::find($validated['project_id']);
+                        $assignmentData['type'] = 'project';
+                        $assignmentData['name'] = $project ? $project->name : 'Project Assignment';
+                        $assignmentData['project_id'] = $validated['project_id'];
+                        $assignmentData['location'] = $project ? $project->location : null;
+                    } elseif ($validated['rental_id']) {
+                        $rental = \Modules\RentalManagement\Domain\Models\Rental::find($validated['rental_id']);
+                        $assignmentData['type'] = 'rental';
+                        $assignmentData['name'] = $rental ? $rental->project_name : 'Rental Assignment';
+                        $assignmentData['rental_id'] = $validated['rental_id'];
+                        $assignmentData['location'] = $rental && $rental->location ? $rental->location->name : null;
+                    }
+
+                    $assignment = \Modules\EmployeeManagement\Domain\Models\EmployeeAssignment::create($assignmentData);
+                    $assignmentId = $assignment->id;
+                }
 
                 while ($currentDate->lte($endDate)) {
                     $dateString = $currentDate->format('Y-m-d');
@@ -1009,6 +1172,7 @@ class TimesheetController extends Controller
 
                     $timesheet = Timesheet::create([
                         'employee_id' => $validated['employee_id'],
+                        'assignment_id' => $assignmentId,
                         'date' => $dateString,
                         'hours_worked' => $validated['hours_worked'],
                         'overtime_hours' => $overtimeHours,
@@ -1368,6 +1532,7 @@ class TimesheetController extends Controller
         $validated = $request->validate([
             'assignments' => 'required|array|min:1',
             'assignments.*.employee_id' => 'required|exists:employees,id',
+            'assignments.*.assignment_id' => 'nullable|exists:employee_assignments,id',
             'assignments.*.date_from' => 'required|date',
             'assignments.*.date_to' => 'required|date|after_or_equal:assignments.*.date_from',
             'assignments.*.project_id' => 'nullable|exists:projects,id',
@@ -1382,10 +1547,41 @@ class TimesheetController extends Controller
         DB::beginTransaction();
         try {
             foreach ($validated['assignments'] as $block) {
+                $assignmentId = $block['assignment_id'] ?? null;
+
+                // Create assignment if needed
+                if (!$assignmentId && ($block['project_id'] || $block['rental_id'])) {
+                    $assignmentData = [
+                        'employee_id' => $block['employee_id'],
+                        'status' => 'active',
+                        'start_date' => $block['date_from'],
+                        'end_date' => null,
+                        'assigned_by' => auth()->id(),
+                    ];
+
+                    if ($block['project_id']) {
+                        $project = \Modules\ProjectManagement\Domain\Models\Project::find($block['project_id']);
+                        $assignmentData['type'] = 'project';
+                        $assignmentData['name'] = $project ? $project->name : 'Project Assignment';
+                        $assignmentData['project_id'] = $block['project_id'];
+                        $assignmentData['location'] = $project ? $project->location : null;
+                    } elseif ($block['rental_id']) {
+                        $rental = \Modules\RentalManagement\Domain\Models\Rental::find($block['rental_id']);
+                        $assignmentData['type'] = 'rental';
+                        $assignmentData['name'] = $rental ? $rental->project_name : 'Rental Assignment';
+                        $assignmentData['rental_id'] = $block['rental_id'];
+                        $assignmentData['location'] = $rental && $rental->location ? $rental->location->name : null;
+                    }
+
+                    $assignment = \Modules\EmployeeManagement\Domain\Models\EmployeeAssignment::create($assignmentData);
+                    $assignmentId = $assignment->id;
+                }
+
                 $dates = $this->getDateRange($block['date_from'], $block['date_to']);
                 foreach ($dates as $date) {
                     $created[] = Timesheet::create([
                         'employee_id' => $block['employee_id'],
+                        'assignment_id' => $assignmentId,
                         'project_id' => $block['project_id'] ?? null,
                         'rental_id' => $block['rental_id'] ?? null,
                         'date' => $date,
@@ -1674,6 +1870,12 @@ class TimesheetController extends Controller
         if (!is_array($updates) || empty($updates)) {
             return response()->json(['error' => 'No updates provided'], 400);
         }
+
+        \Log::info('Bulk update request', [
+            'user_id' => $user->id,
+            'updates_count' => count($updates),
+            'updates' => $updates
+        ]);
         $updated = 0;
         $errors = [];
         foreach ($updates as $update) {
@@ -1682,11 +1884,31 @@ class TimesheetController extends Controller
             if (!$id || !$date) continue;
             $timesheet = \Modules\TimesheetManagement\Domain\Models\Timesheet::where('employee_id', $update['employee_id'])->where('date', $date)->first();
             if (!$timesheet) {
-                $errors[$date] = 'Timesheet not found for date ' . $date;
-                continue;
+                // Only create new timesheet if the date is today or before
+                $today = now()->toDateString();
+                if ($date <= $today) {
+                    // Create new timesheet if it doesn't exist and date is not in the future
+                    $timesheet = new \Modules\TimesheetManagement\Domain\Models\Timesheet();
+                    $timesheet->employee_id = $update['employee_id'];
+                    $timesheet->date = $date;
+                    $timesheet->status = \Modules\TimesheetManagement\Domain\Models\Timesheet::STATUS_DRAFT;
+                } else {
+                    // Skip creating timesheets for future dates
+                    \Log::info('Skipping future date timesheet creation', [
+                        'date' => $date,
+                        'today' => $today,
+                        'employee_id' => $update['employee_id']
+                    ]);
+                    continue;
+                }
             }
             // Validate fields (reuse update validation)
-            $validator = \Validator::make($update, [
+            // Clean the data before validation
+            $cleanUpdate = $update;
+            $cleanUpdate['project_id'] = empty($update['project_id']) ? null : $update['project_id'];
+            $cleanUpdate['rental_id'] = empty($update['rental_id']) ? null : $update['rental_id'];
+
+            $validator = \Validator::make($cleanUpdate, [
                 'hours_worked' => 'required|numeric|min:0|max:24',
                 'overtime_hours' => 'nullable|numeric|min:0|max:24',
                 'project_id' => 'nullable|exists:projects,id',
@@ -1694,17 +1916,29 @@ class TimesheetController extends Controller
                 'description' => 'nullable|string|max:1000',
             ]);
             if ($validator->fails()) {
-                $errors["hours_worked_{$date}"] = $validator->errors()->first('hours_worked');
-                $errors["overtime_hours_{$date}"] = $validator->errors()->first('overtime_hours');
+                $errors["validation_{$date}"] = $validator->errors()->all();
+                \Log::error('Validation failed for timesheet update', [
+                    'date' => $date,
+                    'employee_id' => $update['employee_id'],
+                    'errors' => $validator->errors()->all(),
+                    'update_data' => $update
+                ]);
                 continue;
             }
-            $timesheet->hours_worked = $update['hours_worked'];
-            $timesheet->overtime_hours = $update['overtime_hours'] ?? 0;
-            $timesheet->project_id = $update['project_id'] ?? null;
-            $timesheet->rental_id = $update['rental_id'] ?? null;
-            $timesheet->description = $update['description'] ?? null;
+            $timesheet->hours_worked = $cleanUpdate['hours_worked'];
+            $timesheet->overtime_hours = $cleanUpdate['overtime_hours'] ?? 0;
+            $timesheet->project_id = $cleanUpdate['project_id'];
+            $timesheet->rental_id = $cleanUpdate['rental_id'];
+            $timesheet->description = $cleanUpdate['description'] ?? null;
             $timesheet->save();
             $updated++;
+            \Log::info('Timesheet updated/created', [
+                'timesheet_id' => $timesheet->id,
+                'employee_id' => $timesheet->employee_id,
+                'date' => $timesheet->date,
+                'hours_worked' => $timesheet->hours_worked,
+                'overtime_hours' => $timesheet->overtime_hours
+            ]);
         }
         if (!empty($errors)) {
             return response()->json(['success' => false, 'error' => 'Some timesheets failed to update', 'errors' => $errors, 'updated' => $updated]);

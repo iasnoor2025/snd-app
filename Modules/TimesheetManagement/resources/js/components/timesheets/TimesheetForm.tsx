@@ -43,6 +43,7 @@ interface TimesheetFormProps {
 const formSchema = z
     .object({
         employee_id: z.string().min(1, 'Employee is required'),
+        assignment_id: z.string().optional(),
         date: z.date({ required_error: 'Date is required' }),
         clock_in: z.string().optional(),
         clock_out: z.string().optional(),
@@ -51,6 +52,7 @@ const formSchema = z
         regular_hours: z.coerce.number().min(0, 'Regular hours must be at least 0').optional(),
         overtime_hours: z.coerce.number().min(0, 'Overtime hours must be at least 0').optional(),
         project_id: z.string().optional(),
+        rental_id: z.string().optional(),
         location: z.string().optional(),
         notes: z.string().optional(),
     })
@@ -76,6 +78,7 @@ const formSchema = z
 
 const TimesheetFormInner: React.FC<TimesheetFormProps> = ({ timesheet, date, employees, onSave, onCancel }) => {
     const [projects, setProjects] = useState<Project[]>([]);
+    const [rentals, setRentals] = useState<any[]>([]);
     const [useTimeClock, setUseTimeClock] = useState(!!timesheet?.clock_in);
     const { isLoading, error, withLoading } = useLoadingState('timesheetForm');
     const { t } = useTranslation('TimesheetManagement');
@@ -92,6 +95,7 @@ const TimesheetFormInner: React.FC<TimesheetFormProps> = ({ timesheet, date, emp
         defaultValues: timesheet
             ? {
                   employee_id: timesheet.employee_id.toString(),
+                  assignment_id: timesheet.assignment_id?.toString() || '',
                   date: timesheet.date ? new Date(timesheet.date) : new Date(),
                   clock_in: timesheet.clock_in || '',
                   clock_out: timesheet.clock_out || '',
@@ -100,11 +104,13 @@ const TimesheetFormInner: React.FC<TimesheetFormProps> = ({ timesheet, date, emp
                   regular_hours: timesheet.regular_hours,
                   overtime_hours: timesheet.overtime_hours,
                   project_id: timesheet.project_id?.toString() || '',
+                  rental_id: timesheet.rental_id?.toString() || '',
                   location: timesheet.location || '',
                   notes: timesheet.notes || '',
               }
             : {
                   employee_id: '',
+                  assignment_id: '',
                   date: date || new Date(),
                   clock_in: '09:00',
                   clock_out: '17:00',
@@ -113,14 +119,16 @@ const TimesheetFormInner: React.FC<TimesheetFormProps> = ({ timesheet, date, emp
                   regular_hours: 8,
                   overtime_hours: 0,
                   project_id: '',
+                  rental_id: '',
                   location: '',
                   notes: '',
               },
     });
 
-    // Load projects on component mount
+    // Load projects and rentals on component mount
     useEffect(() => {
         fetchProjects();
+        fetchRentals();
     }, []);
 
     const fetchProjects = async () => {
@@ -131,6 +139,20 @@ const TimesheetFormInner: React.FC<TimesheetFormProps> = ({ timesheet, date, emp
             console.error('Error fetching projects:', error);
         }
     };
+
+    const fetchRentals = async () => {
+        try {
+            const response = await axios.get('/api/rentals');
+            setRentals(response.data.data || []);
+        } catch (error) {
+            console.error('Error fetching rentals:', error);
+        }
+    };
+
+    // Get selected employee's assignments
+    const selectedEmployeeId = watch('employee_id');
+    const selectedEmployee = employees.find(e => e.id.toString() === selectedEmployeeId);
+    const availableAssignments = selectedEmployee?.assignments || [];
 
     // Handle form submission
     const onSubmit = async (data: TimesheetFormData) => {
@@ -238,7 +260,11 @@ const TimesheetFormInner: React.FC<TimesheetFormProps> = ({ timesheet, date, emp
                             name="employee_id"
                             control={control}
                             render={({ field }) => (
-                                <Select value={field.value} onValueChange={field.onChange} disabled={isLoading}>
+                                <Select value={field.value} onValueChange={(value) => {
+                                    field.onChange(value);
+                                    // Reset assignment when employee changes
+                                    setValue('assignment_id', '');
+                                }} disabled={isLoading}>
                                     <SelectTrigger id="employee_id" className="w-full">
                                         <SelectValue placeholder={t('ph_select_employee')} />
                                     </SelectTrigger>
@@ -254,6 +280,37 @@ const TimesheetFormInner: React.FC<TimesheetFormProps> = ({ timesheet, date, emp
                         />
                         {errors.employee_id && <p className="mt-1 text-sm text-red-500">{t(String(errors.employee_id.message))}</p>}
                     </div>
+
+                    {/* Assignment Selection */}
+                    {availableAssignments.length > 0 && (
+                        <div>
+                            <Label htmlFor="assignment_id">{t('lbl_assignment')}</Label>
+                            <Controller
+                                name="assignment_id"
+                                control={control}
+                                render={({ field }) => (
+                                    <Select value={field.value} onValueChange={field.onChange} disabled={isLoading}>
+                                        <SelectTrigger id="assignment_id" className="w-full">
+                                            <SelectValue placeholder={t('ph_select_assignment')} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="">{t('opt_no_assignment')}</SelectItem>
+                                            {availableAssignments.map((assignment) => (
+                                                <SelectItem key={assignment.id} value={assignment.id.toString()}>
+                                                    {assignment.type === 'project' && assignment.project
+                                                        ? `Project: ${assignment.project.name}`
+                                                        : assignment.type === 'rental' && assignment.rental
+                                                        ? `Rental: ${assignment.rental.rental_number || assignment.rental.project_name}`
+                                                        : `${assignment.type}: ${assignment.name}`
+                                                    }
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                )}
+                            />
+                        </div>
+                    )}
 
                     <div>
                         <Label htmlFor="date">{t('lbl_date')}</Label>
@@ -283,6 +340,31 @@ const TimesheetFormInner: React.FC<TimesheetFormProps> = ({ timesheet, date, emp
                                         {projects.map((project) => (
                                             <SelectItem key={project.id} value={project.id.toString()}>
                                                 {project.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            )}
+                        />
+                    </div>
+
+                    <div>
+                        <Label htmlFor="rental_id">
+                            {t('lbl_rental')} ({t('optional')})
+                        </Label>
+                        <Controller
+                            name="rental_id"
+                            control={control}
+                            render={({ field }) => (
+                                <Select value={field.value} onValueChange={field.onChange} disabled={isLoading}>
+                                    <SelectTrigger id="rental_id" className="w-full">
+                                        <SelectValue placeholder={t('ph_select_rental')} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="">{t('opt_no_rental')}</SelectItem>
+                                        {rentals.map((rental) => (
+                                            <SelectItem key={rental.id} value={rental.id.toString()}>
+                                                {rental.rental_number} - {rental.equipment?.name || 'Unknown Equipment'}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>

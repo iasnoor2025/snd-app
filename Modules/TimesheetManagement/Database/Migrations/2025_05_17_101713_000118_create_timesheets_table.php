@@ -16,8 +16,14 @@ return new class extends Migration
         Schema::create('timesheets', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('employee_id')->cascadeOnDelete();
-            $table->unsignedBigInteger('project_id')->nullable();
-            $table->unsignedBigInteger('rental_id')->nullable();
+
+            // New assignment-based structure
+            $table->unsignedBigInteger('assignment_id')->nullable()->comment('References employee_assignments table');
+
+            // Legacy columns for backward compatibility
+            $table->unsignedBigInteger('project_id')->nullable()->comment('Legacy - use assignment_id instead');
+            $table->unsignedBigInteger('rental_id')->nullable()->comment('Legacy - use assignment_id instead');
+            
             $table->text('description')->nullable();
             $table->date('date');
             $table->time('start_time');
@@ -33,10 +39,20 @@ return new class extends Migration
             $table->string('location')->nullable();
             $table->string('project')->nullable();
             $table->string('tasks')->nullable();
+
+            // Foreign key constraints
+            $table->foreign('assignment_id')->references('id')->on('employee_assignments')->onDelete('set null');
             $table->foreign('project_id')->references('id')->on('projects')->onDelete('set null');
             $table->foreign('rental_id')->references('id')->on('rentals')->onDelete('set null');
+
             $table->timestamps();
             $table->softDeletes();
+
+            // Indexes for better performance
+            $table->index(['employee_id', 'date']);
+            $table->index(['assignment_id', 'date']);
+            $table->index(['project_id', 'date']);
+            $table->index(['rental_id', 'date']);
         });
     }
 

@@ -1,25 +1,46 @@
 import { AppLayout } from '@/Core';
 import { Select } from '@/Core/components/Common/Select';
 import { Button } from '@/Core/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/Core/components/ui/card';
-import { FormLabel } from '@/Core/components/ui/form';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
+import { Label } from '@/Core';
 import { Input } from '@/Core/components/ui/input';
 import { Textarea } from '@/Core/components/ui/textarea';
+import { DatePicker } from '@/Core/components/ui/date-picker';
 import { BreadcrumbItem, PageProps } from '@/Core/types';
 import { router } from '@inertiajs/core';
-import { Head, useForm } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import { format } from 'date-fns';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Clock, User, Calendar, Plus, AlertCircle } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { route } from 'ziggy-js';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/Core/components/ui/dialog';
+import { Alert, AlertDescription } from '@/Core/components/ui/alert';
 
 // Define interfaces
+interface Assignment {
+    id: number;
+    type: string;
+    name: string;
+    project_id?: number;
+    rental_id?: number;
+    project?: {
+        id: number;
+        name: string;
+    };
+    rental?: {
+        id: number;
+        project_name: string;
+        rental_number: string;
+    };
+}
+
 interface Employee {
     id: number;
     first_name: string;
     last_name: string;
+    assignments?: Assignment[];
 }
 
 interface Project {
@@ -52,26 +73,22 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
         { title: t('create', 'Create'), href: '/hr/timesheets/create' },
     ];
 
-    const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-    const [startDate, setStartDate] = useState<Date | undefined>(new Date());
-    const [endDate, setEndDate] = useState<Date | undefined>(new Date());
-    const [isBulkMode, setIsBulkMode] = useState(false);
-    const [customOvertimePerDay, setCustomOvertimePerDay] = useState(false);
-    const [dailyOvertimeHours, setDailyOvertimeHours] = useState<Record<string, string>>({});
-    const [dailyNormalHours, setDailyNormalHours] = useState<Record<string, string>>({});
-    const [, forceUpdate] = useState(0);
-    const [assignmentBlocks, setAssignmentBlocks] = useState([
-        {
-            id: 1,
-            project_id: '',
-            rental_id: '',
-            start_date: '',
-            end_date: '',
-        },
-    ]);
+    // Assignment creation popup state
+    const [showAssignmentPopup, setShowAssignmentPopup] = useState(false);
+    const [selectedEmployeeForAssignment, setSelectedEmployeeForAssignment] = useState<Employee | null>(null);
+    const [newAssignmentData, setNewAssignmentData] = useState({
+        type: 'manual',
+        name: '',
+        project_id: '',
+        rental_id: '',
+        location: '',
+        notes: '',
+        start_date: new Date().toISOString().split('T')[0],
+    });
 
-    const { data, setData, post, processing, errors, reset } = useForm({
-        employee_id: employees.length > 0 ? employees[0].id.toString() : '',
+    const [data, setDataState] = useState({
+        employee_id: '',
+        assignment_id: '',
         date: new Date().toISOString().split('T')[0],
         hours_worked: '8',
         overtime_hours: '0',
@@ -79,748 +96,553 @@ export default function TimesheetCreate({ auth, employees = [], projects = [], r
         rental_id: rental_id || '',
         description: '',
         tasks_completed: '',
-        bulk_mode: false,
-        start_date: new Date().toISOString().split('T')[0],
-        end_date: new Date().toISOString().split('T')[0],
-        daily_overtime_hours: {},
-        daily_normal_hours: {},
+        start_time: '08:00',
+        end_time: '17:00',
     });
 
-    // Check URL parameters for bulk mode and month
-    useEffect(() => {
-        const url = new URL(window.location.href);
-        const bulkParam = url.searchParams.get('bulk');
-        const monthParam = url.searchParams.get('month');
+    const [processing, setProcessing] = useState(false);
+    const [errors, setErrors] = useState<any>({});
 
-        if (bulkParam === 'true') {
-            setIsBulkMode(true);
-            // setData('bulk_mode', true); // This line is removed as per the edit hint
+    const setData = (key: string, value: string) => {
+        setDataState(prev => ({ ...prev, [key]: value }));
+    };
 
-            if (monthParam) {
-                // Parse the month parameter (format: yyyy-MM)
-                const [year, month] = monthParam.split('-').map(Number);
+    // Get selected employee's assignments
+    const selectedEmployee = employees.find(e => e.id.toString() === data.employee_id);
+    const availableAssignments = selectedEmployee?.assignments || [];
 
-                // Set start date to first day of month
-                const firstDay = new Date(year, month - 1, 1);
-                setStartDate(firstDay);
-                // setData('start_date', firstDay.toISOString().split('T')[0]); // This line is removed as per the edit hint
+    // Handle employee selection
+    const handleEmployeeChange = (employeeId: string) => {
+        setData('employee_id', employeeId);
+        setData('assignment_id', ''); // Reset assignment when employee changes
+        setData('project_id', ''); // Reset project when employee changes
+        setData('rental_id', ''); // Reset rental when employee changes
 
-                // Set end date to last day of month
-                const lastDay = new Date(year, month, 0);
-                setEndDate(lastDay);
-                // setData('end_date', lastDay.toISOString().split('T')[0]); // This line is removed as per the edit hint
-            }
+        // Check if employee has assignments
+        const employee = employees.find(e => e.id.toString() === employeeId);
+        if (employee && (!employee.assignments || employee.assignments.length === 0)) {
+            setSelectedEmployeeForAssignment(employee);
+            setShowAssignmentPopup(true);
         }
-    }, []);
+    };
 
-    const checkDuplicate = async (employeeId: string, date: string) => {
+    // Handle assignment selection
+    const handleAssignmentChange = (assignmentId: string) => {
+        setData('assignment_id', assignmentId);
+
+        if (assignmentId) {
+            // Clear project/rental when assignment is selected
+            setData('project_id', '');
+            setData('rental_id', '');
+        }
+    };
+
+    // Handle project/rental selection (clears assignment)
+    const handleProjectChange = (projectId: string) => {
+        setData('project_id', projectId);
+        if (projectId) {
+            setData('assignment_id', '');
+        }
+    };
+
+    const handleRentalChange = (rentalId: string) => {
+        setData('rental_id', rentalId);
+        if (rentalId) {
+            setData('assignment_id', '');
+        }
+    };
+
+    // Create assignment function
+    const createAssignment = async () => {
+        if (!selectedEmployeeForAssignment || !newAssignmentData.name.trim()) {
+            toast.error('Please provide assignment name');
+            return;
+        }
+
         try {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            const assignmentData = {
+                ...newAssignmentData,
+                employee_id: selectedEmployeeForAssignment.id,
+            };
 
-            const response = await fetch(route('timesheets.check-duplicate'), {
+            const response = await fetch(`/api/employees/${selectedEmployeeForAssignment.id}/assignments`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    Accept: 'application/json',
-                    'X-CSRF-TOKEN': csrfToken || '',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
                 },
-                body: JSON.stringify({
-                    employee_id: employeeId,
-                    date: date,
-                }),
+                body: JSON.stringify(assignmentData),
             });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            if (response.ok) {
+                toast.success('Assignment created successfully');
+                setShowAssignmentPopup(false);
+                window.location.reload(); // Refresh to get updated assignments
+            } else {
+                const error = await response.json();
+                toast.error(error.message || 'Failed to create assignment');
             }
-
-            const data = await response.json();
-            return data.exists || false;
         } catch (error) {
-            console.error('Error checking duplicate:', error);
-            // Return false to allow submission if check fails
-            return false;
+            console.error('Error creating assignment:', error);
+            toast.error('Failed to create assignment');
         }
     };
 
+    const closeAssignmentPopup = () => {
+        setShowAssignmentPopup(false);
+        setSelectedEmployeeForAssignment(null);
+        setNewAssignmentData({
+            type: 'manual',
+            name: '',
+            project_id: '',
+            rental_id: '',
+            location: '',
+            notes: '',
+            start_date: new Date().toISOString().split('T')[0],
+        });
+    };
+
+        // Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setProcessing(true);
+        setErrors({});
 
-        if (isBulkMode && assignmentBlocks.length > 1) {
-            // Validate all blocks
-            const validAssignments = assignmentBlocks.filter((block) => block.start_date && block.end_date && (block.project_id || block.rental_id));
-            if (validAssignments.length === 0) {
-                toast.error('Please fill at least one assignment block completely');
-                return;
-            }
-            for (const block of assignmentBlocks) {
-                if (!block.start_date || !block.end_date || (!block.project_id && !block.rental_id)) {
-                    toast.error('Please fill all assignment block fields');
-                    return;
-                }
-            }
-            // Submit only valid assignments using FormData for Laravel compatibility
-            const formData = new FormData();
-            validAssignments.forEach((block, i) => {
-                formData.append(`assignments[${i}][employee_id]`, 'employee_id'); // This line is removed as per the edit hint
-                formData.append(`assignments[${i}][project_id]`, block.project_id && block.project_id !== 'none' ? block.project_id : '');
-                formData.append(`assignments[${i}][rental_id]`, block.rental_id && block.rental_id !== 'none' ? block.rental_id : '');
-                formData.append(`assignments[${i}][date_from]`, block.start_date);
-                formData.append(`assignments[${i}][date_to]`, block.end_date);
-                formData.append(`assignments[${i}][hours_worked]`, '8');
-                formData.append(`assignments[${i}][overtime_hours]`, '0');
-                formData.append(`assignments[${i}][description]`, 'description'); // This line is removed as per the edit hint
-                formData.append(`assignments[${i}][start_time]`, '08:00');
-                formData.append(`assignments[${i}][end_time]`, '');
-            });
-            router.post(route('timesheets.store-bulk-split'), formData, {
-                forceFormData: true,
-                onSuccess: () => {
-                    toast.success('Timesheets created successfully!');
-                    // reset(); // This line is removed as per the edit hint
-                    router.visit(route('hr.api.timesheets.index'));
+        try {
+            const response = await fetch(route('timesheets.store'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
                 },
-                onError: (errors) => {
-                    const firstError = Object.values(errors)[0];
-                    const message = Array.isArray(firstError) ? firstError[0] : firstError;
-                    toast.error(message || 'Please check the form for errors');
-                },
+                body: JSON.stringify(data),
             });
-            return;
-        }
 
-        // Basic validation (add more as needed)
-        if (!data.employee_id) {
-            toast.error(t('employee_error', 'Please select an employee'));
-            return;
-        }
-        if (!data.date) {
-            toast.error(t('date_error', 'Please select a date'));
-            return;
-        }
-        if (!data.hours_worked) {
-            toast.error(t('hours_worked_error', 'Please enter hours worked'));
-            return;
-        }
-
-        if (isBulkMode) {
-            if (!startDate || !endDate) {
-                toast.error(t('bulk_error', 'Please select both start and end dates for bulk entry'));
-                return;
+            if (response.ok) {
+                toast.success('Timesheet created successfully');
+                router.visit(route('timesheets.index'));
+            } else {
+                const errorData = await response.json();
+                setErrors(errorData.errors || {});
+                Object.keys(errorData.errors || {}).forEach(key => {
+                    toast.error(errorData.errors[key][0] || errorData.errors[key]);
+                });
             }
-            if (startDate > endDate) {
-                toast.error(t('end_date_error', 'End date must be after start date'));
-                return;
-            }
-            // post(route('timesheets.store-bulk'), { // This line is removed as per the edit hint
-            //   onSuccess: () => {
-            //     toast.success(t('bulk_success', 'Timesheets created successfully!'));
-            //     reset();
-            //     router.visit(route('hr.api.timesheets.index'));
-            //   },
-            //   onError: (errors) => {
-            //     const firstError = Object.values(errors)[0];
-            //     const message = Array.isArray(firstError) ? firstError[0] : firstError;
-            //     toast.error(message || t('check_form', 'Please check the form for errors'));
-            //   },
-            // });
-        } else {
-            // Check for duplicates first
-            try {
-                const isDuplicate = await checkDuplicate(data.employee_id, data.date); // This line is removed as per the edit hint
-                if (isDuplicate) {
-                    toast.error(t('duplicate_error', 'A timesheet for this employee and date already exists'));
-                    return;
-                }
-            } catch (error) {
-                console.warn('Duplicate check failed:', error);
-                // Continue with submission if duplicate check fails
-            }
-            // post(route('timesheets.store'), { // This line is removed as per the edit hint
-            //   onSuccess: () => {
-            //     toast.success(t('single_success', 'Timesheet created successfully!'));
-            //     reset();
-            //     router.visit(route('hr.api.timesheets.index'));
-            //   },
-            //   onError: (errors) => {
-            //     const firstError = Object.values(errors)[0];
-            //     const message = Array.isArray(firstError) ? firstError[0] : firstError;
-            //     toast.error(message || t('check_form', 'Please check the form for errors'));
-            //   },
-            // });
+        } catch (error) {
+            console.error('Error creating timesheet:', error);
+            toast.error('Failed to create timesheet');
+        } finally {
+            setProcessing(false);
         }
-    };
-
-    const onDateSelect = (date: Date | undefined) => {
-        setSelectedDate(date);
-        if (date) {
-            const formattedDate = format(date, 'yyyy-MM-dd');
-            // setData('date', formattedDate); // This line is removed as per the edit hint
-        }
-    };
-
-    const onStartDateSelect = (date: Date | undefined) => {
-        setStartDate(date);
-        if (date) {
-            const formattedDate = format(date, 'yyyy-MM-dd');
-            // setData('start_date', formattedDate); // This line is removed as per the edit hint
-            if (isBulkMode) {
-                // Auto-select end date to last day of the same month
-                const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-                setEndDate(lastDay);
-                // setData('end_date', format(lastDay, 'yyyy-MM-dd')); // This line is removed as per the edit hint
-                // Always use fresh date objects
-                generateDailyOvertimeHours(
-                    new Date(date.getFullYear(), date.getMonth(), date.getDate()),
-                    new Date(lastDay.getFullYear(), lastDay.getMonth(), lastDay.getDate()),
-                );
-            } else if (isBulkMode && endDate) {
-                generateDailyOvertimeHours(date, endDate);
-            }
-        }
-    };
-
-    const onEndDateSelect = (date: Date | undefined) => {
-        setEndDate(date);
-        if (date) {
-            const formattedDate = format(date, 'yyyy-MM-dd');
-            // setData('end_date', formattedDate); // This line is removed as per the edit hint
-            if (isBulkMode && startDate) {
-                generateDailyOvertimeHours(startDate, date);
-            }
-        }
-    };
-
-    // Generate daily overtime hours for the date range
-    const generateDailyOvertimeHours = (start: Date, end: Date) => {
-        const newDailyOvertimeHours: Record<string, string> = {};
-        const newDailyNormalHours: Record<string, string> = {};
-        let currentDate = new Date(Date.UTC(start.getFullYear(), start.getMonth(), start.getDate()));
-        const endDateValue = new Date(Date.UTC(end.getFullYear(), end.getMonth(), end.getDate()));
-        while (currentDate <= endDateValue) {
-            const dateString = currentDate.toISOString().split('T')[0];
-            newDailyOvertimeHours[dateString] = '0';
-            newDailyNormalHours[dateString] = '8';
-            // Move to next day in UTC
-            currentDate.setUTCDate(currentDate.getUTCDate() + 1);
-        }
-        setDailyOvertimeHours(newDailyOvertimeHours);
-        setDailyNormalHours(newDailyNormalHours);
-        // setData('daily_overtime_hours', newDailyOvertimeHours); // This line is removed as per the edit hint
-        // setData('daily_normal_hours', newDailyNormalHours); // This line is removed as per the edit hint
-    };
-
-    const toggleBulkMode = (enabled: boolean) => {
-        setIsBulkMode(enabled);
-        // setData('bulk_mode', enabled); // This line is removed as per the edit hint
-
-        if (enabled) {
-            setSelectedDate(undefined);
-            // setData('date', ''); // This line is removed as per the edit hint
-            // Set start date to 1st of current month
-            const now = new Date();
-            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-            const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-            setStartDate(firstDay);
-            setEndDate(lastDay);
-            // setData('start_date', format(firstDay, 'yyyy-MM-dd')); // This line is removed as per the edit hint
-            // setData('end_date', format(lastDay, 'yyyy-MM-dd')); // This line is removed as per the edit hint
-            setDailyOvertimeHours({});
-            setDailyNormalHours({});
-            // reset(); // This line is removed as per the edit hint
-            generateDailyOvertimeHours(firstDay, lastDay);
-        } else {
-            setStartDate(undefined);
-            setEndDate(undefined);
-            // setData('start_date', ''); // This line is removed as per the edit hint
-            // setData('end_date', ''); // This line is removed as per the edit hint
-            setDailyOvertimeHours({});
-            setDailyNormalHours({});
-            // reset(); // This line is removed as per the edit hint
-        }
-    };
-
-    const updateDailyOvertimeHours = (start: Date, end: Date) => {
-        const newDailyOvertimeHours: Record<string, string> = {};
-        const currentDate = new Date(start);
-
-        // Loop through each day in the range
-        while (currentDate <= end) {
-            const dateString = currentDate.toISOString().split('T')[0];
-            // Initialize with default overtime value
-            newDailyOvertimeHours[dateString] = dailyOvertimeHours[dateString] || '0';
-            // Move to next day
-            currentDate.setDate(currentDate.getDate() + 1);
-        }
-
-        setDailyOvertimeHours(newDailyOvertimeHours);
-    };
-
-    const handleDailyOvertimeChange = (date: string, value: string) => {
-        setDailyOvertimeHours((prev) => {
-            const updated = { ...prev, [date]: value };
-            // setData('daily_overtime_hours', updated); // This line is removed as per the edit hint
-            return updated;
-        });
-    };
-
-    const handleDailyNormalChange = (date: string, value: string) => {
-        setDailyNormalHours((prev) => {
-            const updated = { ...prev, [date]: value };
-            // setData('daily_normal_hours', updated); // This line is removed as per the edit hint
-            return updated;
-        });
-    };
-
-    // Observer effect to force re-render on dailyNormalHours change
-    useEffect(() => {
-        forceUpdate((n) => n + 1);
-    }, [dailyNormalHours]);
-
-    const addAssignmentBlock = () => {
-        setAssignmentBlocks((blocks) => [...blocks, { id: Date.now(), project_id: '', rental_id: '', start_date: '', end_date: '' }]);
-    };
-
-    const removeAssignmentBlock = (id: number) => {
-        setAssignmentBlocks((blocks) => blocks.filter((b) => b.id !== id));
-    };
-
-    const updateAssignmentBlock = (id: number, field: string, value: string) => {
-        setAssignmentBlocks((blocks) => blocks.map((b) => (b.id === id ? { ...b, [field]: value } : b)));
-    };
-
-    const getDisabledStartDates = (idx: number) => {
-        const usedDates = assignmentBlocks.map((block) => block.start_date);
-        const minDate = Math.min(...usedDates.map((date) => new Date(date).getTime()));
-        const maxDate = Math.max(...usedDates.map((date) => new Date(date).getTime()));
-        const disabledDates = [];
-        const currentDate = new Date(minDate);
-        while (currentDate <= new Date(maxDate)) {
-            if (!usedDates.includes(currentDate.toISOString().split('T')[0])) {
-                disabledDates.push(currentDate.toISOString().split('T')[0]);
-            }
-            currentDate.setDate(currentDate.getDate() + 1);
-        }
-        return disabledDates.join(',');
-    };
-
-    const getDisabledEndDates = (idx: number) => {
-        const usedDates = assignmentBlocks.map((block) => block.end_date);
-        const minDate = Math.min(...usedDates.map((date) => new Date(date).getTime()));
-        const maxDate = Math.max(...usedDates.map((date) => new Date(date).getTime()));
-        const disabledDates = [];
-        const currentDate = new Date(minDate);
-        while (currentDate <= new Date(maxDate)) {
-            if (!usedDates.includes(currentDate.toISOString().split('T')[0])) {
-                disabledDates.push(currentDate.toISOString().split('T')[0]);
-            }
-            currentDate.setDate(currentDate.getDate() + 1);
-        }
-        return disabledDates.join(',');
-    };
-
-    // Add helper to get all selected date ranges except for the current block
-    const getSelectedDateRanges = (excludeIdx: number) => {
-        return assignmentBlocks
-            .filter((_, idx) => idx !== excludeIdx)
-            .map((block) => ({
-                start: block.start_date,
-                end: block.end_date,
-            }))
-            .filter((block) => block.start && block.end);
-    };
-
-    // Helper to check if a date is within any selected range
-    const isDateInOtherRanges = (date: string, excludeIdx: number) => {
-        const ranges = getSelectedDateRanges(excludeIdx);
-        const d = new Date(date);
-        return ranges.some(({ start, end }) => {
-            if (!start || !end) return false;
-            const s = new Date(start);
-            const e = new Date(end);
-            return d >= s && d <= e;
-        });
     };
 
     return (
         <AppLayout
-            title={t('TimesheetManagement:actions.create_timesheet')}
-            breadcrumbs={[
-                { title: t('TimesheetManagement:pages.timesheets'), href: route('timesheets.index') },
-                { title: t('TimesheetManagement:actions.create_timesheet'), href: route('timesheets.create') },
-            ]}
+            title={t('create_timesheet', 'Create Timesheet')}
+            breadcrumbs={breadcrumbs}
             requiredPermission="timesheets.create"
         >
-            <Head title={t('TimesheetManagement:actions.create_timesheet')} />
+            <Head title={t('create_timesheet', 'Create Timesheet')} />
 
-            <div className="py-12">
-                <div className="w-full px-0">
-                    <Card className="w-full border border-gray-200 shadow-lg">
-                        <CardHeader>
-                            <div className="mb-2 flex items-center justify-between">
-                                <Button asChild variant="ghost" size="sm" className="gap-2">
-                                    <a href={route('timesheets.index')}>
-                                        <ArrowLeft className="h-4 w-4" /> {t('ui.buttons.back', 'Back')}
-                                    </a>
-                                </Button>
-                                <h1 className="text-2xl font-bold">
-                                    {isBulkMode
-                                        ? t('TimesheetManagement:actions.create_timesheet_bulk', 'Create Timesheet (Bulk Entry)')
-                                        : t('TimesheetManagement:actions.create_timesheet', 'Create Timesheet')}
-                                </h1>
-                            </div>
-                        </CardHeader>
-                        <CardContent>
-                            <form onSubmit={handleSubmit} className="space-y-8">
-                                {/* Assignment Details Section */}
-                                <div>
-                                    <h2 className="mb-4 border-b pb-2 text-lg font-semibold">
-                                        {t('TimesheetManagement:sections.assignment_details', 'Assignment Details')}
-                                    </h2>
-                                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                        {/* Employee Selection */}
-                                        <div>
-                                            <FormLabel>{t('TimesheetManagement:fields.employee')}</FormLabel>
-                                            <Select
-                                                onValueChange={(value) => setData('employee_id', value)}
-                                                value={data.employee_id}
-                                                options={employees.map((e) => ({ value: e.id.toString(), label: `${e.first_name} ${e.last_name}` }))}
-                                            />
-                                            {/* {errors?.employee_id && <FormMessage>{errors.employee_id}</FormMessage>} */}
-                                        </div>
-                                        {/* Project Selection */}
-                                        <div>
-                                            <FormLabel>{t('TimesheetManagement:fields.project')}</FormLabel>
-                                            <Select
-                                                onValueChange={(value) => setData('project_id', value)}
-                                                value={data.project_id}
-                                                options={projects.map((p) => ({ value: p.id.toString(), label: p.name }))}
-                                            />
-                                            {/* {errors?.project_id && <FormMessage>{errors.project_id}</FormMessage>} */}
-                                        </div>
-                                        {/* Rental Selection */}
-                                        <div className="md:col-span-2">
-                                            <FormLabel>{t('TimesheetManagement:fields.rental', 'Rental')}</FormLabel>
-                                            <Select
-                                                onValueChange={(value) => setData('rental_id', value)}
-                                                value={data.rental_id}
-                                                options={rentals?.map((r) => ({
-                                                    value: r.id.toString(),
-                                                    label: `${r.rental_number} - ${r.equipment?.name || 'Unknown Equipment'}`,
-                                                }))}
-                                            />
-                                            {/* {errors?.rental_id && <FormMessage>{errors.rental_id}</FormMessage>} */}
-                                        </div>
-                                    </div>
+            <div className="flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+                {/* Header */}
+                <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                        <div className="flex items-center space-x-2">
+                            <Clock className="h-6 w-6 text-primary" />
+                            <h1 className="text-3xl font-bold tracking-tight">{t('create_timesheet', 'Create Timesheet')}</h1>
+                        </div>
+                        <p className="text-muted-foreground">Record work hours and assignment details</p>
+                    </div>
+                    <Button variant="outline" asChild>
+                        <a href={route('timesheets.index')}>
+                            <ArrowLeft className="mr-2 h-4 w-4" />
+                            Back to Timesheets
+                        </a>
+                    </Button>
+                </div>
+
+                {/* Main Form */}
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                        {/* Employee & Assignment Section */}
+                        <Card className="lg:col-span-2">
+                            <CardHeader>
+                                <CardTitle className="flex items-center">
+                                    <User className="mr-2 h-5 w-5" />
+                                    Employee & Assignment
+                                </CardTitle>
+                                <CardDescription>
+                                    Select the employee and their work assignment
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                {/* Employee Selection */}
+                                <div className="space-y-2">
+                                    <Label htmlFor="employee_id">Employee *</Label>
+                                    <Select
+                                        value={data.employee_id}
+                                        onValueChange={handleEmployeeChange}
+                                        options={employees.map((e) => ({
+                                            value: e.id.toString(),
+                                            label: `${e.first_name} ${e.last_name}`
+                                        }))}
+                                        placeholder="Select an employee"
+                                    />
+                                    {errors?.employee_id && (
+                                        <p className="text-sm text-red-600">{errors.employee_id}</p>
+                                    )}
                                 </div>
-                                {/* Bulk Mode Toggle */}
-                                <div className="flex items-center gap-2">
-                                    <input type="checkbox" checked={isBulkMode} onChange={(e) => toggleBulkMode(e.target.checked)} id="bulk_mode" />
-                                    <FormLabel htmlFor="bulk_mode">{t('TimesheetManagement:fields.bulk_mode', 'Bulk Mode')}</FormLabel>
-                                </div>
-                                {/* Bulk Section (unchanged) */}
-                                {isBulkMode && (
-                                    <div className="space-y-6">
-                                        {/* Bulk Date Range */}
-                                        <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-                                            <div>
-                                                <FormLabel>{t('TimesheetManagement:fields.start_date', 'Start Date')}</FormLabel>
-                                                <input
-                                                    type="month"
-                                                    value={startDate ? format(startDate, 'yyyy-MM') : ''}
-                                                    onChange={(e) => {
-                                                        if (e.target.value) {
-                                                            const [year, month] = e.target.value.split('-').map(Number);
-                                                            const firstDay = new Date(year, month - 1, 1);
-                                                            const lastDay = new Date(year, month, 0);
-                                                            setStartDate(firstDay);
-                                                            setEndDate(lastDay);
-                                                            generateDailyOvertimeHours(firstDay, lastDay);
-                                                        }
-                                                    }}
-                                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                                                />
-                                            </div>
-                                            <div>
-                                                <FormLabel>{t('TimesheetManagement:fields.end_date', 'End Date')}</FormLabel>
-                                                <input
-                                                    type="date"
-                                                    value={endDate ? format(endDate, 'yyyy-MM-dd') : ''}
-                                                    onChange={(e) => onEndDateSelect(e.target.value ? new Date(e.target.value) : undefined)}
-                                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                                                    disabled={isBulkMode}
-                                                />
-                                            </div>
-                                        </div>
-                                        {/* Daily Overtime Table */}
-                                        <div className="mb-4">
-                                            <FormLabel>{t('TimesheetManagement:fields.daily_overtime', 'Daily Overtime')}</FormLabel>
-                                            <div className="overflow-x-auto">
-                                                <table
-                                                    className="w-full table-fixed rounded-lg border border-gray-200 text-sm shadow-sm"
-                                                    style={{ tableLayout: 'fixed' }}
-                                                >
-                                                    <thead className="bg-white">
-                                                        <tr>
-                                                            {Object.keys(dailyNormalHours).map((date) => {
-                                                                const day = new Date(date).getDay();
-                                                                const isFriday = day === 5;
-                                                                return (
-                                                                    <th
-                                                                        key={date}
-                                                                        className={`sticky top-0 z-10 border-b border-gray-200 text-center align-middle font-semibold ${isFriday ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-900'}`}
-                                                                        style={{
-                                                                            width: '40px',
-                                                                            minWidth: '40px',
-                                                                            maxWidth: '40px',
-                                                                            padding: '6px 0',
-                                                                        }}
-                                                                    >
-                                                                        {new Date(date).getDate()}
-                                                                    </th>
-                                                                );
-                                                            })}
-                                                        </tr>
-                                                        <tr>
-                                                            {Object.keys(dailyOvertimeHours).map((date) => {
-                                                                const day = new Date(date).getDay();
-                                                                const isFriday = day === 5;
-                                                                return (
-                                                                    <th
-                                                                        key={date}
-                                                                        className={`sticky top-8 z-10 border-b border-gray-200 text-center align-middle font-semibold ${isFriday ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-900'}`}
-                                                                        style={{
-                                                                            width: '40px',
-                                                                            minWidth: '40px',
-                                                                            maxWidth: '40px',
-                                                                            padding: '4px 0',
-                                                                        }}
-                                                                    >
-                                                                        {format(new Date(date), 'EEE')}
-                                                                    </th>
-                                                                );
-                                                            })}
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            {Object.entries(dailyNormalHours).map(([date, value]) => {
-                                                                const day = new Date(date).getDay();
-                                                                const isFriday = day === 5;
-                                                                const isAbsent = !value || parseFloat(value) === 0;
-                                                                return (
-                                                                    <td
-                                                                        key={date}
-                                                                        className={`border-b border-gray-100 text-center align-middle ${isFriday ? 'bg-blue-50' : 'bg-white'}`}
-                                                                        style={{
-                                                                            width: '40px',
-                                                                            minWidth: '40px',
-                                                                            maxWidth: '40px',
-                                                                            padding: '2px 0',
-                                                                        }}
-                                                                    >
-                                                                        <input
-                                                                            type="number"
-                                                                            min="0"
-                                                                            max="24"
-                                                                            step="0.5"
-                                                                            value={isFriday ? '' : isAbsent ? '' : value}
-                                                                            onChange={(e) => handleDailyNormalChange(date, e.target.value)}
-                                                                            className={`w-full rounded border bg-gray-50 px-0 py-0 text-center text-xs focus:bg-white ${isFriday ? 'font-bold text-blue-600' : isAbsent ? 'font-bold text-red-600' : ''}`}
-                                                                            style={{
-                                                                                width: '38px',
-                                                                                minWidth: '38px',
-                                                                                maxWidth: '38px',
-                                                                                padding: 0,
-                                                                                textAlign: 'center',
-                                                                            }}
-                                                                            placeholder={isFriday ? 'F' : isAbsent ? 'A' : ''}
-                                                                        />
-                                                                    </td>
-                                                                );
-                                                            })}
-                                                        </tr>
-                                                        <tr>
-                                                            {Object.entries(dailyOvertimeHours).map(([date, value]) => {
-                                                                const day = new Date(date).getDay();
-                                                                const isFriday = day === 5;
-                                                                return (
-                                                                    <td
-                                                                        key={date}
-                                                                        className={`border-b border-gray-100 text-center align-middle ${isFriday ? 'bg-blue-50' : 'bg-white'}`}
-                                                                        style={{
-                                                                            width: '40px',
-                                                                            minWidth: '40px',
-                                                                            maxWidth: '40px',
-                                                                            padding: '2px 0',
-                                                                        }}
-                                                                    >
-                                                                        <input
-                                                                            type="number"
-                                                                            min="0"
-                                                                            max="24"
-                                                                            step="0.5"
-                                                                            value={value}
-                                                                            onChange={(e) => handleDailyOvertimeChange(date, e.target.value)}
-                                                                            className="w-full rounded border bg-gray-50 px-0 py-0 text-center text-xs focus:bg-white"
-                                                                            style={{
-                                                                                width: '38px',
-                                                                                minWidth: '38px',
-                                                                                maxWidth: '38px',
-                                                                                padding: 0,
-                                                                                textAlign: 'center',
-                                                                            }}
-                                                                        />
-                                                                    </td>
-                                                                );
-                                                            })}
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <h2 className="mb-2 text-lg font-semibold">Split Assignments</h2>
-                                        {assignmentBlocks.map((block, idx) => (
-                                            <div
-                                                key={block.id}
-                                                className="mb-2 grid grid-cols-1 items-end gap-4 rounded border bg-gray-50 p-4 md:grid-cols-4"
-                                            >
-                                                <div>
-                                                    <FormLabel>Project</FormLabel>
-                                                    <Select
-                                                        value={block.project_id}
-                                                        onValueChange={(v) => updateAssignmentBlock(block.id, 'project_id', v)}
-                                                        options={projects.map((p) => ({ value: p.id.toString(), label: p.name }))}
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <FormLabel>Rental</FormLabel>
-                                                    <Select
-                                                        value={block.rental_id}
-                                                        onValueChange={(v) => updateAssignmentBlock(block.id, 'rental_id', v)}
-                                                        options={rentals?.map((r) => ({
-                                                            value: r.id.toString(),
-                                                            label: `${r.rental_number} - ${r.equipment?.name || 'Unknown Equipment'}`,
-                                                        }))}
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <FormLabel>Start Date</FormLabel>
-                                                    <Input
-                                                        type="date"
-                                                        value={block.start_date}
-                                                        onChange={(e) => updateAssignmentBlock(block.id, 'start_date', e.target.value)}
-                                                        min={format(startDate || new Date(), 'yyyy-MM-01')}
-                                                        max={format(endDate || new Date(), 'yyyy-MM-dd')}
-                                                        disabled={false}
-                                                        style={{
-                                                            backgroundColor: isDateInOtherRanges(block.start_date, idx) ? '#fca5a5' : undefined,
-                                                        }}
-                                                        onInput={(e) => {
-                                                            if (isDateInOtherRanges(e.currentTarget.value, idx)) {
-                                                                e.currentTarget.setCustomValidity('This date is already assigned in another block.');
-                                                            } else {
-                                                                e.currentTarget.setCustomValidity('');
-                                                            }
-                                                        }}
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <FormLabel>End Date</FormLabel>
-                                                    <Input
-                                                        type="date"
-                                                        value={block.end_date}
-                                                        onChange={(e) => updateAssignmentBlock(block.id, 'end_date', e.target.value)}
-                                                        min={block.start_date || format(startDate || new Date(), 'yyyy-MM-01')}
-                                                        max={format(endDate || new Date(), 'yyyy-MM-dd')}
-                                                        disabled={false}
-                                                        style={{ backgroundColor: isDateInOtherRanges(block.end_date, idx) ? '#fca5a5' : undefined }}
-                                                        onInput={(e) => {
-                                                            if (isDateInOtherRanges(e.currentTarget.value, idx)) {
-                                                                e.currentTarget.setCustomValidity('This date is already assigned in another block.');
-                                                            } else {
-                                                                e.currentTarget.setCustomValidity('');
-                                                            }
-                                                        }}
-                                                    />
-                                                </div>
-                                                {assignmentBlocks.length > 1 && (
-                                                    <Button
-                                                        type="button"
-                                                        variant="destructive"
-                                                        size="sm"
-                                                        className="mt-2"
-                                                        onClick={() => removeAssignmentBlock(block.id)}
-                                                    >
-                                                        Remove
-                                                    </Button>
-                                                )}
-                                            </div>
-                                        ))}
-                                        <Button type="button" variant="secondary" onClick={addAssignmentBlock}>
-                                            Add Assignment Block
-                                        </Button>
+
+                                {/* Assignment Selection */}
+                                {availableAssignments.length > 0 && (
+                                    <div className="space-y-2">
+                                        <Label htmlFor="assignment_id">Assignment</Label>
+                                        <Select
+                                            value={data.assignment_id}
+                                            onValueChange={handleAssignmentChange}
+                                            options={[
+                                                { value: '', label: 'No specific assignment' },
+                                                ...availableAssignments.map((assignment) => ({
+                                                    value: assignment.id.toString(),
+                                                    label: assignment.type === 'project' && assignment.project
+                                                        ? `Project: ${assignment.project.name}`
+                                                        : assignment.type === 'rental' && assignment.rental
+                                                        ? `Rental: ${assignment.rental.rental_number || assignment.rental.project_name}`
+                                                        : `${assignment.type}: ${assignment.name}`
+                                                }))
+                                            ]}
+                                            placeholder="Select an assignment"
+                                        />
                                     </div>
                                 )}
-                                {/* Timesheet Details Section */}
-                                <div>
-                                    <h2 className="mb-4 border-b pb-2 text-lg font-semibold">
-                                        {t('TimesheetManagement:sections.timesheet_details', 'Timesheet Details')}
-                                    </h2>
-                                    {!isBulkMode && (
-                                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                            <div>
-                                                <FormLabel>{t('TimesheetManagement:fields.hours')}</FormLabel>
-                                                <Input
-                                                    type="number"
-                                                    step="0.5"
-                                                    min="0"
-                                                    max="24"
-                                                    value={data.hours_worked}
-                                                    onChange={(e) => setData('hours_worked', e.target.value)}
-                                                    placeholder={t('TimesheetManagement:placeholders.enter_hours')}
-                                                />
-                                                {/* {errors?.hours_worked && <FormMessage>{errors.hours_worked}</FormMessage>} */}
-                                            </div>
-                                            <div>
-                                                <FormLabel>{t('TimesheetManagement:fields.overtime_hours', 'Overtime Hours')}</FormLabel>
-                                                <Input
-                                                    type="number"
-                                                    step="0.5"
-                                                    min="0"
-                                                    max="24"
-                                                    value={data.overtime_hours}
-                                                    onChange={(e) => setData('overtime_hours', e.target.value)}
-                                                    placeholder={t('TimesheetManagement:placeholders.enter_overtime', 'Enter overtime hours')}
-                                                />
-                                                {/* {errors?.overtime_hours && <FormMessage>{errors.overtime_hours}</FormMessage>} */}
-                                            </div>
+
+                                {/* Assignment Display */}
+                                {data.assignment_id && (
+                                    <div className="rounded-lg border p-4 bg-blue-50">
+                                        <h4 className="font-medium text-sm text-blue-800 mb-2">Selected Assignment</h4>
+                                        <div className="text-sm text-blue-700">
+                                            {(() => {
+                                                const assignment = availableAssignments.find(a => a.id.toString() === data.assignment_id);
+                                                if (!assignment) return 'Assignment not found';
+
+                                                if (assignment.type === 'project' && assignment.project) {
+                                                    return `Project: ${assignment.project.name}`;
+                                                } else if (assignment.type === 'rental' && assignment.rental) {
+                                                    return `Rental: ${assignment.rental.rental_number || assignment.rental.project_name}`;
+                                                } else {
+                                                    return `${assignment.type}: ${assignment.name}`;
+                                                }
+                                            })()}
                                         </div>
+                                    </div>
+                                )}
+
+                                {/* Project/Rental Selection (when no assignment) */}
+                                {!data.assignment_id && (
+                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="project_id">Project (Optional)</Label>
+                                            <Select
+                                                value={data.project_id}
+                                                onValueChange={handleProjectChange}
+                                                options={[
+                                                    { value: '', label: 'No project' },
+                                                    ...projects.map((p) => ({
+                                                        value: p.id.toString(),
+                                                        label: p.name
+                                                    }))
+                                                ]}
+                                                placeholder="Select a project"
+                                            />
+                                        </div>
+
+                                        {include_rentals && (
+                                            <div className="space-y-2">
+                                                <Label htmlFor="rental_id">Rental (Optional)</Label>
+                                                <Select
+                                                    value={data.rental_id}
+                                                    onValueChange={handleRentalChange}
+                                                    options={[
+                                                        { value: '', label: 'No rental' },
+                                                        ...rentals.map((r) => ({
+                                                            value: r.id.toString(),
+                                                            label: `${r.rental_number} - ${r.equipment?.name || 'Unknown Equipment'}`
+                                                        }))
+                                                    ]}
+                                                    placeholder="Select a rental"
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Warning when no assignment and employee has assignments */}
+                                {!data.assignment_id && availableAssignments.length > 0 && (
+                                    <Alert>
+                                        <AlertCircle className="h-4 w-4" />
+                                        <AlertDescription>
+                                            This employee has active assignments. Consider selecting one above or use project/rental fields to create a new assignment.
+                                        </AlertDescription>
+                                    </Alert>
+                                )}
+                            </CardContent>
+                        </Card>
+
+                        {/* Time Details Section */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center">
+                                    <Calendar className="mr-2 h-5 w-5" />
+                                    Time Details
+                                </CardTitle>
+                                <CardDescription>
+                                    Work date and hours
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                {/* Date */}
+                                <div className="space-y-2">
+                                    <Label htmlFor="date">Date *</Label>
+                                                                         <DatePicker
+                                         value={data.date ? new Date(data.date) : null}
+                                         onChange={(date) => setData('date', date ? format(date, 'yyyy-MM-dd') : '')}
+                                     />
+                                    {errors?.date && (
+                                        <p className="text-sm text-red-600">{errors.date}</p>
                                     )}
-                                    <div className="mt-6">
-                                        <FormLabel>{t('TimesheetManagement:fields.description')}</FormLabel>
-                                        <Textarea
-                                            value={data.description}
-                                            onChange={(e) => setData('description', e.target.value)}
-                                            rows={4}
-                                            placeholder={t('TimesheetManagement:placeholders.brief_description')}
+                                </div>
+
+                                {/* Hours */}
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="hours_worked">Regular Hours *</Label>
+                                        <Input
+                                            id="hours_worked"
+                                            type="number"
+                                            step="0.5"
+                                            min="0"
+                                            max="24"
+                                            value={data.hours_worked}
+                                            onChange={(e) => setData('hours_worked', e.target.value)}
+                                            placeholder="8"
                                         />
-                                        {/* {errors?.description && <FormMessage>{errors.description}</FormMessage>} */}
+                                        {errors?.hours_worked && (
+                                            <p className="text-sm text-red-600">{errors.hours_worked}</p>
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label htmlFor="overtime_hours">Overtime Hours</Label>
+                                        <Input
+                                            id="overtime_hours"
+                                            type="number"
+                                            step="0.5"
+                                            min="0"
+                                            max="24"
+                                            value={data.overtime_hours}
+                                            onChange={(e) => setData('overtime_hours', e.target.value)}
+                                            placeholder="0"
+                                        />
+                                        {errors?.overtime_hours && (
+                                            <p className="text-sm text-red-600">{errors.overtime_hours}</p>
+                                        )}
                                     </div>
                                 </div>
-                                <div className="mt-8 flex justify-end space-x-3">
-                                    <Button asChild variant="outline">
-                                        <a href={route('timesheets.index')}>{t('ui.buttons.cancel')}</a>
-                                    </Button>
-                                    <Button type="submit" disabled={false}>
-                                        {t('ui.buttons.create')}
-                                    </Button>
+
+                                {/* Time Range (Optional) */}
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="start_time">Start Time</Label>
+                                        <Input
+                                            id="start_time"
+                                            type="time"
+                                            value={data.start_time}
+                                            onChange={(e) => setData('start_time', e.target.value)}
+                                        />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label htmlFor="end_time">End Time</Label>
+                                        <Input
+                                            id="end_time"
+                                            type="time"
+                                            value={data.end_time}
+                                            onChange={(e) => setData('end_time', e.target.value)}
+                                        />
+                                    </div>
                                 </div>
-                            </form>
+
+                                {/* Total Hours Display */}
+                                <div className="rounded-lg bg-muted/30 p-3">
+                                    <div className="text-sm font-medium text-muted-foreground">Total Hours</div>
+                                    <div className="text-2xl font-bold">
+                                        {(parseFloat(data.hours_worked || '0') + parseFloat(data.overtime_hours || '0')).toFixed(1)}h
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    {/* Description Section */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Work Description</CardTitle>
+                            <CardDescription>
+                                Describe the work performed and tasks completed
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                <div className="space-y-2">
+                                    <Label htmlFor="description">Description</Label>
+                                    <Textarea
+                                        id="description"
+                                        value={data.description}
+                                        onChange={(e) => setData('description', e.target.value)}
+                                        placeholder="Brief description of work performed..."
+                                        rows={4}
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="tasks_completed">Tasks Completed</Label>
+                                    <Textarea
+                                        id="tasks_completed"
+                                        value={data.tasks_completed}
+                                        onChange={(e) => setData('tasks_completed', e.target.value)}
+                                        placeholder="List of specific tasks completed..."
+                                        rows={4}
+                                    />
+                                </div>
+                            </div>
                         </CardContent>
                     </Card>
-                </div>
+
+                    {/* Form Actions */}
+                    <div className="flex justify-end space-x-4">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => router.visit(route('timesheets.index'))}
+                            disabled={processing}
+                        >
+                            Cancel
+                        </Button>
+                        <Button type="submit" disabled={processing}>
+                            {processing ? 'Creating...' : 'Create Timesheet'}
+                        </Button>
+                    </div>
+                </form>
             </div>
+
+            {/* Assignment Creation Dialog */}
+            <Dialog open={showAssignmentPopup} onOpenChange={setShowAssignmentPopup}>
+                <DialogContent className="max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Create Assignment</DialogTitle>
+                    </DialogHeader>
+
+                    <div className="space-y-4">
+                        <Alert>
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertDescription>
+                                This employee has no active assignments. Please create one to proceed.
+                            </AlertDescription>
+                        </Alert>
+
+                        <div className="space-y-2">
+                            <Label>Assignment Type</Label>
+                            <Select
+                                value={newAssignmentData.type}
+                                onValueChange={(value) => setNewAssignmentData(prev => ({ ...prev, type: value }))}
+                                options={[
+                                    { value: 'manual', label: 'Manual Assignment' },
+                                    { value: 'project', label: 'Project Assignment' },
+                                    { value: 'rental', label: 'Rental Assignment' },
+                                ]}
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Assignment Name *</Label>
+                            <Input
+                                value={newAssignmentData.name}
+                                onChange={(e) => setNewAssignmentData(prev => ({ ...prev, name: e.target.value }))}
+                                placeholder="Enter assignment name"
+                            />
+                        </div>
+
+                        {newAssignmentData.type === 'project' && (
+                            <div className="space-y-2">
+                                <Label>Project</Label>
+                                <Select
+                                    value={newAssignmentData.project_id}
+                                    onValueChange={(value) => setNewAssignmentData(prev => ({ ...prev, project_id: value }))}
+                                    options={[
+                                        { value: '', label: 'Select a project' },
+                                        ...projects.map(p => ({ value: p.id.toString(), label: p.name }))
+                                    ]}
+                                />
+                            </div>
+                        )}
+
+                        {newAssignmentData.type === 'rental' && include_rentals && (
+                            <div className="space-y-2">
+                                <Label>Rental</Label>
+                                <Select
+                                    value={newAssignmentData.rental_id}
+                                    onValueChange={(value) => setNewAssignmentData(prev => ({ ...prev, rental_id: value }))}
+                                    options={[
+                                        { value: '', label: 'Select a rental' },
+                                        ...rentals.map(r => ({
+                                            value: r.id.toString(),
+                                            label: `${r.rental_number} - ${r.equipment?.name || 'Unknown'}`
+                                        }))
+                                    ]}
+                                />
+                            </div>
+                        )}
+
+                        <div className="space-y-2">
+                            <Label>Location</Label>
+                            <Input
+                                value={newAssignmentData.location}
+                                onChange={(e) => setNewAssignmentData(prev => ({ ...prev, location: e.target.value }))}
+                                placeholder="Work location"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Start Date</Label>
+                            <Input
+                                type="date"
+                                value={newAssignmentData.start_date}
+                                onChange={(e) => setNewAssignmentData(prev => ({ ...prev, start_date: e.target.value }))}
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Notes</Label>
+                            <Textarea
+                                value={newAssignmentData.notes}
+                                onChange={(e) => setNewAssignmentData(prev => ({ ...prev, notes: e.target.value }))}
+                                placeholder="Additional notes..."
+                                rows={3}
+                            />
+                        </div>
+                    </div>
+
+                    <DialogFooter>
+                        <Button variant="outline" onClick={closeAssignmentPopup}>
+                            Cancel
+                        </Button>
+                        <Button onClick={createAssignment} disabled={!newAssignmentData.name.trim()}>
+                            Create Assignment
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </AppLayout>
     );
 }

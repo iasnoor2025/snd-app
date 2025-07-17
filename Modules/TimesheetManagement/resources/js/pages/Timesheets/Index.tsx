@@ -40,6 +40,23 @@ interface Employee {
     id: number;
     first_name: string;
     last_name: string;
+    assignments?: Assignment[];
+}
+
+interface Assignment {
+    id: number;
+    type: string;
+    name: string;
+    status: string;
+    location?: string;
+    start_date: string;
+    end_date?: string;
+    project?: Project;
+    rental?: {
+        id: number;
+        rental_number?: string;
+        project_name?: string;
+    };
 }
 
 interface Timesheet {
@@ -354,16 +371,29 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
             accessor: (row: Timesheet) => row.overtime_hours,
         },
         {
-            key: 'project',
-            header: t('lbl_project_column'),
-            accessor: (row: Timesheet) =>
-                row.project?.name && row.rental?.equipment?.name
+            key: 'assignment',
+            header: t('lbl_assignment_column', 'Assignment'),
+            accessor: (row: Timesheet) => {
+                const employee = row.employee;
+                if (employee?.assignments && employee.assignments.length > 0) {
+                    const assignment = employee.assignments[0]; // Get the latest active assignment
+                    if (assignment.type === 'project' && assignment.project) {
+                        return `Project: ${assignment.project.name}`;
+                    } else if (assignment.type === 'rental' && assignment.rental) {
+                        return `Rental: ${assignment.rental.rental_number || assignment.rental.project_name}`;
+                    } else {
+                        return `${assignment.type}: ${assignment.name}`;
+                    }
+                }
+                // Fallback to legacy project/rental if no assignment
+                return row.project?.name && row.rental?.equipment?.name
                     ? `${row.project.name} / ${row.rental.equipment.name}`
                     : row.project?.name
-                        ? row.project.name
+                        ? `Project: ${row.project.name}`
                         : row.rental?.equipment?.name
-                            ? row.rental.equipment.name
-                            : t('not_assigned'),
+                            ? `Rental: ${row.rental.equipment.name}`
+                            : t('not_assigned');
+            },
         },
         {
             key: 'status',
@@ -751,7 +781,7 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                                         </th>
                                         <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Hours</th>
                                         <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Overtime</th>
-                                        <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Project/Equipment</th>
+                                        <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Assignment</th>
                                         <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Status</th>
                                         <th className="px-2 py-2 text-right text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Actions</th>
                                     </tr>
@@ -771,17 +801,31 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                                                 <td className="px-2 py-2 whitespace-nowrap text-sm">{row.hours_worked}</td>
                                                 <td className="px-2 py-2 whitespace-nowrap text-sm">{row.overtime_hours}</td>
                                                 <td className="px-2 py-2 whitespace-nowrap text-sm">
-                                                    {row.project?.name
-                                                        ? `Project: ${row.project.name}`
-                                                        : row.rental?.equipment?.name
-                                                            ? `Rental: ${row.rental.equipment.name}`
-                                                            : row.location
-                                                                ? `Location: ${row.location}`
-                                                                : row.start_address
-                                                                    ? `Location: ${row.start_address}`
-                                                                    : row.end_address
-                                                                        ? `Location: ${row.end_address}`
-                                                                        : t('not_assigned')}
+                                                    {(() => {
+                                                        const employee = row.employee;
+                                                        if (employee?.assignments && employee.assignments.length > 0) {
+                                                            const assignment = employee.assignments[0];
+                                                            if (assignment.type === 'project' && assignment.project) {
+                                                                return `Project: ${assignment.project.name}`;
+                                                            } else if (assignment.type === 'rental' && assignment.rental) {
+                                                                return `Rental: ${assignment.rental.rental_number || assignment.rental.project_name}`;
+                                                            } else {
+                                                                return `${assignment.type}: ${assignment.name}`;
+                                                            }
+                                                        }
+                                                        // Fallback to legacy data
+                                                        return row.project?.name
+                                                            ? `Project: ${row.project.name}`
+                                                            : row.rental?.equipment?.name
+                                                                ? `Rental: ${row.rental.equipment.name}`
+                                                                : row.location
+                                                                    ? `Location: ${row.location}`
+                                                                    : row.start_address
+                                                                        ? `Location: ${row.start_address}`
+                                                                        : row.end_address
+                                                                            ? `Location: ${row.end_address}`
+                                                                            : t('not_assigned');
+                                                    })()}
                                                 </td>
                                                 <td className="px-2 py-2 whitespace-nowrap text-sm">{getStatusBadge(row.status)}</td>
                                                 <td className="px-2 py-2 whitespace-nowrap text-right text-sm font-medium">

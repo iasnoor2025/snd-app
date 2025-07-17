@@ -5,6 +5,7 @@ namespace Modules\EmployeeManagement\Domain\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
 use Modules\Core\Domain\Models\User;
@@ -164,6 +165,14 @@ class EmployeeAssignment extends Model
     public function rental(): BelongsTo
     {
         return $this->belongsTo(Rental::class);
+    }
+
+    /**
+     * Get the timesheets for this assignment
+     */
+    public function timesheets(): HasMany
+    {
+        return $this->hasMany(\Modules\TimesheetManagement\Domain\Models\Timesheet::class, 'assignment_id');
     }
 
     /**

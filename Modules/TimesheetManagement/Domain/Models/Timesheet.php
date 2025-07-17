@@ -24,6 +24,7 @@ class Timesheet extends Model
      */
     protected $fillable = [
         'employee_id',
+        'assignment_id',
         'date',
         'hours_worked',
         'overtime_hours',
@@ -149,6 +150,14 @@ class Timesheet extends Model
     public function rental(): BelongsTo
     {
         return $this->belongsTo(Rental::class);
+    }
+
+    /**
+     * Get the assignment associated with the timesheet
+     */
+    public function assignment(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\EmployeeManagement\Domain\Models\EmployeeAssignment::class);
     }
 
     /**

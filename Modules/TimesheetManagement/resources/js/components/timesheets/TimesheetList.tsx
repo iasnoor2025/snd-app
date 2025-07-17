@@ -232,7 +232,7 @@ const TimesheetList: React.FC<TimesheetListProps> = ({ timesheets, isLoading, on
                             <TableHead>{t('lbl_employee')}</TableHead>
                             <TableHead>{t('lbl_date')}</TableHead>
                             <TableHead>{t('lbl_hours')}</TableHead>
-                            <TableHead>{t('lbl_project')}</TableHead>
+                            <TableHead>{t('lbl_assignment', 'Assignment')}</TableHead>
                             <TableHead>{t('lbl_status')}</TableHead>
                             <TableHead className="text-right">{t('lbl_actions')}</TableHead>
                         </TableRow>
@@ -281,15 +281,29 @@ const TimesheetList: React.FC<TimesheetListProps> = ({ timesheets, isLoading, on
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        {(timesheet as any).project?.name && (timesheet as any).rental?.equipment?.name ? (
-                                            `${(timesheet as any).project.name} / ${(timesheet as any).rental.equipment.name}`
-                                        ) : (timesheet as any).project?.name ? (
-                                            (timesheet as any).project.name
-                                        ) : (timesheet as any).rental?.equipment?.name ? (
-                                            (timesheet as any).rental.equipment.name
-                                        ) : (
-                                            <span className="text-gray-400">{t('not_assigned')}</span>
-                                        )}
+                                        {(() => {
+                                            const employee = (timesheet as any).employee;
+                                            if (employee?.assignments && employee.assignments.length > 0) {
+                                                const assignment = employee.assignments[0];
+                                                if (assignment.type === 'project' && assignment.project) {
+                                                    return `Project: ${assignment.project.name}`;
+                                                } else if (assignment.type === 'rental' && assignment.rental) {
+                                                    return `Rental: ${assignment.rental.rental_number || assignment.rental.project_name}`;
+                                                } else {
+                                                    return `${assignment.type}: ${assignment.name}`;
+                                                }
+                                            }
+                                            // Fallback to legacy data
+                                            return (timesheet as any).project?.name && (timesheet as any).rental?.equipment?.name ? (
+                                                `${(timesheet as any).project.name} / ${(timesheet as any).rental.equipment.name}`
+                                            ) : (timesheet as any).project?.name ? (
+                                                `Project: ${(timesheet as any).project.name}`
+                                            ) : (timesheet as any).rental?.equipment?.name ? (
+                                                `Rental: ${(timesheet as any).rental.equipment.name}`
+                                            ) : (
+                                                <span className="text-gray-400">{t('not_assigned')}</span>
+                                            );
+                                        })()}
                                     </TableCell>
                                     <TableCell>{getStatusBadge((timesheet as any).status)}</TableCell>
                                     <TableCell className="text-right">
