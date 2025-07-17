@@ -115,9 +115,13 @@ export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, e
                     });
                     const newDailyNormalHours: Record<string, string> = {};
                     const newDailyOvertimeHours: Record<string, string> = {};
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
                     let currentDate = new Date(startDate);
                     while (currentDate <= endDate) {
                         const dateStr = format(currentDate, 'yyyy-MM-dd');
+                        const isAfterToday = currentDate > today;
+
                         if (timesheetMap[dateStr]) {
                             // Regular hours: if < 0 or not present, show empty (A)
                             const rh = timesheetMap[dateStr].hours_worked;
@@ -126,7 +130,9 @@ export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, e
                             const ot = timesheetMap[dateStr].overtime_hours;
                             newDailyOvertimeHours[dateStr] = ot === undefined || ot === null || ot < 0 ? '0' : ot.toString();
                         } else {
-                            newDailyNormalHours[dateStr] = '';
+                            // For future dates (after today), show 'A' for absent
+                            // For past/current dates, show empty for existing behavior
+                            newDailyNormalHours[dateStr] = isAfterToday ? 'A' : '';
                             newDailyOvertimeHours[dateStr] = '0';
                         }
                         currentDate.setDate(currentDate.getDate() + 1);
@@ -218,12 +224,17 @@ export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, e
     const generateDailyOvertimeHours = (start: Date, end: Date) => {
         const newDailyOvertimeHours: Record<string, string> = {};
         const newDailyNormalHours: Record<string, string> = {};
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
         let currentDate = new Date(Date.UTC(start.getFullYear(), start.getMonth(), start.getDate()));
         const endDateValue = new Date(Date.UTC(end.getFullYear(), end.getMonth(), end.getDate()));
         while (currentDate <= endDateValue) {
             const dateString = currentDate.toISOString().split('T')[0];
+            const isAfterToday = currentDate > today;
             newDailyOvertimeHours[dateString] = '0';
-            newDailyNormalHours[dateString] = '8';
+            // For future dates (after today), show 'A' for absent
+            // For past/current dates, show default 8 hours
+            newDailyNormalHours[dateString] = isAfterToday ? '0' : '8';
             currentDate.setUTCDate(currentDate.getUTCDate() + 1);
         }
         setDailyOvertimeHours(newDailyOvertimeHours);
