@@ -122,16 +122,6 @@ export default function Index({ users, roles, can }: Props) {
                                     ))}
                                 </SelectContent>
                             </Select>
-                            <Select value={perPage.toString()} onValueChange={v => { setPerPage(Number(v)); setCurrentPage(1); }}>
-                                <SelectTrigger className="w-28">
-                                    <SelectValue>{perPage} / page</SelectValue>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {[10, 15, 25, 50, 100].map(n => (
-                                        <SelectItem key={n} value={n.toString()}>{n} / page</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
                         </div>
                         <div className="overflow-x-auto rounded-md border">
                             <table className="min-w-full divide-y divide-gray-200">
@@ -196,19 +186,6 @@ export default function Index({ users, roles, can }: Props) {
                                         </div>
                                     </div>
                                     <div className="flex flex-col items-center gap-4 sm:flex-row">
-                                        <div className="flex items-center space-x-2">
-                                            <span className="text-sm text-muted-foreground">Show:</span>
-                                            <Select value={perPage.toString()} onValueChange={v => { setPerPage(Number(v)); setCurrentPage(1); }}>
-                                                <SelectTrigger className="w-20">
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {[10, 15, 25, 50, 100].map(n => (
-                                                        <SelectItem key={n} value={n.toString()}>{n}</SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
                                         <div className="flex items-center space-x-1">
                                             <Button variant="outline" size="sm" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>
                                                 Previous
