@@ -1243,6 +1243,15 @@ function Resources({
                                                 <ResourceList
                                                     type="manpower"
                                                     resources={getResourcesByType('manpower')}
+                                                    pagination={{
+                                                        current_page: manpower.current_page,
+                                                        from: (manpower.current_page - 1) * manpower.per_page + 1,
+                                                        last_page: manpower.last_page,
+                                                        per_page: manpower.per_page,
+                                                        to: Math.min(manpower.current_page * manpower.per_page, manpower.total),
+                                                        total: manpower.total,
+                                                    }}
+                                                    projectId={project.id}
                                                     onEdit={(resource) => handleEditResource(resource, 'manpower')}
                                                     onDelete={(resource) => handleDeleteResource(resource, 'manpower')}
                                                 />
@@ -1261,6 +1270,15 @@ function Resources({
                                                 <ResourceList
                                                     type="equipment"
                                                     resources={getResourcesByType('equipment')}
+                                                    pagination={{
+                                                        current_page: equipment.current_page,
+                                                        from: (equipment.current_page - 1) * equipment.per_page + 1,
+                                                        last_page: equipment.last_page,
+                                                        per_page: equipment.per_page,
+                                                        to: Math.min(equipment.current_page * equipment.per_page, equipment.total),
+                                                        total: equipment.total,
+                                                    }}
+                                                    projectId={project.id}
                                                     onEdit={(resource) => handleEditResource(resource, 'equipment')}
                                                     onDelete={(resource) => handleDeleteResource(resource, 'equipment')}
                                                 />
@@ -1279,6 +1297,15 @@ function Resources({
                                                 <ResourceList
                                                     type="material"
                                                     resources={getResourcesByType('material')}
+                                                    pagination={{
+                                                        current_page: materials.current_page,
+                                                        from: (materials.current_page - 1) * materials.per_page + 1,
+                                                        last_page: materials.last_page,
+                                                        per_page: materials.per_page,
+                                                        to: Math.min(materials.current_page * materials.per_page, materials.total),
+                                                        total: materials.total,
+                                                    }}
+                                                    projectId={project.id}
                                                     onEdit={(resource) => handleEditResource(resource, 'material')}
                                                     onDelete={(resource) => handleDeleteResource(resource, 'material')}
                                                 />
@@ -1298,6 +1325,15 @@ function Resources({
                                                 <ResourceList
                                                     type="fuel"
                                                     resources={getResourcesByType('fuel')}
+                                                    pagination={{
+                                                        current_page: fuel.current_page,
+                                                        from: (fuel.current_page - 1) * fuel.per_page + 1,
+                                                        last_page: fuel.last_page,
+                                                        per_page: fuel.per_page,
+                                                        to: Math.min(fuel.current_page * fuel.per_page, fuel.total),
+                                                        total: fuel.total,
+                                                    }}
+                                                    projectId={project.id}
                                                     onEdit={(resource) => handleEditResource(resource, 'fuel')}
                                                     onDelete={(resource) => handleDeleteResource(resource, 'fuel')}
                                                 />
@@ -1317,6 +1353,15 @@ function Resources({
                                                 <ResourceList
                                                     type="expense"
                                                     resources={getResourcesByType('expense')}
+                                                    pagination={{
+                                                        current_page: expenses.current_page,
+                                                        from: (expenses.current_page - 1) * expenses.per_page + 1,
+                                                        last_page: expenses.last_page,
+                                                        per_page: expenses.per_page,
+                                                        to: Math.min(expenses.current_page * expenses.per_page, expenses.total),
+                                                        total: expenses.total,
+                                                    }}
+                                                    projectId={project.id}
                                                     onEdit={(resource) => handleEditResource(resource, 'expense')}
                                                     onDelete={(resource) => handleDeleteResource(resource, 'expense')}
                                                 />
