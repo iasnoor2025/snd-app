@@ -487,6 +487,99 @@ async function ensureSanctumCsrf() {
     await axios.get('/sanctum/csrf-cookie');
 }
 
+// Add this function to handle document upload with proper authentication - moved outside component
+const handleDocumentUpload = async (file: File, documentType: string, employeeId: number, metadata: any = {}) => {
+    if (!file) {
+        ToastService.error('No file selected');
+        return;
+    }
+
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+    if (!allowedTypes.includes(file.type)) {
+        ToastService.error(`Invalid file type. Allowed types: ${allowedTypes.map((type) => type.split('/')[1].toUpperCase()).join(', ')}`);
+        return;
+    }
+
+    const maxSize = 10 * 1024 * 1024;
+    if (file.size > maxSize) {
+        ToastService.error('File size exceeds 10MB');
+        return;
+    }
+
+    const loadingToastId = ToastService.loading(`Uploading ${documentType.replace('_', ' ')}...`);
+
+        try {
+        // Ensure CSRF cookie is set for Laravel Sanctum
+        await axios.get('/sanctum/csrf-cookie');
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('document_type', documentType);
+        formData.append('name', file.name);
+        formData.append('type', documentType);
+
+        // Add metadata fields if provided
+        Object.keys(metadata).forEach(key => {
+            if (metadata[key]) {
+                formData.append(key, metadata[key]);
+            }
+        });
+
+                // Use the correct web-based endpoint based on document type
+        let endpoint = `/employees/${employeeId}/documents/upload`;
+
+        // Use specific endpoints for specific document types
+        switch (documentType) {
+            case 'iqama':
+                endpoint = `/employees/${employeeId}/documents/upload/iqama`;
+                break;
+            case 'passport':
+                endpoint = `/employees/${employeeId}/documents/upload/passport`;
+                break;
+            case 'contract':
+                endpoint = `/employees/${employeeId}/documents/upload/contract`;
+                break;
+            case 'medical':
+                endpoint = `/employees/${employeeId}/documents/upload/medical`;
+                break;
+            case 'driving_license':
+            case 'operator_license':
+            case 'tuv_certification':
+            case 'spsp_license':
+            default:
+                endpoint = `/employees/${employeeId}/documents/upload`;
+                break;
+        }
+
+                        // Get CSRF token from meta tag or cookie
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+                         decodeURIComponent(document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN='))?.split('=')[1] || '');
+
+        await axios.post(endpoint, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        });
+
+        ToastService.dismiss(loadingToastId);
+        ToastService.success(`${documentType.replace('_', ' ')} uploaded successfully`);
+
+        // Use Inertia to reload the page and refresh the data
+        router.visit(window.location.pathname, {
+            preserveScroll: true,
+            only: ['employee']
+        });
+    } catch (error: any) {
+        ToastService.dismiss(loadingToastId);
+        const errorMessage = error.response?.data?.message || error.message;
+        ToastService.error(`Failed to upload ${documentType.replace('_', ' ')}: ${errorMessage}`);
+        console.error('Upload error:', error);
+    }
+};
+
 export default function Show({
     employee,
     timesheets = { data: [] },
@@ -591,46 +684,7 @@ export default function Show({
         }
     };
 
-    const handleFileUpload = async (file: File, documentType: string) => {
-        if (!file) {
-            ToastService.error('No file selected');
-            return;
-        }
 
-        const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
-        if (!allowedTypes.includes(file.type)) {
-            ToastService.error(`Invalid file type. Allowed types: ${allowedTypes.map((type) => type.split('/')[1].toUpperCase()).join(', ')}`);
-            return;
-        }
-
-        const maxSize = 10 * 1024 * 1024;
-        if (file.size > maxSize) {
-            ToastService.error('File size exceeds 10MB');
-            return;
-        }
-
-        const loadingToastId = ToastService.loading(`Uploading ${documentType.replace('_', ' ')}...`);
-
-        try {
-            const formData = new FormData();
-            formData.append('document', file);
-            formData.append('type', documentType);
-
-            await axios.post(`/api/v1/employees/${employee.id}/documents`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-
-            ToastService.dismiss(loadingToastId);
-            ToastService.success(`${documentType.replace('_', ' ')} uploaded successfully`);
-            // fetchDocuments(); // Commented out as fetchDocuments is not defined
-        } catch (error: any) {
-            ToastService.dismiss(loadingToastId);
-            const errorMessage = error.response?.data?.message || error.message;
-            ToastService.error(`Failed to upload ${documentType.replace('_', ' ')}: ${errorMessage}`);
-        }
-    };
 
     const handleAdvanceRequest = async (data: any) => {
         const { amount, monthly_deduction, reason } = data;
@@ -3219,6 +3273,143 @@ export default function Show({
     );
 }
 
+// Document Upload Form Component
+const DocumentUploadForm = ({ documentType, onSubmit, onCancel, uploading }: any) => {
+  const [formData, setFormData] = useState<any>({});
+  const { t } = useTranslation(['EmployeeManagement']);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev: any) => ({ ...prev, [field]: value }));
+  };
+
+  const renderFields = () => {
+    switch (documentType) {
+      case 'iqama':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="document_number">Iqama Number *</Label>
+              <Input
+                id="document_number"
+                value={formData.document_number || ''}
+                onChange={(e) => handleChange('document_number', e.target.value)}
+                placeholder="Enter 10-digit Iqama number"
+                maxLength={10}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="issue_date">Issue Date *</Label>
+              <Input
+                id="issue_date"
+                type="date"
+                value={formData.issue_date || ''}
+                onChange={(e) => handleChange('issue_date', e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="expiry_date">Expiry Date *</Label>
+              <Input
+                id="expiry_date"
+                type="date"
+                value={formData.expiry_date || ''}
+                onChange={(e) => handleChange('expiry_date', e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="issuing_authority">Issuing Authority *</Label>
+              <Input
+                id="issuing_authority"
+                value={formData.issuing_authority || ''}
+                onChange={(e) => handleChange('issuing_authority', e.target.value)}
+                placeholder="Enter issuing authority"
+                required
+              />
+            </div>
+          </>
+        );
+      case 'passport':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="document_number">Passport Number *</Label>
+              <Input
+                id="document_number"
+                value={formData.document_number || ''}
+                onChange={(e) => handleChange('document_number', e.target.value)}
+                placeholder="Enter passport number"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="issue_date">Issue Date *</Label>
+              <Input
+                id="issue_date"
+                type="date"
+                value={formData.issue_date || ''}
+                onChange={(e) => handleChange('issue_date', e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="expiry_date">Expiry Date *</Label>
+              <Input
+                id="expiry_date"
+                type="date"
+                value={formData.expiry_date || ''}
+                onChange={(e) => handleChange('expiry_date', e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="issuing_authority">Issuing Authority *</Label>
+              <Input
+                id="issuing_authority"
+                value={formData.issuing_authority || ''}
+                onChange={(e) => handleChange('issuing_authority', e.target.value)}
+                placeholder="Enter issuing authority"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="nationality">Nationality *</Label>
+              <Input
+                id="nationality"
+                value={formData.nationality || ''}
+                onChange={(e) => handleChange('nationality', e.target.value)}
+                placeholder="Enter nationality"
+                required
+              />
+            </div>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {renderFields()}
+      <div className="flex justify-end gap-2 pt-4">
+        <Button type="button" variant="outline" onClick={onCancel} disabled={uploading}>
+          Cancel
+        </Button>
+        <Button type="submit" disabled={uploading}>
+          {uploading ? 'Uploading...' : 'Upload'}
+        </Button>
+      </div>
+    </form>
+  );
+};
+
 // Placeholder for missing components
 const DocumentSection = ({ children, title, description, badgeText, badgeClassName }: any) => (
   <div className="mb-10">
@@ -3241,20 +3432,51 @@ const DocumentCard = ({
   previewSize = 'id_card',
   documentName,
 }: any) => {
-  const previewUrl = `/api/employee/${employeeId}/documents/${documentType}/preview`;
-  const isImage = ["jpg", "jpeg", "png", "gif"].some((ext) => (previewUrl || '').toLowerCase().endsWith(ext));
-  const isPdf = (previewUrl || '').toLowerCase().endsWith("pdf");
   const hasDocument = !!documentNumber;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [localPreviewUrl, setLocalPreviewUrl] = useState<string | null>(null);
   const [localFileType, setLocalFileType] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [showUploadDialog, setShowUploadDialog] = useState(false);
+  const [uploadData, setUploadData] = useState<any>({});
+  const [documentData, setDocumentData] = useState<any>(null);
+  const [loadingDocument, setLoadingDocument] = useState(false);
 
   useEffect(() => {
     return () => {
       if (localPreviewUrl) URL.revokeObjectURL(localPreviewUrl);
     };
   }, [localPreviewUrl]);
+
+  // Fetch document data when component mounts if document exists
+  useEffect(() => {
+    if (hasDocument && documentType) {
+      fetchDocumentData();
+    }
+  }, [hasDocument, documentType, employeeId]);
+
+    const fetchDocumentData = async () => {
+    setLoadingDocument(true);
+    try {
+      // Use web-based route instead of API route to avoid auth issues
+      const response = await axios.get(`/employees/${employeeId}/documents/api`);
+      const documents = response.data.documents || response.data;
+
+      // Find the document by type in custom properties
+      const document = documents.find((doc: any) => {
+        const customProps = doc.custom_properties || {};
+        return customProps.document_type === documentType;
+      });
+
+      if (document) {
+        setDocumentData(document);
+      }
+    } catch (error) {
+      console.error('Error fetching document data:', error);
+    } finally {
+      setLoadingDocument(false);
+    }
+  };
 
   const handleButtonClick = () => {
     fileInputRef.current?.click();
@@ -3266,37 +3488,55 @@ const DocumentCard = ({
       if (localPreviewUrl) URL.revokeObjectURL(localPreviewUrl);
       setLocalPreviewUrl(URL.createObjectURL(file));
       setLocalFileType(file.type);
-      setUploading(true);
-      try {
-        // Ensure CSRF cookie is set for Laravel Sanctum
-        await axios.get('/sanctum/csrf-cookie');
-        const formData = new FormData();
-        formData.append('document', file);
-        formData.append('type', documentType);
-        await axios.post(`/api/v1/employees/${employeeId}/documents`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        toast.success(`Uploaded ${file.name} for ${documentType}`);
-        window.location.reload();
-      } catch (err: any) {
-        toast.error(err?.response?.data?.message || 'Upload failed');
-      } finally {
-        setUploading(false);
+
+      // Show upload dialog for document types that require additional fields
+      if (['iqama', 'passport', 'contract', 'medical'].includes(documentType)) {
+        setUploadData({ file });
+        setShowUploadDialog(true);
+      } else {
+        // For general documents, upload directly
+        setUploading(true);
+        try {
+          await handleDocumentUpload(file, documentType, employeeId);
+        } catch (err: any) {
+          toast.error(err?.response?.data?.message || 'Upload failed');
+        } finally {
+          setUploading(false);
+        }
       }
     }
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  // Determine which preview to show
-  let showPreviewUrl = localPreviewUrl || previewUrl;
+  const handleUploadWithMetadata = async (metadata: any) => {
+    setUploading(true);
+    try {
+      await handleDocumentUpload(uploadData.file, documentType, employeeId, metadata);
+      setShowUploadDialog(false);
+      // Refresh document data after upload
+      fetchDocumentData();
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+      // Determine which preview to show
+  let showPreviewUrl: string | undefined = localPreviewUrl || undefined;
   let showIsImage = false;
   let showIsPdf = false;
+  let downloadUrl = '';
+
   if (localPreviewUrl && localFileType) {
     showIsImage = localFileType.startsWith('image/');
     showIsPdf = localFileType === 'application/pdf';
-  } else {
-    showIsImage = isImage;
-    showIsPdf = isPdf;
+  } else if (documentData) {
+    // Use the actual document data from the API
+    showPreviewUrl = documentData.url || documentData.preview_url || undefined;
+    showIsImage = documentData.mime_type && documentData.mime_type.startsWith('image/');
+    showIsPdf = documentData.mime_type === 'application/pdf';
+    downloadUrl = `/employees/${employeeId}/documents/${documentData.id}/download`;
   }
 
   return (
@@ -3343,9 +3583,9 @@ const DocumentCard = ({
                 size="sm"
                 asChild
                 className="text-sm px-3 py-2"
-                disabled={uploading}
+                disabled={uploading || loadingDocument}
               >
-                <a href={`/api/employee/${employeeId}/documents/${documentType}/download`} target="_blank" rel="noopener noreferrer">
+                <a href={downloadUrl || '#'} target="_blank" rel="noopener noreferrer">
                   <Download className="h-5 w-5 mr-1" /> Download
                 </a>
               </Button>
@@ -3354,9 +3594,9 @@ const DocumentCard = ({
                 size="sm"
                 asChild
                 className="text-sm px-3 py-2"
-                disabled={uploading}
+                disabled={uploading || loadingDocument || !showPreviewUrl}
               >
-                <a href={previewUrl} target="_blank" rel="noopener noreferrer">
+                <a href={showPreviewUrl || '#'} target="_blank" rel="noopener noreferrer">
                   <Eye className="h-5 w-5 mr-1" /> Preview
                 </a>
               </Button>
@@ -3383,10 +3623,45 @@ const DocumentCard = ({
           )}
         </div>
       </div>
+
+      {/* Upload Dialog */}
+      <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Upload {title}</DialogTitle>
+            <DialogDescription>
+              Please provide the required information for this document.
+            </DialogDescription>
+          </DialogHeader>
+          <DocumentUploadForm
+            documentType={documentType}
+            onSubmit={handleUploadWithMetadata}
+            onCancel={() => setShowUploadDialog(false)}
+            uploading={uploading}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
 const AdditionalDocumentsList = ({ documents = [], employeeId }: any) => {
+  const handleUploadClick = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.pdf,.jpg,.jpeg,.png';
+    input.onchange = async (e: any) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        try {
+          await handleDocumentUpload(file, 'general', employeeId);
+        } catch (error) {
+          console.error('Upload error:', error);
+        }
+      }
+    };
+    input.click();
+  };
+
   if (!documents.length) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[220px] py-10">
@@ -3394,7 +3669,7 @@ const AdditionalDocumentsList = ({ documents = [], employeeId }: any) => {
           variant="default"
           size="lg"
           className="text-base px-6 py-3"
-          onClick={() => handleUpdateDocument('additional', employeeId)}
+          onClick={handleUploadClick}
         >
           Upload Document
         </Button>
@@ -3450,7 +3725,7 @@ const AdditionalDocumentsList = ({ documents = [], employeeId }: any) => {
                 variant="default"
                 size="sm"
                 className="text-sm px-3 py-2"
-                onClick={() => handleUpdateDocument('additional', employeeId)}
+                onClick={handleUploadClick}
               >
                 Update
               </Button>

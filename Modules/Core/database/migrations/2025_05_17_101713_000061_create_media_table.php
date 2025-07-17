@@ -28,6 +28,7 @@ return new class extends Migration
             $table->json('responsive_images');
             $table->uuid()->nullable()->unique();
             $table->unsignedInteger('order_column')->nullable()->index();
+            $table->nullableTimestamps();
         });
     }
 

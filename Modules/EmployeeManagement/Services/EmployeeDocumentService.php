@@ -58,6 +58,9 @@ class EmployeeDocumentService extends BaseService
                 ->withCustomProperties($customProperties)
                 ->toMediaCollection('documents');
 
+            // Update employee model fields based on document type
+            $this->updateEmployeeFields($employee, $documentType, $processedMetadata);
+
             DB::commit();
             return $media;
         } catch (\Exception $e) {
@@ -228,6 +231,74 @@ class EmployeeDocumentService extends BaseService
             $this->uploadDocument($employee->id, $doc['type'], $doc, $doc['file']);
         }
         return $batchId;
+    }
+
+    /**
+     * Update employee model fields based on document type and metadata
+     */
+    private function updateEmployeeFields(Employee $employee, string $documentType, array $metadata): void
+    {
+        $updateData = [];
+
+        switch ($documentType) {
+            case 'iqama':
+                $updateData = [
+                    'iqama_number' => $metadata['document_number'] ?? null,
+                    'iqama_expiry' => $metadata['expiry_date'] ?? null,
+                ];
+                break;
+
+            case 'passport':
+                $updateData = [
+                    'passport_number' => $metadata['document_number'] ?? null,
+                    'passport_expiry' => $metadata['expiry_date'] ?? null,
+                ];
+                break;
+
+            case 'driving_license':
+                $updateData = [
+                    'driving_license_number' => $metadata['document_number'] ?? null,
+                    'driving_license_expiry' => $metadata['expiry_date'] ?? null,
+                ];
+                break;
+
+            case 'operator_license':
+                $updateData = [
+                    'operator_license_number' => $metadata['document_number'] ?? null,
+                    'operator_license_expiry' => $metadata['expiry_date'] ?? null,
+                ];
+                break;
+
+            case 'tuv_certification':
+                $updateData = [
+                    'tuv_certification_number' => $metadata['document_number'] ?? null,
+                    'tuv_certification_expiry' => $metadata['expiry_date'] ?? null,
+                ];
+                break;
+
+            case 'spsp_license':
+                $updateData = [
+                    'spsp_license_number' => $metadata['document_number'] ?? null,
+                    'spsp_license_expiry' => $metadata['expiry_date'] ?? null,
+                ];
+                break;
+        }
+
+        if (!empty($updateData)) {
+            // Filter out null values
+            $updateData = array_filter($updateData, function($value) {
+                return $value !== null;
+            });
+
+            if (!empty($updateData)) {
+                $employee->update($updateData);
+                Log::info('Updated employee fields after document upload', [
+                    'employee_id' => $employee->id,
+                    'document_type' => $documentType,
+                    'updated_fields' => array_keys($updateData)
+                ]);
+            }
+        }
     }
 }
 

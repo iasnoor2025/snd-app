@@ -113,6 +113,37 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('permission:employees.view')
         ->name('employees.documents');
 
+    // Employee document upload routes (web-based)
+    Route::post('/employees/{employee}/documents/upload', [\Modules\EmployeeManagement\Http\Controllers\EmployeeDocumentController::class, 'uploadGeneral'])
+        ->middleware('permission:employees.edit')
+        ->name('employees.documents.upload');
+
+    Route::post('/employees/{employee}/documents/upload/iqama', [\Modules\EmployeeManagement\Http\Controllers\EmployeeDocumentController::class, 'uploadIqama'])
+        ->middleware('permission:employees.edit')
+        ->name('employees.documents.upload.iqama');
+
+    Route::post('/employees/{employee}/documents/upload/passport', [\Modules\EmployeeManagement\Http\Controllers\EmployeeDocumentController::class, 'uploadPassport'])
+        ->middleware('permission:employees.edit')
+        ->name('employees.documents.upload.passport');
+
+    Route::post('/employees/{employee}/documents/upload/contract', [\Modules\EmployeeManagement\Http\Controllers\EmployeeDocumentController::class, 'uploadContract'])
+        ->middleware('permission:employees.edit')
+        ->name('employees.documents.upload.contract');
+
+    Route::post('/employees/{employee}/documents/upload/medical', [\Modules\EmployeeManagement\Http\Controllers\EmployeeDocumentController::class, 'uploadMedical'])
+        ->middleware('permission:employees.edit')
+        ->name('employees.documents.upload.medical');
+
+    // Employee documents API (web-based)
+    Route::get('/employees/{employee}/documents/api', [\Modules\EmployeeManagement\Http\Controllers\EmployeeDocumentController::class, 'index'])
+        ->middleware('permission:employees.view')
+        ->name('employees.documents.api');
+
+    // Employee document download (web-based)
+    Route::get('/employees/{employee}/documents/{document}/download', [\Modules\EmployeeManagement\Http\Controllers\EmployeeDocumentController::class, 'download'])
+        ->middleware('permission:employees.view')
+        ->name('employees.documents.download');
+
     // Employee timesheet history
     Route::get('/employees/{employee}/timesheet-history', function ($employee) {
         return Inertia::render('Employees/TimesheetHistory', ['employeeId' => $employee]);
