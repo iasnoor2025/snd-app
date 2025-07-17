@@ -71,8 +71,8 @@ export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, e
             id: 1,
             project_id: timesheet.project_id?.toString() || '',
             rental_id: timesheet.rental_id?.toString() || '',
-            start_date: timesheet.date,
-            end_date: timesheet.date,
+            start_date: timesheet.date ? (timesheet.date.includes('T') ? timesheet.date.split('T')[0] : timesheet.date) : '',
+            end_date: timesheet.date ? (timesheet.date.includes('T') ? timesheet.date.split('T')[0] : timesheet.date) : '',
             description: timesheet.description || '',
         },
     ]);
@@ -247,6 +247,51 @@ export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, e
     const handleDailyNormalChange = (date: string, value: string) => {
         setDailyNormalHours((prev) => ({ ...prev, [date]: value }));
     };
+
+    // Effect to automatically set Friday to 0 if both Thursday and Saturday are 0/absent
+    useEffect(() => {
+        const newDailyNormalHours = { ...dailyNormalHours };
+        let hasChanges = false;
+
+        Object.keys(dailyNormalHours).forEach((date) => {
+            const currentDate = new Date(date);
+            const dayOfWeek = currentDate.getDay();
+
+            // Only process Fridays
+            if (dayOfWeek === 5) {
+                // Get Thursday (day before Friday)
+                const thursday = new Date(currentDate);
+                thursday.setDate(thursday.getDate() - 1);
+                const thursdayStr = thursday.toISOString().split('T')[0];
+
+                // Get Saturday (day after Friday)
+                const saturday = new Date(currentDate);
+                saturday.setDate(saturday.getDate() + 1);
+                const saturdayStr = saturday.toISOString().split('T')[0];
+
+                // Check if both Thursday and Saturday are absent
+                const thursdayValue = dailyNormalHours[thursdayStr] || '';
+                const saturdayValue = dailyNormalHours[saturdayStr] || '';
+
+                const isDayAbsent = (dayValue: string) => {
+                    return !dayValue || dayValue === 'A' || dayValue === '0' || parseFloat(dayValue) === 0;
+                };
+
+                const shouldFridayBeAbsent = isDayAbsent(thursdayValue) && isDayAbsent(saturdayValue);
+                const currentFridayValue = dailyNormalHours[date] || '';
+
+                // If Friday should be absent but isn't, or if Friday shouldn't be absent but is set to 0
+                if (shouldFridayBeAbsent && currentFridayValue !== '0' && currentFridayValue !== 'A') {
+                    newDailyNormalHours[date] = '0';
+                    hasChanges = true;
+                }
+            }
+        });
+
+        if (hasChanges) {
+            setDailyNormalHours(newDailyNormalHours);
+        }
+    }, [dailyNormalHours]);
     const addAssignmentBlock = () => {
         setAssignmentBlocks((blocks) => [...blocks, { id: Date.now(), project_id: '', rental_id: '', start_date: '', end_date: '' }]);
     };
@@ -463,7 +508,34 @@ export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, e
                                                     {Object.entries(dailyNormalHours).map(([date, value]) => {
                                                         const day = new Date(date).getDay();
                                                         const isFriday = day === 5;
-                                                        const isAbsent = !value || parseFloat(value) === 0;
+
+                                                        // Helper function to check if a day is absent (0 hours or 'A')
+                                                        const isDayAbsent = (dayValue: string) => {
+                                                            return !dayValue || dayValue === 'A' || dayValue === '0' || parseFloat(dayValue) === 0;
+                                                        };
+
+                                                        // If it's Friday, check if Thursday and Saturday are both absent
+                                                        let shouldFridayBeAbsent = false;
+                                                        if (isFriday) {
+                                                            const currentDate = new Date(date);
+                                                            // Get Thursday (day before Friday)
+                                                            const thursday = new Date(currentDate);
+                                                            thursday.setDate(thursday.getDate() - 1);
+                                                            const thursdayStr = thursday.toISOString().split('T')[0];
+
+                                                            // Get Saturday (day after Friday)
+                                                            const saturday = new Date(currentDate);
+                                                            saturday.setDate(saturday.getDate() + 1);
+                                                            const saturdayStr = saturday.toISOString().split('T')[0];
+
+                                                            // Check if both Thursday and Saturday are absent
+                                                            const thursdayValue = dailyNormalHours[thursdayStr] || '';
+                                                            const saturdayValue = dailyNormalHours[saturdayStr] || '';
+
+                                                            shouldFridayBeAbsent = isDayAbsent(thursdayValue) && isDayAbsent(saturdayValue);
+                                                        }
+
+                                                        const isAbsent = !value || value === 'A' || value === '0' || parseFloat(value) === 0;
                                                         return (
                                                             <td
                                                                 key={date}
@@ -475,9 +547,9 @@ export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, e
                                                                     min="0"
                                                                     max="24"
                                                                     step="0.5"
-                                                                    value={isFriday ? '' : isAbsent ? '' : value}
+                                                                    value={isFriday ? (shouldFridayBeAbsent ? '' : '') : (value === 'A' || isAbsent) ? '' : value}
                                                                     onChange={(e) => handleDailyNormalChange(date, e.target.value)}
-                                                                    className={`w-full rounded border bg-gray-50 px-0 py-0 text-center text-xs focus:bg-white ${isFriday ? 'font-bold text-blue-600' : isAbsent ? 'font-bold text-red-600' : ''}`}
+                                                                    className={`w-full rounded border bg-gray-50 px-0 py-0 text-center text-xs focus:bg-white ${isFriday ? (shouldFridayBeAbsent ? 'font-bold text-red-600' : 'font-bold text-blue-600') : isAbsent ? 'font-bold text-red-600' : ''}`}
                                                                     style={{
                                                                         width: '38px',
                                                                         minWidth: '38px',
@@ -485,7 +557,7 @@ export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, e
                                                                         padding: 0,
                                                                         textAlign: 'center',
                                                                     }}
-                                                                    placeholder={isFriday ? 'F' : isAbsent ? 'A' : ''}
+                                                                    placeholder={isFriday ? (shouldFridayBeAbsent ? 'A' : 'F') : isAbsent ? 'A' : ''}
                                                                 />
                                                             </td>
                                                         );
@@ -557,7 +629,7 @@ export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, e
                                             <FormLabel>Start Date</FormLabel>
                                             <Input
                                                 type="date"
-                                                value={block.start_date}
+                                                value={block.start_date ? (block.start_date.includes('T') ? block.start_date.split('T')[0] : block.start_date) : ''}
                                                 onChange={(e) => updateAssignmentBlock(block.id, 'start_date', e.target.value)}
                                                 min={format(startDate || new Date(), 'yyyy-MM-01')}
                                                 max={format(endDate || new Date(), 'yyyy-MM-dd')}
@@ -576,7 +648,7 @@ export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, e
                                             <FormLabel>End Date</FormLabel>
                                             <Input
                                                 type="date"
-                                                value={block.end_date}
+                                                value={block.end_date ? (block.end_date.includes('T') ? block.end_date.split('T')[0] : block.end_date) : ''}
                                                 onChange={(e) => updateAssignmentBlock(block.id, 'end_date', e.target.value)}
                                                 min={block.start_date || format(startDate || new Date(), 'yyyy-MM-01')}
                                                 max={format(endDate || new Date(), 'yyyy-MM-dd')}
