@@ -186,6 +186,29 @@ class ProjectController extends Controller
     }
 
     /**
+     * API: Generate project report (JSON only)
+     */
+    public function apiGenerateReport(Request $request, Project $project)
+    {
+        $project->load(['manager', 'tasks', 'teamMembers', 'resources']);
+        $reportData = [
+            'project' => $project,
+            'summary' => [
+                'total_tasks' => $project->tasks->count(),
+                'completed_tasks' => $project->tasks->where('status', 'completed')->count(),
+                'pending_tasks' => $project->tasks->where('status', 'pending')->count(),
+                'in_progress_tasks' => $project->tasks->where('status', 'in_progress')->count(),
+                'total_team_members' => $project->teamMembers->count(),
+                'budget_utilization' => $project->getSpentAmount(),
+                'completion_percentage' => $project->progress ?? 0,
+            ],
+            'tasks_by_status' => $project->tasks->groupBy('status'),
+            'generated_at' => now()->format('Y-m-d H:i:s'),
+        ];
+        return response()->json($reportData);
+    }
+
+    /**
      * Generate HTML content for project report
      */
     private function generateProjectReportHTML($data)

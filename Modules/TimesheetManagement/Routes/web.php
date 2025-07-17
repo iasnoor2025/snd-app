@@ -84,6 +84,9 @@ Route::prefix('timesheets')->name('timesheets.')->middleware(['auth', 'verified'
         ->middleware('permission:admin')
         ->name('bulk-delete');
     Route::post('/create-missing', [TimesheetController::class, 'createMissingTimesheets'])->name('timesheets.create-missing')->middleware('permission:timesheets.create');
+    Route::post('/auto-generate', [TimesheetController::class, 'autoGenerate'])
+        ->middleware('permission:timesheets.create')
+        ->name('auto-generate');
     Route::post('/bulk-submit', [TimesheetController::class, 'bulkSubmitWeb'])
         ->middleware('permission:timesheets.submit')
         ->name('bulk-submit');

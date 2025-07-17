@@ -51,11 +51,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('timesheets/auto-generate', [
         \Modules\TimesheetManagement\Http\Controllers\TimesheetController::class,
         'autoGenerate'
-    ]);
+    ])->middleware(['auth:sanctum', 'permission:timesheets.create']);
     Route::post('timesheets/create-missing', [
         \Modules\TimesheetManagement\Http\Controllers\TimesheetController::class,
         'createMissingTimesheets'
-    ]);
+    ])->middleware(['auth:sanctum', 'permission:timesheets.create']);
 
     // Time Entry Routes
     Route::apiResource('time-entries', TimeEntryController::class)->names([

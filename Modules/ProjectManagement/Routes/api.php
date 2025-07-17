@@ -57,6 +57,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         ->name('project.documents.share');
 });
 
+Route::post('projects/{project}/report', [\Modules\ProjectManagement\Http\Controllers\ProjectController::class, 'apiGenerateReport']);
+
 Route::get('/projects/{project}/tasks', [ProjectTaskController::class, 'tasks']);
 
 Route::get('/projects/{project}/resources', [ProjectResourceController::class, 'index']);

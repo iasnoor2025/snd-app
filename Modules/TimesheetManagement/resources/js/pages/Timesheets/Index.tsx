@@ -451,7 +451,7 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                                         variant="outline"
                                         onClick={async () => {
                                             try {
-                                                const res = await fetch('/api/timesheets/create-missing', {
+                                                const res = await fetch('/timesheets/create-missing', {
                                                     method: 'POST',
                                                     headers: { 'Content-Type': 'application/json' },
                                                 });
@@ -475,7 +475,7 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                                                 // Always fetch CSRF cookie for Sanctum
                                                 await fetch('/sanctum/csrf-cookie', { credentials: 'same-origin' });
                                                 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-                                                const res = await fetch('/api/timesheets/auto-generate', {
+                                                const res = await fetch('/timesheets/auto-generate', {
                                                     method: 'POST',
                                                     headers: {
                                                         'X-CSRF-TOKEN': csrfToken || '',
@@ -649,7 +649,7 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                                                     onClick={async () => {
                                                         setBulkProcessing(true);
                                                         try {
-                                                            const res = await fetch('/api/timesheets/bulk-delete', {
+                                                            const res = await fetch('/timesheets/bulk-delete', {
                                                                 method: 'DELETE',
                                                                 headers: { 'Content-Type': 'application/json' },
                                                                 body: JSON.stringify({ ids: selectedTimesheets }),

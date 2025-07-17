@@ -40,7 +40,6 @@ import RiskAssessmentCard from '../Components/project/RiskAssessmentCard';
 import TaskDialog from '../Components/project/TaskDialog';
 import { ProjectTask } from '../Components/project/TaskList';
 import VelocityChart from '../Components/project/VelocityChart';
-import ProjectTimesheets from './ProjectTimesheets';
 
 // Declare window.route for TypeScript
 // @ts-ignore
@@ -995,90 +994,6 @@ export default function Show({
                         </div>
                     </div>
                 </div>
-
-                {/* Project Timesheets Section */}
-                <ProjectTimesheets projectId={project.id} />
-
-                <ResourceDialog
-                    projectId={project.id}
-                    isOpen={isDialogOpen}
-                    onOpenChange={setIsDialogOpen}
-                    initialType={editingResourceType || 'manpower'}
-                    initialData={editingResource}
-                    onSuccess={handleResourceSuccess}
-                />
-
-                {taskDialogOpen && (
-                    <TaskDialogWrapper
-                        open={taskDialogOpen}
-                        onOpenChange={setTaskDialogOpen}
-                        projectId={project.id}
-                        initialData={editingTask}
-                        assignableUsers={teamMembers}
-                        onSuccess={handleTaskSuccess}
-                    />
-                )}
-
-                {/* Delete Resource Confirmation Dialog */}
-                <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>{t('ttl_delete_resource')}</DialogTitle>
-                            <DialogDescription>Are you sure you want to delete this resource? This action cannot be undone.</DialogDescription>
-                        </DialogHeader>
-                        <DialogFooter>
-                            <Button variant="outline" onClick={() => setDeleteConfirmOpen(false)}>
-                                Cancel
-                            </Button>
-                            <Button onClick={handleDeleteConfirm} variant="destructive">
-                                Delete
-                            </Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
-
-                {/* Delete Task Confirmation Dialog */}
-                <Dialog open={taskDeleteConfirmOpen} onOpenChange={setTaskDeleteConfirmOpen}>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>{t('delete_task')}</DialogTitle>
-                            <DialogDescription>Are you sure you want to delete this task? This action cannot be undone.</DialogDescription>
-                        </DialogHeader>
-                        <DialogFooter>
-                            <Button variant="outline" onClick={() => setTaskDeleteConfirmOpen(false)}>
-                                Cancel
-                            </Button>
-                            <Button
-                                onClick={() => {
-                                    if (taskToDelete) {
-                                        handleDeleteTask(taskToDelete);
-                                    }
-                                }}
-                                variant="destructive"
-                            >
-                                Delete
-                            </Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
-
-                {/* Project Delete Confirmation Dialog */}
-                <Dialog open={projectDeleteDialogOpen} onOpenChange={setProjectDeleteDialogOpen}>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>{t('ttl_delete_project')}</DialogTitle>
-                            <DialogDescription>Are you sure you want to delete this project? This action cannot be undone.</DialogDescription>
-                        </DialogHeader>
-                        <DialogFooter>
-                            <Button variant="outline" onClick={() => setProjectDeleteDialogOpen(false)}>
-                                Cancel
-                            </Button>
-                            <Button onClick={handleConfirmProjectDelete} variant="destructive">
-                                Delete
-                            </Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
 
                 {/* Additional Project Analytics */}
                 <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">

@@ -2,9 +2,6 @@ import axios from 'axios';
 import { route } from 'ziggy-js';
 import Ziggy from './ziggy';
 
-// Bootstrap configuration - imports from Core module for centralized resource management
-import '../../Modules/Core/resources/js/bootstrap';
-
 // Configure axios
 window.axios = axios;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
@@ -21,5 +18,9 @@ if (csrfToken) {
 } else {
     console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
+
+// Bootstrap configuration - imports from Core module for centralized resource management
+// This must be loaded AFTER axios configuration to ensure interceptors work properly
+import '../../Modules/Core/resources/js/bootstrap';
 
 // Add any other global JavaScript configurations here
