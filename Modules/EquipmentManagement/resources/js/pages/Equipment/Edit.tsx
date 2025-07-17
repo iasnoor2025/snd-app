@@ -1,6 +1,6 @@
 import { useEquipmentCategories } from '@/Core';
 import { Button } from '@/Core/components/ui/button';
-import { Calendar } from '@/Core/components/ui/calendar';
+import { Calendar } from '@/Core';
 import { Card, CardContent } from '@/Core/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/Core/components/ui/form';
 import { Input } from '@/Core/components/ui/input';

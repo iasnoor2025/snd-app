@@ -9,7 +9,7 @@ import { Button } from '@/Core';
 import { router } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
-import { ResourceFormModal } from '../../../Components/project/ResourceModal';  
+import { ResourceFormModal } from '../../../Components/project/resources/ResourceModal';
 import { ResourceTable } from '../../../Components/project/ResourceList';
 import { useResourceFormModal } from '../../../hooks/useResourceFormModal';
 import { useResourceSubmit } from '../../../hooks/useResourceSubmit';

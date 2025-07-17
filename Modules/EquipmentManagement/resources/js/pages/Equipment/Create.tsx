@@ -1,8 +1,7 @@
 import { useEquipmentCategories } from '@/Core';
 import ErrorBoundary from '@/Core/components/ErrorBoundary';
 import { Alert, AlertDescription } from '@/Core/components/ui/alert';
-import { Button } from '@/Core/components/ui/button';
-import { Calendar } from '@/Core/components/ui/calendar';
+import { Button, Calendar } from '@/Core';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/Core/components/ui/dialog';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/Core/components/ui/form';

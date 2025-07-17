@@ -853,7 +853,7 @@ function Resources({
 
                             toast.success(t('projects:task_added_success'));
                         })
-                        .catch((error) => {
+                        .catch((error) => { 
                             console.error('Error fetching updated tasks:', error);
                             Inertia.reload({ only: ['tasks'] });
                         });

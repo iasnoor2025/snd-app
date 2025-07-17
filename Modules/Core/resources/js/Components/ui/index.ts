@@ -6,6 +6,7 @@ export * from './badge';
 export * from './breadcrumb';
 export { Button } from './button';
 export { Calendar } from './calendar';
+export { FormCalendar } from './form-calendar';
 export * from './card';
 export * from './collapsible';
 export { DatePicker } from './date-picker';
