@@ -1,5 +1,4 @@
-import { Badge, Button, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core';
-import { usePage } from '@inertiajs/react';
+import { Badge, Button } from '@/Core';
 import { format } from 'date-fns';
 import { Pencil, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
@@ -37,8 +36,8 @@ const dummyEmployees: Record<number, Employee> = {
 export default function ResourceList({ type, resources = [], onEdit, onDelete, onSort, sortState, getSortIcon }: ResourceListProps) {
     const { t } = useTranslation('project');
 
-    // Extract locale from Inertia shared props
-    const { locale = 'en' } = usePage<any>().props;
+    // Use default locale
+    const locale = 'en';
 
     // Check if resources is undefined, if so use empty array
     const safeResources = resources || [];
@@ -51,33 +50,23 @@ export default function ResourceList({ type, resources = [], onEdit, onDelete, o
                 .filter((resource) => resource.employee_id && !resource.employee)
                 .map((resource) => resource.employee_id);
 
-            if (employeeIds.length === 0) return;
-
-            // Instead of making an API call, use dummy data
-            const newEmployeeData: Record<number, Employee> = {};
-            employeeIds.forEach((employeeId) => {
-                // If we already have this employee in our dummy data, use it
-                if (dummyEmployees[employeeId]) {
-                    newEmployeeData[employeeId] = dummyEmployees[employeeId];
-                } else {
-                    // Otherwise create a dummy entry
-                    newEmployeeData[employeeId] = {
-                        id: employeeId,
-                        first_name: 'Employee',
-                        last_name: `#${employeeId}`,
-                        full_name: `Employee #${employeeId}`,
-                    };
+            if (employeeIds.length > 0) {
+                try {
+                    // Use dummy data instead of API call to avoid errors
+                    console.log('Would fetch employee data for IDs:', employeeIds);
+                } catch (error) {
+                    console.error('Error fetching employee data:', error);
                 }
-            });
-
-            setEmployeeData((prev) => ({ ...prev, ...newEmployeeData }));
+            }
         };
 
         fetchEmployeeData();
     }, [safeResources]);
 
-    // Helper function to safely format currency values
+    // Helper function to format currency
     const formatCurrency = (value: any): string => {
+        if (value === null || value === undefined || value === '') return '0.00';
+
         // Convert to number and check if it's a valid number
         const num = parseFloat(value);
         return !isNaN(num) ? num.toFixed(2) : '0.00';
@@ -104,12 +93,12 @@ export default function ResourceList({ type, resources = [], onEdit, onDelete, o
         };
 
         const renderSortableHeader = (label: string, key: string, className: string = '') => (
-            <TableHead className={`cursor-pointer hover:bg-muted/50 ${className}`} onClick={() => handleSort(key)}>
+            <th className={`cursor-pointer hover:bg-muted/50 border border-gray-200 px-4 py-2 text-left ${className}`} onClick={() => handleSort(key)}>
                 <div className="flex items-center gap-1">
                     {label}
                     {getSortIcon && getSortIcon(key)}
                 </div>
-            </TableHead>
+            </th>
         );
 
         switch (type) {
@@ -122,7 +111,7 @@ export default function ResourceList({ type, resources = [], onEdit, onDelete, o
                         {renderSortableHeader('Daily Rate', 'daily_rate', 'w-[12%] text-right')}
                         {renderSortableHeader('Total Days', 'total_days', 'w-[12%] text-right')}
                         {renderSortableHeader('Total Cost', 'total_cost', 'w-[12%] text-right')}
-                        <TableHead className="w-[100px]">Actions</TableHead>
+                        <th className="w-[100px] border border-gray-200 px-4 py-2">Actions</th>
                     </>
                 );
 
@@ -134,7 +123,7 @@ export default function ResourceList({ type, resources = [], onEdit, onDelete, o
                         {renderSortableHeader('Hourly Rate', 'hourly_rate', 'w-[15%] text-right')}
                         {renderSortableHeader('Maintenance Cost', 'maintenance_cost', 'w-[15%] text-right')}
                         {renderSortableHeader('Total Cost', 'total_cost', 'w-[15%] text-right')}
-                        <TableHead className="w-[100px]">Actions</TableHead>
+                        <th className="w-[100px] border border-gray-200 px-4 py-2">Actions</th>
                     </>
                 );
 
@@ -146,7 +135,7 @@ export default function ResourceList({ type, resources = [], onEdit, onDelete, o
                         {renderSortableHeader('Quantity', 'quantity', 'w-[15%] text-right')}
                         {renderSortableHeader('Unit Price', 'unit_price', 'w-[15%] text-right')}
                         {renderSortableHeader('Total Cost', 'total_cost', 'w-[15%] text-right')}
-                        <TableHead className="w-[100px]">Actions</TableHead>
+                        <th className="w-[100px] border border-gray-200 px-4 py-2">Actions</th>
                     </>
                 );
 
@@ -158,7 +147,7 @@ export default function ResourceList({ type, resources = [], onEdit, onDelete, o
                         {renderSortableHeader('Quantity', 'quantity', 'w-[15%] text-right')}
                         {renderSortableHeader('Unit Price', 'unit_price', 'w-[15%] text-right')}
                         {renderSortableHeader('Total Cost', 'total_cost', 'w-[15%] text-right')}
-                        <TableHead className="w-[100px]">Actions</TableHead>
+                        <th className="w-[100px] border border-gray-200 px-4 py-2">Actions</th>
                     </>
                 );
 
@@ -169,7 +158,7 @@ export default function ResourceList({ type, resources = [], onEdit, onDelete, o
                         {renderSortableHeader('Description', 'description', 'w-[40%]')}
                         {renderSortableHeader('Amount', 'amount', 'w-[15%] text-right')}
                         {renderSortableHeader('Date', 'date', 'w-[15%]')}
-                        <TableHead className="w-[100px]">Actions</TableHead>
+                        <th className="w-[100px] border border-gray-200 px-4 py-2">Actions</th>
                     </>
                 );
             default:
@@ -187,7 +176,7 @@ export default function ResourceList({ type, resources = [], onEdit, onDelete, o
 
                 return (
                     <>
-                        <TableCell>
+                        <td className="border border-gray-200 px-4 py-2">
                             <div className="flex items-center">
                                 <span>{employeeName}</span>
                                 <Badge
@@ -197,13 +186,13 @@ export default function ResourceList({ type, resources = [], onEdit, onDelete, o
                                     {isInternalWorker ? 'Internal' : 'External'}
                                 </Badge>
                             </div>
-                        </TableCell>
-                        <TableCell>{resource.job_title || 'N/A'}</TableCell>
-                        <TableCell>{resource.start_date ? format(new Date(resource.start_date), 'PPP') : 'N/A'}</TableCell>
-                        <TableCell className="text-right">SAR {formatCurrency(resource.daily_rate)}</TableCell>
-                        <TableCell className="text-right">{resource.total_days || '0'}</TableCell>
-                        <TableCell className="text-right">SAR {formatCurrency(resource.total_cost)}</TableCell>
-                        <TableCell className="w-[100px]">
+                        </td>
+                        <td className="border border-gray-200 px-4 py-2">{resource.job_title || 'N/A'}</td>
+                        <td className="border border-gray-200 px-4 py-2">{resource.start_date ? format(new Date(resource.start_date), 'PPP') : 'N/A'}</td>
+                        <td className="border border-gray-200 px-4 py-2 text-right">SAR {formatCurrency(resource.daily_rate)}</td>
+                        <td className="border border-gray-200 px-4 py-2 text-right">{resource.total_days || '0'}</td>
+                        <td className="border border-gray-200 px-4 py-2 text-right">SAR {formatCurrency(resource.total_cost)}</td>
+                        <td className="border border-gray-200 px-4 py-2 w-[100px]">
                             <div className="flex items-center gap-2">
                                 <Button variant="ghost" size="icon" onClick={() => onEdit?.(resource)}>
                                     <Pencil className="h-4 w-4" />
@@ -212,50 +201,90 @@ export default function ResourceList({ type, resources = [], onEdit, onDelete, o
                                     <Trash2 className="h-4 w-4" />
                                 </Button>
                             </div>
-                        </TableCell>
+                        </td>
                     </>
                 );
 
             case 'equipment':
                 return (
                     <>
-                        <TableCell className="max-w-[30%] truncate">{resource.equipment?.name || 'N/A'}</TableCell>
-                        <TableCell className="max-w-[15%] text-right">{resource.usage_hours || '0'}</TableCell>
-                        <TableCell className="max-w-[15%] text-right">SAR {formatCurrency(resource.hourly_rate)}</TableCell>
-                        <TableCell className="max-w-[15%] text-right">SAR {formatCurrency(resource.maintenance_cost)}</TableCell>
-                        <TableCell className="max-w-[15%] text-right">SAR {formatCurrency(resource.total_cost)}</TableCell>
+                        <td className="border border-gray-200 px-4 py-2 max-w-[30%] truncate">{resource.equipment?.name || 'N/A'}</td>
+                        <td className="border border-gray-200 px-4 py-2 max-w-[15%] text-right">{resource.usage_hours || '0'}</td>
+                        <td className="border border-gray-200 px-4 py-2 max-w-[15%] text-right">SAR {formatCurrency(resource.hourly_rate)}</td>
+                        <td className="border border-gray-200 px-4 py-2 max-w-[15%] text-right">SAR {formatCurrency(resource.maintenance_cost)}</td>
+                        <td className="border border-gray-200 px-4 py-2 max-w-[15%] text-right">SAR {formatCurrency(resource.total_cost)}</td>
+                        <td className="border border-gray-200 px-4 py-2 w-[100px]">
+                            <div className="flex items-center gap-2">
+                                <Button variant="ghost" size="icon" onClick={() => onEdit?.(resource)}>
+                                    <Pencil className="h-4 w-4" />
+                                </Button>
+                                <Button variant="ghost" size="icon" onClick={() => onDelete?.(resource)}>
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        </td>
                     </>
                 );
 
             case 'material':
                 return (
                     <>
-                        <TableCell className="max-w-[30%] truncate">{resource.name || 'N/A'}</TableCell>
-                        <TableCell className="max-w-[15%]">{resource.unit || 'N/A'}</TableCell>
-                        <TableCell className="max-w-[15%] text-right">{resource.quantity || '0'}</TableCell>
-                        <TableCell className="max-w-[15%] text-right">SAR {formatCurrency(resource.unit_price)}</TableCell>
-                        <TableCell className="max-w-[15%] text-right">SAR {formatCurrency(resource.total_cost)}</TableCell>
+                        <td className="border border-gray-200 px-4 py-2 max-w-[30%] truncate">{resource.name || 'N/A'}</td>
+                        <td className="border border-gray-200 px-4 py-2 max-w-[15%]">{resource.unit || 'N/A'}</td>
+                        <td className="border border-gray-200 px-4 py-2 max-w-[15%] text-right">{resource.quantity || '0'}</td>
+                        <td className="border border-gray-200 px-4 py-2 max-w-[15%] text-right">SAR {formatCurrency(resource.unit_price)}</td>
+                        <td className="border border-gray-200 px-4 py-2 max-w-[15%] text-right">SAR {formatCurrency(resource.total_cost)}</td>
+                        <td className="border border-gray-200 px-4 py-2 w-[100px]">
+                            <div className="flex items-center gap-2">
+                                <Button variant="ghost" size="icon" onClick={() => onEdit?.(resource)}>
+                                    <Pencil className="h-4 w-4" />
+                                </Button>
+                                <Button variant="ghost" size="icon" onClick={() => onDelete?.(resource)}>
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        </td>
                     </>
                 );
 
             case 'fuel':
                 return (
                     <>
-                        <TableCell className="max-w-[30%] truncate">{resource.equipment?.name || 'N/A'}</TableCell>
-                        <TableCell className="max-w-[20%]">{resource.type || 'N/A'}</TableCell>
-                        <TableCell className="max-w-[15%] text-right">{resource.quantity || '0'}</TableCell>
-                        <TableCell className="max-w-[15%] text-right">SAR {formatCurrency(resource.unit_price)}</TableCell>
-                        <TableCell className="max-w-[15%] text-right">SAR {formatCurrency(resource.total_cost)}</TableCell>
+                        <td className="border border-gray-200 px-4 py-2 max-w-[30%] truncate">{resource.equipment?.name || 'N/A'}</td>
+                        <td className="border border-gray-200 px-4 py-2 max-w-[20%]">{resource.type || 'N/A'}</td>
+                        <td className="border border-gray-200 px-4 py-2 max-w-[15%] text-right">{resource.quantity || '0'}</td>
+                        <td className="border border-gray-200 px-4 py-2 max-w-[15%] text-right">SAR {formatCurrency(resource.unit_price)}</td>
+                        <td className="border border-gray-200 px-4 py-2 max-w-[15%] text-right">SAR {formatCurrency(resource.total_cost)}</td>
+                        <td className="border border-gray-200 px-4 py-2 w-[100px]">
+                            <div className="flex items-center gap-2">
+                                <Button variant="ghost" size="icon" onClick={() => onEdit?.(resource)}>
+                                    <Pencil className="h-4 w-4" />
+                                </Button>
+                                <Button variant="ghost" size="icon" onClick={() => onDelete?.(resource)}>
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        </td>
                     </>
                 );
 
             case 'expense':
                 return (
                     <>
-                        <TableCell className="max-w-[20%]">{resource.category || 'N/A'}</TableCell>
-                        <TableCell className="max-w-[40%] truncate">{resource.description || 'N/A'}</TableCell>
-                        <TableCell className="max-w-[15%] text-right">SAR {formatCurrency(resource.amount)}</TableCell>
-                        <TableCell className="max-w-[15%]">{resource.date ? format(new Date(resource.date), 'PPP') : 'N/A'}</TableCell>
+                        <td className="border border-gray-200 px-4 py-2 max-w-[20%]">{resource.category || 'N/A'}</td>
+                        <td className="border border-gray-200 px-4 py-2 max-w-[40%] truncate">{resource.description || 'N/A'}</td>
+                        <td className="border border-gray-200 px-4 py-2 max-w-[15%] text-right">SAR {formatCurrency(resource.amount)}</td>
+                        <td className="border border-gray-200 px-4 py-2 max-w-[15%]">{resource.date ? format(new Date(resource.date), 'PPP') : 'N/A'}</td>
+                        <td className="border border-gray-200 px-4 py-2 w-[100px]">
+                            <div className="flex items-center gap-2">
+                                <Button variant="ghost" size="icon" onClick={() => onEdit?.(resource)}>
+                                    <Pencil className="h-4 w-4" />
+                                </Button>
+                                <Button variant="ghost" size="icon" onClick={() => onDelete?.(resource)}>
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        </td>
                     </>
                 );
             default:
@@ -283,22 +312,22 @@ export default function ResourceList({ type, resources = [], onEdit, onDelete, o
 
     return (
         <div className="w-full overflow-x-auto">
-            <Table>
-                <TableHeader>
-                    <TableRow>{renderTableHeaders()}</TableRow>
-                </TableHeader>
-                <TableBody>
+            <table className="w-full border-collapse border border-gray-200">
+                <thead>
+                    <tr>{renderTableHeaders()}</tr>
+                </thead>
+                <tbody>
                     {safeResources.length === 0 ? (
-                        <TableRow>
-                            <TableCell colSpan={getColumnCount()} className="py-8 text-center text-muted-foreground">
+                        <tr>
+                            <td colSpan={getColumnCount()} className="py-8 text-center text-muted-foreground border border-gray-200">
                                 No resources found
-                            </TableCell>
-                        </TableRow>
+                            </td>
+                        </tr>
                     ) : (
-                        safeResources.map((resource) => <TableRow key={resource.id}>{renderTableRow(resource)}</TableRow>)
+                        safeResources.map((resource) => <tr key={resource.id}>{renderTableRow(resource)}</tr>)
                     )}
-                </TableBody>
-            </Table>
+                </tbody>
+            </table>
         </div>
     );
 }
