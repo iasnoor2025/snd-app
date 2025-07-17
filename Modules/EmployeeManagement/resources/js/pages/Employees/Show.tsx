@@ -67,7 +67,7 @@ import {
     Award,
     Eye,
 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Employee as BaseEmployee } from '../../types/models/index';
 import { toast } from 'sonner';
@@ -3241,23 +3241,75 @@ const DocumentCard = ({
   previewSize = 'id_card',
   documentName,
 }: any) => {
-  // Simulate a preview URL for demonstration; replace with real data as needed
   const previewUrl = `/api/employee/${employeeId}/documents/${documentType}/preview`;
   const isImage = ["jpg", "jpeg", "png", "gif"].some((ext) => (previewUrl || '').toLowerCase().endsWith(ext));
   const isPdf = (previewUrl || '').toLowerCase().endsWith("pdf");
-  const hasDocument = !!documentNumber; // or use a real check for document existence
+  const hasDocument = !!documentNumber;
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [localPreviewUrl, setLocalPreviewUrl] = useState<string | null>(null);
+  const [localFileType, setLocalFileType] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      if (localPreviewUrl) URL.revokeObjectURL(localPreviewUrl);
+    };
+  }, [localPreviewUrl]);
+
+  const handleButtonClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (localPreviewUrl) URL.revokeObjectURL(localPreviewUrl);
+      setLocalPreviewUrl(URL.createObjectURL(file));
+      setLocalFileType(file.type);
+      setUploading(true);
+      try {
+        // Ensure CSRF cookie is set for Laravel Sanctum
+        await axios.get('/sanctum/csrf-cookie');
+        const formData = new FormData();
+        formData.append('document', file);
+        formData.append('type', documentType);
+        await axios.post(`/api/v1/employees/${employeeId}/documents`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        toast.success(`Uploaded ${file.name} for ${documentType}`);
+        window.location.reload();
+      } catch (err: any) {
+        toast.error(err?.response?.data?.message || 'Upload failed');
+      } finally {
+        setUploading(false);
+      }
+    }
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  // Determine which preview to show
+  let showPreviewUrl = localPreviewUrl || previewUrl;
+  let showIsImage = false;
+  let showIsPdf = false;
+  if (localPreviewUrl && localFileType) {
+    showIsImage = localFileType.startsWith('image/');
+    showIsPdf = localFileType === 'application/pdf';
+  } else {
+    showIsImage = isImage;
+    showIsPdf = isPdf;
+  }
 
   return (
     <div className="rounded-2xl border bg-white shadow-lg p-6 flex flex-col items-center w-full max-w-sm min-w-[340px] mx-auto min-h-[420px]">
       <div className="mb-5 flex items-center justify-center w-full h-72 bg-muted/30 rounded-xl overflow-hidden">
-        {isImage ? (
+        {showIsImage ? (
           <img
-            src={previewUrl}
+            src={showPreviewUrl}
             alt={documentName || title}
             className="object-contain h-full w-full"
             style={{ maxHeight: 280, maxWidth: 360 }}
           />
-        ) : isPdf ? (
+        ) : showIsPdf ? (
           <div className="flex flex-col items-center justify-center w-full h-full">
             <FileText className="h-20 w-20 text-blue-500 mb-2" />
             <span className="text-base text-muted-foreground">PDF Preview</span>
@@ -3276,6 +3328,14 @@ const DocumentCard = ({
         </div>
         <div className="text-base text-muted-foreground mb-3">{documentNumber || 'Not set'}</div>
         <div className="flex justify-center gap-3 mt-3">
+          <input
+            type="file"
+            accept=".pdf,.jpg,.jpeg,.png"
+            ref={fileInputRef}
+            className="hidden"
+            onChange={handleFileChange}
+            disabled={uploading}
+          />
           {hasDocument ? (
             <>
               <Button
@@ -3283,6 +3343,7 @@ const DocumentCard = ({
                 size="sm"
                 asChild
                 className="text-sm px-3 py-2"
+                disabled={uploading}
               >
                 <a href={`/api/employee/${employeeId}/documents/${documentType}/download`} target="_blank" rel="noopener noreferrer">
                   <Download className="h-5 w-5 mr-1" /> Download
@@ -3293,6 +3354,7 @@ const DocumentCard = ({
                 size="sm"
                 asChild
                 className="text-sm px-3 py-2"
+                disabled={uploading}
               >
                 <a href={previewUrl} target="_blank" rel="noopener noreferrer">
                   <Eye className="h-5 w-5 mr-1" /> Preview
@@ -3302,9 +3364,10 @@ const DocumentCard = ({
                 variant="default"
                 size="sm"
                 className="text-sm px-3 py-2"
-                onClick={() => handleUpdateDocument(documentType, employeeId)}
+                onClick={handleButtonClick}
+                disabled={uploading}
               >
-                Update
+                {uploading ? 'Uploading...' : 'Update'}
               </Button>
             </>
           ) : (
@@ -3312,9 +3375,10 @@ const DocumentCard = ({
               variant="default"
               size="sm"
               className="text-sm px-3 py-2"
-              onClick={() => handleUpdateDocument(documentType, employeeId)}
+              onClick={handleButtonClick}
+              disabled={uploading}
             >
-              Upload
+              {uploading ? 'Uploading...' : 'Upload'}
             </Button>
           )}
         </div>
