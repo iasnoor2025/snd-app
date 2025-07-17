@@ -496,7 +496,7 @@ export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, e
                                                         const day = new Date(date).getDay();
                                                         const isFriday = day === 5;
                                                         // For overtime, if value is empty or 0, show 0
-                                                        const showValue = isFriday ? '' : value && parseFloat(value) !== 0 ? value : '0';
+                                                        const showValue = value && parseFloat(value) !== 0 ? value : '0';
                                                         return (
                                                             <td
                                                                 key={date}
@@ -518,7 +518,7 @@ export default function TimesheetEdit({ timesheet, employee = {}, rental = {}, e
                                                                         padding: 0,
                                                                         textAlign: 'center',
                                                                     }}
-                                                                    placeholder={isFriday ? 'F' : ''}
+                                                                    placeholder=""
                                                                 />
                                                             </td>
                                                         );
