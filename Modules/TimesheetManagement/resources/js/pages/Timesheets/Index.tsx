@@ -360,10 +360,10 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                 row.project?.name && row.rental?.equipment?.name
                     ? `${row.project.name} / ${row.rental.equipment.name}`
                     : row.project?.name
-                      ? row.project.name
-                      : row.rental?.equipment?.name
-                        ? row.rental.equipment.name
-                        : t('not_assigned'),
+                        ? row.project.name
+                        : row.rental?.equipment?.name
+                            ? row.rental.equipment.name
+                            : t('not_assigned'),
         },
         {
             key: 'status',
@@ -576,7 +576,7 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                                                         } else if (data.submitted === 0) {
                                                             toast.error(
                                                                 data.error ||
-                                                                    'No timesheets were submitted. Please check the status of selected timesheets.',
+                                                                'No timesheets were submitted. Please check the status of selected timesheets.',
                                                             );
                                                         } else {
                                                             toast.error(
@@ -738,7 +738,17 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                                             />
                                         </th>
                                         <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Employee</th>
-                                        <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Date</th>
+                                        <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap cursor-pointer select-none" onClick={() => {
+                                            setSortField('date');
+                                            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                                        }}>
+                                            Date
+                                            {sortField === 'date' && (
+                                                <span className="ml-1">
+                                                    {sortOrder === 'asc' ? '▲' : '▼'}
+                                                </span>
+                                            )}
+                                        </th>
                                         <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Hours</th>
                                         <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Overtime</th>
                                         <th className="px-2 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Project/Equipment</th>
