@@ -61,6 +61,11 @@ import {
     Upload,
     User,
     X,
+    IdCard,
+    Car,
+    Truck,
+    Award,
+    Eye,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -1836,7 +1841,7 @@ export default function Show({
                         </Card>
 
                         {/* Legal Documents Section */}
-                        {/* <DocumentSection
+                        <DocumentSection
               title={t('ttl_legal_documents')}
               description="Official identification and legal documents"
               badgeText="Required Documents"
@@ -1860,10 +1865,10 @@ export default function Show({
                 previewSize="id_card"
                 documentName="Passport"
               />
-            </DocumentSection> */}
+            </DocumentSection>
 
                         {/* Licenses Section */}
-                        {/* <DocumentSection
+                        <DocumentSection
               title={t('ttl_licenses_certifications')}
               description="Professional licenses and certifications"
               badgeText="Professional Documents"
@@ -1905,10 +1910,10 @@ export default function Show({
                 previewSize="id_card"
                 documentName="SPSP License"
               />
-            </DocumentSection> */}
+            </DocumentSection>
 
                         {/* Additional Documents Section */}
-                        {/* <Card>
+                        <Card>
               <CardHeader>
                 <CardTitle>{t('ttl_additional_documents')}</CardTitle>
                 <CardDescription>
@@ -1920,18 +1925,18 @@ export default function Show({
                   employeeId={employee.id}
                   onUploadSuccess={() => {
                     // Refresh the page data if needed
-                    Link.reload();
+                    window.location.reload();
                   }}
                   onDeleteSuccess={() => {
                     // Refresh the page data if needed
-                    Link.reload();
+                    window.location.reload();
                   }}
                 />
               </CardContent>
-            </Card> */}
+            </Card>
 
                         {/* Document Expiry Tracker */}
-                        {/* <DocumentExpiryTracker
+                        <DocumentExpiryTracker
               documents={[
                 { name: 'Iqama', expiry: employee.iqama_expiry, number: employee.iqama_number },
                 { name: 'Passport', expiry: employee.passport_expiry, number: employee.passport_number },
@@ -1940,344 +1945,7 @@ export default function Show({
                 { name: 'TÜV Certification', expiry: employee.tuv_certification_expiry, number: employee.tuv_certification_number },
                 { name: 'SPSP License', expiry: employee.spsp_license_expiry, number: employee.spsp_license_number },
               ]}
-            /> */}
-
-                        {/* Enhanced Document Details Section */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>{t('legal_identification_documents')}</CardTitle>
-                                <CardDescription>{t('view_and_manage_key_employee_documents')}</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-                                    {/* Iqama */}
-                                    <div className="space-y-2">
-                                        <h3 className="text-lg font-medium">{t('iqama')}</h3>
-                                        <div className="flex justify-between border-b pb-2">
-                                            <span className="text-sm font-medium">{t('number')}</span>
-                                            <span className="text-sm">{employee.iqama_number || t('not_set')}</span>
-                                        </div>
-                                        <div className="flex justify-between border-b pb-2">
-                                            <span className="text-sm font-medium">{t('expiry')}</span>
-                                            <span className="text-sm">
-                                                {employee.iqama_expiry ? format(new Date(employee.iqama_expiry), 'PPP') : t('not_set')}
-                                            </span>
-                                        </div>
-                                        <div className="flex justify-between border-b pb-2">
-                                            <span className="text-sm font-medium">{t('cost')}</span>
-                                            <span className="text-sm">
-                                                {employee.iqama_cost ? `SAR ${Number(employee.iqama_cost).toFixed(2)}` : t('not_set')}
-                                            </span>
-                                        </div>
-                                        {/* File upload/download */}
-                                        <div className="mt-2 flex items-center gap-2">
-                                            {employee.iqama_file && (
-                                                <Button asChild variant="outline" size="sm">
-                                                    <a href={employee.iqama_file} target="_blank" rel="noopener noreferrer">
-                                                        {t('download')}
-                                                    </a>
-                                                </Button>
-                                            )}
-                                            {hasPermission('employees.edit') && (
-                                                <>
-                                                    <Input
-                                                        type="file"
-                                                        accept=".pdf,.jpg,.jpeg,.png"
-                                                        className="hidden"
-                                                        id="iqama-upload"
-                                                        onChange={(e) => {
-                                                            const file = e.target.files?.[0];
-                                                            if (file) {
-                                                                handleFileUpload(file, 'iqama');
-                                                            }
-                                                        }}
-                                                    />
-                                                    <Button
-                                                        type="button"
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => document.getElementById('iqama-upload')?.click()}
-                                                    >
-                                                        {t('upload')}
-                                                    </Button>
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-                                    {/* Passport */}
-                                    <div className="space-y-2">
-                                        <h3 className="text-lg font-medium">{t('passport')}</h3>
-                                        <div className="flex justify-between border-b pb-2">
-                                            <span className="text-sm font-medium">{t('number')}</span>
-                                            <span className="text-sm">{employee.passport_number || t('not_set')}</span>
-                                        </div>
-                                        <div className="flex justify-between border-b pb-2">
-                                            <span className="text-sm font-medium">{t('expiry')}</span>
-                                            <span className="text-sm">
-                                                {employee.passport_expiry ? format(new Date(employee.passport_expiry), 'PPP') : t('not_set')}
-                                            </span>
-                                        </div>
-                                        <div className="mt-2 flex items-center gap-2">
-                                            {employee.passport_file && (
-                                                <Button asChild variant="outline" size="sm">
-                                                    <a href={employee.passport_file} target="_blank" rel="noopener noreferrer">
-                                                        {t('download')}
-                                                    </a>
-                                                </Button>
-                                            )}
-                                            {hasPermission('employees.edit') && (
-                                                <>
-                                                    <Input
-                                                        type="file"
-                                                        accept=".pdf,.jpg,.jpeg,.png"
-                                                        className="hidden"
-                                                        id="passport-upload"
-                                                        onChange={(e) => {
-                                                            const file = e.target.files?.[0];
-                                                            if (file) {
-                                                                handleFileUpload(file, 'passport');
-                                                            }
-                                                        }}
-                                                    />
-                                                    <Button
-                                                        type="button"
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => document.getElementById('passport-upload')?.click()}
-                                                    >
-                                                        {t('upload')}
-                                                    </Button>
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-                                    {/* Driving License */}
-                                    <div className="space-y-2">
-                                        <h3 className="text-lg font-medium">{t('driving_license')}</h3>
-                                        <div className="flex justify-between border-b pb-2">
-                                            <span className="text-sm font-medium">{t('number')}</span>
-                                            <span className="text-sm">{employee.driving_license_number || t('not_set')}</span>
-                                        </div>
-                                        <div className="flex justify-between border-b pb-2">
-                                            <span className="text-sm font-medium">{t('expiry')}</span>
-                                            <span className="text-sm">
-                                                {employee.driving_license_expiry
-                                                    ? format(new Date(employee.driving_license_expiry), 'PPP')
-                                                    : t('not_set')}
-                                            </span>
-                                        </div>
-                                        <div className="flex justify-between border-b pb-2">
-                                            <span className="text-sm font-medium">{t('cost')}</span>
-                                            <span className="text-sm">
-                                                {employee.driving_license_cost
-                                                    ? `SAR ${Number(employee.driving_license_cost).toFixed(2)}`
-                                                    : t('not_set')}
-                                            </span>
-                                        </div>
-                                        <div className="mt-2 flex items-center gap-2">
-                                            {employee.driving_license_file && (
-                                                <Button asChild variant="outline" size="sm">
-                                                    <a href={employee.driving_license_file} target="_blank" rel="noopener noreferrer">
-                                                        {t('download')}
-                                                    </a>
-                                                </Button>
-                                            )}
-                                            {hasPermission('employees.edit') && (
-                                                <>
-                                                    <Input
-                                                        type="file"
-                                                        accept=".pdf,.jpg,.jpeg,.png"
-                                                        className="hidden"
-                                                        id="driving-license-upload"
-                                                        onChange={(e) => {
-                                                            const file = e.target.files?.[0];
-                                                            if (file) {
-                                                                handleFileUpload(file, 'driving_license');
-                                                            }
-                                                        }}
-                                                    />
-                                                    <Button
-                                                        type="button"
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => document.getElementById('driving-license-upload')?.click()}
-                                                    >
-                                                        {t('upload')}
-                                                    </Button>
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-                                    {/* Operator License */}
-                                    <div className="space-y-2">
-                                        <h3 className="text-lg font-medium">{t('lbl_operator_license')}</h3>
-                                        <div className="flex justify-between border-b pb-2">
-                                            <span className="text-sm font-medium">{t('number')}</span>
-                                            <span className="text-sm">{employee.operator_license_number || t('not_set')}</span>
-                                        </div>
-                                        <div className="flex justify-between border-b pb-2">
-                                            <span className="text-sm font-medium">{t('expiry')}</span>
-                                            <span className="text-sm">
-                                                {employee.operator_license_expiry
-                                                    ? format(new Date(employee.operator_license_expiry), 'PPP')
-                                                    : t('not_set')}
-                                            </span>
-                                        </div>
-                                        <div className="flex justify-between border-b pb-2">
-                                            <span className="text-sm font-medium">{t('cost')}</span>
-                                            <span className="text-sm">
-                                                {employee.operator_license_cost
-                                                    ? `SAR ${Number(employee.operator_license_cost).toFixed(2)}`
-                                                    : t('not_set')}
-                                            </span>
-                                        </div>
-                                        <div className="mt-2 flex items-center gap-2">
-                                            {employee.operator_license_file && (
-                                                <Button asChild variant="outline" size="sm">
-                                                    <a href={employee.operator_license_file} target="_blank" rel="noopener noreferrer">
-                                                        {t('download')}
-                                                    </a>
-                                                </Button>
-                                            )}
-                                            {hasPermission('employees.edit') && (
-                                                <>
-                                                    <Input
-                                                        type="file"
-                                                        accept=".pdf,.jpg,.jpeg,.png"
-                                                        className="hidden"
-                                                        id="operator-license-upload"
-                                                        onChange={(e) => {
-                                                            const file = e.target.files?.[0];
-                                                            if (file) {
-                                                                handleFileUpload(file, 'operator_license');
-                                                            }
-                                                        }}
-                                                    />
-                                                    <Button
-                                                        type="button"
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => document.getElementById('operator-license-upload')?.click()}
-                                                    >
-                                                        {t('upload')}
-                                                    </Button>
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-                                    {/* TUV Certification */}
-                                    <div className="space-y-2">
-                                        <h3 className="text-lg font-medium">{t('tuv_certification')}</h3>
-                                        <div className="flex justify-between border-b pb-2">
-                                            <span className="text-sm font-medium">{t('number')}</span>
-                                            <span className="text-sm">{employee.tuv_certification_number || t('not_set')}</span>
-                                        </div>
-                                        <div className="flex justify-between border-b pb-2">
-                                            <span className="text-sm font-medium">{t('expiry')}</span>
-                                            <span className="text-sm">
-                                                {employee.tuv_certification_expiry
-                                                    ? format(new Date(employee.tuv_certification_expiry), 'PPP')
-                                                    : t('not_set')}
-                                            </span>
-                                        </div>
-                                        <div className="flex justify-between border-b pb-2">
-                                            <span className="text-sm font-medium">{t('cost')}</span>
-                                            <span className="text-sm">
-                                                {employee.tuv_certification_cost
-                                                    ? `SAR ${Number(employee.tuv_certification_cost).toFixed(2)}`
-                                                    : t('not_set')}
-                                            </span>
-                                        </div>
-                                        <div className="mt-2 flex items-center gap-2">
-                                            {employee.tuv_certification_file && (
-                                                <Button asChild variant="outline" size="sm">
-                                                    <a href={employee.tuv_certification_file} target="_blank" rel="noopener noreferrer">
-                                                        {t('download')}
-                                                    </a>
-                                                </Button>
-                                            )}
-                                            {hasPermission('employees.edit') && (
-                                                <>
-                                                    <Input
-                                                        type="file"
-                                                        accept=".pdf,.jpg,.jpeg,.png"
-                                                        className="hidden"
-                                                        id="tuv-certification-upload"
-                                                        onChange={(e) => {
-                                                            const file = e.target.files?.[0];
-                                                            if (file) {
-                                                                handleFileUpload(file, 'tuv_certification');
-                                                            }
-                                                        }}
-                                                    />
-                                                    <Button
-                                                        type="button"
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => document.getElementById('tuv-certification-upload')?.click()}
-                                                    >
-                                                        {t('upload')}
-                                                    </Button>
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-                                    {/* SPSP License */}
-                                    <div className="space-y-2">
-                                        <h3 className="text-lg font-medium">{t('spsp_license')}</h3>
-                                        <div className="flex justify-between border-b pb-2">
-                                            <span className="text-sm font-medium">{t('number')}</span>
-                                            <span className="text-sm">{employee.spsp_license_number || t('not_set')}</span>
-                                        </div>
-                                        <div className="flex justify-between border-b pb-2">
-                                            <span className="text-sm font-medium">{t('expiry')}</span>
-                                            <span className="text-sm">
-                                                {employee.spsp_license_expiry ? format(new Date(employee.spsp_license_expiry), 'PPP') : t('not_set')}
-                                            </span>
-                                        </div>
-                                        <div className="flex justify-between border-b pb-2">
-                                            <span className="text-sm font-medium">{t('cost')}</span>
-                                            <span className="text-sm">
-                                                {employee.spsp_license_cost ? `SAR ${Number(employee.spsp_license_cost).toFixed(2)}` : t('not_set')}
-                                            </span>
-                                        </div>
-                                        <div className="mt-2 flex items-center gap-2">
-                                            {employee.spsp_license_file && (
-                                                <Button asChild variant="outline" size="sm">
-                                                    <a href={employee.spsp_license_file} target="_blank" rel="noopener noreferrer">
-                                                        {t('download')}
-                                                    </a>
-                                                </Button>
-                                            )}
-                                            {hasPermission('employees.edit') && (
-                                                <>
-                                                    <Input
-                                                        type="file"
-                                                        accept=".pdf,.jpg,.jpeg,.png"
-                                                        className="hidden"
-                                                        id="spsp-license-upload"
-                                                        onChange={(e) => {
-                                                            const file = e.target.files?.[0];
-                                                            if (file) {
-                                                                handleFileUpload(file, 'spsp_license');
-                                                            }
-                                                        }}
-                                                    />
-                                                    <Button
-                                                        type="button"
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => document.getElementById('spsp-license-upload')?.click()}
-                                                    >
-                                                        {t('upload')}
-                                                    </Button>
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
+            />
                     </TabsContent>
 
                     <TabsContent value="assignments" className="mt-6 space-y-6">
@@ -3511,3 +3179,163 @@ export default function Show({
         </AppLayout>
     );
 }
+
+// Placeholder for missing components
+const DocumentSection = ({ children, title, description, badgeText, badgeClassName }: any) => (
+  <div className="mb-10">
+    <div className="mb-4 flex items-center gap-3">
+      {title && <h2 className="text-lg font-semibold">{title}</h2>}
+      {badgeText && <span className={`rounded px-2 py-1 text-xs font-medium border ${badgeClassName || ''}`}>{badgeText}</span>}
+    </div>
+    {description && <div className="mb-4 text-sm text-muted-foreground">{description}</div>}
+    <div className="flex flex-row gap-10 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-muted-foreground/30 scrollbar-track-transparent">
+      {children}
+    </div>
+  </div>
+);
+const DocumentCard = ({
+  title,
+  documentNumber,
+  documentType,
+  employeeId,
+  icon,
+  previewSize = 'id_card',
+  documentName,
+}: any) => {
+  // Simulate a preview URL for demonstration; replace with real data as needed
+  const previewUrl = `/api/employee/${employeeId}/documents/${documentType}/preview`;
+  const isImage = ["jpg", "jpeg", "png", "gif"].some((ext) => (previewUrl || '').toLowerCase().endsWith(ext));
+  const isPdf = (previewUrl || '').toLowerCase().endsWith("pdf");
+
+  return (
+    <div className="rounded-2xl border bg-white shadow-lg p-6 flex flex-col items-center w-full max-w-sm min-w-[340px] mx-auto min-h-[420px]">
+      <div className="mb-5 flex items-center justify-center w-full h-72 bg-muted/30 rounded-xl overflow-hidden">
+        {isImage ? (
+          <img
+            src={previewUrl}
+            alt={documentName || title}
+            className="object-contain h-full w-full"
+            style={{ maxHeight: 280, maxWidth: 360 }}
+          />
+        ) : isPdf ? (
+          <div className="flex flex-col items-center justify-center w-full h-full">
+            <FileText className="h-20 w-20 text-blue-500 mb-2" />
+            <span className="text-base text-muted-foreground">PDF Preview</span>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center w-full h-full">
+            {icon}
+            <span className="text-base text-muted-foreground">No Preview</span>
+          </div>
+        )}
+      </div>
+      <div className="w-full text-center">
+        <div className="flex items-center justify-center gap-2 mb-2">
+          {icon}
+          <span className="font-bold text-lg truncate" title={title}>{title}</span>
+        </div>
+        <div className="text-base text-muted-foreground mb-3">{documentNumber || 'Not set'}</div>
+        <div className="flex justify-center gap-3 mt-3">
+          <Button
+            variant="outline"
+            size="sm"
+            asChild
+            className="text-sm px-3 py-2"
+          >
+            <a href={`/api/employee/${employeeId}/documents/${documentType}/download`} target="_blank" rel="noopener noreferrer">
+              <Download className="h-5 w-5 mr-1" /> Download
+            </a>
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            asChild
+            className="text-sm px-3 py-2"
+          >
+            <a href={previewUrl} target="_blank" rel="noopener noreferrer">
+              <Eye className="h-5 w-5 mr-1" /> Preview
+            </a>
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+const AdditionalDocumentsList = (props: any) => (
+  <div className="flex flex-row gap-10 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-muted-foreground/30 scrollbar-track-transparent">
+    {[1, 2, 3, 4].map((i) => (
+      <div key={i} className="rounded-2xl border bg-white shadow-lg p-6 flex flex-col items-center w-full max-w-sm min-w-[340px] mx-auto min-h-[420px]">
+        <div className="mb-5 flex items-center justify-center w-full h-72 bg-muted/30 rounded-xl overflow-hidden">
+          <FileText className="h-20 w-20 text-blue-500 mb-2" />
+          <span className="text-base text-muted-foreground">No Preview</span>
+        </div>
+        <div className="w-full text-center">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <FileText className="h-5 w-5 text-muted-foreground" />
+            <span className="font-bold text-lg truncate">Additional Document {i}</span>
+          </div>
+          <div className="text-base text-muted-foreground mb-3">Not set</div>
+          <div className="flex justify-center gap-3 mt-3">
+            <Button
+              variant="outline"
+              size="sm"
+              asChild
+              className="text-sm px-3 py-2"
+            >
+              <a href="#" target="_blank" rel="noopener noreferrer">
+                <Download className="h-5 w-5 mr-1" /> Download
+              </a>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              asChild
+              className="text-sm px-3 py-2"
+            >
+              <a href="#" target="_blank" rel="noopener noreferrer">
+                <Eye className="h-5 w-5 mr-1" /> Preview
+              </a>
+            </Button>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+);
+const DocumentExpiryTracker = ({ documents }: any) => {
+  // Helper to determine status and color
+  const getStatus = (expiry: string | undefined) => {
+    if (!expiry) return { label: 'No Expiry', color: 'bg-gray-200 text-gray-600' };
+    const now = new Date();
+    const exp = new Date(expiry);
+    const days = Math.ceil((exp.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    if (days < 0) return { label: 'Expired', color: 'bg-red-100 text-red-700' };
+    if (days <= 30) return { label: 'Expiring Soon', color: 'bg-yellow-100 text-yellow-800' };
+    return { label: 'Valid', color: 'bg-green-100 text-green-800' };
+  };
+
+  return (
+    <div className="flex flex-row gap-10 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-muted-foreground/30 scrollbar-track-transparent">
+      {documents.map((doc: any, i: number) => {
+        const status = getStatus(doc.expiry);
+        const now = new Date();
+        const exp = doc.expiry ? new Date(doc.expiry) : null;
+        const days = exp ? Math.ceil((exp.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : null;
+        return (
+          <div key={i} className="rounded-2xl border bg-white shadow-lg p-6 flex flex-col items-center w-full max-w-xs min-w-[260px] mx-auto min-h-[220px]">
+            <div className="mb-3 flex items-center gap-2">
+              <span className="font-bold text-base truncate">{doc.name}</span>
+              <span className={`rounded px-2 py-1 text-xs font-medium border ${status.color}`}>{status.label}</span>
+            </div>
+            <div className="text-sm text-muted-foreground mb-2">
+              Expiry: {doc.expiry ? new Date(doc.expiry).toLocaleDateString() : 'N/A'}
+            </div>
+            <div className="text-lg font-semibold mb-2">
+              {days !== null ? (days < 0 ? 'Expired' : `${days} days left`) : '—'}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
