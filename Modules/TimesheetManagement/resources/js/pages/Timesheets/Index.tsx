@@ -28,6 +28,7 @@ import { Trash2 } from 'lucide-react';
 import { Permission } from '@/Core';
 import { Checkbox } from '@/Core/components/ui/checkbox';
 import { DatePicker } from '@/Core/components/ui/date-picker';
+import axios from 'axios';
 
 // Define the Timesheet interface here to ensure it has all required properties
 interface Project {
@@ -451,18 +452,15 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                                         variant="outline"
                                         onClick={async () => {
                                             try {
-                                                const res = await fetch('/timesheets/create-missing', {
-                                                    method: 'POST',
-                                                    headers: { 'Content-Type': 'application/json' },
-                                                });
-                                                if (res.ok) {
+                                                const response = await axios.post('/timesheets/create-missing');
+                                                if (response.data.success) {
                                                     toast.success(t('Created missing timesheets'));
                                                     reloadPage();
                                                 } else {
-                                                    toast.error(t('Failed to create missing timesheets'));
+                                                    toast.error(response.data.message || t('Failed to create missing timesheets'));
                                                 }
-                                            } catch (e) {
-                                                toast.error(t('Failed to create missing timesheets'));
+                                            } catch (error: any) {
+                                                toast.error(error.response?.data?.message || t('Failed to create missing timesheets'));
                                             }
                                         }}
                                     >
@@ -472,26 +470,15 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                                         variant="default"
                                         onClick={async () => {
                                             try {
-                                                // Always fetch CSRF cookie for Sanctum
-                                                await fetch('/sanctum/csrf-cookie', { credentials: 'same-origin' });
-                                                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-                                                const res = await fetch('/timesheets/auto-generate', {
-                                                    method: 'POST',
-                                                    headers: {
-                                                        'X-CSRF-TOKEN': csrfToken || '',
-                                                        Accept: 'application/json',
-                                                        'Content-Type': 'application/json',
-                                                    },
-                                                    credentials: 'same-origin',
-                                                });
-                                                if (res.ok) {
+                                                const response = await axios.post('/timesheets/auto-generate');
+                                                if (response.data.success) {
                                                     toast.success('Auto-generated timesheets successfully');
                                                     window.location.reload();
                                                 } else {
-                                                    toast.error('Failed to auto-generate timesheets');
+                                                    toast.error(response.data.message || 'Failed to auto-generate timesheets');
                                                 }
-                                            } catch (e) {
-                                                toast.error('Failed to auto-generate timesheets');
+                                            } catch (error: any) {
+                                                toast.error(error.response?.data?.message || 'Failed to auto-generate timesheets');
                                             }
                                         }}
                                     >
@@ -576,24 +563,17 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                                                 onClick={async () => {
                                                     setBulkProcessing(true);
                                                     try {
-                                                        const res = await fetch(route('timesheets.bulk-submit'), {
-                                                            method: 'POST',
-                                                            headers: {
-                                                                'X-CSRF-TOKEN':
-                                                                    document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '',
-                                                                Accept: 'application/json',
-                                                                'Content-Type': 'application/json',
-                                                            },
-                                                            body: JSON.stringify({ timesheet_ids: selectedTimesheets }),
+                                                        const response = await axios.post(route('timesheets.bulk-submit'), {
+                                                            timesheet_ids: selectedTimesheets,
                                                         });
-                                                        const data = await res.json();
-                                                        if (res.ok && data.success) {
+                                                        const data = response.data;
+                                                        if (response.data.success) {
                                                             toast.success(
                                                                 `${data.submitted ?? selectedTimesheets.length} timesheets submitted successfully`,
                                                             );
                                                             setSelectedTimesheets([]);
                                                             reloadPage();
-                                                        } else if (res.ok && data.submitted === 0) {
+                                                        } else if (data.submitted === 0) {
                                                             toast.error(
                                                                 data.error ||
                                                                     'No timesheets were submitted. Please check the status of selected timesheets.',
@@ -606,7 +586,7 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                                                             );
                                                         }
                                                     } catch (e: any) {
-                                                        toast.error(e.message || 'Failed to submit timesheets');
+                                                        toast.error(e.response?.data?.message || 'Failed to submit timesheets');
                                                     } finally {
                                                         setBulkProcessing(false);
                                                         setShowBulkSubmitDialog(false);
@@ -649,21 +629,16 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                                                     onClick={async () => {
                                                         setBulkProcessing(true);
                                                         try {
-                                                            const res = await fetch('/timesheets/bulk-delete', {
-                                                                method: 'DELETE',
-                                                                headers: { 'Content-Type': 'application/json' },
-                                                                body: JSON.stringify({ ids: selectedTimesheets }),
-                                                            });
-                                                            if (res.ok) {
+                                                            const response = await axios.post('/timesheets/bulk-delete', { ids: selectedTimesheets });
+                                                            if (response.data.success) {
                                                                 toast.success(t('bulk_delete_success', 'Timesheets deleted successfully'));
                                                                 reloadPage();
                                                                 setSelectedTimesheets([]);
                                                             } else {
-                                                                const data = await res.json();
-                                                                toast.error(data.error || t('bulk_delete_failed', 'Failed to delete timesheets'));
+                                                                toast.error(response.data.message || t('bulk_delete_failed', 'Failed to delete timesheets'));
                                                             }
-                                                        } catch (e) {
-                                                            toast.error(t('bulk_delete_failed', 'Failed to delete timesheets'));
+                                                        } catch (error: any) {
+                                                            toast.error(error.response?.data?.message || t('bulk_delete_failed', 'Failed to delete timesheets'));
                                                         } finally {
                                                             setBulkProcessing(false);
                                                             setShowBulkDeleteDialog(false);
