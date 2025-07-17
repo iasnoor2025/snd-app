@@ -817,6 +817,17 @@ class TimesheetController extends Controller
                 ];
             })->values()->all();
 
+            // Debug logging
+            \Log::debug('Admin/HR Summary Data', [
+                'total_hours' => $total_hours,
+                'total_overtime' => $total_overtime,
+                'total_timesheets' => $total_timesheets,
+                'employee_stats_count' => count($employee_stats),
+                'employee_stats' => $employee_stats,
+                'project_stats_count' => count($project_stats),
+                'status_stats_count' => count($status_stats),
+            ]);
+
             return Inertia::render('Timesheets/Summary', [
                 'summary' => [
                     'month' => $month->format('F'),
@@ -877,6 +888,18 @@ class TimesheetController extends Controller
                 'percentage' => $percentage,
             ];
         })->values()->all();
+
+        // Debug logging
+        \Log::debug('Non-Admin Summary Data', [
+            'employee_id' => $employeeId,
+            'total_hours' => $total_hours,
+            'total_overtime' => $total_overtime,
+            'total_timesheets' => $total_timesheets,
+            'employee_stats_count' => count($employee_stats),
+            'employee_stats' => $employee_stats,
+            'project_stats_count' => count($project_stats),
+            'status_stats_count' => count($status_stats),
+        ]);
 
         return Inertia::render('Timesheets/Summary', [
             'summary' => [

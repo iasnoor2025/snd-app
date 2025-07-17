@@ -12,13 +12,6 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-    useToast,
 } from '@/Core';
 import { PageProps } from '@/Core/types';
 import { router } from '@inertiajs/core';
@@ -27,6 +20,7 @@ import { addMonths, format, startOfMonth, subMonths } from 'date-fns';
 import { Calendar as CalendarIcon, ChevronLeft, Download as DownloadIcon, Search as SearchIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { route } from 'ziggy-js';
 
 interface Employee {
@@ -90,7 +84,6 @@ interface Props extends PageProps {
 export default function MonthlyTimesheets({ auth, timesheets = [], employees = [], summary = [], filters }: Props) {
     const { t } = useTranslation('TimesheetManagement');
 
-    const { toast } = useToast();
     const [selectedDate, setSelectedDate] = useState<Date>(filters?.month ? new Date(filters.month + '-01') : new Date());
     const [selectedEmployee, setSelectedEmployee] = useState<string>(filters?.employee_id ? String(filters.employee_id) : 'all');
     const [search, setSearch] = useState<string>('');
@@ -133,7 +126,7 @@ export default function MonthlyTimesheets({ auth, timesheets = [], employees = [
     };
 
     const handleExport = () => {
-        toast({ description: t('export_started', 'Export Started') });
+        toast.info(t('export_started', 'Export Started'));
     };
 
     return (
@@ -217,36 +210,36 @@ export default function MonthlyTimesheets({ auth, timesheets = [], employees = [
                         <CardDescription>View and manage timesheets for the entire month with overtime</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="w-12 text-center">#</TableHead>
-                                    <TableHead className="w-32 text-center">{t('file_number', 'File No.')}</TableHead>
-                                    <TableHead>{t('lbl_employee_column', 'Employee')}</TableHead>
-                                    <TableHead>{t('lbl_total_days', 'Total Days')}</TableHead>
-                                    <TableHead>{t('lbl_total_hours', 'Total Hours')}</TableHead>
-                                    <TableHead>{t('lbl_total_overtime', 'Total Overtime')}</TableHead>
-                                    <TableHead>{t('lbl_projects', 'Projects')}</TableHead>
-                                    <TableHead>{t('actions', 'Actions')}</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('file_number', 'File No.')}</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('lbl_employee_column', 'Employee')}</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('lbl_total_days', 'Total Days')}</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('lbl_total_hours', 'Total Hours')}</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('lbl_total_overtime', 'Total Overtime')}</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('lbl_projects', 'Projects')}</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('actions', 'Actions')}</th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
                                 {filteredSummary.length === 0 ? (
-                                    <TableRow>
-                                        <TableCell colSpan={8} className="text-center text-muted-foreground">
+                                    <tr>
+                                        <td colSpan={8} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                                             {t('no_timesheet_data', 'No timesheet data available for this month.')}
-                                        </TableCell>
-                                    </TableRow>
+                                        </td>
+                                    </tr>
                                 ) : (
                                     filteredSummary.map((emp, idx) => (
-                                        <TableRow key={emp.employee.id || idx}>
-                                            <TableCell className="text-center">{idx + 1}</TableCell>
-                                            <TableCell className="text-center">{emp.employee.file_number || ''}</TableCell>
-                                            <TableCell>{emp.employee.name}</TableCell>
-                                            <TableCell>{emp.total_days}</TableCell>
-                                            <TableCell>{emp.total_hours}</TableCell>
-                                            <TableCell>{emp.total_overtime}</TableCell>
-                                            <TableCell>
+                                        <tr key={emp.employee.id || idx}>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">{idx + 1}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">{emp.employee.file_number || ''}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{emp.employee.name}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{emp.total_days}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{emp.total_hours}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{emp.total_overtime}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                 {emp.projects && emp.projects.length > 0 ? (
                                                     <ul className="ml-4 list-disc">
                                                         {emp.projects.map((proj, pidx) => (
@@ -256,10 +249,10 @@ export default function MonthlyTimesheets({ auth, timesheets = [], employees = [
                                                         ))}
                                                     </ul>
                                                 ) : (
-                                                    <span className="text-muted-foreground">{t('no_projects', 'No Projects')}</span>
+                                                    <span className="text-gray-500">{t('no_projects', 'No Projects')}</span>
                                                 )}
-                                            </TableCell>
-                                            <TableCell>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <Button asChild variant="default" size="sm" className="w-full sm:w-auto">
                                                     <a
                                                         href={(route as any)('timesheets.pay-slip', {
@@ -272,12 +265,12 @@ export default function MonthlyTimesheets({ auth, timesheets = [], employees = [
                                                         {t('btn_view_payslip', 'View Payslip')}
                                                     </a>
                                                 </Button>
-                                            </TableCell>
-                                        </TableRow>
+                                            </td>
+                                        </tr>
                                     ))
                                 )}
-                            </TableBody>
-                        </Table>
+                            </tbody>
+                        </table>
                     </CardContent>
                 </Card>
             </div>
