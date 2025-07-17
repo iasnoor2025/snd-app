@@ -72,14 +72,14 @@ class AutoGenerateTimesheets extends Command
                     continue;
                 }
                 if (Carbon::parse($dateStr)->dayOfWeek === Carbon::FRIDAY) {
-                    // Friday: overtime
+                    // Friday: rest day (no work)
                     $data = [
                         'employee_id' => $employeeId,
                         'date' => $dateStr,
                         'status' => \Modules\TimesheetManagement\Domain\Models\Timesheet::STATUS_DRAFT,
                         'hours_worked' => 0,
-                        'overtime_hours' => 8,
-                        'start_time' => '08:00',
+                        'overtime_hours' => 0,
+                        'start_time' => null,
                         'end_time' => null,
                     ];
                 } else {
@@ -90,8 +90,8 @@ class AutoGenerateTimesheets extends Command
                         'status' => \Modules\TimesheetManagement\Domain\Models\Timesheet::STATUS_DRAFT,
                         'hours_worked' => 8,
                         'overtime_hours' => 0,
-                        'start_time' => '08:00',
-                        'end_time' => null,
+                        'start_time' => '06:00',
+                        'end_time' => '16:00',
                     ];
                 }
                 if ($assignment->type === 'project' && $assignment->project_id) {
@@ -135,7 +135,7 @@ class AutoGenerateTimesheets extends Command
             'hours_worked' => 0,
             'overtime_hours' => 0,
             'start_time' => '08:00',
-            'end_time' => null,
+            'end_time' => '16:00',
         ]);
         Log::info('Auto-generated timesheet', [
             'employee_id' => $employee->id,
