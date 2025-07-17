@@ -14,6 +14,7 @@ import { Input } from '../../components/ui/input';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/ui/select';
 import { Table } from '../../components/Common/Table';
 import { BreadcrumbItem } from '../../types';
+import { CrudButtons } from '@/Core';
 
 interface User {
     id: number;
@@ -54,17 +55,10 @@ export default function Index({ users, roles, can }: Props) {
     const [status, setStatus] = useState('all');
     const [role, setRole] = useState('all');
     const [perPage, setPerPage] = useState(15);
-    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-    const [userToDelete, setUserToDelete] = useState<User | null>(null);
-    const [isDeleting, setIsDeleting] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
 
-    const breadcrumbs: BreadcrumbItem[] = [
-        { title: t('navigation.dashboard'), href: route('dashboard') },
-        { title: t('navigation.users'), href: '' },
-    ];
-
-    // Advanced filtering
-    const filteredUsers = users.filter(
+    // Filtering
+    const filteredUsers = (users || []).filter(
         (user) =>
             (searchTerm === '' ||
                 user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -75,227 +69,164 @@ export default function Index({ users, roles, can }: Props) {
     );
 
     // Pagination logic
-    const [currentPage, setCurrentPage] = useState(1);
     const totalPages = Math.ceil(filteredUsers.length / perPage);
     const paginatedUsers = filteredUsers.slice((currentPage - 1) * perPage, currentPage * perPage);
 
-    const handleDeleteUser = () => {
-        if (!userToDelete) return;
-        setIsDeleting(true);
-        router.delete(route('users.destroy', userToDelete.id), {
-            onSuccess: () => {
-                toast.success(t('messages.delete_success', { resource: t('users') }));
-                setDeleteDialogOpen(false);
-                setUserToDelete(null);
-            },
-            onError: (errors) => {
-                toast.error(errors.message || t('messages.delete_error', { resource: t('users') }));
-            },
-            onFinish: () => {
-                setIsDeleting(false);
-            },
-        });
-    };
-
-    const openDeleteDialog = (user: User) => {
-        setUserToDelete(user);
-        setDeleteDialogOpen(true);
-    };
-
-    const getStatusBadge = (verified: string | null) => (
-        <Badge variant={verified ? 'default' : 'destructive'}>
-            {verified ? t('status.verified') : t('status.unverified')}
-        </Badge>
-    );
-
-    const columns = [
-        {
-            key: 'name',
-            header: t('users:fields.name'),
-            accessor: (user: User) => <span className="font-medium">{user.name}</span>,
-        },
-        {
-            key: 'email',
-            header: t('users:fields.email'),
-            accessor: (user: User) => user.email,
-        },
-        {
-            key: 'roles',
-            header: t('users:fields.roles'),
-            accessor: (user: User) => (
-                <div className="flex flex-wrap gap-1">
-                    {user.roles.map((role: Role) => (
-                        <Badge key={role.id} variant="outline">{role.name}</Badge>
-                    ))}
-                </div>
-            ),
-        },
-        {
-            key: 'email_verified_at',
-            header: t('users:fields.status'),
-            accessor: (user: User) => (
-                user.email_verified_at ? (
-                    <Badge variant="secondary">{t('users:fields.verified')}</Badge>
-                ) : (
-                    <Badge variant="destructive">{t('users:fields.unverified')}</Badge>
-                )
-            ),
-        },
-        {
-            key: 'created_at',
-            header: t('users:fields.created_at'),
-            accessor: (user: User) => formatDateMedium(user.created_at),
-        },
-        {
-            key: 'actions',
-            header: t('actions'),
-            accessor: (user: User) => (
-                <div className="flex items-center gap-2 justify-end">
-                    <Button variant="ghost" size="sm" asChild>
-                        <Link href={route('users.show', user.id)}>
-                            <Eye className="h-4 w-4" />
-                        </Link>
-                    </Button>
-                    <Button variant="ghost" size="sm" asChild>
-                        <Link href={route('users.edit', user.id)}>
-                            <Edit className="h-4 w-4" />
-                        </Link>
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openDeleteDialog(user)}
-                        className="text-destructive hover:text-destructive"
-                    >
-                        <Trash2 className="h-4 w-4" />
-                    </Button>
-                </div>
-            ),
-            className: 'text-right',
-        },
-    ];
-
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={t('navigation.users')} />
-            <div className="py-6">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <Card>
-                        <CardHeader>
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <CardTitle className="flex items-center gap-2">
-                                        <UsersIcon className="h-5 w-5" />
-                                        {t('users:title')}
-                                    </CardTitle>
-                                    <CardDescription>{t('users:messages.manage_user_description')}</CardDescription>
-                                </div>
-                                {can.create_users && (
+        <AppLayout title={t('users:fields.users')} breadcrumbs={[] /* Add breadcrumbs if needed */} requiredPermission="users.view">
+            <Head title={t('users:fields.users')} />
+            <div className="flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <div>
+                            <CardTitle className="flex items-center gap-2 text-2xl font-bold">
+                                <UsersIcon className="h-6 w-6" />
+                                {t('users:fields.users')}
+                            </CardTitle>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            {can.create_users && (
+                                <Button asChild>
                                     <Link href={route('users.create')}>
-                                        <Button>
-                                            <Plus className="mr-2 h-4 w-4" />
-                                            {t('users:create')}
-                                        </Button>
+                                        <Plus className="mr-2 h-4 w-4" />
+                                        {t('users:fields.add_user')}
                                     </Link>
-                                )}
-                            </div>
-                        </CardHeader>
-                        <CardContent>
-                            {/* Advanced Filters */}
-                            <div className="flex flex-col md:flex-row md:items-center md:gap-4 mb-6 gap-2">
-                                <div className="relative w-full md:w-64">
-                                    <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
-                                    <Input
-                                        placeholder={t('users:search')}
-                                        value={searchTerm}
-                                        onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                                        className="pl-10"
-                                    />
-                                </div>
-                                <Select value={status} onValueChange={v => { setStatus(v); setCurrentPage(1); }}>
-                                    <SelectTrigger className="w-36">
-                                        <SelectValue>{status === 'all' ? t('status.all') : t('status.' + status)}</SelectValue>
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">{t('status.all')}</SelectItem>
-                                        <SelectItem value="verified">{t('status.verified')}</SelectItem>
-                                        <SelectItem value="unverified">{t('status.unverified')}</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <Select value={role} onValueChange={v => { setRole(v); setCurrentPage(1); }}>
-                                    <SelectTrigger className="w-36">
-                                        <SelectValue>{role === 'all' ? t('users:fields.roles') : role}</SelectValue>
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">{t('users:fields.roles')}</SelectItem>
-                                        {roles.map(r => (
-                                            <SelectItem key={r.id} value={r.name}>{r.name}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <Select value={perPage.toString()} onValueChange={v => { setPerPage(Number(v)); setCurrentPage(1); }}>
-                                    <SelectTrigger className="w-28">
-                                        <SelectValue>{perPage} / page</SelectValue>
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {[10, 15, 25, 50, 100].map(n => (
-                                            <SelectItem key={n} value={n.toString()}>{n} / page</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            {/* Users Table */}
-                            <Table
-                                data={paginatedUsers}
-                                columns={columns}
-                                pageSize={perPage}
-                                currentPage={currentPage}
-                                totalItems={filteredUsers.length}
-                                onPageChange={setCurrentPage}
-                                showPagination={totalPages > 1}
-                                showBorders
-                                showHover
-                                emptyMessage={searchTerm ? t('messages.no_results') : t('messages.no_users')}
-                            />
-                            {/* Pagination */}
-                            {totalPages > 1 && (
-                                <div className="mt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                                    <div className="text-sm text-muted-foreground">
-                                        {t('showing')} {(currentPage - 1) * perPage + 1} {t('to')} {Math.min(currentPage * perPage, filteredUsers.length)} {t('of')} {filteredUsers.length} {t('users')}
-                                    </div>
-                                    <div className="flex gap-1">
-                                        <Button variant="outline" size="sm" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>Prev</Button>
-                                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                                            <Button key={page} variant={page === currentPage ? 'default' : 'outline'} size="sm" onClick={() => setCurrentPage(page)}>{page}</Button>
-                                        ))}
-                                        <Button variant="outline" size="sm" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>Next</Button>
-                                    </div>
-                                </div>
+                                </Button>
                             )}
-                        </CardContent>
-                    </Card>
-                </div>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="mb-6 flex flex-col md:flex-row md:items-center md:gap-4 gap-2">
+                            <div className="relative w-full md:w-64">
+                                <Search className="absolute top-2.5 left-2 h-4 w-4 text-muted-foreground" />
+                                <Input placeholder={t('users:fields.search')} value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }} className="pl-8" />
+                            </div>
+                            <Select value={status} onValueChange={v => { setStatus(v); setCurrentPage(1); }}>
+                                <SelectTrigger className="w-36">
+                                    <SelectValue>{status === 'all' ? t('users:fields.status') : status}</SelectValue>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">{t('users:fields.status')}</SelectItem>
+                                    <SelectItem value="verified">{t('users:fields.verified')}</SelectItem>
+                                    <SelectItem value="unverified">{t('users:fields.unverified')}</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <Select value={role} onValueChange={v => { setRole(v); setCurrentPage(1); }}>
+                                <SelectTrigger className="w-36">
+                                    <SelectValue>{role === 'all' ? t('users:fields.roles') : role}</SelectValue>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">{t('users:fields.roles')}</SelectItem>
+                                    {roles.map(r => (
+                                        <SelectItem key={r.id} value={r.name}>{r.name}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <Select value={perPage.toString()} onValueChange={v => { setPerPage(Number(v)); setCurrentPage(1); }}>
+                                <SelectTrigger className="w-28">
+                                    <SelectValue>{perPage} / page</SelectValue>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {[10, 15, 25, 50, 100].map(n => (
+                                        <SelectItem key={n} value={n.toString()}>{n} / page</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="overflow-x-auto rounded-md border">
+                            <table className="min-w-full divide-y divide-gray-200">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('users:fields.name')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('users:fields.email')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('users:fields.roles')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('users:fields.status')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('users:fields.created_at')}</th>
+                                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{t('actions')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200">
+                                    {paginatedUsers.map((user) => (
+                                        <tr key={user.id} className="align-top">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">{user.name}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm">{user.email}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                <div className="flex flex-wrap gap-1">
+                                                    {user.roles.map((role) => (
+                                                        <Badge key={role.id} variant="outline">{role.name}</Badge>
+                                                    ))}
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                {user.email_verified_at ? (
+                                                    <Badge variant="secondary">{t('users:fields.verified')}</Badge>
+                                                ) : (
+                                                    <Badge variant="destructive">{t('users:fields.unverified')}</Badge>
+                                                )}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm">{formatDateMedium(user.created_at)}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                <CrudButtons
+                                                    resourceType="users"
+                                                    resourceId={user.id}
+                                                    resourceName={user.name}
+                                                    className="justify-end"
+                                                />
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {paginatedUsers.length === 0 && (
+                                        <tr>
+                                            <td colSpan={6} className="py-4 text-center">
+                                                {t('common:no_items', { items: t('users:fields.users').toLowerCase() })}
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                        {/* Pagination */}
+                        {filteredUsers.length > 0 && (
+                            <div className="mt-6 border-t pt-4">
+                                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                                    <div className="text-sm text-muted-foreground">
+                                        {t('showing')} {(currentPage - 1) * perPage + 1} {t('to')} {Math.min(currentPage * perPage, filteredUsers.length)} {t('of')} {filteredUsers.length} {t('users:fields.users')}
+                                        <div className="mt-1 text-xs opacity-60">
+                                            Page {currentPage} of {totalPages}
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col items-center gap-4 sm:flex-row">
+                                        <div className="flex items-center space-x-2">
+                                            <span className="text-sm text-muted-foreground">Show:</span>
+                                            <Select value={perPage.toString()} onValueChange={v => { setPerPage(Number(v)); setCurrentPage(1); }}>
+                                                <SelectTrigger className="w-20">
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {[10, 15, 25, 50, 100].map(n => (
+                                                        <SelectItem key={n} value={n.toString()}>{n}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="flex items-center space-x-1">
+                                            <Button variant="outline" size="sm" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>
+                                                Previous
+                                            </Button>
+                                            <span className="text-xs">
+                                                {currentPage} / {totalPages}
+                                            </span>
+                                            <Button variant="outline" size="sm" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
+                                                Next
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
             </div>
-            {/* Delete Confirmation Dialog */}
-            <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>{t('users:messages.confirm_delete')}</DialogTitle>
-                        <DialogDescription>
-                            {userToDelete && t('users:messages.delete_user_confirmation', { name: userToDelete.name })}
-                        </DialogDescription>
-                    </DialogHeader>
-                    <DialogFooter>
-                        <Button variant="outline" onClick={() => setDeleteDialogOpen(false)} disabled={isDeleting}>
-                            {t('users:messages.cancel')}
-                        </Button>
-                        <Button variant="destructive" onClick={handleDeleteUser} disabled={isDeleting}>
-                            {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            {t('users:messages.delete')}
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
         </AppLayout>
     );
 }

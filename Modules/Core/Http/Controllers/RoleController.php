@@ -15,13 +15,25 @@ class RoleController extends Controller
     /**
      * Display a listing of the roles.
      */
-    public function index()
+    public function index(Request $request)
     {
         if (!auth()->user()->can('roles.view')) {
             abort(403, 'Unauthorized');
         }
 
         $roles = \Spatie\Permission\Models\Role::with('permissions')->withCount('users')->get();
+
+        // Debug logging
+        \Log::info('Roles data for Inertia:', [
+            'count' => $roles->count(),
+            'first_role' => $roles->first()?->toArray(),
+            'has_permissions' => $roles->first()?->permissions->count() ?? 0,
+            'has_users_count' => $roles->first()?->users_count ?? 'missing'
+        ]);
+
+        if ($request->wantsJson() || $request->is('api/*')) {
+            return response()->json(['data' => $roles]);
+        }
 
         return \Inertia\Inertia::render('Roles/Index', [
             'roles' => $roles,

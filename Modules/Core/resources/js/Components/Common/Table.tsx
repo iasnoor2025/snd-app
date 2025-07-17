@@ -173,43 +173,41 @@ const Table = forwardRef<HTMLDivElement, TableProps<any>>(
             <div ref={ref} className={cn('space-y-4', className)} {...props}>
                 <div className={cn('rounded-md', showBorders && 'border')}>
                     <ShadcnTable>
-                        {showHeaders && (
-                            <TableHeader>
-                                <TableRow>
-                                    {showRowNumbers && <TableHead className="w-12">#</TableHead>}
-                                    {visibleColumns.map((column) => (
-                                        <TableHead
-                                            key={column.key}
-                                            className={cn(
-                                                column.sortable && 'cursor-pointer select-none',
-                                                column.sticky && 'sticky left-0 bg-background',
-                                                column.className,
+                        <TableHeader>
+                            <TableRow>
+                                {showRowNumbers && <TableHead className="w-12">#</TableHead>}
+                                {(visibleColumns.length > 0 ? visibleColumns : columns).map((column) => (
+                                    <TableHead
+                                        key={column.key}
+                                        className={cn(
+                                            column.sortable && 'cursor-pointer select-none',
+                                            column.sticky && 'sticky left-0 bg-background',
+                                            column.className,
+                                        )}
+                                        style={{ width: column.width }}
+                                        onClick={() => column.sortable && handleSort(column.key)}
+                                        title={column.tooltip}
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            {column.header}
+                                            {column.sortable && sortKey === column.key && (
+                                                <span className="inline-flex">
+                                                    {sortDirection === 'asc' ? (
+                                                        <ChevronUp className="h-4 w-4" />
+                                                    ) : (
+                                                        <ChevronDown className="h-4 w-4" />
+                                                    )}
+                                                </span>
                                             )}
-                                            style={{ width: column.width }}
-                                            onClick={() => column.sortable && handleSort(column.key)}
-                                            title={column.tooltip}
-                                        >
-                                            <div className="flex items-center gap-2">
-                                                {column.header}
-                                                {column.sortable && sortKey === column.key && (
-                                                    <span className="inline-flex">
-                                                        {sortDirection === 'asc' ? (
-                                                            <ChevronUp className="h-4 w-4" />
-                                                        ) : (
-                                                            <ChevronDown className="h-4 w-4" />
-                                                        )}
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </TableHead>
-                                    ))}
-                                </TableRow>
-                            </TableHeader>
-                        )}
+                                        </div>
+                                    </TableHead>
+                                ))}
+                            </TableRow>
+                        </TableHeader>
                         <TableBody>
                             {isLoading ? (
                                 <TableRow>
-                                    <TableCell colSpan={visibleColumns.length + (showRowNumbers ? 1 : 0)} className="h-24 text-center">
+                                    <TableCell colSpan={(visibleColumns.length > 0 ? visibleColumns.length : columns.length) + (showRowNumbers ? 1 : 0)} className="h-24 text-center">
                                         {useSpinner ? (
                                             <div className="flex items-center justify-center">
                                                 <Loader2 className="h-6 w-6 animate-spin" />
@@ -219,13 +217,7 @@ const Table = forwardRef<HTMLDivElement, TableProps<any>>(
                                         )}
                                     </TableCell>
                                 </TableRow>
-                            ) : data.length === 0 ? (
-                                <TableRow>
-                                    <TableCell colSpan={visibleColumns.length + (showRowNumbers ? 1 : 0)} className="h-24 text-center">
-                                        {emptyMessage}
-                                    </TableCell>
-                                </TableRow>
-                            ) : (
+                            ) : (data && data.length > 0) ? (
                                 data.map((item, index) => (
                                     <TableRow
                                         key={index}
@@ -237,16 +229,24 @@ const Table = forwardRef<HTMLDivElement, TableProps<any>>(
                                         onClick={() => onRowClick?.(item)}
                                     >
                                         {showRowNumbers && <TableCell className="w-12">{startItem + index}</TableCell>}
-                                        {visibleColumns.map((column) => (
+                                        {(visibleColumns.length > 0 ? visibleColumns : columns).map((column) => (
                                             <TableCell
                                                 key={column.key}
                                                 className={cn(column.sticky && 'sticky left-0 bg-background', column.className, compact && 'py-2')}
                                             >
-                                                {column.accessor(item)}
+                                                {typeof column.accessor === 'function'
+                                                    ? column.accessor(item)
+                                                    : item[column.key]}
                                             </TableCell>
                                         ))}
                                     </TableRow>
                                 ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={(visibleColumns.length > 0 ? visibleColumns.length : columns.length) + (showRowNumbers ? 1 : 0)} className="h-24 text-center">
+                                        {emptyMessage}
+                                    </TableCell>
+                                </TableRow>
                             )}
                         </TableBody>
                     </ShadcnTable>
