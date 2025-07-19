@@ -20,7 +20,7 @@ import {
     SelectItem,
 } from '@/Core';
 import { Head } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { route } from 'ziggy-js';
@@ -41,9 +41,14 @@ interface Props extends PageProps {
         prev_page_url: string | null;
         [key: string]: any;
     };
+    filters?: {
+        search?: string;
+        status?: string;
+        city?: string;
+    };
 }
 
-export default function Index({ customers }: Props) {
+export default function Index({ customers, filters }: Props) {
     const { t } = useTranslation('customer');
 
     const breadcrumbs = [
@@ -51,10 +56,11 @@ export default function Index({ customers }: Props) {
         { title: t('ttl_customers'), href: route('customers.index') },
     ];
 
-    const [search, setSearch] = useState('');
-    const [status, setStatus] = useState('all');
-    const [city, setCity] = useState('all');
-    const [perPage, setPerPage] = useState<number>(Number(new URLSearchParams(window.location.search).get('per_page')) || 10);
+    const [search, setSearch] = useState(filters?.search || '');
+    const [status, setStatus] = useState(filters?.status || 'all');
+    const [city, setCity] = useState(filters?.city || 'all');
+    const [perPage, setPerPage] = useState<number>(customers.per_page || 10);
+
     const safeCustomers = Array.isArray(customers.data) ? customers.data : [];
     const cities = Array.from(new Set(safeCustomers.map((c) => c.city).filter(Boolean)));
 
@@ -81,17 +87,54 @@ export default function Index({ customers }: Props) {
         }
     };
 
-    // Filtering logic (simulate backend filtering for demo)
-    const filteredCustomers = safeCustomers.filter((customer) => {
-        const matchesSearch =
-            !search ||
-            customer.name?.toLowerCase().includes(search.toLowerCase()) ||
-            customer.email?.toLowerCase().includes(search.toLowerCase()) ||
-            customer.contact_person?.toLowerCase().includes(search.toLowerCase());
-        const matchesStatus = status === 'all' || customer.status === status;
-        const matchesCity = city === 'all' || customer.city === city;
-        return matchesSearch && matchesStatus && matchesCity;
-    });
+    // Handle search with debounce
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            router.get(route('customers.index'), {
+                search,
+                status,
+                city,
+                per_page: perPage,
+                page: 1
+            }, {
+                preserveState: true,
+                replace: true
+            });
+        }, 300);
+
+        return () => clearTimeout(timeoutId);
+    }, [search, status, city]);
+
+    // Handle perPage changes separately
+    useEffect(() => {
+        router.get(route('customers.index'), {
+            search,
+            status,
+            city,
+            per_page: perPage,
+            page: 1
+        }, {
+            preserveState: true,
+            replace: true
+        });
+    }, [perPage]);
+
+    const handlePerPageChange = (newPerPage: number) => {
+        setPerPage(newPerPage);
+    };
+
+    const handlePageChange = (page: number) => {
+        router.get(route('customers.index'), {
+            search,
+            status,
+            city,
+            per_page: perPage,
+            page
+        }, {
+            preserveState: true,
+            replace: true
+        });
+    };
 
     return (
         <AppLayout title={t('ttl_customers')} breadcrumbs={breadcrumbs}>
@@ -117,7 +160,7 @@ export default function Index({ customers }: Props) {
                                 onChange={(e) => setSearch(e.target.value)}
                                 className="pl-8"
                             />
-                            <Select value={status || ''} onValueChange={setStatus}>
+                            <Select value={status} onValueChange={setStatus}>
                                 <SelectTrigger className="w-full">
                                     <SelectValue placeholder={t('all_statuses')} />
                                 </SelectTrigger>
@@ -127,14 +170,14 @@ export default function Index({ customers }: Props) {
                                     <SelectItem value="inactive">{t('status_inactive')}</SelectItem>
                                 </SelectContent>
                             </Select>
-                            <Select value={city || ''} onValueChange={setCity}>
+                            <Select value={city} onValueChange={setCity}>
                                 <SelectTrigger className="w-full">
                                     <SelectValue placeholder={t('all_cities')} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">{t('all_cities')}</SelectItem>
-                                    {cities.map((city) => (
-                                        <SelectItem key={city} value={city}>{city}</SelectItem>
+                                    {cities.map((cityName) => (
+                                        <SelectItem key={cityName} value={cityName}>{cityName}</SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
@@ -190,7 +233,7 @@ export default function Index({ customers }: Props) {
                             </table>
                         </div>
                         {/* Pagination Controls */}
-                        {safeCustomers.length > 0 && (
+                        {customers.total > 0 && (
                             <div className="mt-6 border-t pt-4">
                                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                                     <div className="text-sm text-muted-foreground">
@@ -203,10 +246,7 @@ export default function Index({ customers }: Props) {
                                         {/* Per Page Selector */}
                                         <div className="flex items-center space-x-2">
                                             <span className="text-sm text-muted-foreground">Show:</span>
-                                            <Select value={perPage.toString()} onValueChange={(v) => {
-                                                setPerPage(Number(v));
-                                                router.get(route('customers.index'), { page: 1, perPage: Number(v), search, status, city }, { preserveState: true, replace: true });
-                                            }}>
+                                            <Select value={perPage.toString()} onValueChange={(v) => handlePerPageChange(Number(v))}>
                                                 <SelectTrigger className="w-20">
                                                     <SelectValue />
                                                 </SelectTrigger>
@@ -224,7 +264,7 @@ export default function Index({ customers }: Props) {
                                                 variant="outline"
                                                 size="sm"
                                                 disabled={customers.current_page === 1}
-                                                onClick={() => router.get(route('customers.index'), { page: customers.current_page - 1, perPage, search, status, city }, { preserveState: true, replace: true })}
+                                                onClick={() => handlePageChange(customers.current_page - 1)}
                                             >
                                                 Previous
                                             </Button>
@@ -249,7 +289,7 @@ export default function Index({ customers }: Props) {
                                                                 variant={pageNumber === customers.current_page ? 'default' : 'outline'}
                                                                 size="sm"
                                                                 className="h-8 w-8 p-0"
-                                                                onClick={() => router.get(route('customers.index'), { page: pageNumber, perPage, search, status, city }, { preserveState: true, replace: true })}
+                                                                onClick={() => handlePageChange(pageNumber)}
                                                             >
                                                                 {pageNumber}
                                                             </Button>
@@ -261,7 +301,7 @@ export default function Index({ customers }: Props) {
                                                 variant="outline"
                                                 size="sm"
                                                 disabled={customers.current_page === customers.last_page}
-                                                onClick={() => router.get(route('customers.index'), { page: customers.current_page + 1, perPage, search, status, city }, { preserveState: true, replace: true })}
+                                                onClick={() => handlePageChange(customers.current_page + 1)}
                                             >
                                                 Next
                                             </Button>

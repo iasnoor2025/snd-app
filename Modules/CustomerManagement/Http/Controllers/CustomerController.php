@@ -30,8 +30,8 @@ class CustomerController extends Controller
     {
         $query = Customer::query();
 
-        // Apply filters
-        if ($request->has('search')) {
+        // Apply search filter
+        if ($request->has('search') && $request->input('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('company_name', 'like', "%{$search}%")
@@ -41,9 +41,15 @@ class CustomerController extends Controller
             });
         }
 
-        if ($request->has('status') && $request->input('status')) {
+        // Apply status filter
+        if ($request->has('status') && $request->input('status') && $request->input('status') !== 'all') {
             $status = $request->input('status') === 'active';
             $query->where('is_active', $status);
+        }
+
+        // Apply city filter
+        if ($request->has('city') && $request->input('city') && $request->input('city') !== 'all') {
+            $query->where('city', $request->input('city'));
         }
 
         $perPage = $request->input('per_page', 10);
@@ -66,7 +72,7 @@ class CustomerController extends Controller
 
         return Inertia::render('Customers/Index', [
             'customers' => $customers,
-            'filters' => $request->only(['search', 'status'])
+            'filters' => $request->only(['search', 'status', 'city'])
         ]);
     }
 
