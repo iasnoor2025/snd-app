@@ -266,7 +266,8 @@ class PayrollController extends Controller
     {
         $this->authorize('viewAny', Payroll::class);
 
-        $payrolls = Payroll::where('month', $payrollRun->run_date)
+        $payrolls = Payroll::where('month', $payrollRun->run_date->month)
+            ->where('year', $payrollRun->run_date->year)
             ->with(['employee', 'items'])
             ->get();
 
@@ -329,6 +330,54 @@ class PayrollController extends Controller
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="payslip_{$payroll->employee->id}_{$payroll->id}.pdf"',
         ]);
+    }
+
+    /**
+     * Bulk delete payrolls (admin only)
+     */
+    public function bulkDelete(Request $request)
+    {
+        // Check if user is admin
+        if (!auth()->user()->hasRole('admin')) {
+            abort(403, 'Only administrators can perform bulk delete operations.');
+        }
+
+        $request->validate([
+            'payroll_ids' => 'required|array',
+            'payroll_ids.*' => 'exists:payrolls,id'
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $payrollIds = $request->payroll_ids;
+            $deletedCount = 0;
+
+            foreach ($payrollIds as $payrollId) {
+                $payroll = Payroll::find($payrollId);
+
+                if ($payroll && $payroll->status !== 'paid') {
+                    // Delete associated items first
+                    $payroll->items()->delete();
+
+                    // Soft delete the payroll
+                    $payroll->delete();
+                    $deletedCount++;
+                }
+            }
+
+            DB::commit();
+
+            $message = $deletedCount > 0
+                ? "Successfully deleted {$deletedCount} payroll record(s)."
+                : "No payroll records were deleted (only unpaid payrolls can be deleted).";
+
+            return back()->with('success', $message);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Failed to delete payroll records: ' . $e->getMessage());
+        }
     }
 }
 

@@ -1,7 +1,8 @@
 import { AppLayout, Button, Card, CardContent, CardHeader, CardTitle } from '@/Core';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 interface PayrollItem {
     id: number;
@@ -90,7 +91,14 @@ export default function Show({ payroll, employee = {}, items = [], approver = {}
                                     variant="outline"
                                     onClick={() => {
                                         if (confirm('Are you sure you want to cancel this payroll?')) {
-                                            // Handle cancel
+                                            router.post(`/hr/payroll/${payroll.id}/cancel`, {}, {
+                                                onSuccess: () => {
+                                                    toast.success('Payroll cancelled successfully');
+                                                },
+                                                onError: (errors) => {
+                                                    toast.error('Failed to cancel payroll');
+                                                }
+                                            });
                                         }
                                     }}
                                 >
@@ -99,7 +107,14 @@ export default function Show({ payroll, employee = {}, items = [], approver = {}
                                 <Button
                                     onClick={() => {
                                         if (confirm('Are you sure you want to approve this payroll?')) {
-                                            // Handle approve
+                                            router.post(`/hr/payroll/${payroll.id}/approve`, {}, {
+                                                onSuccess: () => {
+                                                    toast.success('Payroll approved successfully');
+                                                },
+                                                onError: (errors) => {
+                                                    toast.error('Failed to approve payroll');
+                                                }
+                                            });
                                         }
                                     }}
                                 >
@@ -111,7 +126,14 @@ export default function Show({ payroll, employee = {}, items = [], approver = {}
                             <Button
                                 onClick={() => {
                                     if (confirm('Are you sure you want to mark this payroll as paid?')) {
-                                        // Handle mark as paid
+                                        router.post(`/hr/payroll/${payroll.id}/process-payment`, {}, {
+                                            onSuccess: () => {
+                                                toast.success('Payroll marked as paid successfully');
+                                            },
+                                            onError: (errors) => {
+                                                toast.error('Failed to mark payroll as paid');
+                                            }
+                                        });
                                     }
                                 }}
                             >
@@ -170,42 +192,42 @@ export default function Show({ payroll, employee = {}, items = [], approver = {}
                                         <dt className="text-sm font-medium text-gray-500">{t('base_salary')}</dt>
                                         <dd className="mt-1 text-sm text-gray-900">
                                             {getCurrencySymbol(payroll.currency)}
-                                            {payroll.base_salary.toFixed(2)}
+                                            {Number(payroll.base_salary || 0).toFixed(2)}
                                         </dd>
                                     </div>
                                     <div>
                                         <dt className="text-sm font-medium text-gray-500">Overtime</dt>
                                         <dd className="mt-1 text-sm text-gray-900">
-                                            {payroll.overtime_hours} hours = {getCurrencySymbol(payroll.currency)}
-                                            {payroll.overtime_amount.toFixed(2)}
+                                            {Number(payroll.overtime_hours || 0)} hours = {getCurrencySymbol(payroll.currency)}
+                                            {Number(payroll.overtime_amount || 0).toFixed(2)}
                                         </dd>
                                     </div>
                                     <div>
                                         <dt className="text-sm font-medium text-gray-500">Bonus</dt>
                                         <dd className="mt-1 text-sm text-gray-900">
                                             {getCurrencySymbol(payroll.currency)}
-                                            {payroll.bonus_amount.toFixed(2)}
+                                            {Number(payroll.bonus_amount || 0).toFixed(2)}
                                         </dd>
                                     </div>
                                     <div>
                                         <dt className="text-sm font-medium text-gray-500">Deductions</dt>
                                         <dd className="mt-1 text-sm text-gray-900">
                                             {getCurrencySymbol(payroll.currency)}
-                                            {payroll.deduction_amount.toFixed(2)}
+                                            {Number(payroll.deduction_amount || 0).toFixed(2)}
                                         </dd>
                                     </div>
                                     <div>
                                         <dt className="text-sm font-medium text-gray-500">Advance Deductions</dt>
                                         <dd className="mt-1 text-sm text-gray-900">
                                             {getCurrencySymbol(payroll.currency)}
-                                            {payroll.advance_deduction.toFixed(2)}
+                                            {Number(payroll.advance_deduction || 0).toFixed(2)}
                                         </dd>
                                     </div>
                                     <div className="border-t pt-4">
                                         <dt className="text-sm font-medium text-gray-500">{t('final_amount')}</dt>
                                         <dd className="mt-1 text-lg font-semibold text-gray-900">
                                             {getCurrencySymbol(payroll.currency)}
-                                            {payroll.final_amount.toFixed(2)}
+                                            {Number(payroll.final_amount || 0).toFixed(2)}
                                         </dd>
                                     </div>
                                 </dl>
@@ -241,7 +263,7 @@ export default function Show({ payroll, employee = {}, items = [], approver = {}
                                                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">{item.description}</td>
                                                     <td className="px-6 py-4 text-right text-sm whitespace-nowrap text-gray-900">
                                                         {getCurrencySymbol(payroll.currency)}
-                                                        {item.amount.toFixed(2)}
+                                                        {Number(item.amount || 0).toFixed(2)}
                                                     </td>
                                                 </tr>
                                             ))}

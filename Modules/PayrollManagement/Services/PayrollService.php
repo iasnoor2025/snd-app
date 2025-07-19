@@ -50,16 +50,16 @@ class PayrollService
                     continue;
                 }
 
-                // Check if employee has any approved timesheets for the month
+                // Check if employee has any approved timesheets for the month (optional)
                 $timesheets = $employee->timesheets()
                     ->whereYear('date', $month->year)
                     ->whereMonth('date', $month->month)
                     ->where('status', 'approved')
                     ->count();
 
+                // If no timesheets, we'll use a fallback calculation based on contract days
                 if ($timesheets === 0) {
-                    $errors[] = "No approved timesheets found for {$employee->full_name} for {$month->format('F Y')}";
-                    continue;
+                    Log::info("No approved timesheets found for {$employee->full_name} for {$month->format('F Y')}, using fallback calculation");
                 }
 
                 // Generate payroll
@@ -135,6 +135,15 @@ class PayrollService
             // Calculate net salary
             $netSalary = $grossSalary - $totalDeductions;
 
+            // Check if we used fallback calculation (no timesheets)
+            $timesheets = $employee->timesheets()
+                ->whereYear('date', $month->year)
+                ->whereMonth('date', $month->month)
+                ->where('status', 'approved')
+                ->count();
+
+            $notes = $timesheets === 0 ? "Generated for {$month->format('F Y')} - Basic salary with allowances and tax deduction (no timesheets available)" : null;
+
             // Create payroll record
             $payroll = Payroll::create([
                 'employee_id' => $employee->id,
@@ -147,7 +156,8 @@ class PayrollService
                 'deduction_amount' => $totalDeductions,
                 'final_amount' => $netSalary,
                 'total_worked_hours' => $regularHours,
-                'status' => 'pending'
+                'status' => 'pending',
+                'notes' => $notes
             ]);
 
             // Create payroll items
@@ -235,11 +245,26 @@ class PayrollService
      */
     protected function calculateOvertimeHours(Employee $employee, Carbon $month): float
     {
-        return $employee->timesheets()
+        $overtimeHours = $employee->timesheets()
             ->whereYear('date', $month->year)
             ->whereMonth('date', $month->month)
             ->where('status', 'approved')
             ->sum('overtime_hours');
+
+        // If no timesheets found, assume no overtime
+        if ($overtimeHours === 0) {
+            $timesheets = $employee->timesheets()
+                ->whereYear('date', $month->year)
+                ->whereMonth('date', $month->month)
+                ->where('status', 'approved')
+                ->count();
+
+            if ($timesheets === 0) {
+                return 0; // No overtime if no timesheets
+            }
+        }
+
+        return $overtimeHours;
     }
 
     /**
@@ -273,6 +298,16 @@ class PayrollService
             }
         }
 
+        // If no timesheets found, use fallback calculation based on contract days
+        if ($timesheets->isEmpty()) {
+            $workingDaysInMonth = Carbon::parse($month)->daysInMonth;
+            $contractDaysPerMonth = $employee->contract_days_per_month ?? 26; // Default to 26 working days
+            $contractHoursPerDay = $employee->contract_hours_per_day ?? 8; // Default to 8 hours per day
+
+            $daysWorked = $contractDaysPerMonth;
+            $totalHours = $contractDaysPerMonth * $contractHoursPerDay;
+        }
+
         return [
             'days_worked' => $daysWorked,
             'regular_hours' => $totalHours
@@ -301,20 +336,23 @@ class PayrollService
             'deductions' => 0
         ];
 
-        // Get unpaid leaves for the month
-        $unpaidLeaves = $employee->leaves()
-            ->whereYear('start_date', $month->year)
-            ->whereMonth('start_date', $month->month)
-            ->where('status', 'approved')
-            ->where('type', 'unpaid')
-            ->get();
+        // Check if employee has leaves relationship
+        if (method_exists($employee, 'leaves')) {
+            // Get unpaid leaves for the month
+            $unpaidLeaves = $employee->leaves()
+                ->whereYear('start_date', $month->year)
+                ->whereMonth('start_date', $month->month)
+                ->where('status', 'approved')
+                ->where('type', 'unpaid')
+                ->get();
 
-        $workingDaysInMonth = Carbon::parse($month)->daysInMonth;
-        $dailyRate = $employee->basic_salary / $workingDaysInMonth;
+            $workingDaysInMonth = Carbon::parse($month)->daysInMonth;
+            $dailyRate = $employee->basic_salary / $workingDaysInMonth;
 
-        foreach ($unpaidLeaves as $leave) {
-            $leaveData['unpaid_leaves'] += $leave->duration;
-            $leaveData['deductions'] += $dailyRate * $leave->duration;
+            foreach ($unpaidLeaves as $leave) {
+                $leaveData['unpaid_leaves'] += $leave->duration;
+                $leaveData['deductions'] += $dailyRate * $leave->duration;
+            }
         }
 
         return $leaveData;

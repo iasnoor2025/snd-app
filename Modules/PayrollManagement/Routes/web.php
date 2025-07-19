@@ -50,6 +50,9 @@ Route::prefix('hr/payroll')->name('payroll.')->middleware(['auth', 'verified'])-
     Route::post('/generate', [PayrollController::class, 'store'])
         ->middleware('permission:payroll.create')
         ->name('generate');
+    Route::post('/bulk-delete', [PayrollController::class, 'bulkDelete'])
+        ->middleware('permission:payroll.delete')
+        ->name('bulk-delete');
     Route::prefix('runs')->name('runs.')->group(function () {
         Route::get('/{payrollRun}', [PayrollController::class, 'showPayrollRun'])
             ->middleware('permission:payroll.view')

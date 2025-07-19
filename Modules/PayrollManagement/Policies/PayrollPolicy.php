@@ -29,4 +29,14 @@ class PayrollPolicy
     {
         return $user->hasPermissionTo('payroll.delete');
     }
+
+    public function approve($user, $model = null)
+    {
+        return $user->hasPermissionTo('payroll.edit');
+    }
+
+    public function process($user, $model = null)
+    {
+        return $user->hasPermissionTo('payroll.edit');
+    }
 }

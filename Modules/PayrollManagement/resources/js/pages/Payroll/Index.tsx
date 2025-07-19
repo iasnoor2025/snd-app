@@ -6,6 +6,7 @@ import {
     CardContent,
     CardHeader,
     CardTitle,
+    Checkbox,
     Dialog,
     DialogContent,
     DialogDescription,
@@ -30,10 +31,11 @@ import { PageProps } from '@/Core/types';
 import { router } from '@inertiajs/core';
 import { Head } from '@inertiajs/react';
 import { format } from 'date-fns';
-import { Banknote, Calendar, User, TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
+import { Banknote, Calendar, User, TrendingUp, TrendingDown, DollarSign, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { route } from 'ziggy-js';
+import { toast } from 'sonner';
 
 interface Props extends PageProps {
     payrolls: {
@@ -75,6 +77,11 @@ type Payroll = {
 export default function Index({ auth, payrolls, employees, filters, hasRecords }: Props) {
     const { t } = useTranslation('PayrollManagement');
 
+        // Check for admin role using the same pattern as LeaveManagement
+    const hasRole = auth.hasRole || (auth.user && auth.user.roles) || [];
+    const isAdmin = Array.isArray(hasRole) &&
+        hasRole.some((role) => role && (role === 'admin' || role === 'Admin' || role.name === 'admin' || role.name === 'Admin'));
+
 
 
     const [showModal, setShowModal] = useState(false);
@@ -83,16 +90,20 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
     });
     const [processing, setProcessing] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const [selectedPayrolls, setSelectedPayrolls] = useState<number[]>([]);
+    const [showBulkDeleteModal, setShowBulkDeleteModal] = useState(false);
+    const [bulkDeleteProcessing, setBulkDeleteProcessing] = useState(false);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setProcessing(true);
-        router.post(route('payroll.generate'), formData, {
+        router.post(route('payroll.generate-monthly'), formData, {
             onSuccess: () => {
                 setShowModal(false);
                 setProcessing(false);
             },
             onError: (errors) => {
+                console.error('Payroll generation error:', errors);
                 setErrors(errors);
                 setProcessing(false);
             },
@@ -101,6 +112,51 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
 
     const handleFilter = (key: string, value: string) => {
         router.get(route('payroll.index'), { ...filters, [key]: value }, { preserveState: true });
+    };
+
+    const handleSelectPayroll = (payrollId: number, checked: boolean) => {
+        console.log('Selecting payroll:', payrollId, 'checked:', checked);
+        if (checked) {
+            setSelectedPayrolls(prev => {
+                const newSelection = [...prev, payrollId];
+                console.log('New selection:', newSelection);
+                return newSelection;
+            });
+        } else {
+            setSelectedPayrolls(prev => {
+                const newSelection = prev.filter(id => id !== payrollId);
+                console.log('New selection:', newSelection);
+                return newSelection;
+            });
+        }
+    };
+
+    const handleSelectAll = (checked: boolean) => {
+        console.log('Select all:', checked);
+        if (checked) {
+            setSelectedPayrolls(payrolls.data.map(payroll => payroll.id));
+        } else {
+            setSelectedPayrolls([]);
+        }
+    };
+
+        const handleBulkDelete = () => {
+        if (selectedPayrolls.length === 0) return;
+
+        setBulkDeleteProcessing(true);
+        router.post(route('payroll.bulk-delete'), { payroll_ids: selectedPayrolls }, {
+            onSuccess: () => {
+                setSelectedPayrolls([]);
+                setShowBulkDeleteModal(false);
+                setBulkDeleteProcessing(false);
+                toast.success(`Successfully deleted ${selectedPayrolls.length} payroll record(s)`);
+            },
+            onError: (errors) => {
+                console.error('Bulk delete error:', errors);
+                setBulkDeleteProcessing(false);
+                toast.error('Failed to delete payroll records. Please try again.');
+            },
+        });
     };
 
     const getStatusBadge = (status: string) => {
@@ -140,6 +196,21 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                             <Button variant="outline" onClick={() => router.post(route('payroll.generate-monthly'))}>
                                 Generate Monthly
                             </Button>
+
+                                                                                    {isAdmin && (
+                                <>
+                                    {selectedPayrolls.length > 0 && (
+                                        <Button
+                                            variant="destructive"
+                                            onClick={() => setShowBulkDeleteModal(true)}
+                                            className="flex items-center gap-2"
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                            Delete Selected ({selectedPayrolls.length})
+                                        </Button>
+                                    )}
+                                </>
+                            )}
                         </div>
                     </CardHeader>
                     <CardContent>
@@ -208,6 +279,18 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
+                                        {isAdmin && (
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                                                                    <div className="flex items-center justify-center">
+                                                        <Checkbox
+                                                            checked={selectedPayrolls.length === payrolls.data.length && payrolls.data.length > 0}
+                                                            onChange={(e) => handleSelectAll(e.target.checked)}
+                                                            onClick={(e) => console.log('Select all clicked:', e.target.checked)}
+                                                            className="h-4 w-4 cursor-pointer"
+                                                        />
+                                                    </div>
+                                            </th>
+                                        )}
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Employee
                                         </th>
@@ -241,6 +324,18 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                     {hasRecords && payrolls?.data?.length > 0 ? (
                                         payrolls.data.map((payroll) => (
                                             <tr key={payroll.id} className="align-top">
+                                                {isAdmin && (
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                        <div className="flex items-center justify-center">
+                                                            <Checkbox
+                                                                checked={selectedPayrolls.includes(payroll.id)}
+                                                                onChange={(e) => handleSelectPayroll(payroll.id, e.target.checked)}
+                                                                onClick={(e) => console.log('Checkbox clicked:', payroll.id, e.target.checked)}
+                                                                className="h-4 w-4 cursor-pointer"
+                                                            />
+                                                        </div>
+                                                    </td>
+                                                )}
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                     <div className="flex flex-col gap-1">
                                                         <div className="flex items-center gap-2">
@@ -360,7 +455,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                         ))
                                     ) : (
                                         <tr>
-                                            <td colSpan={9} className="py-8 text-center">
+                                            <td colSpan={isAdmin ? 10 : 9} className="py-8 text-center">
                                                 <div className="flex flex-col items-center justify-center text-muted-foreground">
                                                     <p>No payroll records found</p>
                                                 </div>
@@ -440,6 +535,39 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                             </Button>
                         </DialogFooter>
                     </form>
+                </DialogContent>
+            </Dialog>
+
+            {/* Bulk Delete Confirmation Modal */}
+            <Dialog open={showBulkDeleteModal} onOpenChange={setShowBulkDeleteModal}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Confirm Bulk Delete</DialogTitle>
+                        <DialogDescription>
+                            Are you sure you want to delete {selectedPayrolls.length} selected payroll record(s)?
+                            This action cannot be undone and will only delete unpaid payrolls.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setShowBulkDeleteModal(false)}
+                            disabled={bulkDeleteProcessing}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="destructive"
+                            onClick={handleBulkDelete}
+                            disabled={bulkDeleteProcessing}
+                            className="flex items-center gap-2"
+                        >
+                            <Trash2 className="h-4 w-4" />
+                            {bulkDeleteProcessing ? 'Deleting...' : 'Delete Selected'}
+                        </Button>
+                    </DialogFooter>
                 </DialogContent>
             </Dialog>
         </AppLayout>
