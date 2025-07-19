@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/Core';
+import { Card, CardContent, CardHeader, CardTitle, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Core';
 import axios from 'axios';
 import { format } from 'date-fns';
 import React, { useEffect, useState } from 'react';
@@ -162,12 +162,13 @@ export const TimesheetSummary: React.FC<TimesheetSummaryProps> = ({ employeeId, 
         { value: 11, label: t('month_december') },
     ];
 
-    const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const newMonth = parseInt(e.target.value, 10);
+    const handleMonthChange = (value: string) => {
+        const newMonth = parseInt(value, 10);
         setSelectedMonth(new Date(selectedMonth.getFullYear(), newMonth, 1));
     };
-    const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const newYear = parseInt(e.target.value, 10);
+
+    const handleYearChange = (value: string) => {
+        const newYear = parseInt(value, 10);
         setSelectedMonth(new Date(newYear, selectedMonth.getMonth(), 1));
     };
 
@@ -177,44 +178,47 @@ export const TimesheetSummary: React.FC<TimesheetSummaryProps> = ({ employeeId, 
                 <h2 className="text-2xl font-bold">{t('timesheet_summary')}</h2>
                 <div className="flex flex-wrap items-center gap-2">
                     {showEmployeeSelector && employees.length > 0 && (
-                        <select
-                            className="rounded-md border border-input bg-background px-3 py-2"
-                            value={selectedEmployeeId}
-                            onChange={(e) => setSelectedEmployeeId(Number(e.target.value))}
-                        >
-                            <option value="">{t('lbl_select_employee')}</option>
-                            {employees.map((employee) => (
-                                <option key={employee.id} value={employee.id}>
-                                    {employee.name}
-                                </option>
-                            ))}
-                        </select>
+                        <Select value={selectedEmployeeId?.toString() || ''} onValueChange={(value) => setSelectedEmployeeId(Number(value))}>
+                            <SelectTrigger className="w-[200px]">
+                                <SelectValue placeholder={t('lbl_select_employee')} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="">{t('lbl_select_employee')}</SelectItem>
+                                {employees.map((employee) => (
+                                    <SelectItem key={employee.id} value={employee.id.toString()}>
+                                        {employee.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     )}
 
                     {/* Payslip-style month/year selector */}
                     <div className="flex items-center gap-2">
-                        <select
-                            value={selectedMonth.getMonth()}
-                            onChange={handleMonthChange}
-                            className="rounded-md border border-input bg-background px-2 py-1"
-                        >
-                            {months.map((m) => (
-                                <option key={m.value} value={m.value}>
-                                    {m.label}
-                                </option>
-                            ))}
-                        </select>
-                        <select
-                            value={selectedMonth.getFullYear()}
-                            onChange={handleYearChange}
-                            className="rounded-md border border-input bg-background px-2 py-1"
-                        >
-                            {years.map((y) => (
-                                <option key={y} value={y}>
-                                    {y}
-                                </option>
-                            ))}
-                        </select>
+                        <Select value={selectedMonth.getMonth().toString()} onValueChange={handleMonthChange}>
+                            <SelectTrigger className="w-[140px]">
+                                <SelectValue placeholder={t('select_month')} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {months.map((month) => (
+                                    <SelectItem key={month.value} value={month.value.toString()}>
+                                        {month.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        <Select value={selectedMonth.getFullYear().toString()} onValueChange={handleYearChange}>
+                            <SelectTrigger className="w-[100px]">
+                                <SelectValue placeholder={t('select_year')} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {years.map((year) => (
+                                    <SelectItem key={year} value={year.toString()}>
+                                        {year}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
                 </div>
             </div>

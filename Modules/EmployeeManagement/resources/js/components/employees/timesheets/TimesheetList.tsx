@@ -9,17 +9,16 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
     ToastService,
 } from '@/Core';
 import axios from 'axios';
 import { format, parseISO } from 'date-fns';
-import { Ellipsis, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Ellipsis, Plus } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -53,6 +52,9 @@ export const TimesheetList: React.FC<TimesheetListProps> = ({ employeeId, onAddN
     const { t } = useTranslation('employees');
     const [timesheets, setTimesheets] = useState<Timesheet[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [perPage, setPerPage] = useState(10);
+    const [totalItems, setTotalItems] = useState(0);
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth();
     const initialStart = new Date(currentYear, currentMonth, 1);
@@ -77,16 +79,20 @@ export const TimesheetList: React.FC<TimesheetListProps> = ({ employeeId, onAddN
     const [selectedMonth, setSelectedMonth] = useState(currentMonth);
     const [selectedYear, setSelectedYear] = useState(currentYear);
 
-    const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const newMonth = parseInt(e.target.value, 10);
+    const handleMonthChange = (value: string) => {
+        const newMonth = parseInt(value, 10);
         setSelectedMonth(newMonth);
         updateDateRange(newMonth, selectedYear);
+        setCurrentPage(1); // Reset to first page when changing month
     };
-    const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const newYear = parseInt(e.target.value, 10);
+
+    const handleYearChange = (value: string) => {
+        const newYear = parseInt(value, 10);
         setSelectedYear(newYear);
         updateDateRange(selectedMonth, newYear);
+        setCurrentPage(1); // Reset to first page when changing year
     };
+
     function updateDateRange(month: number, year: number) {
         const start = new Date(year, month, 1);
         const end = new Date(year, month + 1, 0);
@@ -103,13 +109,22 @@ export const TimesheetList: React.FC<TimesheetListProps> = ({ employeeId, onAddN
             const formattedEndDate = format(endDate, 'yyyy-MM-dd');
 
             const response = await axios.get(
-                `/api/v1/employees/${employeeId}/timesheets?start_date=${formattedStartDate}&end_date=${formattedEndDate}`,
+                `/api/v1/employees/${employeeId}/timesheets?start_date=${formattedStartDate}&end_date=${formattedEndDate}&page=${currentPage}&per_page=${perPage}`,
             );
-            setTimesheets((response.data.timesheets || []).filter((t: any) => t.regular_hours > 0 || t.overtime_hours > 0 || t.status !== undefined));
+
+            // Handle paginated response
+            if (response.data.timesheets) {
+                setTimesheets(response.data.timesheets || []);
+                setTotalItems(response.data.total || 0);
+            } else {
+                setTimesheets([]);
+                setTotalItems(0);
+            }
         } catch (error) {
             const err = error as any;
             if (err?.response?.status === 404) {
                 setTimesheets([]);
+                setTotalItems(0);
             } else {
                 console.error('Error fetching timesheets:', error);
                 ToastService.error(t('msg_failed_load_timesheets'));
@@ -121,7 +136,7 @@ export const TimesheetList: React.FC<TimesheetListProps> = ({ employeeId, onAddN
 
     useEffect(() => {
         fetchTimesheets();
-    }, [employeeId, startDate, endDate]);
+    }, [employeeId, startDate, endDate, currentPage, perPage]);
 
     const deleteTimesheet = async (timesheetId: number) => {
         if (!confirm(t('msg_confirm_delete_timesheet'))) {
@@ -156,36 +171,100 @@ export const TimesheetList: React.FC<TimesheetListProps> = ({ employeeId, onAddN
     const getStatusBadge = (status: string) => {
         switch (status) {
             case 'approved':
-                return <Badge className="bg-green-500">{t('status_approved')}</Badge>;
+                return <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">{t('status_approved')}</Badge>;
             case 'pending':
-                return <Badge className="bg-yellow-500">{t('status_pending')}</Badge>;
+                return <Badge variant="outline" className="border-yellow-200 bg-yellow-100 text-yellow-800">{t('status_pending')}</Badge>;
             case 'rejected':
-                return <Badge className="bg-red-500">{t('status_rejected')}</Badge>;
+                return <Badge variant="outline" className="border-red-200 bg-red-100 text-red-800">{t('status_rejected')}</Badge>;
             default:
-                return <Badge>{status}</Badge>;
+                return <Badge variant="outline">{status}</Badge>;
         }
+    };
+
+    // Pagination calculations
+    const totalPages = Math.ceil(totalItems / perPage);
+    const startItem = (currentPage - 1) * perPage + 1;
+    const endItem = Math.min(currentPage * perPage, totalItems);
+
+
+
+
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
+
+    const handlePerPageChange = (value: string) => {
+        setPerPage(Number(value));
+        setCurrentPage(1); // Reset to first page when changing items per page
+    };
+
+    // Generate page numbers for pagination
+    const getPageNumbers = () => {
+        const pages = [];
+        const maxVisiblePages = 5;
+
+        if (totalPages <= maxVisiblePages) {
+            for (let i = 1; i <= totalPages; i++) {
+                pages.push(i);
+            }
+        } else {
+            if (currentPage <= 3) {
+                for (let i = 1; i <= 4; i++) {
+                    pages.push(i);
+                }
+                pages.push('...');
+                pages.push(totalPages);
+            } else if (currentPage >= totalPages - 2) {
+                pages.push(1);
+                pages.push('...');
+                for (let i = totalPages - 3; i <= totalPages; i++) {
+                    pages.push(i);
+                }
+            } else {
+                pages.push(1);
+                pages.push('...');
+                for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+                    pages.push(i);
+                }
+                pages.push('...');
+                pages.push(totalPages);
+            }
+        }
+
+        return pages;
     };
 
     return (
         <Card>
             <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>{t('timesheets_title')}</CardTitle>
-                <div className="flex space-x-2">
+                <div className="flex items-center gap-2">
                     <div className="flex items-center gap-2">
-                        <select value={selectedMonth} onChange={handleMonthChange} className="rounded-md border border-input bg-background px-2 py-1">
-                            {months.map((m) => (
-                                <option key={m.value} value={m.value}>
-                                    {m.label}
-                                </option>
-                            ))}
-                        </select>
-                        <select value={selectedYear} onChange={handleYearChange} className="rounded-md border border-input bg-background px-2 py-1">
-                            {years.map((y) => (
-                                <option key={y} value={y}>
-                                    {y}
-                                </option>
-                            ))}
-                        </select>
+                        <Select value={selectedMonth.toString()} onValueChange={handleMonthChange}>
+                            <SelectTrigger className="w-[140px]">
+                                <SelectValue placeholder={t('select_month')} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {months.map((month) => (
+                                    <SelectItem key={month.value} value={month.value.toString()}>
+                                        {month.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        <Select value={selectedYear.toString()} onValueChange={handleYearChange}>
+                            <SelectTrigger className="w-[100px]">
+                                <SelectValue placeholder={t('select_year')} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {years.map((year) => (
+                                    <SelectItem key={year} value={year.toString()}>
+                                        {year}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
                     {onAddNew && (
                         <Button onClick={onAddNew}>
@@ -203,71 +282,174 @@ export const TimesheetList: React.FC<TimesheetListProps> = ({ employeeId, onAddN
                 ) : timesheets.length === 0 ? (
                     <div className="py-8 text-center text-muted-foreground">{t('no_timesheets_found')}</div>
                 ) : (
-                    <div className="overflow-auto">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>{t('th_date')}</TableHead>
-                                    <TableHead>{t('th_clock_in')}</TableHead>
-                                    <TableHead>{t('th_clock_out')}</TableHead>
-                                    <TableHead>{t('th_break')}</TableHead>
-                                    <TableHead>{t('th_regular_hours')}</TableHead>
-                                    <TableHead>{t('th_overtime')}</TableHead>
-                                    <TableHead>{t('th_total')}</TableHead>
-                                    <TableHead>{t('th_project')}</TableHead>
-                                    <TableHead>{t('th_status')}</TableHead>
-                                    <TableHead className="text-right">{t('th_actions')}</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {timesheets.map((timesheet) => (
-                                    <TableRow key={timesheet.id}>
-                                        <TableCell>{timesheet.date ? format(new Date(timesheet.date), 'MMM d, yyyy') : '-'}</TableCell>
-                                        <TableCell>{formatDateTime(timesheet.clock_in)}</TableCell>
-                                        <TableCell>{formatDateTime(timesheet.clock_out)}</TableCell>
-                                        <TableCell>
-                                            {timesheet.break_start && timesheet.break_end
-                                                ? `${format(parseISO(timesheet.break_start), 'h:mm a')} - ${format(
-                                                      parseISO(timesheet.break_end),
-                                                      'h:mm a',
-                                                  )}`
-                                                : '-'}
-                                        </TableCell>
-                                        <TableCell>{formatHours(timesheet.regular_hours)}</TableCell>
-                                        <TableCell>{formatHours(timesheet.overtime_hours)}</TableCell>
-                                        <TableCell>{formatHours(timesheet.total_hours)}</TableCell>
-                                        <TableCell>{timesheet.project ? timesheet.project.name : '-'}</TableCell>
-                                        <TableCell>{getStatusBadge(timesheet.status)}</TableCell>
-                                        <TableCell className="text-right">
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="ghost" className="h-8 w-8 p-0">
-                                                        <span className="sr-only">{t('open_menu')}</span>
-                                                        <Ellipsis className="h-4 w-4" />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end">
-                                                    <DropdownMenuItem
-                                                        onClick={() => onEdit && onEdit(timesheet.id)}
-                                                        disabled={timesheet.status === 'approved'}
-                                                    >
-                                                        {t('btn_edit')}
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem
-                                                        onClick={() => deleteTimesheet(timesheet.id)}
-                                                        disabled={timesheet.status === 'approved'}
-                                                        className="text-red-600"
-                                                    >
-                                                        {t('btn_delete')}
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </div>
+                    <>
+                        <div className="overflow-x-auto rounded-md border">
+                            <table className="min-w-full divide-y divide-gray-200">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            {t('th_date')}
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            {t('th_clock_in')}
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            {t('th_clock_out')}
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            {t('th_break')}
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            {t('th_regular_hours')}
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            {t('th_overtime')}
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            {t('th_total')}
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            {t('th_project')}
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            {t('th_status')}
+                                        </th>
+                                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            {t('th_actions')}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200">
+                                    {timesheets.map((timesheet) => (
+                                        <tr key={timesheet.id} className="align-top">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                {timesheet.date ? format(new Date(timesheet.date), 'MMM d, yyyy') : '-'}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                {formatDateTime(timesheet.clock_in)}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                {formatDateTime(timesheet.clock_out)}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                {timesheet.break_start && timesheet.break_end
+                                                    ? `${format(parseISO(timesheet.break_start), 'h:mm a')} - ${format(
+                                                          parseISO(timesheet.break_end),
+                                                          'h:mm a',
+                                                      )}`
+                                                    : '-'}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                {formatHours(timesheet.regular_hours)}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                {formatHours(timesheet.overtime_hours)}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                {formatHours(timesheet.total_hours)}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                {timesheet.project ? timesheet.project.name : '-'}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                {getStatusBadge(timesheet.status)}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button variant="ghost" className="h-8 w-8 p-0">
+                                                            <span className="sr-only">{t('open_menu')}</span>
+                                                            <Ellipsis className="h-4 w-4" />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end">
+                                                        <DropdownMenuItem
+                                                            onClick={() => onEdit && onEdit(timesheet.id)}
+                                                            disabled={timesheet.status === 'approved'}
+                                                        >
+                                                            {t('btn_edit')}
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem
+                                                            onClick={() => deleteTimesheet(timesheet.id)}
+                                                            disabled={timesheet.status === 'approved'}
+                                                            className="text-red-600"
+                                                        >
+                                                            {t('btn_delete')}
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Pagination */}
+                        {totalItems > 0 && (
+                            <div className="mt-6 border-t pt-4">
+                                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                                    <div className="text-sm text-muted-foreground">
+                                        {t('showing_results', { start: startItem, end: endItem, total: totalItems })}
+                                        <div className="mt-1 text-xs opacity-60">
+                                            {t('page_of', { current: currentPage, total: totalPages })}
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm text-muted-foreground">{t('rows_per_page')}:</span>
+                                            <Select value={perPage.toString()} onValueChange={handlePerPageChange}>
+                                                <SelectTrigger className="w-[70px]">
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {[10, 25, 50, 100].map((value) => (
+                                                        <SelectItem key={value} value={value.toString()}>
+                                                            {value}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="flex items-center gap-1">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => handlePageChange(currentPage - 1)}
+                                                disabled={currentPage === 1}
+                                            >
+                                                <ChevronLeft className="h-4 w-4" />
+                                            </Button>
+                                            {getPageNumbers().map((page, index) => (
+                                                <React.Fragment key={index}>
+                                                    {page === '...' ? (
+                                                        <span className="px-2 py-1 text-sm text-muted-foreground">...</span>
+                                                    ) : (
+                                                        <Button
+                                                            variant={currentPage === page ? 'default' : 'outline'}
+                                                            size="sm"
+                                                            onClick={() => handlePageChange(page as number)}
+                                                            className="min-w-[32px]"
+                                                        >
+                                                            {page}
+                                                        </Button>
+                                                    )}
+                                                </React.Fragment>
+                                            ))}
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => handlePageChange(currentPage + 1)}
+                                                disabled={currentPage === totalPages}
+                                            >
+                                                <ChevronRight className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </>
                 )}
             </CardContent>
         </Card>

@@ -2493,55 +2493,84 @@ export default function Show({
                                             <CardTitle>{t('ttl_recent_leave_requests')}</CardTitle>
                                         </CardHeader>
                                         <CardContent>
-                                            <table>
-                                                <thead>
-                                                    <tr>
-                                                        <th className="px-4 py-2 text-left">Type</th>
-                                                        <th className="px-4 py-2 text-left">{t('lbl_start_date')}</th>
-                                                        <th className="px-4 py-2 text-left">{t('lbl_end_date')}</th>
-                                                        <th className="px-4 py-2 text-left">Duration</th>
-                                                        <th className="px-4 py-2 text-left">{t('status')}</th>
-                                                        <th className="px-4 py-2 text-left">{t('actions')}</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {leaveRequests.data.map((request) => (
-                                                        <tr key={request.id}>
-                                                            <td className="px-4 py-2 capitalize">{getLeaveTypeName(request.leave_type)}</td>
-                                                            <td className="px-4 py-2">{format(new Date(request.start_date), 'PP')}</td>
-                                                            <td className="px-4 py-2">{format(new Date(request.end_date), 'PP')}</td>
-                                                            <td className="px-4 py-2">{calculateDays(request.start_date, request.end_date)} days</td>
-                                                            <td className="px-4 py-2">
-                                                                <Badge
-                                                                    variant={
-                                                                        request.status === 'approved'
-                                                                            ? 'default'
-                                                                            : request.status === 'rejected'
-                                                                              ? 'destructive'
-                                                                              : 'secondary'
-                                                                    }
-                                                                >
-                                                                    {request.status}
-                                                                </Badge>
-                                                            </td>
-                                                            <td className="px-4 py-2">
-                                                                <Button variant="outline" size="sm" asChild>
-                                                                    <a href={route('leave-requests.show', { leaveRequest: request.id })}>
-                                                                        {t('ttl_view_details')}
-                                                                    </a>
-                                                                </Button>
-                                                            </td>
-                                                        </tr>
-                                                    ))}
-                                                    {leaveRequests.data.length === 0 && (
+                                            <div className="overflow-x-auto rounded-md border">
+                                                <table className="min-w-full divide-y divide-gray-200">
+                                                    <thead className="bg-gray-50">
                                                         <tr>
-                                                            <td colSpan={6} className="text-center text-muted-foreground">
-                                                                No leave requests found
-                                                            </td>
+                                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                                {t('th_leave_type')}
+                                                            </th>
+                                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                                {t('lbl_start_date')}
+                                                            </th>
+                                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                                {t('lbl_end_date')}
+                                                            </th>
+                                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                                {t('th_duration')}
+                                                            </th>
+                                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                                {t('status')}
+                                                            </th>
+                                                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                                {t('actions')}
+                                                            </th>
                                                         </tr>
-                                                    )}
-                                                </tbody>
-                                            </table>
+                                                    </thead>
+                                                    <tbody className="bg-white divide-y divide-gray-200">
+                                                        {leaveRequests.data.map((request) => (
+                                                            <tr key={request.id} className="hover:bg-gray-50">
+                                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 capitalize">
+                                                                    {getLeaveTypeName(request.leave_type)}
+                                                                </td>
+                                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                                    {format(new Date(request.start_date), 'MMM d, yyyy')}
+                                                                </td>
+                                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                                    {format(new Date(request.end_date), 'MMM d, yyyy')}
+                                                                </td>
+                                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                                    {calculateDays(request.start_date, request.end_date)} days
+                                                                </td>
+                                                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                                    <Badge
+                                                                        variant={
+                                                                            request.status === 'approved'
+                                                                                ? 'default'
+                                                                                : request.status === 'rejected'
+                                                                                  ? 'destructive'
+                                                                                  : 'secondary'
+                                                                        }
+                                                                        className={
+                                                                            request.status === 'approved'
+                                                                                ? 'bg-green-100 text-green-800 border-green-200'
+                                                                                : request.status === 'rejected'
+                                                                                  ? 'border-red-200 bg-red-100 text-red-800'
+                                                                                  : 'border-yellow-200 bg-yellow-100 text-yellow-800'
+                                                                        }
+                                                                    >
+                                                                        {request.status}
+                                                                    </Badge>
+                                                                </td>
+                                                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                                    <Button variant="outline" size="sm" asChild>
+                                                                        <a href={route('leave-requests.show', { leaveRequest: request.id })}>
+                                                                            {t('ttl_view_details')}
+                                                                        </a>
+                                                                    </Button>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                        {leaveRequests.data.length === 0 && (
+                                                            <tr>
+                                                                <td colSpan={6} className="px-6 py-8 text-center text-sm text-muted-foreground">
+                                                                    {t('no_leave_requests_found')}
+                                                                </td>
+                                                            </tr>
+                                                        )}
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </CardContent>
                                     </Card>
                                 </div>

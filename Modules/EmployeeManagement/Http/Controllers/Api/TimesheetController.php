@@ -51,12 +51,22 @@ class TimesheetController extends Controller
     {
         $start = $request->query('start_date');
         $end = $request->query('end_date');
+        $page = $request->query('page', 1);
+        $perPage = $request->query('per_page', 10);
+
         $employee = \Modules\EmployeeManagement\Domain\Models\Employee::findOrFail($employeeId);
-        $timesheets = \Modules\TimesheetManagement\Domain\Models\Timesheet::with('project')
+
+        // Get paginated timesheets
+        $timesheetsQuery = \Modules\TimesheetManagement\Domain\Models\Timesheet::with('project')
             ->where('employee_id', $employeeId)
             ->whereBetween('date', [$start, $end])
-            ->orderBy('date')
+            ->orderBy('date', 'desc');
+
+        $totalItems = $timesheetsQuery->count();
+        $timesheets = $timesheetsQuery->skip(($page - 1) * $perPage)
+            ->take($perPage)
             ->get();
+
         $daysInMonth = (int)date('t', strtotime($start));
         $calendar = [];
         for ($d = 1; $d <= $daysInMonth; $d++) {
@@ -71,31 +81,50 @@ class TimesheetController extends Controller
                 'overtime_hours' => 0.0,
             ];
         }
-        foreach ($timesheets as $t) {
+
+        // Get all timesheets for calendar (not paginated)
+        $allTimesheets = \Modules\TimesheetManagement\Domain\Models\Timesheet::where('employee_id', $employeeId)
+            ->whereBetween('date', [$start, $end])
+            ->get();
+
+        foreach ($allTimesheets as $t) {
             $date = $t->date->format('Y-m-d');
             if (isset($calendar[$date])) {
                 $calendar[$date]['regular_hours'] += $t->hours_worked;
                 $calendar[$date]['overtime_hours'] += $t->overtime_hours;
             }
         }
+
         // Transform timesheets for frontend
         $timesheetData = $timesheets->map(function ($t) {
             return [
                 'id' => $t->id,
+                'employee_id' => $t->employee_id,
                 'date' => $t->date->format('Y-m-d'),
+                'clock_in' => $t->start_time,
+                'clock_out' => $t->end_time,
+                'break_start' => $t->break_start,
+                'break_end' => $t->break_end,
                 'regular_hours' => $t->hours_worked,
                 'overtime_hours' => $t->overtime_hours,
+                'total_hours' => $t->hours_worked + $t->overtime_hours,
                 'status' => $t->status,
-                'project' => $t->project ? $t->project->name : null,
-                'start_time' => $t->start_time,
-                'end_time' => $t->end_time,
-                'break' => $t->break ?? null,
-                'total' => $t->hours_worked + $t->overtime_hours,
+                'notes' => $t->notes,
+                'project_id' => $t->project_id,
+                'project' => $t->project ? [
+                    'id' => $t->project->id,
+                    'name' => $t->project->name
+                ] : null,
             ];
         });
+
         return response()->json([
             'calendar' => array_values($calendar),
             'timesheets' => $timesheetData,
+            'total' => $totalItems,
+            'current_page' => (int)$page,
+            'per_page' => (int)$perPage,
+            'last_page' => ceil($totalItems / $perPage),
         ]);
     }
 
