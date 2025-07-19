@@ -108,5 +108,33 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/equipment/sync-status', [\Modules\EquipmentManagement\Http\Controllers\Api\EquipmentController::class, 'syncStatus'])
         ->middleware('permission:equipment.view')
         ->name('equipment.sync-status');
+
+    // Equipment media routes (web accessible)
+    Route::prefix('/equipment/{equipment}/media')->group(function () {
+        Route::get('/', [\Modules\EquipmentManagement\Http\Controllers\EquipmentMediaController::class, 'index'])
+            ->middleware('permission:equipment.view')
+            ->name('equipment.media.index');
+        Route::post('/images', [\Modules\EquipmentManagement\Http\Controllers\EquipmentMediaController::class, 'uploadImage'])
+            ->middleware('permission:equipment.edit')
+            ->name('equipment.media.upload-image');
+        Route::post('/manuals', [\Modules\EquipmentManagement\Http\Controllers\EquipmentMediaController::class, 'uploadManual'])
+            ->middleware('permission:equipment.edit')
+            ->name('equipment.media.upload-manual');
+        Route::post('/specifications', [\Modules\EquipmentManagement\Http\Controllers\EquipmentMediaController::class, 'uploadSpecification'])
+            ->middleware('permission:equipment.edit')
+            ->name('equipment.media.upload-specification');
+        Route::post('/certifications', [\Modules\EquipmentManagement\Http\Controllers\EquipmentMediaController::class, 'uploadCertification'])
+            ->middleware('permission:equipment.edit')
+            ->name('equipment.media.upload-certification');
+        Route::patch('/{media}', [\Modules\EquipmentManagement\Http\Controllers\EquipmentMediaController::class, 'updateMetadata'])
+            ->middleware('permission:equipment.edit')
+            ->name('equipment.media.update');
+        Route::delete('/{media}', [\Modules\EquipmentManagement\Http\Controllers\EquipmentMediaController::class, 'destroy'])
+            ->middleware('permission:equipment.edit')
+            ->name('equipment.media.destroy');
+        Route::get('/{media}/download', [\Modules\EquipmentManagement\Http\Controllers\EquipmentMediaController::class, 'download'])
+            ->middleware('permission:equipment.view')
+            ->name('equipment.media.download');
+    });
 });
 

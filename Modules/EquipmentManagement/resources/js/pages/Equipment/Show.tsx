@@ -187,7 +187,7 @@ export default function Show({
             try {
                 // Ensure CSRF cookie is set
                 await axios.get('/sanctum/csrf-cookie', { withCredentials: true });
-                const response = await axios.get(`/api/v1/equipment/${equipment.id}/media`, { withCredentials: true });
+                const response = await axios.get(`/equipment/${equipment.id}/media`, { withCredentials: true });
                 const mediaData = response.data.media || {};
                 const allMedia = [
                     ...(mediaData.images || []),
@@ -222,7 +222,7 @@ export default function Show({
 
         try {
             setIsUploading(true);
-            const response = await axios.post(`/api/v1/equipment/${equipment.id}/media`, formData, {
+            const response = await axios.post(`/equipment/${equipment.id}/media`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -235,7 +235,7 @@ export default function Show({
             });
 
             // Refresh media items
-            const mediaResponse = await axios.get(`/api/v1/equipment/${equipment.id}/media`);
+            const mediaResponse = await axios.get(`/equipment/${equipment.id}/media`);
             const mediaData = mediaResponse.data.media || {};
             const allMedia = [
                 ...(mediaData.images || []),
@@ -260,7 +260,7 @@ export default function Show({
     // Handle file deletion
     const handleFileDelete = async (mediaItem: MediaItem) => {
         try {
-            await axios.delete(`/api/v1/equipment/${equipment.id}/media/${mediaItem.id}`);
+            await axios.delete(`/equipment/${equipment.id}/media/${mediaItem.id}`);
             setMediaItems((prev) => prev.filter((item) => item.id !== mediaItem.id));
             toast.success(t('messages.file_deleted_successfully'));
         } catch (error: any) {

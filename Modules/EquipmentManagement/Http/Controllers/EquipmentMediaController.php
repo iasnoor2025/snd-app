@@ -26,7 +26,6 @@ class EquipmentMediaController extends Controller
     ) {
         $this->mediaService = $mediaService;
         $this->mediaTypeService = $mediaTypeService;
-        $this->middleware('auth:sanctum');
     }
 
     /**
@@ -374,4 +373,4 @@ class EquipmentMediaController extends Controller
             'message' => 'Failed to ' . $operation . ' media: ' . $e->getMessage()
         ], 500);
     }
-} 
+}
