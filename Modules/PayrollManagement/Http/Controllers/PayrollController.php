@@ -52,6 +52,14 @@ class PayrollController extends Controller
         }
 
         $payrolls = $query->latest()->paginate(10);
+
+        // Ensure employee data is properly loaded and formatted
+        $payrolls->getCollection()->transform(function ($payroll) {
+            if ($payroll->employee) {
+                $payroll->employee->append('name');
+            }
+            return $payroll;
+        });
         $employees = Employee::where('status', 'active')
             ->get(['id', 'first_name', 'middle_name', 'last_name'])
             ->append('name')

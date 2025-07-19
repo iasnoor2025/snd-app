@@ -34,10 +34,10 @@ class PayrollService
 
         foreach ($employees as $employee) {
             try {
-                // Validate employee data
-                if (!$employee->base_salary) {
-                    throw new \Exception("Employee {$employee->full_name} has no base salary configured");
-                }
+                            // Validate employee data
+            if (!$employee->basic_salary) {
+                throw new \Exception("Employee {$employee->full_name} has no base salary configured");
+            }
 
                 // Check if payroll already exists for this month
                 $existingPayroll = Payroll::where('employee_id', $employee->id)
@@ -101,7 +101,7 @@ class PayrollService
 
             // Calculate base salary for worked days
             $workingDaysInMonth = Carbon::parse($month)->daysInMonth;
-            $dailyRate = $employee->base_salary / $workingDaysInMonth;
+            $dailyRate = $employee->basic_salary / $workingDaysInMonth;
             $baseSalary = $dailyRate * $daysWorked;
 
             // Calculate allowances (if any)
@@ -248,7 +248,7 @@ class PayrollService
     protected function calculateOvertimeAmount(Employee $employee, float $overtimeHours): float
     {
         $workingDaysInMonth = Carbon::now()->daysInMonth;
-        $hourlyRate = $employee->base_salary / ($workingDaysInMonth * 8); // 8 hours per day
+        $hourlyRate = $employee->basic_salary / ($workingDaysInMonth * 8); // 8 hours per day
         return $overtimeHours * ($hourlyRate * 1.5); // 1.5x for overtime
     }
 
@@ -310,7 +310,7 @@ class PayrollService
             ->get();
 
         $workingDaysInMonth = Carbon::parse($month)->daysInMonth;
-        $dailyRate = $employee->base_salary / $workingDaysInMonth;
+        $dailyRate = $employee->basic_salary / $workingDaysInMonth;
 
         foreach ($unpaidLeaves as $leave) {
             $leaveData['unpaid_leaves'] += $leave->duration;

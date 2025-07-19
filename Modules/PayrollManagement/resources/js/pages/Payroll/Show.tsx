@@ -16,12 +16,14 @@ interface Payroll {
         id: number;
         name: string;
     };
-    payroll_month: string;
+    month: number;
+    year: number;
     base_salary: number;
     overtime_hours: number;
-    overtime_rate: number;
+    overtime_amount: number;
     bonus_amount: number;
     deduction_amount: number;
+    advance_deduction: number;
     final_amount: number;
     status: string;
     notes: string;
@@ -131,7 +133,16 @@ export default function Show({ payroll, employee = {}, items = [], approver = {}
                                     </div>
                                     <div>
                                         <dt className="text-sm font-medium text-gray-500">{t('lbl_payroll_month')}</dt>
-                                        <dd className="mt-1 text-sm text-gray-900">{format(new Date(payroll.payroll_month), 'MMMM yyyy')}</dd>
+                                        <dd className="mt-1 text-sm text-gray-900">
+                                            {(() => {
+                                                try {
+                                                    const date = new Date(payroll.year, payroll.month - 1);
+                                                    return format(date, 'MMMM yyyy');
+                                                } catch (error) {
+                                                    return `${payroll.month}/${payroll.year}`;
+                                                }
+                                            })()}
+                                        </dd>
                                     </div>
                                     <div>
                                         <dt className="text-sm font-medium text-gray-500">Status</dt>
@@ -165,9 +176,8 @@ export default function Show({ payroll, employee = {}, items = [], approver = {}
                                     <div>
                                         <dt className="text-sm font-medium text-gray-500">Overtime</dt>
                                         <dd className="mt-1 text-sm text-gray-900">
-                                            {payroll.overtime_hours} hours × {getCurrencySymbol(payroll.currency)}
-                                            {payroll.overtime_rate.toFixed(2)} = {getCurrencySymbol(payroll.currency)}
-                                            {(payroll.overtime_hours * payroll.overtime_rate).toFixed(2)}
+                                            {payroll.overtime_hours} hours = {getCurrencySymbol(payroll.currency)}
+                                            {payroll.overtime_amount.toFixed(2)}
                                         </dd>
                                     </div>
                                     <div>
@@ -182,6 +192,13 @@ export default function Show({ payroll, employee = {}, items = [], approver = {}
                                         <dd className="mt-1 text-sm text-gray-900">
                                             {getCurrencySymbol(payroll.currency)}
                                             {payroll.deduction_amount.toFixed(2)}
+                                        </dd>
+                                    </div>
+                                    <div>
+                                        <dt className="text-sm font-medium text-gray-500">Advance Deductions</dt>
+                                        <dd className="mt-1 text-sm text-gray-900">
+                                            {getCurrencySymbol(payroll.currency)}
+                                            {payroll.advance_deduction.toFixed(2)}
                                         </dd>
                                     </div>
                                     <div className="border-t pt-4">

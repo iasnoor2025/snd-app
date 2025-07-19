@@ -30,6 +30,7 @@ import { PageProps } from '@/Core/types';
 import { router } from '@inertiajs/core';
 import { Head } from '@inertiajs/react';
 import { format } from 'date-fns';
+import { Banknote, Calendar, User, TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { route } from 'ziggy-js';
@@ -59,19 +60,22 @@ type Employee = {
 type Payroll = {
     id: number;
     employee: Employee;
-    salary_month: string;
+    month: number;
+    year: number;
     base_salary: number;
     overtime_amount: number;
-    bonus: number;
-    deduction: number;
+    bonus_amount: number;
+    deduction_amount: number;
     advance_deduction?: number;
-    net_salary: number;
+    final_amount: number;
     status: string;
     [key: string]: any;
 };
 
 export default function Index({ auth, payrolls, employees, filters, hasRecords }: Props) {
     const { t } = useTranslation('PayrollManagement');
+
+
 
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState({
@@ -200,92 +204,206 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                 </Select>
                             </div>
                         </div>
-                        <div className="mt-6 rounded-md border">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Employee</TableHead>
-                                        <TableHead>Month</TableHead>
-                                        <TableHead>{t('base_salary')}</TableHead>
-                                        <TableHead>Overtime</TableHead>
-                                        <TableHead>Bonus</TableHead>
-                                        <TableHead>Deductions</TableHead>
-                                        <TableHead>{t('final_amount')}</TableHead>
-                                        <TableHead>Status</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
+                        <div className="overflow-x-auto rounded-md border">
+                            <table className="min-w-full divide-y divide-gray-200">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Employee
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Period
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Base Salary
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Overtime
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Bonus
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Deductions
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Final Amount
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Status
+                                        </th>
+                                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Actions
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200">
                                     {hasRecords && payrolls?.data?.length > 0 ? (
                                         payrolls.data.map((payroll) => (
-                                            <TableRow key={payroll.id}>
-                                                <TableCell>{payroll.employee.name}</TableCell>
-                                                <TableCell>
-                                                    {(() => {
-                                                        try {
-                                                            const date = new Date(payroll.salary_month);
-                                                            if (isNaN(date.getTime())) {
-                                                                return payroll.salary_month || 'Invalid Date';
-                                                            }
-                                                            return format(date, 'MMM yyyy');
-                                                        } catch (error) {
-                                                            console.error('Date formatting error:', error, 'Value:', payroll.salary_month);
-                                                            return payroll.salary_month || 'Invalid Date';
-                                                        }
-                                                    })()}
-                                                </TableCell>
-                                                <TableCell>${(Number(payroll.base_salary) || 0).toFixed(2)}</TableCell>
-                                                <TableCell>${(Number(payroll.overtime_amount) || 0).toFixed(2)}</TableCell>
-                                                <TableCell>${(Number(payroll.bonus) || 0).toFixed(2)}</TableCell>
-                                                <TableCell>
-                                                    ${((Number(payroll.deduction) || 0) + (Number(payroll.advance_deduction) || 0)).toFixed(2)}
-                                                </TableCell>
-                                                <TableCell>${(Number(payroll.net_salary) || 0).toFixed(2)}</TableCell>
-                                                <TableCell>{getStatusBadge(payroll.status)}</TableCell>
-                                                <TableCell className="text-right">
-                                                    <Button
-                                                        variant="ghost"
-                                                        onClick={() => router.get(route('payroll.show', { payroll: payroll.id }))}
-                                                    >
-                                                        View
-                                                    </Button>
-                                                </TableCell>
-                                            </TableRow>
+                                            <tr key={payroll.id} className="align-top">
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                    <div className="flex flex-col gap-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <User className="h-4 w-4 text-muted-foreground" />
+                                                            <span className="font-medium">
+                                                                {payroll.employee.name}
+                                                            </span>
+                                                        </div>
+                                                        <span className="text-xs text-muted-foreground ml-6">
+                                                            ID: {payroll.employee.id}
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                    <div className="flex flex-col gap-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <Calendar className="h-4 w-4 text-muted-foreground" />
+                                                            <span className="font-medium">
+                                                                {(() => {
+                                                                    try {
+                                                                        const date = new Date(payroll.year, payroll.month - 1);
+                                                                        return format(date, 'MMM yyyy');
+                                                                    } catch (error) {
+                                                                        console.error('Date formatting error:', error, 'Month:', payroll.month, 'Year:', payroll.year);
+                                                                        return `${payroll.month}/${payroll.year}`;
+                                                                    }
+                                                                })()}
+                                                            </span>
+                                                        </div>
+                                                        <span className="text-xs text-muted-foreground ml-6">
+                                                            Month {payroll.month}, {payroll.year}
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                    <div className="flex flex-col gap-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <Banknote className="h-4 w-4 text-muted-foreground" />
+                                                            <span className="font-medium">
+                                                                ${(Number(payroll.base_salary) || 0).toFixed(2)}
+                                                            </span>
+                                                        </div>
+                                                        <span className="text-xs text-muted-foreground ml-6">
+                                                            Base
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                    <div className="flex flex-col gap-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                                                            <span className="font-medium">
+                                                                ${(Number(payroll.overtime_amount) || 0).toFixed(2)}
+                                                            </span>
+                                                        </div>
+                                                        <span className="text-xs text-muted-foreground ml-6">
+                                                            Extra
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                    <div className="flex flex-col gap-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <DollarSign className="h-4 w-4 text-muted-foreground" />
+                                                            <span className="font-medium">
+                                                                ${(Number(payroll.bonus_amount) || 0).toFixed(2)}
+                                                            </span>
+                                                        </div>
+                                                        <span className="text-xs text-muted-foreground ml-6">
+                                                            Bonus
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                    <div className="flex flex-col gap-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <TrendingDown className="h-4 w-4 text-red-500" />
+                                                            <span className="font-medium text-red-600">
+                                                                ${((Number(payroll.deduction_amount) || 0) + (Number(payroll.advance_deduction) || 0)).toFixed(2)}
+                                                            </span>
+                                                        </div>
+                                                        <span className="text-xs text-muted-foreground ml-6">
+                                                            Deductions
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                    <div className="flex flex-col gap-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <DollarSign className="h-4 w-4 text-green-500" />
+                                                            <span className="font-medium text-green-600">
+                                                                ${(Number(payroll.final_amount) || 0).toFixed(2)}
+                                                            </span>
+                                                        </div>
+                                                        <span className="text-xs text-muted-foreground ml-6">
+                                                            Net
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                    <div className="flex flex-col gap-1">
+                                                        {getStatusBadge(payroll.status)}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                    <div className="flex justify-end gap-2">
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() => router.get(route('payroll.show', { payroll: payroll.id }))}
+                                                        >
+                                                            View
+                                                        </Button>
+                                                    </div>
+                                                </td>
+                                            </tr>
                                         ))
                                     ) : (
-                                        <TableRow>
-                                            <TableCell colSpan={9} className="py-8 text-center">
+                                        <tr>
+                                            <td colSpan={9} className="py-8 text-center">
                                                 <div className="flex flex-col items-center justify-center text-muted-foreground">
                                                     <p>No payroll records found</p>
                                                 </div>
-                                            </TableCell>
-                                        </TableRow>
+                                            </td>
+                                        </tr>
                                     )}
-                                </TableBody>
-                            </Table>
+                                </tbody>
+                            </table>
                         </div>
 
-                        {/* Pagination Controls */}
+                        {/* Enhanced Pagination - Always show if there are payrolls */}
                         {payrolls?.data && payrolls.data.length > 0 && (
-                            <div className="mt-4 flex items-center justify-between">
-                                <div className="text-sm text-muted-foreground">Showing {payrolls.data.length} records</div>
-                                <div className="flex items-center space-x-2">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        disabled={!payrolls.links?.prev}
-                                        onClick={() => payrolls.links?.prev && router.get(payrolls.links.prev)}
-                                    >
-                                        Previous
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        disabled={!payrolls.links?.next}
-                                        onClick={() => payrolls.links?.next && router.get(payrolls.links.next)}
-                                    >
-                                        Next
-                                    </Button>
+                            <div className="mt-6 border-t pt-4">
+                                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                                    <div className="text-sm text-muted-foreground">
+                                        Showing {payrolls?.meta?.from || 1} to {payrolls?.meta?.to || payrolls.data.length} of{' '}
+                                        {payrolls?.meta?.total || payrolls.data.length} results
+                                        <div className="mt-1 text-xs opacity-60">
+                                            Page {payrolls?.meta?.current_page || 1} of {payrolls?.meta?.last_page || 1}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col items-center gap-4 sm:flex-row">
+                                        {/* Page Navigation */}
+                                        <div className="flex items-center space-x-1">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                disabled={!payrolls?.links?.prev}
+                                                onClick={() => payrolls.links?.prev && router.get(payrolls.links.prev)}
+                                            >
+                                                Previous
+                                            </Button>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                disabled={!payrolls?.links?.next}
+                                                onClick={() => payrolls.links?.next && router.get(payrolls.links.next)}
+                                            >
+                                                Next
+                                            </Button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         )}
