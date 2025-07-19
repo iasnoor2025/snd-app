@@ -548,13 +548,20 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                     <div className="flex justify-end gap-2">
-                                                    <Button
-                                                        variant="ghost"
+                                                        <Button
+                                                            variant="ghost"
                                                             size="sm"
-                                                        onClick={() => router.get(route('payroll.show', { payroll: payroll.id }))}
-                                                    >
-                                                        View
-                                                    </Button>
+                                                            onClick={() => router.get(route('payroll.show', { payroll: payroll.id }))}
+                                                        >
+                                                            View
+                                                        </Button>
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            onClick={() => router.get(route('payroll.payslip.view', { payroll: payroll.id }))}
+                                                        >
+                                                            Payslip
+                                                        </Button>
                                                     </div>
                                                 </td>
                                             </tr>
