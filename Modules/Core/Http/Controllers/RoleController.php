@@ -49,9 +49,7 @@ class RoleController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        $permissions = Permission::all()->groupBy(function ($permission) {
-            return explode('.', $permission->name)[0];
-        });
+        $permissions = Permission::all();
 
         return Inertia::render('Roles/Create', [
             'permissions' => $permissions,

@@ -10,12 +10,6 @@ import {
     Checkbox,
     Input,
     Label,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
 } from '@/Core';
 import { BreadcrumbItem } from '@/Core/types';
 import { Head, Link, router } from '@inertiajs/react';
@@ -185,36 +179,36 @@ export default function Create({ permissions }: Props) {
                                                     </Button>
                                                 </div>
 
-                                                <div className="rounded-md border">
-                                                    <Table>
-                                                        <TableHeader>
-                                                            <TableRow>
-                                                                <TableHead className="w-[50px]">Select</TableHead>
-                                                                <TableHead>Permission Name</TableHead>
-                                                                <TableHead>Display Name</TableHead>
-                                                                <TableHead>Guard</TableHead>
-                                                            </TableRow>
-                                                        </TableHeader>
-                                                        <TableBody>
+                                                <div className="overflow-x-auto rounded-md border">
+                                                    <table className="min-w-full divide-y divide-gray-200">
+                                                        <thead className="bg-gray-50">
+                                                            <tr>
+                                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[50px]">Select</th>
+                                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Permission Name</th>
+                                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Display Name</th>
+                                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Guard</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody className="bg-white divide-y divide-gray-200">
                                                             {modulePermissions.map((permission) => (
-                                                                <TableRow key={permission.id}>
-                                                                    <TableCell>
+                                                                <tr key={permission.id}>
+                                                                    <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                                         <Checkbox
                                                                             checked={selectedPermissions.includes(permission.id)}
                                                                             onChange={() => handlePermissionChange(permission.id)}
                                                                         />
-                                                                    </TableCell>
-                                                                    <TableCell className="font-medium">
+                                                                    </td>
+                                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                                         <Badge variant="outline">{permission.name}</Badge>
-                                                                    </TableCell>
-                                                                    <TableCell>{permission.display_name || '-'}</TableCell>
-                                                                    <TableCell>
+                                                                    </td>
+                                                                    <td className="px-6 py-4 whitespace-nowrap text-sm">{permission.display_name || '-'}</td>
+                                                                    <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                                         <Badge variant="secondary">{permission.guard_name}</Badge>
-                                                                    </TableCell>
-                                                                </TableRow>
+                                                                    </td>
+                                                                </tr>
                                                             ))}
-                                                        </TableBody>
-                                                    </Table>
+                                                        </tbody>
+                                                    </table>
                                                 </div>
                                             </div>
                                         ))}
