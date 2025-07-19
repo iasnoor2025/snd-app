@@ -53,7 +53,7 @@ const moduleDisplayNames: Record<string, string> = {
     CustomerManagement: 'Customer Management',
     AuditCompliance: 'Audit & Compliance',
     API: 'API',
-    PayrollManagenent: 'Payroll Managenent',
+    PayrollManagement: 'Payroll Management',
     SafetyManagement: 'Safety Management',
 };
 

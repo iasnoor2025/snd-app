@@ -72,6 +72,16 @@ Route::middleware(['auth', 'verified'])->prefix('payrolls')->group(function () {
     });
 });
 
+// Direct route for payroll (singular)
+Route::middleware(['auth', 'verified'])->get('/payroll', function () {
+    return redirect('/hr/payroll');
+});
+
+// Direct route for payroll with trailing slash
+Route::middleware(['auth', 'verified'])->get('/payroll/', function () {
+    return redirect('/hr/payroll');
+});
+
 // Direct routes for localization
 Route::middleware(['auth', 'verified'])->prefix('localization')->group(function () {
     Route::get('/', function () {
