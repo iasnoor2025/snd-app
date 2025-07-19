@@ -68,7 +68,6 @@ type Payroll = {
     base_salary: number;
     overtime_amount: number;
     bonus_amount: number;
-    deduction_amount: number;
     advance_deduction?: number;
     final_amount: number;
     status: string;
@@ -141,14 +140,14 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                         // Reload the page to show new payrolls
                         window.location.reload();
                     }
-                },
-                onError: (errors) => {
+            },
+            onError: (errors) => {
                     console.error('Payroll generation error:', errors);
-                    setErrors(errors);
-                    setProcessing(false);
+                setErrors(errors);
+                setProcessing(false);
                     toast.error('Failed to generate payroll: ' + (errors.message || 'Unknown error'));
-                },
-            });
+            },
+        });
         } catch (error) {
             console.error('Form submission error:', error);
             setProcessing(false);
@@ -218,17 +217,17 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
     };
 
     const filteredEmployees = employees?.filter((employee) => employee.id != null && employee.name && employee.name !== '');
-    console.log('Filtered Employees for Select:', filteredEmployees);
+    // console.log('Filtered Employees for Select:', filteredEmployees);
     const validEmployees = Array.isArray(filteredEmployees)
         ? filteredEmployees.filter((e) => typeof e.id === 'number' && !isNaN(e.id) && e.name && typeof e.name === 'string' && e.name.trim() !== '')
         : [];
-    console.log('Valid Employees for Select:', validEmployees);
+    // console.log('Valid Employees for Select:', validEmployees);
 
     const hasInvalidOriginalEmployee =
         Array.isArray(employees) &&
         employees.some((e) => typeof e.id !== 'number' || isNaN(e.id) || !e.name || typeof e.name !== 'string' || e.name.trim() === '');
 
-    console.log('Employees for Select:', employees);
+    // console.log('Employees for Select:', employees);
 
     return (
         <AppLayout title="Payroll Management" breadcrumbs={[{ title: 'Payroll', href: route('payroll.index') }]} requiredPermission="payroll.view">
@@ -251,24 +250,39 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                         const month = new Date().toISOString().slice(0, 7);
                                         console.log('Month:', month);
 
-                                        // Try direct URL approach if route function fails
-                                        const routeUrl = '/hr/payroll/generate-monthly';
+                                        // Use actual payroll route
+                                        const routeUrl = route('payroll.generate-monthly');
                                         console.log('Route URL:', routeUrl);
 
-                                        router.post(routeUrl, {
-                                            month,
-                                            _token: document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-                                        }, {
-                                            onSuccess: () => {
-                                                console.log('Payroll generation successful');
-                                                toast.success('Payroll generated successfully');
-                                                // Reload the page to show new payrolls
-                                                window.location.reload();
+                                        // Use regular fetch instead of Inertia router
+                                        fetch(routeUrl, {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+                                                'Accept': 'application/json'
                                             },
-                                            onError: (errors) => {
-                                                console.error('Payroll generation error:', errors);
-                                                toast.error('Failed to generate payroll: ' + (errors.message || 'Unknown error'));
-                                            },
+                                            body: JSON.stringify({
+                                                month
+                                            })
+                                                                                })
+                                        .then(response => {
+                                            console.log('Response status:', response.status);
+                                            console.log('Response headers:', response.headers);
+                                            if (!response.ok) {
+                                                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                                            }
+                                            return response.json();
+                                        })
+                                        .then(data => {
+                                            console.log('Payroll generation successful:', data);
+                                            toast.success('Payroll generated successfully');
+                                            // Reload the page to show new payrolls
+                                            window.location.reload();
+                                        })
+                                        .catch(error => {
+                                            console.error('Payroll generation error:', error);
+                                            toast.error('Failed to generate payroll: ' + (error.message || 'Unknown error'));
                                         });
                                     } catch (error) {
                                         console.error('Button click error:', error);
@@ -459,15 +473,15 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                                         <div className="flex items-center gap-2">
                                                             <Calendar className="h-4 w-4 text-muted-foreground" />
                                                             <span className="font-medium">
-                                                                {(() => {
-                                                                    try {
+                                                    {(() => {
+                                                        try {
                                                                         const date = new Date(payroll.year, payroll.month - 1);
-                                                                        return format(date, 'MMM yyyy');
-                                                                    } catch (error) {
+                                                            return format(date, 'MMM yyyy');
+                                                        } catch (error) {
                                                                         console.error('Date formatting error:', error, 'Month:', payroll.month, 'Year:', payroll.year);
                                                                         return `${payroll.month}/${payroll.year}`;
-                                                                    }
-                                                                })()}
+                                                        }
+                                                    })()}
                                                             </span>
                                                         </div>
                                                         <span className="text-xs text-muted-foreground ml-6">
@@ -534,13 +548,13 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                     <div className="flex justify-end gap-2">
-                                                        <Button
-                                                            variant="ghost"
+                                                    <Button
+                                                        variant="ghost"
                                                             size="sm"
-                                                            onClick={() => router.get(route('payroll.show', { payroll: payroll.id }))}
-                                                        >
-                                                            View
-                                                        </Button>
+                                                        onClick={() => router.get(route('payroll.show', { payroll: payroll.id }))}
+                                                    >
+                                                        View
+                                                    </Button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -572,7 +586,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
 
                                     <div className="flex flex-col items-center gap-4 sm:flex-row">
                                         {/* Per Page Selector */}
-                                        <div className="flex items-center space-x-2">
+                                <div className="flex items-center space-x-2">
                                             <span className="text-sm text-muted-foreground">Show:</span>
                                             <Select value={payrolls?.meta?.per_page?.toString() || "3"} onValueChange={(value) => {
                                                 router.get(
@@ -602,9 +616,9 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
 
                                         {/* Page Navigation */}
                                         <div className="flex items-center space-x-1">
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
                                                 disabled={!payrolls?.meta?.current_page || payrolls.meta.current_page === 1}
                                                 onClick={() => {
                                                     const currentPage = payrolls?.meta?.current_page || 1;
@@ -622,9 +636,9 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                                         );
                                                     }
                                                 }}
-                                            >
-                                                Previous
-                                            </Button>
+                                    >
+                                        Previous
+                                    </Button>
 
                                             {/* Page Numbers - always show */}
                                             <div className="flex items-center space-x-1">
@@ -671,9 +685,9 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                                 })}
                                             </div>
 
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
                                                 disabled={
                                                     !payrolls?.meta?.current_page ||
                                                     !payrolls?.meta?.last_page ||
@@ -696,9 +710,9 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                                         );
                                                     }
                                                 }}
-                                            >
-                                                Next
-                                            </Button>
+                                    >
+                                        Next
+                                    </Button>
                                         </div>
                                     </div>
                                 </div>

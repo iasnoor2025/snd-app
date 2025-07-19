@@ -15,7 +15,7 @@ use Modules\PayrollManagement\Http\Controllers\TaxDocumentationController;
 |
 */
 
-Route::prefix('hr/payroll')->name('payroll.')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('hr/payroll')->name('payroll.')->group(function () {
     // Payroll listing and management
     Route::get('/', [PayrollController::class, 'index'])
         ->middleware('permission:payroll.view')

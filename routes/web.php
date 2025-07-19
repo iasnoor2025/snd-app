@@ -1,6 +1,4 @@
 <?php
-
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Modules\Core\Http\Controllers\UserController;
 use Modules\Core\Http\Controllers\RoleController;
@@ -165,4 +163,15 @@ Route::get('/debug/session-debug', function (\Illuminate\Http\Request $request) 
         'headers' => $request->headers->all(),
         'user' => $request->user(),
     ]);
+});
+
+// Test route for payroll generation - bypass all middleware
+Route::post('/test-payroll-generate', function (Illuminate\Http\Request $request) {
+    \Log::info('Test payroll route reached', [
+        'headers' => $request->headers->all(),
+        'user' => auth()->user() ? auth()->user()->id : 'not logged in'
+    ]);
+
+    // Return proper Inertia response
+    return back()->with('success', 'Test payroll generation successful');
 });

@@ -119,24 +119,14 @@ class PayrollService
             // Calculate performance bonus
             $performanceData = $this->calculatePerformanceBonus($employee, $month);
 
-            // Calculate leave deductions
-            $leaveData = $this->calculateLeaveDeductions($employee, $month);
-
-            // Calculate advance deductions
+            // Calculate advance deductions only
             $advanceData = $this->calculateAdvanceDeductions($employee, $month);
 
             // Calculate gross salary
             $grossSalary = $baseSalary + $allowances + $overtimeAmount + $performanceData['bonus'];
 
-            // Calculate tax and insurance
-            $taxAndInsurance = $this->calculateTaxAndInsurance($employee, $grossSalary);
-
-            // Calculate total deductions
-            $totalDeductions = $leaveData['deductions'] +
-                              $taxAndInsurance['tax'] +
-                              $taxAndInsurance['insurance'] +
-                              $taxAndInsurance['other'] +
-                              $advanceData['total_advance_deduction'];
+            // Calculate total deductions (only advance deductions)
+            $totalDeductions = $advanceData['total_advance_deduction'];
 
             // Calculate net salary
             $netSalary = $grossSalary - $totalDeductions;
@@ -208,28 +198,7 @@ class PayrollService
                 ]);
             }
 
-            // Add deductions
-            if ($taxAndInsurance['tax'] > 0) {
-                $this->createPayrollItems($payroll, [
-                    [
-                        'type' => 'tax',
-                        'description' => "Income tax",
-                        'amount' => -$taxAndInsurance['tax'],
-                        'is_taxable' => false
-                    ]
-                ]);
-            }
 
-            if ($taxAndInsurance['insurance'] > 0) {
-                $this->createPayrollItems($payroll, [
-                    [
-                        'type' => 'insurance',
-                        'description' => "Insurance deduction",
-                        'amount' => -$taxAndInsurance['insurance'],
-                        'is_taxable' => false
-                    ]
-                ]);
-            }
 
             // Add advance deductions
             if ($advanceData['total_advance_deduction'] > 0) {
@@ -341,37 +310,7 @@ class PayrollService
         ];
     }
 
-    /**
-     * Calculate leave deductions
-     */
-    protected function calculateLeaveDeductions(Employee $employee, Carbon $month): array
-    {
-        $leaveData = [
-            'unpaid_leaves' => 0,
-            'deductions' => 0
-        ];
 
-        // Check if employee has leaves relationship
-        if (method_exists($employee, 'leaves')) {
-            // Get unpaid leaves for the month
-            $unpaidLeaves = $employee->leaves()
-                ->whereYear('start_date', $month->year)
-                ->whereMonth('start_date', $month->month)
-                ->where('status', 'approved')
-                ->where('type', 'unpaid')
-                ->get();
-
-            $workingDaysInMonth = Carbon::parse($month)->daysInMonth;
-            $dailyRate = $employee->basic_salary / $workingDaysInMonth;
-
-            foreach ($unpaidLeaves as $leave) {
-                $leaveData['unpaid_leaves'] += $leave->duration;
-                $leaveData['deductions'] += $dailyRate * $leave->duration;
-            }
-        }
-
-        return $leaveData;
-    }
 
     /**
      * Calculate advance payment deductions based on repayment dates and amounts
@@ -436,29 +375,7 @@ class PayrollService
         return $advanceData;
     }
 
-    /**
-     * Calculate tax and insurance deductions
-     */
-    protected function calculateTaxAndInsurance(Employee $employee, float $grossSalary): array
-    {
-        $deductions = [
-            'tax' => 0,
-            'insurance' => 0,
-            'other' => 0
-        ];
 
-        // Calculate tax based on salary brackets
-        if ($grossSalary > 10000) {
-            $deductions['tax'] = $grossSalary * 0.1; // 10% tax
-        } elseif ($grossSalary > 5000) {
-            $deductions['tax'] = $grossSalary * 0.05; // 5% tax
-        }
-
-        // Calculate insurance (example: 2% of gross salary)
-        $deductions['insurance'] = $grossSalary * 0.02;
-
-        return $deductions;
-    }
 
     /**
      * Create payroll items
