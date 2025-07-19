@@ -102,7 +102,7 @@ export default function Edit({ user, roles }: Props) {
                         </div>
                         <div className="flex items-center space-x-2">
                             <Button variant="outline" asChild>
-                                <Link href="/settings/users">
+                                <Link href="/users">
                                     <ArrowLeft className="mr-2 h-4 w-4" />
                                     Back to Users
                                 </Link>
@@ -145,7 +145,7 @@ export default function Edit({ user, roles }: Props) {
                                                 <Checkbox
                                                     id={`role-${role.id}`}
                                                     checked={selectedRoles.includes(role.id)}
-                                                    onCheckedChange={(checked) => handleRoleChange(role.id, checked as boolean)}
+                                                    onChange={(checked) => handleRoleChange(role.id, checked as boolean)}
                                                 />
                                                 <Label htmlFor={`role-${role.id}`}>{role.display_name || role.name}</Label>
                                             </div>

@@ -11,16 +11,11 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
     Input,
     Label,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
 } from '@/Core';
 import { BreadcrumbItem } from '@/Core/types';
 import { Head, router } from '@inertiajs/react';
@@ -135,27 +130,27 @@ export default function UserRoles({ users, roles }: Props) {
                             <div className="py-8 text-center">
                                 <div className="flex flex-col items-center gap-2 text-muted-foreground">
                                     <Shield className="h-8 w-8" />
-                                    <p>{t('common:no_items_found', { items: t('common:users').toLowerCase() })}</p>
-                                    {search && <p className="text-sm">{t('common:try_adjusting_search')}</p>}
+                                    <p>{users.length === 0 ? 'No users available' : t('common:no_items_found', { items: t('common:users').toLowerCase() })}</p>
+                                    {search && users.length > 0 && <p className="text-sm">{t('common:try_adjusting_search')}</p>}
                                 </div>
                             </div>
                         ) : (
-                            <div className="rounded-md border">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>{t('common:name')}</TableHead>
-                                            <TableHead>{t('common:email')}</TableHead>
-                                            <TableHead>{t('current_roles')}</TableHead>
-                                            <TableHead className="text-right">{t('common:actions')}</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
+                            <div className="overflow-x-auto rounded-md border">
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common:name')}</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common:email')}</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('current_roles')}</th>
+                                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common:actions')}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
                                         {filteredUsers.map((user) => (
-                                            <TableRow key={user.id}>
-                                                <TableCell className="font-medium">{user.name}</TableCell>
-                                                <TableCell>{user.email}</TableCell>
-                                                <TableCell>
+                                            <tr key={user.id}>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">{user.name}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm">{user.email}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                     <div className="flex flex-wrap gap-1">
                                                         {user.roles.map((role) => (
                                                             <Badge key={role.id} variant="secondary">
@@ -163,16 +158,16 @@ export default function UserRoles({ users, roles }: Props) {
                                                             </Badge>
                                                         ))}
                                                     </div>
-                                                </TableCell>
-                                                <TableCell className="text-right">
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                     <Button variant="ghost" size="sm" onClick={() => handleUserSelect(user)}>
                                                         <UserPlus className="h-4 w-4" />
                                                     </Button>
-                                                </TableCell>
-                                            </TableRow>
+                                                </td>
+                                            </tr>
                                         ))}
-                                    </TableBody>
-                                </Table>
+                                    </tbody>
+                                </table>
                             </div>
                         )}
                     </CardContent>

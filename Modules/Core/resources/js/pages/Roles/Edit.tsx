@@ -248,7 +248,7 @@ export default function Edit({ auth, role, permissions, selectedPermissions: ini
                                                                 <Checkbox
                                                                     id={`permission-${permission.id}`}
                                                                     checked={selectedPermissions.includes(permission.id)}
-                                                                    onCheckedChange={(checked) =>
+                                                                    onChange={(checked) =>
                                                                         handlePermissionChange(permission.id, checked as boolean)
                                                                     }
                                                                 />

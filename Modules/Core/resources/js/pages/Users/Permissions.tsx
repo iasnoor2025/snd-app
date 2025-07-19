@@ -7,7 +7,6 @@ import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Checkbox } from '../../components/ui/checkbox';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/table';
 
 interface Permission {
     id: number;
@@ -104,35 +103,45 @@ export default function Permissions({ user, directPermissions, allPermissions }:
                                 handleSave();
                             }}
                         >
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Assign</TableHead>
-                                        <TableHead>Name</TableHead>
-                                        <TableHead>Display Name</TableHead>
-                                        <TableHead>Guard</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {allPermissions.map((permission) => (
-                                        <TableRow key={permission.id}>
-                                            <TableCell>
-                                                <Checkbox
-                                                    checked={selected.includes(permission.id)}
-                                                    onCheckedChange={() => handleToggle(permission.id)}
-                                                />
-                                            </TableCell>
-                                            <TableCell className="font-medium">
-                                                <Badge variant="outline">{permission.name}</Badge>
-                                            </TableCell>
-                                            <TableCell>{permission.display_name || '-'}</TableCell>
-                                            <TableCell>
-                                                <Badge variant="secondary">{permission.guard_name}</Badge>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                            <div className="overflow-x-auto rounded-md border">
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assign</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Display Name</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Guard</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                        {allPermissions.length === 0 ? (
+                                            <tr>
+                                                <td colSpan={4} className="px-6 py-4 text-center text-sm text-muted-foreground">
+                                                    No permissions available
+                                                </td>
+                                            </tr>
+                                        ) : (
+                                            allPermissions.map((permission) => (
+                                                <tr key={permission.id}>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                        <Checkbox
+                                                            checked={selected.includes(permission.id)}
+                                                            onChange={() => handleToggle(permission.id)}
+                                                        />
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                        <Badge variant="outline">{permission.name}</Badge>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm">{permission.display_name || '-'}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                        <Badge variant="secondary">{permission.guard_name}</Badge>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
                             <div className="mt-6 flex justify-end">
                                 <Button type="submit" disabled={saving}>
                                     {saving ? 'Saving...' : 'Save Permissions'}

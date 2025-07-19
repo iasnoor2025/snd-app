@@ -56,7 +56,7 @@ class SettingController extends Controller
 
     public function show($id)
     {
-        $setting = $this->settingService->repository->find($id);
+        $setting = $this->settingService->getSettingById($id);
         $groups = array_keys($this->settingService->getGroupedSettings());
         return Inertia::render('Settings/Show', [
             'setting' => $setting,
@@ -70,7 +70,7 @@ class SettingController extends Controller
 
     public function edit($id)
     {
-        $setting = $this->settingService->repository->find($id);
+        $setting = $this->settingService->getSettingById($id);
         $groups = array_keys($this->settingService->getGroupedSettings());
         return Inertia::render('Settings/Edit', [
             'setting' => $setting,

@@ -43,7 +43,7 @@ class ApiTokenController extends Controller
      */
     public function index(Request $request)
     {
-        $tokens = $this->apiTokenService->repository->getForUser($request->user()->id);
+        $tokens = $this->apiTokenService->getTokensForUser($request->user()->id);
 
         return Inertia::render('API/Tokens/Index', [
             'tokens' => $tokens,

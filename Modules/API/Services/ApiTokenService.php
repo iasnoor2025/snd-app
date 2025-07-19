@@ -126,6 +126,17 @@ class ApiTokenService
     }
 
     /**
+     * Get all tokens for a user.
+     *
+     * @param int $userId
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getTokensForUser(int $userId): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->repository->getForUser($userId);
+    }
+
+    /**
      * Prune expired tokens.
      *
      * @return int;

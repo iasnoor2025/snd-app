@@ -155,14 +155,25 @@ class SettingService
     }
 
     /**
+     * Get a setting by ID.
+     *
+     * @param int|string $id
+     * @return Setting|null
+     */
+    public function getSettingById(int|string $id): ?Setting
+    {
+        return $this->repository->find((int) $id);
+    }
+
+    /**
      * Delete a setting.
      *
-     * @param int $id
+     * @param int|string $id
      * @return bool;
      */
-    public function deleteSetting(int $id): bool
+    public function deleteSetting(int|string $id): bool
     {
-        return $this->repository->delete($id);
+        return $this->repository->delete((int) $id);
     }
 
     /**

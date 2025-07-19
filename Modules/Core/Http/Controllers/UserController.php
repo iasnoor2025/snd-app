@@ -88,7 +88,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        $user->load('roles', 'permissions');
+        $user->load(['roles.permissions', 'permissions']);
 
         return Inertia::render('Users/Show', [
             'user' => $user,

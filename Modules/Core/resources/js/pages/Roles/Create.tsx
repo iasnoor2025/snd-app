@@ -201,7 +201,7 @@ export default function Create({ permissions }: Props) {
                                                                     <TableCell>
                                                                         <Checkbox
                                                                             checked={selectedPermissions.includes(permission.id)}
-                                                                            onCheckedChange={() => handlePermissionChange(permission.id)}
+                                                                            onChange={() => handlePermissionChange(permission.id)}
                                                                         />
                                                                     </TableCell>
                                                                     <TableCell className="font-medium">

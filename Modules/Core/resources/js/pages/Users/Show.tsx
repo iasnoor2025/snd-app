@@ -8,14 +8,9 @@ import {
     CardHeader,
     CardTitle,
     Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
 } from '@/Core';
 import { BreadcrumbItem } from '@/Core/types';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { ArrowLeft, Edit, Key, Shield, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -25,6 +20,7 @@ interface Role {
     name: string;
     display_name?: string;
     guard_name: string;
+    permissions?: Permission[];
 }
 
 interface Permission {
@@ -54,10 +50,11 @@ export default function Show({ user }: Props) {
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Settings', href: '/settings' },
-        { title: 'Users', href: '/settings/users' },
-        { title: user.name, href: `/settings/users/${user.id}` },
+        { title: 'Users', href: '/users' },
+        { title: user.name, href: `/users/${user.id}` },
     ];
+
+
 
     return (
         <AppLayout title={`User: ${user.name}`} breadcrumbs={breadcrumbs} requiredPermission="users.view">
@@ -75,13 +72,13 @@ export default function Show({ user }: Props) {
                         </div>
                         <div className="flex items-center space-x-2">
                             <Button variant="outline" asChild>
-                                <Link href="/settings/users">
+                                <Link href="/users">
                                     <ArrowLeft className="mr-2 h-4 w-4" />
                                     Back to Users
                                 </Link>
                             </Button>
                             <Button variant="outline" asChild>
-                                <Link href={`/settings/users/${user.id}/edit`}>
+                                <Link href={`/users/${user.id}/edit`}>
                                     <Edit className="mr-2 h-4 w-4" />
                                     Edit User
                                 </Link>
@@ -93,38 +90,46 @@ export default function Show({ user }: Props) {
                             {/* User Information */}
                             <div>
                                 <h3 className="mb-4 text-lg font-semibold">User Information</h3>
-                                <div className="rounded-md border">
-                                    <Table>
-                                        <TableBody>
-                                            <TableRow>
-                                                <TableCell className="font-medium">Name</TableCell>
-                                                <TableCell>{user.name}</TableCell>
-                                            </TableRow>
-                                            <TableRow>
-                                                <TableCell className="font-medium">Email</TableCell>
-                                                <TableCell className="flex items-center gap-2">
-                                                    {user.email}
-                                                    {user.email_verified_at ? (
-                                                        <Badge variant="secondary" className="text-xs">
-                                                            Verified
-                                                        </Badge>
-                                                    ) : (
-                                                        <Badge variant="destructive" className="text-xs">
-                                                            Not Verified
-                                                        </Badge>
-                                                    )}
-                                                </TableCell>
-                                            </TableRow>
-                                            <TableRow>
-                                                <TableCell className="font-medium">Created At</TableCell>
-                                                <TableCell>{format(new Date(user.created_at), 'PPpp')}</TableCell>
-                                            </TableRow>
-                                            <TableRow>
-                                                <TableCell className="font-medium">Last Updated</TableCell>
-                                                <TableCell>{format(new Date(user.updated_at), 'PPpp')}</TableCell>
-                                            </TableRow>
-                                        </TableBody>
-                                    </Table>
+                                <div className="overflow-x-auto rounded-md border">
+                                    <table className="min-w-full divide-y divide-gray-200">
+                                        <thead className="bg-gray-50">
+                                            <tr>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Field</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="bg-white divide-y divide-gray-200">
+                                            <tr>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">Name</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm">{user.name}</td>
+                                            </tr>
+                                            <tr>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">Email</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                    <div className="flex items-center gap-2">
+                                                        {user.email}
+                                                        {user.email_verified_at ? (
+                                                            <Badge variant="secondary" className="text-xs">
+                                                                Verified
+                                                            </Badge>
+                                                        ) : (
+                                                            <Badge variant="destructive" className="text-xs">
+                                                                Not Verified
+                                                            </Badge>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">Created At</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm">{format(new Date(user.created_at), 'PPpp')}</td>
+                                            </tr>
+                                            <tr>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">Last Updated</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm">{format(new Date(user.updated_at), 'PPpp')}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
 
@@ -139,37 +144,37 @@ export default function Show({ user }: Props) {
                                         </Link>
                                     </Button>
                                 </div>
-                                <div className="rounded-md border">
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHead>Name</TableHead>
-                                                <TableHead>Display Name</TableHead>
-                                                <TableHead>Guard</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
+                                <div className="overflow-x-auto rounded-md border">
+                                    <table className="min-w-full divide-y divide-gray-200">
+                                        <thead className="bg-gray-50">
+                                            <tr>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Display Name</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Guard</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="bg-white divide-y divide-gray-200">
                                             {user.roles.length === 0 ? (
-                                                <TableRow>
-                                                    <TableCell colSpan={3} className="text-center text-muted-foreground">
+                                                <tr>
+                                                    <td colSpan={3} className="px-6 py-4 text-center text-sm text-muted-foreground">
                                                         No roles assigned
-                                                    </TableCell>
-                                                </TableRow>
+                                                    </td>
+                                                </tr>
                                             ) : (
                                                 user.roles.map((role) => (
-                                                    <TableRow key={role.id}>
-                                                        <TableCell className="font-medium">
+                                                    <tr key={role.id}>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                             <Badge variant="outline">{role.name}</Badge>
-                                                        </TableCell>
-                                                        <TableCell>{role.display_name || '-'}</TableCell>
-                                                        <TableCell>
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm">{role.display_name || '-'}</td>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                             <Badge variant="secondary">{role.guard_name}</Badge>
-                                                        </TableCell>
-                                                    </TableRow>
+                                                        </td>
+                                                    </tr>
                                                 ))
                                             )}
-                                        </TableBody>
-                                    </Table>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
 
@@ -184,37 +189,37 @@ export default function Show({ user }: Props) {
                                         </Link>
                                     </Button>
                                 </div>
-                                <div className="rounded-md border">
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHead>Name</TableHead>
-                                                <TableHead>Display Name</TableHead>
-                                                <TableHead>Guard</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
+                                <div className="overflow-x-auto rounded-md border">
+                                    <table className="min-w-full divide-y divide-gray-200">
+                                        <thead className="bg-gray-50">
+                                            <tr>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Display Name</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Guard</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="bg-white divide-y divide-gray-200">
                                             {user.permissions.length === 0 ? (
-                                                <TableRow>
-                                                    <TableCell colSpan={3} className="text-center text-muted-foreground">
+                                                <tr>
+                                                    <td colSpan={3} className="px-6 py-4 text-center text-sm text-muted-foreground">
                                                         No direct permissions assigned
-                                                    </TableCell>
-                                                </TableRow>
+                                                    </td>
+                                                </tr>
                                             ) : (
                                                 user.permissions.map((permission) => (
-                                                    <TableRow key={permission.id}>
-                                                        <TableCell className="font-medium">
+                                                    <tr key={permission.id}>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                             <Badge variant="outline">{permission.name}</Badge>
-                                                        </TableCell>
-                                                        <TableCell>{permission.display_name || '-'}</TableCell>
-                                                        <TableCell>
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm">{permission.display_name || '-'}</td>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                             <Badge variant="secondary">{permission.guard_name}</Badge>
-                                                        </TableCell>
-                                                    </TableRow>
+                                                        </td>
+                                                    </tr>
                                                 ))
                                             )}
-                                        </TableBody>
-                                    </Table>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
