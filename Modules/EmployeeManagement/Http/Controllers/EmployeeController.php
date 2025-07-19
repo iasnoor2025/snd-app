@@ -544,8 +544,15 @@ class EmployeeController extends Controller
      */
     public function updateAssignment(Request $request, $employeeId, $assignmentId)
     {
-        $employee = \Modules\EmployeeManagement\Domain\Models\Employee::findOrFail($employeeId);
-        $assignment = $employee->assignments()->where('id', $assignmentId)->firstOrFail();
+        try {
+            \Log::info('Assignment update request received', [
+                'employee_id' => $employeeId,
+                'assignment_id' => $assignmentId,
+                'request_data' => $request->all(),
+            ]);
+
+            $employee = \Modules\EmployeeManagement\Domain\Models\Employee::findOrFail($employeeId);
+            $assignment = $employee->assignments()->where('id', $assignmentId)->firstOrFail();
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -555,17 +562,43 @@ class EmployeeController extends Controller
             'notes' => 'nullable|string',
         ]);
 
+                        // Update the assignment using the model to trigger proper status management
         $assignment->update($validated);
-        // Always ensure current assignment has end_date = null and status = 'active'
-        $assignment->end_date = null;
-        $assignment->status = 'active';
-        $assignment->save();
+
+        // Force a refresh to ensure the model events are triggered
+        $assignment->refresh();
+
+        // Manually manage assignment statuses to ensure they're correct
+        $assignmentService = app(\Modules\EmployeeManagement\Services\EmployeeAssignmentService::class);
+        $assignmentService->manageAssignmentStatuses($employeeId);
+
+        \Log::info('Assignment update completed', [
+            'assignment_id' => $assignment->id,
+            'updated_data' => $assignment->toArray(),
+        ]);
 
         // If Inertia or API, return JSON; otherwise, redirect back
         if ($request->wantsJson()) {
             return response()->json(['success' => true, 'assignment' => $assignment->fresh()]);
         }
         return redirect()->back()->with('success', 'Assignment updated successfully.');
+
+        } catch (\Exception $e) {
+            \Log::error('Error updating assignment', [
+                'employee_id' => $employeeId,
+                'assignment_id' => $assignmentId,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to update assignment: ' . $e->getMessage()
+                ], 500);
+            }
+            return redirect()->back()->with('error', 'Failed to update assignment: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -585,6 +618,33 @@ class EmployeeController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
             return response()->json(['error' => 'Failed to sync employees: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Manually manage assignment statuses for an employee
+     */
+    public function manageAssignmentStatuses(Request $request, Employee $employee)
+    {
+        try {
+            $assignmentService = app(\Modules\EmployeeManagement\Services\EmployeeAssignmentService::class);
+            $assignmentService->manageAssignmentStatuses($employee->id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Assignment statuses managed successfully'
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error managing assignment statuses', [
+                'employee_id' => $employee->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to manage assignment statuses: ' . $e->getMessage()
+            ], 500);
         }
     }
 

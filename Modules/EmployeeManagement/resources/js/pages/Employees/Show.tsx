@@ -54,9 +54,11 @@ import {
     FileBox,
     FileText,
     History,
+    Loader2,
     Printer,
     Receipt,
     RefreshCw,
+    Save,
     Trash2,
     Upload,
     User,
@@ -2246,68 +2248,98 @@ export default function Show({
                         <div>
                             <h3 className="mb-2 text-lg font-semibold">Assignment History</h3>
                             {strictAssignmentHistory.length === 0 ? (
-                                <div className="text-muted-foreground">No previous assignments found.</div>
+                                <div className="text-center py-8 text-muted-foreground">
+                                    <div className="text-lg font-medium">No previous assignments found.</div>
+                                    <div className="text-sm">This employee has no assignment history.</div>
+                                </div>
                             ) : (
-                                <div className="overflow-x-auto">
-                                    <table className="min-w-full rounded-lg border border-gray-200 bg-white">
-                                        <thead>
+                                <div className="overflow-x-auto rounded-md border">
+                                    <table className="min-w-full divide-y divide-gray-200">
+                                        <thead className="bg-gray-50">
                                             <tr>
-                                                <th className="px-4 py-2 text-left">Assignment Name</th>
-                                                <th className="px-4 py-2 text-left">Type</th>
-                                                <th className="px-4 py-2 text-left">Location</th>
-                                                <th className="px-4 py-2 text-left">Start Date</th>
-                                                <th className="px-4 py-2 text-left">End Date</th>
-                                                <th className="px-4 py-2 text-left">Status</th>
-                                                <th className="px-4 py-2 text-left">Actions</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                                                    Assignment Name
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                                                    Type
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                                                    Location
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                                                    Start Date
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                                                    End Date
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                                                    Status
+                                                </th>
+                                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                                                    Actions
+                                                </th>
                                             </tr>
                                         </thead>
-                                        <tbody>
+                                        <tbody className="bg-white divide-y divide-gray-200">
                                             {strictAssignmentHistory.map((a) => (
-                                                <tr key={a.id} className="border-t">
-                                                    <td className="px-4 py-2 font-medium">{a.name || a.title || '-'}</td>
-                                                    <td className="px-4 py-2 capitalize">{a.type || '-'}</td>
-                                                    <td className="px-4 py-2">{a.location || '-'}</td>
-                                                    <td className="px-4 py-2">
+                                                <tr key={a.id} className="hover:bg-gray-50 transition-colors">
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                        {a.name || a.title || '-'}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
+                                                        {a.type || '-'}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                        {a.location || '-'}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                         {a.start_date ? format(new Date(a.start_date), 'MMM d, yyyy') : '-'}
                                                     </td>
-                                                    <td className="px-4 py-2">{a.end_date ? format(new Date(a.end_date), 'MMM d, yyyy') : '-'}</td>
-                                                    <td className="px-4 py-2">
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                        {a.end_date ? format(new Date(a.end_date), 'MMM d, yyyy') : '-'}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                         <span
                                                             className={
                                                                 a.status === 'active'
-                                                                    ? 'rounded bg-green-100 px-2 py-1 text-xs text-green-800'
-                                                                    : 'rounded bg-gray-100 px-2 py-1 text-xs text-gray-800'
+                                                                    ? 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800'
+                                                                    : a.status === 'completed'
+                                                                    ? 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800'
+                                                                    : 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800'
                                                             }
                                                         >
                                                             {a.status || '-'}
                                                         </span>
                                                     </td>
-                                                    <td className="px-4 py-2">
-                                                        {hasPermission('employees.edit') && (
-                                                            <Button
-                                                                size="sm"
-                                                                variant="outline"
-                                                                className="mr-2"
-                                                                onClick={() => {
-                                                                    setEditAssignment(a);
-                                                                    setIsEditAssignmentDialogOpen(true);
-                                                                }}
-                                                            >
-                                                                <Edit className="mr-1 inline h-4 w-4" /> Edit
-                                                            </Button>
-                                                        )}
-                                                        {hasPermission('admin') && (
-                                                            <Button
-                                                                size="sm"
-                                                                variant="destructive"
-                                                                onClick={() => {
-                                                                    setDeleteAssignmentId(a.id);
-                                                                    setIsDeletingAssignment(true);
-                                                                }}
-                                                            >
-                                                                <Trash2 className="mr-1 inline h-4 w-4" /> Delete
-                                                            </Button>
-                                                        )}
+                                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                        <div className="flex items-center justify-end space-x-2">
+                                                            {hasPermission('employees.edit') && (
+                                                                <Button
+                                                                    size="sm"
+                                                                    variant="outline"
+                                                                    onClick={() => {
+                                                                        setEditAssignment(a);
+                                                                        setIsEditAssignmentDialogOpen(true);
+                                                                    }}
+                                                                >
+                                                                    <Edit className="mr-1 h-4 w-4" />
+                                                                    Edit
+                                                                </Button>
+                                                            )}
+                                                            {hasPermission('admin') && (
+                                                                <Button
+                                                                    size="sm"
+                                                                    variant="destructive"
+                                                                    onClick={() => {
+                                                                        setDeleteAssignmentId(a.id);
+                                                                        setIsDeletingAssignment(true);
+                                                                    }}
+                                                                >
+                                                                    <Trash2 className="mr-1 h-4 w-4" />
+                                                                    Delete
+                                                                </Button>
+                                                            )}
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             ))}
@@ -3162,18 +3194,24 @@ export default function Show({
                                 method="POST"
                                 onSubmit={async (e) => {
                                     e.preventDefault();
+                                    console.log('Submitting assignment update:', editAssignment);
                                     setIsSubmittingEdit(true);
                                     router.post(
-                                        route('employees.assignments.update', { employee: employee.id, assignment: editAssignment.id }),
+                                        route('employees.assignments.update.web', { employee: employee.id, assignment: editAssignment.id }),
                                         editAssignment,
                                         {
-                                            onSuccess: () => {
+                                            onSuccess: (response) => {
+                                                console.log('Assignment update successful:', response);
                                                 setIsEditAssignmentDialogOpen(false);
                                                 setEditAssignment(null);
                                                 ToastService.success('Assignment updated successfully.');
                                                 router.reload();
                                             },
-                                            onError: () => setIsSubmittingEdit(false),
+                                            onError: (errors) => {
+                                                console.error('Assignment update failed:', errors);
+                                                setIsSubmittingEdit(false);
+                                                ToastService.error('Failed to update assignment');
+                                            },
                                             preserveScroll: true,
                                         },
                                     );
@@ -3216,6 +3254,34 @@ export default function Show({
                                     onChange={(e) => setEditAssignment({ ...editAssignment, notes: e.target.value })}
                                     name="notes"
                                 />
+                                <div className="flex justify-end space-x-2 pt-4">
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => {
+                                            setIsEditAssignmentDialogOpen(false);
+                                            setEditAssignment(null);
+                                        }}
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        type="submit"
+                                        disabled={isSubmittingEdit}
+                                    >
+                                        {isSubmittingEdit ? (
+                                            <>
+                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                Saving...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Save className="mr-2 h-4 w-4" />
+                                                Save Changes
+                                            </>
+                                        )}
+                                    </Button>
+                                </div>
                             </form>
                         )}
                     </DialogContent>

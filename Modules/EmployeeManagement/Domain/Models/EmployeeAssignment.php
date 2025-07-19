@@ -62,58 +62,73 @@ class EmployeeAssignment extends Model
             }
         });
 
-        // On save, update only the immediate previous assignment's end_date and status if it does not already have an end_date
+        // On save, manage assignment statuses properly
         static::saved(function ($assignment) {
             if (!$assignment->start_date || !$assignment->employee_id) return;
-            $currentStart = (new \DateTime($assignment->start_date))->format('Y-m-d');
+
             Log::info('EmployeeAssignment saved event', [
                 'current_id' => $assignment->id,
                 'employee_id' => $assignment->employee_id,
-                'current_start' => $currentStart
+                'current_start' => $assignment->start_date,
+                'current_status' => $assignment->status
             ]);
-            // Only run if this is the latest assignment for the employee
-            $latest = self::where('employee_id', $assignment->employee_id)
-                ->orderByDesc('start_date')
-                ->orderByDesc('id')
-                ->first();
-            if (!$latest || $latest->id !== $assignment->id) {
-                Log::info('Not the latest assignment, skipping previous update', ['current_id' => $assignment->id, 'latest_id' => $latest ? $latest->id : null]);
-                return;
-            }
-            // Find the immediate previous assignment for the same employee (latest start_date before current), or if same start_date, lower id
-            $previous = self::where('employee_id', $assignment->employee_id)
-                ->where('id', '!=', $assignment->id)
-                ->where(function($query) use ($currentStart, $assignment) {
-                    $query->whereRaw('DATE(start_date) < ?', [$currentStart])
-                        ->orWhere(function($q) use ($currentStart, $assignment) {
-                            $q->whereRaw('DATE(start_date) = ?', [$currentStart])
-                              ->where('id', '<', $assignment->id);
-                        });
-                })
-                ->whereNull('end_date')
-                ->orderByDesc('start_date')
-                ->orderByDesc('id')
-                ->first();
-            Log::info('Previous assignment query result', [
-                'previous_id' => $previous ? $previous->id : null,
-                'previous_start' => $previous ? $previous->start_date : null,
-                'previous_end_date_before' => $previous ? $previous->end_date : null,
-                'previous_status_before' => $previous ? $previous->status : null
+
+            // Get all assignments for this employee, ordered by start date and ID
+            $allAssignments = self::where('employee_id', $assignment->employee_id)
+                ->orderBy('start_date', 'asc')
+                ->orderBy('id', 'asc')
+                ->get();
+
+            // Find the current/latest assignment (the one with the latest start date)
+            $currentAssignment = $allAssignments->sortByDesc('start_date')->first();
+
+            Log::info('Assignment status management', [
+                'total_assignments' => $allAssignments->count(),
+                'current_assignment_id' => $currentAssignment ? $currentAssignment->id : null,
+                'saved_assignment_id' => $assignment->id
             ]);
-            if ($previous) {
-                $previous->refresh();
-                $previous->end_date = (new \DateTime($assignment->start_date))->modify('-1 day')->format('Y-m-d');
-                $previous->status = 'completed';
-                $previous->save();
-                $previous->refresh();
-                Log::info('Updated previous assignment', [
-                    'prev_id' => $previous->id,
-                    'new_end_date' => $previous->end_date,
-                    'new_status' => $previous->status
-                ]);
-            } else {
-                $all = self::where('employee_id', $assignment->employee_id)->orderBy('start_date')->get(['id','start_date','end_date','status'])->toArray();
-                Log::info('No previous assignment found to update', ['employee_id' => $assignment->employee_id, 'current_start' => $currentStart, 'all_assignments' => $all]);
+
+            // Update all assignments based on their position
+            foreach ($allAssignments as $assignmentItem) {
+                $isCurrent = $assignmentItem->id === $currentAssignment->id;
+
+                if ($isCurrent) {
+                    // Current assignment should be active and have no end date
+                    if ($assignmentItem->status !== 'active' || $assignmentItem->end_date !== null) {
+                        Log::info('Updating current assignment status', [
+                            'assignment_id' => $assignmentItem->id,
+                            'old_status' => $assignmentItem->status,
+                            'new_status' => 'active'
+                        ]);
+
+                        \DB::table('employee_assignments')
+                            ->where('id', $assignmentItem->id)
+                            ->update([
+                                'status' => 'active',
+                                'end_date' => null
+                            ]);
+                    }
+                } else {
+                    // Previous assignments should be completed and have an end date
+                    if ($assignmentItem->status !== 'completed' || $assignmentItem->end_date === null) {
+                        // Set end date to the day before the current assignment starts
+                        $endDate = $currentAssignment->start_date->copy()->subDay()->format('Y-m-d');
+
+                        Log::info('Updating previous assignment status', [
+                            'assignment_id' => $assignmentItem->id,
+                            'old_status' => $assignmentItem->status,
+                            'new_status' => 'completed',
+                            'end_date' => $endDate
+                        ]);
+
+                        \DB::table('employee_assignments')
+                            ->where('id', $assignmentItem->id)
+                            ->update([
+                                'status' => 'completed',
+                                'end_date' => $endDate
+                            ]);
+                    }
+                }
             }
         });
 

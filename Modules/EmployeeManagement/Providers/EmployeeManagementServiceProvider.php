@@ -89,6 +89,7 @@ class EmployeeManagementServiceProvider extends ServiceProvider
         $this->commands([
             \Modules\EmployeeManagement\Console\Commands\SyncEmployeeAssignments::class,
             \Modules\EmployeeManagement\Console\Commands\SyncEmployeesFromERPNext::class,
+            \Modules\EmployeeManagement\Console\Commands\FixAssignmentStatuses::class,
         ]);
     }
 
