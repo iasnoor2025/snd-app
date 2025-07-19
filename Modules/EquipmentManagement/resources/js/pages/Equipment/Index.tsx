@@ -28,6 +28,7 @@ import { toast } from 'sonner';
 import { PageProps } from '../../types/index';
 import { Equipment } from '../../types/models';
 import { router } from '@inertiajs/core';
+import React from 'react';
 
 const breadcrumbs = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -62,12 +63,52 @@ export default function Index({ equipment, categories = [], statuses = {}, filte
     const [search, setSearch] = useState(filters.search || '');
     const [status, setStatus] = useState(filters.status || 'all');
     const [category, setCategory] = useState(filters.category || 'all');
-    const [perPage, setPerPage] = useState(equipment.meta?.per_page || 15);
+    const [perPage, setPerPage] = useState(() => {
+        // Priority: filters.per_page > equipment.per_page > 15
+        const value = filters.per_page || equipment.per_page || 15;
+        return value;
+    });
     const [isSyncing, setIsSyncing] = useState(false);
-    const [isDebugging, setIsDebugging] = useState(false);
 
     const safeEquipment = Array.isArray(equipment.data) ? equipment.data : [];
-    const meta = equipment.meta || { current_page: 1, per_page: 15, last_page: 1, total: 0 };
+    const meta = equipment.meta || {
+        current_page: equipment.current_page || 1,
+        per_page: equipment.per_page || perPage,
+        last_page: equipment.last_page || 1,
+        total: equipment.total || 0,
+        from: equipment.from || 1,
+        to: equipment.to || safeEquipment.length
+    };
+
+    // Check CSRF token availability on mount
+    React.useEffect(() => {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        if (!csrfToken) {
+            console.warn('CSRF token not found. Sync functionality may not work properly.');
+        }
+    }, []);
+
+    // Ensure per_page is set correctly on initial load
+    React.useEffect(() => {
+        const currentPerPage = filters.per_page || equipment.per_page || 15;
+        if (currentPerPage !== perPage) {
+            setPerPage(currentPerPage);
+        }
+
+        // If per_page is 10 (old default), redirect with 15
+        if (filters.per_page === 10 || filters.per_page === '10') {
+            router.get(
+                '/equipment',
+                {
+                    per_page: 15,
+                    search: search === 'all' ? '' : search,
+                    status: status === 'all' ? '' : status,
+                    category: category === 'all' ? '' : category,
+                },
+                { preserveState: true, preserveScroll: true },
+            );
+        }
+    }, [filters.per_page, equipment.per_page]); 
 
     const handleSearch = debounce((value: string) => {
         const normalizedValue = !value || value === 'all' ? '' : value;
@@ -159,64 +200,60 @@ export default function Index({ equipment, categories = [], statuses = {}, filte
 
         setIsSyncing(true);
         try {
-            const xsrfToken = document.cookie
-                .split('; ')
-                .find((row) => row.startsWith('XSRF-TOKEN='))
-                ?.split('=')[1];
+            // Get CSRF token from meta tag
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-            const res = await fetch('/api/v1/equipment/sync-erpnext', {
+            if (!csrfToken) {
+                throw new Error('CSRF token not found. Please refresh the page and try again.');
+            }
+
+            const res = await fetch('/equipment/sync-erpnext', {
                 method: 'POST',
-                headers: xsrfToken ? { 'X-XSRF-TOKEN': decodeURIComponent(xsrfToken) } : {},
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
                 credentials: 'same-origin',
             });
 
+            if (!res.ok) {
+                const errorText = await res.text();
+                console.error('Sync response error:', res.status, errorText);
+
+                // Try to parse as JSON for better error messages
+                try {
+                    const errorData = JSON.parse(errorText);
+                    throw new Error(errorData.message || `HTTP ${res.status}: ${errorText}`);
+                } catch {
+                    throw new Error(`HTTP ${res.status}: ${errorText}`);
+                }
+            }
+
             const data = await res.json();
 
-            if (res.ok) {
-                toast.success(data.message || 'Equipment synced from ERPNext successfully');
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
+            if (data.success !== false) {
+                if (data.job_dispatched) {
+                    toast.success(data.message || 'ERPNext sync started in background. You will be notified when it completes.');
+                    // Don't reload immediately since it's running in background
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 5000); // Reload after 5 seconds to show any updates
+                } else {
+                    toast.success(data.message || 'Equipment synced from ERPNext successfully');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                }
             } else {
                 toast.error(data.message || 'Failed to sync equipment from ERPNext');
             }
         } catch (e) {
             console.error('Sync error:', e);
-            toast.error('Failed to sync equipment from ERPNext. Please try again.');
+            toast.error(`Failed to sync equipment from ERPNext: ${e.message}`);
         } finally {
             setIsSyncing(false);
-        }
-    };
-
-    const handleDebug = async () => {
-        if (isDebugging) return;
-
-        setIsDebugging(true);
-        try {
-            const xsrfToken = document.cookie
-                .split('; ')
-                .find((row) => row.startsWith('XSRF-TOKEN='))
-                ?.split('=')[1];
-
-            const res = await fetch('/api/v1/equipment/debug-erpnext', {
-                method: 'GET',
-                headers: xsrfToken ? { 'X-XSRF-TOKEN': decodeURIComponent(xsrfToken) } : {},
-                credentials: 'same-origin',
-            });
-
-            const data = await res.json();
-
-            if (res.ok) {
-                console.log('ERPNext Debug Info:', data.debug_info);
-                toast.success('ERPNext connection test completed. Check console for details.');
-            } else {
-                toast.error(data.message || 'Failed to test ERPNext connection');
-            }
-        } catch (e) {
-            console.error('Debug error:', e);
-            toast.error('Failed to test ERPNext connection. Please try again.');
-        } finally {
-            setIsDebugging(false);
         }
     };
 
@@ -236,15 +273,6 @@ export default function Index({ equipment, categories = [], statuses = {}, filte
                             <Button onClick={handleSync} type="button" variant="default" disabled={isSyncing}>
                                 {isSyncing ? <LoaderCircle className="mr-2 h-4 w-4 animate-spin" /> : null}
                                 {isSyncing ? 'Syncing...' : t('sync_erpnext')}
-                            </Button>
-                            <Button
-                                onClick={handleDebug}
-                                type="button"
-                                variant="outline"
-                                disabled={isDebugging}
-                            >
-                                {isDebugging ? <LoaderCircle className="mr-2 h-4 w-4 animate-spin" /> : null}
-                                {isDebugging ? 'Testing...' : t('debug_erpnext')}
                             </Button>
                         </div>
                     </CardHeader>
@@ -470,7 +498,7 @@ export default function Index({ equipment, categories = [], statuses = {}, filte
                                             <span className="text-sm text-muted-foreground">Show:</span>
                                             <Select value={perPage.toString()} onValueChange={handlePerPageChange}>
                                                 <SelectTrigger className="w-20">
-                                                    <SelectValue />
+                                                    <SelectValue placeholder={perPage.toString()} />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     <SelectItem value="10">10</SelectItem>
@@ -480,6 +508,7 @@ export default function Index({ equipment, categories = [], statuses = {}, filte
                                                     <SelectItem value="100">100</SelectItem>
                                                 </SelectContent>
                                             </Select>
+                                            <span className="text-sm text-muted-foreground">per page</span>
                                         </div>
 
                                         {/* Page Navigation */}

@@ -19,7 +19,8 @@ class ERPNextClient
         $this->apiSecret = config('services.erpnext.api_secret');
         $this->client = new Client([
             'base_uri' => $this->baseUrl,
-            'timeout'  => 10, // seconds
+            'timeout'  => 60, // Increased timeout to 60 seconds
+            'connect_timeout' => 30, // Connection timeout
             'headers' => [
                 'Authorization' => 'token ' . $this->apiKey . ':' . $this->apiSecret,
                 'Content-Type' => 'application/json',
@@ -140,7 +141,7 @@ class ERPNextClient
     {
         try {
             $filters = urlencode(json_encode([["item_group", "=", "Equipment"]]));
-            $url = "/api/resource/Item?filters=$filters&limit_page_length=1000";
+            $url = "/api/resource/Item?filters=$filters&limit_page_length=1000&fields=[\"name\",\"item_code\",\"item_name\",\"description\",\"item_group\",\"stock_uom\",\"disabled\",\"standard_rate\",\"last_purchase_rate\",\"valuation_rate\",\"stock_qty\",\"model\",\"serial_no\",\"manufacturer\"]";
 
             Log::info('ERPNext: Fetching equipment items', [
                 'url' => $url,
@@ -172,49 +173,14 @@ class ERPNextClient
                     'item_count' => count($data['data'])
                 ]);
 
-                foreach ($data['data'] as $item) {
-                    if (isset($item['name'])) {
-                        try {
-                            $full = $this->getItemByName($item['name']);
-                            if ($full) {
-                                $items[] = $full;
-                            } else {
-                                Log::warning('ERPNext: Could not fetch full item details', [
-                                    'item_name' => $item['name']
-                                ]);
-                            }
-                        } catch (\Exception $e) {
-                            Log::error('ERPNext: Failed to fetch full item details', [
-                                'item_name' => $item['name'],
-                                'error' => $e->getMessage()
-                            ]);
-                        }
-                    }
-                }
+                // Use the data directly without fetching individual items
+                $items = $data['data'];
             } elseif (is_array($data)) {
                 Log::info('ERPNext: Processing direct array', [
                     'item_count' => count($data)
                 ]);
 
-                foreach ($data as $item) {
-                    if (isset($item['name'])) {
-                        try {
-                            $full = $this->getItemByName($item['name']);
-                            if ($full) {
-                                $items[] = $full;
-                            } else {
-                                Log::warning('ERPNext: Could not fetch full item details', [
-                                    'item_name' => $item['name']
-                                ]);
-                            }
-                        } catch (\Exception $e) {
-                            Log::error('ERPNext: Failed to fetch full item details', [
-                                'item_name' => $item['name'],
-                                'error' => $e->getMessage()
-                            ]);
-                        }
-                    }
-                }
+                $items = $data;
             } else {
                 Log::warning('ERPNext: Unexpected response format', [
                     'data_type' => gettype($data),

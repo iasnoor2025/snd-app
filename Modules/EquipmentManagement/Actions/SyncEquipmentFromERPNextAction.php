@@ -11,62 +11,74 @@ class SyncEquipmentFromERPNextAction
     public function execute(): int
     {
         try {
-        $client = app(ERPNextClient::class);
-        $erpItems = $client->fetchAllEquipmentItems();
+            $client = app(ERPNextClient::class);
+            $erpItems = $client->fetchAllEquipmentItems();
 
             Log::info('ERPNext Equipment Sync: Starting sync', [
                 'total_items' => count($erpItems)
             ]);
 
-        $count = 0;
+            $count = 0;
             $errors = [];
+            $batchSize = 50; // Process in batches to avoid memory issues
+            $batches = array_chunk($erpItems, $batchSize);
 
-        foreach ($erpItems as $erpItem) {
-                try {
-            $data = $this->mapToLocal($erpItem);
+            foreach ($batches as $batchIndex => $batch) {
+                Log::info("ERPNext Equipment Sync: Processing batch {$batchIndex} of " . count($batches), [
+                    'batch_size' => count($batch)
+                ]);
 
-            // Always set erpnext_id from ERPNext 'name' field
-            $data['erpnext_id'] = $erpItem['name'] ?? null;
+                foreach ($batch as $erpItem) {
+                    try {
+                        $data = $this->mapToLocal($erpItem);
 
-            if (empty($data['erpnext_id'])) {
-                        Log::warning('ERPNext Equipment Sync: Skipping item without erpnext_id', [
-                            'item' => $erpItem
+                        // Always set erpnext_id from ERPNext 'name' field
+                        $data['erpnext_id'] = $erpItem['name'] ?? null;
+
+                        if (empty($data['erpnext_id'])) {
+                            Log::warning('ERPNext Equipment Sync: Skipping item without erpnext_id', [
+                                'item' => $erpItem
+                            ]);
+                            continue;
+                        }
+
+                        // Validate required fields
+                        if (empty($data['name'])) {
+                            Log::warning('ERPNext Equipment Sync: Skipping item without name', [
+                                'erpnext_id' => $data['erpnext_id'],
+                                'item' => $erpItem
+                            ]);
+                            continue;
+                        }
+
+                        Equipment::updateOrCreate(
+                            ['erpnext_id' => $data['erpnext_id']],
+                            $data
+                        );
+
+                        $count++;
+
+                        if ($count % 10 === 0) {
+                            Log::info("ERPNext Equipment Sync: Processed {$count} items");
+                        }
+
+                    } catch (\Exception $e) {
+                        $errors[] = [
+                            'erpnext_id' => $erpItem['name'] ?? 'unknown',
+                            'error' => $e->getMessage()
+                        ];
+
+                        Log::error('ERPNext Equipment Sync: Failed to process item', [
+                            'erpnext_id' => $erpItem['name'] ?? 'unknown',
+                            'error' => $e->getMessage(),
+                            'trace' => $e->getTraceAsString()
                         ]);
-                        continue;
                     }
+                }
 
-                    // Validate required fields
-                    if (empty($data['name'])) {
-                        Log::warning('ERPNext Equipment Sync: Skipping item without name', [
-                            'erpnext_id' => $data['erpnext_id'],
-                            'item' => $erpItem
-                        ]);
-                continue;
-            }
-
-            Equipment::updateOrCreate(
-                ['erpnext_id' => $data['erpnext_id']],
-                $data
-            );
-
-            $count++;
-
-                    Log::info('ERPNext Equipment Sync: Processed item', [
-                        'erpnext_id' => $data['erpnext_id'],
-                        'name' => $data['name']
-                    ]);
-
-                } catch (\Exception $e) {
-                    $errors[] = [
-                        'erpnext_id' => $erpItem['name'] ?? 'unknown',
-                        'error' => $e->getMessage()
-                    ];
-
-                    Log::error('ERPNext Equipment Sync: Failed to process item', [
-                        'erpnext_id' => $erpItem['name'] ?? 'unknown',
-                        'error' => $e->getMessage(),
-                        'trace' => $e->getTraceAsString()
-                    ]);
+                // Clear memory after each batch
+                if (function_exists('gc_collect_cycles')) {
+                    gc_collect_cycles();
                 }
             }
 

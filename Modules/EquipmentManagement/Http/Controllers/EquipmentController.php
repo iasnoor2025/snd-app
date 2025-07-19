@@ -33,6 +33,8 @@ class EquipmentController extends Controller
         $category = $request->input('category');
         $search = $request->input('search');
 
+        $perPage = $request->input('per_page', 15); // Default to 15 items per page
+
         $query = Equipment::query()->with('category');
 
         if ($status) {
@@ -54,7 +56,7 @@ class EquipmentController extends Controller
             });
         }
 
-        $equipment = $query->latest()->paginate(10)->withQueryString();
+        $equipment = $query->latest()->paginate($perPage)->withQueryString();
 
         // Add category name to each equipment
         $equipment->getCollection()->transform(function ($item) {
@@ -88,6 +90,7 @@ class EquipmentController extends Controller
                 'status' => $status,
                 'category' => $category,
                 'search' => $search,
+                'per_page' => $perPage,
             ],
         ]);
     }
@@ -101,7 +104,7 @@ class EquipmentController extends Controller
         // Get categories and locations with id and name
         $categories = Category::where('category_type', 'equipment')->select('id', 'name')->get();
         $locations = Location::select('id', 'name')->get();
-        
+
         // Get employees for assignment dropdown
         $employees = \Modules\EmployeeManagement\Domain\Models\Employee::select('id', 'first_name', 'last_name')
             ->whereNull('deleted_at')

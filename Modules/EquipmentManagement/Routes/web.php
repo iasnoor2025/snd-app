@@ -95,5 +95,18 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/locations', [LocationController::class, 'store'])
         ->middleware('permission:equipment.create')
         ->name('locations.store');
+
+    // ERPNext sync routes
+    Route::post('/equipment/sync-erpnext', [\Modules\EquipmentManagement\Http\Controllers\Api\EquipmentController::class, 'syncErpnext'])
+        ->middleware('permission:equipment.edit')
+        ->name('equipment.sync-erpnext');
+
+    Route::get('/equipment/debug-erpnext', [\Modules\EquipmentManagement\Http\Controllers\Api\EquipmentController::class, 'debugErpnext'])
+        ->middleware('permission:equipment.view')
+        ->name('equipment.debug-erpnext');
+
+    Route::get('/equipment/sync-status', [\Modules\EquipmentManagement\Http\Controllers\Api\EquipmentController::class, 'syncStatus'])
+        ->middleware('permission:equipment.view')
+        ->name('equipment.sync-status');
 });
 

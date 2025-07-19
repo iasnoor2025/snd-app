@@ -297,27 +297,47 @@ class EquipmentController extends Controller
         try {
             Log::info('ERPNext Equipment Sync: Starting via API endpoint');
 
-            $count = (new \Modules\EquipmentManagement\Actions\SyncEquipmentFromERPNextAction())->execute();
+            // Check if queue is available
+            try {
+                // Dispatch the job to run in background
+                \Modules\EquipmentManagement\Jobs\SyncEquipmentFromERPNextJob::dispatch();
 
-            Log::info('ERPNext Equipment Sync: Completed via API endpoint', [
-                'processed_count' => $count
-            ]);
+                Log::info('ERPNext Equipment Sync: Job dispatched successfully');
 
-            return response()->json([
-                'success' => true,
-                'message' => "ERPNext Equipment Sync complete. {$count} equipment items processed.",
-                'count' => $count
-            ]);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'ERPNext Equipment Sync has been started and will run in the background. You will be notified when it completes.',
+                    'job_dispatched' => true
+                ]);
+            } catch (\Exception $queueException) {
+                Log::warning('ERPNext Equipment Sync: Queue not available, running synchronously', [
+                    'error' => $queueException->getMessage()
+                ]);
+
+                // Fallback to synchronous execution
+                $count = (new \Modules\EquipmentManagement\Actions\SyncEquipmentFromERPNextAction())->execute();
+
+                Log::info('ERPNext Equipment Sync: Completed synchronously', [
+                    'processed_count' => $count
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => "ERPNext Equipment Sync complete. {$count} equipment items processed.",
+                    'count' => $count,
+                    'job_dispatched' => false
+                ]);
+            }
 
         } catch (\Exception $e) {
-            Log::error('ERPNext Equipment Sync: Failed via API endpoint', [
+            Log::error('ERPNext Equipment Sync: Failed to dispatch job', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to sync equipment from ERPNext: ' . $e->getMessage(),
+                'message' => 'Failed to start ERPNext sync: ' . $e->getMessage(),
                 'error' => $e->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -376,6 +396,47 @@ class EquipmentController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to test ERPNext connection: ' . $e->getMessage(),
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Check ERPNext sync status.
+     */
+    public function syncStatus(): JsonResponse
+    {
+        try {
+            // Check if there are any recent sync jobs
+            $recentJobs = \Illuminate\Support\Facades\DB::table('jobs')
+                ->where('queue', 'default')
+                ->where('payload', 'like', '%SyncEquipmentFromERPNextJob%')
+                ->where('created_at', '>=', now()->subMinutes(10))
+                ->count();
+
+            $failedJobs = \Illuminate\Support\Facades\DB::table('failed_jobs')
+                ->where('payload', 'like', '%SyncEquipmentFromERPNextJob%')
+                ->where('failed_at', '>=', now()->subMinutes(10))
+                ->count();
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'recent_jobs' => $recentJobs,
+                    'failed_jobs' => $failedJobs,
+                    'has_recent_activity' => $recentJobs > 0 || $failedJobs > 0
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('ERPNext Equipment Sync: Failed to check status', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to check sync status: ' . $e->getMessage(),
                 'error' => $e->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
