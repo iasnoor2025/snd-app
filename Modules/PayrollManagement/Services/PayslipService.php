@@ -9,7 +9,12 @@ class PayslipService
 {
     public function generatePayslip(Payroll $payroll): string
     {
-        $pdf = Pdf::loadView('payroll::payslip', [
+        // Load the employee relationship if not already loaded
+        if (!$payroll->relationLoaded('employee')) {
+            $payroll->load('employee');
+        }
+
+        $pdf = Pdf::loadView('PayrollManagement::payslip', [
             'payroll' => $payroll,
             'employee' => $payroll->employee,
         ]);

@@ -31,7 +31,7 @@ import { PageProps } from '@/Core/types';
 import { router } from '@inertiajs/core';
 import { Head } from '@inertiajs/react';
 import { format } from 'date-fns';
-import { Banknote, Calendar, User, TrendingUp, TrendingDown, DollarSign, Trash2 } from 'lucide-react';
+import { Banknote, Calendar, User, TrendingUp, TrendingDown, DollarSign, Trash2, Search } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { route } from 'ziggy-js';
@@ -56,6 +56,7 @@ interface Props extends PageProps {
 type Employee = {
     id: number;
     name: string;
+    file_number?: string;
     [key: string]: any;
 };
 
@@ -77,37 +78,83 @@ type Payroll = {
 export default function Index({ auth, payrolls, employees, filters, hasRecords }: Props) {
     const { t } = useTranslation('PayrollManagement');
 
-        // Check for admin role using the same pattern as LeaveManagement
+    // Check for admin role using the same pattern as LeaveManagement
     const hasRole = auth.hasRole || (auth.user && auth.user.roles) || [];
     const isAdmin = Array.isArray(hasRole) &&
         hasRole.some((role) => role && (role === 'admin' || role === 'Admin' || role.name === 'admin' || role.name === 'Admin'));
 
 
 
+
+
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState({
         month: new Date().toISOString().slice(0, 7),
+        employee_id: '',
     });
     const [processing, setProcessing] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [selectedPayrolls, setSelectedPayrolls] = useState<number[]>([]);
     const [showBulkDeleteModal, setShowBulkDeleteModal] = useState(false);
     const [bulkDeleteProcessing, setBulkDeleteProcessing] = useState(false);
+    const [employeeSearch, setEmployeeSearch] = useState('');
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setProcessing(true);
-        router.post(route('payroll.generate-monthly'), formData, {
-            onSuccess: () => {
-                setShowModal(false);
+
+        try {
+            console.log('Process Payroll form submitted');
+            console.log('Form data:', formData);
+
+            // Validate form data
+            if (!formData.employee_id) {
+                setErrors({ employee_id: 'Please select an employee' });
                 setProcessing(false);
-            },
-            onError: (errors) => {
-                console.error('Payroll generation error:', errors);
-                setErrors(errors);
+                return;
+            }
+
+            if (!formData.month) {
+                setErrors({ month: 'Please select a month' });
                 setProcessing(false);
-            },
-        });
+                return;
+            }
+
+            // Use individual payroll generation route
+            const routeUrl = '/hr/payroll';
+            console.log('Route URL:', routeUrl);
+
+            router.post(routeUrl, {
+                ...formData,
+                _token: document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+            }, {
+                onSuccess: (response) => {
+                    console.log('Payroll generation successful');
+                    setShowModal(false);
+                    setProcessing(false);
+                    toast.success('Payroll generated successfully');
+
+                    // Redirect to the generated payroll if available
+                    if (response && response.data && response.data.id) {
+                        router.visit(`/hr/payroll/${response.data.id}`);
+                    } else {
+                        // Reload the page to show new payrolls
+                        window.location.reload();
+                    }
+                },
+                onError: (errors) => {
+                    console.error('Payroll generation error:', errors);
+                    setErrors(errors);
+                    setProcessing(false);
+                    toast.error('Failed to generate payroll: ' + (errors.message || 'Unknown error'));
+                },
+            });
+        } catch (error) {
+            console.error('Form submission error:', error);
+            setProcessing(false);
+            setErrors({ general: 'Button error: ' + error.message });
+            toast.error('Form error: ' + error.message);
+        }
     };
 
     const handleFilter = (key: string, value: string) => {
@@ -193,7 +240,42 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                         <CardTitle>Payroll Management</CardTitle>
                         <div className="flex gap-2">
                             <Button onClick={() => setShowModal(true)}>Process Payroll</Button>
-                            <Button variant="outline" onClick={() => router.post(route('payroll.generate-monthly'))}>
+                                                                                    <Button
+                                variant="outline"
+                                type="button"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    try {
+                                        console.log('Generate Monthly button clicked');
+                                        const month = new Date().toISOString().slice(0, 7);
+                                        console.log('Month:', month);
+
+                                        // Try direct URL approach if route function fails
+                                        const routeUrl = '/hr/payroll/generate-monthly';
+                                        console.log('Route URL:', routeUrl);
+
+                                        router.post(routeUrl, {
+                                            month,
+                                            _token: document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+                                        }, {
+                                            onSuccess: () => {
+                                                console.log('Payroll generation successful');
+                                                toast.success('Payroll generated successfully');
+                                                // Reload the page to show new payrolls
+                                                window.location.reload();
+                                            },
+                                            onError: (errors) => {
+                                                console.error('Payroll generation error:', errors);
+                                                toast.error('Failed to generate payroll: ' + (errors.message || 'Unknown error'));
+                                            },
+                                        });
+                                    } catch (error) {
+                                        console.error('Button click error:', error);
+                                        toast.error('Button error: ' + error.message);
+                                    }
+                                }}
+                            >
                                 Generate Monthly
                             </Button>
 
@@ -256,8 +338,27 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                         </div>
                                     ) : (
                                         <SelectContent>
+                                            {/* Search Input */}
+                                            <div className="flex items-center px-3 py-2">
+                                                <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+                                                <Input
+                                                    placeholder="Search by name or file number..."
+                                                    value={employeeSearch}
+                                                    onChange={(e) => setEmployeeSearch(e.target.value)}
+                                                    className="border-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                                                />
+                                            </div>
+                                            {/* Filtered Employees */}
                                             {employees
                                                 .filter((e) => e.id && typeof e.id === 'number' && e.name && e.name.trim() !== '')
+                                                .filter((e) => {
+                                                    if (!employeeSearch) return true;
+                                                    const searchLower = employeeSearch.toLowerCase();
+                                                    return (
+                                                        e.name.toLowerCase().includes(searchLower) ||
+                                                        (e.file_number && e.file_number.toLowerCase().includes(searchLower))
+                                                    );
+                                                })
                                                 .map((e) => {
                                                     const value = e.id.toString();
                                                     if (!value) {
@@ -266,7 +367,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                                     }
                                                     return (
                                                         <SelectItem key={e.id} value={value}>
-                                                            {e.name}
+                                                            {e.name} {e.file_number ? `(${e.file_number})` : ''}
                                                         </SelectItem>
                                                     );
                                                 })}
@@ -307,9 +408,6 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                             Bonus
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Deductions
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Final Amount
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -344,9 +442,16 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                                                 {payroll.employee.name}
                                                             </span>
                                                         </div>
-                                                        <span className="text-xs text-muted-foreground ml-6">
-                                                            ID: {payroll.employee.id}
-                                                        </span>
+                                                        <div className="flex flex-col gap-1 ml-6">
+                                                            <span className="text-xs text-muted-foreground">
+                                                                ID: {payroll.employee.id}
+                                                            </span>
+                                                            {payroll.employee.file_number && (
+                                                                <span className="text-xs text-blue-600 font-medium">
+                                                                    File: {payroll.employee.file_number}
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -412,19 +517,6 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                     <div className="flex flex-col gap-1">
                                                         <div className="flex items-center gap-2">
-                                                            <TrendingDown className="h-4 w-4 text-red-500" />
-                                                            <span className="font-medium text-red-600">
-                                                                ${((Number(payroll.deduction_amount) || 0) + (Number(payroll.advance_deduction) || 0)).toFixed(2)}
-                                                            </span>
-                                                        </div>
-                                                        <span className="text-xs text-muted-foreground ml-6">
-                                                            Deductions
-                                                        </span>
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                                    <div className="flex flex-col gap-1">
-                                                        <div className="flex items-center gap-2">
                                                             <DollarSign className="h-4 w-4 text-green-500" />
                                                             <span className="font-medium text-green-600">
                                                                 ${(Number(payroll.final_amount) || 0).toFixed(2)}
@@ -455,7 +547,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                         ))
                                     ) : (
                                         <tr>
-                                            <td colSpan={isAdmin ? 10 : 9} className="py-8 text-center">
+                                            <td colSpan={isAdmin ? 9 : 8} className="py-8 text-center">
                                                 <div className="flex flex-col items-center justify-center text-muted-foreground">
                                                     <p>No payroll records found</p>
                                                 </div>
@@ -466,7 +558,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                             </table>
                         </div>
 
-                        {/* Enhanced Pagination - Always show if there are payrolls */}
+                                                {/* Enhanced Pagination - Always show if there are payrolls */}
                         {payrolls?.data && payrolls.data.length > 0 && (
                             <div className="mt-6 border-t pt-4">
                                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -479,21 +571,131 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                     </div>
 
                                     <div className="flex flex-col items-center gap-4 sm:flex-row">
+                                        {/* Per Page Selector */}
+                                        <div className="flex items-center space-x-2">
+                                            <span className="text-sm text-muted-foreground">Show:</span>
+                                            <Select value={payrolls?.meta?.per_page?.toString() || "3"} onValueChange={(value) => {
+                                                router.get(
+                                                    route('payroll.index'),
+                                                    {
+                                                        per_page: value,
+                                                        month: filters.month,
+                                                        status: filters.status,
+                                                        employee_id: filters.employee_id,
+                                                    },
+                                                    { preserveState: true, preserveScroll: true },
+                                                );
+                                            }}>
+                                                <SelectTrigger className="w-20">
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="3">3</SelectItem>
+                                                    <SelectItem value="5">5</SelectItem>
+                                                    <SelectItem value="10">10</SelectItem>
+                                                    <SelectItem value="15">15</SelectItem>
+                                                    <SelectItem value="25">25</SelectItem>
+                                                    <SelectItem value="50">50</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
                                         {/* Page Navigation */}
                                         <div className="flex items-center space-x-1">
                                             <Button
                                                 variant="outline"
                                                 size="sm"
-                                                disabled={!payrolls?.links?.prev}
-                                                onClick={() => payrolls.links?.prev && router.get(payrolls.links.prev)}
+                                                disabled={!payrolls?.meta?.current_page || payrolls.meta.current_page === 1}
+                                                onClick={() => {
+                                                    const currentPage = payrolls?.meta?.current_page || 1;
+                                                    if (currentPage > 1) {
+                                                        router.get(
+                                                            route('payroll.index'),
+                                                            {
+                                                                page: currentPage - 1,
+                                                                per_page: payrolls?.meta?.per_page || 3,
+                                                                month: filters.month,
+                                                                status: filters.status,
+                                                                employee_id: filters.employee_id,
+                                                            },
+                                                            { preserveState: true, preserveScroll: true },
+                                                        );
+                                                    }
+                                                }}
                                             >
                                                 Previous
                                             </Button>
+
+                                            {/* Page Numbers - always show */}
+                                            <div className="flex items-center space-x-1">
+                                                {Array.from({ length: Math.min(5, payrolls?.meta?.last_page || 1) }, (_, i) => {
+                                                        let pageNumber;
+                                                        const lastPage = payrolls?.meta?.last_page || 1;
+                                                        const currentPage = payrolls?.meta?.current_page || 1;
+
+                                                        if (lastPage <= 5) {
+                                                            pageNumber = i + 1;
+                                                        } else {
+                                                            if (currentPage <= 3) {
+                                                                pageNumber = i + 1;
+                                                            } else if (currentPage >= lastPage - 2) {
+                                                                pageNumber = lastPage - 4 + i;
+                                                            } else {
+                                                                pageNumber = currentPage - 2 + i;
+                                                            }
+                                                        }
+
+                                                        return (
+                                                            <Button
+                                                                key={pageNumber}
+                                                                variant={pageNumber === currentPage ? 'default' : 'outline'}
+                                                                size="sm"
+                                                                className="h-8 w-8 p-0"
+                                                                onClick={() => {
+                                                                    router.get(
+                                                                        route('payroll.index'),
+                                                                        {
+                                                                            page: pageNumber,
+                                                                            per_page: payrolls?.meta?.per_page || 3,
+                                                                            month: filters.month,
+                                                                            status: filters.status,
+                                                                            employee_id: filters.employee_id,
+                                                                        },
+                                                                        { preserveState: true, preserveScroll: true },
+                                                                    );
+                                                                }}
+                                                            >
+                                                                {pageNumber}
+                                                            </Button>
+                                                        );
+                                                })}
+                                            </div>
+
                                             <Button
                                                 variant="outline"
                                                 size="sm"
-                                                disabled={!payrolls?.links?.next}
-                                                onClick={() => payrolls.links?.next && router.get(payrolls.links.next)}
+                                                disabled={
+                                                    !payrolls?.meta?.current_page ||
+                                                    !payrolls?.meta?.last_page ||
+                                                    payrolls.meta.current_page >= payrolls.meta.last_page
+                                                }
+                                                onClick={() => {
+                                                    const currentPage = payrolls?.meta?.current_page || 1;
+                                                    const lastPage = payrolls?.meta?.last_page || 1;
+                                                    if (currentPage < lastPage) {
+                                                        router.get(
+                                                            route('payroll.index'),
+                                                            {
+                                                                page: currentPage + 1,
+                                                                per_page: payrolls?.meta?.per_page || 3,
+                                                                month: filters.month,
+                                                                status: filters.status,
+                                                                employee_id: filters.employee_id,
+                                                            },
+                                                            { preserveState: true, preserveScroll: true },
+                                                        );
+                                                    }
+                                                }}
                                             >
                                                 Next
                                             </Button>
@@ -506,14 +708,59 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                 </Card>
             </div>
 
-            <Dialog open={showModal} onOpenChange={setShowModal}>
+            <Dialog open={showModal} onOpenChange={(open) => {
+                setShowModal(open);
+                if (!open) {
+                    setEmployeeSearch('');
+                }
+            }}>
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Process Payroll</DialogTitle>
-                        <DialogDescription>Select the month for which you want to generate payroll records.</DialogDescription>
+                        <DialogDescription>Select an employee and month to generate payroll.</DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handleSubmit}>
                         <div className="grid gap-4 py-4">
+                            <div className="grid gap-2">
+                                <Label htmlFor="employee">Select Employee</Label>
+                                <Select
+                                    value={formData.employee_id}
+                                    onValueChange={(value) => setFormData((prev) => ({ ...prev, employee_id: value }))}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select an employee" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {/* Search Input */}
+                                        <div className="flex items-center px-3 py-2">
+                                            <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+                                            <Input
+                                                placeholder="Search by name or file number..."
+                                                value={employeeSearch}
+                                                onChange={(e) => setEmployeeSearch(e.target.value)}
+                                                className="border-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                                            />
+                                        </div>
+                                        {/* Filtered Employees */}
+                                        {employees
+                                            .filter((e) => e.id && typeof e.id === 'number' && e.name && e.name.trim() !== '')
+                                            .filter((e) => {
+                                                if (!employeeSearch) return true;
+                                                const searchLower = employeeSearch.toLowerCase();
+                                                return (
+                                                    e.name.toLowerCase().includes(searchLower) ||
+                                                    (e.file_number && e.file_number.toLowerCase().includes(searchLower))
+                                                );
+                                            })
+                                            .map((e) => (
+                                                <SelectItem key={e.id} value={e.id.toString()}>
+                                                    {e.name} {e.file_number ? `(${e.file_number})` : ''}
+                                                </SelectItem>
+                                            ))}
+                                    </SelectContent>
+                                </Select>
+                                {errors.employee_id && <p className="text-sm text-red-500">{errors.employee_id}</p>}
+                            </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="month">Select Month</Label>
                                 <Input

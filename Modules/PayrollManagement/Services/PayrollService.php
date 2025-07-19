@@ -50,19 +50,21 @@ class PayrollService
                     continue;
                 }
 
-                // Check if employee has any approved timesheets for the month (optional)
+                // Check if employee has any manager-approved timesheets for the month
                 $timesheets = $employee->timesheets()
                     ->whereYear('date', $month->year)
                     ->whereMonth('date', $month->month)
-                    ->where('status', 'approved')
+                    ->where('status', 'manager_approved')
                     ->count();
 
-                // If no timesheets, we'll use a fallback calculation based on contract days
+                // Only generate payroll if employee has manager-approved timesheets
                 if ($timesheets === 0) {
-                    Log::info("No approved timesheets found for {$employee->full_name} for {$month->format('F Y')}, using fallback calculation");
+                    Log::info("No manager-approved timesheets found for {$employee->full_name} for {$month->format('F Y')}, skipping payroll generation");
+                    $errors[] = "No manager-approved timesheets found for {$employee->full_name} for {$month->format('F Y')}";
+                    continue;
                 }
 
-                // Generate payroll
+                // Generate payroll only for employees with approved timesheets
                 $payroll = $this->generateEmployeePayroll($employee, $month);
                 $generatedPayrolls[] = $payroll;
 
@@ -120,6 +122,9 @@ class PayrollService
             // Calculate leave deductions
             $leaveData = $this->calculateLeaveDeductions($employee, $month);
 
+            // Calculate advance deductions
+            $advanceData = $this->calculateAdvanceDeductions($employee, $month);
+
             // Calculate gross salary
             $grossSalary = $baseSalary + $allowances + $overtimeAmount + $performanceData['bonus'];
 
@@ -130,19 +135,14 @@ class PayrollService
             $totalDeductions = $leaveData['deductions'] +
                               $taxAndInsurance['tax'] +
                               $taxAndInsurance['insurance'] +
-                              $taxAndInsurance['other'];
+                              $taxAndInsurance['other'] +
+                              $advanceData['total_advance_deduction'];
 
             // Calculate net salary
             $netSalary = $grossSalary - $totalDeductions;
 
-            // Check if we used fallback calculation (no timesheets)
-            $timesheets = $employee->timesheets()
-                ->whereYear('date', $month->year)
-                ->whereMonth('date', $month->month)
-                ->where('status', 'approved')
-                ->count();
-
-            $notes = $timesheets === 0 ? "Generated for {$month->format('F Y')} - Basic salary with allowances and tax deduction (no timesheets available)" : null;
+            // Since we only generate payroll for employees with manager-approved timesheets
+            $notes = "Generated for {$month->format('F Y')} based on manager-approved timesheets";
 
             // Create payroll record
             $payroll = Payroll::create([
@@ -154,6 +154,7 @@ class PayrollService
                 'overtime_amount' => $overtimeAmount,
                 'bonus_amount' => $performanceData['bonus'],
                 'deduction_amount' => $totalDeductions,
+                'advance_deduction' => $advanceData['total_advance_deduction'],
                 'final_amount' => $netSalary,
                 'total_worked_hours' => $regularHours,
                 'status' => 'pending',
@@ -230,6 +231,24 @@ class PayrollService
                 ]);
             }
 
+            // Add advance deductions
+            if ($advanceData['total_advance_deduction'] > 0) {
+                foreach ($advanceData['advance_details'] as $advanceDetail) {
+                    $this->createPayrollItems($payroll, [
+                        [
+                            'type' => 'advance_deduction',
+                            'description' => "Advance repayment: {$advanceDetail['reason']}",
+                            'amount' => -$advanceDetail['amount'],
+                            'is_taxable' => false,
+                            'metadata' => [
+                                'advance_id' => $advanceDetail['advance_id'],
+                                'remaining_balance' => $advanceDetail['remaining_balance']
+                            ]
+                        ]
+                    ]);
+                }
+            }
+
             return $payroll;
         } catch (\Exception $e) {
             Log::error("Error generating payroll for employee {$employee->full_name}", [
@@ -248,7 +267,7 @@ class PayrollService
         $overtimeHours = $employee->timesheets()
             ->whereYear('date', $month->year)
             ->whereMonth('date', $month->month)
-            ->where('status', 'approved')
+            ->where('status', 'manager_approved')
             ->sum('overtime_hours');
 
         // If no timesheets found, assume no overtime
@@ -256,7 +275,7 @@ class PayrollService
             $timesheets = $employee->timesheets()
                 ->whereYear('date', $month->year)
                 ->whereMonth('date', $month->month)
-                ->where('status', 'approved')
+                ->where('status', 'manager_approved')
                 ->count();
 
             if ($timesheets === 0) {
@@ -285,7 +304,7 @@ class PayrollService
         $timesheets = $employee->timesheets()
             ->whereYear('date', $month->year)
             ->whereMonth('date', $month->month)
-            ->where('status', 'approved')
+            ->where('status', 'manager_approved')
             ->get();
 
         $totalHours = 0;
@@ -298,14 +317,10 @@ class PayrollService
             }
         }
 
-        // If no timesheets found, use fallback calculation based on contract days
+        // Since we only generate payroll for employees with manager-approved timesheets,
+        // we should always have timesheets here. If not, throw an exception.
         if ($timesheets->isEmpty()) {
-            $workingDaysInMonth = Carbon::parse($month)->daysInMonth;
-            $contractDaysPerMonth = $employee->contract_days_per_month ?? 26; // Default to 26 working days
-            $contractHoursPerDay = $employee->contract_hours_per_day ?? 8; // Default to 8 hours per day
-
-            $daysWorked = $contractDaysPerMonth;
-            $totalHours = $contractDaysPerMonth * $contractHoursPerDay;
+            throw new \Exception("No manager-approved timesheets found for {$employee->full_name} for {$month->format('F Y')}");
         }
 
         return [
@@ -356,6 +371,69 @@ class PayrollService
         }
 
         return $leaveData;
+    }
+
+    /**
+     * Calculate advance payment deductions based on repayment dates and amounts
+     */
+    protected function calculateAdvanceDeductions(Employee $employee, Carbon $month): array
+    {
+        $advanceData = [
+            'total_advance_deduction' => 0,
+            'advance_details' => []
+        ];
+
+        // Get active advance payments for the employee
+        $activeAdvances = \Modules\EmployeeManagement\Domain\Models\AdvancePayment::where('employee_id', $employee->id)
+            ->whereIn('status', ['approved', 'partially_repaid'])
+            ->get();
+
+        foreach ($activeAdvances as $advance) {
+            $remainingBalance = $advance->remaining_balance;
+
+            // Only process if there's remaining balance
+            if ($remainingBalance > 0) {
+                // Check for repayment history in the specific month
+                $monthlyRepayments = \Modules\EmployeeManagement\Domain\Models\AdvancePaymentHistory::where('advance_payment_id', $advance->id)
+                    ->whereYear('payment_date', $month->year)
+                    ->whereMonth('payment_date', $month->month)
+                    ->sum('amount');
+
+                // If there are repayments scheduled for this month, use that amount
+                if ($monthlyRepayments > 0) {
+                    $deductionAmount = min($monthlyRepayments, $remainingBalance);
+
+                    $advanceData['total_advance_deduction'] += $deductionAmount;
+                    $advanceData['advance_details'][] = [
+                        'advance_id' => $advance->id,
+                        'amount' => $deductionAmount,
+                        'remaining_balance' => $remainingBalance,
+                        'monthly_repayments' => $monthlyRepayments,
+                        'reason' => $advance->reason,
+                        'payment_date' => $month->format('Y-m')
+                    ];
+                }
+                // If no specific repayments for this month, check if advance has repayment_date in this month
+                elseif ($advance->repayment_date &&
+                        $advance->repayment_date->year === $month->year &&
+                        $advance->repayment_date->month === $month->month) {
+
+                    $deductionAmount = min($advance->monthly_deduction ?? $remainingBalance, $remainingBalance);
+
+                    $advanceData['total_advance_deduction'] += $deductionAmount;
+                    $advanceData['advance_details'][] = [
+                        'advance_id' => $advance->id,
+                        'amount' => $deductionAmount,
+                        'remaining_balance' => $remainingBalance,
+                        'monthly_deduction' => $advance->monthly_deduction,
+                        'reason' => $advance->reason,
+                        'repayment_date' => $advance->repayment_date->format('Y-m-d')
+                    ];
+                }
+            }
+        }
+
+        return $advanceData;
     }
 
     /**
@@ -472,6 +550,30 @@ class PayrollService
                 'is_taxable' => false
             ]);
         });
+    }
+
+    /**
+     * Check if employee has manager-approved timesheets for a specific month
+     */
+    public function hasManagerApprovedTimesheets(Employee $employee, Carbon $month): bool
+    {
+        return $employee->timesheets()
+            ->whereYear('date', $month->year)
+            ->whereMonth('date', $month->month)
+            ->where('status', 'manager_approved')
+            ->exists();
+    }
+
+    /**
+     * Get manager-approved timesheets for an employee in a specific month
+     */
+    public function getManagerApprovedTimesheets(Employee $employee, Carbon $month)
+    {
+        return $employee->timesheets()
+            ->whereYear('date', $month->year)
+            ->whereMonth('date', $month->month)
+            ->where('status', 'manager_approved')
+            ->get();
     }
 
     /**

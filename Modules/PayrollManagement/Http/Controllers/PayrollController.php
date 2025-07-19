@@ -51,7 +51,8 @@ class PayrollController extends Controller
             $query->where('employee_id', $request->employee_id);
         }
 
-        $payrolls = $query->latest()->paginate(10);
+        $perPage = $request->get('per_page', 3);
+        $payrolls = $query->latest()->paginate($perPage);
 
         // Ensure employee data is properly loaded and formatted
         $payrolls->getCollection()->transform(function ($payroll) {
@@ -61,7 +62,7 @@ class PayrollController extends Controller
             return $payroll;
         });
         $employees = Employee::where('status', 'active')
-            ->get(['id', 'first_name', 'middle_name', 'last_name'])
+            ->get(['id', 'first_name', 'middle_name', 'last_name', 'file_number'])
             ->append('name')
             ->filter(function ($employee) {
                 return !empty($employee->id) && !empty($employee->name);
@@ -107,10 +108,17 @@ class PayrollController extends Controller
         $employee = Employee::findOrFail($request->employee_id);
         $month = Carbon::parse($request->month);
 
+        // Check if employee has manager-approved timesheets for the month
+        $hasApprovedTimesheets = $this->payrollService->hasManagerApprovedTimesheets($employee, $month);
+
+        if (!$hasApprovedTimesheets) {
+            return back()->with('error', "No manager-approved timesheets found for {$employee->name} for {$month->format('F Y')}. Payroll generation requires manager-approved timesheets.");
+        }
+
         $payroll = $this->payrollService->generatePayroll($month, $employee);
 
         return redirect()->route('payroll.show', $payroll)
-            ->with('success', 'Payroll generated successfully.');
+            ->with('success', 'Payroll generated successfully based on manager-approved timesheets.');
     }
 
     /**
@@ -247,12 +255,29 @@ class PayrollController extends Controller
             DB::beginTransaction();
 
             $month = Carbon::parse($request->month);
+
+            // Check how many employees have manager-approved timesheets
+            $employees = Employee::where('status', 'active')->get();
+            $employeesWithApprovedTimesheets = 0;
+
+            foreach ($employees as $employee) {
+                if ($this->payrollService->hasManagerApprovedTimesheets($employee, $month)) {
+                    $employeesWithApprovedTimesheets++;
+                }
+            }
+
+            if ($employeesWithApprovedTimesheets === 0) {
+                return back()->with('warning', "No employees have manager-approved timesheets for {$month->format('F Y')}. Payroll generation requires manager-approved timesheets.");
+            }
+
             $payrollRun = $this->payrollService->runPayrollForMonth($month, auth()->id());
 
             DB::commit();
 
+            $message = "Payroll run initiated successfully. {$employeesWithApprovedTimesheets} employees have manager-approved timesheets for {$month->format('F Y')}.";
+
             return redirect()->route('payroll.runs.show', $payrollRun)
-                ->with('success', 'Payroll run initiated successfully.');
+                ->with('success', $message);
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Failed to run payroll: ' . $e->getMessage());
@@ -322,13 +347,32 @@ class PayrollController extends Controller
         ]);
     }
 
-    public function downloadPayslip($payrollId, PayslipService $payslipService)
+        public function downloadPayslip($payrollId, PayslipService $payslipService)
     {
-        $payroll = \Modules\PayrollManagement\Domain\Models\Payroll::with('employee')->findOrFail($payrollId);
+        $payroll = \Modules\PayrollManagement\Domain\Models\Payroll::with(['employee', 'employee.department', 'employee.designation'])->findOrFail($payrollId);
+
+        if (!$payroll->employee) {
+            abort(404, 'Employee not found for this payroll');
+        }
+
         $pdf = $payslipService->generatePayslip($payroll);
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="payslip_{$payroll->employee->id}_{$payroll->id}.pdf"',
+        ]);
+    }
+
+    public function viewPayslip($payrollId)
+    {
+        $payroll = \Modules\PayrollManagement\Domain\Models\Payroll::with(['employee', 'employee.department', 'employee.designation', 'items'])->findOrFail($payrollId);
+
+        if (!$payroll->employee) {
+            abort(404, 'Employee not found for this payroll');
+        }
+
+        return Inertia::render('Payroll/Payslip', [
+            'payroll' => $payroll,
+            'employee' => $payroll->employee,
         ]);
     }
 

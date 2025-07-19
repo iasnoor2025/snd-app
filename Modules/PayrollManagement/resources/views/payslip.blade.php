@@ -20,10 +20,11 @@
         <div>{{ now()->format('Y-m-d') }}</div>
     </div>
     <div class="section">
-        <strong>Employee:</strong> {{ $employee->full_name ?? $employee->name }}<br>
-        <strong>Employee ID:</strong> {{ $employee->employee_id ?? $employee->id }}<br>
+        <strong>Employee:</strong> {{ $employee->full_name ?? $employee->name ?? 'N/A' }}<br>
+        <strong>Employee ID:</strong> {{ $employee->employee_id ?? $employee->id ?? 'N/A' }}<br>
         <strong>Department:</strong> {{ $employee->department->name ?? 'N/A' }}<br>
         <strong>Designation:</strong> {{ $employee->designation->title ?? 'N/A' }}<br>
+        <strong>Period:</strong> {{ \Carbon\Carbon::createFromDate($payroll->year, $payroll->month, 1)->format('F Y') }}<br>
     </div>
     <div class="section">
         <table class="table">
