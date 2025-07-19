@@ -62,6 +62,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('equipment/{equipment}/documents', [EquipmentApiController::class, 'storeDocument']);
     Route::put('equipment/{equipment}/status', [EquipmentApiController::class, 'updateStatus']);
     Route::post('equipment/sync-erpnext', [\Modules\EquipmentManagement\Http\Controllers\Api\EquipmentController::class, 'syncErpnext']);
+    Route::get('equipment/debug-erpnext', [\Modules\EquipmentManagement\Http\Controllers\Api\EquipmentController::class, 'debugErpnext']);
 
     // Equipment costs and depreciation
     Route::get('equipment/{equipment}/costs', [EquipmentCostApiController::class, 'index']);

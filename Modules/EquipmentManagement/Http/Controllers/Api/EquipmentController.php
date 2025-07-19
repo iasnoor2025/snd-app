@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Modules\EquipmentManagement\Domain\Equipment;
 use Illuminate\Http\Response;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class EquipmentController extends Controller
 {
@@ -293,10 +294,90 @@ class EquipmentController extends Controller
      */
     public function syncErpnext(): JsonResponse
     {
-        $count = (new \Modules\EquipmentManagement\Actions\SyncEquipmentFromERPNextAction())->execute();
-        return response()->json([
-            'message' => "ERPNext Equipment Sync complete. {$count} equipment items processed.",
-            'count' => $count
-        ]);
+        try {
+            Log::info('ERPNext Equipment Sync: Starting via API endpoint');
+
+            $count = (new \Modules\EquipmentManagement\Actions\SyncEquipmentFromERPNextAction())->execute();
+
+            Log::info('ERPNext Equipment Sync: Completed via API endpoint', [
+                'processed_count' => $count
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => "ERPNext Equipment Sync complete. {$count} equipment items processed.",
+                'count' => $count
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('ERPNext Equipment Sync: Failed via API endpoint', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to sync equipment from ERPNext: ' . $e->getMessage(),
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Debug ERPNext connection and data.
+     */
+    public function debugErpnext(): JsonResponse
+    {
+        try {
+            Log::info('ERPNext Equipment Debug: Starting debug test');
+
+            $client = app(\Modules\RentalManagement\Services\ERPNextClient::class);
+
+            // Test connection
+            $connectionTest = $client->testConnection();
+
+            // If connection is successful, try to fetch equipment data
+            $equipmentData = null;
+            if ($connectionTest['success']) {
+                try {
+                    $equipmentItems = $client->fetchAllEquipmentItems();
+                    $equipmentData = [
+                        'total_items' => count($equipmentItems),
+                        'sample_items' => array_slice($equipmentItems, 0, 2)
+                    ];
+                } catch (\Exception $e) {
+                    $equipmentData = [
+                        'error' => $e->getMessage(),
+                        'total_items' => 0,
+                        'sample_items' => []
+                    ];
+                }
+            }
+
+            $debugInfo = [
+                'connection_test' => $connectionTest,
+                'equipment_data' => $equipmentData
+            ];
+
+            Log::info('ERPNext Equipment Debug: Debug test completed', $debugInfo);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'ERPNext connection test completed',
+                'debug_info' => $debugInfo
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('ERPNext Equipment Debug: Failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to test ERPNext connection: ' . $e->getMessage(),
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }

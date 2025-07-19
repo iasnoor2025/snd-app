@@ -1,3 +1,4 @@
 {
-    "sync_erpnext": "Sync ERPNext"
+    "sync_erpnext": "Sync ERPNext",
+    "debug_erpnext": "Debug ERPNext"
 }

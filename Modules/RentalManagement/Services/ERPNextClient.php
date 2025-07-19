@@ -28,6 +28,14 @@ class ERPNextClient
         ]);
     }
 
+    /**
+     * Get the HTTP client for debugging purposes.
+     */
+    public function getClient(): Client
+    {
+        return $this->client;
+    }
+
     public function getOrCreateCustomer(array $customerData): array
     {
         $name = $customerData['customer_name'] ?? null;
@@ -130,36 +138,103 @@ class ERPNextClient
      */
     public function fetchAllEquipmentItems(): array
     {
-        $filters = urlencode(json_encode([["item_group", "=", "Equipment"]]));
-        $url = "/api/resource/Item?filters=$filters&limit_page_length=1000";
-        $response = $this->client->get($url);
-        $body = $response->getBody()->getContents();
-        Log::info('ERPNext raw equipment response', ['body' => $body]);
-        $data = json_decode($body, true);
-        $items = [];
-        if (isset($data['data']) && is_array($data['data'])) {
-            foreach ($data['data'] as $item) {
-                if (isset($item['name'])) {
-                    $full = $this->getItemByName($item['name']);
-                    if ($full) {
-                        $items[] = $full;
+        try {
+            $filters = urlencode(json_encode([["item_group", "=", "Equipment"]]));
+            $url = "/api/resource/Item?filters=$filters&limit_page_length=1000";
+
+            Log::info('ERPNext: Fetching equipment items', [
+                'url' => $url,
+                'filters' => [["item_group", "=", "Equipment"]]
+            ]);
+
+            $response = $this->client->get($url);
+            $body = $response->getBody()->getContents();
+
+            Log::info('ERPNext: Raw equipment response received', [
+                'status_code' => $response->getStatusCode(),
+                'body_length' => strlen($body)
+            ]);
+
+            $data = json_decode($body, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                Log::error('ERPNext: Failed to parse JSON response', [
+                    'json_error' => json_last_error_msg(),
+                    'body' => substr($body, 0, 500) // Log first 500 chars
+                ]);
+                return [];
+            }
+
+            $items = [];
+
+            if (isset($data['data']) && is_array($data['data'])) {
+                Log::info('ERPNext: Processing data array', [
+                    'item_count' => count($data['data'])
+                ]);
+
+                foreach ($data['data'] as $item) {
+                    if (isset($item['name'])) {
+                        try {
+                            $full = $this->getItemByName($item['name']);
+                            if ($full) {
+                                $items[] = $full;
+                            } else {
+                                Log::warning('ERPNext: Could not fetch full item details', [
+                                    'item_name' => $item['name']
+                                ]);
+                            }
+                        } catch (\Exception $e) {
+                            Log::error('ERPNext: Failed to fetch full item details', [
+                                'item_name' => $item['name'],
+                                'error' => $e->getMessage()
+                            ]);
+                        }
                     }
                 }
-            }
-            return $items;
-        }
-        if (is_array($data)) {
-            foreach ($data as $item) {
-                if (isset($item['name'])) {
-                    $full = $this->getItemByName($item['name']);
-                    if ($full) {
-                        $items[] = $full;
+            } elseif (is_array($data)) {
+                Log::info('ERPNext: Processing direct array', [
+                    'item_count' => count($data)
+                ]);
+
+                foreach ($data as $item) {
+                    if (isset($item['name'])) {
+                        try {
+                            $full = $this->getItemByName($item['name']);
+                            if ($full) {
+                                $items[] = $full;
+                            } else {
+                                Log::warning('ERPNext: Could not fetch full item details', [
+                                    'item_name' => $item['name']
+                                ]);
+                            }
+                        } catch (\Exception $e) {
+                            Log::error('ERPNext: Failed to fetch full item details', [
+                                'item_name' => $item['name'],
+                                'error' => $e->getMessage()
+                            ]);
+                        }
                     }
                 }
+            } else {
+                Log::warning('ERPNext: Unexpected response format', [
+                    'data_type' => gettype($data),
+                    'data_keys' => is_array($data) ? array_keys($data) : 'not_array'
+                ]);
             }
+
+            Log::info('ERPNext: Equipment fetch completed', [
+                'total_items_found' => count($items)
+            ]);
+
             return $items;
+
+        } catch (\Exception $e) {
+            Log::error('ERPNext: Failed to fetch equipment items', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return [];
         }
-        return [];
     }
 
     /**
@@ -167,10 +242,105 @@ class ERPNextClient
      */
     public function getItemByName(string $name): ?array
     {
-        $filters = urlencode(json_encode([["name", "=", $name]]));
-        $url = "/api/resource/Item?filters=$filters";
-        $response = $this->client->get($url);
-        $data = json_decode($response->getBody()->getContents(), true);
-        return $data['data'][0] ?? null;
+        try {
+            $filters = urlencode(json_encode([["name", "=", $name]]));
+            $url = "/api/resource/Item?filters=$filters";
+
+            Log::info('ERPNext: Fetching item by name', [
+                'item_name' => $name,
+                'url' => $url
+            ]);
+
+            $response = $this->client->get($url);
+            $body = $response->getBody()->getContents();
+
+            Log::info('ERPNext: Item by name response received', [
+                'item_name' => $name,
+                'status_code' => $response->getStatusCode(),
+                'body_length' => strlen($body)
+            ]);
+
+            $data = json_decode($body, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                Log::error('ERPNext: Failed to parse JSON response for item', [
+                    'item_name' => $name,
+                    'json_error' => json_last_error_msg(),
+                    'body' => substr($body, 0, 500)
+                ]);
+                return null;
+            }
+
+            $item = $data['data'][0] ?? null;
+
+            if ($item) {
+                Log::info('ERPNext: Item found', [
+                    'item_name' => $name,
+                    'item_code' => $item['item_code'] ?? 'unknown'
+                ]);
+            } else {
+                Log::warning('ERPNext: Item not found', [
+                    'item_name' => $name
+                ]);
+            }
+
+            return $item;
+
+        } catch (\Exception $e) {
+            Log::error('ERPNext: Failed to fetch item by name', [
+                'item_name' => $name,
+                'error' => $e->getMessage()
+            ]);
+            return null;
+        }
+    }
+
+    /**
+     * Test ERPNext connection and return status.
+     */
+    public function testConnection(): array
+    {
+        try {
+            Log::info('ERPNext: Testing connection');
+
+            // Test with a simple API call
+            $response = $this->client->get('/api/resource/Item?limit_page_length=1');
+            $statusCode = $response->getStatusCode();
+            $body = $response->getBody()->getContents();
+
+            $data = json_decode($body, true);
+            $jsonError = json_last_error();
+
+            $result = [
+                'success' => $statusCode === 200 && $jsonError === JSON_ERROR_NONE,
+                'status_code' => $statusCode,
+                'json_error' => $jsonError !== JSON_ERROR_NONE ? json_last_error_msg() : null,
+                'response_length' => strlen($body),
+                'has_data' => isset($data['data']),
+                'data_count' => isset($data['data']) ? count($data['data']) : 0,
+                'sample_response' => substr($body, 0, 200)
+            ];
+
+            Log::info('ERPNext: Connection test completed', $result);
+
+            return $result;
+
+        } catch (\Exception $e) {
+            Log::error('ERPNext: Connection test failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+                'status_code' => null,
+                'json_error' => null,
+                'response_length' => 0,
+                'has_data' => false,
+                'data_count' => 0,
+                'sample_response' => null
+            ];
+        }
     }
 }
