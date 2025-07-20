@@ -581,43 +581,56 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {/* Attendance Status Row */}
+                                                    {/* Regular Hours Row */}
                                                     <tr>
                                                         {Array.from({ length: new Date(safePayroll.year, safePayroll.month, 0).getDate() }, (_, i) => {
                                                             const day = i + 1;
                                                             const dayData = attendanceData?.[day];
 
                                                             // Always use real data if available
-                                                            const status = dayData?.status || 'A';
+                                                            const status = dayData?.status || '8';
                                                             const totalHours = dayData?.total_hours || 0;
+                                                            const overtimeHours = dayData?.overtime_hours || 0;
+                                                            const regularHours = totalHours - overtimeHours;
+                                                            const hasAnyHours = totalHours > 0 || overtimeHours > 0;
+                                                            const isFriday = status === 'F';
 
                                                             let bgColor = 'bg-green-100';
                                                             let textColor = 'text-green-700';
 
                                                             // Set colors based on status
-                                                            switch (status) {
-                                                                case 'F':
-                                                                    bgColor = 'bg-blue-100';
-                                                                    textColor = 'text-blue-700';
-                                                                    break;
-                                                                case 'A':
-                                                                    bgColor = 'bg-red-100';
-                                                                    textColor = 'text-red-700';
-                                                                    break;
-                                                                case 'O':
-                                                                    bgColor = 'bg-blue-100';
-                                                                    textColor = 'text-blue-700';
-                                                                    break;
-                                                                case '8':
-                                                                default:
-                                                                    bgColor = 'bg-green-100';
-                                                                    textColor = 'text-green-700';
-                                                                    break;
+                                                            if (isFriday) {
+                                                                bgColor = 'bg-blue-100';
+                                                                textColor = 'text-blue-700';
+                                                            } else if (status === 'A') {
+                                                                bgColor = 'bg-red-100';
+                                                                textColor = 'text-red-700';
+                                                            } else if (hasAnyHours) {
+                                                                // Always green if any hours worked (>0)
+                                                                bgColor = 'bg-green-100';
+                                                                textColor = 'text-green-700';
+                                                            } else {
+                                                                bgColor = 'bg-red-100';
+                                                                textColor = 'text-red-700';
+                                                            }
+
+                                                            // Determine what to display
+                                                            let displayValue = '8';
+                                                            if (isFriday) {
+                                                                displayValue = 'F';
+                                                            } else if (hasAnyHours) {
+                                                                if (regularHours === 8) {
+                                                                    displayValue = 'P';
+                                                                } else {
+                                                                    displayValue = regularHours.toString();
+                                                                }
+                                                            } else {
+                                                                displayValue = 'A';
                                                             }
 
                                                             return (
                                                                 <td key={day} className={`border border-gray-300 px-1 py-1 text-center text-xs font-medium ${bgColor} ${textColor}`}>
-                                                                    {status}
+                                                                    {displayValue}
                                                                 </td>
                                                             );
                                                         })}
@@ -641,9 +654,6 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                                                 </tbody>
                                             </table>
                                         </div>
-
-
-
                                         {/* Legend */}
                                         <div className="mt-1 flex flex-wrap gap-1 text-xs attendance-legend">
                                             <div className="flex items-center gap-1">
