@@ -1,7 +1,8 @@
 import { Button } from '@/Core/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@/Core/components/ui/table';
-import { Link } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 interface Invoice {
@@ -18,23 +19,26 @@ interface PageProps {
 }
 
 const InvoicesIndex: React.FC<PageProps> = ({ invoices }) => {
+    const { t } = useTranslation(['common', 'rentals']);
+
     const handleDownload = (id: number) => {
         // TODO: Implement download logic
-        toast.info('Download not implemented yet');
+        toast.info(t('common:download_not_implemented'));
     };
 
     return (
         <div className="p-6">
-            <h1 className="mb-4 text-2xl font-bold">Invoices</h1>
+            <Head title={t('rentals:invoices')} />
+            <h1 className="mb-4 text-2xl font-bold">{t('rentals:invoices')}</h1>
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell>Invoice #</TableCell>
-                        <TableCell>Customer</TableCell>
-                        <TableCell>Issue Date</TableCell>
-                        <TableCell>Status</TableCell>
-                        <TableCell>Total</TableCell>
-                        <TableCell>Actions</TableCell>
+                        <TableCell>{t('rentals:invoice_number')}</TableCell>
+                        <TableCell>{t('rentals:customer')}</TableCell>
+                        <TableCell>{t('rentals:issue_date')}</TableCell>
+                        <TableCell>{t('common:status')}</TableCell>
+                        <TableCell>{t('rentals:total')}</TableCell>
+                        <TableCell>{t('common:actions')}</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -47,10 +51,10 @@ const InvoicesIndex: React.FC<PageProps> = ({ invoices }) => {
                             <TableCell>{inv.total_amount}</TableCell>
                             <TableCell>
                                 <Link href={`/invoices/${inv.id}`} className="mr-2">
-                                    <Button size="sm">View</Button>
+                                    <Button size="sm">{t('common:view')}</Button>
                                 </Link>
-                                <Button size="sm" variant="outline" onClick={() => handleDownload(inv.id)}>
-                                    Download
+                                <Button size="sm" onClick={() => handleDownload(inv.id)}>
+                                    {t('common:download')}
                                 </Button>
                             </TableCell>
                         </TableRow>

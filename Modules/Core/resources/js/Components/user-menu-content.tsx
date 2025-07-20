@@ -7,7 +7,15 @@ import LanguageSwitcher from './LanguageSwitcher';
 import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from './ui/dropdown-menu';
 import { UserInfo } from './user-info';
 
-export function UserMenuContent() {
+interface UserMenuContentProps {
+    user?: {
+        name: string;
+        email: string;
+        avatar?: string;
+    };
+}
+
+export function UserMenuContent({ user }: UserMenuContentProps) {
     const { t } = useTranslation(['common']);
     const { closeMobileNavigation } = useMobileNavigation();
 
@@ -15,7 +23,7 @@ export function UserMenuContent() {
         <>
             <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                    <UserInfo />
+                    <UserInfo user={user} />
                 </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />

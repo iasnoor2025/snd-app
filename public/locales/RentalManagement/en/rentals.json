@@ -1,5 +1,13 @@
 {
     "title": "Rental Management",
+    "rentals": "Rentals",
+    "create_rental": "Create Rental",
+    "search_rentals": "Search rentals...",
+    "customer": "Customer",
+    "invoice_number": "Invoice #",
+    "issue_date": "Issue Date",
+    "invoices": "Invoices",
+    "total": "Total",
     "list": {
         "title": "Rentals",
         "add": "Add Rental",

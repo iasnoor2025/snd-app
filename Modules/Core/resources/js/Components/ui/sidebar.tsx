@@ -1,25 +1,56 @@
 import * as React from 'react';
 import { cn } from '../../lib/utils';
 
-const SidebarContext = React.createContext<{ collapsible?: string }>({});
+interface SidebarContextType {
+    collapsible?: string;
+    isCollapsed: boolean;
+    toggleCollapsed: () => void;
+}
+
+const SidebarContext = React.createContext<SidebarContextType>({
+    isCollapsed: false,
+    toggleCollapsed: () => {},
+});
+
+export function useSidebar() {
+    const context = React.useContext(SidebarContext);
+    if (!context) {
+        throw new Error('useSidebar must be used within a SidebarProvider');
+    }
+    return context;
+}
 
 export function Sidebar({ children, collapsible = 'icon', className, ...props }: React.HTMLAttributes<HTMLDivElement> & { collapsible?: string }) {
+    const { isCollapsed } = useSidebar();
+
     return (
-        <SidebarContext.Provider value={{ collapsible }}>
-            <aside
-                data-collapsible={collapsible}
-                className={cn('group/sidebar-wrapper flex h-full flex-col transition-[width] ease-linear', className)}
-                {...props}
-            >
-                {children}
-            </aside>
-        </SidebarContext.Provider>
+        <aside
+            data-collapsible={collapsible}
+            data-collapsed={isCollapsed}
+            className={cn(
+                'group/sidebar-wrapper flex h-full flex-col transition-[width] duration-300 ease-in-out',
+                isCollapsed ? 'w-16' : 'w-64',
+                className
+            )}
+            {...props}
+        >
+            {children}
+        </aside>
     );
 }
 
 export function SidebarHeader({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+    const { isCollapsed } = useSidebar();
+
     return (
-        <div className={cn('flex items-center', className)} {...props}>
+        <div
+            className={cn(
+                'flex shrink-0 items-center border-b px-4 py-3',
+                isCollapsed && 'justify-center px-2',
+                className
+            )}
+            {...props}
+        >
             {children}
         </div>
     );
@@ -34,8 +65,17 @@ export function SidebarContent({ children, className, ...props }: React.HTMLAttr
 }
 
 export function SidebarFooter({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+    const { isCollapsed } = useSidebar();
+
     return (
-        <div className={cn('flex items-center', className)} {...props}>
+        <div
+            className={cn(
+                'border-t px-4 py-3',
+                isCollapsed && 'px-2',
+                className
+            )}
+            {...props}
+        >
             {children}
         </div>
     );
@@ -64,6 +104,7 @@ export function SidebarMenuButton({
     asChild = false,
     ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & { size?: 'sm' | 'md' | 'lg'; asChild?: boolean }) {
+    const { isCollapsed } = useSidebar();
     const sizes = {
         sm: 'px-2 py-1 text-sm',
         md: 'px-3 py-2 text-base',
@@ -74,6 +115,7 @@ export function SidebarMenuButton({
         <Comp
             className={cn(
                 'flex w-full items-center gap-2 rounded transition-colors hover:bg-accent focus:ring-2 focus:ring-primary focus:outline-none',
+                isCollapsed && 'justify-center px-2',
                 sizes[size],
                 className,
             )}
@@ -85,10 +127,13 @@ export function SidebarMenuButton({
 }
 
 export function SidebarTrigger({ className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+    const { toggleCollapsed } = useSidebar();
+
     return (
         <button
             type="button"
             aria-label="Toggle sidebar"
+            onClick={toggleCollapsed}
             className={cn(
                 'inline-flex items-center justify-center rounded p-2 text-muted-foreground hover:bg-accent focus:ring-2 focus:ring-primary focus:outline-none',
                 className,
@@ -112,6 +157,12 @@ export function SidebarGroup({ children, className, ...props }: React.HTMLAttrib
 }
 
 export function SidebarGroupLabel({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+    const { isCollapsed } = useSidebar();
+
+    if (isCollapsed) {
+        return null; // Hide group labels when collapsed
+    }
+
     return (
         <div className={cn('px-3 py-1 text-xs font-semibold text-muted-foreground uppercase', className)} {...props}>
             {children}
@@ -120,6 +171,12 @@ export function SidebarGroupLabel({ children, className, ...props }: React.HTMLA
 }
 
 export function SidebarMenuSub({ children, className, ...props }: React.HTMLAttributes<HTMLUListElement>) {
+    const { isCollapsed } = useSidebar();
+
+    if (isCollapsed) {
+        return null; // Hide submenus when collapsed
+    }
+
     return (
         <ul className={cn('ml-4 flex flex-col gap-1 border-l pl-2', className)} {...props}>
             {children}
@@ -150,6 +207,34 @@ export function SidebarMenuSubButton({ children, className, ...props }: React.Bu
 }
 
 export function SidebarProvider({ children, defaultOpen = true }: { children: React.ReactNode; defaultOpen?: boolean }) {
-    // Placeholder for context logic if needed
-    return <>{children}</>;
+    const [isCollapsed, setIsCollapsed] = React.useState(() => {
+        // Load saved state from localStorage
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem('sidebar-collapsed');
+            return saved ? JSON.parse(saved) : !defaultOpen;
+        }
+        return !defaultOpen;
+    });
+
+    const toggleCollapsed = React.useCallback(() => {
+        setIsCollapsed((prev: boolean) => {
+            const newState = !prev;
+            // Save to localStorage
+            if (typeof window !== 'undefined') {
+                localStorage.setItem('sidebar-collapsed', JSON.stringify(newState));
+            }
+            return newState;
+        });
+    }, []);
+
+    const contextValue = React.useMemo(() => ({
+        isCollapsed,
+        toggleCollapsed,
+    }), [isCollapsed, toggleCollapsed]);
+
+    return (
+        <SidebarContext.Provider value={contextValue}>
+            {children}
+        </SidebarContext.Provider>
+    );
 }

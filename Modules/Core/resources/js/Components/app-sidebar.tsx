@@ -1,10 +1,11 @@
 import { type NavItem } from '../types';
 import { NavMain } from './nav-main';
 import { NavUser } from './nav-user';
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger } from './ui/sidebar';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from './ui/sidebar';
 
 import { usePermission } from '../hooks/usePermission';
 import AppLogo from './app-logo';
+import AppLogoIcon from './app-logo-icon';
 
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -62,6 +63,7 @@ const moduleDisplayNames: Record<string, string> = {
 export function AppSidebar() {
     const { i18n } = useTranslation(['common']);
     const { hasPermission, isAdmin, user } = usePermission();
+    const { isCollapsed } = useSidebar();
     const [modules, setModules] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -168,27 +170,35 @@ export function AppSidebar() {
 
     return (
         <Sidebar collapsible="icon" className="border-r bg-white">
-            <SidebarHeader className="flex items-center gap-2 border-b p-4">
-                <SidebarTrigger className="mr-2" />
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton size="lg">
-                            <AppLogo />
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
-                <button
-                    onClick={handleRefresh}
-                    className="ml-auto text-xs text-gray-600 hover:text-gray-800 transition-colors"
-                    title={`Refresh modules${lastRefresh ? ` (Last: ${lastRefresh.toLocaleTimeString()})` : ''}`}
-                    disabled={loading}
-                >
-                    {loading ? (
-                        <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-gray-600"></div>
-                    ) : (
-                        '↻'
+            <SidebarHeader>
+                <div className="flex items-center gap-2">
+                    {!isCollapsed && (
+                        <>
+                            <SidebarMenu>
+                                <SidebarMenuItem>
+                                    <SidebarMenuButton size="lg">
+                                        <AppLogo />
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            </SidebarMenu>
+                            <button
+                                onClick={handleRefresh}
+                                className="ml-auto text-xs text-gray-600 hover:text-gray-800 transition-colors"
+                                title={`Refresh modules${lastRefresh ? ` (Last: ${lastRefresh.toLocaleTimeString()})` : ''}`}
+                                disabled={loading}
+                            >
+                                {loading ? (
+                                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-gray-600"></div>
+                                ) : (
+                                    '↻'
+                                )}
+                            </button>
+                        </>
                     )}
-                </button>
+                    {isCollapsed && (
+                        <AppLogoIcon className="h-6 w-6 fill-current text-black dark:text-white" />
+                    )}
+                </div>
             </SidebarHeader>
             <SidebarContent className="flex-1">
                 {loading ? (
@@ -203,7 +213,7 @@ export function AppSidebar() {
                     <NavMain items={finalNavigationItems} />
                 )}
             </SidebarContent>
-            <SidebarFooter className="border-t p-4">
+            <SidebarFooter>
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

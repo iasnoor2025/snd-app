@@ -4,23 +4,35 @@ import { useInitials } from '../hooks/use-initials';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { SmartAvatar } from './ui/smart-avatar';
 
-export function UserInfo() {
+interface UserInfoProps {
+    user?: {
+        name: string;
+        email: string;
+        avatar?: string;
+    };
+    showName?: boolean;
+}
+
+export function UserInfo({ user, showName = true }: UserInfoProps) {
     const { auth } = usePage<SharedData>().props;
+    const currentUser = user || auth.user;
     const getInitials = useInitials();
-    const initials = getInitials(auth.user.name);
+    const initials = getInitials(currentUser.name);
 
     return (
         <div className="flex items-center gap-2">
             <SmartAvatar>
                 <Avatar>
-                    <AvatarImage src={auth.user.avatar} alt={auth.user.name} />
+                    <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
                     <AvatarFallback>{initials}</AvatarFallback>
                 </Avatar>
             </SmartAvatar>
-            <div className="flex flex-col">
-                <span className="text-sm font-medium">{auth.user.name}</span>
-                <span className="text-xs text-muted-foreground">{auth.user.email}</span>
-            </div>
+            {showName && (
+                <div className="flex flex-col min-w-0">
+                    <span className="text-sm font-medium truncate">{currentUser.name}</span>
+                    <span className="text-xs text-muted-foreground truncate">{currentUser.email}</span>
+                </div>
+            )}
         </div>
     );
 }

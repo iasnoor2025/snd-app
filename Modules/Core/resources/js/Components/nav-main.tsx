@@ -1,7 +1,9 @@
 import { type NavItem } from '@/Core/types';
 import { router } from '@inertiajs/core';
+import { usePage } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 import { usePermission } from '../hooks/usePermission';
+import { cn } from '../lib/utils';
 import { Icon } from './icon';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
 import {
@@ -13,6 +15,7 @@ import {
     SidebarMenuSub,
     SidebarMenuSubButton,
     SidebarMenuSubItem,
+    useSidebar,
 } from './ui/sidebar';
 
 interface NavMainProps {
@@ -22,6 +25,20 @@ interface NavMainProps {
 export function NavMain({ items }: NavMainProps) {
     const { t } = useTranslation('common');
     const { hasPermission } = usePermission();
+    const { isCollapsed } = useSidebar();
+    const page = usePage();
+    const currentUrl = page.url;
+
+    // Function to check if item is active
+    const isActive = (href: string) => {
+        // Check for exact match first
+        if (currentUrl === href) return true;
+
+        // Check if current URL starts with the item href (for nested routes)
+        if (href !== '/' && currentUrl.startsWith(href)) return true;
+
+        return false;
+    };
 
     if (!items || items.length === 0) {
         return (
@@ -46,14 +63,22 @@ export function NavMain({ items }: NavMainProps) {
                     //     return null;
                     // }
 
-                    if (item.items) {
+                    const itemIsActive = isActive(item.href);
+
+                    if (item.items && !isCollapsed) {
                         return (
                             <SidebarMenuItem key={index}>
                                 <Collapsible>
                                     <CollapsibleTrigger>
-                                        <SidebarMenuButton onClick={() => router.visit(item.href)} className="w-full text-left">
-                                            {item.icon && <Icon name={item.icon} className="mr-2 h-4 w-4" />}
-                                            {item.title}
+                                        <SidebarMenuButton
+                                            onClick={() => router.visit(item.href)}
+                                            className={cn(
+                                                "w-full text-left",
+                                                itemIsActive && "bg-accent text-accent-foreground font-medium"
+                                            )}
+                                        >
+                                            {item.icon && <Icon name={item.icon} className="h-4 w-4 shrink-0" />}
+                                            {!isCollapsed && <span className="truncate">{item.title}</span>}
                                         </SidebarMenuButton>
                                     </CollapsibleTrigger>
                                     <CollapsibleContent>
@@ -64,10 +89,18 @@ export function NavMain({ items }: NavMainProps) {
                                                 //     return null;
                                                 // }
 
+                                                const childIsActive = isActive(child.href);
+
                                                 return (
                                                     <SidebarMenuSubItem key={childIndex}>
-                                                        <SidebarMenuSubButton onClick={() => router.visit(child.href)} className="w-full text-left">
-                                                            {child.title}
+                                                        <SidebarMenuSubButton
+                                                            onClick={() => router.visit(child.href)}
+                                                            className={cn(
+                                                                "w-full text-left",
+                                                                childIsActive && "bg-accent text-accent-foreground font-medium"
+                                                            )}
+                                                        >
+                                                            <span className="truncate">{child.title}</span>
                                                         </SidebarMenuSubButton>
                                                     </SidebarMenuSubItem>
                                                 );
@@ -85,10 +118,14 @@ export function NavMain({ items }: NavMainProps) {
                                 onClick={() => {
                                     router.visit(item.href);
                                 }}
-                                className="flex w-full items-center text-left"
+                                className={cn(
+                                    "flex w-full items-center text-left",
+                                    itemIsActive && "bg-accent text-accent-foreground font-medium"
+                                )}
+                                title={isCollapsed ? item.title : undefined} // Show tooltip when collapsed
                             >
-                                {item.icon && <Icon name={item.icon} className="mr-2 h-4 w-4" />}
-                                {item.title}
+                                {item.icon && <Icon name={item.icon} className="h-4 w-4 shrink-0" />}
+                                {!isCollapsed && <span className="truncate">{item.title}</span>}
                             </SidebarMenuButton>
                         </SidebarMenuItem>
                     );

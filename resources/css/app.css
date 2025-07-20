@@ -48,27 +48,57 @@
     --radius: 0.375rem;
     --tracking-tighter: calc(var(--tracking-normal) - 0.05em);
     --tracking-tight: calc(var(--tracking-normal) - 0.025em);
+    --tracking-normal: 0em;
     --tracking-wide: calc(var(--tracking-normal) + 0.025em);
     --tracking-wider: calc(var(--tracking-normal) + 0.05em);
     --tracking-widest: calc(var(--tracking-normal) + 0.1em);
-    --tracking-normal: var(--tracking-normal);
-    --shadow-2xl: var(--shadow-2xl);
-    --shadow-xl: var(--shadow-xl);
-    --shadow-lg: var(--shadow-lg);
-    --shadow-md: var(--shadow-md);
-    --shadow: var(--shadow);
-    --shadow-sm: var(--shadow-sm);
-    --shadow-xs: var(--shadow-xs);
-    --shadow-2xs: var(--shadow-2xs);
-    --spacing: var(--spacing);
-    --letter-spacing: var(--letter-spacing);
-    --shadow-offset-y: var(--shadow-offset-y);
-    --shadow-offset-x: var(--shadow-offset-x);
-    --shadow-spread: var(--shadow-spread);
-    --shadow-blur: var(--shadow-blur);
-    --shadow-opacity: var(--shadow-opacity);
-    --color-shadow-color: var(--shadow-color);
-    --color-destructive-foreground: var(--destructive-foreground);
+    --leading-3: 0.75rem;
+    --leading-4: 1rem;
+    --leading-5: 1.25rem;
+    --leading-6: 1.5rem;
+    --leading-7: 1.75rem;
+    --leading-8: 2rem;
+    --leading-9: 2.25rem;
+    --leading-10: 2.5rem;
+    --leading-none: 1;
+    --leading-tight: 1.25;
+    --leading-snug: 1.375;
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.625;
+    --leading-loose: 2;
+    --sidebar-width: 16rem;
+    --sidebar-width-collapsed: 4rem;
+}
+
+/* Custom sidebar transitions and animations */
+.group\/sidebar-wrapper {
+    transition: width 300ms ease-in-out;
+}
+
+/* Ensure collapsed sidebar has proper overflow behavior */
+.group\/sidebar-wrapper[data-collapsed="true"] {
+    width: var(--sidebar-width-collapsed);
+}
+
+.group\/sidebar-wrapper[data-collapsed="false"] {
+    width: var(--sidebar-width);
+}
+
+/* Smooth transitions for sidebar content */
+.group\/sidebar-wrapper * {
+    transition: opacity 200ms ease-in-out;
+}
+
+/* Hide text content smoothly when collapsing */
+.group\/sidebar-wrapper[data-collapsed="true"] .truncate {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
+
+.group\/sidebar-wrapper[data-collapsed="false"] .truncate {
+    opacity: 1;
+    width: auto;
 }
 
 :root {

@@ -2,7 +2,7 @@ import { Head } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 
 export default function TranslationTest() {
-    const { t, i18n } = useTranslation('common');
+    const { t, i18n } = useTranslation(['common', 'fields', 'actions', 'messages', 'status']);
 
     return (
         <>
@@ -16,77 +16,88 @@ export default function TranslationTest() {
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <strong>Key:</strong> navigation.dashboard
+                                <strong>Key:</strong> common:navigation.dashboard
                             </div>
                             <div>
-                                <strong>Value:</strong> {t('navigation.dashboard')}
-                            </div>
-
-                            <div>
-                                <strong>Key:</strong> navigation.users
-                            </div>
-                            <div>
-                                <strong>Value:</strong> {t('navigation.users')}
+                                <strong>Value:</strong> {t('common:navigation.dashboard')}
                             </div>
 
                             <div>
-                                <strong>Key:</strong> actions.create
+                                <strong>Key:</strong> common:navigation.users
                             </div>
                             <div>
-                                <strong>Value:</strong> {t('actions.create')}
-                            </div>
-
-                            <div>
-                                <strong>Key:</strong> fields.name
-                            </div>
-                            <div>
-                                <strong>Value:</strong> {t('fields.name')}
+                                <strong>Value:</strong> {t('common:navigation.users')}
                             </div>
 
                             <div>
-                                <strong>Key:</strong> messages.loading
+                                <strong>Key:</strong> actions:create
                             </div>
                             <div>
-                                <strong>Value:</strong> {t('messages.loading')}
+                                <strong>Value:</strong> {t('actions:create')}
                             </div>
 
                             <div>
-                                <strong>Key:</strong> status.active
+                                <strong>Key:</strong> fields:name
                             </div>
                             <div>
-                                <strong>Value:</strong> {t('status.active')}
+                                <strong>Value:</strong> {t('fields:name')}
+                            </div>
+
+                            <div>
+                                <strong>Key:</strong> messages:loading
+                            </div>
+                            <div>
+                                <strong>Value:</strong> {t('messages:loading')}
+                            </div>
+
+                            <div>
+                                <strong>Key:</strong> status:active
+                            </div>
+                            <div>
+                                <strong>Value:</strong> {t('status:active')}
                             </div>
                         </div>
 
-                        <div className="mt-6 border-t pt-6">
-                            <h3 className="mb-2 text-lg font-semibold">i18n Debug Info</h3>
-                            <div className="space-y-1 text-sm text-gray-600">
+                        <div className="mt-8 border-t pt-6">
+                            <h3 className="mb-4 text-lg font-semibold">Language Information</h3>
+                            <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <strong>Current Language:</strong> {i18n.language}
                                 </div>
                                 <div>
+                                    <strong>Text Direction:</strong> {i18n.dir()}
+                                </div>
+                                <div>
+                                    <strong>Available Languages:</strong> {i18n.languages.join(', ')}
+                                </div>
+                                <div>
                                     <strong>Loaded Namespaces:</strong> {i18n.options.ns?.join(', ')}
-                                </div>
-                                <div>
-                                    <strong>Backend URL Pattern:</strong> /locales/Core/en/common.json
-                                </div>
-                                <div>
-                                    <strong>Is Initialized:</strong> {i18n.isInitialized ? 'Yes' : 'No'}
                                 </div>
                             </div>
                         </div>
 
-                        <div className="mt-4">
-                            <button onClick={() => window.location.reload()} className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
-                                Reload Page
-                            </button>
-                            <a
-                                href="/locales/Core/en/common.json"
-                                target="_blank"
-                                className="ml-4 inline-block rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
-                            >
-                                View Translation File
-                            </a>
+                        <div className="mt-8 border-t pt-6">
+                            <h3 className="mb-4 text-lg font-semibold">Fallback Test</h3>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <strong>Non-existent Key:</strong> common:non_existent_key
+                                </div>
+                                <div>
+                                    <strong>Value:</strong> {t('common:non_existent_key', 'Default Fallback')}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-8 border-t pt-6">
+                            <h3 className="mb-4 text-lg font-semibold">Interpolation Test</h3>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <strong>Key with Variables:</strong> common:welcome_user
+                                </div>
+                                <div>
+                                    <strong>Value:</strong> {t('common:welcome_user', { username: 'John Doe' })}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

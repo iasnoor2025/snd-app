@@ -12,16 +12,18 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
     return (
         <header className="flex h-16 shrink-0 items-center gap-2 border-b border-sidebar-border/50 bg-white px-6 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:px-4">
             <div className="flex items-center gap-2">
-                <SidebarTrigger className="-ml-1" />
                 <Breadcrumbs breadcrumbs={breadcrumbs} />
             </div>
-            <button
-                className="ml-auto flex items-center justify-center rounded-full p-2 transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
-                title={`Switch theme (current: ${theme})`}
-                onClick={() => setTheme(nextTheme)}
-            >
-                {icon}
-            </button>
+            <div className="ml-auto flex items-center gap-2">
+                <button
+                    className="flex items-center justify-center rounded-full p-2 transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
+                    title={`Switch theme (current: ${theme})`}
+                    onClick={() => setTheme(nextTheme)}
+                >
+                    {icon}
+                </button>
+                <SidebarTrigger />
+            </div>
         </header>
     );
 }

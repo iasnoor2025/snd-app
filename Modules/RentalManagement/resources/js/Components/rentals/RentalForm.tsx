@@ -25,106 +25,62 @@ export const RentalForm: React.FC<RentalFormProps> = ({
     onSubmit,
     onCancel,
 }) => {
-    const { t } = useTranslation('RentalManagement');
+    const { t } = useTranslation(['common', 'fields', 'rentals']);
     const { data, setData, errors, processing } = useForm({
         rental_number: initialData.rental_number || '',
         customer_id: initialData.customer_id || '',
-        equipment_ids: initialData.equipment_ids || [],
-        operator_ids: initialData.operator_ids || [],
         start_date: initialData.start_date || '',
         expected_end_date: initialData.expected_end_date || '',
         notes: initialData.notes || '',
+        equipment_ids: initialData.equipment_ids || [],
+        operator_ids: initialData.operator_ids || [],
     });
 
-    const [equipmentPrices, setEquipmentPrices] = useState<{ [id: string]: number | null }>({});
-    const [isPriceLoading, setIsPriceLoading] = useState(false);
+    const [selectedEquipment, setSelectedEquipment] = useState<any[]>(
+        initialData.equipment?.map((eq: any) => ({ id: eq.id, name: eq.name })) || [],
+    );
 
-    // Helper to fetch dynamic price for equipment
-    const fetchDynamicPrice = async (equipmentId: string, days: number) => {
-        setIsPriceLoading(true);
-        try {
-            const response = await fetch(`/api/equipment/${equipmentId}/calculate-price`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    rental_date: data.start_date || new Date().toISOString().slice(0, 10),
-                    duration: days,
-                    quantity: 1,
-                }),
-            });
-            if (!response.ok) throw new Error('Failed to fetch dynamic price');
-            const result = await response.json();
-            return result.data?.final_price || null;
-        } catch (err) {
-            toast.error('Failed to calculate dynamic price');
-            return null;
-        } finally {
-            setIsPriceLoading(false);
-        }
-    };
+    const [selectedOperators, setSelectedOperators] = useState<any[]>(
+        initialData.operators?.map((op: any) => ({ id: op.id, name: op.name })) || [],
+    );
 
-    // Update price when equipment, start_date, or expected_end_date changes
     useEffect(() => {
-        const updatePrices = async () => {
-            if (!data.start_date || !data.expected_end_date || !data.equipment_ids.length) return;
-            const startDateObj = new Date(data.start_date);
-            const endDateObj = new Date(data.expected_end_date);
-            const days = Math.ceil((endDateObj.getTime() - startDateObj.getTime()) / (1000 * 60 * 60 * 24));
-            if (days <= 0) return;
-            const newPrices: { [id: string]: number | null } = {};
-            for (const id of data.equipment_ids) {
-                newPrices[id] = await fetchDynamicPrice(id, days);
-            }
-            setEquipmentPrices(newPrices);
-        };
-        updatePrices();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [data.equipment_ids, data.start_date, data.expected_end_date]);
+        setData('equipment_ids', selectedEquipment.map((eq) => eq.id));
+    }, [selectedEquipment]);
+
+    useEffect(() => {
+        setData('operator_ids', selectedOperators.map((op) => op.id));
+    }, [selectedOperators]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        // Validate required fields
-        if (!data.rental_number) {
-            RentalToastService.rentalValidationError('rental number');
-            return;
+        try {
+            await onSubmit(data);
+            RentalToastService.success(
+                isEditMode ? 'Rental updated successfully!' : 'Rental created successfully!',
+            );
+        } catch (error) {
+            RentalToastService.error('Failed to save rental. Please try again.');
         }
-        if (!data.customer_id) {
-            RentalToastService.rentalValidationError('customer');
-            return;
-        }
-        if (!data.equipment_ids.length) {
-            RentalToastService.rentalValidationError('equipment');
-            return;
-        }
-        if (!data.start_date) {
-            RentalToastService.rentalValidationError('start date');
-            return;
-        }
-        if (!data.expected_end_date) {
-            RentalToastService.rentalValidationError('expected end date');
-            return;
-        }
-
-        await onSubmit(data);
     };
 
     const addEquipment = (equipmentId: string) => {
-        if (!data.equipment_ids.includes(equipmentId)) {
-            setData('equipment_ids', [...data.equipment_ids, equipmentId]);
+        const equipment = equipment.find((eq) => eq.id.toString() === equipmentId);
+        if (equipment && !selectedEquipment.find((eq) => eq.id.toString() === equipmentId)) {
+            setSelectedEquipment([...selectedEquipment, equipment]);
         }
     };
 
     const removeEquipment = (equipmentId: string) => {
-        setData(
-            'equipment_ids',
-            data.equipment_ids.filter((id) => id !== equipmentId),
+        setSelectedEquipment(
+            selectedEquipment.filter((eq) => eq.id.toString() !== equipmentId),
         );
     };
 
     const addOperator = (operatorId: string) => {
-        if (!data.operator_ids.includes(operatorId)) {
-            setData('operator_ids', [...data.operator_ids, operatorId]);
+        const operator = employees.find((emp) => emp.id.toString() === operatorId);
+        if (operator && !selectedOperators.find((op) => op.id.toString() === operatorId)) {
+            setSelectedOperators([...selectedOperators, operator]);
         }
     };
 
@@ -138,7 +94,7 @@ export const RentalForm: React.FC<RentalFormProps> = ({
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-                <Label htmlFor="rental_number">{t('rental_number')}</Label>
+                <Label htmlFor="rental_number">{t('rentals:rental_number')}</Label>
                 <Input
                     id="rental_number"
                     type="text"
@@ -150,10 +106,10 @@ export const RentalForm: React.FC<RentalFormProps> = ({
             </div>
 
             <div>
-                <Label htmlFor="customer_id">{t('customer')}</Label>
+                <Label htmlFor="customer_id">{t('rentals:customer')}</Label>
                 <Select value={data.customer_id || undefined} onValueChange={(value) => setData('customer_id', value)}>
                     <SelectTrigger>
-                        <SelectValue placeholder={t('select_customer')} />
+                        <SelectValue placeholder={t('rentals:select_customer')} />
                     </SelectTrigger>
                     <SelectContent>
                         {customers.map((customer) => (
@@ -167,19 +123,19 @@ export const RentalForm: React.FC<RentalFormProps> = ({
             </div>
 
             <div>
-                <Label htmlFor="start_date">{t('start_date')}</Label>
+                <Label htmlFor="start_date">{t('fields:start_date')}</Label>
                 <DatePicker value={formatDateMedium(data.start_date)} onChange={(date) => setData('start_date', date)} />
                 {errors.start_date && <p className="text-sm text-red-600">{errors.start_date}</p>}
             </div>
 
             <div>
-                <Label htmlFor="expected_end_date">{t('expected_end_date')}</Label>
+                <Label htmlFor="expected_end_date">{t('rentals:expected_end_date')}</Label>
                 <DatePicker value={data.expected_end_date} onChange={(date) => setData('expected_end_date', date)} />
                 {errors.expected_end_date && <p className="text-sm text-red-600">{errors.expected_end_date}</p>}
             </div>
 
             <div>
-                <Label htmlFor="notes">{t('notes')}</Label>
+                <Label htmlFor="notes">{t('fields:notes')}</Label>
                 <textarea
                     id="notes"
                     className="focus:border-primary-500 focus:ring-primary-500 mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm"
@@ -192,10 +148,10 @@ export const RentalForm: React.FC<RentalFormProps> = ({
 
             <div className="flex justify-end space-x-3">
                 <Button type="button" variant="outline" onClick={onCancel} disabled={processing}>
-                    {t('cancel')}
+                    {t('common:cancel')}
                 </Button>
                 <Button type="submit" disabled={processing}>
-                    {isEditMode ? t('update') : t('create')}
+                    {isEditMode ? t('common:update') : t('common:create')}
                 </Button>
             </div>
         </form>

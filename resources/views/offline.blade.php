@@ -252,10 +252,10 @@
 
             if (navigator.onLine) {
                 statusElement.className = 'connection-status status-online';
-                statusElement.innerHTML = '🟢 {{ __('Connected to internet') }}';
+                statusElement.innerHTML = '🟢 {{ __('Core::offline.connected_to_internet') }}';
             } else {
                 statusElement.className = 'connection-status status-offline';
-                statusElement.innerHTML = '🔴 {{ __('No internet connection') }}';
+                statusElement.innerHTML = '🔴 {{ __('Core::offline.no_internet_connection') }}';
             }
         }
 
@@ -272,7 +272,7 @@
                     retryBtn.classList.remove('loading');
                     // Show a brief message
                     const originalText = retryBtn.querySelector('.btn-text').textContent;
-                    retryBtn.querySelector('.btn-text').textContent = '{{ __('Still offline') }}';
+                    retryBtn.querySelector('.btn-text').textContent = '{{ __('Core::offline.still_offline') }}';
                     setTimeout(() => {
                         retryBtn.querySelector('.btn-text').textContent = originalText;
                     }, 2000);
