@@ -279,7 +279,11 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
         last_name: String(employee.last_name || ''),
         employee_id: employee.employee_id ? String(employee.employee_id) : String(employee.id || ''),
         designation: employee.designation ? String(employee.designation) : 'N/A',
-        department: employee.department ? String(employee.department) : 'N/A'
+        department: employee.department ? String(employee.department) : 'N/A',
+        basic_salary: Number(employee.basic_salary) || 0,
+        food_allowance: Number(employee.food_allowance) || 0,
+        housing_allowance: Number(employee.housing_allowance) || 0,
+        transport_allowance: Number(employee.transport_allowance) || 0
     };
 
     const safePayroll = {
@@ -302,7 +306,7 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
     };
 
     // Calculate totals
-    const grossPay = safePayroll.base_salary + safePayroll.overtime_amount + safePayroll.bonus_amount;
+    const grossPay = safeEmployee.basic_salary + safePayroll.overtime_amount + safePayroll.bonus_amount;
     const totalDeductions = safePayroll.advance_deduction;
     const netPay = grossPay - totalDeductions;
 
@@ -489,7 +493,7 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                                             </div>
                                             <div className="flex justify-between text-xs">
                                                 <span className="text-gray-500">Basic:</span>
-                                                <span className="font-bold text-green-700">{formatCurrency(safePayroll.base_salary)}</span>
+                                                <span className="font-bold text-green-700">{formatCurrency(safeEmployee.basic_salary)}</span>
                                             </div>
                                             <div className="flex justify-between text-xs">
                                                 <span className="text-gray-500">Overtime:</span>
@@ -525,7 +529,7 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                                             </div>
                                             <div className="flex justify-between text-xs">
                                                 <span className="text-gray-500">Rate:</span>
-                                                <span>{formatCurrency(safePayroll.base_salary / (safePayroll.total_worked_hours || 1))}</span>
+                                                <span>{formatCurrency(safeEmployee.basic_salary / (safePayroll.total_worked_hours || 1))}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -690,7 +694,7 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                                         <h4 className="mb-1 text-sm font-semibold text-gray-700">Earnings & Deductions</h4>
                                         <div className="grid grid-cols-2 gap-y-1 text-sm">
                                             <div className="font-medium text-gray-600">Basic Salary:</div>
-                                            <div className="text-right font-medium">{formatCurrency(safePayroll.base_salary)}</div>
+                                            <div className="text-right font-medium">{formatCurrency(safeEmployee.basic_salary)}</div>
 
                                             <div className="font-medium text-gray-600">Overtime Pay:</div>
                                             <div className="text-right text-green-600">{formatCurrency(safePayroll.overtime_amount)}</div>

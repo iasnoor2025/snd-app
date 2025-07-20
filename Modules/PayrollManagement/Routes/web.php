@@ -79,6 +79,9 @@ Route::prefix('hr/payroll')->name('payroll.')->middleware('auth')->group(functio
         ->where('payroll', '[0-9]+')
         ->middleware('permission:payroll.view')
         ->name('payslip.view');
+    Route::post('/payslip/bulk-pdf', [PayrollController::class, 'generateBulkPayslipPDF'])
+        ->middleware('permission:payroll.view')
+        ->name('payslip.bulk-pdf');
     Route::prefix('runs')->name('runs.')->group(function () {
         Route::get('/{payrollRun}', [PayrollController::class, 'showPayrollRun'])
             ->where('payrollRun', '[0-9]+')

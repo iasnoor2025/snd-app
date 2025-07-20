@@ -32,7 +32,7 @@ import { PageProps } from '@/Core/types';
 import { router } from '@inertiajs/core';
 import { Head } from '@inertiajs/react';
 import { format } from 'date-fns';
-import { Banknote, Calendar, User, TrendingUp, TrendingDown, DollarSign, Trash2, Search } from 'lucide-react';
+import { Banknote, Calendar, User, TrendingUp, TrendingDown, DollarSign, Trash2, Search, Printer } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { route } from 'ziggy-js';
@@ -85,6 +85,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
     const [employeeSearch, setEmployeeSearch] = useState('');
     const [processing, setProcessing] = useState(false);
     const [bulkDeleteProcessing, setBulkDeleteProcessing] = useState(false);
+    const [printAllProcessing, setPrintAllProcessing] = useState(false);
     const [selectedPayrolls, setSelectedPayrolls] = useState<number[]>([]);
     const [formData, setFormData] = useState({
         employee_id: '',
@@ -290,6 +291,59 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
         }
     };
 
+        const handlePrintAllPayslips = async () => {
+        try {
+            setPrintAllProcessing(true);
+
+            // Get all payroll IDs from the current page
+            const payrollIds = payrolls.data.map(payroll => payroll.id);
+
+            if (payrollIds.length === 0) {
+                toast.error('No payrolls to print');
+                return;
+            }
+
+            toast.info(`Generating PDF with ${payrollIds.length} payslips...`);
+
+            // Create a single PDF with all payslips
+            const response = await fetch(route('payroll.payslip.bulk-pdf'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                    'Accept': 'application/pdf'
+                },
+                body: JSON.stringify({
+                    payroll_ids: payrollIds
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            // Get the PDF blob
+            const blob = await response.blob();
+
+            // Create download link
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `all_payslips_${new Date().toISOString().slice(0, 10)}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+
+            toast.success(`PDF generated successfully with ${payrollIds.length} payslips`);
+        } catch (error: any) {
+            console.error('Print all payslips error:', error);
+            toast.error('Failed to generate PDF: ' + (error.message || 'Unknown error'));
+        } finally {
+            setPrintAllProcessing(false);
+        }
+    };
+
     return (
         <AppLayout title="Payroll Management" breadcrumbs={[{ title: 'Payroll', href: route('payroll.index') }]} requiredPermission="payroll.view">
             <Head title="Payroll Management" />
@@ -300,7 +354,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                         <CardTitle>Payroll Management</CardTitle>
                         <div className="flex gap-2">
                             <Button onClick={() => setShowModal(true)}>Process Payroll</Button>
-                                                                                    <Button
+                            <Button
                                 variant="outline"
                                 type="button"
                                 onClick={() => setShowConfirmDialog(true)}
@@ -308,8 +362,18 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                             >
                                 {isGenerating ? 'Generating...' : 'Generate Payroll'}
                             </Button>
-
-                                                                                    {isAdmin && (
+                            {hasRecords && payrolls?.data?.length > 0 && (
+                                <Button
+                                    variant="outline"
+                                    onClick={handlePrintAllPayslips}
+                                    disabled={printAllProcessing}
+                                    className="flex items-center gap-2"
+                                >
+                                    <Printer className="h-4 w-4" />
+                                    {printAllProcessing ? 'Generating PDF...' : 'Download All Payslips PDF'}
+                                </Button>
+                            )}
+                            {isAdmin && (
                                 <>
                                     {selectedPayrolls.length > 0 && (
                                         <Button

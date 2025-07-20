@@ -464,6 +464,63 @@ class PayrollController extends Controller
         ]);
     }
 
+    /**
+     * Generate bulk PDF with multiple payslips
+     */
+    public function generateBulkPayslipPDF(Request $request)
+    {
+        $this->authorize('view', Payroll::class);
+
+        $request->validate([
+            'payroll_ids' => 'required|array',
+            'payroll_ids.*' => 'required|integer|exists:payrolls,id'
+        ]);
+
+        $payrollIds = $request->payroll_ids;
+        $payrolls = Payroll::with(['employee', 'items'])->whereIn('id', $payrollIds)->get();
+
+        if ($payrolls->isEmpty()) {
+            return response()->json(['error' => 'No payrolls found'], 404);
+        }
+
+        try {
+            // Create PDF with multiple payslips
+            $pdf = \PDF::loadView('payroll::payslips.bulk', [
+                'payrolls' => $payrolls,
+                'attendanceData' => $this->getBulkAttendanceData($payrolls)
+            ]);
+
+            $filename = 'all_payslips_' . now()->format('Y-m-d') . '.pdf';
+            return $pdf->download($filename);
+        } catch (\Exception $e) {
+            \Log::error('Bulk payslip PDF error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Get attendance data for multiple payrolls
+     */
+    private function getBulkAttendanceData($payrolls)
+    {
+        $attendanceData = [];
+
+        foreach ($payrolls as $payroll) {
+            $month = Carbon::createFromDate($payroll->year, $payroll->month, 1);
+            $startDate = $month->copy()->startOfMonth();
+            $endDate = $month->copy()->endOfMonth();
+
+            $timesheets = \Modules\TimesheetManagement\Domain\Models\Timesheet::where('employee_id', $payroll->employee_id)
+                ->whereBetween('date', [$startDate, $endDate])
+                ->orderBy('date')
+                ->get();
+
+            $attendanceData[$payroll->id] = $this->generateAttendanceCalendar($timesheets, $startDate, $endDate);
+        }
+
+        return $attendanceData;
+    }
+
         /**
      * Generate attendance calendar data for payslip
      */
