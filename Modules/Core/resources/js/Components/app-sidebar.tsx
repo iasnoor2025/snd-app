@@ -151,7 +151,7 @@ export function AppSidebar() {
     const salaryIncrementItem: NavItem = {
         title: 'Salary Increments',
         href: '/salary-increments',
-        icon: 'trending-up', 
+        icon: 'trending-up',
         permission: 'salary-increments.view',
     };
 

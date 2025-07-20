@@ -232,6 +232,9 @@ export const EmployeeList: React.FC<EmployeeListProps> = ({ initialEmployees = [
                                                     <DropdownMenuItem asChild>
                                                         <Link href={`/employees/${employee.id}/timesheets`}>Timesheets</Link>
                                                     </DropdownMenuItem>
+                                                    <DropdownMenuItem asChild>
+                                                        <Link href={`/employees/${employee.id}/salary-history`}>Salary History</Link>
+                                                    </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </TableCell>

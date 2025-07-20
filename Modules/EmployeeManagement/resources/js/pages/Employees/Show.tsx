@@ -68,6 +68,7 @@ import {
     Truck,
     Award,
     Eye,
+    DollarSign,
 } from 'lucide-react';
 import React, { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -1870,6 +1871,17 @@ export default function Show({
                                             >
                                                 <Download className="mr-2 h-4 w-4" />
                                                 Download All Documents
+                                            </Button>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                className="w-full justify-start"
+                                                asChild
+                                            >
+                                                <a href={`/employees/${employee.id}/salary-history`}>
+                                                    <DollarSign className="mr-2 h-4 w-4" />
+                                                    View Salary History
+                                                </a>
                                             </Button>
                                             <Button
                                                 variant="outline"

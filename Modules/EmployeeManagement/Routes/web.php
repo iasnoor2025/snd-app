@@ -192,14 +192,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'overtime_amount' => 0.0, // Not available in salary increments
                 'deductions' => 0.0, // Not available in salary increments
                 'net_salary' => $basicSalary + $foodAllowance + $housingAllowance + $transportAllowance,
-                'status' => $increment->status === 'approved' ? 'approved' : $increment->status,
+                'status' => $increment->status === 'approved' ? 'applied' : $increment->status,
                 'paid_date' => $increment->approved_at,
                 'notes' => $increment->notes,
+                'requested_by' => $increment->requestedBy ? [
+                    'name' => $increment->requestedBy->name
+                ] : null,
+                'approved_by' => $increment->approvedBy ? [
+                    'name' => $increment->approvedBy->name
+                ] : null,
             ];
         });
 
         return Inertia::render('Employees/SalaryHistory', [
             'employeeId' => $employee,
+            'employee' => [
+                'id' => $employeeModel->id,
+                'first_name' => $employeeModel->first_name,
+                'last_name' => $employeeModel->last_name,
+                'employee_id' => $employeeModel->employee_id,
+                'file_number' => $employeeModel->file_number,
+            ],
             'records' => $records
         ]);
     })

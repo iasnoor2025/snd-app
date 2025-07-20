@@ -302,6 +302,15 @@ export const EmployeeDetail: React.FC<EmployeeDetailProps> = ({ employeeId, init
                         </TabsContent>
 
                         <TabsContent value="salary" className="space-y-4">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-lg font-medium">{t('salary_information')}</h3>
+                                <Link href={`/employees/${employee.id}/salary-history`}>
+                                    <Button variant="outline" size="sm">
+                                        {t('view_salary_history')}
+                                    </Button>
+                                </Link>
+                            </div>
+
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div className="space-y-4">
                                     <div>
