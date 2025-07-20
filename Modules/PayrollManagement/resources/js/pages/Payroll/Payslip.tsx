@@ -94,8 +94,8 @@ const formatCurrency = (amount: number): string => {
 const printStyles = `
   @media print {
     @page {
-      size: A4;
-      margin: 10mm;
+      size: A4 landscape;
+      margin: 8mm;
     }
 
     body {
@@ -423,10 +423,10 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                             </div>
                         </CardHeader>
 
-                        <CardContent className="space-y-6 p-6">
+                        <CardContent className="space-y-3 p-4">
                             {/* Employee & Pay Summary Section - 4 Columns */}
-                            <Card className="mb-4 border-none bg-white/90 shadow-none">
-                                <CardContent className="p-4">
+                            <Card className="mb-2 border-none bg-white/90 shadow-none">
+                                <CardContent className="p-3">
                                     <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
                                         {/* Employee Details */}
                                         <div className="flex flex-col gap-1 border-r border-gray-200 pr-0 md:pr-3">
@@ -536,7 +536,7 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
 
 
                             {/* Payroll Summary */}
-                            <div className="space-y-4">
+                            <div className="space-y-2">
                                 <div className="flex items-center gap-2">
                                     <DollarSign className="h-4 w-4 text-muted-foreground" />
                                     <h3 className="font-semibold">Payroll Summary</h3>
@@ -544,8 +544,8 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
 
                                                                 <div className="rounded-md border bg-white shadow-sm">
                                     {/* Earnings & Deductions Section */}
-                                    <div className="border-b border-gray-200 p-4">
-                                        <h4 className="mb-3 text-sm font-semibold text-gray-700">Earnings & Deductions</h4>
+                                    <div className="border-b border-gray-200 p-3">
+                                        <h4 className="mb-2 text-sm font-semibold text-gray-700">Earnings & Deductions</h4>
                                         <div className="grid grid-cols-2 gap-y-2 text-sm">
                                             <div className="font-medium text-gray-600">Basic Salary:</div>
                                             <div className="text-right font-medium">{formatCurrency(safePayroll.base_salary)}</div>
@@ -562,7 +562,7 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                                     </div>
 
                                     {/* Net Pay Section */}
-                                    <div className="p-4 bg-gray-50">
+                                    <div className="p-3 bg-gray-50">
                                         <div className="grid grid-cols-2 gap-y-2 text-sm">
                                             <div className="font-bold text-gray-800">Net Pay:</div>
                                             <div className="text-right font-bold text-lg text-green-600">{formatCurrency(netPay)}</div>
@@ -572,15 +572,15 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                             </div>
 
                             {/* Attendance Record */}
-                            <div className="space-y-4">
+                            <div className="space-y-2">
                                 <div className="flex items-center gap-2">
                                     <Calendar className="h-4 w-4 text-muted-foreground" />
                                     <h3 className="font-semibold">Attendance Record</h3>
                                 </div>
 
                                 <div className="overflow-x-auto rounded-md border">
-                                    <div className="bg-white p-4">
-                                        <div className="mb-4 flex items-center gap-2">
+                                    <div className="bg-white p-3">
+                                        <div className="mb-2 flex items-center gap-2">
                                             <Calendar className="h-4 w-4 text-primary" />
                                             <span className="text-sm font-medium text-gray-700">attendance_record</span>
                                         </div>
@@ -588,7 +588,7 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                                         {/* Attendance Table */}
                                         <div className="overflow-x-auto">
                                             {!attendanceData && (
-                                                <div className="mb-4 p-4 bg-yellow-100 border border-yellow-300 rounded">
+                                                <div className="mb-2 p-2 bg-yellow-100 border border-yellow-300 rounded">
                                                     <p className="text-sm text-yellow-800">
                                                         ⚠️ No attendance data received from backend. Showing sample data.
                                                     </p>
@@ -682,7 +682,7 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
 
 
                                         {/* Legend */}
-                                        <div className="mt-4 flex flex-wrap gap-4 text-xs attendance-legend">
+                                        <div className="mt-2 flex flex-wrap gap-2 text-xs attendance-legend">
                                             <div className="flex items-center gap-1">
                                                 <span className="inline-block h-3 w-3 rounded bg-green-500"></span>
                                                 <span className="text-green-700">8 = regular hours</span>
@@ -706,31 +706,31 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
 
                             {/* Notes */}
                             {safePayroll.notes && (
-                                <div className="space-y-2">
+                                <div className="space-y-1">
                                     <h3 className="font-semibold">Notes</h3>
-                                    <div className="rounded-md border bg-gray-50 p-4 text-sm">
+                                    <div className="rounded-md border bg-gray-50 p-2 text-sm">
                                         <p className="text-gray-700">{safePayroll.notes}</p>
                                     </div>
                                 </div>
                             )}
                         </CardContent>
 
-                        <CardFooter className="flex justify-end border-t pt-6">
+                        <CardFooter className="flex justify-end border-t pt-4">
                             <div className="grid grid-cols-3 gap-x-12 text-sm">
                                 <div className="text-center">
                                     <p className="mb-1 font-semibold">Chief-Accountant</p>
                                     <p className="text-muted-foreground italic">Samir Taima</p>
-                                    <div className="mt-8 border-t border-gray-300 pt-1">Signature</div>
+                                    <div className="mt-4 border-t border-gray-300 pt-1">Signature</div>
                                 </div>
                                 <div className="text-center">
                                     <p className="mb-1 font-semibold">Verified By</p>
                                     <p className="text-muted-foreground italic">Salem Samhan Al-Dosri</p>
-                                    <div className="mt-8 border-t border-gray-300 pt-1">Signature</div>
+                                    <div className="mt-4 border-t border-gray-300 pt-1">Signature</div>
                                 </div>
                                 <div className="text-center">
                                     <p className="mb-1 font-semibold">Approved By</p>
                                     <p className="text-muted-foreground italic">Nasser Samhan Al-Dosri</p>
-                                    <div className="mt-8 border-t border-gray-300 pt-1">Signature</div>
+                                    <div className="mt-4 border-t border-gray-300 pt-1">Signature</div>
                                 </div>
                             </div>
                         </CardFooter>
