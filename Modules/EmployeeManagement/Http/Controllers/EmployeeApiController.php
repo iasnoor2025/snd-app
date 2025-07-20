@@ -130,7 +130,7 @@ class EmployeeApiController extends Controller
                 'bank_account_number' => $validated['bank_account_number'] ?? '',
                 'bank_iban' => $validated['bank_iban'] ?? '',
                 'contract_hours_per_day' => $validated['contract_hours_per_day'] ?? 8,
-                'contract_days_per_month' => $validated['contract_days_per_month'] ?? 22,
+                'contract_days_per_month' => $validated['contract_days_per_month'] ?? 30,
                 'hire_date' => $validated['hire_date'] ? date('Y-m-d', strtotime($validated['hire_date'])) : null,
                 'status' => $validated['status'] ?? 'active',
                 'emergency_contact_name' => $validated['emergency_contact_name'] ?? '',

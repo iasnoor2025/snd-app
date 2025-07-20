@@ -271,9 +271,9 @@ class PayrollService
             $daysWorked = $workData['days_worked'];
             $regularHours = $workData['regular_hours'];
 
-            // Calculate base salary for worked days
-            $workingDaysInMonth = Carbon::parse($month)->daysInMonth;
-            $dailyRate = $employee->basic_salary / $workingDaysInMonth;
+            // Calculate base salary for worked days using employee's contract settings
+            $contractDaysPerMonth = $employee->contract_days_per_month ?: 30;
+            $dailyRate = $employee->basic_salary / $contractDaysPerMonth;
             $baseSalary = $dailyRate * $daysWorked;
 
             // Calculate allowances (if any)
@@ -428,11 +428,24 @@ class PayrollService
     /**
      * Calculate overtime amount
      */
-    protected function calculateOvertimeAmount(Employee $employee, float $overtimeHours): float
+    public function calculateOvertimeAmount(Employee $employee, float $overtimeHours): float
     {
-        $workingDaysInMonth = Carbon::now()->daysInMonth;
-        $hourlyRate = $employee->basic_salary / ($workingDaysInMonth * 8); // 8 hours per day
-        return $overtimeHours * ($hourlyRate * 1.5); // 1.5x for overtime
+        // Use employee's contract settings for accurate calculation
+        $contractDaysPerMonth = $employee->contract_days_per_month ?: 30;
+        $contractHoursPerDay = $employee->contract_hours_per_day ?: 8;
+
+        // Calculate hourly rate based on contract settings
+        $hourlyRate = $employee->basic_salary / ($contractDaysPerMonth * $contractHoursPerDay);
+
+        // Use employee's overtime rate multiplier or default to 1.5
+        $overtimeMultiplier = $employee->overtime_rate_multiplier ?: 1.5;
+
+        // If employee has a fixed overtime rate, use that instead
+        if ($employee->overtime_fixed_rate > 0) {
+            return $overtimeHours * $employee->overtime_fixed_rate;
+        }
+
+        return $overtimeHours * ($hourlyRate * $overtimeMultiplier);
     }
 
     /**

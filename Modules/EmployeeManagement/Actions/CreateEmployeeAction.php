@@ -107,7 +107,7 @@ class CreateEmployeeAction
                         'bank_account_number' => $data['bank_account_number'] ?? '',
                         'bank_iban' => $data['bank_iban'] ?? '',
                         'contract_hours_per_day' => $data['contract_hours_per_day'] ?? 8,
-                        'contract_days_per_month' => $data['contract_days_per_month'] ?? 22,
+                        'contract_days_per_month' => $data['contract_days_per_month'] ?? 30,
                         'hire_date' => $data['hire_date'] ? date('Y-m-d', strtotime($data['hire_date'])) : null,
                         'status' => $data['status'] ?? 'active',
                         'emergency_contact_name' => $data['emergency_contact_name'] ?? '',

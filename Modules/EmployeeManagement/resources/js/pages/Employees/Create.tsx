@@ -186,7 +186,7 @@ export default function Create({ users, designations, employee, isEditing = fals
             overtime_rate_multiplier: employee?.overtime_rate_multiplier || 1.5,
             overtime_fixed_rate: employee?.overtime_fixed_rate || 0,
             contract_hours_per_day: employee?.contract_hours_per_day || 8,
-            contract_days_per_month: employee?.contract_days_per_month || 22,
+            contract_days_per_month: employee?.contract_days_per_month || 30,
             iqama_number: employee?.iqama_number || '',
             iqama_expiry: employee?.iqama_expiry || '',
             iqama_cost: employee?.iqama_cost || 0,

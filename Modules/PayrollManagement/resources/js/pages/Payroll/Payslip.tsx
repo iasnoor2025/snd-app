@@ -41,6 +41,8 @@ interface Employee {
     food_allowance?: number;
     housing_allowance?: number;
     transport_allowance?: number;
+    contract_days_per_month?: number;
+    contract_hours_per_day?: number;
 }
 
 interface Payroll {
@@ -283,7 +285,9 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
         basic_salary: Number(employee.basic_salary) || 0,
         food_allowance: Number(employee.food_allowance) || 0,
         housing_allowance: Number(employee.housing_allowance) || 0,
-        transport_allowance: Number(employee.transport_allowance) || 0
+        transport_allowance: Number(employee.transport_allowance) || 0,
+        contract_days_per_month: Number(employee.contract_days_per_month) || 30,
+        contract_hours_per_day: Number(employee.contract_hours_per_day) || 8
     };
 
     const safePayroll = {
@@ -529,7 +533,7 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                                             </div>
                                             <div className="flex justify-between text-xs">
                                                 <span className="text-gray-500">Rate:</span>
-                                                <span>{formatCurrency(safeEmployee.basic_salary / (safePayroll.total_worked_hours || 1))}</span>
+                                                <span>{formatCurrency(safeEmployee.basic_salary / (safeEmployee.contract_days_per_month * safeEmployee.contract_hours_per_day))}</span>
                                             </div>
                                         </div>
                                     </div>

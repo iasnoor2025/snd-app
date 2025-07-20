@@ -37,7 +37,7 @@ class EmployeeFactory extends Factory
             'bank_account_number' => $this->faker->bankAccountNumber(),
             'bank_iban' => $this->faker->iban(),
             'contract_hours_per_day' => $this->faker->numberBetween(6, 12),
-            'contract_days_per_month' => $this->faker->numberBetween(20, 30),
+            'contract_days_per_month' => $this->faker->numberBetween(26, 30),
             'hire_date' => $this->faker->date(),
             'status' => $this->faker->randomElement(['active', 'inactive', 'on_leave', 'terminated']),
             'current_location' => $this->faker->city(),

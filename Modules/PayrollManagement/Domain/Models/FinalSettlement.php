@@ -181,8 +181,10 @@ use SoftDeletes;
             return 0;
         }
 
-        // Calculate daily rate
-        $dailyRate = $lastPayroll->base_salary / 22; // Assuming 22 working days per month
+        // Calculate daily rate using employee's contract settings
+        $employee = $this->employee;
+        $contractDaysPerMonth = $employee->contract_days_per_month ?: 30;
+        $dailyRate = $lastPayroll->base_salary / $contractDaysPerMonth;
 
         // Calculate days from last payroll to last working day
         $days = $this->last_working_day->diffInDays($lastPayroll->month->endOfMonth());
@@ -220,8 +222,10 @@ use SoftDeletes;
             return 0;
         }
 
-        // Calculate daily rate
-        $dailyRate = $lastPayroll->base_salary / 22; // Assuming 22 working days per month
+        // Calculate daily rate using employee's contract settings
+        $employee = $this->employee;
+        $contractDaysPerMonth = $employee->contract_days_per_month ?: 30;
+        $dailyRate = $lastPayroll->base_salary / $contractDaysPerMonth;
 
         return $leaveBalance * $dailyRate;
     }

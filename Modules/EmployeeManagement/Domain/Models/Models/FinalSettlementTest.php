@@ -154,8 +154,9 @@ class FinalSettlementTest extends TestCase
         ]);
 
         // Overtime rate is typically 1.5x the hourly rate
-        // Hourly rate = (monthly salary / (22 days * 8 hours))
-        $hourlyRate = $this->employee->salary / (22 * 8);
+        // Hourly rate = (monthly salary / (contract days * 8 hours))
+        $contractDaysPerMonth = $this->employee->contract_days_per_month ?: 30;
+        $hourlyRate = $this->employee->salary / ($contractDaysPerMonth * 8);
         $overtimeRate = $hourlyRate * 1.5;
         $expectedOvertimeAmount = $overtimeRate * 10; // 10 hours of overtime
 

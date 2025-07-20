@@ -227,7 +227,7 @@ export default function PaySlip({
     const netSalary = Number(salary_details?.net_salary) || 0;
 
     // Set default contract days if not available
-    const contractDaysPerMonth = 22;
+    const contractDaysPerMonth = 30;
 
     // Calculate overtime details
     const hourlyRate = employee.hourly_rate ?? basicSalary / (8 * contractDaysPerMonth);

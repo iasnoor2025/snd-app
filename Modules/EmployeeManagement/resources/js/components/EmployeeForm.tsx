@@ -103,7 +103,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onSave, onCancel 
                   status: 'active',
                   overtime_rate_multiplier: 1.5,
                   contract_hours_per_day: 8,
-                  contract_days_per_month: 22,
+                  contract_days_per_month: 30,
               },
     });
 
