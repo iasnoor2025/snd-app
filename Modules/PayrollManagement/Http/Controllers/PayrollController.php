@@ -243,7 +243,7 @@ class PayrollController extends Controller
     /**
      * Generate monthly payroll for all employees
      */
-                public function generateMonthlyPayroll(Request $request)
+    public function generateMonthlyPayroll(Request $request)
     {
         // Debug: Log that we reached the controller
         \Log::info('GenerateMonthlyPayroll controller method reached', [
@@ -393,7 +393,7 @@ class PayrollController extends Controller
         ]);
     }
 
-        public function downloadPayslip($payrollId, PayslipService $payslipService)
+    public function downloadPayslip($payrollId, PayslipService $payslipService)
     {
         $payroll = \Modules\PayrollManagement\Domain\Models\Payroll::with(['employee', 'employee.department', 'employee.designation'])->findOrFail($payrollId);
 

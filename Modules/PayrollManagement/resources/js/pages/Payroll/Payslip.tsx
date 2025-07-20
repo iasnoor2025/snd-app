@@ -303,8 +303,8 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
 
     // Calculate totals
     const grossPay = safePayroll.base_salary + safePayroll.overtime_amount + safePayroll.bonus_amount;
-    const totalDeductions = safePayroll.deduction_amount + safePayroll.advance_deduction;
-    const netPay = safePayroll.final_amount;
+    const totalDeductions = safePayroll.advance_deduction;
+    const netPay = grossPay - totalDeductions;
 
     // Format dates
     const periodDate = new Date(safePayroll.year, safePayroll.month - 1, 1);
@@ -424,17 +424,17 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                         </CardHeader>
 
                         <CardContent className="space-y-6 p-6">
-                            {/* Employee & Pay Summary Section - 5 Equal Columns */}
-                            <Card className="mb-6 border-none bg-white/90 shadow-none">
-                                <CardContent className="p-6">
-                                    <div className="grid grid-cols-1 gap-6 md:grid-cols-5">
+                            {/* Employee & Pay Summary Section - 4 Columns */}
+                            <Card className="mb-4 border-none bg-white/90 shadow-none">
+                                <CardContent className="p-4">
+                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
                                         {/* Employee Details */}
-                                        <div className="flex flex-col gap-2 border-r border-gray-200 pr-0 md:pr-4">
-                                            <div className="mb-1 flex items-center gap-2">
-                                                <User className="h-5 w-5 text-primary" />
-                                                <span className="text-base font-semibold text-gray-800">Employee Details</span>
+                                        <div className="flex flex-col gap-1 border-r border-gray-200 pr-0 md:pr-3">
+                                            <div className="mb-1 flex items-center gap-1">
+                                                <User className="h-4 w-4 text-primary" />
+                                                <span className="text-sm font-semibold text-gray-800">Employee Details</span>
                                             </div>
-                                            <div className="space-y-1 text-sm">
+                                            <div className="space-y-0.5 text-xs">
                                                 <div className="flex justify-between">
                                                     <span className="font-medium text-gray-500">File #:</span>
                                                     <span className="font-semibold text-gray-800">{safeEmployee.employee_id}</span>
@@ -457,12 +457,12 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                                         </div>
 
                                         {/* Pay Period Details */}
-                                        <div className="flex flex-col gap-2 border-r border-gray-200 pr-0 md:pr-4">
-                                            <div className="mb-1 flex items-center gap-2">
-                                                <Calendar className="h-5 w-5 text-primary" />
-                                                <span className="text-base font-semibold text-gray-800">Pay Period</span>
+                                        <div className="flex flex-col gap-1 border-r border-gray-200 pr-0 md:pr-3">
+                                            <div className="mb-1 flex items-center gap-1">
+                                                <Calendar className="h-4 w-4 text-primary" />
+                                                <span className="text-sm font-semibold text-gray-800">Pay Period</span>
                                             </div>
-                                            <div className="space-y-1 text-sm">
+                                            <div className="space-y-0.5 text-xs">
                                                 <div className="flex justify-between">
                                                     <span className="font-medium text-gray-500">Period:</span>
                                                     <span className="font-semibold text-gray-800">{formattedPeriod}</span>
@@ -483,10 +483,10 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                                         </div>
 
                                         {/* Salary Details */}
-                                        <div className="flex flex-col gap-2 border-r border-gray-200 pr-0 md:pr-4">
+                                        <div className="flex flex-col gap-1 border-r border-gray-200 pr-0 md:pr-3">
                                             <div className="mb-1 flex items-center gap-1">
                                                 <DollarSign className="h-4 w-4 text-green-600" />
-                                                <span className="text-base font-semibold text-gray-700">Salary Details</span>
+                                                <span className="text-sm font-semibold text-gray-700">Salary Details</span>
                                             </div>
                                             <div className="flex justify-between text-xs">
                                                 <span className="text-gray-500">Basic:</span>
@@ -507,10 +507,10 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                                         </div>
 
                                         {/* Working Hours */}
-                                        <div className="flex flex-col gap-2 border-r border-gray-200 pr-0 md:pr-4">
+                                        <div className="flex flex-col gap-1">
                                             <div className="mb-1 flex items-center gap-1">
                                                 <Clock className="h-4 w-4 text-blue-600" />
-                                                <span className="text-base font-semibold text-gray-700">Working Hours</span>
+                                                <span className="text-sm font-semibold text-gray-700">Working Hours</span>
                                             </div>
                                             <div className="flex justify-between text-xs">
                                                 <span className="text-gray-500">Total:</span>
@@ -529,112 +529,44 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                                                 <span>{formatCurrency(safePayroll.base_salary / (safePayroll.total_worked_hours || 1))}</span>
                                             </div>
                                         </div>
-
-                                        {/* Other Details */}
-                                        <div className="flex flex-col gap-2">
-                                            <div className="mb-1 flex items-center gap-1">
-                                                <MapPin className="h-4 w-4 text-purple-600" />
-                                                <span className="text-base font-semibold text-gray-700">Deductions</span>
-                                            </div>
-                                            <div className="flex justify-between text-xs">
-                                                <span className="text-gray-500">Deductions:</span>
-                                                <span className="text-right font-semibold text-red-600">
-                                                    -{formatCurrency(safePayroll.deduction_amount)}
-                                                </span>
-                                            </div>
-                                            <div className="flex justify-between text-xs">
-                                                <span className="text-gray-500">Advance:</span>
-                                                <span className="text-right font-semibold text-red-600">
-                                                    -{formatCurrency(safePayroll.advance_deduction)}
-                                                </span>
-                                            </div>
-                                            <div className="flex justify-between text-xs">
-                                                <span className="text-gray-500">Total Ded:</span>
-                                                <span className="text-right font-bold text-red-600">
-                                                    -{formatCurrency(totalDeductions)}
-                                                </span>
-                                            </div>
-                                            <div className="flex justify-between text-xs">
-                                                <span className="text-gray-500">Net Pay:</span>
-                                                <span className="text-right font-bold text-green-600">
-                                                    {formatCurrency(netPay)}
-                                                </span>
-                                            </div>
-                                        </div>
                                     </div>
                                 </CardContent>
                             </Card>
 
-                            <Separator />
 
-                            {/* Payroll Items Table */}
-                            {safePayroll.items && safePayroll.items.length > 0 && (
-                                <div className="space-y-4">
-                                    <div className="flex items-center gap-2">
-                                        <DollarSign className="h-4 w-4 text-muted-foreground" />
-                                        <h3 className="font-semibold">Payroll Items</h3>
-                                    </div>
 
-                                    <div className="overflow-x-auto rounded-md border">
-                                        <table className="min-w-full divide-y divide-gray-200">
-                                            <thead className="bg-gray-50">
-                                                <tr>
-                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                                                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                                                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Taxable</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="bg-white divide-y divide-gray-200">
-                                                {safePayroll.items.map((item) => (
-                                                    <tr key={item.id} className="hover:bg-gray-50">
-                                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{String(item.type || '')}</td>
-                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{String(item.description || '')}</td>
-                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">{formatCurrency(Number(item.amount) || 0)}</td>
-                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">{item.is_taxable ? 'Yes' : 'No'}</td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Summary */}
-                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                <div className="space-y-4">
+                            {/* Payroll Summary */}
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-2">
+                                    <DollarSign className="h-4 w-4 text-muted-foreground" />
                                     <h3 className="font-semibold">Payroll Summary</h3>
-                                    <div className="grid grid-cols-2 gap-y-2 rounded-md border bg-gray-50 p-4 text-sm">
-                                        <div className="font-medium">Basic Salary:</div>
-                                        <div className="text-right">{formatCurrency(safePayroll.base_salary)}</div>
-
-                                        <div className="font-medium">Overtime Pay:</div>
-                                        <div className="text-right text-green-600">{formatCurrency(safePayroll.overtime_amount)}</div>
-
-                                        <div className="font-medium">Bonus:</div>
-                                        <div className="text-right text-green-600">{formatCurrency(safePayroll.bonus_amount)}</div>
-
-                                        <div className="font-medium">Gross Pay:</div>
-                                        <div className="text-right font-bold text-green-600">{formatCurrency(grossPay)}</div>
-                                    </div>
                                 </div>
 
-                                <div className="space-y-4">
-                                    <h3 className="font-semibold">Deductions Summary</h3>
-                                    <div className="grid grid-cols-2 gap-y-2 rounded-md border bg-gray-50 p-4 text-sm">
-                                        <div className="font-medium">Deductions:</div>
-                                        <div className="text-right text-red-600">-{formatCurrency(safePayroll.deduction_amount)}</div>
+                                                                <div className="rounded-md border bg-white shadow-sm">
+                                    {/* Earnings & Deductions Section */}
+                                    <div className="border-b border-gray-200 p-4">
+                                        <h4 className="mb-3 text-sm font-semibold text-gray-700">Earnings & Deductions</h4>
+                                        <div className="grid grid-cols-2 gap-y-2 text-sm">
+                                            <div className="font-medium text-gray-600">Basic Salary:</div>
+                                            <div className="text-right font-medium">{formatCurrency(safePayroll.base_salary)}</div>
 
-                                        <div className="font-medium">Advance Deductions:</div>
-                                        <div className="text-right text-red-600">-{formatCurrency(safePayroll.advance_deduction)}</div>
+                                            <div className="font-medium text-gray-600">Overtime Pay:</div>
+                                            <div className="text-right text-green-600">{formatCurrency(safePayroll.overtime_amount)}</div>
 
-                                        <div className="font-medium">Total Deductions:</div>
-                                        <div className="text-right text-red-600">-{formatCurrency(totalDeductions)}</div>
+                                            <div className="font-medium text-gray-600">Bonus:</div>
+                                            <div className="text-right text-green-600">{formatCurrency(safePayroll.bonus_amount)}</div>
 
-                                        <Separator className="col-span-2 my-1" />
+                                            <div className="font-medium text-gray-600">Advance Deductions:</div>
+                                            <div className="text-right text-red-600">{formatCurrency(safePayroll.advance_deduction)}</div>
+                                        </div>
+                                    </div>
 
-                                        <div className="font-medium">Net Pay:</div>
-                                        <div className="text-right font-bold text-green-600">{formatCurrency(netPay)}</div>
+                                    {/* Net Pay Section */}
+                                    <div className="p-4 bg-gray-50">
+                                        <div className="grid grid-cols-2 gap-y-2 text-sm">
+                                            <div className="font-bold text-gray-800">Net Pay:</div>
+                                            <div className="text-right font-bold text-lg text-green-600">{formatCurrency(netPay)}</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
