@@ -18,7 +18,7 @@ use Modules\PayrollManagement\Http\Controllers\LoanController;
 |
 */
 
-Route::prefix('hr/payroll')->name('payroll.')->group(function () {
+Route::prefix('hr/payroll')->name('payroll.')->middleware('auth')->group(function () {
     // Payroll listing and management
     Route::get('/', [PayrollController::class, 'index'])
         ->middleware('permission:payroll.view')
@@ -30,26 +30,41 @@ Route::prefix('hr/payroll')->name('payroll.')->group(function () {
         ->middleware('permission:payroll.create')
         ->name('store');
     Route::get('/{payroll}', [PayrollController::class, 'show'])
+        ->where('payroll', '[0-9]+')
         ->middleware('permission:payroll.view')
         ->name('show');
     Route::get('/{payroll}/edit', [PayrollController::class, 'edit'])
+        ->where('payroll', '[0-9]+')
         ->middleware('permission:payroll.edit')
         ->name('edit');
     Route::put('/{payroll}', [PayrollController::class, 'update'])
+        ->where('payroll', '[0-9]+')
         ->middleware('permission:payroll.edit')
         ->name('update');
     Route::post('/{payroll}/approve', [PayrollController::class, 'approve'])
+        ->where('payroll', '[0-9]+')
         ->middleware('permission:payroll.edit')
         ->name('approve');
     Route::post('/{payroll}/process-payment', [PayrollController::class, 'processPayment'])
+        ->where('payroll', '[0-9]+')
         ->middleware('permission:payroll.edit')
         ->name('process-payment');
     Route::post('/{payroll}/cancel', [PayrollController::class, 'cancel'])
+        ->where('payroll', '[0-9]+')
         ->middleware('permission:payroll.edit')
         ->name('cancel');
     Route::post('/generate-monthly', [PayrollController::class, 'generateMonthlyPayroll'])
         ->middleware('permission:payroll.create')
         ->name('generate-monthly');
+    Route::post('/generate-payroll', [PayrollController::class, 'generatePayrollForApprovedTimesheets'])
+        ->middleware('permission:payroll.create')
+        ->name('generate-payroll');
+    Route::post('/generate-all-months', [PayrollController::class, 'generatePayrollForAllMonths'])
+        ->middleware('permission:payroll.create')
+        ->name('generate-all-months');
+    Route::get('/months-needing-payroll', [PayrollController::class, 'getMonthsNeedingPayroll'])
+        ->middleware('permission:payroll.view')
+        ->name('months-needing-payroll');
     Route::post('/generate', [PayrollController::class, 'store'])
         ->middleware('permission:payroll.create')
         ->name('generate');
@@ -57,19 +72,24 @@ Route::prefix('hr/payroll')->name('payroll.')->group(function () {
         ->middleware('permission:payroll.delete')
         ->name('bulk-delete');
     Route::get('/{payroll}/payslip', [PayrollController::class, 'downloadPayslip'])
+        ->where('payroll', '[0-9]+')
         ->middleware('permission:payroll.view')
         ->name('payslip');
     Route::get('/{payroll}/payslip/view', [PayrollController::class, 'viewPayslip'])
+        ->where('payroll', '[0-9]+')
         ->middleware('permission:payroll.view')
         ->name('payslip.view');
     Route::prefix('runs')->name('runs.')->group(function () {
         Route::get('/{payrollRun}', [PayrollController::class, 'showPayrollRun'])
+            ->where('payrollRun', '[0-9]+')
             ->middleware('permission:payroll.view')
             ->name('show');
         Route::post('/{payrollRun}/approve', [PayrollController::class, 'approvePayrollRun'])
+            ->where('payrollRun', '[0-9]+')
             ->middleware('permission:payroll.edit')
             ->name('approve');
         Route::post('/{payrollRun}/reject', [PayrollController::class, 'rejectPayrollRun'])
+            ->where('payrollRun', '[0-9]+')
             ->middleware('permission:payroll.edit')
             ->name('reject');
     });
@@ -121,21 +141,27 @@ Route::prefix('hr/payroll')->name('payroll.')->group(function () {
             ->middleware('permission:final-settlements.create')
             ->name('store');
         Route::get('/{finalSettlement}', [FinalSettlementController::class, 'show'])
+            ->where('finalSettlement', '[0-9]+')
             ->middleware('permission:final-settlements.view')
             ->name('show');
         Route::post('/{finalSettlement}/approve', [FinalSettlementController::class, 'approve'])
+            ->where('finalSettlement', '[0-9]+')
             ->middleware('permission:final-settlements.edit')
             ->name('approve');
         Route::post('/{finalSettlement}/mark-as-paid', [FinalSettlementController::class, 'processPayment'])
+            ->where('finalSettlement', '[0-9]+')
             ->middleware('permission:final-settlements.edit')
             ->name('mark-as-paid');
         Route::post('/{finalSettlement}/cancel', [FinalSettlementController::class, 'cancel'])
+            ->where('finalSettlement', '[0-9]+')
             ->middleware('permission:final-settlements.edit')
             ->name('cancel');
         Route::get('/{finalSettlement}/report', [FinalSettlementController::class, 'generateReport'])
+            ->where('finalSettlement', '[0-9]+')
             ->middleware('permission:final-settlements.view')
             ->name('report');
         Route::get('/{finalSettlement}/pdf', [FinalSettlementController::class, 'generatePDF'])
+            ->where('finalSettlement', '[0-9]+')
             ->middleware('permission:final-settlements.view')
             ->name('pdf');
     });

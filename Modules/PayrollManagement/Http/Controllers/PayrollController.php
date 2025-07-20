@@ -578,6 +578,182 @@ class PayrollController extends Controller
             return back()->with('error', 'Failed to delete payroll records: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Generate payroll for all months that need it
+     * This method checks for approved timesheets and skips months that already have payroll
+     */
+    public function generatePayrollForAllMonths(Request $request)
+    {
+        $this->authorize('create', Payroll::class);
+
+        $request->validate([
+            'employee_id' => 'nullable|exists:employees,id',
+            'start_month' => 'nullable|date_format:Y-m',
+            'end_month' => 'nullable|date_format:Y-m',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $employee = $request->employee_id ? Employee::findOrFail($request->employee_id) : null;
+            $startMonth = $request->start_month;
+            $endMonth = $request->end_month;
+
+            $result = $this->payrollService->generatePayrollForAllMonths($employee, $startMonth, $endMonth);
+
+            // Create payroll run record
+            $payrollRun = PayrollRun::create([
+                'batch_id' => 'BATCH_ALL_' . time(),
+                'run_date' => Carbon::now(),
+                'status' => 'pending',
+                'run_by' => auth()->id() ?? 1,
+                'total_employees' => count($result['processed_employees']),
+                'notes' => 'Multi-month payroll run - Generated: ' . $result['total_generated'] . ', Skipped: ' . $result['total_skipped']
+            ]);
+
+            DB::commit();
+
+            $message = "Payroll generation completed successfully.\n";
+            $message .= "Generated: {$result['total_generated']} payrolls\n";
+            $message .= "Skipped: {$result['total_skipped']} months (already exists or no approved timesheets)\n";
+            $message .= "Errors: {$result['total_errors']}";
+
+            if (count($result['processed_employees']) > 0) {
+                $message .= "\n\nProcessed employees: " . implode(', ', $result['processed_employees']);
+            }
+
+            if (count($result['errors']) > 0) {
+                $message .= "\n\nErrors: " . implode(', ', array_slice($result['errors'], 0, 5));
+                if (count($result['errors']) > 5) {
+                    $message .= " and " . (count($result['errors']) - 5) . " more...";
+                }
+            }
+
+            return response()->json([
+                'success' => $result['success'],
+                'message' => $message,
+                'data' => $result,
+                'payroll_run_id' => $payrollRun->id
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Multi-month payroll generation error: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to generate payroll for all months: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get months that need payroll generation for an employee
+     */
+    public function getMonthsNeedingPayroll(Request $request)
+    {
+        $this->authorize('view', Payroll::class);
+
+        $request->validate([
+            'employee_id' => 'required|exists:employees,id',
+            'start_month' => 'nullable|date_format:Y-m',
+            'end_month' => 'nullable|date_format:Y-m',
+        ]);
+
+        try {
+            $employee = Employee::findOrFail($request->employee_id);
+            $startMonth = $request->start_month;
+            $endMonth = $request->end_month;
+
+            $months = $this->payrollService->getMonthsNeedingPayroll($employee, $startMonth, $endMonth);
+
+            return response()->json([
+                'success' => true,
+                'data' => $months,
+                'employee' => [
+                    'id' => $employee->id,
+                    'name' => $employee->full_name,
+                    'employee_id' => $employee->employee_id
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error getting months needing payroll: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to get months needing payroll: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Generate payroll for all employees with approved timesheets
+     */
+    public function generatePayrollForApprovedTimesheets()
+    {
+        $this->authorize('create', Payroll::class);
+
+        try {
+            DB::beginTransaction();
+
+            $result = $this->payrollService->generatePayrollForApprovedTimesheets();
+
+            // Create payroll run record
+            $payrollRun = PayrollRun::create([
+                'batch_id' => 'BATCH_APPROVED_' . time(),
+                'run_date' => Carbon::now(),
+                'status' => 'pending',
+                'run_by' => auth()->id() ?? 1,
+                'total_employees' => $result['total_processed_employees'],
+                'notes' => 'Payroll generation for employees with approved timesheets - Generated: ' . $result['total_generated']
+            ]);
+
+            DB::commit();
+
+            $message = "Payroll generation completed successfully.\n";
+            $message .= "Generated: {$result['total_generated']} payrolls\n";
+            $message .= "Processed employees: {$result['total_processed_employees']}\n";
+            $message .= "Skipped employees: {$result['total_skipped_employees']}\n";
+            $message .= "Errors: {$result['total_errors']}";
+
+            if (count($result['processed_employees']) > 0) {
+                $message .= "\n\nProcessed: " . implode(', ', $result['processed_employees']);
+            }
+
+            if (count($result['errors']) > 0) {
+                $message .= "\n\nErrors: " . implode(', ', array_slice($result['errors'], 0, 5));
+                if (count($result['errors']) > 5) {
+                    $message .= " and " . (count($result['errors']) - 5) . " more...";
+                }
+            }
+
+            return response()->json([
+                'success' => $result['success'],
+                'message' => $message,
+                'data' => $result,
+                'payroll_run_id' => $payrollRun->id
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Payroll generation for approved timesheets error: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to generate payroll: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
 
 

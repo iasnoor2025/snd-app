@@ -91,6 +91,176 @@ class PayrollService
     }
 
     /**
+     * Generate payroll for all months that need it
+     * This method checks for approved timesheets and skips months that already have payroll
+     */
+    public function generatePayrollForAllMonths(?Employee $employee = null, $startMonth = null, $endMonth = null)
+    {
+        // If no date range specified, generate for the last 12 months
+        if (!$startMonth) {
+            $startMonth = Carbon::now()->subMonths(12)->startOfMonth();
+        } else {
+            $startMonth = Carbon::parse($startMonth)->startOfMonth();
+        }
+
+        if (!$endMonth) {
+            $endMonth = Carbon::now()->subMonth()->endOfMonth(); // Exclude current month
+        } else {
+            $endMonth = Carbon::parse($endMonth)->endOfMonth();
+        }
+
+        $errors = [];
+        $generatedPayrolls = [];
+        $skippedMonths = [];
+        $processedEmployees = [];
+
+        // Get employees to process
+        $employees = $employee ? collect([$employee]) : Employee::where('status', 'active')->get();
+
+        foreach ($employees as $employee) {
+            $employeeProcessed = false;
+
+            // Generate for each month in the range
+            $currentMonth = $startMonth->copy();
+
+            while ($currentMonth->lte($endMonth)) {
+                try {
+                    // Check if payroll already exists for this month
+                    $existingPayroll = Payroll::where('employee_id', $employee->id)
+                        ->where('month', $currentMonth->month)
+                        ->where('year', $currentMonth->year)
+                        ->first();
+
+                    if ($existingPayroll) {
+                        $skippedMonths[] = "Payroll already exists for {$employee->full_name} for {$currentMonth->format('F Y')}";
+                        $currentMonth->addMonth();
+                        continue;
+                    }
+
+                    // Check if employee has manager-approved timesheets for the month
+                    $timesheets = $employee->timesheets()
+                        ->whereYear('date', $currentMonth->year)
+                        ->whereMonth('date', $currentMonth->month)
+                        ->where('status', 'manager_approved')
+                        ->count();
+
+                    if ($timesheets === 0) {
+                        $skippedMonths[] = "No manager-approved timesheets found for {$employee->full_name} for {$currentMonth->format('F Y')}";
+                        $currentMonth->addMonth();
+                        continue;
+                    }
+
+                    // Validate employee data
+                    if (!$employee->basic_salary) {
+                        $errors[] = "Employee {$employee->full_name} has no base salary configured for {$currentMonth->format('F Y')}";
+                        $currentMonth->addMonth();
+                        continue;
+                    }
+
+                    // Generate payroll for this month
+                    $payroll = $this->generateEmployeePayroll($employee, $currentMonth);
+                    $generatedPayrolls[] = $payroll;
+                    $employeeProcessed = true;
+
+                    Log::info("Generated payroll for {$employee->full_name} for {$currentMonth->format('F Y')}");
+
+                } catch (\Exception $e) {
+                    $errors[] = "Error processing {$employee->full_name} for {$currentMonth->format('F Y')}: {$e->getMessage()}";
+                    Log::error("Error generating payroll for employee {$employee->full_name}", [
+                        'error' => $e->getMessage(),
+                        'employee_id' => $employee->id,
+                        'month' => $currentMonth->format('Y-m')
+                    ]);
+                }
+
+                $currentMonth->addMonth();
+            }
+
+            if ($employeeProcessed) {
+                $processedEmployees[] = $employee->full_name;
+            }
+        }
+
+        return [
+            'success' => count($generatedPayrolls) > 0,
+            'generated_payrolls' => $generatedPayrolls,
+            'processed_employees' => $processedEmployees,
+            'skipped_months' => $skippedMonths,
+            'errors' => $errors,
+            'total_generated' => count($generatedPayrolls),
+            'total_skipped' => count($skippedMonths),
+            'total_errors' => count($errors)
+        ];
+    }
+
+    /**
+     * Check which months need payroll generation for an employee
+     */
+    public function getMonthsNeedingPayroll(Employee $employee, $startMonth = null, $endMonth = null)
+    {
+        if (!$startMonth) {
+            $startMonth = Carbon::now()->subMonths(12)->startOfMonth();
+        } else {
+            $startMonth = Carbon::parse($startMonth)->startOfMonth();
+        }
+
+        if (!$endMonth) {
+            $endMonth = Carbon::now()->subMonth()->endOfMonth();
+        } else {
+            $endMonth = Carbon::parse($endMonth)->endOfMonth();
+        }
+
+        $monthsNeedingPayroll = [];
+        $currentMonth = $startMonth->copy();
+
+        while ($currentMonth->lte($endMonth)) {
+            // Check if payroll already exists
+            $existingPayroll = Payroll::where('employee_id', $employee->id)
+                ->where('month', $currentMonth->month)
+                ->where('year', $currentMonth->year)
+                ->first();
+
+            if (!$existingPayroll) {
+                // Check if employee has approved timesheets
+                $timesheets = $employee->timesheets()
+                    ->whereYear('date', $currentMonth->year)
+                    ->whereMonth('date', $currentMonth->month)
+                    ->where('status', 'manager_approved')
+                    ->count();
+
+                if ($timesheets > 0) {
+                    $monthsNeedingPayroll[] = [
+                        'month' => $currentMonth->format('Y-m'),
+                        'month_name' => $currentMonth->format('F Y'),
+                        'timesheets_count' => $timesheets,
+                        'can_generate' => true
+                    ];
+                } else {
+                    $monthsNeedingPayroll[] = [
+                        'month' => $currentMonth->format('Y-m'),
+                        'month_name' => $currentMonth->format('F Y'),
+                        'timesheets_count' => 0,
+                        'can_generate' => false,
+                        'reason' => 'No approved timesheets'
+                    ];
+                }
+            } else {
+                $monthsNeedingPayroll[] = [
+                    'month' => $currentMonth->format('Y-m'),
+                    'month_name' => $currentMonth->format('F Y'),
+                    'timesheets_count' => 0,
+                    'can_generate' => false,
+                    'reason' => 'Payroll already exists'
+                ];
+            }
+
+            $currentMonth->addMonth();
+        }
+
+        return $monthsNeedingPayroll;
+    }
+
+    /**
      * Generate payroll for a specific employee
      */
     protected function generateEmployeePayroll(Employee $employee, Carbon $month): Payroll
@@ -499,6 +669,94 @@ class PayrollService
     public function approvePayroll(Payroll $payroll, int $approvedBy): void
     {
         $payroll->approve(User::find($approvedBy));
+    }
+
+    /**
+     * Generate payroll for all employees with approved timesheets
+     * This method finds all employees with approved timesheets and generates payroll for them
+     */
+    public function generatePayrollForApprovedTimesheets()
+    {
+        $errors = [];
+        $generatedPayrolls = [];
+        $skippedEmployees = [];
+        $processedEmployees = [];
+
+        // Get all active employees
+        $employees = Employee::where('status', 'active')->get();
+
+        // Define the range of months to check (last 12 months including current month)
+        $endMonth = Carbon::now(); // Include current month
+        $startMonth = Carbon::now()->subMonths(12)->startOfMonth();
+
+        foreach ($employees as $employee) {
+            try {
+                $employeeProcessed = false;
+                $currentMonth = $startMonth->copy();
+
+                // Check each month in the range
+                while ($currentMonth->lte($endMonth)) {
+                    // Check if employee has manager-approved timesheets for this month
+                    $hasApprovedTimesheets = $this->hasManagerApprovedTimesheets($employee, $currentMonth);
+
+                    if (!$hasApprovedTimesheets) {
+                        $currentMonth->addMonth();
+                        continue;
+                    }
+
+                    // Check if payroll already exists for this month
+                    $existingPayroll = Payroll::where('employee_id', $employee->id)
+                        ->where('month', $currentMonth->month)
+                        ->where('year', $currentMonth->year)
+                        ->first();
+
+                    if ($existingPayroll) {
+                        $currentMonth->addMonth();
+                        continue; // Skip this month, payroll already exists
+                    }
+
+                    // Validate employee data
+                    if (!$employee->basic_salary) {
+                        $errors[] = "Employee {$employee->full_name} has no base salary configured";
+                        break; // Skip this employee entirely
+                    }
+
+                    // Generate payroll for this month
+                    $payroll = $this->generateEmployeePayroll($employee, $currentMonth);
+                    $generatedPayrolls[] = $payroll;
+                    $employeeProcessed = true;
+
+                    Log::info("Generated payroll for {$employee->full_name} for {$currentMonth->format('F Y')}");
+
+                    $currentMonth->addMonth();
+                }
+
+                if ($employeeProcessed) {
+                    $processedEmployees[] = $employee->full_name;
+                } else {
+                    $skippedEmployees[] = $employee->full_name;
+                }
+
+            } catch (\Exception $e) {
+                $errors[] = "Error processing {$employee->full_name}: {$e->getMessage()}";
+                Log::error("Error generating payroll for employee {$employee->full_name}", [
+                    'error' => $e->getMessage(),
+                    'employee_id' => $employee->id
+                ]);
+            }
+        }
+
+        return [
+            'success' => count($generatedPayrolls) > 0,
+            'generated_payrolls' => $generatedPayrolls,
+            'processed_employees' => $processedEmployees,
+            'skipped_employees' => $skippedEmployees,
+            'errors' => $errors,
+            'total_generated' => count($generatedPayrolls),
+            'total_processed_employees' => count($processedEmployees),
+            'total_skipped_employees' => count($skippedEmployees),
+            'total_errors' => count($errors)
+        ];
     }
 }
 

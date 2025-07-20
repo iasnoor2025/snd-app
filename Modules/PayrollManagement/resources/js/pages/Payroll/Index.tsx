@@ -26,6 +26,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
+    usePermission,
 } from '@/Core';
 import { PageProps } from '@/Core/types';
 import { router } from '@inertiajs/core';
@@ -77,27 +78,24 @@ type Payroll = {
 
 export default function Index({ auth, payrolls, employees, filters, hasRecords }: Props) {
     const { t } = useTranslation('PayrollManagement');
+    const [showModal, setShowModal] = useState(false);
+    const [showBulkDeleteModal, setShowBulkDeleteModal] = useState(false);
+    const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [employeeSearch, setEmployeeSearch] = useState('');
+    const [processing, setProcessing] = useState(false);
+    const [bulkDeleteProcessing, setBulkDeleteProcessing] = useState(false);
+    const [selectedPayrolls, setSelectedPayrolls] = useState<number[]>([]);
+    const [formData, setFormData] = useState({
+        employee_id: '',
+        month: new Date().toISOString().slice(0, 7),
+    });
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
     // Check for admin role using the same pattern as LeaveManagement
     const hasRole = auth.hasRole || (auth.user && auth.user.roles) || [];
     const isAdmin = Array.isArray(hasRole) &&
         hasRole.some((role) => role && (role === 'admin' || role === 'Admin' || role.name === 'admin' || role.name === 'Admin'));
-
-
-
-
-
-    const [showModal, setShowModal] = useState(false);
-    const [formData, setFormData] = useState({
-        month: new Date().toISOString().slice(0, 7),
-        employee_id: '',
-    });
-    const [processing, setProcessing] = useState(false);
-    const [errors, setErrors] = useState<Record<string, string>>({});
-    const [selectedPayrolls, setSelectedPayrolls] = useState<number[]>([]);
-    const [showBulkDeleteModal, setShowBulkDeleteModal] = useState(false);
-    const [bulkDeleteProcessing, setBulkDeleteProcessing] = useState(false);
-    const [employeeSearch, setEmployeeSearch] = useState('');
 
     // Debug: Log payrolls data when it changes
     useEffect(() => {
@@ -156,7 +154,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                     toast.error('Failed to generate payroll: ' + (errors.message || 'Unknown error'));
             },
         });
-        } catch (error) {
+        } catch (error: any) {
             console.error('Form submission error:', error);
             setProcessing(false);
             setErrors({ general: 'Button error: ' + error.message });
@@ -237,6 +235,61 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
 
     // console.log('Employees for Select:', employees);
 
+    const handleGeneratePayroll = async () => {
+        try {
+            setIsGenerating(true);
+            setShowConfirmDialog(false);
+
+            // Use the simple payroll generation route
+            const routeUrl = route('payroll.generate-payroll');
+            console.log('Route URL:', routeUrl);
+
+            // Show loading state
+            toast.info('Generating payroll for employees with approved timesheets...');
+
+            // Use regular fetch instead of Inertia router
+            const response = await fetch(routeUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({})
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log('Payroll generation successful:', data);
+
+            // Show detailed results
+            let message = data.message || 'Payroll generation completed';
+            if (data.data) {
+                const result = data.data;
+                message = `Generated: ${result.total_generated} payrolls\n`;
+                message += `Processed employees: ${result.total_processed_employees}\n`;
+                message += `Skipped employees: ${result.total_skipped_employees}\n`;
+                message += `Errors: ${result.total_errors}`;
+
+                if (result.processed_employees && result.processed_employees.length > 0) {
+                    message += `\n\nProcessed: ${result.processed_employees.join(', ')}`;
+                }
+            }
+
+            toast.success(message);
+            // Reload the page to show new payrolls
+            window.location.reload();
+        } catch (error: any) {
+            console.error('Payroll generation error:', error);
+            toast.error('Failed to generate payroll: ' + (error.message || 'Unknown error'));
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
     return (
         <AppLayout title="Payroll Management" breadcrumbs={[{ title: 'Payroll', href: route('payroll.index') }]} requiredPermission="payroll.view">
             <Head title="Payroll Management" />
@@ -250,55 +303,10 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                                                                     <Button
                                 variant="outline"
                                 type="button"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    try {
-                                        console.log('Generate Monthly button clicked');
-                                        const month = new Date().toISOString().slice(0, 7);
-                                        console.log('Month:', month);
-
-                                        // Use actual payroll route
-                                        const routeUrl = route('payroll.generate-monthly');
-                                        console.log('Route URL:', routeUrl);
-
-                                        // Use regular fetch instead of Inertia router
-                                        fetch(routeUrl, {
-                                            method: 'POST',
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                                                'Accept': 'application/json'
-                                            },
-                                            body: JSON.stringify({
-                                                month
-                                            })
-                                                                                })
-                                        .then(response => {
-                                            console.log('Response status:', response.status);
-                                            console.log('Response headers:', response.headers);
-                                            if (!response.ok) {
-                                                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                                            }
-                                            return response.json();
-                                        })
-                                        .then(data => {
-                                            console.log('Payroll generation successful:', data);
-                                            toast.success('Payroll generated successfully');
-                                            // Reload the page to show new payrolls
-                                            window.location.reload();
-                                        })
-                                        .catch(error => {
-                                            console.error('Payroll generation error:', error);
-                                            toast.error('Failed to generate payroll: ' + (error.message || 'Unknown error'));
-                                        });
-                                    } catch (error) {
-                                        console.error('Button click error:', error);
-                                        toast.error('Button error: ' + error.message);
-                                    }
-                                }}
+                                onClick={() => setShowConfirmDialog(true)}
+                                disabled={isGenerating}
                             >
-                                Generate Monthly
+                                {isGenerating ? 'Generating...' : 'Generate Payroll'}
                             </Button>
 
                                                                                     {isAdmin && (
@@ -861,6 +869,30 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                         >
                             <Trash2 className="h-4 w-4" />
                             {bulkDeleteProcessing ? 'Deleting...' : 'Delete Selected'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Confirmation Dialog */}
+            <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Generate Payroll</DialogTitle>
+                        <DialogDescription>
+                            This will generate payroll for all employees who have approved timesheets for any month in the last 12 months (including current month).
+                            The system will automatically skip employees who already have payroll generated for those months.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleGeneratePayroll}
+                            disabled={isGenerating}
+                        >
+                            {isGenerating ? 'Generating...' : 'Generate Payroll'}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
