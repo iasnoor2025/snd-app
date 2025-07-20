@@ -51,7 +51,16 @@ class PayrollController extends Controller
             $query->where('employee_id', $request->employee_id);
         }
 
-        $perPage = $request->get('per_page', 3);
+        $perPage = $request->get('per_page', 10);
+
+        // Debug: Log the per_page parameter
+        \Log::info('Payroll index - per_page parameter', [
+            'requested_per_page' => $request->get('per_page'),
+            'default_per_page' => 10,
+            'final_per_page' => $perPage,
+            'all_request_params' => $request->all()
+        ]);
+
         $payrolls = $query->latest()->paginate($perPage);
 
         // Ensure employee data is properly loaded and formatted
@@ -69,10 +78,22 @@ class PayrollController extends Controller
             })
             ->values();
 
+                // Add per_page to the pagination data
+        $payrollsArray = $payrolls->toArray();
+        $payrollsArray['per_page'] = $perPage;
+
+        // Debug: Log the response data
+        \Log::info('Payroll index - response data', [
+            'payrolls_meta' => $payrollsArray,
+            'filters' => $request->only(['month', 'status', 'employee_id', 'per_page']),
+            'total_records' => $payrolls->total(),
+            'per_page' => $perPage
+        ]);
+
         return Inertia::render('Payroll/Index', [
-            'payrolls' => $payrolls,
+            'payrolls' => $payrollsArray,
             'employees' => $employees,
-            'filters' => $request->only(['month', 'status', 'employee_id']),
+            'filters' => $request->only(['month', 'status', 'employee_id', 'per_page']),
             'hasRecords' => $payrolls->total() > 0
         ]);
     }

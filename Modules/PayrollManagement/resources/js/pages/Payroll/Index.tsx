@@ -32,7 +32,7 @@ import { router } from '@inertiajs/core';
 import { Head } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { Banknote, Calendar, User, TrendingUp, TrendingDown, DollarSign, Trash2, Search } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { route } from 'ziggy-js';
 import { toast } from 'sonner';
@@ -47,6 +47,7 @@ interface Props extends PageProps {
         employee_id?: number;
         month?: string;
         status?: string;
+        per_page?: string;
     };
     hasRecords: boolean;
 }
@@ -97,6 +98,13 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
     const [showBulkDeleteModal, setShowBulkDeleteModal] = useState(false);
     const [bulkDeleteProcessing, setBulkDeleteProcessing] = useState(false);
     const [employeeSearch, setEmployeeSearch] = useState('');
+
+    // Debug: Log payrolls data when it changes
+    useEffect(() => {
+        console.log('Payrolls data updated:', payrolls);
+        console.log('Payrolls meta:', payrolls?.meta);
+        console.log('Per page value:', payrolls?.meta?.per_page);
+    }, [payrolls]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -584,75 +592,93 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                             <div className="mt-6 border-t pt-4">
                                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                                     <div className="text-sm text-muted-foreground">
-                                        Showing {payrolls?.meta?.from || 1} to {payrolls?.meta?.to || payrolls.data.length} of{' '}
-                                        {payrolls?.meta?.total || payrolls.data.length} results
-                                        <div className="mt-1 text-xs opacity-60">
-                                            Page {payrolls?.meta?.current_page || 1} of {payrolls?.meta?.last_page || 1}
-                                        </div>
+                                        Showing {payrolls?.from || 1} to {payrolls?.to || payrolls.data.length} of{' '}
+                                        {payrolls?.total || payrolls.data.length} results
+                                        {payrolls?.last_page > 1 && (
+                                            <div className="mt-1 text-xs opacity-60">
+                                                Page {payrolls?.current_page || 1} of {payrolls?.last_page || 1}
+                                            </div>
+                                        )}
                                     </div>
 
                                     <div className="flex flex-col items-center gap-4 sm:flex-row">
                                         {/* Per Page Selector */}
-                                <div className="flex items-center space-x-2">
+                                        <div className="flex items-center space-x-2">
                                             <span className="text-sm text-muted-foreground">Show:</span>
-                                            <Select value={payrolls?.meta?.per_page?.toString() || "3"} onValueChange={(value) => {
-                                                router.get(
-                                                    route('payroll.index'),
-                                                    {
-                                                        per_page: value,
-                                                        month: filters.month,
-                                                        status: filters.status,
-                                                        employee_id: filters.employee_id,
-                                                    },
-                                                    { preserveState: true, preserveScroll: true },
-                                                );
-                                            }}>
+                                            <Select
+                                                value={payrolls?.per_page?.toString() || "10"}
+                                                // Debug: Log the current per_page value
+                                                onOpenChange={(open) => {
+                                                    if (open) {
+                                                        console.log('Current per_page:', payrolls?.per_page);
+                                                        console.log('Full payrolls object:', payrolls);
+                                                    }
+                                                }}
+                                                onValueChange={(value) => {
+                                                    console.log('Changing per_page to:', value);
+                                                    router.get(
+                                                        route('payroll.index'),
+                                                        {
+                                                            per_page: value,
+                                                            month: filters.month,
+                                                            status: filters.status,
+                                                            employee_id: filters.employee_id,
+                                                        },
+                                                        {
+                                                            preserveState: true,
+                                                            preserveScroll: true,
+                                                            replace: true
+                                                        },
+                                                    );
+                                                }}
+                                            >
                                                 <SelectTrigger className="w-20">
                                                     <SelectValue />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="3">3</SelectItem>
                                                     <SelectItem value="5">5</SelectItem>
                                                     <SelectItem value="10">10</SelectItem>
                                                     <SelectItem value="15">15</SelectItem>
                                                     <SelectItem value="25">25</SelectItem>
                                                     <SelectItem value="50">50</SelectItem>
+                                                    <SelectItem value="100">100</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </div>
 
-                                        {/* Page Navigation */}
-                                        <div className="flex items-center space-x-1">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                                disabled={!payrolls?.meta?.current_page || payrolls.meta.current_page === 1}
-                                                onClick={() => {
-                                                    const currentPage = payrolls?.meta?.current_page || 1;
-                                                    if (currentPage > 1) {
-                                                        router.get(
-                                                            route('payroll.index'),
-                                                            {
-                                                                page: currentPage - 1,
-                                                                per_page: payrolls?.meta?.per_page || 3,
-                                                                month: filters.month,
-                                                                status: filters.status,
-                                                                employee_id: filters.employee_id,
-                                                            },
-                                                            { preserveState: true, preserveScroll: true },
-                                                        );
-                                                    }
-                                                }}
-                                    >
-                                        Previous
-                                    </Button>
-
-                                            {/* Page Numbers - always show */}
+                                        {/* Page Navigation - Only show if more than one page */}
+                                        {payrolls?.last_page > 1 && (
                                             <div className="flex items-center space-x-1">
-                                                {Array.from({ length: Math.min(5, payrolls?.meta?.last_page || 1) }, (_, i) => {
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    disabled={!payrolls?.current_page || payrolls.current_page === 1}
+                                                    onClick={() => {
+                                                        const currentPage = payrolls?.current_page || 1;
+                                                        if (currentPage > 1) {
+                                                            router.get(
+                                                                route('payroll.index'),
+                                                                {
+                                                                    page: currentPage - 1,
+                                                                    per_page: payrolls?.per_page || 10,
+                                                                    month: filters.month,
+                                                                    status: filters.status,
+                                                                    employee_id: filters.employee_id,
+                                                                },
+                                                                { preserveState: true, preserveScroll: true },
+                                                            );
+                                                        }
+                                                    }}
+                                                >
+                                                    Previous
+                                                </Button>
+
+                                                {/* Page Numbers */}
+                                                <div className="flex items-center space-x-1">
+                                                    {Array.from({ length: Math.min(5, payrolls?.last_page || 1) }, (_, i) => {
                                                         let pageNumber;
-                                                        const lastPage = payrolls?.meta?.last_page || 1;
-                                                        const currentPage = payrolls?.meta?.current_page || 1;
+                                                        const lastPage = payrolls?.last_page || 1;
+                                                        const currentPage = payrolls?.current_page || 1;
 
                                                         if (lastPage <= 5) {
                                                             pageNumber = i + 1;
@@ -677,7 +703,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                                                         route('payroll.index'),
                                                                         {
                                                                             page: pageNumber,
-                                                                            per_page: payrolls?.meta?.per_page || 3,
+                                                                            per_page: payrolls?.per_page || 10,
                                                                             month: filters.month,
                                                                             status: filters.status,
                                                                             employee_id: filters.employee_id,
@@ -689,38 +715,39 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                                                 {pageNumber}
                                                             </Button>
                                                         );
-                                                })}
-                                            </div>
+                                                    })}
+                                                </div>
 
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                                disabled={
-                                                    !payrolls?.meta?.current_page ||
-                                                    !payrolls?.meta?.last_page ||
-                                                    payrolls.meta.current_page >= payrolls.meta.last_page
-                                                }
-                                                onClick={() => {
-                                                    const currentPage = payrolls?.meta?.current_page || 1;
-                                                    const lastPage = payrolls?.meta?.last_page || 1;
-                                                    if (currentPage < lastPage) {
-                                                        router.get(
-                                                            route('payroll.index'),
-                                                            {
-                                                                page: currentPage + 1,
-                                                                per_page: payrolls?.meta?.per_page || 3,
-                                                                month: filters.month,
-                                                                status: filters.status,
-                                                                employee_id: filters.employee_id,
-                                                            },
-                                                            { preserveState: true, preserveScroll: true },
-                                                        );
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    disabled={
+                                                        !payrolls?.current_page ||
+                                                        !payrolls?.last_page ||
+                                                        payrolls.current_page >= payrolls.last_page
                                                     }
-                                                }}
-                                    >
-                                        Next
-                                    </Button>
-                                        </div>
+                                                    onClick={() => {
+                                                        const currentPage = payrolls?.current_page || 1;
+                                                        const lastPage = payrolls?.last_page || 1;
+                                                        if (currentPage < lastPage) {
+                                                            router.get(
+                                                                route('payroll.index'),
+                                                                {
+                                                                    page: currentPage + 1,
+                                                                    per_page: payrolls?.per_page || 10,
+                                                                    month: filters.month,
+                                                                    status: filters.status,
+                                                                    employee_id: filters.employee_id,
+                                                                },
+                                                                { preserveState: true, preserveScroll: true },
+                                                            );
+                                                        }
+                                                    }}
+                                                >
+                                                    Next
+                                                </Button>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
