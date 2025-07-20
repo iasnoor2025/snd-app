@@ -403,38 +403,37 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                 </div>
                 <div ref={payslipRef}>
                     <Card className="card-container print:shadow-none">
-                        <CardHeader className="header-container border-b pb-4">
+                        <CardHeader className="header-container border-b pb-2">
                             <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    <div className="flex h-16 w-16 items-center justify-center rounded-md bg-gray-100">
-                                        <img src="/snd%20logo.png" alt="SND Logo" className="h-14 w-14 object-contain bg-white border border-gray-200 rounded" />
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-md bg-gray-100">
+                                        <img src="/snd%20logo.png" alt="SND Logo" className="h-10 w-10 object-contain bg-white border border-gray-200 rounded" />
                                     </div>
                                     <div>
-                                        <CardTitle className="company-name text-xl">Samhan Naser Al-Dosri Est.</CardTitle>
-                                        <CardDescription className="company-subtitle">For Gen. Contracting & Rent. Equipments</CardDescription>
+                                        <CardTitle className="company-name text-lg">Samhan Naser Al-Dosri Est.</CardTitle>
+                                        <CardDescription className="company-subtitle text-xs">For Gen. Contracting & Rent. Equipments</CardDescription>
                                     </div>
                                 </div>
                                 <div className="text-right">
-                                    <h2 className="pay-slip-title text-lg font-semibold">Payroll Payslip</h2>
-                                    <p className="text-sm text-muted-foreground">
+                                    <h2 className="pay-slip-title text-base font-semibold">Payroll Payslip</h2>
+                                    <p className="text-xs text-muted-foreground">
                                         {formattedPeriod}
                                     </p>
                                 </div>
                             </div>
                         </CardHeader>
-
-                        <CardContent className="space-y-3 p-4">
+                        <CardContent className="space-y-1 p-2">
                             {/* Employee & Pay Summary Section - 4 Columns */}
-                            <Card className="mb-2 border-none bg-white/90 shadow-none">
-                                <CardContent className="p-3">
-                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+                            <Card className="mb-0 bg-white/90 shadow-none">
+                                <CardContent className="p-1">
+                                    <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
                                         {/* Employee Details */}
-                                        <div className="flex flex-col gap-1 border-r border-gray-200 pr-0 md:pr-3">
-                                            <div className="mb-1 flex items-center gap-1">
-                                                <User className="h-4 w-4 text-primary" />
-                                                <span className="text-sm font-semibold text-gray-800">Employee Details</span>
+                                        <div className="flex flex-col gap-0.5 border-r border-gray-200 pr-0 md:pr-2">
+                                            <div className="mb-0 flex items-center gap-1">
+                                                <User className="h-3 w-3 text-primary" />
+                                                <span className="text-xs font-semibold text-gray-800">Employee Details</span>
                                             </div>
-                                            <div className="space-y-0.5 text-xs">
+                                            <div className="space-y-0 text-xs">
                                                 <div className="flex justify-between">
                                                     <span className="font-medium text-gray-500">File #:</span>
                                                     <span className="font-semibold text-gray-800">{safeEmployee.employee_id}</span>
@@ -457,12 +456,12 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                                         </div>
 
                                         {/* Pay Period Details */}
-                                        <div className="flex flex-col gap-1 border-r border-gray-200 pr-0 md:pr-3">
-                                            <div className="mb-1 flex items-center gap-1">
-                                                <Calendar className="h-4 w-4 text-primary" />
-                                                <span className="text-sm font-semibold text-gray-800">Pay Period</span>
+                                        <div className="flex flex-col gap-0.5 border-r border-gray-200 pr-0 md:pr-2">
+                                            <div className="mb-0 flex items-center gap-1">
+                                                <Calendar className="h-3 w-3 text-primary" />
+                                                <span className="text-xs font-semibold text-gray-800">Pay Period</span>
                                             </div>
-                                            <div className="space-y-0.5 text-xs">
+                                            <div className="space-y-0 text-xs">
                                                 <div className="flex justify-between">
                                                     <span className="font-medium text-gray-500">Period:</span>
                                                     <span className="font-semibold text-gray-800">{formattedPeriod}</span>
@@ -483,10 +482,10 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                                         </div>
 
                                         {/* Salary Details */}
-                                        <div className="flex flex-col gap-1 border-r border-gray-200 pr-0 md:pr-3">
-                                            <div className="mb-1 flex items-center gap-1">
-                                                <DollarSign className="h-4 w-4 text-green-600" />
-                                                <span className="text-sm font-semibold text-gray-700">Salary Details</span>
+                                        <div className="flex flex-col gap-0.5 border-r border-gray-200 pr-0 md:pr-2">
+                                            <div className="mb-0 flex items-center gap-1">
+                                                <DollarSign className="h-3 w-3 text-green-600" />
+                                                <span className="text-xs font-semibold text-gray-700">Salary Details</span>
                                             </div>
                                             <div className="flex justify-between text-xs">
                                                 <span className="text-gray-500">Basic:</span>
@@ -507,10 +506,10 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                                         </div>
 
                                         {/* Working Hours */}
-                                        <div className="flex flex-col gap-1">
-                                            <div className="mb-1 flex items-center gap-1">
-                                                <Clock className="h-4 w-4 text-blue-600" />
-                                                <span className="text-sm font-semibold text-gray-700">Working Hours</span>
+                                        <div className="flex flex-col gap-0.5">
+                                            <div className="mb-0 flex items-center gap-1">
+                                                <Clock className="h-3 w-3 text-blue-600" />
+                                                <span className="text-xs font-semibold text-gray-700">Working Hours</span>
                                             </div>
                                             <div className="flex justify-between text-xs">
                                                 <span className="text-gray-500">Total:</span>
@@ -522,7 +521,7 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                                             </div>
                                             <div className="flex justify-between text-xs">
                                                 <span className="text-gray-500">Overtime:</span>
-                                                <span className="text-blue-600">{safePayroll.overtime_hours}</span>
+                                                <span className="text-blue-600">{safePayroll.overtime_hours > 0 ? safePayroll.overtime_hours : 0}</span>
                                             </div>
                                             <div className="flex justify-between text-xs">
                                                 <span className="text-gray-500">Rate:</span>
@@ -535,52 +534,16 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
 
 
 
-                            {/* Payroll Summary */}
-                            <div className="space-y-2">
-                                <div className="flex items-center gap-2">
-                                    <DollarSign className="h-4 w-4 text-muted-foreground" />
-                                    <h3 className="font-semibold">Payroll Summary</h3>
-                                </div>
-
-                                                                <div className="rounded-md border bg-white shadow-sm">
-                                    {/* Earnings & Deductions Section */}
-                                    <div className="border-b border-gray-200 p-3">
-                                        <h4 className="mb-2 text-sm font-semibold text-gray-700">Earnings & Deductions</h4>
-                                        <div className="grid grid-cols-2 gap-y-2 text-sm">
-                                            <div className="font-medium text-gray-600">Basic Salary:</div>
-                                            <div className="text-right font-medium">{formatCurrency(safePayroll.base_salary)}</div>
-
-                                            <div className="font-medium text-gray-600">Overtime Pay:</div>
-                                            <div className="text-right text-green-600">{formatCurrency(safePayroll.overtime_amount)}</div>
-
-                                            <div className="font-medium text-gray-600">Bonus:</div>
-                                            <div className="text-right text-green-600">{formatCurrency(safePayroll.bonus_amount)}</div>
-
-                                            <div className="font-medium text-gray-600">Advance Deductions:</div>
-                                            <div className="text-right text-red-600">{formatCurrency(safePayroll.advance_deduction)}</div>
-                                        </div>
-                                    </div>
-
-                                    {/* Net Pay Section */}
-                                    <div className="p-3 bg-gray-50">
-                                        <div className="grid grid-cols-2 gap-y-2 text-sm">
-                                            <div className="font-bold text-gray-800">Net Pay:</div>
-                                            <div className="text-right font-bold text-lg text-green-600">{formatCurrency(netPay)}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
                             {/* Attendance Record */}
-                            <div className="space-y-2">
+                            <div className="space-y-1">
                                 <div className="flex items-center gap-2">
                                     <Calendar className="h-4 w-4 text-muted-foreground" />
                                     <h3 className="font-semibold">Attendance Record</h3>
                                 </div>
 
                                 <div className="overflow-x-auto rounded-md border">
-                                    <div className="bg-white p-3">
-                                        <div className="mb-2 flex items-center gap-2">
+                                    <div className="bg-white p-2">
+                                        <div className="mb-1 flex items-center gap-2">
                                             <Calendar className="h-4 w-4 text-primary" />
                                             <span className="text-sm font-medium text-gray-700">attendance_record</span>
                                         </div>
@@ -588,8 +551,8 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                                         {/* Attendance Table */}
                                         <div className="overflow-x-auto">
                                             {!attendanceData && (
-                                                <div className="mb-2 p-2 bg-yellow-100 border border-yellow-300 rounded">
-                                                    <p className="text-sm text-yellow-800">
+                                                <div className="mb-1 p-1 bg-yellow-100 border border-yellow-300 rounded">
+                                                    <p className="text-xs text-yellow-800">
                                                         ⚠️ No attendance data received from backend. Showing sample data.
                                                     </p>
                                                 </div>
@@ -659,18 +622,18 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                                                             );
                                                         })}
                                                     </tr>
-                                                    {/* Hours Row */}
+                                                    {/* Overtime Hours Row */}
                                                     <tr>
                                                         {Array.from({ length: new Date(safePayroll.year, safePayroll.month, 0).getDate() }, (_, i) => {
                                                             const day = i + 1;
                                                             const dayData = attendanceData?.[day];
 
                                                             // Always use real data if available
-                                                            const totalHours = dayData?.total_hours || 0;
+                                                            const overtimeHours = dayData?.overtime_hours || 0;
 
                                                             return (
                                                                 <td key={day} className="border border-gray-300 px-1 py-1 text-center text-xs text-gray-600">
-                                                                    {totalHours}
+                                                                    {overtimeHours > 0 ? overtimeHours : 0}
                                                                 </td>
                                                             );
                                                         })}
@@ -682,14 +645,14 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
 
 
                                         {/* Legend */}
-                                        <div className="mt-2 flex flex-wrap gap-2 text-xs attendance-legend">
+                                        <div className="mt-1 flex flex-wrap gap-1 text-xs attendance-legend">
                                             <div className="flex items-center gap-1">
                                                 <span className="inline-block h-3 w-3 rounded bg-green-500"></span>
-                                                <span className="text-green-700">8 = regular hours</span>
+                                                <span className="text-green-700">8 = regular hours (top row)</span>
                                             </div>
                                             <div className="flex items-center gap-1">
                                                 <span className="inline-block h-3 w-3 rounded bg-blue-500"></span>
-                                                <span className="text-blue-700">O = overtime hours</span>
+                                                <span className="text-blue-700">O = overtime hours (bottom row)</span>
                                             </div>
                                             <div className="flex items-center gap-1">
                                                 <span className="inline-block h-3 w-3 rounded bg-red-500"></span>
@@ -704,33 +667,69 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                                 </div>
                             </div>
 
+                            {/* Payroll Summary */}
+                            <div className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                    <DollarSign className="h-4 w-4 text-muted-foreground" />
+                                    <h3 className="font-semibold">Payroll Summary</h3>
+                                </div>
+
+                                                                <div className="rounded-md border bg-white shadow-sm">
+                                    {/* Earnings & Deductions Section */}
+                                    <div className="border-b border-gray-200 p-2">
+                                        <h4 className="mb-1 text-sm font-semibold text-gray-700">Earnings & Deductions</h4>
+                                        <div className="grid grid-cols-2 gap-y-1 text-sm">
+                                            <div className="font-medium text-gray-600">Basic Salary:</div>
+                                            <div className="text-right font-medium">{formatCurrency(safePayroll.base_salary)}</div>
+
+                                            <div className="font-medium text-gray-600">Overtime Pay:</div>
+                                            <div className="text-right text-green-600">{formatCurrency(safePayroll.overtime_amount)}</div>
+
+                                            <div className="font-medium text-gray-600">Bonus:</div>
+                                            <div className="text-right text-green-600">{formatCurrency(safePayroll.bonus_amount)}</div>
+
+                                            <div className="font-medium text-gray-600">Advance Deductions:</div>
+                                            <div className="text-right text-red-600">{formatCurrency(safePayroll.advance_deduction)}</div>
+                                        </div>
+                                    </div>
+
+                                    {/* Net Pay Section */}
+                                    <div className="p-2 bg-gray-50">
+                                        <div className="grid grid-cols-2 gap-y-1 text-sm">
+                                            <div className="font-bold text-gray-800">Net Pay:</div>
+                                            <div className="text-right font-bold text-lg text-green-600">{formatCurrency(netPay)}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             {/* Notes */}
                             {safePayroll.notes && (
-                                <div className="space-y-1">
+                                <div className="space-y-0.5">
                                     <h3 className="font-semibold">Notes</h3>
-                                    <div className="rounded-md border bg-gray-50 p-2 text-sm">
+                                    <div className="rounded-md border bg-gray-50 p-1 text-sm">
                                         <p className="text-gray-700">{safePayroll.notes}</p>
                                     </div>
                                 </div>
                             )}
                         </CardContent>
 
-                        <CardFooter className="flex justify-end border-t pt-4">
-                            <div className="grid grid-cols-3 gap-x-12 text-sm">
+                        <CardFooter className="flex justify-end border-t pt-2">
+                            <div className="grid grid-cols-3 gap-x-8 text-sm">
                                 <div className="text-center">
                                     <p className="mb-1 font-semibold">Chief-Accountant</p>
                                     <p className="text-muted-foreground italic">Samir Taima</p>
-                                    <div className="mt-4 border-t border-gray-300 pt-1">Signature</div>
+                                    <div className="mt-2 border-t border-gray-300 pt-1">Signature</div>
                                 </div>
                                 <div className="text-center">
                                     <p className="mb-1 font-semibold">Verified By</p>
                                     <p className="text-muted-foreground italic">Salem Samhan Al-Dosri</p>
-                                    <div className="mt-4 border-t border-gray-300 pt-1">Signature</div>
+                                    <div className="mt-2 border-t border-gray-300 pt-1">Signature</div>
                                 </div>
                                 <div className="text-center">
                                     <p className="mb-1 font-semibold">Approved By</p>
                                     <p className="text-muted-foreground italic">Nasser Samhan Al-Dosri</p>
-                                    <div className="mt-4 border-t border-gray-300 pt-1">Signature</div>
+                                    <div className="mt-2 border-t border-gray-300 pt-1">Signature</div>
                                 </div>
                             </div>
                         </CardFooter>
