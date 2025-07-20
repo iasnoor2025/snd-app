@@ -202,7 +202,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                 setSelectedPayrolls([]);
                 setShowBulkDeleteModal(false);
                 setBulkDeleteProcessing(false);
-                toast.success(`Successfully deleted ${selectedPayrolls.length} payroll record(s)`);
+                toast.success(`Successfully permanently deleted ${selectedPayrolls.length} payroll record(s)`);
             },
             onError: (errors) => {
                 console.error('Bulk delete error:', errors);
@@ -909,10 +909,11 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
             <Dialog open={showBulkDeleteModal} onOpenChange={setShowBulkDeleteModal}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Confirm Bulk Delete</DialogTitle>
+                        <DialogTitle>Confirm Permanent Bulk Delete</DialogTitle>
                         <DialogDescription>
-                            Are you sure you want to delete {selectedPayrolls.length} selected payroll record(s)?
-                            This action cannot be undone and will only delete unpaid payrolls.
+                            Are you sure you want to PERMANENTLY delete {selectedPayrolls.length} selected payroll record(s)?
+                            This action cannot be undone and will permanently remove these records from the database.
+                            Only unpaid payrolls can be deleted. Paid payrolls will be skipped.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
@@ -932,7 +933,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                             className="flex items-center gap-2"
                         >
                             <Trash2 className="h-4 w-4" />
-                            {bulkDeleteProcessing ? 'Deleting...' : 'Delete Selected'}
+                            {bulkDeleteProcessing ? 'Deleting...' : 'Permanently Delete Selected'}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

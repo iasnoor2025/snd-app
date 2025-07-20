@@ -589,7 +589,7 @@ class PayrollController extends Controller
     }
 
     /**
-     * Bulk delete payrolls (admin only)
+     * Bulk delete payrolls permanently (admin only)
      */
     public function bulkDelete(Request $request)
     {
@@ -608,30 +608,43 @@ class PayrollController extends Controller
 
             $payrollIds = $request->payroll_ids;
             $deletedCount = 0;
+            $skippedCount = 0;
 
             foreach ($payrollIds as $payrollId) {
-                $payroll = Payroll::find($payrollId);
+                $payroll = Payroll::withTrashed()->find($payrollId);
 
-                if ($payroll && $payroll->status !== 'paid') {
-                    // Delete associated items first
-                    $payroll->items()->delete();
+                if ($payroll) {
+                    // Check if payroll is paid - if so, skip it
+                    if ($payroll->status === 'paid') {
+                        $skippedCount++;
+                        continue;
+                    }
 
-                    // Soft delete the payroll
-                    $payroll->delete();
+                    // Delete associated items permanently first
+                    $payroll->items()->forceDelete();
+
+                    // Permanently delete the payroll
+                    $payroll->forceDelete();
                     $deletedCount++;
                 }
             }
 
             DB::commit();
 
-            $message = $deletedCount > 0
-                ? "Successfully deleted {$deletedCount} payroll record(s)."
-                : "No payroll records were deleted (only unpaid payrolls can be deleted).";
+            $message = "Successfully permanently deleted {$deletedCount} payroll record(s).";
+            if ($skippedCount > 0) {
+                $message .= " Skipped {$skippedCount} paid payroll(s) (cannot delete paid payrolls).";
+            }
 
             return back()->with('success', $message);
 
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::error('Bulk delete payroll error: ' . $e->getMessage(), [
+                'user_id' => auth()->id(),
+                'payroll_ids' => $request->payroll_ids,
+                'trace' => $e->getTraceAsString()
+            ]);
             return back()->with('error', 'Failed to delete payroll records: ' . $e->getMessage());
         }
     }
