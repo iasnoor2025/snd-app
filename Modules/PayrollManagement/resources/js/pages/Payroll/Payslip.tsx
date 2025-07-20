@@ -598,14 +598,14 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                                             <table className="min-w-full border-collapse border border-gray-300 attendance-table">
                                                 <thead>
                                                     <tr className="bg-black text-white">
-                                                        {Array.from({ length: 31 }, (_, i) => (
+                                                        {Array.from({ length: new Date(safePayroll.year, safePayroll.month, 0).getDate() }, (_, i) => (
                                                             <th key={i + 1} className="border border-gray-300 px-2 py-1 text-center text-xs font-medium">
                                                                 {String(i + 1).padStart(2, '0')}
                                                             </th>
                                                         ))}
                                                     </tr>
                                                     <tr className="bg-gray-100">
-                                                        {Array.from({ length: 31 }, (_, i) => {
+                                                        {Array.from({ length: new Date(safePayroll.year, safePayroll.month, 0).getDate() }, (_, i) => {
                                                             const day = i + 1;
                                                             const dayData = attendanceData?.[day];
                                                             const dayName = dayData?.day_name || ['M', 'T', 'W', 'T', 'F', 'S', 'S'][(day - 1) % 7];
@@ -620,7 +620,7 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                                                 <tbody>
                                                     {/* Attendance Status Row */}
                                                     <tr>
-                                                                                                                                                                                                                                                                                        {Array.from({ length: 31 }, (_, i) => {
+                                                        {Array.from({ length: new Date(safePayroll.year, safePayroll.month, 0).getDate() }, (_, i) => {
                                                             const day = i + 1;
                                                             const dayData = attendanceData?.[day];
 
@@ -661,7 +661,7 @@ export default function Payslip({ auth, payroll, employee, attendanceData }: Pro
                                                     </tr>
                                                     {/* Hours Row */}
                                                     <tr>
-                                                                                                                                                                                                                                {Array.from({ length: 31 }, (_, i) => {
+                                                        {Array.from({ length: new Date(safePayroll.year, safePayroll.month, 0).getDate() }, (_, i) => {
                                                             const day = i + 1;
                                                             const dayData = attendanceData?.[day];
 
