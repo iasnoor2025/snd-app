@@ -62,9 +62,22 @@ interface Payroll {
     created_at: string;
 }
 
+interface AttendanceData {
+    [key: number]: {
+        date: string;
+        day_of_week: number;
+        day_name: string;
+        regular_hours: number;
+        overtime_hours: number;
+        status: string;
+        total_hours: number;
+    };
+}
+
 interface Props extends PageProps {
     payroll: Payroll;
     employee: Employee;
+    attendanceData?: AttendanceData;
 }
 
 // Currency formatter function
@@ -158,12 +171,54 @@ const printStyles = `
     .green-bg {
       background-color: #C6E0B4 !important;
     }
+
+    .attendance-table {
+      border-collapse: collapse !important;
+      width: 100% !important;
+      font-size: 10px !important;
+    }
+
+    .attendance-table th,
+    .attendance-table td {
+      border: 1px solid #000 !important;
+      padding: 2px 4px !important;
+      text-align: center !important;
+    }
+
+    .attendance-table .bg-green-100 {
+      background-color: #d1fae5 !important;
+    }
+
+    .attendance-table .bg-blue-100 {
+      background-color: #dbeafe !important;
+    }
+
+    .attendance-table .bg-red-100 {
+      background-color: #fee2e2 !important;
+    }
+
+    .attendance-legend {
+      margin-top: 10px !important;
+      font-size: 10px !important;
+    }
   }
 `;
 
-export default function Payslip({ auth, payroll, employee }: Props) {
+export default function Payslip({ auth, payroll, employee, attendanceData }: Props) {
     const { t } = useTranslation('PayrollManagement');
     const payslipRef = useRef<HTMLDivElement>(null);
+
+    // Debug: Log the attendance data
+    console.log('Attendance data received:', attendanceData);
+    if (attendanceData) {
+        console.log('Day 1 data:', attendanceData[1]);
+        console.log('Day 4 data:', attendanceData[4]);
+        console.log('Day 5 data:', attendanceData[5]);
+    }
+
+
+
+
 
     // Breadcrumbs
     const breadcrumbs: BreadcrumbItem[] = [
@@ -580,6 +635,139 @@ export default function Payslip({ auth, payroll, employee }: Props) {
 
                                         <div className="font-medium">Net Pay:</div>
                                         <div className="text-right font-bold text-green-600">{formatCurrency(netPay)}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Attendance Record */}
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-2">
+                                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                                    <h3 className="font-semibold">Attendance Record</h3>
+                                </div>
+
+                                <div className="overflow-x-auto rounded-md border">
+                                    <div className="bg-white p-4">
+                                        <div className="mb-4 flex items-center gap-2">
+                                            <Calendar className="h-4 w-4 text-primary" />
+                                            <span className="text-sm font-medium text-gray-700">attendance_record</span>
+                                        </div>
+
+                                        {/* Attendance Table */}
+                                        <div className="overflow-x-auto">
+                                            {!attendanceData && (
+                                                <div className="mb-4 p-4 bg-yellow-100 border border-yellow-300 rounded">
+                                                    <p className="text-sm text-yellow-800">
+                                                        ⚠️ No attendance data received from backend. Showing sample data.
+                                                    </p>
+                                                </div>
+                                            )}
+
+                                            <table className="min-w-full border-collapse border border-gray-300 attendance-table">
+                                                <thead>
+                                                    <tr className="bg-black text-white">
+                                                        {Array.from({ length: 31 }, (_, i) => (
+                                                            <th key={i + 1} className="border border-gray-300 px-2 py-1 text-center text-xs font-medium">
+                                                                {String(i + 1).padStart(2, '0')}
+                                                            </th>
+                                                        ))}
+                                                    </tr>
+                                                    <tr className="bg-gray-100">
+                                                        {Array.from({ length: 31 }, (_, i) => {
+                                                            const day = i + 1;
+                                                            const dayData = attendanceData?.[day];
+                                                            const dayName = dayData?.day_name || ['M', 'T', 'W', 'T', 'F', 'S', 'S'][(day - 1) % 7];
+                                                            return (
+                                                                <th key={day} className="border border-gray-300 px-1 py-1 text-center text-xs font-medium text-gray-600">
+                                                                    {dayName}
+                                                                </th>
+                                                            );
+                                                        })}
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {/* Attendance Status Row */}
+                                                    <tr>
+                                                                                                                                                                                                                                                                                        {Array.from({ length: 31 }, (_, i) => {
+                                                            const day = i + 1;
+                                                            const dayData = attendanceData?.[day];
+
+                                                            // Always use real data if available
+                                                            const status = dayData?.status || 'A';
+                                                            const totalHours = dayData?.total_hours || 0;
+
+                                                            let bgColor = 'bg-green-100';
+                                                            let textColor = 'text-green-700';
+
+                                                            // Set colors based on status
+                                                            switch (status) {
+                                                                case 'F':
+                                                                    bgColor = 'bg-blue-100';
+                                                                    textColor = 'text-blue-700';
+                                                                    break;
+                                                                case 'A':
+                                                                    bgColor = 'bg-red-100';
+                                                                    textColor = 'text-red-700';
+                                                                    break;
+                                                                case 'O':
+                                                                    bgColor = 'bg-blue-100';
+                                                                    textColor = 'text-blue-700';
+                                                                    break;
+                                                                case '8':
+                                                                default:
+                                                                    bgColor = 'bg-green-100';
+                                                                    textColor = 'text-green-700';
+                                                                    break;
+                                                            }
+
+                                                            return (
+                                                                <td key={day} className={`border border-gray-300 px-1 py-1 text-center text-xs font-medium ${bgColor} ${textColor}`}>
+                                                                    {status}
+                                                                </td>
+                                                            );
+                                                        })}
+                                                    </tr>
+                                                    {/* Hours Row */}
+                                                    <tr>
+                                                                                                                                                                                                                                {Array.from({ length: 31 }, (_, i) => {
+                                                            const day = i + 1;
+                                                            const dayData = attendanceData?.[day];
+
+                                                            // Always use real data if available
+                                                            const totalHours = dayData?.total_hours || 0;
+
+                                                            return (
+                                                                <td key={day} className="border border-gray-300 px-1 py-1 text-center text-xs text-gray-600">
+                                                                    {totalHours}
+                                                                </td>
+                                                            );
+                                                        })}
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+
+
+                                        {/* Legend */}
+                                        <div className="mt-4 flex flex-wrap gap-4 text-xs attendance-legend">
+                                            <div className="flex items-center gap-1">
+                                                <span className="inline-block h-3 w-3 rounded bg-green-500"></span>
+                                                <span className="text-green-700">8 = regular hours</span>
+                                            </div>
+                                            <div className="flex items-center gap-1">
+                                                <span className="inline-block h-3 w-3 rounded bg-blue-500"></span>
+                                                <span className="text-blue-700">O = overtime hours</span>
+                                            </div>
+                                            <div className="flex items-center gap-1">
+                                                <span className="inline-block h-3 w-3 rounded bg-red-500"></span>
+                                                <span className="text-red-700">A = absent</span>
+                                            </div>
+                                            <div className="flex items-center gap-1">
+                                                <span className="inline-block h-3 w-3 rounded bg-blue-300"></span>
+                                                <span className="text-blue-700">F = Friday (weekend)</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -416,10 +416,98 @@ class PayrollController extends Controller
             abort(404, 'Employee not found for this payroll');
         }
 
+        // Get attendance data for the payroll month
+        $month = Carbon::createFromDate($payroll->year, $payroll->month, 1);
+        $startDate = $month->copy()->startOfMonth();
+        $endDate = $month->copy()->endOfMonth();
+
+        // Get timesheets for the employee in this month
+        $timesheets = \Modules\TimesheetManagement\Domain\Models\Timesheet::where('employee_id', $payroll->employee_id)
+            ->whereBetween('date', [$startDate, $endDate])
+            ->orderBy('date')
+            ->get();
+
+
+
+        // Generate attendance calendar data
+        $attendanceData = $this->generateAttendanceCalendar($timesheets, $startDate, $endDate);
+
+
+
+
+
         return Inertia::render('Payroll/Payslip', [
             'payroll' => $payroll,
             'employee' => $payroll->employee,
+            'attendanceData' => $attendanceData,
         ]);
+    }
+
+        /**
+     * Generate attendance calendar data for payslip
+     */
+    private function generateAttendanceCalendar($timesheets, $startDate, $endDate)
+    {
+        $calendar = [];
+        $daysInMonth = $endDate->day;
+
+
+
+        // Create calendar structure for all days in the month
+        for ($day = 1; $day <= $daysInMonth; $day++) {
+            $date = $startDate->copy()->setDay($day);
+            $dateStr = $date->format('Y-m-d');
+
+                        // Get timesheet for this day - use more robust matching
+            $timesheet = $timesheets->first(function($t) use ($dateStr) {
+                return $t->date->format('Y-m-d') === $dateStr;
+            });
+
+
+
+            $status = $this->getAttendanceStatus($timesheet, $date);
+            $regularHours = $timesheet ? $timesheet->hours_worked : 0;
+            $overtimeHours = $timesheet ? $timesheet->overtime_hours : 0;
+            $totalHours = $regularHours + $overtimeHours;
+
+
+
+            $calendar[$day] = [
+                'date' => $dateStr,
+                'day_of_week' => $date->dayOfWeek,
+                'day_name' => $date->format('D'),
+                'regular_hours' => $regularHours,
+                'overtime_hours' => $overtimeHours,
+                'status' => $status,
+                'total_hours' => $totalHours,
+            ];
+        }
+
+        return $calendar;
+    }
+
+    /**
+     * Get attendance status for a day
+     */
+    private function getAttendanceStatus($timesheet, $date)
+    {
+        // Check if it's Friday (weekend)
+        if ($date->format('D') === 'Fri') {
+            return 'F'; // Friday (weekend)
+        }
+
+        // Check if employee worked
+        if ($timesheet && ($timesheet->hours_worked > 0 || $timesheet->overtime_hours > 0)) {
+            $totalHours = $timesheet->hours_worked + $timesheet->overtime_hours;
+
+            if ($totalHours > 8) {
+                return 'O'; // Overtime
+            } else {
+                return '8'; // Regular hours
+            }
+        }
+
+        return 'A'; // Absent
     }
 
     /**
