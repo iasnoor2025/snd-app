@@ -632,6 +632,14 @@ class Employee extends Model implements HasMedia
     }
 
     /**
+     * Get the position of the employee (alias for designation)
+     */
+    public function position(): BelongsTo
+    {
+        return $this->belongsTo(Designation::class);
+    }
+
+    /**
      * Get the location of the employee
      * Note: Using current_location as string field since current_location_id doesn't exist in migration
      */
@@ -728,6 +736,24 @@ class Employee extends Model implements HasMedia
     public function salaryIncrements(): HasMany
     {
         return $this->hasMany(SalaryIncrement::class);
+    }
+
+    /**
+     * Get the current salary for the employee
+     */
+    public function currentSalary(): BelongsTo
+    {
+        return $this->belongsTo(EmployeeSalary::class, 'id', 'employee_id')
+            ->where('effective_to', null)
+            ->orWhere('effective_to', '>=', now());
+    }
+
+    /**
+     * Get the leaves for the employee
+     */
+    public function leaves(): HasMany
+    {
+        return $this->hasMany(EmployeeLeave::class);
     }
 
     /**

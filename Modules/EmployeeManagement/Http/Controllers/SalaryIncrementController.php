@@ -72,12 +72,24 @@ class SalaryIncrementController extends Controller
             }])->findOrFail($employeeId);
         }
 
+        // Get all employees with salary data
+        $employees = Employee::select(
+            'id',
+            'first_name',
+            'last_name',
+            'employee_id',
+            'basic_salary as base_salary',
+            'food_allowance',
+            'housing_allowance',
+            'transport_allowance'
+        )
+        ->with(['department', 'position'])
+        ->orderBy('first_name')
+        ->get();
+
         return Inertia::render('EmployeeManagement/SalaryIncrements/Create', [
             'employee' => $employee,
-            'employees' => Employee::select('id', 'first_name', 'last_name', 'employee_id', 'basic_salary as base_salary', 'food_allowance', 'housing_allowance', 'transport_allowance')
-                ->with(['department', 'position'])
-                ->orderBy('first_name')
-                ->get(),
+            'employees' => $employees,
             'incrementTypes' => [
                 SalaryIncrement::TYPE_PERCENTAGE => 'Percentage Increase',
                 SalaryIncrement::TYPE_AMOUNT => 'Fixed Amount Increase',

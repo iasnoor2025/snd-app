@@ -129,7 +129,7 @@ export default function Show({ increment }: Props) {
             title={t('ttl_salary_increment_details')}
             breadcrumbs={[
                 { title: 'Salary Increments', href: route('salary-increments.index') },
-                { title: `${increment.employee.first_name} ${increment.employee.last_name}` },
+                { title: `${increment.employee?.first_name || ''} ${increment.employee?.last_name || ''}` },
             ]}
         >
             <div className="mb-6 flex items-center justify-between">
@@ -143,7 +143,7 @@ export default function Show({ increment }: Props) {
                     <div>
                         <h2 className="text-xl leading-tight font-semibold text-gray-800">{t('ttl_salary_increment_details')}</h2>
                         <p className="text-sm text-gray-600">
-                            {increment.employee.first_name} {increment.employee.last_name} - {increment.employee.employee_id}
+                            {increment.employee?.first_name || ''} {increment.employee?.last_name || ''} - {increment.employee?.employee_id || 'N/A'}
                         </p>
                     </div>
                 </div>
@@ -175,7 +175,7 @@ export default function Show({ increment }: Props) {
                     )}
                 </div>
             </div>
-            <Head title={`Salary Increment - ${increment.employee.first_name} ${increment.employee.last_name}`} />
+            <Head title={`Salary Increment - ${increment.employee?.first_name || ''} ${increment.employee?.last_name || ''}`} />
 
             <div className="py-12">
                 <div className="w-full sm:px-6 lg:px-8">
@@ -195,28 +195,28 @@ export default function Show({ increment }: Props) {
                                         <div>
                                             <label className="text-sm font-medium text-gray-500">{t('full_name')}</label>
                                             <p className="text-lg font-medium">
-                                                {increment.employee.first_name} {increment.employee.last_name}
+                                                {increment.employee?.first_name || ''} {increment.employee?.last_name || ''}
                                             </p>
                                         </div>
                                         <div>
                                             <label className="text-sm font-medium text-gray-500">{t('employee_id')}</label>
-                                            <p className="text-lg font-medium">{increment.employee.employee_id}</p>
+                                            <p className="text-lg font-medium">{increment.employee?.employee_id || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <label className="text-sm font-medium text-gray-500">Department</label>
-                                            <p className="text-lg font-medium">{getTranslation(increment.employee.department.name)}</p>
+                                            <p className="text-lg font-medium">{increment.employee.department ? getTranslation(increment.employee.department.name) : 'N/A'}</p>
                                         </div>
                                         <div>
                                             <label className="text-sm font-medium text-gray-500">Position</label>
-                                            <p className="text-lg font-medium">{getTranslation(increment.employee.position.name)}</p>
+                                            <p className="text-lg font-medium">{increment.employee.position ? getTranslation(increment.employee.position.title) : 'N/A'}</p>
                                         </div>
                                         <div>
                                             <label className="text-sm font-medium text-gray-500">Email</label>
-                                            <p className="text-lg font-medium">{increment.employee.email}</p>
+                                            <p className="text-lg font-medium">{increment.employee?.email || 'N/A'}</p>
                                         </div>
                                         <div>
                                             <label className="text-sm font-medium text-gray-500">{t('hire_date')}</label>
-                                            <p className="text-lg font-medium">{formatDate(increment.employee.hire_date)}</p>
+                                            <p className="text-lg font-medium">{increment.employee?.hire_date ? formatDate(increment.employee.hire_date) : 'N/A'}</p>
                                         </div>
                                     </div>
                                 </CardContent>
@@ -394,7 +394,7 @@ export default function Show({ increment }: Props) {
                                             <div>
                                                 <p className="font-medium">{t('request_created')}</p>
                                                 <p className="text-sm text-gray-600">{formatDate(increment.created_at)}</p>
-                                                <p className="text-sm text-gray-500">by {increment.requested_by.name}</p>
+                                                <p className="text-sm text-gray-500">by {increment.requested_by?.name || 'Unknown'}</p>
                                             </div>
                                         </div>
 
@@ -405,7 +405,7 @@ export default function Show({ increment }: Props) {
                                                     <p className="font-medium text-green-600">Approved</p>
                                                     <p className="text-sm text-gray-600">{formatDate(increment.approval_date)}</p>
                                                     {increment.approved_by && (
-                                                        <p className="text-sm text-gray-500">by {increment.approved_by.name}</p>
+                                                        <p className="text-sm text-gray-500">by {increment.approved_by?.name || 'Unknown'}</p>
                                                     )}
                                                 </div>
                                             </div>
@@ -418,7 +418,7 @@ export default function Show({ increment }: Props) {
                                                     <p className="font-medium text-red-600">Rejected</p>
                                                     <p className="text-sm text-gray-600">{formatDate(increment.rejection_date)}</p>
                                                     {increment.rejected_by && (
-                                                        <p className="text-sm text-gray-500">by {increment.rejected_by.name}</p>
+                                                        <p className="text-sm text-gray-500">by {increment.rejected_by?.name || 'Unknown'}</p>
                                                     )}
                                                 </div>
                                             </div>
@@ -430,7 +430,7 @@ export default function Show({ increment }: Props) {
                                                 <div>
                                                     <p className="font-medium text-blue-600">Applied</p>
                                                     <p className="text-sm text-gray-600">{formatDate(increment.applied_date)}</p>
-                                                    {increment.applied_by && <p className="text-sm text-gray-500">by {increment.applied_by.name}</p>}
+                                                    {increment.applied_by && <p className="text-sm text-gray-500">by {increment.applied_by?.name || 'Unknown'}</p>}
                                                 </div>
                                             </div>
                                         )}
@@ -444,13 +444,13 @@ export default function Show({ increment }: Props) {
                                     <CardTitle>{t('quick_actions')}</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-2">
-                                    <Link href={route('employees.show', increment.employee.id)} className="block">
+                                    <Link href={route('employees.show', increment.employee?.id || 0)} className="block">
                                         <Button variant="outline" className="w-full justify-start">
                                             <User className="mr-2 h-4 w-4" />
                                             {t('view_employee_profile')}
                                         </Button>
                                     </Link>
-                                    <Link href={route('employees.salary-history', increment.employee.id)} className="block">
+                                    <Link href={route('employees.salary-history', increment.employee?.id || 0)} className="block">
                                         <Button variant="outline" className="w-full justify-start">
                                             <DollarSign className="mr-2 h-4 w-4" />
                                             {t('view_salary_history')}

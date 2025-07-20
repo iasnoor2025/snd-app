@@ -101,7 +101,8 @@
         "leaveManagement": "Leave Management",
         "projectManagement": "Project Management",
         "reporting": "Reporting",
-        "users": "Users"
+        "users": "Users",
+        "salary_increments": "Salary Increments"
     },
     "modules": {
         "Core": "Core",

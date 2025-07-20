@@ -1,11 +1,11 @@
 <?php
+
 namespace Modules\PayrollManagement\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Modules\EmployeeManagement\Services\PerformanceReviewService;
+use Modules\PayrollManagement\Services\PerformanceReviewService;
 
 class PerformanceReviewController extends Controller
 {
@@ -21,17 +21,10 @@ class PerformanceReviewController extends Controller
      */
     public function index(Request $request)
     {
-        $status = $request->input('status');
-        $employeeId = $request->input('employee_id');
-        $reviewerId = $request->input('reviewer_id');
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+        $employeeId = $request->get('employee_id');
+        $reviewerId = $request->get('reviewer_id');
 
-        if ($status) {
-            $reviews = $this->performanceReviewService->getReviewsByStatus($status);
-        } elseif ($employeeId && $startDate && $endDate) {
-            $reviews = $this->performanceReviewService->getEmployeeReviewsByPeriod($employeeId, $startDate, $endDate);
-        } elseif ($employeeId) {
+        if ($employeeId) {
             $reviews = $this->performanceReviewService->getEmployeeReviews($employeeId);
         } elseif ($reviewerId) {
             $reviews = $this->performanceReviewService->getReviewsByReviewer($reviewerId);
@@ -39,7 +32,7 @@ class PerformanceReviewController extends Controller
             $reviews = $this->performanceReviewService->getPendingReviews();
         }
 
-        return response()->json([;
+        return response()->json([
             'status' => 'success',
             'data' => $reviews
         ]);
@@ -53,13 +46,13 @@ class PerformanceReviewController extends Controller
         $review = $this->performanceReviewService->getReview($id);
 
         if (!$review) {
-            return response()->json([;
+            return response()->json([
                 'status' => 'error',
                 'message' => 'Performance review not found'
             ], 404);
         }
 
-        return response()->json([;
+        return response()->json([
             'status' => 'success',
             'data' => $review
         ]);
@@ -90,7 +83,7 @@ class PerformanceReviewController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json([;
+                return response()->json([
                     'status' => 'error',
                     'message' => 'Validation failed',
                     'errors' => $validator->errors()
@@ -99,13 +92,13 @@ class PerformanceReviewController extends Controller
 
             $review = $this->performanceReviewService->createReview($request->all());
 
-            return response()->json([;
+            return response()->json([
                 'status' => 'success',
                 'message' => 'Performance review created successfully',
                 'data' => $review
             ], 201);
         } catch (\Exception $e) {
-            return response()->json([;
+            return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to create performance review',
                 'error' => $e->getMessage()
@@ -138,7 +131,7 @@ class PerformanceReviewController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json([;
+                return response()->json([
                     'status' => 'error',
                     'message' => 'Validation failed',
                     'errors' => $validator->errors()
@@ -148,7 +141,7 @@ class PerformanceReviewController extends Controller
             // Check if review exists
             $review = $this->performanceReviewService->getReview($id);
             if (!$review) {
-                return response()->json([;
+                return response()->json([
                     'status' => 'error',
                     'message' => 'Performance review not found'
                 ], 404);
@@ -156,13 +149,13 @@ class PerformanceReviewController extends Controller
 
             $updatedReview = $this->performanceReviewService->updateReview($id, $request->all());
 
-            return response()->json([;
+            return response()->json([
                 'status' => 'success',
                 'message' => 'Performance review updated successfully',
                 'data' => $updatedReview
             ]);
         } catch (\Exception $e) {
-            return response()->json([;
+            return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to update performance review',
                 'error' => $e->getMessage()
@@ -179,7 +172,7 @@ class PerformanceReviewController extends Controller
             // Check if review exists
             $review = $this->performanceReviewService->getReview($id);
             if (!$review) {
-                return response()->json([;
+                return response()->json([
                     'status' => 'error',
                     'message' => 'Performance review not found'
                 ], 404);
@@ -187,12 +180,12 @@ class PerformanceReviewController extends Controller
 
             $this->performanceReviewService->deleteReview($id);
 
-            return response()->json([;
+            return response()->json([
                 'status' => 'success',
                 'message' => 'Performance review deleted successfully'
             ]);
         } catch (\Exception $e) {
-            return response()->json([;
+            return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to delete performance review',
                 'error' => $e->getMessage()
@@ -209,7 +202,7 @@ class PerformanceReviewController extends Controller
             // Check if review exists
             $review = $this->performanceReviewService->getReview($id);
             if (!$review) {
-                return response()->json([;
+                return response()->json([
                     'status' => 'error',
                     'message' => 'Performance review not found'
                 ], 404);
@@ -217,13 +210,13 @@ class PerformanceReviewController extends Controller
 
             $this->performanceReviewService->approveReview($id, Auth::id());
 
-            return response()->json([;
+            return response()->json([
                 'status' => 'success',
                 'message' => 'Performance review approved successfully',
                 'data' => $this->performanceReviewService->getReview($id)
             ]);
         } catch (\Exception $e) {
-            return response()->json([;
+            return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to approve performance review',
                 'error' => $e->getMessage()
@@ -237,43 +230,12 @@ class PerformanceReviewController extends Controller
     public function reject(Request $request, int $id)
     {
         try {
-            // Check if review exists
-            $review = $this->performanceReviewService->getReview($id);
-            if (!$review) {
-                return response()->json([;
-                    'status' => 'error',
-                    'message' => 'Performance review not found'
-                ], 404);
-            }
-
-            $this->performanceReviewService->rejectReview($id);
-
-            return response()->json([;
-                'status' => 'success',
-                'message' => 'Performance review rejected successfully',
-                'data' => $this->performanceReviewService->getReview($id)
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([;
-                'status' => 'error',
-                'message' => 'Failed to reject performance review',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Submit employee comments for a performance review
-     */
-    public function submitEmployeeComments(Request $request, int $id)
-    {
-        try {
             $validator = Validator::make($request->all(), [
-                'employee_comments' => 'required|string'
+                'rejection_reason' => 'required|string|max:500',
             ]);
 
             if ($validator->fails()) {
-                return response()->json([;
+                return response()->json([
                     'status' => 'error',
                     'message' => 'Validation failed',
                     'errors' => $validator->errors()
@@ -283,21 +245,64 @@ class PerformanceReviewController extends Controller
             // Check if review exists
             $review = $this->performanceReviewService->getReview($id);
             if (!$review) {
-                return response()->json([;
+                return response()->json([
                     'status' => 'error',
                     'message' => 'Performance review not found'
                 ], 404);
             }
 
-            $this->performanceReviewService->submitEmployeeComments($id, $request->input('employee_comments'));
+            $this->performanceReviewService->rejectReview($id, $request->all());
 
-            return response()->json([;
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Performance review rejected successfully',
+                'data' => $this->performanceReviewService->getReview($id)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to reject performance review',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Submit employee comments for a review
+     */
+    public function submitEmployeeComments(Request $request, int $id)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'employee_comments' => 'required|string|max:1000',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Validation failed',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            // Check if review exists
+            $review = $this->performanceReviewService->getReview($id);
+            if (!$review) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Performance review not found'
+                ], 404);
+            }
+
+            $this->performanceReviewService->submitEmployeeComments($id, $request->all());
+
+            return response()->json([
                 'status' => 'success',
                 'message' => 'Employee comments submitted successfully',
                 'data' => $this->performanceReviewService->getReview($id)
             ]);
         } catch (\Exception $e) {
-            return response()->json([;
+            return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to submit employee comments',
                 'error' => $e->getMessage()

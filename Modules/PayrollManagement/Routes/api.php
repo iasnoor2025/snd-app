@@ -5,6 +5,9 @@ use Modules\PayrollManagement\Http\Controllers\PayrollController;
 use Modules\PayrollManagement\Http\Controllers\SalaryAdvanceController;
 use Modules\PayrollManagement\Http\Controllers\FinalSettlementController;
 use Modules\PayrollManagement\Http\Controllers\ComplianceReportController;
+use Modules\PayrollManagement\Http\Controllers\PerformanceReviewController;
+use Modules\PayrollManagement\Http\Controllers\PerformanceBenchmarkController;
+use Modules\PayrollManagement\Http\Controllers\LoanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,8 +17,6 @@ use Modules\PayrollManagement\Http\Controllers\ComplianceReportController;
 | Here is where you can register API routes for your payroll module.
 |
 */
-
-// API routes uncommented
 
 // Payroll Routes
 Route::prefix('payroll')
@@ -62,11 +63,17 @@ Route::prefix('payroll')
                 ->name('payroll.api.runs.reject');
         });
 
-        Route::post('/export-bank-file', [PayrollController::class, 'exportBankFile'])->middleware('permission:payroll.view')->name('export-bank-file');
+        Route::post('/export-bank-file', [PayrollController::class, 'exportBankFile'])
+            ->middleware('permission:payroll.view')
+            ->name('export-bank-file');
 
-        Route::get('/{payroll}/payslip', [PayrollController::class, 'downloadPayslip'])->middleware('permission:payroll.view')->name('download-payslip');
+        Route::get('/{payroll}/payslip', [PayrollController::class, 'downloadPayslip'])
+            ->middleware('permission:payroll.view')
+            ->name('download-payslip');
 
-        Route::get('/compliance-report', [ComplianceReportController::class, 'index'])->middleware('permission:payroll.view')->name('compliance-report');
+        Route::get('/compliance-report', [ComplianceReportController::class, 'index'])
+            ->middleware('permission:payroll.view')
+            ->name('compliance-report');
     });
 
 // Salary Advance API Routes
@@ -119,5 +126,83 @@ Route::prefix('final-settlements')
             ->name('report');
     });
 
+// Performance Review API Routes
+Route::prefix('performance-reviews')
+    ->name('performance-reviews.')
+    ->middleware('auth:sanctum')
+    ->group(function() {
+        Route::get('/', [PerformanceReviewController::class, 'index'])
+            ->middleware('permission:performance-reviews.view')
+            ->name('index');
+        Route::post('/', [PerformanceReviewController::class, 'store'])
+            ->middleware('permission:performance-reviews.create')
+            ->name('store');
+        Route::get('/{id}', [PerformanceReviewController::class, 'show'])
+            ->middleware('permission:performance-reviews.view')
+            ->name('show');
+        Route::put('/{id}', [PerformanceReviewController::class, 'update'])
+            ->middleware('permission:performance-reviews.edit')
+            ->name('update');
+        Route::delete('/{id}', [PerformanceReviewController::class, 'destroy'])
+            ->middleware('permission:performance-reviews.delete')
+            ->name('destroy');
+        Route::post('/{id}/approve', [PerformanceReviewController::class, 'approve'])
+            ->middleware('permission:performance-reviews.edit')
+            ->name('approve');
+        Route::post('/{id}/reject', [PerformanceReviewController::class, 'reject'])
+            ->middleware('permission:performance-reviews.edit')
+            ->name('reject');
+    });
 
+// Performance Benchmark API Routes
+Route::prefix('performance-benchmarks')
+    ->name('performance-benchmarks.')
+    ->middleware('auth:sanctum')
+    ->group(function() {
+        Route::get('/', [PerformanceBenchmarkController::class, 'index'])
+            ->middleware('permission:performance-benchmarks.view')
+            ->name('index');
+        Route::post('/', [PerformanceBenchmarkController::class, 'store'])
+            ->middleware('permission:performance-benchmarks.create')
+            ->name('store');
+        Route::get('/{benchmark}', [PerformanceBenchmarkController::class, 'show'])
+            ->middleware('permission:performance-benchmarks.view')
+            ->name('show');
+        Route::put('/{benchmark}', [PerformanceBenchmarkController::class, 'update'])
+            ->middleware('permission:performance-benchmarks.edit')
+            ->name('update');
+        Route::delete('/{benchmark}', [PerformanceBenchmarkController::class, 'destroy'])
+            ->middleware('permission:performance-benchmarks.delete')
+            ->name('destroy');
+        Route::post('/bulk-store', [PerformanceBenchmarkController::class, 'bulkStore'])
+            ->middleware('permission:performance-benchmarks.create')
+            ->name('bulk-store');
+    });
 
+// Loan Management API Routes
+Route::prefix('loans')
+    ->name('loans.')
+    ->middleware('auth:sanctum')
+    ->group(function() {
+        Route::get('/', [LoanController::class, 'index'])
+            ->middleware('permission:loans.view')
+            ->name('index');
+        Route::post('/', [LoanController::class, 'store'])
+            ->middleware('permission:loans.create')
+            ->name('store');
+        Route::get('/{loan}', [LoanController::class, 'show'])
+            ->middleware('permission:loans.view')
+            ->name('show');
+        Route::put('/{loan}', [LoanController::class, 'update'])
+            ->middleware('permission:loans.edit')
+            ->name('update');
+        Route::delete('/{loan}', [LoanController::class, 'destroy'])
+            ->middleware('permission:loans.delete')
+            ->name('destroy');
+        Route::post('/{loan}/approve', [LoanController::class, 'approve'])
+            ->middleware('permission:loans.edit')
+            ->name('approve');
+        Route::post('/{loan}/repay', [LoanController::class, 'repay'])
+            ->middleware('permission:loans.edit')
+            ->name('repay');
+    });

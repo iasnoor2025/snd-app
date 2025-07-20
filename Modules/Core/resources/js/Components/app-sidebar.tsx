@@ -31,6 +31,7 @@ const moduleMap: Record<string, { icon: string; route: string; permission: strin
     AuditCompliance: { icon: 'folder-check', route: '/audit', permission: 'audit.view' },
     API: { icon: 'file-digit', route: '/api', permission: 'api.view' },
     SafetyManagement: { icon: 'alert-triangle', route: '/safety/incidents', permission: 'incidents.view' },
+    SalaryIncrement: { icon: 'trending-up', route: '/salary-increments', permission: 'salary-increments.view' },
 };
 
 // Map module keys to human-friendly display names
@@ -40,12 +41,14 @@ const moduleDisplayNames: Record<string, string> = {
     Roles: 'Roles',
     Core: 'Core',
     EmployeeManagement: 'Employee Management',
+    SalaryIncrement: 'Salary Increments',
     LeaveManagement: 'Leave Management',
+    PayrollManagement: 'Payroll Management',
     TimesheetManagement: 'Timesheet Management',
     ProjectManagement: 'Project Management',
     RentalManagement: 'Rental Management',
     EquipmentManagement: 'Equipment Management',
-    Settings: 'Settings',
+    // Settings: 'Settings',
     Notifications: 'Notifications',
     Reporting: 'Reporting',
     MobileBridge: 'Mobile Bridge',
@@ -53,7 +56,6 @@ const moduleDisplayNames: Record<string, string> = {
     CustomerManagement: 'Customer Management',
     AuditCompliance: 'Audit & Compliance',
     API: 'API',
-    PayrollManagement: 'Payroll Management',
     SafetyManagement: 'Safety Management',
 };
 
@@ -92,6 +94,20 @@ export function AppSidebar() {
             permission: moduleMap[module].permission,
         }));
 
+    // Add salary increment as a separate menu item
+    const salaryIncrementItem: NavItem = {
+        title: 'Salary Increments',
+        href: '/salary-increments',
+        icon: 'trending-up',
+        permission: 'salary-increments.view',
+    };
+
+    // Add salary increment to navigation items if user has permission
+    const finalNavigationItems = [...navigationItems];
+    if (isAdmin || hasPermission('salary-increments.view')) {
+        finalNavigationItems.push(salaryIncrementItem);
+    }
+
     return (
         <Sidebar collapsible="icon" className="border-r bg-white">
             <SidebarHeader className="flex items-center gap-2 border-b p-4">
@@ -105,7 +121,7 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarHeader>
             <SidebarContent className="flex-1">
-                <NavMain items={navigationItems} />
+                <NavMain items={finalNavigationItems} />
             </SidebarContent>
             <SidebarFooter className="border-t p-4">
                 <NavUser />

@@ -5,6 +5,9 @@ use Modules\PayrollManagement\Http\Controllers\PayrollController;
 use Modules\PayrollManagement\Http\Controllers\SalaryAdvanceController;
 use Modules\PayrollManagement\Http\Controllers\FinalSettlementController;
 use Modules\PayrollManagement\Http\Controllers\TaxDocumentationController;
+use Modules\PayrollManagement\Http\Controllers\PerformanceReviewController;
+use Modules\PayrollManagement\Http\Controllers\PerformanceBenchmarkController;
+use Modules\PayrollManagement\Http\Controllers\LoanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -136,7 +139,94 @@ Route::prefix('hr/payroll')->name('payroll.')->group(function () {
             ->middleware('permission:final-settlements.view')
             ->name('pdf');
     });
+
+    // Performance Review routes
+    Route::prefix('performance-reviews')->name('performance-reviews.')->group(function () {
+        Route::get('/', [PerformanceReviewController::class, 'index'])
+            ->middleware('permission:performance-reviews.view')
+            ->name('index');
+        Route::get('/create', [PerformanceReviewController::class, 'create'])
+            ->middleware('permission:performance-reviews.create')
+            ->name('create');
+        Route::post('/', [PerformanceReviewController::class, 'store'])
+            ->middleware('permission:performance-reviews.create')
+            ->name('store');
+        Route::get('/{id}', [PerformanceReviewController::class, 'show'])
+            ->middleware('permission:performance-reviews.view')
+            ->name('show');
+        Route::get('/{id}/edit', [PerformanceReviewController::class, 'edit'])
+            ->middleware('permission:performance-reviews.edit')
+            ->name('edit');
+        Route::put('/{id}', [PerformanceReviewController::class, 'update'])
+            ->middleware('permission:performance-reviews.edit')
+            ->name('update');
+        Route::delete('/{id}', [PerformanceReviewController::class, 'destroy'])
+            ->middleware('permission:performance-reviews.delete')
+            ->name('destroy');
+        Route::post('/{id}/approve', [PerformanceReviewController::class, 'approve'])
+            ->middleware('permission:performance-reviews.edit')
+            ->name('approve');
+        Route::post('/{id}/reject', [PerformanceReviewController::class, 'reject'])
+            ->middleware('permission:performance-reviews.edit')
+            ->name('reject');
+    });
+
+    // Performance Benchmark routes
+    Route::prefix('performance-benchmarks')->name('performance-benchmarks.')->group(function () {
+        Route::get('/', [PerformanceBenchmarkController::class, 'index'])
+            ->middleware('permission:performance-benchmarks.view')
+            ->name('index');
+        Route::get('/create', [PerformanceBenchmarkController::class, 'create'])
+            ->middleware('permission:performance-benchmarks.create')
+            ->name('create');
+        Route::post('/', [PerformanceBenchmarkController::class, 'store'])
+            ->middleware('permission:performance-benchmarks.create')
+            ->name('store');
+        Route::get('/{benchmark}', [PerformanceBenchmarkController::class, 'show'])
+            ->middleware('permission:performance-benchmarks.view')
+            ->name('show');
+        Route::get('/{benchmark}/edit', [PerformanceBenchmarkController::class, 'edit'])
+            ->middleware('permission:performance-benchmarks.edit')
+            ->name('edit');
+        Route::put('/{benchmark}', [PerformanceBenchmarkController::class, 'update'])
+            ->middleware('permission:performance-benchmarks.edit')
+            ->name('update');
+        Route::delete('/{benchmark}', [PerformanceBenchmarkController::class, 'destroy'])
+            ->middleware('permission:performance-benchmarks.delete')
+            ->name('destroy');
+        Route::post('/bulk-store', [PerformanceBenchmarkController::class, 'bulkStore'])
+            ->middleware('permission:performance-benchmarks.create')
+            ->name('bulk-store');
+    });
+
+    // Loan Management routes
+    Route::prefix('loans')->name('loans.')->group(function () {
+        Route::get('/', [LoanController::class, 'index'])
+            ->middleware('permission:loans.view')
+            ->name('index');
+        Route::get('/create', [LoanController::class, 'create'])
+            ->middleware('permission:loans.create')
+            ->name('create');
+        Route::post('/', [LoanController::class, 'store'])
+            ->middleware('permission:loans.create')
+            ->name('store');
+        Route::get('/{loan}', [LoanController::class, 'show'])
+            ->middleware('permission:loans.view')
+            ->name('show');
+        Route::get('/{loan}/edit', [LoanController::class, 'edit'])
+            ->middleware('permission:loans.edit')
+            ->name('edit');
+        Route::put('/{loan}', [LoanController::class, 'update'])
+            ->middleware('permission:loans.edit')
+            ->name('update');
+        Route::delete('/{loan}', [LoanController::class, 'destroy'])
+            ->middleware('permission:loans.delete')
+            ->name('destroy');
+        Route::post('/{loan}/approve', [LoanController::class, 'approve'])
+            ->middleware('permission:loans.edit')
+            ->name('approve');
+        Route::post('/{loan}/repay', [LoanController::class, 'repay'])
+            ->middleware('permission:loans.edit')
+            ->name('repay');
+    });
 });
-
-
-
