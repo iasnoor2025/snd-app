@@ -510,7 +510,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                                         <div className="flex items-center gap-2">
                                                             <Banknote className="h-4 w-4 text-muted-foreground" />
                                                             <span className="font-medium">
-                                                                ${(Number(payroll.base_salary) || 0).toFixed(2)}
+                                                                SAR {(Number(payroll.base_salary) || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                             </span>
                                                         </div>
                                                         <span className="text-xs text-muted-foreground ml-6">
@@ -523,7 +523,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                                         <div className="flex items-center gap-2">
                                                             <TrendingUp className="h-4 w-4 text-muted-foreground" />
                                                             <span className="font-medium">
-                                                                ${(Number(payroll.overtime_amount) || 0).toFixed(2)}
+                                                                SAR {(Number(payroll.overtime_amount) || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                             </span>
                                                         </div>
                                                         <span className="text-xs text-muted-foreground ml-6">
@@ -536,7 +536,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                                         <div className="flex items-center gap-2">
                                                             <DollarSign className="h-4 w-4 text-muted-foreground" />
                                                             <span className="font-medium">
-                                                                ${(Number(payroll.bonus_amount) || 0).toFixed(2)}
+                                                                SAR {(Number(payroll.bonus_amount) || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                             </span>
                                                         </div>
                                                         <span className="text-xs text-muted-foreground ml-6">
@@ -549,7 +549,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                                         <div className="flex items-center gap-2">
                                                             <DollarSign className="h-4 w-4 text-green-500" />
                                                             <span className="font-medium text-green-600">
-                                                                ${(Number(payroll.final_amount) || 0).toFixed(2)}
+                                                                SAR {(Number(payroll.final_amount) || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                             </span>
                                                         </div>
                                                         <span className="text-xs text-muted-foreground ml-6">
