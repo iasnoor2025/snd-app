@@ -77,7 +77,7 @@ interface FormData {
 }
 
 export default function Edit({ increment, employees, incrementTypes }: Props) {
-    const { t } = useTranslation('employees');
+    const { t } = useTranslation('employee');
 
     const { data, setData, put, processing, errors } = useForm<FormData>({
         employee_id: increment.employee.id.toString(),

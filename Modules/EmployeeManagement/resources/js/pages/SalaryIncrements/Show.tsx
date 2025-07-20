@@ -72,7 +72,7 @@ interface Props extends PageProps {
 }
 
 export default function Show({ increment }: Props) {
-    const { t } = useTranslation('employees');
+    const { t } = useTranslation('employee');
 
     const formatCurrency = (amount: number | null | undefined) => {
         // Handle null, undefined, or NaN values

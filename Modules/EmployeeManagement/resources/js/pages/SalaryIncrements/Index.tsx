@@ -90,7 +90,7 @@ interface Props extends PageProps {
 }
 
 export default function Index({ increments, statistics, projectedCost, filters, employees }: Props) {
-    const { t } = useTranslation('employees');
+    const { t } = useTranslation('employee');
 
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
     const [statusFilter, setStatusFilter] = useState(filters.status || 'all');

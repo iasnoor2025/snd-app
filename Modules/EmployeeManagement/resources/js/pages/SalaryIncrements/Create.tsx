@@ -59,7 +59,7 @@ interface FormData {
 }
 
 export default function Create({ employees, incrementTypes }: Props) {
-    const { t } = useTranslation('employees');
+    const { t } = useTranslation('employee');
 
     const { data, setData, post, processing, errors } = useForm<FormData>({
         employee_id: '',

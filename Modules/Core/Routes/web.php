@@ -102,6 +102,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::group([], function () {
     Route::resource('core', CoreController::class)->names('core');
 
+    // Module Management Route
+    Route::get('module-management', function () {
+        return inertia('Core/pages/ModuleManagement');
+    })->name('core.module-management');
+
     // System Settings Routes
     Route::prefix('system-settings')->name('system-settings.')->group(function () {
         Route::get('/', [SystemSettingsController::class, 'index'])->name('index');

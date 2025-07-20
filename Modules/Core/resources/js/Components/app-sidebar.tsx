@@ -6,7 +6,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { usePermission } from '../hooks/usePermission';
 import AppLogo from './app-logo';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // Map module names to their respective icon, route, and required permission
@@ -48,7 +48,7 @@ const moduleDisplayNames: Record<string, string> = {
     ProjectManagement: 'Project Management',
     RentalManagement: 'Rental Management',
     EquipmentManagement: 'Equipment Management',
-    // Settings: 'Settings',
+    Settings: 'Settings',
     Notifications: 'Notifications',
     Reporting: 'Reporting',
     MobileBridge: 'Mobile Bridge',
@@ -63,21 +63,74 @@ export function AppSidebar() {
     const { i18n } = useTranslation(['common']);
     const { hasPermission, isAdmin, user } = usePermission();
     const [modules, setModules] = useState<string[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
+
+    const fetchModules = useCallback(async (useApi = false) => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            let data;
+
+            if (useApi) {
+                // Use API endpoint for immediate updates
+                const response = await fetch('/api/v1/modules/refresh-status', {
+                    method: 'GET',
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                data = result.data;
+            } else {
+                // Use static file for initial load
+                const response = await fetch('/modules_statuses.json', {
+                    method: 'GET',
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                data = await response.json();
+            }
+
+            const enabledModules = Object.entries(data)
+                .filter(([_, enabled]) => enabled)
+                .map(([module]) => module)
+                .filter((module) => moduleMap[module]);
+
+            setModules(enabledModules);
+            setLastRefresh(new Date());
+        } catch (err) {
+            console.error('Error fetching modules status:', err);
+            setError(err instanceof Error ? err.message : 'Failed to load modules');
+        } finally {
+            setLoading(false);
+        }
+    }, []);
 
     useEffect(() => {
-        fetch('/modules_statuses.json')
-            .then((res) => res.json())
-            .then((data) => {
-                const enabledModules = Object.entries(data)
-                    .filter(([_, enabled]) => enabled)
-                    .map(([module]) => module)
-                    .filter((module) => moduleMap[module]);
-                setModules(enabledModules);
-            })
-            .catch((err) => {
-                console.error('Error fetching modules_statuses.json:', err);
-            });
-    }, []);
+        fetchModules(false); // Initial load from static file
+
+        // Set up periodic refresh every 30 seconds using API
+        const interval = setInterval(() => fetchModules(true), 30000);
+
+        return () => clearInterval(interval);
+    }, [fetchModules]);
 
     // Build navigation items from enabled modules and user permissions
     const navigationItems: NavItem[] = modules
@@ -88,7 +141,7 @@ export function AppSidebar() {
             return allowed;
         })
         .map((module) => ({
-            title: module.replace(/([A-Z])/g, ' $1').trim(),
+            title: moduleDisplayNames[module] || module.replace(/([A-Z])/g, ' $1').trim(),
             href: moduleMap[module].route,
             icon: moduleMap[module].icon,
             permission: moduleMap[module].permission,
@@ -98,7 +151,7 @@ export function AppSidebar() {
     const salaryIncrementItem: NavItem = {
         title: 'Salary Increments',
         href: '/salary-increments',
-        icon: 'trending-up',
+        icon: 'trending-up', 
         permission: 'salary-increments.view',
     };
 
@@ -107,6 +160,11 @@ export function AppSidebar() {
     if (isAdmin || hasPermission('salary-increments.view')) {
         finalNavigationItems.push(salaryIncrementItem);
     }
+
+    // Add refresh button to header
+    const handleRefresh = () => {
+        fetchModules(true); // Use API for manual refresh
+    };
 
     return (
         <Sidebar collapsible="icon" className="border-r bg-white">
@@ -119,9 +177,31 @@ export function AppSidebar() {
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
+                <button
+                    onClick={handleRefresh}
+                    className="ml-auto text-xs text-gray-600 hover:text-gray-800 transition-colors"
+                    title={`Refresh modules${lastRefresh ? ` (Last: ${lastRefresh.toLocaleTimeString()})` : ''}`}
+                    disabled={loading}
+                >
+                    {loading ? (
+                        <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-gray-600"></div>
+                    ) : (
+                        '↻'
+                    )}
+                </button>
             </SidebarHeader>
             <SidebarContent className="flex-1">
-                <NavMain items={finalNavigationItems} />
+                {loading ? (
+                    <div className="flex items-center justify-center p-4">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
+                    </div>
+                ) : error ? (
+                    <div className="p-4 text-center text-sm text-red-600">
+                        {error}
+                    </div>
+                ) : (
+                    <NavMain items={finalNavigationItems} />
+                )}
             </SidebarContent>
             <SidebarFooter className="border-t p-4">
                 <NavUser />

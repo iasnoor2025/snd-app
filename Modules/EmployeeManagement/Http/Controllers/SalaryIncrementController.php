@@ -15,6 +15,7 @@ use Modules\Core\Http\Controllers\Controller;
 use Inertia\Inertia;
 use Inertia\Response;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class SalaryIncrementController extends Controller
 {
@@ -41,10 +42,14 @@ class SalaryIncrementController extends Controller
         $statistics = $this->salaryIncrementService->getStatistics();
         $projectedCostData = $this->salaryIncrementService->calculateProjectedAnnualCost();
 
+        // Calculate total annual salary for all employees
+        $totalAnnualSalary = Employee::active()
+            ->sum(DB::raw('(basic_salary + food_allowance + housing_allowance + transport_allowance) * 12'));
+
         return Inertia::render('EmployeeManagement/SalaryIncrements/Index', [
             'increments' => $increments,
             'statistics' => $statistics,
-            'projectedCost' => $projectedCostData['total_annual_increase'],
+            'projectedCost' => $totalAnnualSalary, // Use total annual salary instead of projected cost
             'filters' => $filters,
             'employees' => Employee::select('id', 'first_name', 'last_name', 'employee_id')
                 ->orderBy('first_name')

@@ -102,6 +102,84 @@ class ModuleController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Refresh modules status and return updated data.
+     */
+    public function refreshStatus(): JsonResponse
+    {
+        try {
+            // Read the current modules_statuses.json file
+            $statusesPath = public_path('modules_statuses.json');
+            $statuses = [];
+
+            if (file_exists($statusesPath)) {
+                $statuses = json_decode(file_get_contents($statusesPath), true) ?? [];
+            }
+
+            // Update the modules status based on the service
+            $modules = $this->moduleService->getAllModules();
+            $updatedStatuses = [];
+
+            foreach ($modules as $module) {
+                $moduleName = $module['name'];
+                $updatedStatuses[$moduleName] = $module['status'] === 'active';
+            }
+
+            // Write back to the file
+            file_put_contents($statusesPath, json_encode($updatedStatuses, JSON_PRETTY_PRINT));
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Modules status refreshed successfully',
+                'data' => $updatedStatuses
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => 'error'
+            ], 500);
+        }
+    }
+
+    /**
+     * Toggle module status.
+     */
+    public function toggleStatus(string $name): JsonResponse
+    {
+        try {
+            $currentStatus = $this->moduleService->getModuleStatus($name);
+            $newStatus = $currentStatus === 'active' ? 'inactive' : 'active';
+
+            $this->moduleService->updateModuleStatus($name, $newStatus);
+
+            // Update the modules_statuses.json file
+            $statusesPath = public_path('modules_statuses.json');
+            $statuses = [];
+
+            if (file_exists($statusesPath)) {
+                $statuses = json_decode(file_get_contents($statusesPath), true) ?? [];
+            }
+
+            $statuses[$name] = $newStatus === 'active';
+            file_put_contents($statusesPath, json_encode($statuses, JSON_PRETTY_PRINT));
+
+            return response()->json([
+                'status' => 'success',
+                'message' => "Module {$name} {$newStatus} successfully",
+                'data' => [
+                    'module' => $name,
+                    'status' => $newStatus,
+                    'enabled' => $newStatus === 'active'
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => 'error'
+            ], 500);
+        }
+    }
 }
 
 

@@ -113,7 +113,7 @@ class ModuleService
      * @param string $status
      * @return void;
      */
-    protected function updateModuleStatus(string $name, string $status): void
+    public function updateModuleStatus(string $name, string $status): void
     {
         config(["modules.{$name}.status" => $status]);
     }

@@ -31,6 +31,7 @@ const iconMap: Record<string, ComponentType<LucideProps>> = {
     bell: LucideIcons.Bell,
     home: LucideIcons.Home,
     'alert-triangle': LucideIcons.AlertTriangle,
+    'trending-up': LucideIcons.TrendingUp,
 };
 
 export function Icon({ name, className, ...props }: IconProps) {

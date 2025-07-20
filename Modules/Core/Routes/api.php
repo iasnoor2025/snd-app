@@ -13,6 +13,7 @@ use Modules\Core\Http\Controllers\Api\CalendarWidgetController;
 use Modules\Core\Http\Controllers\Api\TimelineWidgetController;
 use Modules\Core\Http\Controllers\DebugController;
 use Modules\Core\Http\Controllers\ActivityLogController;
+use Modules\Core\Http\Controllers\ModuleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,6 +59,15 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     Route::put('roles/{role}', [RoleController::class, 'update']);
     Route::delete('roles/{role}', [RoleController::class, 'destroy']);
     Route::put('users/{user}/roles', [RoleController::class, 'updateUserRoles']);
+
+    // Module management
+    Route::prefix('modules')->group(function () {
+        Route::get('refresh-status', [ModuleController::class, 'refreshStatus']);
+        Route::post('{name}/toggle-status', [ModuleController::class, 'toggleStatus']);
+        Route::get('{name}/status', [ModuleController::class, 'status']);
+        Route::post('{name}/initialize', [ModuleController::class, 'initialize']);
+        Route::post('{name}/configure', [ModuleController::class, 'configure']);
+    });
 
     // System utilities
     Route::get('system/info', [BaseApiController::class, 'systemInfo']);

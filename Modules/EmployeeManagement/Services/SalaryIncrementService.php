@@ -249,8 +249,10 @@ class SalaryIncrementService
 
         $baseQuery = clone $query;
 
-        // Calculate total increment amount from the difference between new and current total salaries
-        $totalIncrementAmount = (clone $query)->applied()
+        // Calculate total increment amount from ALL increments (pending, approved, and applied)
+        // This shows the total potential increment amount
+        $totalIncrementAmount = (clone $query)
+            ->whereIn('status', ['pending', 'approved', 'applied'])
             ->selectRaw('SUM(new_base_salary + new_food_allowance + new_housing_allowance + new_transport_allowance - current_base_salary - current_food_allowance - current_housing_allowance - current_transport_allowance) as total')
             ->value('total') ?? 0;
 

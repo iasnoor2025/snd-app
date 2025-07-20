@@ -789,6 +789,14 @@ class Employee extends Model implements HasMedia
     }
 
     /**
+     * Get the annual salary for the employee
+     */
+    public function getAnnualSalaryAttribute(): float
+    {
+        return (float) (($this->basic_salary + $this->total_allowances) * 12);
+    }
+
+    /**
      * Get the pending advances for the employee
      */
     public function getPendingAdvancesAttribute()
