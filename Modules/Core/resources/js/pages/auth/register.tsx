@@ -2,7 +2,7 @@ import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
-import TextLink from '../../components/text-link';
+import TextLink from '@/Core/components/text-link';
 import { Button } from '@/Core/components/ui/button';
 import { Input } from '@/Core/components/ui/input';
 import { Label } from '@/Core/components/ui/label';
