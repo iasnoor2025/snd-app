@@ -1,9 +1,9 @@
 import { FormEventHandler, useEffect } from 'react';
 
 import { Head, useForm } from '@inertiajs/react';
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
-import { Label } from '../../components/ui/label';
+import { Button } from '@/Core/components/ui/button';
+import { Input } from '@/Core/components/ui/input';
+import { Label } from '@/Core/components/ui/label';
 
 export default function ConfirmPassword() {
     const { data, setData, post, processing, errors, reset } = useForm({
