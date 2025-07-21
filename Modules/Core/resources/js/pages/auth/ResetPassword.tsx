@@ -1,87 +1,87 @@
-import { FormEventHandler, useEffect } from 'react';
-
 import { Head, useForm } from '@inertiajs/react';
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
-import { Label } from '../../components/ui/label';
+import { LoaderCircle } from 'lucide-react';
+import { Button } from '@/Core/components/ui/button';
+import { Input } from '@/Core/components/ui/input';
+import { Label } from '@/Core/components/ui/label';
+import AuthLayout from '../../layouts/auth-layout';
+
+type ResetPasswordForm = {
+    token: string;
+    email: string;
+    password: string;
+    password_confirmation: string;
+};
 
 export default function ResetPassword({ token, email }: { token: string; email: string }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, reset } = useForm<Required<ResetPasswordForm>>({
         token: token,
         email: email,
         password: '',
         password_confirmation: '',
     });
 
-    useEffect(() => {
-        return () => {
-            reset('password', 'password_confirmation');
-        };
-    }, []);
-
-    const submit: FormEventHandler = (e) => {
+    const submit = (e: React.FormEvent) => {
         e.preventDefault();
-
-        post(route('password.store'));
+        post(route('password.store'), {
+            onFinish: () => reset('password', 'password_confirmation'),
+        });
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
-            <Head title="Reset Password" />
+        <AuthLayout title="Reset password" description="Please enter your new password below">
+            <Head title="Reset password" />
 
             <form onSubmit={submit}>
-                <div>
-                    <Label htmlFor="email" value="Email" />
+                <div className="grid gap-6">
+                    <div className="grid gap-2">
+                        <Label htmlFor="email">Email</Label>
+                        <Input
+                            id="email"
+                            type="email"
+                            name="email"
+                            autoComplete="email"
+                            value={data.email}
+                            className="mt-1 block w-full"
+                            readOnly
+                            onChange={(e) => setData('email', e.target.value)}
+                        />
+                    </div>
 
-                    <Input
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        onChange={(e) => setData('email', e.target.value)}
-                        required
-                    />
-                </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="password">Password</Label>
+                        <Input
+                            id="password"
+                            type="password"
+                            name="password"
+                            autoComplete="new-password"
+                            value={data.password}
+                            className="mt-1 block w-full"
+                            autoFocus
+                            onChange={(e) => setData('password', e.target.value)}
+                            placeholder="Password"
+                        />
+                    </div>
 
-                <div className="mt-4">
-                    <Label htmlFor="password" value="Password" />
+                    <div className="grid gap-2">
+                        <Label htmlFor="password_confirmation">Confirm password</Label>
+                        <Input
+                            id="password_confirmation"
+                            type="password"
+                            name="password_confirmation"
+                            autoComplete="new-password"
+                            value={data.password_confirmation}
+                            className="mt-1 block w-full"
+                            onChange={(e) => setData('password_confirmation', e.target.value)}
+                            placeholder="Confirm password"
+                        />
+                    </div>
 
-                    <Input
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        isFocused={true}
-                        onChange={(e) => setData('password', e.target.value)}
-                        required
-                    />
-                </div>
-
-                <div className="mt-4">
-                    <Label htmlFor="password_confirmation" value="Confirm Password" />
-
-                    <Input
-                        id="password_confirmation"
-                        type="password"
-                        name="password_confirmation"
-                        value={data.password_confirmation}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        onChange={(e) => setData('password_confirmation', e.target.value)}
-                        required
-                    />
-                </div>
-
-                <div className="mt-4 flex items-center justify-end">
-                    <Button className="ml-4" disabled={processing}>
-                        Reset Password
+                    <Button type="submit" className="mt-4 w-full" disabled={processing}>
+                        {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                        Reset password
                     </Button>
                 </div>
             </form>
-        </div>
+        </AuthLayout>
     );
 }
