@@ -1,12 +1,8 @@
 // Components
 import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
-import { FormEventHandler } from 'react';
-
-import TextLink from '../../components/text-link';
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
-import { Label } from '../../components/ui/label';
+import { Button } from '@/Core/components/ui/button';
+import { Input } from '@/Core/components/ui/input';
+import { Label } from '@/Core/components/ui/label';
 import AuthLayout from '../../layouts/auth-layout';
 
 export default function ForgotPassword({ status }: { status?: string }) {
@@ -14,7 +10,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
         email: '',
     });
 
-    const submit: FormEventHandler = (e) => {
+    const submit = (e: React.FormEvent) => {
         e.preventDefault();
 
         post(route('password.email'));
