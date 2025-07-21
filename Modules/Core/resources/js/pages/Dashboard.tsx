@@ -8,6 +8,7 @@ import SelfServiceWidget from '../components/dashboard/SelfServiceWidget';
 import { DailyTimesheetRecords } from '../../../../TimesheetManagement/resources/js/components/timesheets/DailyTimesheetRecords';
 // Placeholder import for TimesheetApprovalList
 // import TimesheetApprovalList from '../../../../TimesheetManagement/resources/js/components/timesheets/TimesheetApprovalList';
+import { AppLayout } from '@/Core';
 
 // Generate mock timesheet data for the current month
 const now = new Date();
@@ -79,40 +80,42 @@ export default function Dashboard() {
   }
   const fullName = user?.employee?.full_name || user?.name || '';
 
-    return (
-    <div className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-br from-[#0f2027] via-[#2c5364] to-[#232526] py-12">
-      <WelcomeHero />
-      <QuickStats />
-      <div className="fixed top-6 right-6 z-30 max-w-xs w-full hidden md:block">
-        <DualClockWidget />
-            </div>
-      <div className="w-full flex justify-center mt-8">
-        <div className="max-w-xl w-full">
-          <div className="backdrop-blur-lg bg-white/10 border border-cyan-400/40 rounded-2xl shadow-xl p-6 flex flex-col items-start relative" style={{ boxShadow: '0 8px 32px 0 rgba(31,38,135,0.37)' }}>
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-tr from-cyan-400 to-blue-600 rounded-full blur-xl opacity-40" />
-            <div className="mb-2 text-lg font-semibold text-cyan-100">Current Assignment</div>
-            <div className="text-white text-xl font-bold mb-1">{currentAssignment.project}</div>
-            <div className="text-cyan-200 mb-1">Role: <span className="font-medium text-white">{currentAssignment.role}</span></div>
-            <div className="text-cyan-200 mb-1">Status: <span className="font-medium text-emerald-300">{currentAssignment.status}</span></div>
-            <div className="text-cyan-200">Start: <span className="font-medium text-white">{currentAssignment.startDate}</span></div>
-                    </div>
-                </div>
-            </div>
-      <div className="w-full flex justify-center mt-8">
-        <div className="max-w-xl w-full">
-          <TeamWidget team={team} />
-            </div>
-            </div>
-      <div className="w-full flex justify-center mt-8">
-        <SelfServiceWidget enabledModules={enabledModules} employeeId={employeeId} fullName={fullName} />
-      </div>
-      {/* Timesheet Approval List Section */}
-      <div className="w-full max-w-3xl mx-auto mt-8">
+  return (
+    <AppLayout title="Dashboard">
+      <div className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-br from-[#0f2027] via-[#2c5364] to-[#232526] py-12">
+        <WelcomeHero />
+        <QuickStats />
+        <div className="fixed top-6 right-6 z-30 max-w-xs w-full hidden md:block">
+          <DualClockWidget />
         </div>
-      <div className="w-full mt-8">
-        <DailyTimesheetRecords timesheets={timesheets} selectedMonth={`${year}-${month}`} showSummary={false} />
-                    </div>
-      {/* Add more modular widgets below (Current Assignment, Timesheet, Activity Feed, etc.) */}
-                </div>
-    );
+        <div className="w-full flex justify-center mt-8">
+          <div className="max-w-xl w-full">
+            <div className="backdrop-blur-lg bg-white/10 border border-cyan-400/40 rounded-2xl shadow-xl p-6 flex flex-col items-start relative" style={{ boxShadow: '0 8px 32px 0 rgba(31,38,135,0.37)' }}>
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-tr from-cyan-400 to-blue-600 rounded-full blur-xl opacity-40" />
+              <div className="mb-2 text-lg font-semibold text-cyan-100">Current Assignment</div>
+              <div className="text-white text-xl font-bold mb-1">{currentAssignment.project}</div>
+              <div className="text-cyan-200 mb-1">Role: <span className="font-medium text-white">{currentAssignment.role}</span></div>
+              <div className="text-cyan-200 mb-1">Status: <span className="font-medium text-emerald-300">{currentAssignment.status}</span></div>
+              <div className="text-cyan-200">Start: <span className="font-medium text-white">{currentAssignment.startDate}</span></div>
+            </div>
+          </div>
+        </div>
+        <div className="w-full flex justify-center mt-8">
+          <div className="max-w-xl w-full">
+            <TeamWidget team={team} />
+          </div>
+        </div>
+        <div className="w-full flex justify-center mt-8">
+          <SelfServiceWidget enabledModules={enabledModules} employeeId={employeeId} fullName={fullName} />
+        </div>
+        {/* Timesheet Approval List Section */}
+        <div className="w-full max-w-3xl mx-auto mt-8">
+        </div>
+        <div className="w-full mt-8">
+          <DailyTimesheetRecords timesheets={timesheets} selectedMonth={`${year}-${month}`} showSummary={false} />
+        </div>
+        {/* Add more modular widgets below (Current Assignment, Timesheet, Activity Feed, etc.) */}
+      </div>
+    </AppLayout>
+  );
 }
