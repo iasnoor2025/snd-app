@@ -1,4 +1,4 @@
-import PageHeader from '../../components/page-header';
+import PageHeader from '@/Core/components/page-header';
 import ApiKeySettings from '../../components/settings/ApiKeySettings';
 import { DeviceSessions } from '../../components/settings/DeviceSessions';
 import MfaSettings from '../../components/settings/MfaSettings';
