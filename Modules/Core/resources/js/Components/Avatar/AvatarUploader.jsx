@@ -1,8 +1,7 @@
-import { Label } from '@/Core';
 import { Camera, Crop, RotateCw, Upload, X } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input } from '../ui';
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label } from '../ui';
 
 const AvatarUploader = ({ user, onAvatarUpdate }) => {
     const [preview, setPreview] = useState(null);
