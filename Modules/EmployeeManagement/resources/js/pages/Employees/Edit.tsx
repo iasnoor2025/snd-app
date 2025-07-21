@@ -26,7 +26,8 @@ import {
 } from '@/Core';
 import { PageProps, User } from '@/Core/types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
+import { router } from '@inertiajs/core';
 import { ArrowLeft, Loader2, Save } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -76,7 +77,7 @@ const formSchema = z.object({
     nationality: z.string().optional(),
     emergency_contact_name: z.string().optional(),
     emergency_contact_phone: z.string().optional(),
-    designation_id: z.string().optional(),
+    designation_id: z.string().min(1, 'Designation is required'),
     department: z.string().optional(),
     join_date: z.string().optional(),
     status: z.string().optional(),
@@ -104,7 +105,7 @@ interface Designation {
 }
 
 interface Props extends PageProps {
-    employee: Employee;
+    employee: any;
     users: User[];
     designations: Designation[];
 }
@@ -534,13 +535,15 @@ export default function Edit({ auth, employee, users, designations }: Props) {
                                                     <FormItem>
                                                         <FormLabel>Designation</FormLabel>
                                                         <FormControl>
-                                                            <Select value={field.value || ''} onValueChange={field.onChange}>
+                                                            <Select value={field.value || ''} onValueChange={field.onChange} required>
                                                                 <SelectTrigger className="w-full">
                                                                     <SelectValue placeholder="Select designation" />
                                                                 </SelectTrigger>
                                                                 <SelectContent>
                                                                     {designations.map((designation) => (
-                                                                        <SelectItem key={designation.id} value={designation.id.toString()}>{getTranslation(designation.name)}</SelectItem>
+                                                                        <SelectItem key={designation.id} value={designation.id.toString()}>
+                                                                            {designation.name}
+                                                                        </SelectItem>
                                                                     ))}
                                                                 </SelectContent>
                                                             </Select>
@@ -826,7 +829,7 @@ export default function Edit({ auth, employee, users, designations }: Props) {
                             </TabsContent>
 
                             <TabsContent value="salary">
-                                <SalaryInfoTab form={form} />
+                                <SalaryInfoTab form={form} /> 
                             </TabsContent>
                         </Tabs>
                     </form>

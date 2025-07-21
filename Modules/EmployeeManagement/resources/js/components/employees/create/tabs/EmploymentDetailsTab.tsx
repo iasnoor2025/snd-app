@@ -50,6 +50,7 @@ interface EmploymentDetailsTabProps {
     form: UseFormReturn<any>;
     positions: any[];
     users: any[];
+    designations: any[];
 }
 
 type PositionType = {
@@ -59,7 +60,7 @@ type PositionType = {
     active?: boolean;
 };
 
-export default function EmploymentDetailsTab({ form, positions, users }: EmploymentDetailsTabProps) {
+export default function EmploymentDetailsTab({ form, positions, users, designations }: EmploymentDetailsTabProps) {
     const { t } = useTranslation('employee');
 
     // Initialize with default positions if none provided
@@ -371,6 +372,31 @@ export default function EmploymentDetailsTab({ form, positions, users }: Employm
                                             +
                                         </Button>
                                     </div>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="designation_id"
+                            render={({ field }: any) => (
+                                <FormItem>
+                                    <FormLabel>Designation</FormLabel>
+                                    <FormControl>
+                                        <Select value={field.value || ''} onValueChange={field.onChange} required>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Select designation" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {designations && designations.map((designation: any) => (
+                                                    <SelectItem key={designation.id} value={designation.id.toString()}>
+                                                        {typeof designation.name === 'string' ? designation.name : (designation.name?.en || '')}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}

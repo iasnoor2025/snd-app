@@ -29,6 +29,9 @@ class EmployeeManagementServiceProvider extends ServiceProvider
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->name, 'database/migrations'));
 
+        // Register EmployeeObserver
+        \Modules\EmployeeManagement\Domain\Models\Employee::observe(\Modules\EmployeeManagement\Observers\EmployeeObserver::class);
+
         // Make all module JavaScript files properly discoverable
         $this->publishes([
             module_path($this->name, 'resources/js') => public_path("modules/{$this->nameLower}/js"),

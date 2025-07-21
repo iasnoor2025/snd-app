@@ -108,9 +108,7 @@ export const DailyTimesheetRecords: React.FC<DailyTimesheetRecordsProps> = ({ ti
                                     return (
                                         <th
                                             key={i + 1}
-                                            className={`p-1 text-center text-xs font-medium ${
-                                                isFridayDay ? 'bg-blue-50 text-blue-700' : 'text-gray-600'
-                                            }`}
+                                            className={`p-1 text-center text-xs font-medium ${isFridayDay ? 'bg-blue-900 text-blue-200' : 'text-cyan-100'}`}
                                         >
                                             {i + 1}
                                         </th>
@@ -130,8 +128,8 @@ export const DailyTimesheetRecords: React.FC<DailyTimesheetRecordsProps> = ({ ti
                                         const record = timesheets.find((r) => r.date === dateString);
                                         const isFridayDay = date.getDay() === 5;
                                         return (
-                                            <td key={`day-${dateString}`} className={`p-1 text-center ${isFridayDay ? 'bg-blue-50' : ''}`}>
-                                                <div className={`text-[10px] ${isFridayDay ? 'font-bold text-blue-700' : 'text-gray-500'}`}>
+                                            <td key={`day-${dateString}`} className={`p-1 text-center ${isFridayDay ? 'bg-blue-900' : ''}`}>
+                                                <div className={`text-[10px] ${isFridayDay ? 'font-bold text-blue-200' : 'text-cyan-200'}`}>
                                                     {record ? record.dayName : ''}
                                                 </div>
                                             </td>
@@ -150,13 +148,13 @@ export const DailyTimesheetRecords: React.FC<DailyTimesheetRecordsProps> = ({ ti
                                         const record = timesheets.find((r) => r.date === dateString);
                                         const isFridayDay = date.getDay() === 5;
                                         return (
-                                            <td key={`regular-${dateString}`} className={`p-1 text-center ${isFridayDay ? 'bg-blue-50' : ''}`}>
+                                            <td key={`regular-${dateString}`} className={`p-1 text-center ${isFridayDay ? 'bg-blue-900' : ''}`}>
                                                 {record && record.regularHours > 0 ? (
-                                                    <div className={`text-[10px] font-medium ${isFridayDay ? 'text-blue-700' : 'text-gray-700'}`}>
+                                                    <div className={`text-[10px] font-medium ${isFridayDay ? 'text-blue-200' : 'text-cyan-100'}`}>
                                                         {record.regularHours}h
                                                     </div>
                                                 ) : (
-                                                    <div className={`text-[10px] ${isFridayDay ? 'text-blue-400' : 'text-gray-400'}`}>-</div>
+                                                    <div className={`text-[10px] ${isFridayDay ? 'text-blue-400' : 'text-cyan-700'}`}>-</div>
                                                 )}
                                             </td>
                                         );
@@ -174,13 +172,13 @@ export const DailyTimesheetRecords: React.FC<DailyTimesheetRecordsProps> = ({ ti
                                         const record = timesheets.find((r) => r.date === dateString);
                                         const isFridayDay = date.getDay() === 5;
                                         return (
-                                            <td key={`overtime-${dateString}`} className={`p-1 text-center ${isFridayDay ? 'bg-blue-50' : ''}`}>
+                                            <td key={`overtime-${dateString}`} className={`p-1 text-center ${isFridayDay ? 'bg-blue-900' : ''}`}>
                                                 {record && record.overtimeHours > 0 ? (
-                                                    <div className={`text-[10px] font-medium ${isFridayDay ? 'text-blue-700' : 'text-amber-600'}`}>
+                                                    <div className={`text-[10px] font-medium ${isFridayDay ? 'text-blue-200' : 'text-amber-300'}`}>
                                                         +{record.overtimeHours}h
                                                     </div>
                                                 ) : (
-                                                    <div className={`text-[10px] ${isFridayDay ? 'text-blue-400' : 'text-gray-400'}`}>-</div>
+                                                    <div className={`text-[10px] ${isFridayDay ? 'text-blue-400' : 'text-cyan-700'}`}>-</div>
                                                 )}
                                             </td>
                                         );
@@ -198,19 +196,19 @@ export const DailyTimesheetRecords: React.FC<DailyTimesheetRecordsProps> = ({ ti
                                         const record = timesheets.find((r) => r.date === dateString);
                                         const isFridayDay = date.getDay() === 5;
                                         return (
-                                            <td key={`status-${dateString}`} className={`p-1 text-center ${isFridayDay ? 'bg-blue-50' : ''}`}>
+                                            <td key={`status-${dateString}`} className={`p-1 text-center ${isFridayDay ? 'bg-blue-900' : ''}`}>
                                                 <div
                                                     className={`inline-block rounded-full px-1.5 py-0.5 text-[10px] font-bold ${
                                                         isFridayDay
-                                                            ? 'bg-blue-100 text-blue-800'
+                                                            ? 'bg-blue-800 text-blue-200'
                                                             : record &&
                                                                 (record.status === 'approved' ||
                                                                     record.status === 'submitted' ||
                                                                     record.status === 'present')
-                                                              ? 'bg-emerald-100 text-emerald-800'
+                                                              ? 'bg-emerald-800 text-emerald-200'
                                                               : record && (record.status === 'absent' || record.status === 'A')
-                                                                ? 'bg-red-100 text-red-800'
-                                                                : 'bg-gray-100 text-gray-600'
+                                                                ? 'bg-red-800 text-red-200'
+                                                                : 'bg-cyan-900 text-cyan-200'
                                                     }`}
                                                 >
                                                     {isFridayDay

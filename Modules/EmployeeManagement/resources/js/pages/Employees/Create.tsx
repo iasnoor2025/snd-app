@@ -13,6 +13,8 @@ import DocumentsTab from '../../components/employees/create/tabs/DocumentsTab';
 import EmploymentDetailsTab from '../../components/employees/create/tabs/EmploymentDetailsTab';
 import PersonalInfoTab from '../../components/employees/create/tabs/PersonalInfoTab';
 import SalaryInfoTab from '../../components/employees/create/tabs/SalaryInfoTab';
+import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/Core/components/ui/form';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/Core/components/ui/select';
 
 interface Props {
     users: any[];
@@ -525,7 +527,7 @@ export default function Create({ users, designations, employee, isEditing = fals
                                 </TabsContent>
 
                                 <TabsContent value="employment">
-                                    <EmploymentDetailsTab form={form} designations={designations} users={users} />
+                                    <EmploymentDetailsTab form={form} designations={designations} users={users} positions={[]} />
                                 </TabsContent>
 
                                 <TabsContent value="salary">

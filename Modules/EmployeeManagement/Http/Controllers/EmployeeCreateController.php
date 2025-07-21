@@ -417,15 +417,25 @@ class EmployeeCreateController extends Controller
 
             $validated = $request->validate($rules);
 
-            // Update user account
-            $employee->user->update([
-                'name' => $validated['first_name'] . ' ' . $validated['last_name'],
-                'email' => $validated['email'],
-                'role' => $validated['role']
-            ]);
+            // Ensure user exists or create if missing
+            if (!$employee->user) {
+                $user = User::create([
+                    'name' => $validated['first_name'] . ' ' . $validated['last_name'],
+                    'email' => $validated['email'],
+                    'password' => Hash::make(Str::random(10)),
+                    'role' => $validated['role'],
+                ]);
+                $validated['user_id'] = $user->id;
+            } else {
+                $employee->user->update([
+                    'name' => $validated['first_name'] . ' ' . $validated['last_name'],
+                    'email' => $validated['email'],
+                    'role' => $validated['role']
+                ]);
+            }
 
             // Update employee record
-            $employee->update([
+            $employee->update(array_merge([
                 'file_number' => $validated['file_number'],
                 'first_name' => $validated['first_name'],
                 'last_name' => $validated['last_name'],
@@ -453,19 +463,23 @@ class EmployeeCreateController extends Controller
                 'notes' => $validated['notes'] ?? '',
                 // Legal Documents
                 'passport_number' => $validated['passport_number'] ?? '',
-                'passport_expiry' => $validated['passport_expiry'] ? date('Y-m-d', strtotime($validated['passport_expiry'])) : null,
+                'passport_expiry' => $validated['passport_expiry'] ?? null,
                 'iqama_number' => $validated['iqama_number'] ?? '',
-                'iqama_expiry' => $validated['iqama_expiry'] ? date('Y-m-d', strtotime($validated['iqama_expiry'])) : null,
+                'iqama_expiry' => $validated['iqama_expiry'] ?? null,
                 'iqama_cost' => $validated['iqama_cost'] ?? 0,
                 'driving_license_number' => $validated['driving_license_number'] ?? '',
-                'driving_license_expiry' => $validated['driving_license_expiry'] ? date('Y-m-d', strtotime($validated['driving_license_expiry'])) : null,
+                'driving_license_expiry' => $validated['driving_license_expiry'] ?? null,
+                'driving_license_cost' => $validated['driving_license_cost'] ?? 0,
                 'operator_license_number' => $validated['operator_license_number'] ?? '',
-                'operator_license_expiry' => $validated['operator_license_expiry'] ? date('Y-m-d', strtotime($validated['operator_license_expiry'])) : null,
+                'operator_license_expiry' => $validated['operator_license_expiry'] ?? null,
+                'operator_license_cost' => $validated['operator_license_cost'] ?? 0,
                 'tuv_certification_number' => $validated['tuv_certification_number'] ?? '',
-                'tuv_certification_expiry' => $validated['tuv_certification_expiry'] ? date('Y-m-d', strtotime($validated['tuv_certification_expiry'])) : null,
+                'tuv_certification_expiry' => $validated['tuv_certification_expiry'] ?? null,
+                'tuv_certification_cost' => $validated['tuv_certification_cost'] ?? 0,
                 'spsp_license_number' => $validated['spsp_license_number'] ?? '',
-                'spsp_license_expiry' => $validated['spsp_license_expiry'] ? date('Y-m-d', strtotime($validated['spsp_license_expiry'])) : null
-            ]);
+                'spsp_license_expiry' => $validated['spsp_license_expiry'] ?? null,
+                'spsp_license_cost' => $validated['spsp_license_cost'] ?? 0
+            ], isset($validated['user_id']) ? ['user_id' => $validated['user_id']] : []));
 
             // Handle file uploads if the employee model has Media-related methods
             if (method_exists($employee, 'addMediaFromRequest')) {
