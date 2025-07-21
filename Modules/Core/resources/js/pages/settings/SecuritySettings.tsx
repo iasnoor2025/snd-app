@@ -1,7 +1,7 @@
 import PageHeader from '@/Core/components/page-header';
-import ApiKeySettings from '../../components/settings/ApiKeySettings';
+import ApiKeySettings from '@/Core/components/settings/ApiKeySettings';
 import { DeviceSessions } from '@/Core/components/settings/DeviceSessions';
-import MfaSettings from '../../components/settings/MfaSettings';
+import MfaSettings from '@/Core/components/settings/MfaSettings';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 
 interface SecuritySettingsProps {
