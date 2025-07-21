@@ -3,7 +3,7 @@ import { Head } from '@inertiajs/react';
 import { PlusIcon } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { ProjectForm } from '../components/ProjectForm';
+import { ProjectForm } from '@/ProjectManagement/Components/ProjectForm';
 import { ProjectList } from '../components/ProjectList';
 
 interface Project {
