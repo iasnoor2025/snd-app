@@ -6,6 +6,8 @@ import DualClockWidget from '../components/dashboard/DualClockWidget';
 import TeamWidget from '../components/dashboard/TeamWidget';
 import SelfServiceWidget from '../components/dashboard/SelfServiceWidget';
 import { DailyTimesheetRecords } from '../../../../TimesheetManagement/resources/js/components/timesheets/DailyTimesheetRecords';
+// Placeholder import for TimesheetApprovalList
+// import TimesheetApprovalList from '../../../../TimesheetManagement/resources/js/components/timesheets/TimesheetApprovalList';
 
 // Generate mock timesheet data for the current month
 const now = new Date();
@@ -79,10 +81,6 @@ export default function Dashboard() {
 
     return (
     <div className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-br from-[#0f2027] via-[#2c5364] to-[#232526] py-12">
-      {/* DEBUG: Show user, employee, and fullName */}
-      <pre style={{ background: '#222', color: '#0ff', padding: 12, borderRadius: 8, margin: 8, maxWidth: 800, overflowX: 'auto' }}>
-        {JSON.stringify({ user, employee: user?.employee, fullName }, null, 2)}
-      </pre>
       <WelcomeHero />
       <QuickStats />
       <div className="fixed top-6 right-6 z-30 max-w-xs w-full hidden md:block">
@@ -107,7 +105,10 @@ export default function Dashboard() {
             </div>
       <div className="w-full flex justify-center mt-8">
         <SelfServiceWidget enabledModules={enabledModules} employeeId={employeeId} fullName={fullName} />
-                        </div>
+      </div>
+      {/* Timesheet Approval List Section */}
+      <div className="w-full max-w-3xl mx-auto mt-8">
+        </div>
       <div className="w-full mt-8">
         <DailyTimesheetRecords timesheets={timesheets} selectedMonth={`${year}-${month}`} showSummary={false} />
                     </div>

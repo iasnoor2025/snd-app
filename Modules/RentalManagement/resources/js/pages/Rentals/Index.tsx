@@ -3,7 +3,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import { Banknote, Car, Clock, MoreHorizontal, Plus, Search, User } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RentalsList } from '../../Components/rentals/RentalsList';
+import RentalsList from '../../Components/rentals/RentalsList';
 
 interface Props {
     rentals: {
@@ -155,7 +155,7 @@ export default function Index({ rentals, customers, filters }: Props) {
                         </div>
 
                         <RentalsList
-                            rentals={rentals.data}
+                            rentals={rentals}
                             customers={customers}
                             onPageChange={handlePageChange}
                             onPerPageChange={handlePerPageChange}

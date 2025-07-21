@@ -39,13 +39,13 @@ const SelfServiceWidget: React.FC<SelfServiceWidgetProps> = ({ enabledModules, e
     return true;
   });
   return (
-    <div className="backdrop-blur-lg bg-white/10 border border-cyan-400/40 rounded-2xl shadow-xl p-6 flex flex-col items-start relative w-full max-w-md mx-auto" style={{ boxShadow: '0 8px 32px 0 rgba(31,38,135,0.37)' }}>
+    <div className="backdrop-blur-lg bg-white/10 border border-cyan-400/40 rounded-2xl shadow-xl p-6 flex flex-col items-start relative w-full" style={{ boxShadow: '0 8px 32px 0 rgba(31,38,135,0.37)' }}>
       <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-tr from-cyan-400 to-blue-600 rounded-full blur-xl opacity-40" />
       {fullName && (
         <div className="mb-2 text-xl font-bold text-cyan-200 drop-shadow-glow w-full text-center">Welcome, {fullName}</div>
       )}
       <div className="mb-4 text-lg font-semibold text-cyan-100">Employee Self Service</div>
-      <div className="flex flex-col gap-3 w-full">
+      <div className="flex flex-row gap-2 w-full overflow-x-auto pb-2">
         {actions.length === 0 && <div className="text-cyan-200">No self-service actions available.</div>}
         {actions.map((action, idx) => {
           let href = typeof action.href === 'function' ? (typeof employeeId === 'number' ? action.href(employeeId) : '/employees') : action.href;
@@ -53,7 +53,7 @@ const SelfServiceWidget: React.FC<SelfServiceWidgetProps> = ({ enabledModules, e
             <a
               key={`${action.label}-${action.module}`}
               href={href}
-              className={`flex items-center gap-3 px-4 py-2 rounded-lg text-white font-medium transition ${action.color} shadow hover:scale-[1.03]`}
+              className={`flex items-center gap-2 px-2 py-1 rounded-lg text-white text-sm font-medium transition ${action.color} shadow`}
             >
               {action.icon}
               {action.label}

@@ -87,14 +87,18 @@ window.axios.interceptors.response.use(
 
         if (error.response?.status === 401) {
             console.log('401 Unauthorized - redirecting to login');
-            // Handle 401 Unauthorized
+            // Prevent infinite redirect loop
             if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
-                window.location.href = '/login';
+                if (!window.sessionStorage.getItem('redirectedToLogin')) {
+                    window.sessionStorage.setItem('redirectedToLogin', '1');
+                    window.location.href = '/login';
+                }
             }
         } else if (error.response?.status === 419) {
             console.log('419 CSRF Token Mismatch - reloading page');
-            // Handle 419 CSRF Token Mismatch
-            if (typeof window !== 'undefined') {
+            // Prevent infinite reload loop
+            if (typeof window !== 'undefined' && !window.sessionStorage.getItem('reloadedForCsrf')) {
+                window.sessionStorage.setItem('reloadedForCsrf', '1');
                 window.location.reload();
             }
         }
