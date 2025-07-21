@@ -2,7 +2,6 @@ import { Monitor, Moon, Sun } from 'lucide-react';
 import { type BreadcrumbItem as BreadcrumbItemType } from '../types';
 import { Breadcrumbs } from './breadcrumbs';
 import { useTheme } from './theme-provider';
-import { SidebarTrigger } from './ui/sidebar';
 
 export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: BreadcrumbItemType[] }) {
     const { theme, setTheme } = useTheme();
@@ -14,16 +13,13 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
             <div className="flex items-center gap-2">
                 <Breadcrumbs breadcrumbs={breadcrumbs} />
             </div>
-            <div className="ml-auto flex items-center gap-2">
-                <button
-                    className="flex items-center justify-center rounded-full p-2 transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
-                    title={`Switch theme (current: ${theme})`}
-                    onClick={() => setTheme(nextTheme)}
-                >
-                    {icon}
-                </button>
-                <SidebarTrigger />
-            </div>
+            <button
+                className="ml-auto flex items-center justify-center rounded-full p-2 transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
+                title={`Switch theme (current: ${theme})`}
+                onClick={() => setTheme(nextTheme)}
+            >
+                {icon}
+            </button>
         </header>
     );
 }

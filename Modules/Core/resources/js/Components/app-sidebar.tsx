@@ -1,7 +1,7 @@
 import { type NavItem } from '../types';
 import { NavMain } from './nav-main';
 import { NavUser } from './nav-user';
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from './ui/sidebar';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger, useSidebar } from './ui/sidebar';
 
 import { usePermission } from '../hooks/usePermission';
 import AppLogo from './app-logo';
@@ -171,33 +171,36 @@ export function AppSidebar() {
     return (
         <Sidebar collapsible="icon" className="border-r bg-white">
             <SidebarHeader>
-                <div className="flex items-center gap-2">
-                    {!isCollapsed && (
-                        <>
-                            <SidebarMenu>
-                                <SidebarMenuItem>
-                                    <SidebarMenuButton size="lg">
-                                        <AppLogo />
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            </SidebarMenu>
-                            <button
-                                onClick={handleRefresh}
-                                className="ml-auto text-xs text-gray-600 hover:text-gray-800 transition-colors"
-                                title={`Refresh modules${lastRefresh ? ` (Last: ${lastRefresh.toLocaleTimeString()})` : ''}`}
-                                disabled={loading}
-                            >
-                                {loading ? (
-                                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-gray-600"></div>
-                                ) : (
-                                    '↻'
-                                )}
-                            </button>
-                        </>
-                    )}
-                    {isCollapsed && (
-                        <AppLogoIcon className="h-6 w-6 fill-current text-black dark:text-white" />
-                    )}
+                <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center gap-2">
+                        {!isCollapsed && (
+                            <>
+                                <SidebarMenu>
+                                    <SidebarMenuItem>
+                                        <SidebarMenuButton size="lg">
+                                            <AppLogo />
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                </SidebarMenu>
+                                <button
+                                    onClick={handleRefresh}
+                                    className="text-xs text-gray-600 hover:text-gray-800 transition-colors"
+                                    title={`Refresh modules${lastRefresh ? ` (Last: ${lastRefresh.toLocaleTimeString()})` : ''}`}
+                                    disabled={loading}
+                                >
+                                    {loading ? (
+                                        <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-gray-600"></div>
+                                    ) : (
+                                        '↻'
+                                    )}
+                                </button>
+                            </>
+                        )}
+                        {isCollapsed && (
+                            <AppLogoIcon className="h-6 w-6 fill-current text-black dark:text-white" />
+                        )}
+                    </div>
+                    <SidebarTrigger />
                 </div>
             </SidebarHeader>
             <SidebarContent className="flex-1">
