@@ -56,14 +56,19 @@ export function ApprovalDialog({ timesheet, trigger, action, onSuccess }: Approv
     const handleSubmit = async () => {
         setIsSubmitting(true);
 
-        const routeName = isApproval ? 'timesheets.approve' : 'timesheets.reject';
+        // Use web route for approval
+        const routeName = isApproval ? route('timesheets.approve', timesheet.id) : route('timesheets.reject', timesheet.id);
         const data = notes ? { notes, reason: notes } : {};
 
-        router.put(route(routeName, timesheet.id), data, {
+        router.put(routeName, data, {
             onSuccess: () => {
                 setIsOpen(false);
                 setNotes('');
-                toast.success(isApproval ? 'Timesheet approved successfully' : 'Timesheet rejected successfully');
+                if (isApproval) {
+                    toast.success('Timesheet approved successfully');
+                } else {
+                    toast.success('Timesheet rejected successfully');
+                }
                 onSuccess?.();
             },
             onError: (errors: any) => {

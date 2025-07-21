@@ -205,7 +205,7 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                 },
                 {
                     onSuccess: () => {
-                        toast(`${selectedTimesheets.length} timesheets approved successfully`);
+                        toast.success(`${selectedTimesheets.length} timesheets approved successfully`);
                         setSelectedTimesheets([]);
                         setBulkProcessing(false);
                     },

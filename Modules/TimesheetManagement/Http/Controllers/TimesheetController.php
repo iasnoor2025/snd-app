@@ -1347,59 +1347,46 @@ class TimesheetController extends Controller
             return response()->json(['error' => 'Unauthorized or timesheet not found'], 403);
         }
 
-        // Check if user has general approval permission - if so, allow direct final approval
-        if ($user->can('timesheets.approve')) {
-            if ($timesheet->status === $timesheet::STATUS_SUBMITTED) {
-                // Direct approval to final stage for users with general approval permission
-                $timesheet->status = $timesheet::STATUS_MANAGER_APPROVED;
-                $timesheet->manager_approval_by = $user->id;
-                $timesheet->manager_approval_at = now();
-                $timesheet->save();
-                return response()->json(['success' => true, 'message' => 'Timesheet approved successfully.']);
-            }
-            return response()->json(['error' => 'Only submitted timesheets can be approved.'], 400);
-        }
-
-        // Multi-stage approval workflow for specific roles
+        // Multi-stage approval workflow for all users (including admin)
         // Foreman approval
         if ($timesheet->status === $timesheet::STATUS_SUBMITTED) {
-            if ($user->hasRole(['foreman', 'admin', 'hr'])) {
+            if ($user->hasRole(['foreman', 'admin', 'hr']) || $user->can('timesheets.approve')) {
                 if ($timesheet->approveByForeman($user->id)) {
                     return response()->json(['success' => true, 'message' => 'Timesheet approved by foreman.']);
                 }
                 return response()->json(['error' => 'Approval failed.'], 400);
             }
-            return response()->json(['error' => 'Only foreman, admin, or hr can approve at this stage.'], 403);
+            return response()->json(['error' => 'Only foreman, admin, hr, or users with approval permission can approve at this stage.'], 403);
         }
         // Incharge approval
         if ($timesheet->status === $timesheet::STATUS_FOREMAN_APPROVED) {
-            if ($user->hasRole(['timesheet_incharge', 'admin', 'hr'])) {
+            if ($user->hasRole(['timesheet_incharge', 'admin', 'hr']) || $user->can('timesheets.approve.incharge')) {
                 if ($timesheet->approveByIncharge($user->id)) {
                     return response()->json(['success' => true, 'message' => 'Timesheet approved by incharge.']);
                 }
                 return response()->json(['error' => 'Approval failed.'], 400);
             }
-            return response()->json(['error' => 'Only incharge, admin, or hr can approve at this stage.'], 403);
+            return response()->json(['error' => 'Only incharge, admin, hr, or users with incharge approval permission can approve at this stage.'], 403);
         }
         // Checking approval
         if ($timesheet->status === $timesheet::STATUS_INCHARGE_APPROVED) {
-            if ($user->hasRole(['timesheet_checking', 'admin', 'hr'])) {
+            if ($user->hasRole(['timesheet_checking', 'admin', 'hr']) || $user->can('timesheets.approve.checking')) {
                 if ($timesheet->approveByChecking($user->id)) {
                     return response()->json(['success' => true, 'message' => 'Timesheet approved by checking incharge.']);
                 }
                 return response()->json(['error' => 'Approval failed.'], 400);
             }
-            return response()->json(['error' => 'Only checking incharge, admin, or hr can approve at this stage.'], 403);
+            return response()->json(['error' => 'Only checking incharge, admin, hr, or users with checking approval permission can approve at this stage.'], 403);
         }
         // Manager approval
         if ($timesheet->status === $timesheet::STATUS_CHECKING_APPROVED) {
-            if ($user->hasRole(['manager', 'admin', 'hr'])) {
+            if ($user->hasRole(['manager', 'admin', 'hr']) || $user->can('timesheets.approve.manager')) {
                 if ($timesheet->approveByManager($user->id)) {
                     return response()->json(['success' => true, 'message' => 'Timesheet approved by manager.']);
                 }
                 return response()->json(['error' => 'Approval failed.'], 400);
             }
-            return response()->json(['error' => 'Only manager, admin, or hr can approve at this stage.'], 403);
+            return response()->json(['error' => 'Only manager, admin, hr, or users with manager approval permission can approve at this stage.'], 403);
         }
         return response()->json(['error' => 'No approval possible at this stage.'], 400);
     }

@@ -113,11 +113,12 @@ export default function TimesheetShow({ timesheet, assignment }: Props) {
         return null;
     };
 
+    // Fix canApprove logic to match backend multi-stage workflow
     const canApprove = (
-        (timesheet.status === 'submitted' && hasPermission('timesheets.approve')) ||
-        (timesheet.status === 'foreman_approved' && (hasPermission('timesheets.approve.incharge') || hasPermission('timesheets.approve'))) ||
-        (timesheet.status === 'incharge_approved' && (hasPermission('timesheets.approve.checking') || hasPermission('timesheets.approve'))) ||
-        (timesheet.status === 'checking_approved' && (hasPermission('timesheets.approve.manager') || hasPermission('timesheets.approve')))
+        (timesheet.status === 'submitted' && (hasPermission('timesheets.approve') || hasPermission('timesheets.approve.foreman') || hasPermission('timesheets.approve.incharge') || hasPermission('timesheets.approve.checking') || hasPermission('timesheets.approve.manager')))
+        || (timesheet.status === 'foreman_approved' && (hasPermission('timesheets.approve.incharge') || hasPermission('timesheets.approve') || hasPermission('timesheets.approve.checking') || hasPermission('timesheets.approve.manager')))
+        || (timesheet.status === 'incharge_approved' && (hasPermission('timesheets.approve.checking') || hasPermission('timesheets.approve') || hasPermission('timesheets.approve.manager')))
+        || (timesheet.status === 'checking_approved' && (hasPermission('timesheets.approve.manager') || hasPermission('timesheets.approve')))
     );
 
     return (
@@ -264,6 +265,8 @@ export default function TimesheetShow({ timesheet, assignment }: Props) {
                                              timesheet.status === 'checking_approved' ? 'Manager Approve' : 'Approve'}
                                         </Button>
                                     }
+                                    approveRoute={route('timesheets.approve', timesheet.id)}
+                                    approveMethod="PUT"
                                 />
                             </CardFooter>
                         )}
