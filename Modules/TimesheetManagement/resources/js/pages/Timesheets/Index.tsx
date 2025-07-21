@@ -109,6 +109,7 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
     const { hasPermission, hasRole } = usePermission();
     const canBulkSubmit =
         hasPermission('timesheets.submit') || ['admin', 'hr', 'foreman', 'timesheet_incharge', 'manager'].some((role) => hasRole(role));
+    const canBulkDelete = hasPermission('timesheets.delete') || hasRole('admin');
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
     const [selectedStatus, setSelectedStatus] = useState(filters.status || 'all');
     const [startDate, setStartDate] = useState<Date | undefined>(filters.date_from ? new Date(filters.date_from) : undefined);
@@ -158,6 +159,13 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
 
     const canApproveTimesheet = hasPermission('timesheets.approve');
     const canDeleteTimesheet = hasPermission('timesheets.delete');
+
+    const canApproveRow = (row: Timesheet) => (
+        (row.status === 'submitted' && hasPermission('timesheets.approve')) ||
+        (row.status === 'foreman_approved' && (hasPermission('timesheets.approve.incharge') || hasPermission('timesheets.approve'))) ||
+        (row.status === 'incharge_approved' && (hasPermission('timesheets.approve.checking') || hasPermission('timesheets.approve'))) ||
+        (row.status === 'checking_approved' && (hasPermission('timesheets.approve.manager') || hasPermission('timesheets.approve')))
+    );
 
     // Determine if user is admin
     // const isAdmin = auth?.user?.roles?.includes('admin');
@@ -247,7 +255,10 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
     };
     const toggleSelectAll = (checked: boolean) => {
         if (checked) {
-            if (canBulkSubmit) {
+            if (canBulkDelete) {
+                // Admin or delete permission: select all timesheets
+                setSelectedTimesheets(timesheetsData.map((ts) => ts.id));
+            } else if (canBulkSubmit) {
                 // Bulk submitter: select all eligible timesheets
                 const eligible = timesheetsData.filter((ts) => ['draft', 'rejected', 'submitted'].includes(ts.status)).map((ts) => ts.id);
                 setSelectedTimesheets(eligible);
@@ -403,11 +414,41 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
         {
             key: 'actions',
             header: t('lbl_actions_column'),
-            accessor: (row: Timesheet) => (
-                <div className="flex items-center justify-end space-x-2">
-                    <CrudButtons resourceType="timesheets" resourceId={row.id} resourceName={`Timesheet from ${format(new Date(row.date), 'PP')}`} />
-                    {canApproveTimesheet && row.status === 'submitted' && (
-                        <>
+            accessor: (row: Timesheet) => {
+                // Determine the main workflow action for this row
+                let action = null;
+                let label = '';
+                let canAct = false;
+                let dialogAction = 'approve';
+                if (row.status === 'submitted' && hasPermission('timesheets.approve')) {
+                    label = 'Approve';
+                    canAct = true;
+                    dialogAction = 'approve';
+                } else if (row.status === 'foreman_approved' && (hasPermission('timesheets.approve.incharge') || hasPermission('timesheets.approve'))) {
+                    label = 'Incharge Approve';
+                    canAct = true;
+                    dialogAction = 'approve';
+                } else if (row.status === 'incharge_approved' && (hasPermission('timesheets.approve.checking') || hasPermission('timesheets.approve'))) {
+                    label = 'Checking Approve';
+                    canAct = true;
+                    dialogAction = 'approve';
+                } else if (row.status === 'checking_approved' && (hasPermission('timesheets.approve.manager') || hasPermission('timesheets.approve'))) {
+                    label = 'Manager Approve';
+                    canAct = true;
+                    dialogAction = 'approve';
+                } else if (['draft', 'rejected'].includes(row.status) && hasPermission('timesheets.edit')) {
+                    label = row.status === 'draft' ? 'Submit' : 'Resubmit';
+                    canAct = true;
+                    dialogAction = 'submit';
+                }
+                return (
+                    <div className="flex items-center justify-end space-x-2">
+                        <CrudButtons resourceType="timesheets" resourceId={row.id} resourceName={`Timesheet from ${format(new Date(row.date), 'PP')}`} />
+                        {/* DEBUG OUTPUT */}
+                        <span style={{ fontSize: 10, color: '#888', marginRight: 4 }}>
+                            [DBG: {label} | {dialogAction} | {canAct ? 'Y' : 'N'}]
+                        </span>
+                        {canAct && dialogAction === 'approve' && (
                             <ApprovalDialog
                                 timesheet={row}
                                 action="approve"
@@ -416,40 +457,43 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                                     <TooltipProvider>
                                         <Tooltip>
                                             <TooltipTrigger asChild>
-                                                <Button variant="outline" size="icon">
-                                                    <CheckIcon className="h-4 w-4" />
+                                                <Button variant="default" size="sm">
+                                                    {label}
                                                 </Button>
                                             </TooltipTrigger>
                                             <TooltipContent>
-                                                <p>{t('approve_timesheet', 'Approve Timesheet')}</p>
+                                                <p>{label}</p>
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>
                                 }
                             />
-                            <ApprovalDialog
-                                timesheet={row}
-                                action="reject"
-                                onSuccess={reloadPage}
-                                trigger={
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <Button variant="outline" size="icon">
-                                                    <XIcon className="h-4 w-4" />
-                                                </Button>
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p>{t('reject_timesheet', 'Reject Timesheet')}</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                }
-                            />
-                        </>
-                    )}
-                </div>
-            ),
+                        )}
+                        {canAct && dialogAction === 'submit' && (
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button
+                                            variant="default"
+                                            size="sm"
+                                            onClick={async () => {
+                                                await router.post(route('timesheets.submit', row.id), {}, {
+                                                    onSuccess: reloadPage,
+                                                });
+                                            }}
+                                        >
+                                            {label}
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>{label} Timesheet</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        )}
+                    </div>
+                );
+            },
             className: 'text-right',
         },
     ];
@@ -638,57 +682,62 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                                     </AlertDialogContent>
                                 </AlertDialog>
                             )}
-                            {canDeleteTimesheet && selectedTimesheets.length > 0 && (
-                                <>
-                                    <Button variant="destructive" disabled={bulkProcessing} onClick={handleBulkDelete}>
-                                        <TrashIcon className="mr-2 h-4 w-4" />
-                                        {t('btn_delete_selected')}
-                                    </Button>
-                                    <AlertDialog open={showBulkDeleteDialog} onOpenChange={setShowBulkDeleteDialog}>
-                                        <AlertDialogContent>
-                                            <AlertDialogTitle>
-                                                {t('delete_confirm', 'Are you sure you want to delete the selected timesheets?')}
-                                            </AlertDialogTitle>
-                                            <AlertDialogDescription>{t('delete_warning', 'This action cannot be undone.')}</AlertDialogDescription>
-                                            <div className="mt-4 flex justify-end gap-2">
-                                                <Button onClick={() => setShowBulkDeleteDialog(false)} disabled={bulkProcessing}>
-                                                    {t('btn_cancel', 'Cancel')}
-                                                </Button>
-                                                <Button
-                                                    variant="destructive"
-                                                    onClick={async () => {
-                                                        setBulkProcessing(true);
-                                                        try {
-                                                            const response = await axios.post('/timesheets/bulk-delete', { ids: selectedTimesheets });
-                                                            if (response.data.success) {
-                                                                toast.success(t('bulk_delete_success', 'Timesheets deleted successfully'));
-                                                                reloadPage();
+                            {canBulkDelete && selectedTimesheets.length > 0 && (
+                                <AlertDialog open={showBulkDeleteDialog} onOpenChange={setShowBulkDeleteDialog}>
+                                    <AlertDialogTrigger asChild>
+                                        <Button disabled={bulkProcessing} variant="destructive">
+                                            <TrashIcon className="mr-2 h-4 w-4" />
+                                            Delete Selected
+                                        </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogTitle>Delete Timesheets</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            Are you sure you want to delete {selectedTimesheets.length} selected timesheets? This action cannot be undone, even for approved timesheets.
+                                        </AlertDialogDescription>
+                                        <div className="mt-4 flex justify-end gap-2">
+                                            <Button onClick={() => setShowBulkDeleteDialog(false)} disabled={bulkProcessing}>
+                                                Cancel
+                                            </Button>
+                                            <Button
+                                                variant="destructive"
+                                                onClick={() => {
+                                                    setBulkProcessing(true);
+                                                    router.post(
+                                                        route('timesheets.bulk-delete'),
+                                                        {
+                                                            timesheet_ids: selectedTimesheets,
+                                                        },
+                                                        {
+                                                            onSuccess: () => {
+                                                                toast(`${selectedTimesheets.length} timesheets deleted successfully`);
                                                                 setSelectedTimesheets([]);
-                                                            } else {
-                                                                toast.error(response.data.message || t('bulk_delete_failed', 'Failed to delete timesheets'));
-                                                            }
-                                                        } catch (error: any) {
-                                                            toast.error(error.response?.data?.message || t('bulk_delete_failed', 'Failed to delete timesheets'));
-                                                        } finally {
-                                                            setBulkProcessing(false);
-                                                            setShowBulkDeleteDialog(false);
-                                                        }
-                                                    }}
-                                                    disabled={bulkProcessing}
-                                                >
-                                                    {bulkProcessing ? (
-                                                        <>{t('btn_processing')}</>
-                                                    ) : (
-                                                        <>
-                                                            <TrashIcon className="mr-2 h-4 w-4" />
-                                                            {t('btn_delete_selected', 'Delete Selected')}
-                                                        </>
-                                                    )}
-                                                </Button>
-                                            </div>
-                                        </AlertDialogContent>
-                                    </AlertDialog>
-                                </>
+                                                                setBulkProcessing(false);
+                                                                setShowBulkDeleteDialog(false);
+                                                                reloadPage();
+                                                            },
+                                                            onError: (errors: any) => {
+                                                                toast(errors.error || 'Failed to delete timesheets');
+                                                                setBulkProcessing(false);
+                                                                setShowBulkDeleteDialog(false);
+                                                            },
+                                                        },
+                                                    );
+                                                }}
+                                                disabled={bulkProcessing}
+                                            >
+                                                {bulkProcessing ? (
+                                                    <>Deleting...</>
+                                                ) : (
+                                                    <>
+                                                        <TrashIcon className="mr-2 h-4 w-4" />
+                                                        Delete
+                                                    </>
+                                                )}
+                                            </Button>
+                                        </div>
+                                    </AlertDialogContent>
+                                </AlertDialog>
                             )}
                         </div>
                     </CardHeader>

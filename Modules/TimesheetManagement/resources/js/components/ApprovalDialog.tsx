@@ -113,9 +113,21 @@ export function ApprovalDialog({ timesheet, trigger, action, onSuccess }: Approv
                             </div>
                         )}
                         <div>
-                            <AlertDialogTitle className="text-xl">{isApproval ? 'Approve Timesheet' : 'Reject Timesheet'}</AlertDialogTitle>
+                            <AlertDialogTitle className="text-xl">
+                                {isApproval ?
+                                    (timesheet.status === 'submitted' ? 'Approve Timesheet' :
+                                     timesheet.status === 'foreman_approved' ? 'Incharge Approve Timesheet' :
+                                     timesheet.status === 'incharge_approved' ? 'Checking Approve Timesheet' :
+                                     timesheet.status === 'checking_approved' ? 'Manager Approve Timesheet' : 'Approve Timesheet')
+                                    : 'Reject Timesheet'}
+                            </AlertDialogTitle>
                             <AlertDialogDescription>
-                                {isApproval ? 'Are you sure you want to approve this timesheet?' : 'Are you sure you want to reject this timesheet?'}
+                                {isApproval ?
+                                    (timesheet.status === 'submitted' ? 'Are you sure you want to approve this timesheet?' :
+                                     timesheet.status === 'foreman_approved' ? 'Are you sure you want to approve this timesheet as Incharge?' :
+                                     timesheet.status === 'incharge_approved' ? 'Are you sure you want to approve this timesheet as Checking?' :
+                                     timesheet.status === 'checking_approved' ? 'Are you sure you want to approve this timesheet as Manager?' : 'Are you sure you want to approve this timesheet?')
+                                    : 'Are you sure you want to reject this timesheet?'}
                             </AlertDialogDescription>
                         </div>
                     </div>
@@ -187,12 +199,22 @@ export function ApprovalDialog({ timesheet, trigger, action, onSuccess }: Approv
                 {/* Notes/Reason Input */}
                 <div className="space-y-3">
                     <Label htmlFor="notes" className="text-sm font-medium">
-                        {isApproval ? 'Approval Notes (Optional)' : 'Rejection Reason'}
+                        {isApproval ?
+                            (timesheet.status === 'submitted' ? 'Approval Notes (Optional)' :
+                             timesheet.status === 'foreman_approved' ? 'Incharge Approval Notes (Optional)' :
+                             timesheet.status === 'incharge_approved' ? 'Checking Approval Notes (Optional)' :
+                             timesheet.status === 'checking_approved' ? 'Manager Approval Notes (Optional)' : 'Approval Notes (Optional)')
+                            : 'Rejection Reason'}
                         {!isApproval && <span className="ml-1 text-red-500">*</span>}
                     </Label>
                     <Textarea
                         id="notes"
-                        placeholder={isApproval ? 'Add any notes about this approval...' : 'Please provide a reason for rejection...'}
+                        placeholder={isApproval ?
+                            (timesheet.status === 'submitted' ? 'Add any notes about this approval...' :
+                             timesheet.status === 'foreman_approved' ? 'Add any notes about incharge approval...' :
+                             timesheet.status === 'incharge_approved' ? 'Add any notes about checking approval...' :
+                             timesheet.status === 'checking_approved' ? 'Add any notes about manager approval...' : 'Add any notes about this approval...')
+                            : 'Please provide a reason for rejection...'}
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
                         rows={3}
@@ -223,7 +245,10 @@ export function ApprovalDialog({ timesheet, trigger, action, onSuccess }: Approv
                                 {isApproval ? (
                                     <>
                                         <Check className="mr-2 h-4 w-4" />
-                                        Approve Timesheet
+                                        {timesheet.status === 'submitted' ? 'Approve Timesheet' :
+                                         timesheet.status === 'foreman_approved' ? 'Incharge Approve' :
+                                         timesheet.status === 'incharge_approved' ? 'Checking Approve' :
+                                         timesheet.status === 'checking_approved' ? 'Manager Approve' : 'Approve Timesheet'}
                                     </>
                                 ) : (
                                     <>

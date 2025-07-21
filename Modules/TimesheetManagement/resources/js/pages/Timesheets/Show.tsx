@@ -112,6 +112,13 @@ export default function TimesheetShow({ timesheet, assignment }: Props) {
         return null;
     };
 
+    const canApprove = (
+        (timesheet.status === 'submitted' && hasPermission('timesheets.approve')) ||
+        (timesheet.status === 'foreman_approved' && (hasPermission('timesheets.approve.incharge') || hasPermission('timesheets.approve'))) ||
+        (timesheet.status === 'incharge_approved' && (hasPermission('timesheets.approve.checking') || hasPermission('timesheets.approve'))) ||
+        (timesheet.status === 'checking_approved' && (hasPermission('timesheets.approve.manager') || hasPermission('timesheets.approve')))
+    );
+
     return (
         <AppLayout title={t('ttl_view_timesheet')} breadcrumbs={breadcrumbs} requiredPermission="timesheets.view">
             <Head title={t('ttl_view_timesheet')} />
@@ -237,7 +244,8 @@ export default function TimesheetShow({ timesheet, assignment }: Props) {
                             )}
                         </CardContent>
 
-                        {timesheet.status === 'submitted' && hasPermission('timesheets.approve') && (
+                        {/* Approval buttons for all stages */}
+                        {['submitted', 'foreman_approved', 'incharge_approved', 'checking_approved'].includes(timesheet.status) && canApprove && (
                             <CardFooter className="flex justify-end space-x-2 border-t pt-4">
                                 <ApprovalDialog
                                     timesheet={timesheet}
@@ -263,7 +271,10 @@ export default function TimesheetShow({ timesheet, assignment }: Props) {
                                     trigger={
                                         <Button variant="default" className="bg-green-600 hover:bg-green-700">
                                             <CheckIcon className="mr-2 h-4 w-4" />
-                                            Approve
+                                            {timesheet.status === 'submitted' ? 'Approve' :
+                                             timesheet.status === 'foreman_approved' ? 'Incharge Approve' :
+                                             timesheet.status === 'incharge_approved' ? 'Checking Approve' :
+                                             timesheet.status === 'checking_approved' ? 'Manager Approve' : 'Approve'}
                                         </Button>
                                     }
                                 />
