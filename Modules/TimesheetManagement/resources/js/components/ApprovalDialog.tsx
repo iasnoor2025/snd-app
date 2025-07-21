@@ -18,6 +18,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { route } from 'ziggy-js';
+import { format } from 'date-fns';
 
 interface Timesheet {
     id: number;
@@ -103,7 +104,7 @@ export function ApprovalDialog({ timesheet, trigger, action, onSuccess }: Approv
     };
 
     return (
-        <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+        <AlertDialog open={isOpen} onOpenChange={setIsOpen} title="Approval">
             <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
             <AlertDialogContent className="sm:max-w-[600px]">
                 <AlertDialogHeader>
@@ -164,7 +165,7 @@ export function ApprovalDialog({ timesheet, trigger, action, onSuccess }: Approv
                                 <Calendar className="h-4 w-4" />
                                 <span>Date</span>
                             </div>
-                            <p className="font-medium">{new Date(timesheet.date)}</p>
+                            <p className="font-medium">{format(new Date(timesheet.date), 'PPP')}</p>
                         </div>
 
                         <div className="space-y-2">

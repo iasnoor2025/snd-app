@@ -107,6 +107,22 @@ Route::prefix('v1/designations')->group(function() {
 Route::get('/employee-numbers/next', [EmployeeNumberController::class, 'getNextEmployeeNumber']);
 Route::get('/departments', [DepartmentApiController::class, 'index']);
 
+// Add this route for current authenticated user's employee record
+Route::middleware(['auth:sanctum'])->get('/employees/me', function (\Illuminate\Http\Request $request) {
+    $user = $request->user();
+    if (!$user) {
+        return response()->json(['error' => 'Not authenticated'], 401);
+    }
+    $employee = $user->employee;
+    if (!$employee) {
+        return response()->json(['error' => 'No employee record found for user'], 404);
+    }
+    $employee->load(['department', 'designation', 'assignments']);
+    $data = $employee->toArray();
+    $data['current_assignment'] = $employee->current_assignment;
+    return response()->json(['data' => $data]);
+});
+
 // Authenticated API endpoints
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {

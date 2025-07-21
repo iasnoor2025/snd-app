@@ -63,34 +63,37 @@ const DualClockWidget: React.FC = () => {
     const sortedTimezones = [...(rawTimeZones as any[])].sort((a, b) => a.name.localeCompare(b.name));
 
     return (
-        <div className="relative flex w-full flex-col">
-            {/* Local Clock - Light */}
-            <div className="flex h-full min-w-0 flex-1 flex-row items-center justify-between bg-white px-4 py-3 text-black">
+        <div className="relative flex w-full max-w-xl flex-col items-stretch justify-center rounded-2xl backdrop-blur-lg bg-white/10 border border-cyan-400/40 shadow-xl p-0 overflow-hidden" style={{ boxShadow: '0 8px 32px 0 rgba(31,38,135,0.37)' }}>
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-16 h-16 bg-gradient-to-tr from-cyan-400 to-blue-600 rounded-full blur-2xl opacity-40" />
+            {/* Local Clock - Glassmorphic */}
+            <div className="flex flex-row items-center justify-between px-6 py-5 bg-white/10 backdrop-blur-lg">
                 <div>
-                    <div className="font-semibold">{localCity}</div>
-                    <div className="text-xs text-muted-foreground">{getTimezoneName(localTz)}</div>
+                    <div className="font-semibold text-white drop-shadow">{localCity}</div>
+                    <div className="text-xs text-cyan-100/80 drop-shadow">{getTimezoneName(localTz)}</div>
                 </div>
-                <div className="font-mono text-2xl font-bold tracking-tight whitespace-nowrap">{getTimeString(localTz)}</div>
+                <div className="font-mono text-3xl font-bold tracking-tight text-cyan-200 drop-shadow-glow whitespace-nowrap">{getTimeString(localTz)}</div>
             </div>
-            {/* Country Clock - Dark, Clickable */}
+            {/* Divider */}
+            <div className="h-[2px] w-full bg-gradient-to-r from-cyan-400/40 via-transparent to-blue-400/40" />
+            {/* Country Clock - Glassmorphic, Clickable */}
             <div
-                className="flex h-full min-w-0 flex-1 cursor-pointer flex-row items-center justify-between bg-black px-4 py-3 text-white transition hover:bg-gray-900"
+                className="flex flex-row items-center justify-between px-6 py-5 cursor-pointer bg-white/10 backdrop-blur-lg transition hover:bg-cyan-400/10"
                 onClick={() => setShowPopup(true)}
                 tabIndex={0}
                 aria-label="Change timezone"
             >
                 <div>
-                    <div className="font-semibold">{selectedTz?.mainCities?.[0] || selectedTz?.name}</div>
-                    <div className="text-xs text-gray-300">{getTimezoneName(selectedTz.name)}</div>
+                    <div className="font-semibold text-white drop-shadow">{selectedTz?.mainCities?.[0] || selectedTz?.name}</div>
+                    <div className="text-xs text-cyan-100/80 drop-shadow">{getTimezoneName(selectedTz.name)}</div>
                 </div>
-                <div className="font-mono text-2xl font-bold tracking-tight whitespace-nowrap">{getTimeString(selectedTz.name)}</div>
+                <div className="font-mono text-3xl font-bold tracking-tight text-cyan-200 drop-shadow-glow whitespace-nowrap">{getTimeString(selectedTz.name)}</div>
             </div>
             {/* Popup for timezone selection */}
             {showPopup && (
                 <div ref={popupRef} className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-                    <div className="max-h-[60vh] min-w-[260px] overflow-y-auto rounded bg-white p-2 shadow">
+                    <div className="max-h-[60vh] min-w-[260px] overflow-y-auto rounded-2xl bg-white/90 p-4 shadow-2xl border border-cyan-400/40">
                         <select
-                            className="w-full rounded border px-2 py-1 text-sm"
+                            className="w-full rounded border border-cyan-400/40 px-2 py-1 text-sm focus:ring-2 focus:ring-cyan-400"
                             value={timezone}
                             onChange={(e) => {
                                 setTimezone(e.target.value);
@@ -108,6 +111,7 @@ const DualClockWidget: React.FC = () => {
                     </div>
                 </div>
             )}
+            <div className="absolute inset-0 rounded-2xl border-2 border-cyan-400/30 pointer-events-none" style={{ boxShadow: '0 0 24px 2px #22d3ee55' }} />
         </div>
     );
 };
