@@ -96,6 +96,21 @@ Route::prefix('timesheets')->name('timesheets.')->middleware(['auth', 'verified'
     Route::post('/update-bulk', [TimesheetController::class, 'updateBulk'])
         ->middleware('permission:timesheets.edit')
         ->name('update-bulk');
+    Route::post('/bulk-submit-web', [TimesheetController::class, 'bulkSubmitWeb'])
+        ->middleware('permission:timesheets.submit')
+        ->name('bulk-submit-web');
+    Route::post('/bulk-approve-web', [TimesheetController::class, 'bulkApproveWeb'])
+        ->middleware('permission:timesheets.approve')
+        ->name('bulk-approve-web');
+    Route::post('/bulk-approve-incharge', [TimesheetController::class, 'bulkApproveIncharge'])
+        ->middleware('permission:timesheets.approve.incharge')
+        ->name('bulk-approve-incharge');
+    Route::post('/bulk-approve-checking', [TimesheetController::class, 'bulkApproveChecking'])
+        ->middleware('permission:timesheets.approve.checking')
+        ->name('bulk-approve-checking');
+    Route::post('/bulk-approve-manager', [TimesheetController::class, 'bulkApproveManager'])
+        ->middleware('permission:timesheets.approve.manager')
+        ->name('bulk-approve-manager');
 
     // Daily timesheet entries
     Route::get('/entries', [TimeEntryController::class, 'index'])

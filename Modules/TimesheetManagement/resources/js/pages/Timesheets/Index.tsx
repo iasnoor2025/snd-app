@@ -358,6 +358,130 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
         }
     };
 
+    // Determine the main bulk workflow action and label
+    let bulkAction = () => {};
+    let bulkLabel = '';
+    let canBulkAct = false;
+    if (selectedTimesheets.length > 0) {
+        const selectedRows = timesheetsData.filter(ts => selectedTimesheets.includes(ts.id));
+        const allDraftOrRejected = selectedRows.every(ts => ['draft', 'rejected'].includes(ts.status));
+        const allSubmitted = selectedRows.every(ts => ts.status === 'submitted');
+        const allForemanApproved = selectedRows.every(ts => ts.status === 'foreman_approved');
+        const allInchargeApproved = selectedRows.every(ts => ts.status === 'incharge_approved');
+        const allCheckingApproved = selectedRows.every(ts => ts.status === 'checking_approved');
+        if (allDraftOrRejected && hasPermission('timesheets.edit')) {
+            bulkLabel = 'Submit Selected';
+            canBulkAct = true;
+            bulkAction = async () => {
+                setBulkProcessing(true);
+                router.post(
+                    route('timesheets.bulk-submit-web'),
+                    { timesheet_ids: selectedTimesheets },
+                    {
+                        onSuccess: () => {
+                            toast(`${selectedTimesheets.length} timesheets submitted successfully`);
+                            setSelectedTimesheets([]);
+                            setBulkProcessing(false);
+                            reloadPage();
+                        },
+                        onError: (errors: any) => {
+                            toast(errors.error || 'Failed to submit timesheets');
+                            setBulkProcessing(false);
+                        },
+                    },
+                );
+            };
+        } else if (allSubmitted && canApproveTimesheet) {
+            bulkLabel = 'Foreman Approve Selected';
+            canBulkAct = true;
+            bulkAction = async () => {
+                setBulkProcessing(true);
+                router.post(
+                    route('timesheets.bulk-approve-web'),
+                    { timesheet_ids: selectedTimesheets },
+                    {
+                        onSuccess: () => {
+                            toast(`${selectedTimesheets.length} timesheets foreman approved successfully`, { variant: 'success' });
+                            setSelectedTimesheets([]);
+                            setBulkProcessing(false);
+                            reloadPage();
+                        },
+                        onError: (errors: any) => {
+                            toast(errors.error || 'Failed to foreman approve timesheets');
+                            setBulkProcessing(false);
+                        },
+                    },
+                );
+            };
+        } else if (allForemanApproved && (hasPermission('timesheets.approve.incharge') || hasPermission('timesheets.approve'))) {
+            bulkLabel = 'Incharge Approve Selected';
+            canBulkAct = true;
+            bulkAction = async () => {
+                setBulkProcessing(true);
+                router.post(
+                    route('timesheets.bulk-approve-incharge'),
+                    { timesheet_ids: selectedTimesheets },
+                    {
+                        onSuccess: () => {
+                            toast(`${selectedTimesheets.length} timesheets incharge approved successfully`, { variant: 'success' });
+                            setSelectedTimesheets([]);
+                            setBulkProcessing(false);
+                            reloadPage();
+                        },
+                        onError: (errors: any) => {
+                            toast(errors.error || 'Failed to incharge approve timesheets');
+                            setBulkProcessing(false);
+                        },
+                    },
+                );
+            };
+        } else if (allInchargeApproved && (hasPermission('timesheets.approve.checking') || hasPermission('timesheets.approve'))) {
+            bulkLabel = 'Checking Approve Selected';
+            canBulkAct = true;
+            bulkAction = async () => {
+                setBulkProcessing(true);
+                router.post(
+                    route('timesheets.bulk-approve-checking'),
+                    { timesheet_ids: selectedTimesheets },
+                    {
+                        onSuccess: () => {
+                            toast(`${selectedTimesheets.length} timesheets checking approved successfully`, { variant: 'success' });
+                            setSelectedTimesheets([]);
+                            setBulkProcessing(false);
+                            reloadPage();
+                        },
+                        onError: (errors: any) => {
+                            toast(errors.error || 'Failed to checking approve timesheets');
+                            setBulkProcessing(false);
+                        },
+                    },
+                );
+            };
+        } else if (allCheckingApproved && (hasPermission('timesheets.approve.manager') || hasPermission('timesheets.approve'))) {
+            bulkLabel = 'Manager Approve Selected';
+            canBulkAct = true;
+            bulkAction = async () => {
+                setBulkProcessing(true);
+                router.post(
+                    route('timesheets.bulk-approve-manager'),
+                    { timesheet_ids: selectedTimesheets },
+                    {
+                        onSuccess: () => {
+                            toast(`${selectedTimesheets.length} timesheets manager approved successfully`, { variant: 'success' });
+                            setSelectedTimesheets([]);
+                            setBulkProcessing(false);
+                            reloadPage();
+                        },
+                        onError: (errors: any) => {
+                            toast(errors.error || 'Failed to manager approve timesheets');
+                            setBulkProcessing(false);
+                        },
+                    },
+                );
+            };
+        }
+    }
+
     // Define columns for Table
     const columns = [
         {
@@ -561,126 +685,14 @@ export default function TimesheetsIndex({ timesheets, filters = { status: 'all',
                                 </>
                             )}
                             {/* Bulk action buttons only when selection is active */}
-                            {canApproveTimesheet && selectedTimesheets.length > 0 && (
-                                <AlertDialog open={showBulkApproveDialog} onOpenChange={setShowBulkApproveDialog}>
-                                    <AlertDialogTrigger asChild>
-                                        <Button disabled={bulkProcessing} variant="default">
-                                            <CheckIcon className="mr-2 h-4 w-4" />
-                                            {t('btn_approve_selected')}
-                                        </Button>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                        <AlertDialogTitle>Approve Timesheets</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            Are you sure you want to approve {selectedTimesheets.length} selected timesheets?
-                                        </AlertDialogDescription>
-                                        <div className="mt-4 flex justify-end gap-2">
-                                            <Button onClick={() => setShowBulkApproveDialog(false)} disabled={bulkProcessing}>
-                                                Cancel
-                                            </Button>
-                                            <Button
-                                                onClick={() => {
-                                                    setBulkProcessing(true);
-                                                    router.post(
-                                                        route('timesheets.bulk-approve'),
-                                                        {
-                                                            timesheet_ids: selectedTimesheets,
-                                                        },
-                                                        {
-                                                            onSuccess: () => {
-                                                                toast(`${selectedTimesheets.length} timesheets approved successfully`);
-                                                                setSelectedTimesheets([]);
-                                                                setBulkProcessing(false);
-                                                                setShowBulkApproveDialog(false);
-                                                            },
-                                                            onError: (errors: any) => {
-                                                                toast(errors.error || 'Failed to approve timesheets');
-                                                                setBulkProcessing(false);
-                                                                setShowBulkApproveDialog(false);
-                                                            },
-                                                        },
-                                                    );
-                                                }}
-                                                disabled={bulkProcessing}
-                                            >
-                                                {bulkProcessing ? (
-                                                    <>{t('btn_processing')}</>
-                                                ) : (
-                                                    <>
-                                                        <CheckIcon className="mr-2 h-4 w-4" />
-                                                        Approve
-                                                    </>
-                                                )}
-                                            </Button>
-                                        </div>
-                                    </AlertDialogContent>
-                                </AlertDialog>
-                            )}
-                            {canBulkSubmit && selectedTimesheets.length > 0 && (
-                                <AlertDialog open={showBulkSubmitDialog} onOpenChange={setShowBulkSubmitDialog}>
-                                    <AlertDialogTrigger asChild>
-                                        <Button disabled={bulkProcessing} variant="default" className="bg-blue-600 hover:bg-blue-700">
-                                            <CheckIcon className="mr-2 h-4 w-4" />
-                                            Submit Selected
-                                        </Button>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                        <AlertDialogTitle>Submit Timesheets</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            Are you sure you want to submit {selectedTimesheets.length} selected timesheets?
-                                        </AlertDialogDescription>
-                                        <div className="mt-4 flex justify-end gap-2">
-                                            <Button onClick={() => setShowBulkSubmitDialog(false)} disabled={bulkProcessing}>
-                                                Cancel
-                                            </Button>
-                                            <Button
-                                                onClick={async () => {
-                                                    setBulkProcessing(true);
-                                                    try {
-                                                        const response = await axios.post(route('timesheets.bulk-submit'), {
-                                                            timesheet_ids: selectedTimesheets,
-                                                        });
-                                                        const data = response.data;
-                                                        if (response.data.success) {
-                                                            toast.success(
-                                                                `${data.submitted ?? selectedTimesheets.length} timesheets submitted successfully`,
-                                                            );
-                                                            setSelectedTimesheets([]);
-                                                            reloadPage();
-                                                        } else if (data.submitted === 0) {
-                                                            toast.error(
-                                                                data.error ||
-                                                                'No timesheets were submitted. Please check the status of selected timesheets.',
-                                                            );
-                                                        } else {
-                                                            toast.error(
-                                                                data && data.error
-                                                                    ? data.error
-                                                                    : `Failed to submit timesheets. Response: ${JSON.stringify(data)}`,
-                                                            );
-                                                        }
-                                                    } catch (e: any) {
-                                                        toast.error(e.response?.data?.message || 'Failed to submit timesheets');
-                                                    } finally {
-                                                        setBulkProcessing(false);
-                                                        setShowBulkSubmitDialog(false);
-                                                    }
-                                                }}
-                                                disabled={bulkProcessing}
-                                                className="bg-blue-600 hover:bg-blue-700"
-                                            >
-                                                {bulkProcessing ? (
-                                                    <>{t('btn_processing')}</>
-                                                ) : (
-                                                    <>
-                                                        <CheckIcon className="mr-2 h-4 w-4" />
-                                                        Submit
-                                                    </>
-                                                )}
-                                            </Button>
-                                        </div>
-                                    </AlertDialogContent>
-                                </AlertDialog>
+                            {canBulkAct && (
+                                <Button
+                                    variant="default"
+                                    disabled={bulkProcessing}
+                                    onClick={bulkAction}
+                                >
+                                    {bulkLabel}
+                                </Button>
                             )}
                             {canBulkDelete && selectedTimesheets.length > 0 && (
                                 <AlertDialog open={showBulkDeleteDialog} onOpenChange={setShowBulkDeleteDialog}>

@@ -688,20 +688,31 @@ class TimesheetController extends Controller
     /**
      * Submit a timesheet for approval.
      */
-    public function submit(Timesheet $timesheet)
+    public function submit(Request $request, $id)
     {
-        if (!$timesheet->canBeSubmitted()) {
-            return redirect()->back()
-                ->with('error', 'This timesheet cannot be submitted.');
+        $user = auth()->user();
+        $timesheet = \Modules\TimesheetManagement\Domain\Models\Timesheet::find($id);
+        if (!$user || !$timesheet) {
+            if ($request->inertia()) {
+                return redirect()->back()->withErrors(['error' => 'Unauthorized or timesheet not found']);
+            }
+            return response()->json(['error' => 'Unauthorized or timesheet not found'], 403);
         }
-
-        if ($timesheet->submit()) {
-            return redirect()->route('timesheets.show', $timesheet)
-                ->with('success', 'Timesheet submitted for approval.');
-        } else {
-            return redirect()->back()
-                ->with('error', 'An error occurred while submitting the timesheet.');
+        // Only allow submit if draft or rejected
+        if (!in_array($timesheet->status, ['draft', 'rejected'])) {
+            if ($request->inertia()) {
+                return redirect()->back()->withErrors(['error' => 'Only draft or rejected timesheets can be submitted']);
+            }
+            return response()->json(['error' => 'Only draft or rejected timesheets can be submitted'], 400);
         }
+        $timesheet->status = 'submitted';
+        $timesheet->submitted_by = $user->id;
+        $timesheet->submitted_at = now();
+        $timesheet->save();
+        if ($request->inertia()) {
+            return redirect()->back()->with('success', 'Timesheet submitted for approval.');
+        }
+        return response()->json(['success' => true]);
     }
 
     /**
@@ -1451,27 +1462,44 @@ class TimesheetController extends Controller
     {
         $user = auth()->user();
         if (!$user || !$user->can('timesheets.approve')) {
-            return redirect()->back()->withErrors(['error' => 'Unauthorized']);
+            if ($request->inertia()) {
+                return redirect()->back()->withErrors(['error' => 'Unauthorized']);
+            }
+            return response()->json(['error' => 'Unauthorized'], 403);
         }
-
         $ids = $request->input('timesheet_ids', []);
         if (!is_array($ids) || empty($ids)) {
-            return redirect()->back()->withErrors(['error' => 'No timesheet IDs provided']);
+            if ($request->inertia()) {
+                return redirect()->back()->withErrors(['error' => 'No timesheet IDs provided']);
+            }
+            return response()->json(['error' => 'No timesheet IDs provided'], 400);
         }
-
         $approved = 0;
         foreach ($ids as $id) {
             $timesheet = \Modules\TimesheetManagement\Domain\Models\Timesheet::find($id);
-            if ($timesheet && $timesheet->status === \Modules\TimesheetManagement\Domain\Models\Timesheet::STATUS_SUBMITTED) {
-                $timesheet->status = \Modules\TimesheetManagement\Domain\Models\Timesheet::STATUS_MANAGER_APPROVED;
-                $timesheet->manager_approval_by = $user->id;
-                $timesheet->manager_approval_at = now();
-                $timesheet->save();
-                $approved++;
+            if (!$timesheet) continue;
+            if ($timesheet->status === $timesheet::STATUS_SUBMITTED) {
+                if ($user->hasRole(['foreman', 'admin', 'hr'])) {
+                    if ($timesheet->approveByForeman($user->id)) $approved++;
+                }
+            } elseif ($timesheet->status === $timesheet::STATUS_FOREMAN_APPROVED) {
+                if ($user->hasRole(['timesheet_incharge', 'admin', 'hr'])) {
+                    if ($timesheet->approveByIncharge($user->id)) $approved++;
+                }
+            } elseif ($timesheet->status === $timesheet::STATUS_INCHARGE_APPROVED) {
+                if ($user->hasRole(['checking_incharge', 'admin', 'hr'])) {
+                    if ($timesheet->approveByChecking($user->id)) $approved++;
+                }
+            } elseif ($timesheet->status === $timesheet::STATUS_CHECKING_APPROVED) {
+                if ($user->hasRole(['manager', 'admin', 'hr'])) {
+                    if ($timesheet->approveByManager($user->id)) $approved++;
+                }
             }
         }
-
-        return redirect()->back()->with('success', "{$approved} timesheets approved successfully");
+        if ($request->inertia()) {
+            return redirect()->back()->with('success', "$approved timesheets approved to next stage");
+        }
+        return response()->json(['success' => true, 'approved' => $approved]);
     }
 
     /**
@@ -1481,10 +1509,16 @@ class TimesheetController extends Controller
     {
         $user = auth()->user();
         if (!$user || !$user->hasRole(['admin', 'hr', 'foreman', 'timesheet_incharge', 'manager'])) {
+            if ($request->inertia()) {
+                return redirect()->back()->withErrors(['error' => 'Unauthorized']);
+            }
             return response()->json(['error' => 'Unauthorized'], 403);
         }
         $ids = $request->input('timesheet_ids', []);
         if (!is_array($ids) || empty($ids)) {
+            if ($request->inertia()) {
+                return redirect()->back()->withErrors(['error' => 'No timesheet IDs provided']);
+            }
             return response()->json(['error' => 'No timesheet IDs provided'], 400);
         }
         $submitted = 0;
@@ -1496,6 +1530,9 @@ class TimesheetController extends Controller
                 $timesheet->save();
                 $submitted++;
             }
+        }
+        if ($request->inertia()) {
+            return redirect()->back()->with('success', "$submitted timesheets submitted successfully");
         }
         return response()->json(['success' => true, 'submitted' => $submitted]);
     }
@@ -1933,6 +1970,102 @@ class TimesheetController extends Controller
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Failed to auto-generate timesheets: ' . $e->getMessage()], 500);
         }
+    }
+
+    /**
+     * Bulk approve incharge timesheets (admin only).
+     */
+    public function bulkApproveIncharge(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user || !($user->hasRole(['timesheet_incharge', 'admin', 'hr']) || $user->can('timesheets.approve.incharge'))) {
+            if ($request->inertia()) {
+                return redirect()->back()->withErrors(['error' => 'Unauthorized']);
+            }
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        $ids = $request->input('timesheet_ids', []);
+        if (!is_array($ids) || empty($ids)) {
+            if ($request->inertia()) {
+                return redirect()->back()->withErrors(['error' => 'No timesheet IDs provided']);
+            }
+            return response()->json(['error' => 'No timesheet IDs provided'], 400);
+        }
+        $approved = 0;
+        foreach ($ids as $id) {
+            $timesheet = \Modules\TimesheetManagement\Domain\Models\Timesheet::find($id);
+            if ($timesheet && $timesheet->status === $timesheet::STATUS_FOREMAN_APPROVED) {
+                if ($timesheet->approveByIncharge($user->id)) $approved++;
+            }
+        }
+        if ($request->inertia()) {
+            return redirect()->back()->with('success', "$approved timesheets incharge approved to next stage");
+        }
+        return response()->json(['success' => true, 'approved' => $approved]);
+    }
+
+    /**
+     * Bulk approve checking timesheets (admin only).
+     */
+    public function bulkApproveChecking(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user || !($user->hasRole(['checking_incharge', 'admin', 'hr']) || $user->can('timesheets.approve.checking'))) {
+            if ($request->inertia()) {
+                return redirect()->back()->withErrors(['error' => 'Unauthorized']);
+            }
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        $ids = $request->input('timesheet_ids', []);
+        if (!is_array($ids) || empty($ids)) {
+            if ($request->inertia()) {
+                return redirect()->back()->withErrors(['error' => 'No timesheet IDs provided']);
+            }
+            return response()->json(['error' => 'No timesheet IDs provided'], 400);
+        }
+        $approved = 0;
+        foreach ($ids as $id) {
+            $timesheet = \Modules\TimesheetManagement\Domain\Models\Timesheet::find($id);
+            if ($timesheet && $timesheet->status === $timesheet::STATUS_INCHARGE_APPROVED) {
+                if ($timesheet->approveByChecking($user->id)) $approved++;
+            }
+        }
+        if ($request->inertia()) {
+            return redirect()->back()->with('success', "$approved timesheets checking approved to next stage");
+        }
+        return response()->json(['success' => true, 'approved' => $approved]);
+    }
+
+    /**
+     * Bulk approve manager timesheets (admin only).
+     */
+    public function bulkApproveManager(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user || !($user->hasRole(['manager', 'admin', 'hr']) || $user->can('timesheets.approve.manager'))) {
+            if ($request->inertia()) {
+                return redirect()->back()->withErrors(['error' => 'Unauthorized']);
+            }
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        $ids = $request->input('timesheet_ids', []);
+        if (!is_array($ids) || empty($ids)) {
+            if ($request->inertia()) {
+                return redirect()->back()->withErrors(['error' => 'No timesheet IDs provided']);
+            }
+            return response()->json(['error' => 'No timesheet IDs provided'], 400);
+        }
+        $approved = 0;
+        foreach ($ids as $id) {
+            $timesheet = \Modules\TimesheetManagement\Domain\Models\Timesheet::find($id);
+            if ($timesheet && $timesheet->status === $timesheet::STATUS_CHECKING_APPROVED) {
+                if ($timesheet->approveByManager($user->id)) $approved++;
+            }
+        }
+        if ($request->inertia()) {
+            return redirect()->back()->with('success', "$approved timesheets manager approved to final stage");
+        }
+        return response()->json(['success' => true, 'approved' => $approved]);
     }
 }
 

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ApprovalDialog } from '../../components/ApprovalDialog';
+import { toast } from 'sonner';
 
 interface Props {
     timesheet: any;
@@ -244,29 +245,15 @@ export default function TimesheetShow({ timesheet, assignment }: Props) {
                             )}
                         </CardContent>
 
-                        {/* Approval buttons for all stages */}
+                        {/* Approval button for all workflow stages */}
                         {['submitted', 'foreman_approved', 'incharge_approved', 'checking_approved'].includes(timesheet.status) && canApprove && (
                             <CardFooter className="flex justify-end space-x-2 border-t pt-4">
                                 <ApprovalDialog
                                     timesheet={timesheet}
-                                    action="reject"
-                                    onSuccess={() => {
-                                        // Reload the page to show updated data
-                                        window.location.reload();
-                                    }}
-                                    trigger={
-                                        <Button variant="outline" className="text-destructive">
-                                            <XIcon className="mr-2 h-4 w-4" />
-                                            Reject
-                                        </Button>
-                                    }
-                                />
-                                <ApprovalDialog
-                                    timesheet={timesheet}
                                     action="approve"
                                     onSuccess={() => {
-                                        // Reload the page to show updated data
                                         window.location.reload();
+                                        toast.success('Timesheet approved successfully');
                                     }}
                                     trigger={
                                         <Button variant="default" className="bg-green-600 hover:bg-green-700">
