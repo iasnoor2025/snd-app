@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { ModuleToggle } from '../components/Module/ModuleToggle';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { Button } from '../components/ui/button';
+import { ModuleToggle } from '@/Core/components/Module/ModuleToggle';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
+import { Button } from '@/Core/components/ui/button';
 import { RefreshCw, Settings } from 'lucide-react';
 
 interface ModuleStatus {

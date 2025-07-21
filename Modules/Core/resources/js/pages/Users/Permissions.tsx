@@ -3,10 +3,10 @@ import { Head, Link, router } from '@inertiajs/react';
 import { ArrowLeft, Key } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { Badge } from '../../components/ui/badge';
-import { Button } from '../../components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
-import { Checkbox } from '../../components/ui/checkbox';
+import { Badge } from '@/Core/components/ui/badge';
+import { Button } from '@/Core/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
+import { Checkbox } from '@/Core/components/ui/checkbox';
 
 interface Permission {
     id: number;

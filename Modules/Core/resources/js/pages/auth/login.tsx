@@ -3,9 +3,9 @@ import axios from 'axios';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { Button } from '../../components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../components/ui/card';
-import { Input } from '../../components/ui/input';
+import { Button } from '@/Core/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/Core/components/ui/card';
+import { Input } from '@/Core/components/ui/input';
 import AppLogo from '../../components/app-logo';
 import { FaEnvelope, FaLock, FaGoogle } from 'react-icons/fa';
 

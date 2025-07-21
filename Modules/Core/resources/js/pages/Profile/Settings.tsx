@@ -4,17 +4,19 @@ import React, { useEffect, useState } from 'react';
 import { FaMicrosoft } from 'react-icons/fa';
 import { SiGoogle, SiWhatsapp } from 'react-icons/si';
 import { toast } from 'sonner';
-import AvatarUploader from '../../components/Avatar/AvatarUploader';
-import ActivityFeed from '../../components/dashboard/ActivityFeed';
-import { AppearanceTabs } from '../../components/index';
-import { ProfileNav } from '../../components/profile-nav';
-import ApiKeySettings from '../../components/settings/ApiKeySettings';
-import { DeviceSessions } from '../../components/settings/DeviceSessions';
-import { Button, Input, Separator } from '../../components/ui';
-import { Badge } from '../../components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '../../components/ui/dialog';
-import { SmartAvatar } from '../../components/ui/smart-avatar';
+import AvatarUploader from '@/Core/components/Avatar/AvatarUploader';
+import ActivityFeed from '@/Core/components/dashboard/ActivityFeed';
+import { AppearanceTabs } from '@/Core/components/index';
+import { ProfileNav } from '@/Core/components/profile-nav';
+import ApiKeySettings from '@/Core/components/settings/ApiKeySettings';
+import { DeviceSessions } from '@/Core/components/settings/DeviceSessions';
+import { Button } from '@/Core/components/ui/button';
+import { Input } from '@/Core/components/ui/input';
+import { Separator } from '@/Core/components/ui/separator';
+import { Badge } from '@/Core/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/Core/components/ui/dialog';
+import { SmartAvatar } from '@/Core/components/ui/smart-avatar';
 
 // Fix ProfileSettingsProps user type
 type UserType = {

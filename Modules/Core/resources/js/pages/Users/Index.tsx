@@ -5,14 +5,14 @@ import { Edit, Eye, Loader2, MoreHorizontal, Plus, Search, Trash2, Users as User
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Button } from '../../../../resources/js/components/ui/button';
-import { Badge } from '../../components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../components/ui/dropdown-menu';
-import { Input } from '../../components/ui/input';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/ui/select';
-import { Table } from '../../components/Common/Table';
+import { Button } from '@/Core/components/ui/button';
+import { Badge } from '@/Core/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/Core/components/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/Core/components/ui/dropdown-menu';
+import { Input } from '@/Core/components/ui/input';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/Core/components/ui/select';
+import { Table } from '@/Core/components/ui/table';
 import { BreadcrumbItem } from '../../types';
 import { CrudButtons } from '@/Core';
 

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { Alert } from '../../components/ui/alert';
-import { Badge } from '../../components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { Alert } from '@/Core/components/ui/alert';
+import { Badge } from '@/Core/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
 
 interface HealthCheck {
     status: 'healthy' | 'warning' | 'unhealthy';
