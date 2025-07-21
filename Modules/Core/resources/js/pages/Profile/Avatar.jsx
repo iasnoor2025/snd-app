@@ -2,13 +2,13 @@ import { Camera, Globe, Heart, Palette, Settings, Shield, Star, User, Users, Zap
 import { useState } from 'react';
 import { toast } from 'sonner';
 import AvatarUploader from '@/Core/components/Avatar/AvatarUploader';
-import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
-import { Badge } from '../../components/ui/badge';
-import { Button } from '../../components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
-import { Separator } from '../../components/ui/separator';
-import { SmartAvatar } from '../../components/ui/smart-avatar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
+import { Avatar, AvatarFallback, AvatarImage } from '@/Core/components/ui/avatar';
+import { Badge } from '@/Core/components/ui/badge';
+import { Button } from '@/Core/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
+import { Separator } from '@/Core/components/ui/separator';
+import { SmartAvatar } from '@/Core/components/ui/smart-avatar';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Core/components/ui/tabs';
 import AppLayout from '../../layouts/AppLayout';
 
 const AvatarPage = ({ auth }) => {
