@@ -485,3 +485,5 @@ export default function ResourceList({ type, resources = [], pagination, project
         </div>
     );
 }
+
+export { ResourceList as ResourceTable };

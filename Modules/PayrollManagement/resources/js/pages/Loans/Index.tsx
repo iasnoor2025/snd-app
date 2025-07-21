@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Head, router } from '@inertiajs/react';
-import { PageProps } from '@/types';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
+import { Head } from '@inertiajs/react';
+import { router } from '@inertiajs/core';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/components/ui/card';
+import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
+import { Input } from '@/../../Modules/Core/resources/js/components/ui/input';
+import { Label } from '@/../../Modules/Core/resources/js/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/../../Modules/Core/resources/js/components/ui/select';
+import { Badge } from '@/../../Modules/Core/resources/js/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/../../Modules/Core/resources/js/components/ui/table';
+import { Pagination } from '@/../../Modules/Core/resources/js/components/ui/pagination';
 import { Plus, Search, Filter, Eye, Edit, Trash2, CheckCircle, XCircle, DollarSign } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -35,7 +35,7 @@ interface Employee {
     employee_id: string;
 }
 
-interface Props extends PageProps {
+interface Props {
     loans: {
         data: Loan[];
         current_page: number;
@@ -67,7 +67,6 @@ export default function LoansIndex({ loans, employees, filters, hasRecords }: Pr
     // Debug: Log loans data when it changes
     useEffect(() => {
         console.log('Loans data updated:', loans);
-        console.log('Loans meta:', loans?.meta);
         console.log('Per page value:', loans?.per_page);
     }, [loans]);
 
@@ -130,6 +129,83 @@ export default function LoansIndex({ loans, employees, filters, hasRecords }: Pr
         employee.name.toLowerCase().includes(employeeSearch.toLowerCase()) ||
         employee.employee_id.toLowerCase().includes(employeeSearch.toLowerCase())
     );
+
+    // Define columns for the Table
+    const columns = [
+        {
+            key: 'employee',
+            header: 'Employee',
+            accessor: (loan: Loan) => (
+                <div>
+                    <div className="font-medium">{loan.employee.name}</div>
+                    <div className="text-sm text-muted-foreground">{loan.employee.employee_id}</div>
+                </div>
+            ),
+        },
+        {
+            key: 'amount',
+            header: 'Amount',
+            accessor: (loan: Loan) => <span className="font-medium">{formatCurrency(loan.amount)}</span>,
+        },
+        {
+            key: 'interest_rate',
+            header: 'Interest Rate',
+            accessor: (loan: Loan) => `${loan.interest_rate}%`,
+        },
+        {
+            key: 'term_months',
+            header: 'Term',
+            accessor: (loan: Loan) => `${loan.term_months} months`,
+        },
+        {
+            key: 'repaid_amount',
+            header: 'Repaid',
+            accessor: (loan: Loan) => formatCurrency(loan.repaid_amount),
+        },
+        {
+            key: 'remaining',
+            header: 'Remaining',
+            accessor: (loan: Loan) => <span className="font-medium">{formatCurrency(calculateRemainingBalance(loan))}</span>,
+        },
+        {
+            key: 'status',
+            header: 'Status',
+            accessor: (loan: Loan) => getStatusBadge(loan.status),
+        },
+        {
+            key: 'actions',
+            header: 'Actions',
+            accessor: (loan: Loan) => (
+                <div className="flex items-center gap-2">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => router.get(route('loans.show', loan.id))}
+                    >
+                        <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => router.get(route('loans.edit', loan.id))}
+                    >
+                        <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                            if (confirm('Are you sure you want to delete this loan?')) {
+                                router.delete(route('loans.destroy', loan.id));
+                            }
+                        }}
+                    >
+                        <Trash2 className="h-4 w-4" />
+                    </Button>
+                </div>
+            ),
+        },
+    ];
 
     return (
         <>
@@ -284,170 +360,29 @@ export default function LoansIndex({ loans, employees, filters, hasRecords }: Pr
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Employee</TableHead>
-                                        <TableHead>Amount</TableHead>
-                                        <TableHead>Interest Rate</TableHead>
-                                        <TableHead>Term</TableHead>
-                                        <TableHead>Repaid</TableHead>
-                                        <TableHead>Remaining</TableHead>
-                                        <TableHead>Status</TableHead>
-                                        <TableHead>Actions</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {loans.data.map((loan) => (
-                                        <TableRow key={loan.id}>
-                                            <TableCell>
-                                                <div>
-                                                    <div className="font-medium">{loan.employee.name}</div>
-                                                    <div className="text-sm text-muted-foreground">
-                                                        {loan.employee.employee_id}
-                                                    </div>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="font-medium">
-                                                {formatCurrency(loan.amount)}
-                                            </TableCell>
-                                            <TableCell>
-                                                {loan.interest_rate}%
-                                            </TableCell>
-                                            <TableCell>
-                                                {loan.term_months} months
-                                            </TableCell>
-                                            <TableCell>
-                                                {formatCurrency(loan.repaid_amount)}
-                                            </TableCell>
-                                            <TableCell>
-                                                <span className="font-medium">
-                                                    {formatCurrency(calculateRemainingBalance(loan))}
-                                                </span>
-                                            </TableCell>
-                                            <TableCell>{getStatusBadge(loan.status)}</TableCell>
-                                            <TableCell>
-                                                <div className="flex items-center gap-2">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        onClick={() => router.get(route('loans.show', loan.id))}
-                                                    >
-                                                        <Eye className="h-4 w-4" />
-                                                    </Button>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        onClick={() => router.get(route('loans.edit', loan.id))}
-                                                    >
-                                                        <Edit className="h-4 w-4" />
-                                                    </Button>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        onClick={() => {
-                                                            if (confirm('Are you sure you want to delete this loan?')) {
-                                                                router.delete(route('loans.destroy', loan.id));
-                                                            }
-                                                        }}
-                                                    >
-                                                        <Trash2 className="h-4 w-4" />
-                                                    </Button>
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                            <Table data={loans.data} columns={columns} />
 
                             {/* Pagination */}
                             {loans.last_page > 1 && (
                                 <div className="mt-6">
-                                    <Pagination>
-                                        <PaginationContent>
-                                            <PaginationItem>
-                                                <PaginationPrevious
-                                                    disabled={loans.current_page === 1}
-                                                    onClick={() => {
-                                                        const currentPage = loans.current_page || 1;
-                                                        if (currentPage > 1) {
-                                                            router.get(
-                                                                route('loans.index'),
-                                                                {
-                                                                    page: currentPage - 1,
-                                                                    per_page: loans.per_page || 10,
-                                                                    ...filters,
-                                                                },
-                                                                { preserveState: true }
-                                                            );
-                                                        }
-                                                    }}
-                                                />
-                                            </PaginationItem>
-
-                                            {Array.from({ length: Math.min(5, loans.last_page || 1) }, (_, i) => {
-                                                let pageNumber;
-                                                const lastPage = loans.last_page || 1;
-                                                const currentPage = loans.current_page || 1;
-
-                                                if (lastPage <= 5) {
-                                                    pageNumber = i + 1;
-                                                } else if (currentPage <= 3) {
-                                                    pageNumber = i + 1;
-                                                } else if (currentPage >= lastPage - 2) {
-                                                    pageNumber = lastPage - 4 + i;
-                                                } else {
-                                                    pageNumber = currentPage - 2 + i;
-                                                }
-
-                                                return (
-                                                    <PaginationItem key={pageNumber}>
-                                                        <PaginationLink
-                                                            isActive={pageNumber === currentPage}
-                                                            onClick={() => {
-                                                                router.get(
-                                                                    route('loans.index'),
-                                                                    {
-                                                                        page: pageNumber,
-                                                                        per_page: loans.per_page || 10,
-                                                                        ...filters,
-                                                                    },
-                                                                    { preserveState: true }
-                                                                );
-                                                            }}
-                                                        >
-                                                            {pageNumber}
-                                                        </PaginationLink>
-                                                    </PaginationItem>
-                                                );
-                                            })}
-
-                                            <PaginationItem>
-                                                <PaginationNext
-                                                    disabled={
-                                                        !loans.current_page ||
-                                                        !loans.last_page ||
-                                                        loans.current_page >= loans.last_page
-                                                    }
-                                                    onClick={() => {
-                                                        const currentPage = loans.current_page || 1;
-                                                        const lastPage = loans.last_page || 1;
-                                                        if (currentPage < lastPage) {
-                                                            router.get(
-                                                                route('loans.index'),
-                                                                {
-                                                                    page: currentPage + 1,
-                                                                    per_page: loans.per_page || 10,
-                                                                    ...filters,
-                                                                },
-                                                                { preserveState: true }
-                                                            );
-                                                        }
-                                                    }}
-                                                />
-                                            </PaginationItem>
-                                        </PaginationContent>
-                                    </Pagination>
+                                    <Pagination
+                                        currentPage={loans.current_page}
+                                        totalPages={loans.last_page}
+                                        onPageChange={(page) => {
+                                            router.get(
+                                                route('loans.index'),
+                                                {
+                                                    page,
+                                                    per_page: loans.per_page || 10,
+                                                    ...filters,
+                                                },
+                                                { preserveState: true }
+                                            );
+                                        }}
+                                        showTotal={true}
+                                        totalItems={loans.total}
+                                        pageSize={loans.per_page}
+                                    />
                                 </div>
                             )}
                         </CardContent>
