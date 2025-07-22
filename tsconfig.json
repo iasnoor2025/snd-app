@@ -135,7 +135,8 @@
             "@/EmployeeManagement/services": ["Modules/EmployeeManagement/resources/js/services"],
             "@/EmployeeManagement/services/*": ["Modules/EmployeeManagement/resources/js/services/*"],
             "@/EmployeeManagement/types": ["Modules/EmployeeManagement/resources/js/types"],
-            "@/EmployeeManagement/types/*": ["Modules/EmployeeManagement/resources/js/types/*"]
+            "@/EmployeeManagement/types/*": ["Modules/EmployeeManagement/resources/js/types/*"],
+            "@CoreUI": ["Modules/Core/resources/js/Components/ui/index.ts"]
         },
         "jsx": "react-jsx",
         "types": ["vite/client"],

@@ -1,4 +1,4 @@
-import { Card } from '@/../../Modules/Core/resources/js/components/ui/card';
+import { Card } from '../../../../Core/resources/js/Components/ui/card';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';

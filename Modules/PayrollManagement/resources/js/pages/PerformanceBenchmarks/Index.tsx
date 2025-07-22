@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Head, router } from '@inertiajs/react';
 import { PageProps } from '@/types';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/components/ui/card';
-import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
-import { Input } from '@/../../Modules/Core/resources/js/components/ui/input';
-import { Label } from '@/../../Modules/Core/resources/js/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/../../Modules/Core/resources/js/components/ui/select';
-import { Badge } from '@/../../Modules/Core/resources/js/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/components/ui/table';
-import { Pagination } from '@/../../Modules/Core/resources/js/components/ui/pagination';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../../Core/resources/js/Components/ui/card';
+import { Button } from '../../../../Core/resources/js/Components/ui/button';
+import { Input } from '../../../../Core/resources/js/Components/ui/input';
+import { Label } from '../../../../Core/resources/js/Components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../../Core/resources/js/Components/ui/select';
+import { Badge } from '../../../../Core/resources/js/Components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../../Core/resources/js/Components/ui/table';
+import { Pagination } from '../../../../Core/resources/js/Components/ui/pagination';
 import { Plus, Search, Filter, Eye, Edit, Trash2, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 

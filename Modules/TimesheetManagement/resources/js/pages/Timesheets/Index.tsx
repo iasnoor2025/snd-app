@@ -23,7 +23,7 @@ import { Permission } from '@/Core';
 
 
 import axios from 'axios';
-import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Checkbox, DatePicker, Dialog as AlertDialog, DialogContent as AlertDialogContent, DialogDescription as AlertDialogDescription, DialogTitle as AlertDialogTitle, DialogTrigger as AlertDialogTrigger, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Table as ReactTable, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/Core/components/ui';
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Checkbox, DatePicker, Dialog as AlertDialog, DialogContent as AlertDialogContent, DialogDescription as AlertDialogDescription, DialogTitle as AlertDialogTitle, DialogTrigger as AlertDialogTrigger, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Table as ReactTable, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@CoreUI';
 
 // Define the Timesheet interface here to ensure it has all required properties
 interface Project {

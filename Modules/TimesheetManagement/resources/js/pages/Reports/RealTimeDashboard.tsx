@@ -1,5 +1,4 @@
-import { Badge } from '@/../../Modules/Core/resources/js/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/components/ui/card';
+import { Badge, Card, CardContent, CardHeader, CardTitle } from '@CoreUI';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';

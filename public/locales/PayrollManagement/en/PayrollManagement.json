@@ -1,0 +1,12 @@
+{
+  "_placeholder": "Add PayrollManagement translations here.",
+  "PayrollManagement": {
+    "PayrollManagement": "Payroll Management",
+    "Payroll": "Payroll",
+    "PayrollList": "Payroll List",
+    "PayrollDetails": "Payroll Details",
+    "PayrollHistory": "Payroll History",
+    "PayrollReport": "Payroll Report",
+    "PayrollSettings": "Payroll Settings"
+  }
+}

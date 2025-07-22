@@ -59,6 +59,10 @@ export {
   SelectTrigger,
   SelectValue,
 } from './Components/ui';
+export { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from './Components/ui';
+export { Progress } from './Components/ui';
+export { Toggle } from './Components/ui';
+export { Checkbox } from './Components/ui';
 
 // Core Module - Shared Resources Index
 // This file exports all shared resources for use by other modules
@@ -173,3 +177,13 @@ export { default as RentalWidget } from './Components/dashboard/RentalWidget';
 export { default as StatsCard } from './Components/dashboard/StatsCard';
 export { default as TeamWidget } from './Components/dashboard/TeamWidget';
 export { default as VacationWidget } from './Components/dashboard/VacationWidget';
+
+export { Calendar } from './Components/ui';
+export { DatePicker } from './Components/ui';
+export { Popover, PopoverContent, PopoverTrigger } from './Components/ui';
+export { Pagination } from './Components/ui';
+export { Alert, AlertDescription, AlertTitle } from './Components/ui';
+export { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from './Components/ui';
+export { AlertDialogTrigger } from './Components/ui';
+// export { Slider } from './Components/ui';
+export { useToast } from './Components/ui';

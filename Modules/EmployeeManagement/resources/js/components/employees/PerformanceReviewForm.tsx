@@ -15,7 +15,6 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-    Slider,
     Textarea,
 } from '@/Core';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -381,13 +380,18 @@ const PerformanceReviewForm: React.FC<PerformanceReviewFormProps> = ({ review, e
                                     name="job_knowledge_rating"
                                     control={control}
                                     render={({ field }) => (
-                                        <Slider
-                                            value={[field.value]}
-                                            min={1}
-                                            max={5}
-                                            step={0.5}
-                                            onValueChange={(value) => field.onChange(value[0])}
-                                        />
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm">{field.value}/5</span>
+                                            <input
+                                                type="range"
+                                                min="1"
+                                                max="5"
+                                                step="0.5"
+                                                value={field.value}
+                                                onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                                className="flex-1"
+                                            />
+                                        </div>
                                     )}
                                 />
                             </div>
@@ -401,13 +405,18 @@ const PerformanceReviewForm: React.FC<PerformanceReviewFormProps> = ({ review, e
                                     name="work_quality_rating"
                                     control={control}
                                     render={({ field }) => (
-                                        <Slider
-                                            value={[field.value]}
-                                            min={1}
-                                            max={5}
-                                            step={0.5}
-                                            onValueChange={(value) => field.onChange(value[0])}
-                                        />
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm">{field.value}/5</span>
+                                            <input
+                                                type="range"
+                                                min="1"
+                                                max="5"
+                                                step="0.5"
+                                                value={field.value}
+                                                onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                                className="flex-1"
+                                            />
+                                        </div>
                                     )}
                                 />
                             </div>
@@ -421,13 +430,18 @@ const PerformanceReviewForm: React.FC<PerformanceReviewFormProps> = ({ review, e
                                     name="attendance_rating"
                                     control={control}
                                     render={({ field }) => (
-                                        <Slider
-                                            value={[field.value]}
-                                            min={1}
-                                            max={5}
-                                            step={0.5}
-                                            onValueChange={(value) => field.onChange(value[0])}
-                                        />
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm">{field.value}/5</span>
+                                            <input
+                                                type="range"
+                                                min="1"
+                                                max="5"
+                                                step="0.5"
+                                                value={field.value}
+                                                onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                                className="flex-1"
+                                            />
+                                        </div>
                                     )}
                                 />
                             </div>
@@ -441,13 +455,18 @@ const PerformanceReviewForm: React.FC<PerformanceReviewFormProps> = ({ review, e
                                     name="communication_rating"
                                     control={control}
                                     render={({ field }) => (
-                                        <Slider
-                                            value={[field.value]}
-                                            min={1}
-                                            max={5}
-                                            step={0.5}
-                                            onValueChange={(value) => field.onChange(value[0])}
-                                        />
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm">{field.value}/5</span>
+                                            <input
+                                                type="range"
+                                                min="1"
+                                                max="5"
+                                                step="0.5"
+                                                value={field.value}
+                                                onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                                className="flex-1"
+                                            />
+                                        </div>
                                     )}
                                 />
                             </div>
@@ -461,13 +480,18 @@ const PerformanceReviewForm: React.FC<PerformanceReviewFormProps> = ({ review, e
                                     name="teamwork_rating"
                                     control={control}
                                     render={({ field }) => (
-                                        <Slider
-                                            value={[field.value]}
-                                            min={1}
-                                            max={5}
-                                            step={0.5}
-                                            onValueChange={(value) => field.onChange(value[0])}
-                                        />
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm">{field.value}/5</span>
+                                            <input
+                                                type="range"
+                                                min="1"
+                                                max="5"
+                                                step="0.5"
+                                                value={field.value}
+                                                onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                                className="flex-1"
+                                            />
+                                        </div>
                                     )}
                                 />
                             </div>
@@ -481,13 +505,18 @@ const PerformanceReviewForm: React.FC<PerformanceReviewFormProps> = ({ review, e
                                     name="initiative_rating"
                                     control={control}
                                     render={({ field }) => (
-                                        <Slider
-                                            value={[field.value]}
-                                            min={1}
-                                            max={5}
-                                            step={0.5}
-                                            onValueChange={(value) => field.onChange(value[0])}
-                                        />
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm">{field.value}/5</span>
+                                            <input
+                                                type="range"
+                                                min="1"
+                                                max="5"
+                                                step="0.5"
+                                                value={field.value}
+                                                onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                                className="flex-1"
+                                            />
+                                        </div>
                                     )}
                                 />
                             </div>

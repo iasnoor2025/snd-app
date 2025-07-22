@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@CoreUI';
 
 interface DayData {
     date: string;
@@ -160,7 +161,6 @@ const printStyles = `;
 
     .green-bg {
       background-color: #C6E0B4 !important;
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/components/ui';
     }
   }
 `;

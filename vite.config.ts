@@ -203,6 +203,7 @@ export default defineConfig(
                 '@/ProjectManagement': path.resolve(__dirname, 'Modules/ProjectManagement/resources/js'),
                 '@/RentalManagement': path.resolve(__dirname, 'Modules/RentalManagement/resources/js'),
                 '@/EquipmentManagement': path.resolve(__dirname, 'Modules/EquipmentManagement/resources/js'),
+                '@CoreUI': path.resolve(__dirname, 'Modules/Core/resources/js/Components/ui/index.ts'),
                 'ziggy-js': path.resolve(__dirname, 'vendor/tightenco/ziggy/dist/index.esm.js'),
                 // '@': path.resolve(__dirname, './resources/js'), // keep last or comment out if not needed
             },

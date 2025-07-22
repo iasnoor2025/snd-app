@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { route } from 'ziggy-js';
 import * as z from 'zod';
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Form, FormField, FormItem, FormLabel, Input, Textarea } from '@/Core/components/ui';
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Checkbox, DatePicker, Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger, Form, FormField, FormItem, FormLabel, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Table, Textarea, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@CoreUI';
 
 // Define interfaces
 interface Props {

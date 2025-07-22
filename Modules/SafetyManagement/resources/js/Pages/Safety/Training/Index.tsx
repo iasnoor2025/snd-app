@@ -1,5 +1,5 @@
-import { Card } from '@/../../Modules/Core/resources/js/components/ui/card';
-import { Table } from '@/Core/components/ui/table';
+import { Card } from '../../../../Core/resources/js/Components/ui/card';
+import { Table } from '../../../../Core/resources/js/Components/ui/table';
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
