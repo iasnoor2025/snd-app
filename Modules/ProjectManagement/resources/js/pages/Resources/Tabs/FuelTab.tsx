@@ -2,7 +2,7 @@ import { Button } from '@/Core';
 import { formatDateMedium } from '@/Core/utils/dateFormatter';
 import { useTranslation } from 'react-i18next';
 import { ResourceFormModal } from '../../../components/project/resources/ResourceModal';
-import { ResourceTable } from '../../../Components/project/resources/ResourceTable';
+import { ResourceTable } from '../../../components/project/resources/ResourceTable';
 import { useResourceFormModal } from '../../../hooks/useResourceFormModal';
 import { useResourceSubmit } from '../../../hooks/useResourceSubmit';
 import { formatCurrency } from '../../../lib/utils';

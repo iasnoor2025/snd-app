@@ -5,6 +5,8 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import TaskList from '@/ProjectManagement/Components/project/TaskList.tsx';
+import { ResourceFormModal } from '../../../components/project/resources/ResourceModal';
+import { ResourceTable } from '../../../components/project/resources/ResourceTable';
 
 interface TasksTabProps {
     project: {
