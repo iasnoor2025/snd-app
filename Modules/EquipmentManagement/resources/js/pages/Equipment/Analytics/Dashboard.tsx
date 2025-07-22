@@ -1,13 +1,14 @@
-import { Badge } from '@/Core/components/ui/badge';
-import { Button } from '@/Core/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Core/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Core/components/ui/tabs';
+
+
+
+
 import AppLayout from '@/Core/layouts/AppLayout';
 import { formatCurrency } from '@/Core/utils/format';
 import { Head } from '@inertiajs/react';
 import { Activity, CheckCircle, DollarSign, Download, RefreshCw, TrendingUp } from 'lucide-react';
 import React, { useState } from 'react';
 import { CartesianGrid, Cell, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Tabs, TabsContent, TabsList, TabsTrigger } from '@/Core/components/ui';
 
 interface EquipmentAnalytics {
     totalEquipment: number;

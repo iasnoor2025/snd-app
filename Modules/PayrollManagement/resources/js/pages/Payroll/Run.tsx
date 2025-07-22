@@ -1,9 +1,9 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
 import AppLayout from '@/Core/layouts/AppLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Core/components/ui/card';
-import { Badge } from '@/Core/components/ui/badge';
-import { Button } from '@/Core/components/ui/button';
+
+
+
 import { formatCurrency } from '@/Core/utils/format';
 import { formatDate } from '@/Core/utils/dateFormatter';
 import {
@@ -16,6 +16,7 @@ import {
     Download,
     Eye
 } from 'lucide-react';
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle } from '@/Core/components/ui';
 
 interface Props {
     payrollRun: {

@@ -1,9 +1,10 @@
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
-import { Button } from '@/Core/components/ui/button';
-import { Input } from '@/Core/components/ui/input';
-import { Label } from '@/Core/components/ui/label';
+
+
+
 import AuthLayout from '../../layouts/auth-layout';
+import { Button, Input, Label } from '@/Core/components/ui';
 
 type ResetPasswordForm = {
     token: string;

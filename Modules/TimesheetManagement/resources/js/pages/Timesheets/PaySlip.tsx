@@ -15,7 +15,7 @@ import { format, parseISO } from 'date-fns';
 import { ArrowLeft, Building, Calendar, Clock, DollarSign, Download, MapPin, Printer, User } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/components/ui/table';
+
 import { toast } from 'sonner';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -160,6 +160,7 @@ const printStyles = `;
 
     .green-bg {
       background-color: #C6E0B4 !important;
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/components/ui';
     }
   }
 `;

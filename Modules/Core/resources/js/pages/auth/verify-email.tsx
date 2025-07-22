@@ -5,8 +5,9 @@ import { LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
 
 import TextLink from '@/Core/components/text-link';
-import { Button } from '@/Core/components/ui/button';
+
 import AuthLayout from '../../layouts/auth-layout';
+import { Button } from '@/Core/components/ui';
 
 export default function VerifyEmail({ status }: { status?: string }) {
     const [processing, setProcessing] = useState(false);

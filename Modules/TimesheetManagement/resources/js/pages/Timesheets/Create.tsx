@@ -1,11 +1,11 @@
 import { AppLayout } from '@/Core';
 import { Select } from '@/Core/components/Common/Select';
-import { Button } from '@/Core/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
+
+
 import { Label } from '@/Core';
-import { Input } from '@/Core/components/ui/input';
-import { Textarea } from '@/Core/components/ui/textarea';
-import { DatePicker } from '@/Core/components/ui/date-picker';
+
+
+
 import { BreadcrumbItem, PageProps } from '@/Core/types';
 import { router } from '@inertiajs/core';
 import { Head } from '@inertiajs/react';
@@ -15,8 +15,9 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { route } from 'ziggy-js';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/Core/components/ui/dialog';
-import { Alert, AlertDescription } from '@/Core/components/ui/alert';
+import { Alert, AlertDescription, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, DatePicker, Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, Input, Textarea } from '@/Core/components/ui';
+
+
 
 // Define interfaces
 interface Assignment {

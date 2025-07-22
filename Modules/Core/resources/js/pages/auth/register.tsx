@@ -3,10 +3,11 @@ import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
 import TextLink from '@/Core/components/text-link';
-import { Button } from '@/Core/components/ui/button';
-import { Input } from '@/Core/components/ui/input';
-import { Label } from '@/Core/components/ui/label';
+
+
+
 import AuthLayout from '../../layouts/auth-layout';
+import { Button, Input, Label } from '@/Core/components/ui';
 
 type RegisterForm = {
     name: string;

@@ -1,16 +1,16 @@
 import { useEquipmentCategories } from '@/Core';
 import ErrorBoundary from '@/Core/components/ErrorBoundary';
-import { Alert, AlertDescription } from '@/Core/components/ui/alert';
+
 import { Button, Calendar } from '@/Core';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/Core/components/ui/dialog';
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/Core/components/ui/form';
-import { Input } from '@/Core/components/ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@/Core/components/ui/popover';
-import { ScrollArea } from '@/Core/components/ui/scroll-area';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Core/components/ui/select';
-import { Switch } from '@/Core/components/ui/switch';
-import { Textarea } from '@/Core/components/ui/textarea';
+
+
+
+
+
+
+
+
+
 import AppLayout from '@/Core/layouts/AppLayout';
 import { cn } from '@/Core/lib/utils';
 import type { PageProps } from '@/Core/types';
@@ -24,6 +24,7 @@ import { useForm as useReactHookForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { Alert, AlertDescription, Card, CardContent, CardDescription, CardHeader, CardTitle, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, Input, Popover, PopoverContent, PopoverTrigger, ScrollArea, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Switch, Textarea } from '@/Core/components/ui';
 
 interface Props extends PageProps {
     categories: { id: number; name: string }[];

@@ -1,6 +1,7 @@
-import { Button, buttonVariants } from '@/Core/components/ui/button';
+
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
+import { Button, buttonVariants } from '@/Core/components/ui';
 
 export default function TaxDocumentForm({ onSubmit, initialData = {}, isSubmitting = false }) {
     const { t } = useTranslation();

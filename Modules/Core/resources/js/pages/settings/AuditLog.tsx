@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { Badge } from '@/Core/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
-import { Input } from '@/Core/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/components/ui/table';
+
+
+
+
 
 interface LogEntry {
     id: number;
@@ -93,4 +93,5 @@ export default function AuditLog() {
             </CardContent>
         </Card>
     );
+import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/components/ui';
 }

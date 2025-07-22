@@ -1,13 +1,13 @@
 import { useEquipmentCategories } from '@/Core';
-import { Button } from '@/Core/components/ui/button';
+
 import { Calendar } from '@/Core';
-import { Card, CardContent } from '@/Core/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/Core/components/ui/form';
-import { Input } from '@/Core/components/ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@/Core/components/ui/popover';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Core/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Core/components/ui/tabs';
-import { Textarea } from '@/Core/components/ui/textarea';
+
+
+
+
+
+
+
 import AppLayout from '@/Core/layouts/AppLayout';
 import { cn } from '@/Core/lib/utils';
 import type { PageProps } from '@/Core/types';
@@ -38,6 +38,7 @@ import { useForm as useReactHookForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import { Equipment } from '../../types';
+import { Button, Card, CardContent, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, Input, Popover, PopoverContent, PopoverTrigger, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Tabs, TabsContent, TabsList, TabsTrigger, Textarea } from '@/Core/components/ui';
 
 interface Props extends PageProps {
     equipment: Equipment;

@@ -4,19 +4,20 @@ import React, { useEffect, useState } from 'react';
 import { FaMicrosoft } from 'react-icons/fa';
 import { SiGoogle, SiWhatsapp } from 'react-icons/si';
 import { toast } from 'sonner';
-import AvatarUploader from '@/Core/components/Avatar/AvatarUploader';
+import AvatarUploader from '@/Core/components/Avatar/AvatarUploader.jsx';
 import ActivityFeed from '@/Core/components/dashboard/ActivityFeed';
 import { AppearanceTabs } from '@/Core/components/index';
 import { ProfileNav } from '@/Core/components/profile-nav';
 import ApiKeySettings from '@/Core/components/settings/ApiKeySettings';
 import { DeviceSessions } from '@/Core/components/settings/DeviceSessions';
-import { Button } from '@/Core/components/ui/button';
-import { Input } from '@/Core/components/ui/input';
-import { Separator } from '@/Core/components/ui/separator';
-import { Badge } from '@/Core/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/Core/components/ui/dialog';
-import { SmartAvatar } from '@/Core/components/ui/smart-avatar';
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Dialog, DialogContent, DialogDescription, DialogTitle, Input, Separator, SmartAvatar } from '@/Core/components/ui';
+
+
+
+
+
+
+
 
 // Fix ProfileSettingsProps user type
 type UserType = {

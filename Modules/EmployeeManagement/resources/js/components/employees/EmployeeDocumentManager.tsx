@@ -1,37 +1,20 @@
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from '@/Core/components/ui/alert-dialog';
-import { Badge } from '@/Core/components/ui/badge';
-import { Button } from '@/Core/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Core/components/ui/card';
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from '@/Core/components/ui/dialog';
-import { Input } from '@/Core/components/ui/input';
-import { Label } from '@/Core/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Core/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/components/ui/table';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Core/components/ui/tabs';
+
+
+
+
+
+
+
+
+
+
 import axios from 'axios';
 import { format } from 'date-fns';
 import { Calendar, Download, File, FileCheck, Plus, Trash } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Document } from '../../types/employee';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, Badge, Button, Card, CardContent, CardHeader, CardTitle, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, Input, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsTrigger } from '@/Core/components/ui';
 
 axios.defaults.withCredentials = true;
 

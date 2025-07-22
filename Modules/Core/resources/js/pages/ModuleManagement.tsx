@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { ModuleToggle } from '@/Core/components/Module/ModuleToggle';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
-import { Button } from '@/Core/components/ui/button';
+
+
 import { RefreshCw, Settings } from 'lucide-react';
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui';
 
 interface ModuleStatus {
     [key: string]: boolean;

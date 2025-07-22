@@ -1,8 +1,9 @@
 import { AppLayout } from '@/Core';
-import { Button, buttonVariants } from '@/Core/components/ui/button';
+
 import { cn } from '@/lib/utils';
 import { Head } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
+import { Button, buttonVariants } from '@/Core/components/ui';
 
 export default function TaxDocumentsIndex({ documents }) {
     const { t } = useTranslation();

@@ -1,18 +1,12 @@
 import { AppLayout, CreateButton, CrudButtons, usePermission } from '@/Core';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/Core/components/ui/select';
-import { Badge } from '@/Core/components/ui/badge';
-import { Button } from '@/Core/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
-import {
-    Dialog as AlertDialog,
-    DialogContent as AlertDialogContent,
-    DialogDescription as AlertDialogDescription,
-    DialogTitle as AlertDialogTitle,
-    DialogTrigger as AlertDialogTrigger,
-} from '@/Core/components/ui/dialog';
-import { Input } from '@/Core/components/ui/input';
-import { Table as ReactTable } from '@/Core/components/ui/table';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/Core/components/ui/tooltip';
+
+
+
+
+
+
+
+
 import { BreadcrumbItem, PageProps } from '@/Core/types';
 import { router } from '@inertiajs/core';
 import { Head } from '@inertiajs/react';
@@ -26,9 +20,10 @@ import { ApprovalDialog } from '../../components/ApprovalDialog';
 import { Eye, Edit } from 'lucide-react';
 import { Trash2 } from 'lucide-react';
 import { Permission } from '@/Core';
-import { Checkbox } from '@/Core/components/ui/checkbox';
-import { DatePicker } from '@/Core/components/ui/date-picker';
+
+
 import axios from 'axios';
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Checkbox, DatePicker, Dialog as AlertDialog, DialogContent as AlertDialogContent, DialogDescription as AlertDialogDescription, DialogTitle as AlertDialogTitle, DialogTrigger as AlertDialogTrigger, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Table as ReactTable, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/Core/components/ui';
 
 // Define the Timesheet interface here to ensure it has all required properties
 interface Project {

@@ -1,7 +1,8 @@
 import { Head, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
-import { Button } from '@/Core/components/ui/button';
-import { Input } from '@/Core/components/ui/input';
+import { Button, Input } from '@/Core/components/ui';
+
+
 
 export default function ForgotPassword({ status }: { status?: string }) {
     const { data, setData, post, processing, errors } = useForm({

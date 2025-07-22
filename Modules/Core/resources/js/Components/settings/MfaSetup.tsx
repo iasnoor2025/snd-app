@@ -1,13 +1,14 @@
-import { Alert, AlertDescription } from '@/Core/components/ui/alert';
-import { Button } from '@/Core/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/Core/components/ui/dialog';
-import { Input } from '@/Core/components/ui/input';
-import { Label } from '@/Core/components/ui/label';
-import { Switch } from '@/Core/components/ui/switch';
+
+
+
+
+
+
+
 import { QRCodeSVG } from 'qrcode.react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { Alert, AlertDescription, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, Input, Label, Switch } from '@/Core/components/ui';
 
 interface MfaSetupProps {
     isEnabled: boolean;

@@ -1,11 +1,12 @@
-import { Button } from '@/Core/components/ui/button';
-import { DataTable } from '@/Core/components/ui/data-table';
+
+
 import AppLayout from '@/Core/layouts/AppLayout';
 import React from 'react';
 import { Eye, Download } from 'lucide-react';
-import { Badge } from '@/Core/components/ui/badge';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/Core/components/ui/select';
+
+
 import { useState } from 'react';
+import { Badge, Button, DataTable, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Core/components/ui';
 
 interface Quotation {
     id: number;

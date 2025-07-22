@@ -13,8 +13,9 @@ import DocumentsTab from '../../components/employees/create/tabs/DocumentsTab';
 import EmploymentDetailsTab from '../../components/employees/create/tabs/EmploymentDetailsTab';
 import PersonalInfoTab from '../../components/employees/create/tabs/PersonalInfoTab';
 import SalaryInfoTab from '../../components/employees/create/tabs/SalaryInfoTab';
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/Core/components/ui/form';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/Core/components/ui/select';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Core/components/ui';
+
+
 
 interface Props {
     users: any[];

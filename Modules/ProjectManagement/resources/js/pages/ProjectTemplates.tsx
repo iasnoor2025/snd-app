@@ -1,9 +1,10 @@
-import { Button } from '@/Core/components/ui/button';
-import { Dialog, DialogContent, DialogTitle } from '@/Core/components/ui/dialog';
-import { Input } from '@/Core/components/ui/input';
+
+
+
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { Button, Dialog, DialogContent, DialogTitle, Input } from '@/Core/components/ui';
 
 interface ProjectTemplate {
     id: number;
