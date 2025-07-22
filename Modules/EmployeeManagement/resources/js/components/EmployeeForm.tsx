@@ -9,15 +9,15 @@ import { useTranslation } from 'react-i18next';
 import * as z from 'zod';
 import useLoadingState from '../../../resources/js/hooks/useLoadingState';
 import DocumentManager from '../../@/Core/components/DocumentManager';
-import { Alert, AlertDescription, AlertTitle } from '@/Core/components/ui/alert';
-import { Button } from '@/Core/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
-import { DatePicker } from '@/Core/components/ui/date-picker';
-import { Input } from '@/Core/components/ui/input';
-import { Label } from '@/Core/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Core/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Core/components/ui/tabs';
-import { Textarea } from '@/Core/components/ui/textarea';
+import { Alert, AlertDescription, AlertTitle } from '@/Core/Components/ui/alert';
+import { Button } from '@/Core/Components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/Components/ui/card';
+import { DatePicker } from '@/Core/Components/ui/date-picker';
+import { Input } from '@/Core/Components/ui/input';
+import { Label } from '@/Core/Components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Core/Components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Core/Components/ui/tabs';
+import { Textarea } from '@/Core/Components/ui/textarea';
 import { Department, Designation, Employee } from '../types/employee';
 
 interface EmployeeFormProps {
