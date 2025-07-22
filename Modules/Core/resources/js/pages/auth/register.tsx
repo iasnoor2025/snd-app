@@ -2,12 +2,12 @@ import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
-import TextLink from '@/Core/components/text-link';
+import TextLink from '@/Core/Components/text-link';
 
 
 
 import AuthLayout from '../../layouts/auth-layout';
-import { Button, Input, Label } from '@/Core/components/ui';
+import { Button, Input, Label } from '@/Core/Components/ui';
 
 type RegisterForm = {
     name: string;
