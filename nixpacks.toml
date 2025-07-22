@@ -84,6 +84,16 @@ stdout_logfile=/var/log/worker-laravel.log
 stderr_logfile=/var/log/worker-laravel.log
 '''
 
+"worker-inertia-ssr.conf" = '''
+[program:inertia-ssr]
+process_name=%(program_name)s_%(process_num)02d
+command=bash -c 'exec php /app/artisan inertia:start-ssr'
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/worker-inertia-ssr.log
+stdout_logfile=/var/log/worker-inertia-ssr.log
+'''
+
 "php-fpm.conf" = '''
 [www]
 listen = 127.0.0.1:9000
@@ -145,7 +155,6 @@ http {
 
         charset utf-8;
 
-
         $if(NIXPACKS_PHP_FALLBACK_PATH) (
             location / {
                 try_files $uri $uri/ ${NIXPACKS_PHP_FALLBACK_PATH}?$query_string;
@@ -165,6 +174,7 @@ http {
 
         location ~ \.php$ {
             fastcgi_pass 127.0.0.1:9000;
+            fastcgi_buffer_size 8k;
             fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
             include $!{nginx}/conf/fastcgi_params;
             include $!{nginx}/conf/fastcgi.conf;
@@ -175,29 +185,4 @@ http {
         }
     }
 }
-
-"nginx.template.conf" = '''
-# ...
-http {
-    # ...
-    server {
-        # ...
-        location ~ \.php$ {
-            fastcgi_buffer_size 8k;
-            fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
-            include $!{nginx}/conf/fastcgi_params;
-            include $!{nginx}/conf/fastcgi.conf;
-
-            # ...
-        }
-    }
-}
-'''"worker-inertia-ssr.conf" = '''
-[program:inertia-ssr]
-process_name=%(program_name)s_%(process_num)02d
-command=bash -c 'exec php /app/artisan inertia:start-ssr'
-autostart=true
-autorestart=true
-stderr_logfile=/var/log/worker-inertia-ssr.log
-stdout_logfile=/var/log/worker-inertia-ssr.log
 '''
