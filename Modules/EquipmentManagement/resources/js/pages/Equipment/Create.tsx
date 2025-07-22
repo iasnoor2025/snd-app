@@ -1,5 +1,5 @@
 import { useEquipmentCategories } from '@/Core';
-import ErrorBoundary from '@/Core/components/ErrorBoundary';
+import ErrorBoundary from '@/Core/Components/ErrorBoundary';
 
 import { Button, Calendar } from '@/Core';
 
