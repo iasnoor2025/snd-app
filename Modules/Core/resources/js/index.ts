@@ -185,5 +185,4 @@ export { Pagination } from './Components/ui';
 export { Alert, AlertDescription, AlertTitle } from './Components/ui';
 export { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from './Components/ui';
 export { AlertDialogTrigger } from './Components/ui';
-// export { Slider } from './Components/ui';
 export { useToast } from './Components/ui';

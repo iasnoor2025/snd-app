@@ -4,7 +4,6 @@ import {
     Button,
     Card,
     CardContent,
-    CardFooter,
     CardHeader,
     CardTitle,
     DatePicker,
@@ -165,14 +164,14 @@ export default function ScheduleForm({ equipment, technicians, onSuccess }: Sche
                     )}
                 </form>
             </CardContent>
-            <CardFooter className="flex justify-end space-x-2">
+            <div className="card-footer flex justify-end space-x-2">
                 <Button variant="outline" onClick={() => reset()}>
                     Cancel
                 </Button>
                 <Button type="submit" onClick={handleSubmit} disabled={processing}>
                     {processing ? 'Scheduling...' : 'Schedule Maintenance'}
                 </Button>
-            </CardFooter>
+            </div>
         </Card>
     );
 }

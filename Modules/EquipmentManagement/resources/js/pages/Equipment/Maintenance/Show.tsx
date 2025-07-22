@@ -4,7 +4,6 @@ import {
     Button,
     Card,
     CardContent,
-    CardFooter,
     CardHeader,
     CardTitle,
     Dialog,
@@ -16,9 +15,10 @@ import {
     DialogTitle,
     DialogTrigger,
     Separator,
-    useToast,
 } from '@/Core';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
+import { Inertia } from '@inertiajs/inertia';
+import { toast } from 'sonner';
 import { ArrowLeft as ArrowLeftIcon, CheckCircle as CheckCircleIcon, Edit as EditIcon, XCircle as XCircleIcon } from 'lucide-react';
 
 // Inline type definitions
@@ -52,7 +52,7 @@ interface MaintenanceRecord {
 
 // Simple placeholder formatters
 const formatCurrency = (amount: number) => `$${amount.toFixed(2)}`;
-const formatDate = (date: string) => new Date(date);
+const formatDate = (date: string) => new Date(date).toLocaleDateString();
 
 interface Props {
     maintenance: MaintenanceRecord & {
@@ -69,8 +69,6 @@ type BreadcrumbItem = {
 };
 
 export default function MaintenanceShow({ maintenance }: Props) {
-    const { toast } = useToast();
-
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Dashboard', href: route('dashboard') },
         { title: 'Equipment', href: route('equipment.index') },
@@ -108,44 +106,30 @@ export default function MaintenanceShow({ maintenance }: Props) {
     };
 
     const handleComplete = () => {
-        router.post(
+        Inertia.post(
             route('equipment.maintenance.complete', [maintenance.equipment.id, maintenance.id]),
             {},
             {
                 onSuccess: () => {
-                    toast({
-                        title: 'Success',
-                        description: 'Maintenance record marked as completed',
-                    });
+                    toast.success('Maintenance record marked as completed');
                 },
                 onError: () => {
-                    toast({
-                        title: 'Error',
-                        description: 'Failed to complete maintenance record',
-                        variant: 'destructive',
-                    });
+                    toast.error('Failed to complete maintenance record');
                 },
             },
         );
     };
 
     const handleCancel = () => {
-        router.post(
+        Inertia.post(
             route('equipment.maintenance.cancel', [maintenance.equipment.id, maintenance.id]),
             {},
             {
                 onSuccess: () => {
-                    toast({
-                        title: 'Success',
-                        description: 'Maintenance record cancelled',
-                    });
+                    toast.success('Maintenance record cancelled');
                 },
                 onError: () => {
-                    toast({
-                        title: 'Error',
-                        description: 'Failed to cancel maintenance record',
-                        variant: 'destructive',
-                    });
+                    toast.error('Failed to cancel maintenance record');
                 },
             },
         );
@@ -165,18 +149,14 @@ export default function MaintenanceShow({ maintenance }: Props) {
                         </p>
                     </div>
                     <div className="flex gap-2">
-                        <Button variant="outline" asChild>
-                            <Link href={route('equipment.maintenance.index', maintenance.equipment.id)}>
-                                <ArrowLeftIcon className="mr-2 h-4 w-4" />
-                                Back to Records
-                            </Link>
+                        <Button variant="outline" onClick={() => window.history.back()}>
+                            <ArrowLeftIcon className="mr-2 h-4 w-4" />
+                            Back to Records
                         </Button>
                         {maintenance.status === 'scheduled' && (
-                            <Button variant="default" asChild>
-                                <Link href={route('equipment.maintenance.edit', [maintenance.equipment.id, maintenance.id])}>
-                                    <EditIcon className="mr-2 h-4 w-4" />
-                                    Edit Record
-                                </Link>
+                            <Button variant="default" onClick={() => Inertia.get(route('equipment.maintenance.edit', [maintenance.equipment.id, maintenance.id]))}>
+                                <EditIcon className="mr-2 h-4 w-4" />
+                                Edit Record
                             </Button>
                         )}
                     </div>
@@ -226,7 +206,7 @@ export default function MaintenanceShow({ maintenance }: Props) {
                             )}
                         </CardContent>
                         {maintenance.status === 'scheduled' && (
-                            <CardFooter className="flex justify-between gap-2">
+                            <div className="card-footer flex justify-between gap-2">
                                 <Dialog>
                                     <DialogTrigger asChild>
                                         <Button variant="destructive">
@@ -252,7 +232,7 @@ export default function MaintenanceShow({ maintenance }: Props) {
                                     <CheckCircleIcon className="mr-2 h-4 w-4" />
                                     Mark as Completed
                                 </Button>
-                            </CardFooter>
+                            </div>
                         )}
                     </Card>
 
@@ -325,12 +305,8 @@ export default function MaintenanceShow({ maintenance }: Props) {
                             <div className="space-y-2">
                                 <h3 className="text-sm font-semibold">Actions</h3>
                                 <div className="flex flex-col gap-2">
-                                    <Button variant="outline" asChild>
-                                        <Link href={route('equipment.show', maintenance.equipment.id)}>View Equipment Details</Link>
-                                    </Button>
-                                    <Button variant="outline" asChild>
-                                        <Link href={route('equipment.edit', maintenance.equipment.id)}>Edit Equipment</Link>
-                                    </Button>
+                                    <Button variant="outline" onClick={() => Inertia.get(route('equipment.show', maintenance.equipment.id))}>View Equipment Details</Button>
+                                    <Button variant="outline" onClick={() => Inertia.get(route('equipment.edit', maintenance.equipment.id))}>Edit Equipment</Button>
                                 </div>
                             </div>
                         </div>

@@ -18,8 +18,12 @@ class EquipmentPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Equipment $equipment): bool
+    public function view(?\App\Models\User $user, Equipment $equipment): bool
     {
+        if (!$user || !method_exists($user, 'hasPermissionTo')) {
+            \Log::warning('EquipmentPolicy:view called with invalid user', ['user' => $user]);
+            return false;
+        }
         return $user->hasPermissionTo('equipment.view');
     }
 
@@ -62,4 +66,4 @@ class EquipmentPolicy
     {
         return $user->hasPermissionTo('equipment.delete');
     }
-} 
+}

@@ -3,7 +3,7 @@ import { NotificationTemplate } from '../types';
 
 export const NotificationTemplateService = {
     async getAll(): Promise<NotificationTemplate[]> {
-        const { data } = await axios.get('/api/notifications/templates');
+        const { data } = await axios.get('/api/v1/notifications/templates');
         return data.data;
     },
     async get(id: number): Promise<NotificationTemplate> {

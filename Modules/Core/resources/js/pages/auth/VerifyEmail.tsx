@@ -1,6 +1,6 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui';
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/Components/ui';
 
 
 
