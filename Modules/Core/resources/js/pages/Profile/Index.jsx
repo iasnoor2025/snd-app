@@ -1,10 +1,7 @@
 import { formatDateMedium } from '@/Core/utils/dateFormatter';
 import { Link } from '@inertiajs/react';
 import { Calendar, Camera, Edit, Mail, Settings, Shield, User } from 'lucide-react';
-import { Badge } from '@/Core/components/ui/badge';
-import { Button } from '@/Core/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
-import { SmartAvatar } from '@/Core/components/ui/smart-avatar';
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, SmartAvatar } from '@/Core/components/ui';
 import AppLayout from '../../layouts/AppLayout';
 
 const ProfileIndex = ({ auth }) => {
