@@ -21,7 +21,7 @@ export { default as Dropdown } from './Dropdown';
 export { default as Heading } from './heading';
 export { default as HeadingSmall } from './heading-small';
 export { default as Modal } from './Modal';
-export { ThemeProvider } from './theme-provider';
+export { ThemeProvider, useTheme } from './theme-provider';
 
 // Form Components
 export { default as Checkbox } from './Checkbox';

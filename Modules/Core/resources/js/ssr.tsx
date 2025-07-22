@@ -3,7 +3,7 @@ import createServer from '@inertiajs/react/server';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ComponentType } from 'react';
 import { I18nextProvider } from 'react-i18next';
-import { ThemeProvider } from './components/theme-provider';
+import { ThemeProvider } from './Components/theme-provider';
 import { TooltipProvider } from './Components/ui/tooltip';
 import i18n from './i18n.js';
 

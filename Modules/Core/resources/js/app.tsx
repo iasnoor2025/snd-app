@@ -11,7 +11,7 @@ import { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { I18nextProvider, useTranslation } from 'react-i18next';
 import { Toaster } from 'sonner';
-import { ThemeProvider } from './components/theme-provider';
+import { ThemeProvider } from './Components/theme-provider';
 import { TooltipProvider } from './components/ui/tooltip';
 import { initializeTheme } from './hooks/use-appearance';
 import i18n from './i18n.js';
