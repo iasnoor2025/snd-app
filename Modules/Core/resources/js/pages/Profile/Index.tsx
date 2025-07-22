@@ -1,13 +1,26 @@
 import { formatDateMedium } from '@/Core/utils/dateFormatter';
 import { Link } from '@inertiajs/react';
 import { Calendar, Camera, Edit, Mail, Settings, Shield, User } from 'lucide-react';
-import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, SmartAvatar } from '@/Core/components/ui/index';
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, SmartAvatar } from '@/Core/components/ui';
 import AppLayout from '../../layouts/AppLayout';
 
-const ProfileIndex = ({ auth }) => {
+interface ProfileIndexProps {
+    auth: {
+        user: {
+            name: string;
+            email: string;
+            is_active: boolean;
+            last_login_at?: string;
+            email_verified_at?: string;
+            created_at: string;
+        };
+    };
+}
+
+const ProfileIndex: React.FC<ProfileIndexProps> = ({ auth }) => {
     const user = auth.user;
 
-    const formatDate = (dateString) => {
+    const formatDate = (dateString?: string) => {
         if (!dateString) return 'Not set';
         return formatDateMedium(dateString);
     };
