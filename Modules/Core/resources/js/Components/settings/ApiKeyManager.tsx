@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
+import { formatDateMedium } from '@/Core/utils/dateFormatter';
 
 interface ApiKey {
     id: number;
@@ -92,7 +93,7 @@ export default function ApiKeyManager({ apiKeys: initialApiKeys }: ApiKeyManager
                 <div className="space-y-4">
                     <Button onClick={() => setShowCreateDialog(true)}>Create New API Key</Button>
 
-                    <Table>
+                    <Table data={apiKeys} columns={columns}>
                         <TableHeader>
                             <TableRow>
                                 <TableHead>Name</TableHead>
@@ -108,9 +109,9 @@ export default function ApiKeyManager({ apiKeys: initialApiKeys }: ApiKeyManager
                                 <TableRow key={key.id}>
                                     <TableCell>{key.name}</TableCell>
                                     <TableCell>{key.scopes.join(', ')}</TableCell>
-                                    <TableCell>{new Date(key.created_at)}</TableCell>
-                                    <TableCell>{key.expires_at ? new Date(key.expires_at) : 'Never'}</TableCell>
-                                    <TableCell>{key.last_used_at ? new Date(key.last_used_at) : 'Never'}</TableCell>
+                                    <TableCell>{formatDateMedium(key.created_at)}</TableCell>
+                                    <TableCell>{key.expires_at ? formatDateMedium(key.expires_at) : 'Never'}</TableCell>
+                                    <TableCell>{key.last_used_at ? formatDateMedium(key.last_used_at) : 'Never'}</TableCell>
                                     <TableCell>
                                         <Button variant="destructive" size="sm" onClick={() => handleRevokeKey(key.id)}>
                                             Revoke
