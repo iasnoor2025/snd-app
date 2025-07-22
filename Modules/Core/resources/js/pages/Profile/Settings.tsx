@@ -4,13 +4,13 @@ import React, { useEffect, useState } from 'react';
 import { FaMicrosoft } from 'react-icons/fa';
 import { SiGoogle, SiWhatsapp } from 'react-icons/si';
 import { toast } from 'sonner';
-import AvatarUploader from '@/Core/components/Avatar/AvatarUploader.jsx';
-import ActivityFeed from '@/Core/components/dashboard/ActivityFeed';
-import { AppearanceTabs } from '@/Core/components/index';
-import { ProfileNav } from '@/Core/components/profile-nav';
-import ApiKeySettings from '@/Core/components/settings/ApiKeySettings';
-import { DeviceSessions } from '@/Core/components/settings/DeviceSessions';
-import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Dialog, DialogContent, DialogDescription, DialogTitle, Input, Separator, SmartAvatar } from '@/Core/components/ui';
+import AvatarUploader from '@/Core/Components/Avatar/AvatarUploader.jsx';
+import ActivityFeed from '@/Core/Components/dashboard/ActivityFeed';
+import { AppearanceTabs } from '@/Core/Components/index';
+import { ProfileNav } from '@/Core/Components/profile-nav';
+import ApiKeySettings from '@/Core/Components/settings/ApiKeySettings';
+import { DeviceSessions } from '@/Core/Components/settings/DeviceSessions';
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Dialog, DialogContent, DialogDescription, DialogTitle, Input, Separator, SmartAvatar } from '@/Core/Components/ui';
 
 
 

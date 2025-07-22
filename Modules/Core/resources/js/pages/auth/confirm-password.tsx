@@ -7,7 +7,7 @@ import { FormEventHandler } from 'react';
 
 
 import AuthLayout from '../../layouts/auth-layout';
-import { Button, Input, Label } from '@/Core/components/ui';
+import { Button, Input, Label } from '@/Core/Components/ui';
 
 export default function ConfirmPassword() {
     const { data, setData, post, processing, errors, reset } = useForm<Required<{ password: string }>>({

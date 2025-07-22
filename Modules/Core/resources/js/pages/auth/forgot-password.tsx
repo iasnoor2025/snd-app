@@ -4,7 +4,7 @@ import { Head, useForm } from '@inertiajs/react';
 
 
 import AuthLayout from '../../layouts/auth-layout';
-import { Button, Input, Label } from '@/Core/components/ui';
+import { Button, Input, Label } from '@/Core/Components/ui';
 
 export default function ForgotPassword({ status }: { status?: string }) {
     const { data, setData, post, processing, errors } = useForm<Required<{ email: string }>>({

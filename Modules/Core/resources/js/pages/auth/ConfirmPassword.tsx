@@ -1,7 +1,7 @@
 import { FormEventHandler, useEffect } from 'react';
 
 import { Head, useForm } from '@inertiajs/react';
-import { Button, Input, Label } from '@/Core/components/ui';
+import { Button, Input, Label } from '@/Core/Components/ui';
 
 
 

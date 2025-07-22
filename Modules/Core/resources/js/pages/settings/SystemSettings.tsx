@@ -1,7 +1,7 @@
 import { Upload } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Tabs, TabsContent, TabsList, TabsTrigger } from '@/Core/components/ui';
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Tabs, TabsContent, TabsList, TabsTrigger } from '@/Core/Components/ui';
 
 
 

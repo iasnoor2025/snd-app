@@ -1,7 +1,7 @@
 import { useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, Input } from '@/Core/components/ui';
+import { Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, Input } from '@/Core/Components/ui';
 
 
 

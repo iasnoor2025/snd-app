@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/components/ui';
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/Components/ui';
 
 interface LogEntry {
     id: number;

@@ -7,7 +7,7 @@ import { useState } from 'react';
 import TextLink from '@/Core/Components/text-link';
 
 import AuthLayout from '../../layouts/auth-layout';
-import { Button } from '@/Core/components/ui';
+import { Button } from '@/Core/Components/ui';
 
 export default function VerifyEmail({ status }: { status?: string }) {
     const [processing, setProcessing] = useState(false);

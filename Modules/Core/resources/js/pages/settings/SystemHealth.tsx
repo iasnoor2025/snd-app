@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { Alert, Badge, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui';
+import { Alert, Badge, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/Components/ui';
 
 
 

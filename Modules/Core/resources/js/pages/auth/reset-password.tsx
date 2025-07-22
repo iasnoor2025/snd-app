@@ -6,7 +6,7 @@ import { FormEventHandler } from 'react';
 
 
 import AuthLayout from '../../layouts/auth-layout';
-import { Button, Input, Label } from '@/Core/components/ui';
+import { Button, Input, Label } from '@/Core/Components/ui';
 
 interface ResetPasswordProps {
     token: string;

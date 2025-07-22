@@ -1,6 +1,6 @@
 import { Head, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
-import { Button, Input } from '@/Core/components/ui';
+import { Button, Input } from '@/Core/Components/ui';
 
 
 
