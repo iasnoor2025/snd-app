@@ -2,7 +2,7 @@ import PageHeader from '@/Core/Components/page-header';
 import ApiKeySettings from '@/Core/Components/settings/ApiKeySettings';
 import { DeviceSessions } from '@/Core/Components/settings/DeviceSessions';
 import MfaSettings from '@/Core/Components/settings/MfaSettings';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Core/Components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Core/components/ui/tabs';
 
 interface SecuritySettingsProps {
     mfa_enabled: boolean;
