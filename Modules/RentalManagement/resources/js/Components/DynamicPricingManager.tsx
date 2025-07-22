@@ -13,7 +13,7 @@ import { Input } from '@/../../Modules/Core/resources/js/components/ui/input';
 import { Label } from '@/../../Modules/Core/resources/js/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/../../Modules/Core/resources/js/components/ui/select';
 import { Switch } from '@/../../Modules/Core/resources/js/components/ui/switch';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/../../Modules/Core/resources/js/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/components/ui/table';
 import { formatDateMedium } from '@/Core/utils/dateFormatter';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';

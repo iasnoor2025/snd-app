@@ -101,27 +101,15 @@ const Table = forwardRef<HTMLDivElement, TableProps<any>>(
                                     {visibleColumns.map((column) => (
                                         <th
                                             key={column.key}
-                                            className={cn(
-                                                column.sortable && 'cursor-pointer select-none',
-                                                column.sticky && 'sticky left-0 bg-background',
-                                                column.className,
-                                            )}
-                                            style={{ width: column.width }}
-                                            onClick={() => column.sortable && handleSort(column.key)}
+                                            className={cn(column.className, column.sticky && 'sticky left-0 bg-white z-10')}
+                                            style={column.width ? { width: column.width } : {}}
                                             title={column.tooltip}
+                                            onClick={() => column.sortable && handleSort(column.key)}
                                         >
-                                            <div className="flex items-center gap-2">
-                                                {column.header}
-                                                {column.sortable && sortKey === column.key && (
-                                                    <span className="inline-flex">
-                                                        {sortDirection === 'asc' ? (
-                                                            <ChevronUp className="h-4 w-4" />
-                                                        ) : (
-                                                            <ChevronDown className="h-4 w-4" />
-                                                        )}
-                                                    </span>
-                                                )}
-                                            </div>
+                                            {column.header}
+                                            {column.sortable && sortKey === column.key && (
+                                                sortDirection === 'asc' ? <ChevronUp className="inline ml-1" /> : <ChevronDown className="inline ml-1" />
+                                            )}
                                         </th>
                                     ))}
                                 </tr>
@@ -130,19 +118,13 @@ const Table = forwardRef<HTMLDivElement, TableProps<any>>(
                         <tbody>
                             {isLoading ? (
                                 <tr>
-                                    <td colSpan={visibleColumns.length + (showRowNumbers ? 1 : 0)} className="h-24 text-center">
-                                        {useSpinner ? (
-                                            <div className="flex items-center justify-center">
-                                                <Loader2 className="h-6 w-6 animate-spin" />
-                                            </div>
-                                        ) : (
-                                            'Loading...'
-                                        )}
+                                    <td colSpan={visibleColumns.length + (showRowNumbers ? 1 : 0)} className="text-center p-4">
+                                        {useSpinner ? <Loader2 className="animate-spin mx-auto" /> : 'Loading...'}
                                     </td>
                                 </tr>
                             ) : safeData.length === 0 ? (
                                 <tr>
-                                    <td colSpan={visibleColumns.length + (showRowNumbers ? 1 : 0)} className="h-24 text-center">
+                                    <td colSpan={visibleColumns.length + (showRowNumbers ? 1 : 0)} className="text-center p-4">
                                         {emptyMessage}
                                     </td>
                                 </tr>
@@ -180,13 +162,9 @@ Table.displayName = 'Table';
 
 // Define basic table subcomponents
 const TableBody = ({ children, ...props }: React.HTMLAttributes<HTMLTableSectionElement>) => <tbody {...props}>{children}</tbody>;
-
 const TableCell = ({ children, ...props }: React.TdHTMLAttributes<HTMLTableCellElement>) => <td {...props}>{children}</td>;
-
 const TableHead = ({ children, ...props }: React.ThHTMLAttributes<HTMLTableCellElement>) => <th {...props}>{children}</th>;
-
 const TableHeader = ({ children, ...props }: React.HTMLAttributes<HTMLTableSectionElement>) => <thead {...props}>{children}</thead>;
-
 const TableRow = ({ children, ...props }: React.HTMLAttributes<HTMLTableRowElement>) => <tr {...props}>{children}</tr>;
 
 export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow };

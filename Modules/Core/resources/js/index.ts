@@ -10,8 +10,56 @@ export * from './services/avatar-service';
 export * from './services/pushNotificationService';
 
 // Components
-export { DialogClose } from './components/ui/dialog';
-export { FileUpload } from './components/ui/FileUpload';
+export { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from './Components/ui';
+export { default as FileUpload } from './Components/ui/FileUpload';
+export { Input } from './Components/ui';
+export { Button } from './Components/ui/button';
+export { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from './Components/ui/sheet';
+export { NavigationMenu, NavigationMenuList, NavigationMenuItem, navigationMenuTriggerStyle } from './Components/ui';
+export { Tooltip, TooltipContent, TooltipTrigger } from './Components/ui';
+export {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from './Components/ui';
+export { Avatar, AvatarFallback, AvatarImage } from './Components/ui';
+export { Label } from './Components/ui';
+export { Textarea } from './Components/ui';
+export { Card, CardContent, CardHeader } from './Components/ui';
+export { Tabs, TabsContent, TabsList, TabsTrigger } from './Components/ui';
+export { DialogHeader } from './Components/ui';
+export { DialogClose } from './Components/ui';
+export { CardTitle } from './Components/ui';
+export { CardDescription } from './Components/ui';
+export { Separator } from './Components/ui';
+export { SmartAvatar } from './Components/ui';
+export { MultiSelect } from './Components/ui';
+export { DialogFooter } from './Components/ui';
+export {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectScrollDownButton,
+  SelectScrollUpButton,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from './Components/ui';
+export { Checkbox } from './Components/ui';
 
 // Core Module - Shared Resources Index
 // This file exports all shared resources for use by other modules
@@ -41,9 +89,9 @@ export { QueryClient, QueryClientProvider, useMutation, useQuery, useQueryClient
 export { I18nextProvider, useTranslation } from 'react-i18next';
 
 // Export theme and UI providers
-export { ThemeProvider, useTheme } from './components/theme-provider';
+export { ThemeProvider, useTheme } from './Components/theme-provider';
 
-export { TooltipProvider } from './components/ui/tooltip';
+export { TooltipProvider } from './Components/ui/tooltip';
 
 // Export common form libraries
 export { Controller, useForm } from 'react-hook-form';
@@ -53,10 +101,8 @@ export { zodResolver } from '@hookform/resolvers/zod';
 export * as z from 'zod';
 
 // Export UI components
-export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './components/ui/table';
-export * from './components/ui';
-export { Progress, Switch, Toggle, TimePicker, ErrorAlert, Pagination, ToggleGroup, ToggleGroupItem, DialogFooter } from './components/ui';
-export { useToast } from './components/ui';
+export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './Components/ui/table';
+export { Badge, badgeVariants } from './Components/ui';
 
 // Export layouts
 export { default as AppLayout } from './layouts/AppLayout';
@@ -106,7 +152,7 @@ export {
     UserInfo,
     UserMenuContent,
     ValidationErrors,
-} from './components';
+} from './Components';
 
 // Export translation debug utilities
 export { debugTranslationObject, isTranslatableObject, safeRender, withTranslationDebug } from './utils/debugTranslation';
@@ -115,17 +161,17 @@ export { debugTranslationObject, isTranslatableObject, safeRender, withTranslati
 export { default as Dashboard } from './pages/Dashboard';
 
 // Export new Dashboard widgets
-export { default as ActivityFeed } from './components/dashboard/ActivityFeed';
-export { default as AnalyticsWidget } from './components/dashboard/AnalyticsWidget';
-export { default as AuditWidget } from './components/dashboard/AuditWidget';
-export { default as ChartWidget } from './components/dashboard/ChartWidget';
-export { default as CustomerWidget } from './components/dashboard/CustomerWidget';
-export { default as EmployeeWidget } from './components/dashboard/EmployeeWidget';
-export { default as EquipmentWidget } from './components/dashboard/EquipmentWidget';
-export { default as PayrollWidget } from './components/dashboard/PayrollWidget';
-export { default as ProjectWidget } from './components/dashboard/ProjectWidget';
-export { default as RecentProjects } from './components/dashboard/RecentProjects';
-export { default as RentalWidget } from './components/dashboard/RentalWidget';
-export { default as StatsCard } from './components/dashboard/StatsCard';
-export { default as TeamWidget } from './components/dashboard/TeamWidget';
-export { default as VacationWidget } from './components/dashboard/VacationWidget';
+export { default as ActivityFeed } from './Components/dashboard/ActivityFeed';
+export { default as AnalyticsWidget } from './Components/dashboard/AnalyticsWidget';
+export { default as AuditWidget } from './Components/dashboard/AuditWidget';
+export { default as ChartWidget } from './Components/dashboard/ChartWidget';
+export { default as CustomerWidget } from './Components/dashboard/CustomerWidget';
+export { default as EmployeeWidget } from './Components/dashboard/EmployeeWidget';
+export { default as EquipmentWidget } from './Components/dashboard/EquipmentWidget';
+export { default as PayrollWidget } from './Components/dashboard/PayrollWidget';
+export { default as ProjectWidget } from './Components/dashboard/ProjectWidget';
+export { default as RecentProjects } from './Components/dashboard/RecentProjects';
+export { default as RentalWidget } from './Components/dashboard/RentalWidget';
+export { default as StatsCard } from './Components/dashboard/StatsCard';
+export { default as TeamWidget } from './Components/dashboard/TeamWidget';
+export { default as VacationWidget } from './Components/dashboard/VacationWidget';
