@@ -1,6 +1,6 @@
 import React from 'react';
 declare global { interface Window { Inertia: any; } }
-import WelcomeHero from '@/Core/components/dashboard/WelcomeHeroTemp';
+import WelcomeHero from '@/Core/components/dashboard/WelcomeHero';
 import QuickStats from '@/Core/components/dashboard/QuickStats';
 import DualClockWidget from '@/Core/components/dashboard/DualClockWidget';
 import TeamWidget from '@/Core/components/dashboard/TeamWidget';
