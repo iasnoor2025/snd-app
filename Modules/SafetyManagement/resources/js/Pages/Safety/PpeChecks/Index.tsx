@@ -1,9 +1,7 @@
-import { Card } from '@/../../Modules/Core/resources/js/components/ui/card';
-import { Table } from '@/Core/components/ui/table';
+import { Card, Table, Button } from '@/Core/Components/ui';
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/Core/components/ui';
 
 interface PpeCheck {
     id: number;
@@ -37,7 +35,9 @@ const PpeChecksIndex: React.FC<Props> = ({ ppeChecks }) => {
                             <td>{check.check_date}</td>
                             <td>{t(`safety:ppe_checks.status_${check.status}`)}</td>
                             <td>
-                                <Button href={`/safety/ppe-checks/${check.id}`}>{t('safety:ppe_checks.view')}</Button>
+                                <Button asChild>
+                                    <Link href={`/safety/ppe-checks/${check.id}`}>{t('safety:ppe_checks.view')}</Link>
+                                </Button>
                             </td>
                         </tr>
                     ))}

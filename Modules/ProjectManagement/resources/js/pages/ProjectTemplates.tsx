@@ -4,7 +4,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { Button, Dialog, DialogContent, DialogTitle, Input } from '@/Core/components/ui';
+import { Button, Dialog, DialogContent, DialogTitle, Input } from '@/Core/Components/ui';
 
 interface ProjectTemplate {
     id: number;

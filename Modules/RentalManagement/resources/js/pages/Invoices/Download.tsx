@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { toast } from 'sonner';
-import { Button } from '@/Core/components/ui';
+import { Button } from '@/Core/Components/ui';
 
 interface Invoice {
     id: number;

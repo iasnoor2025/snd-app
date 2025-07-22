@@ -6,7 +6,7 @@ import { Eye, Download } from 'lucide-react';
 
 
 import { useState } from 'react';
-import { Badge, Button, DataTable, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Core/components/ui';
+import { Badge, Button, DataTable, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Core/Components/ui';
 
 interface Quotation {
     id: number;

@@ -1,5 +1,5 @@
 import { Button, Skeleton } from '@/Core';
-import { TableComponent } from '@/Core/components/ui';
+import { TableComponent } from '@/Core/Components/ui';
 import { Pencil, Trash2 } from 'lucide-react';
 
 interface ResourceTableProps<T> {

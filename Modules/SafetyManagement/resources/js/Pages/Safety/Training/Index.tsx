@@ -1,9 +1,7 @@
-import { Card } from '@/../../Modules/Core/resources/js/components/ui/card';
-import { Table } from '@/../../Modules/Core/resources/js/components/ui/table';
+import { Card, Table, Button } from '@/Core/Components/ui';
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/Core/components/ui';
 
 interface TrainingRecord {
     id: number;

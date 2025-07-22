@@ -4,7 +4,7 @@ import { Head, Link } from '@inertiajs/react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Button, Table, TableBody, TableCell, TableHead, TableRow } from '@/Core/components/ui';
+import { Button, Table, TableBody, TableCell, TableHead, TableRow } from '@/Core/Components/ui';
 
 interface Invoice {
     id: number;

@@ -1,8 +1,7 @@
-import { Card } from '@/../../Modules/Core/resources/js/components/ui/card';
+import { Card, Button } from '@/Core/Components/ui';
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/Core/components/ui';
 
 const IncidentsCreate: React.FC = () => {
     const { t } = useTranslation();

@@ -18,7 +18,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { ApprovalDialog } from '../../components/ApprovalDialog';
 import { toast } from 'sonner';
-import { Badge, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/Core/components/ui';
+import { Badge, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/Core/Components/ui';
 
 interface Props {
     timesheet: any;

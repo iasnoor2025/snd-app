@@ -1,19 +1,4 @@
-import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/components/ui/card';
-import { DatePicker } from '@/../../Modules/Core/resources/js/components/ui/date-picker';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from '@/../../Modules/Core/resources/js/components/ui/dialog';
-import { Input } from '@/../../Modules/Core/resources/js/components/ui/input';
-import { Label } from '@/../../Modules/Core/resources/js/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/../../Modules/Core/resources/js/components/ui/select';
-import { Switch } from '@/../../Modules/Core/resources/js/components/ui/switch';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/components/ui/table';
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, DatePicker, Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, Input, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Switch, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/Components/ui';
 import { formatDateMedium } from '@/Core/utils/dateFormatter';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';

@@ -1,5 +1,4 @@
-import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/components/ui/card';
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/Components/ui';
 import axios from 'axios';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import { useEffect, useState } from 'react';

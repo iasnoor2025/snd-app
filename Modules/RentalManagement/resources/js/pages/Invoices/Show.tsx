@@ -9,7 +9,7 @@ import { format } from 'date-fns';
 import { Download, Printer, Send } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { route } from 'ziggy-js';
-import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/components/ui';
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/Components/ui';
 
 interface InvoiceItem {
     id: number;
