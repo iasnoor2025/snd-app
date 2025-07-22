@@ -4,7 +4,7 @@ import { PlusIcon } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { ProjectForm } from '@/ProjectManagement/Components/ProjectForm';
-import { ProjectList } from '../components/ProjectList';
+import { ProjectList } from '@/ProjectManagement/Components/ProjectList';
 
 interface Project {
     id: number;
