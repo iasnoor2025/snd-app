@@ -37,7 +37,7 @@ export {
 export { Avatar, AvatarFallback, AvatarImage } from './Components/ui';
 export { Label } from './Components/ui';
 export { Textarea } from './Components/ui';
-export { Card, CardContent, CardHeader } from './Components/ui';
+export { Card, CardContent, CardHeader, CardFooter } from './Components/ui';
 export { Tabs, TabsContent, TabsList, TabsTrigger } from './Components/ui';
 export { DialogHeader } from './Components/ui';
 export { DialogClose } from './Components/ui';
@@ -63,6 +63,7 @@ export { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 export { Progress } from './Components/ui';
 export { Toggle } from './Components/ui';
 export { Checkbox } from './Components/ui';
+export { Switch } from './Components/ui';
 
 // Core Module - Shared Resources Index
 // This file exports all shared resources for use by other modules

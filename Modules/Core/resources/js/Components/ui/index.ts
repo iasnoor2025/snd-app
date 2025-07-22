@@ -36,7 +36,7 @@ export {
   SelectTrigger,
   SelectValue,
 } from './select';
-export { Button } from './button';
+export { Button, buttonVariants } from './button';
 export { Input } from './input';
 export { Separator } from './separator';
 export { SmartAvatar } from './smart-avatar';
@@ -56,6 +56,7 @@ export { ScrollArea } from './scroll-area';
 export { useToast } from './toast';
 export { Progress } from './progress';
 export { Toggle } from './toggle';
+export { Skeleton } from './skeleton';
 export { default as ErrorBoundary } from '../ErrorBoundary';
 export { default as FileUpload } from './FileUpload';
 export { cn } from '../../lib/utils';
