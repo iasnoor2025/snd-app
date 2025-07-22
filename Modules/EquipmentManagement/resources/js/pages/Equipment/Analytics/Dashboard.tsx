@@ -8,7 +8,7 @@ import { Head } from '@inertiajs/react';
 import { Activity, CheckCircle, DollarSign, Download, RefreshCw, TrendingUp } from 'lucide-react';
 import React, { useState } from 'react';
 import { CartesianGrid, Cell, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Tabs, TabsContent, TabsList, TabsTrigger } from '@/Core/components/ui';
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Tabs, TabsContent, TabsList, TabsTrigger } from '@/Core/components/ui/index';
 
 interface EquipmentAnalytics {
     totalEquipment: number;
