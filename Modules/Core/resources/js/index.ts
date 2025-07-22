@@ -64,6 +64,7 @@ export { Progress } from './Components/ui';
 export { Toggle } from './Components/ui';
 export { Checkbox } from './Components/ui';
 export { Switch } from './Components/ui';
+export { Skeleton } from './Components/ui';
 
 // Core Module - Shared Resources Index
 // This file exports all shared resources for use by other modules
