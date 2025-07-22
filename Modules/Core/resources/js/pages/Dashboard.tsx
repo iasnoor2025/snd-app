@@ -1,10 +1,10 @@
 import React from 'react';
 declare global { interface Window { Inertia: any; } }
-import WelcomeHero from '@/Core/components/dashboard/WelcomeHero';
-import QuickStats from '@/Core/components/dashboard/QuickStats';
-import DualClockWidget from '@/Core/components/dashboard/DualClockWidget';
-import TeamWidget from '@/Core/components/dashboard/TeamWidget';
-import SelfServiceWidget from '@/Core/components/dashboard/SelfServiceWidget';
+import WelcomeHero from '@/Core/Components/dashboard/WelcomeHero';
+import QuickStats from '@/Core/Components/dashboard/QuickStats';
+import DualClockWidget from '@/Core/Components/dashboard/DualClockWidget';
+import TeamWidget from '@/Core/Components/dashboard/TeamWidget';
+import SelfServiceWidget from '@/Core/Components/dashboard/SelfServiceWidget';
 import { DailyTimesheetRecords } from '../../../../TimesheetManagement/resources/js/components/timesheets/DailyTimesheetRecords';
 // Placeholder import for TimesheetApprovalList
 // import TimesheetApprovalList from '../../../../TimesheetManagement/resources/js/components/timesheets/TimesheetApprovalList';
