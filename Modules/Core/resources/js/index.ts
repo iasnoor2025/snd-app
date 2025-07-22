@@ -12,6 +12,7 @@ export * from './services/pushNotificationService';
 // Components
 export * from './components/ui/toast';
 export { DialogClose } from './components/ui/dialog';
+export { FileUpload } from './components/ui/FileUpload';
 
 // Core Module - Shared Resources Index
 // This file exports all shared resources for use by other modules

@@ -41,3 +41,4 @@ export { ToggleGroup, ToggleGroupItem } from './toggle-group';
 export { TimePicker } from './time-picker';
 export { ErrorAlert } from './error-alert';
 export { Pagination } from './pagination';
+export { default as FileUpload } from './FileUpload';
