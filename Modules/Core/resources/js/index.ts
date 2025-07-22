@@ -114,7 +114,6 @@ export { default as AppLayout } from './layouts/AppLayout';
 export { formatCurrency, t } from './utils';
 
 // Export types
-export type { BreadcrumbItem } from './types';
 
 // Export components
 export {
@@ -186,3 +185,4 @@ export { Alert, AlertDescription, AlertTitle } from './Components/ui';
 export { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from './Components/ui';
 export { AlertDialogTrigger } from './Components/ui';
 export { useToast } from './Components/ui';
+export { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from './components/ui/breadcrumb';

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Head } from '@inertiajs/react';
 import { router } from '@inertiajs/core';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/Components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/Components/ui';
 import { Button } from '@/Core/Components/ui/button';
 import { Input } from '@/Core/Components/ui/input';
 import { Label } from '@/Core/Components/ui/label';

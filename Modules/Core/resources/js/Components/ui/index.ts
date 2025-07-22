@@ -57,4 +57,5 @@ export { useToast } from './toast';
 export { Progress } from './progress';
 export { Toggle } from './toggle';
 export { default as ErrorBoundary } from '../ErrorBoundary';
+export { default as FileUpload } from './FileUpload';
 export { cn } from '../../lib/utils';
