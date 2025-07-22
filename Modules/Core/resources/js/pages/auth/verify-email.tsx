@@ -4,7 +4,7 @@ import { Inertia } from '@inertiajs/inertia';
 import { LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
 
-import TextLink from '@/Core/components/text-link';
+import TextLink from '@/Core/Components/text-link';
 
 import AuthLayout from '../../layouts/auth-layout';
 import { Button } from '@/Core/components/ui';
