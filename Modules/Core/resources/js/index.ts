@@ -120,7 +120,6 @@ export {
     AppearanceTabs,
     ApplicationLogo,
     Breadcrumbs,
-    Checkbox,
     CreateButton,
     CrudButtons,
     DangerButton,
