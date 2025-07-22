@@ -1,8 +1,8 @@
 import PageHeader from '@/Core/Components/page-header';
-import ApiKeySettings from '@/Core/components/settings/ApiKeySettings';
-import { DeviceSessions } from '@/Core/components/settings/DeviceSessions';
-import MfaSettings from '@/Core/components/settings/MfaSettings';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
+import ApiKeySettings from '@/Core/Components/settings/ApiKeySettings';
+import { DeviceSessions } from '@/Core/Components/settings/DeviceSessions';
+import MfaSettings from '@/Core/Components/settings/MfaSettings';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../Components/ui/tabs';
 
 interface SecuritySettingsProps {
     mfa_enabled: boolean;
