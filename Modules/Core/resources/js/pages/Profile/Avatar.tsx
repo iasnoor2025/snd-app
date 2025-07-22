@@ -1,8 +1,8 @@
 import { Camera, Globe, Heart, Palette, Settings, Shield, Star, User, Users, Zap } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import AvatarUploader from '@/Core/components/Avatar/AvatarUploader';
-import { Avatar, AvatarFallback, AvatarImage, Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Separator, SmartAvatar, Tabs, TabsContent, TabsList, TabsTrigger } from '@/Core/components/ui';
+import AvatarUploader from '@/Core/Components/Avatar/AvatarUploader';
+import { Avatar, AvatarFallback, AvatarImage, Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Separator, SmartAvatar, Tabs, TabsContent, TabsList, TabsTrigger } from '@/Core/Components/ui';
 import AppLayout from '../../layouts/AppLayout';
 
 interface UserType {
