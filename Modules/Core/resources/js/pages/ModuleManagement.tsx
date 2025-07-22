@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ModuleToggle } from '@/Core/components/Module/ModuleToggle';
+import { ModuleToggle } from '@/Core/Components/Module/ModuleToggle';
 
 
 import { RefreshCw, Settings } from 'lucide-react';
