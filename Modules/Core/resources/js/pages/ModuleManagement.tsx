@@ -3,7 +3,7 @@ import { ModuleToggle } from '@/Core/Components/Module/ModuleToggle';
 
 
 import { RefreshCw, Settings } from 'lucide-react';
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui';
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/Components/ui';
 
 interface ModuleStatus {
     [key: string]: boolean;

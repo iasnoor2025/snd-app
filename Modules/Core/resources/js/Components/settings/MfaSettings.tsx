@@ -7,7 +7,7 @@
 import { QRCodeSVG } from 'qrcode.react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Input, Label, Switch } from '@/Core/components/ui';
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Input, Label, Switch } from '@/Core/Components/ui';
 
 interface MfaSettingsProps {
     isEnabled: boolean;

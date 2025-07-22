@@ -1,6 +1,6 @@
 import { AlertCircle, CheckCircle, Info, Loader2, XCircle } from 'lucide-react';
 import React, { HTMLAttributes, forwardRef } from 'react';
-import { Toast as ShadcnToast, ToastClose, ToastDescription, ToastProvider, ToastTitle, ToastViewport } from '../../components/ui/toast';
+import { Toast as ShadcnToast, ToastClose, ToastDescription, ToastProvider, ToastTitle, ToastViewport } from '../../Components/ui/toast';
 import { cn } from '../../lib/utils';
 
 /**

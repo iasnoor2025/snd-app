@@ -1,8 +1,8 @@
 import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Loader2 } from 'lucide-react';
 import React, { forwardRef } from 'react';
-import { Table as ShadcnTable, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/table';
+import { Table as ShadcnTable, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../Components/ui/table';
 import { cn } from '../../lib/utils';
-import { Button } from './Button';
+import { Button } from '../../Components/Common/Button';
 
 /**
  * Column configuration for Table component
