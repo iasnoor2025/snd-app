@@ -59,7 +59,6 @@ export {
   SelectTrigger,
   SelectValue,
 } from './Components/ui';
-export { Checkbox } from './Components/ui';
 
 // Core Module - Shared Resources Index
 // This file exports all shared resources for use by other modules

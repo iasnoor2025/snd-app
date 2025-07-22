@@ -21,7 +21,7 @@ export {
 export { Avatar, AvatarFallback, AvatarImage } from './avatar';
 export { Textarea } from './textarea';
 export { Label } from './label';
-export { Card, CardContent, CardHeader, CardTitle, CardDescription } from './card';
+export { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from './card';
 export { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs';
 export { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger, DialogHeader, DialogClose, DialogFooter } from './dialog';
 export {
@@ -43,3 +43,5 @@ export { SmartAvatar } from './smart-avatar';
 export { MultiSelect } from './multi-select';
 export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 export { Checkbox } from './checkbox';
+export { Switch } from './switch';
+export { Form, FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from './form';
