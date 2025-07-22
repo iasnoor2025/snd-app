@@ -21,7 +21,7 @@ import {
     SelectValue,
     Textarea,
 } from '@/Core';
-import FileUpload from '@/Core/components/ui/FileUpload';
+import { FileUpload } from '@/Core/components/ui';
 import { PageProps } from '@/Core/types/index.d';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Head, Link, router, usePage } from '@inertiajs/react';

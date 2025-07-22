@@ -13,7 +13,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/Core';
-import FileUpload from '@/Core/components/ui/FileUpload';
+import { FileUpload } from '@/Core/components/ui';
 import { Head, useForm } from '@inertiajs/react';
 import { format } from 'date-fns';
 import React from 'react';

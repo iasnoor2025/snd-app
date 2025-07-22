@@ -1,4 +1,4 @@
-import FileUpload from '@/Core/components/ui/FileUpload';
+import { FileUpload } from '@/Core/components/ui';
 
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
