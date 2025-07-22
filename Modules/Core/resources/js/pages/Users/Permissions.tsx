@@ -3,7 +3,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import { ArrowLeft, Key } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Checkbox } from '@/Core/components/ui/index';
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Checkbox } from '@/Core/components/ui';
 
 
 
