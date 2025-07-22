@@ -42,3 +42,4 @@ export { TimePicker } from './time-picker';
 export { ErrorAlert } from './error-alert';
 export { Pagination } from './pagination';
 export { default as FileUpload } from './FileUpload';
+export { useToast } from './toast';

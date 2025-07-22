@@ -10,7 +10,6 @@ export * from './services/avatar-service';
 export * from './services/pushNotificationService';
 
 // Components
-export * from './components/ui/toast';
 export { DialogClose } from './components/ui/dialog';
 export { FileUpload } from './components/ui/FileUpload';
 
@@ -57,6 +56,7 @@ export * as z from 'zod';
 export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './components/ui/table';
 export * from './components/ui';
 export { Progress, Switch, Toggle, TimePicker, ErrorAlert, Pagination, ToggleGroup, ToggleGroupItem, DialogFooter } from './components/ui';
+export { useToast } from './components/ui';
 
 // Export layouts
 export { default as AppLayout } from './layouts/AppLayout';
