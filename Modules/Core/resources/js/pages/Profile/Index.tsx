@@ -1,9 +1,13 @@
 import { formatDateMedium } from '@/Core/utils/dateFormatter';
 import { Link } from '@inertiajs/react';
 import { Calendar, Camera, Edit, Mail, Settings, Shield, User } from 'lucide-react';
-import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, SmartAvatar } from '@/Core/components/ui';
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Avatar, AvatarImage, AvatarFallback } from '@/Core/Components/ui';
 import AppLayout from '../../layouts/AppLayout';
 
+interface Role {
+    id: number;
+    name: string;
+}
 interface ProfileIndexProps {
     auth: {
         user: {
@@ -13,6 +17,7 @@ interface ProfileIndexProps {
             last_login_at?: string;
             email_verified_at?: string;
             created_at: string;
+            roles?: Role[];
         };
     };
 }
@@ -35,12 +40,15 @@ const ProfileIndex: React.FC<ProfileIndexProps> = ({ auth }) => {
                     <Card>
                         <CardContent className="p-6">
                             <div className="flex flex-col items-center gap-6 md:flex-row">
-                                <SmartAvatar user={user} size="2xl" className="h-32 w-32" />
+                                <Avatar className="h-32 w-32">
+                                    <AvatarImage src={undefined} alt={user.name} />
+                                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                </Avatar>
                                 <div className="flex-grow text-center md:text-left">
                                     <h1 className="mb-2 text-2xl font-bold">Welcome back, {user.name}!</h1>
                                     <div className="mb-4 text-gray-500 dark:text-gray-400">{user.email}</div>
                                     <div className="flex flex-wrap justify-center gap-2 md:justify-start">
-                                        <Badge variant={user.is_active ? 'success' : 'secondary'}>
+                                        <Badge variant={user.is_active ? 'default' : 'secondary'}>
                                             Status: {user.is_active ? 'Active' : 'Inactive'}
                                         </Badge>
                                         <Badge variant="outline">Last login: {formatDate(user.last_login_at)}</Badge>
@@ -94,7 +102,7 @@ const ProfileIndex: React.FC<ProfileIndexProps> = ({ auth }) => {
                                         <Mail className="h-4 w-4 text-gray-400" />
                                         <p className="text-sm text-gray-900 dark:text-gray-100">{user.email}</p>
                                         {user.email_verified_at && (
-                                            <Badge variant="success" size="sm">
+                                            <Badge variant="default">
                                                 Verified
                                             </Badge>
                                         )}
@@ -112,7 +120,7 @@ const ProfileIndex: React.FC<ProfileIndexProps> = ({ auth }) => {
                                 <div>
                                     <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Role</label>
                                     <div className="mt-1 flex flex-wrap gap-2">
-                                        {user.roles?.map((role) => (
+                                        {user.roles?.map((role: Role) => (
                                             <Badge key={role.id} variant="outline" className="flex items-center gap-1">
                                                 <Shield className="h-3 w-3" />
                                                 {role.name}
