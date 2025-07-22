@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Head } from '@inertiajs/react';
 import { router } from '@inertiajs/core';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
-import { Button } from '@/Core/components/ui/button';
-import { Input } from '@/Core/components/ui/input';
-import { Label } from '@/Core/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Core/components/ui/select';
-import { Badge } from '@/Core/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/components/ui/table';
-import { Pagination } from '@/Core/components/ui/pagination';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/Components/ui/card';
+import { Button } from '@/Core/Components/ui/button';
+import { Input } from '@/Core/Components/ui/input';
+import { Label } from '@/Core/Components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Core/Components/ui/select';
+import { Badge } from '@/Core/Components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/Components/ui/table';
+import { Pagination } from '@/Core/Components/ui/pagination';
 import { Plus, Search, Filter, Eye, Edit, Trash2, CheckCircle, XCircle, DollarSign } from 'lucide-react';
 import { toast } from 'sonner';
 

@@ -52,6 +52,7 @@ export { Calendar } from './calendar';
 export { DatePicker } from './date-picker';
 export { Pagination } from './pagination';
 export { Popover, PopoverContent, PopoverTrigger } from './popover';
+export { ScrollArea } from './scroll-area';
 export { useToast } from './toast';
 export { Progress } from './progress';
 export { Toggle } from './toggle';
