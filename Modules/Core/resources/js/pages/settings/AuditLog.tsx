@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-
-
-
-
+import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/components/ui';
 
 interface LogEntry {
     id: number;
@@ -57,7 +54,7 @@ export default function AuditLog() {
                     <Input placeholder="Search logs..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-64" />
                 </div>
                 <div className="overflow-x-auto rounded-md border">
-                    <Table>
+                    <table className="w-full">
                         <TableHeader>
                             <TableRow>
                                 <TableHead>User</TableHead>
@@ -83,15 +80,14 @@ export default function AuditLog() {
                                             <Badge variant="outline">{log.action}</Badge>
                                         </TableCell>
                                         <TableCell>{log.description}</TableCell>
-                                        <TableCell>{new Date(log.created_at)}</TableCell>
+                                        <TableCell>{new Date(log.created_at).toLocaleString()}</TableCell>
                                     </TableRow>
                                 ))
                             )}
                         </TableBody>
-                    </Table>
+                    </table>
                 </div>
             </CardContent>
         </Card>
     );
-import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/components/ui';
 }

@@ -1,11 +1,10 @@
 import { Button, Skeleton } from '@/Core';
-
+import { TableComponent } from '@/Core/components/ui';
 import { Pencil, Trash2 } from 'lucide-react';
 
 interface ResourceTableProps<T> {
     data: T[];
     columns: import('@/Core/components/ui/table').Column<T>[];
-import { TableComponent } from '@/Core/components/ui';
     onEdit: (resource: T) => void;
     onDelete: (resource: T) => void;
     isLoading?: boolean;

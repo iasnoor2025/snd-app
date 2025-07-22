@@ -4,7 +4,7 @@ import { Plus } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import TaskList from '@/ProjectManagement/Components/project/TaskList';
+import TaskList from '@/ProjectManagement/Components/project/TaskList.tsx';
 
 interface TasksTabProps {
     project: {
