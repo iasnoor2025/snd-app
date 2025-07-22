@@ -1,15 +1,29 @@
 import { Camera, Globe, Heart, Palette, Settings, Shield, Star, User, Users, Zap } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import AvatarUploader from '@/Core/components/Avatar/AvatarUploader.jsx';
+import AvatarUploader from '@/Core/components/Avatar/AvatarUploader';
 import { Avatar, AvatarFallback, AvatarImage, Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Separator, SmartAvatar, Tabs, TabsContent, TabsList, TabsTrigger } from '@/Core/components/ui';
 import AppLayout from '../../layouts/AppLayout';
 
-const AvatarPage = ({ auth }) => {
-    const [currentUser, setCurrentUser] = useState(auth.user);
+interface UserType {
+    id: number;
+    name: string;
+    email: string;
+    avatar: string | null;
+    role?: string;
+}
+
+interface AvatarPageProps {
+    auth: {
+        user: UserType;
+    };
+}
+
+const AvatarPage: React.FC<AvatarPageProps> = ({ auth }) => {
+    const [currentUser, setCurrentUser] = useState<UserType>(auth.user);
 
     // Mock team data for demonstration
-    const teamMembers = [
+    const teamMembers: UserType[] = [
         { id: 1, name: 'John Doe', email: 'john@example.com', avatar: null, role: 'Admin' },
         { id: 2, name: 'Jane Smith', email: 'jane@example.com', avatar: null, role: 'Manager' },
         { id: 3, name: 'Bob Johnson', email: 'bob@example.com', avatar: null, role: 'Developer' },
@@ -17,16 +31,15 @@ const AvatarPage = ({ auth }) => {
         { id: 5, name: 'Charlie Wilson', email: 'charlie@example.com', avatar: null, role: 'Developer' },
     ];
 
-    const handleAvatarUpdate = (newAvatarUrl) => {
+    const handleAvatarUpdate = (newAvatarUrl: string | null) => {
         setCurrentUser((prev) => ({
             ...prev,
             avatar: newAvatarUrl,
         }));
-
         toast.success('Avatar updated successfully');
     };
 
-    const getInitials = (name) => {
+    const getInitials = (name: string | null | undefined) => {
         if (!name) return '?';
         const names = name.trim().split(' ');
         if (names.length === 1) return names[0].charAt(0).toUpperCase();
@@ -84,7 +97,7 @@ const AvatarPage = ({ auth }) => {
                                             <CardContent className="space-y-4">
                                                 <div className="flex items-center space-x-4">
                                                     <Avatar className="h-16 w-16">
-                                                        <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
+                                                        <AvatarImage src={currentUser.avatar || undefined} alt={currentUser.name} />
                                                         <AvatarFallback className="text-lg">{getInitials(currentUser.name)}</AvatarFallback>
                                                     </Avatar>
                                                     <div>
