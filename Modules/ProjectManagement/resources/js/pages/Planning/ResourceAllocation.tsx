@@ -1,5 +1,5 @@
-import { Button } from '@/Core/Components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Core/Components/ui/card';
+import { Button } from '@/Core/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Core/components/ui/card';
 import { formatDateMedium } from '@/Core/utils/dateFormatter';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
