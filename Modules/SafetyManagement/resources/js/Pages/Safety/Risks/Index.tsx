@@ -16,6 +16,8 @@ interface Props {
 
 const RisksIndex: React.FC<Props> = ({ risks }) => {
     const { t } = useTranslation();
+    // Defensive: ensure risks is always an array
+    const safeRisks = Array.isArray(risks) ? risks : [];
     return (
         <Card className="p-6">
             <div className="mb-4 flex items-center justify-between">
@@ -32,7 +34,7 @@ const RisksIndex: React.FC<Props> = ({ risks }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {risks.map((risk) => (
+                    {safeRisks.map((risk) => (
                         <tr key={risk.id}>
                             <td>{risk.title}</td>
                             <td>{risk.risk_score}</td>

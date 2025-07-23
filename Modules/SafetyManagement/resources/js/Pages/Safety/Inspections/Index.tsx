@@ -15,6 +15,8 @@ interface Props {
 
 const InspectionsIndex: React.FC<Props> = ({ inspections }) => {
     const { t } = useTranslation();
+    // Defensive: ensure inspections is always an array
+    const safeInspections = Array.isArray(inspections) ? inspections : [];
     return (
         <Card className="p-6">
             <div className="mb-4 flex items-center justify-between">
@@ -24,16 +26,14 @@ const InspectionsIndex: React.FC<Props> = ({ inspections }) => {
             <Table>
                 <thead>
                     <tr>
-                        <th>{t('safety:inspections.scheduled_date')}</th>
-                        <th>{t('safety:inspections.status')}</th>
+                        <th>{t('safety:inspections.details')}</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    {inspections.map((inspection) => (
+                    {safeInspections.map((inspection) => (
                         <tr key={inspection.id}>
-                            <td>{inspection.scheduled_date}</td>
-                            <td>{t(`safety:inspections.status_${inspection.status}`)}</td>
+                            <td>{inspection.details}</td>
                             <td>
                                 <Button href={`/safety/inspections/${inspection.id}`}>{t('safety:inspections.view')}</Button>
                             </td>

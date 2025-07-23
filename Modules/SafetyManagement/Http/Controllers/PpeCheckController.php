@@ -12,7 +12,15 @@ class PpeCheckController extends Controller
     public function index()
     {
         $ppeChecks = PpeCheck::latest()->paginate(20);
-        return Inertia::render('Safety/PpeChecks/Index', ['ppeChecks' => $ppeChecks]);
+        return Inertia::render('Safety/PpeChecks/Index', [
+            'ppeChecks' => $ppeChecks->items() ?? [],
+            'pagination' => [
+                'total' => $ppeChecks->total(),
+                'per_page' => $ppeChecks->perPage(),
+                'current_page' => $ppeChecks->currentPage(),
+                'last_page' => $ppeChecks->lastPage(),
+            ],
+        ]);
     }
 
     public function create()

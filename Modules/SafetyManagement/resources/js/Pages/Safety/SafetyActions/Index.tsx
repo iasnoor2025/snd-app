@@ -17,6 +17,8 @@ interface Props {
 
 const SafetyActionsIndex: React.FC<Props> = ({ actions }) => {
     const { t } = useTranslation();
+    // Defensive: ensure actions is always an array
+    const safeActions = Array.isArray(actions) ? actions : [];
     return (
         <Card className="p-6">
             <div className="mb-4 flex items-center justify-between">
@@ -26,16 +28,14 @@ const SafetyActionsIndex: React.FC<Props> = ({ actions }) => {
             <Table>
                 <thead>
                     <tr>
-                        <th>{t('safety:safety_actions.due_date')}</th>
-                        <th>{t('safety:safety_actions.status')}</th>
+                        <th>{t('safety:safety_actions.details')}</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    {actions.map((action) => (
+                    {safeActions.map((action) => (
                         <tr key={action.id}>
-                            <td>{action.due_date}</td>
-                            <td>{t(`safety:safety_actions.status_${action.status}`)}</td>
+                            <td>{action.details}</td>
                             <td>
                                 <Button href={`/safety/safety-actions/${action.id}`}>{t('safety:safety_actions.view')}</Button>
                             </td>

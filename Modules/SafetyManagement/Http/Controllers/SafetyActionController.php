@@ -12,7 +12,15 @@ class SafetyActionController extends Controller
     public function index()
     {
         $actions = SafetyAction::latest()->paginate(20);
-        return Inertia::render('Safety/SafetyActions/Index', ['actions' => $actions]);
+        return Inertia::render('Safety/SafetyActions/Index', [
+            'actions' => $actions->items() ?? [],
+            'pagination' => [
+                'total' => $actions->total(),
+                'per_page' => $actions->perPage(),
+                'current_page' => $actions->currentPage(),
+                'last_page' => $actions->lastPage(),
+            ],
+        ]);
     }
 
     public function create()

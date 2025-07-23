@@ -15,6 +15,8 @@ interface Props {
 
 const PpeChecksIndex: React.FC<Props> = ({ ppeChecks }) => {
     const { t } = useTranslation();
+    // Defensive: ensure ppeChecks is always an array
+    const safePpeChecks = Array.isArray(ppeChecks) ? ppeChecks : [];
     return (
         <Card className="p-6">
             <div className="mb-4 flex items-center justify-between">
@@ -24,20 +26,16 @@ const PpeChecksIndex: React.FC<Props> = ({ ppeChecks }) => {
             <Table>
                 <thead>
                     <tr>
-                        <th>{t('safety:ppe_checks.check_date')}</th>
-                        <th>{t('safety:ppe_checks.status')}</th>
+                        <th>{t('safety:ppe_checks.details')}</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    {ppeChecks.map((check) => (
-                        <tr key={check.id}>
-                            <td>{check.check_date}</td>
-                            <td>{t(`safety:ppe_checks.status_${check.status}`)}</td>
+                    {safePpeChecks.map((ppeCheck) => (
+                        <tr key={ppeCheck.id}>
+                            <td>{ppeCheck.details}</td>
                             <td>
-                                <Button asChild>
-                                    <Link href={`/safety/ppe-checks/${check.id}`}>{t('safety:ppe_checks.view')}</Link>
-                                </Button>
+                                <Button href={`/safety/ppe-checks/${ppeCheck.id}`}>{t('safety:ppe_checks.view')}</Button>
                             </td>
                         </tr>
                     ))}

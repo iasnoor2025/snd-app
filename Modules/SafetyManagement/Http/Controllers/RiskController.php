@@ -12,7 +12,15 @@ class RiskController extends Controller
     public function index()
     {
         $risks = Risk::latest()->paginate(20);
-        return Inertia::render('Safety/Risks/Index', ['risks' => $risks]);
+        return Inertia::render('Safety/Risks/Index', [
+            'risks' => $risks->items() ?? [],
+            'pagination' => [
+                'total' => $risks->total(),
+                'per_page' => $risks->perPage(),
+                'current_page' => $risks->currentPage(),
+                'last_page' => $risks->lastPage(),
+            ],
+        ]);
     }
 
     public function create()

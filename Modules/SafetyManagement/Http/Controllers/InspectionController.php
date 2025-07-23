@@ -12,7 +12,15 @@ class InspectionController extends Controller
     public function index()
     {
         $inspections = Inspection::latest()->paginate(20);
-        return Inertia::render('Safety/Inspections/Index', ['inspections' => $inspections]);
+        return Inertia::render('Safety/Inspections/Index', [
+            'inspections' => $inspections->items() ?? [],
+            'pagination' => [
+                'total' => $inspections->total(),
+                'per_page' => $inspections->perPage(),
+                'current_page' => $inspections->currentPage(),
+                'last_page' => $inspections->lastPage(),
+            ],
+        ]);
     }
 
     public function create()
