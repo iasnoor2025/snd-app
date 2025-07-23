@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import PaymentTracker from '../../../components/rentals/PaymentTracker';
+import PaymentTracker from '../../../Components/rentals/PaymentTracker';
 // import { PaymentListing } from "@/Core";
 import { AppLayout, Button, formatCurrency, Tabs, TabsContent, TabsList, TabsTrigger } from '@/Core';
 import { ArrowLeft } from 'lucide-react';
