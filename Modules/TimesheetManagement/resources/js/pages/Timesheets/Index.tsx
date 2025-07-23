@@ -16,7 +16,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { route } from 'ziggy-js';
-import { ApprovalDialog } from '../../Components/ApprovalDialog';
+import { ApprovalDialog } from '../../components/ApprovalDialog';
 import { Eye, Edit } from 'lucide-react';
 import { Trash2 } from 'lucide-react';
 import { Permission } from '@/Core';
