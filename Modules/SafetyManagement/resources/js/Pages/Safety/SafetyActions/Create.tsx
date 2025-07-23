@@ -2,7 +2,7 @@ import { Card } from '@/../../Modules/Core/resources/js/components/ui/card';
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/Core/components/ui';
+import { Button } from '@/Core/Components/ui';
 
 const SafetyActionsCreate: React.FC = () => {
     const { t } = useTranslation();

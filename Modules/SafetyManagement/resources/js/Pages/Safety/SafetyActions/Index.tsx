@@ -3,7 +3,7 @@ import { Table } from '@/Core/components/ui/table';
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/Core/components/ui';
+import { Button } from '@/Core/Components/ui';
 
 interface SafetyAction {
     id: number;

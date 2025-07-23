@@ -19,7 +19,7 @@ import {
     TabsContent,
     TabsList,
     TabsTrigger,
-} from '@/Core/components/ui';
+} from '@/Core/Components/ui';
 import { usePermission } from '@/Core/hooks/usePermission';
 import AppLayout from '@/Core/layouts/AppLayout';
 import { User } from '@/Core/types';

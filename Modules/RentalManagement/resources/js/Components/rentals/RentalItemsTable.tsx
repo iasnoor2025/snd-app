@@ -8,7 +8,7 @@ import { Badge, Button, Table, TableBody, TableCell, TableHead, TableHeader, Tab
 import axios from 'axios';
 import { format } from 'date-fns';
 import { DynamicPricingManager } from '../DynamicPricingManager';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/Core/components/ui';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/Core/Components/ui';
 
 interface ExtendedRentalItem extends Omit<RentalItem, 'operator'> {
     daily_rate?: number;

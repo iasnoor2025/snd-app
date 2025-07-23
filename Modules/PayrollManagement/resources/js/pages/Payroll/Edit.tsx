@@ -1,11 +1,11 @@
-import { FileUpload } from '@/Core/components/ui';
+import { FileUpload } from '@/Core/Components/ui';
 
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Button } from '@/Core/components/ui';
+import { Button } from '@/Core/Components/ui';
 
 interface Props {
     payroll: any;

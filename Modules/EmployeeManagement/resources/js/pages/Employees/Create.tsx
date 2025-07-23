@@ -13,7 +13,7 @@ import DocumentsTab from '../../components/employees/create/tabs/DocumentsTab';
 import EmploymentDetailsTab from '../../components/employees/create/tabs/EmploymentDetailsTab';
 import PersonalInfoTab from '../../components/employees/create/tabs/PersonalInfoTab';
 import SalaryInfoTab from '../../components/employees/create/tabs/SalaryInfoTab';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Core/components/ui';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Core/Components/ui';
 
 
 

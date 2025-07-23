@@ -8,7 +8,7 @@ import { AlertCircle, FileDown, Loader2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card } from '../ui/card';
-import { Button, Input, Label, Separator } from '@/Core/components/ui';
+import { Button, Input, Label, Separator } from '@/Core/Components/ui';
 
 interface Employee {
     id: number;

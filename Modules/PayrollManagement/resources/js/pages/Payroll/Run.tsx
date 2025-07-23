@@ -16,7 +16,7 @@ import {
     Download,
     Eye
 } from 'lucide-react';
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle } from '@/Core/components/ui';
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle } from '@/Core/Components/ui';
 
 interface Props {
     payrollRun: {

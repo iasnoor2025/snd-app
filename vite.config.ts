@@ -193,8 +193,8 @@ export default defineConfig(
         resolve: {
             alias: {
                 '@/Core': path.resolve(__dirname, 'Modules/Core/resources/js'),
-                '@/Core/components': path.resolve(__dirname, 'Modules/Core/resources/js/components'),
-                '@/Core/components/ui': path.resolve(__dirname, 'Modules/Core/resources/js/components/ui'),
+                '@/Core/components': path.resolve(__dirname, 'Modules/Core/resources/js/Components'),
+                '@/Core/components/ui': path.resolve(__dirname, 'Modules/Core/resources/js/Components/ui'),
                 '@/Core/layouts': path.resolve(__dirname, 'Modules/Core/resources/js/layouts'),
                 '@/Core/services': path.resolve(__dirname, 'Modules/Core/resources/js/services'),
                 '@/Core/types': path.resolve(__dirname, 'Modules/Core/resources/js/types'),
