@@ -21,10 +21,12 @@ class NotificationService
     public function __construct()
     {
         $this->config = config('mobilebridge');
-        
+
         // Only initialize WebPush if VAPID keys are configured
         if ($this->hasValidVapidConfiguration()) {
             $this->initializeWebPush();
+        } else {
+            $this->webPush = null;
         }
     }
 
