@@ -1,7 +1,7 @@
 import { Alert, AlertDescription, AlertTitle, AppLayout } from '@/Core';
 import { Head, Link } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
-import TimesheetForm from '../../components/rentals/timesheets/TimesheetForm';
+import TimesheetForm from '../../Components/rentals/timesheets/TimesheetForm';
 // Placeholder types
 type PageProps = any;
 type Employee = any;

@@ -20,9 +20,9 @@ import axios from 'axios';
 import { format } from 'date-fns';
 import { Calendar, ChevronDown, Download, Plus, RefreshCw } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import PayrollDetails from '../../components/payroll/PayrollDetails';
-import PayrollGeneration from '../../components/payroll/PayrollGeneration';
-import PayrollList from '../../components/payroll/PayrollList';
+import PayrollDetails from '../../Components/payroll/PayrollDetails';
+import PayrollGeneration from '../../Components/payroll/PayrollGeneration';
+import PayrollList from '../../Components/payroll/PayrollList';
 import { Employee } from '../../types/employee';
 import { Payroll } from '../../types/payroll';
 

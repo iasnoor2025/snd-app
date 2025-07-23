@@ -21,9 +21,9 @@ import { Calendar, ChevronLeft, ChevronRight, List, Plus, Upload } from 'lucide-
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import BulkTimesheetUpload from '../../components/timesheets/BulkTimesheetUpload';
-import TimesheetCalendar from '../../components/timesheets/TimesheetCalendar';
-import TimesheetList from '../../components/timesheets/TimesheetList';
+import BulkTimesheetUpload from '../../Components/timesheets/BulkTimesheetUpload';
+import TimesheetCalendar from '../../Components/timesheets/TimesheetCalendar';
+import TimesheetList from '../../Components/timesheets/TimesheetList';
 import useLoadingState from '../../hooks/useLoadingState';
 import { Employee } from '../../types/employee';
 import { EmployeeTimesheet } from '../../types/timesheet';

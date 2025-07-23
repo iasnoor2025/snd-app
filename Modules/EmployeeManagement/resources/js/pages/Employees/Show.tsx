@@ -86,9 +86,9 @@ const FinalSettlementTab = React.lazy(() => import('../../components/employees/F
 import { Avatar, AvatarFallback, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Separator, Textarea } from '@/Core';
 import { useQueryClient } from '@tanstack/react-query';
 import { route } from 'ziggy-js';
-import { TimesheetForm } from '../../components/employees/timesheets/TimesheetForm';
-import { TimesheetList } from '../../components/employees/timesheets/TimesheetList';
-import { TimesheetSummary } from '../../components/employees/timesheets/TimesheetSummary';
+import { TimesheetForm } from '../../Components/employees/timesheets/TimesheetForm';
+import { TimesheetList } from '../../Components/employees/timesheets/TimesheetList';
+import { TimesheetSummary } from '../../Components/employees/timesheets/TimesheetSummary';
 
 // MediaLibrary and DailyTimesheetRecords components - implement as needed
 const MediaLibrary = ({ employeeId }: { employeeId: number }) => (
