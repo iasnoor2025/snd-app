@@ -16,7 +16,7 @@ import { FileText, Plus } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import CreateRentalItemForm from '../../pages/Rentals/Items/Create';
-import RentalItemsTable from './RentalItemsTable';
+import RentalItemsTable from './rentalItemsTable';
 
 interface RentalItem {
     id: number;

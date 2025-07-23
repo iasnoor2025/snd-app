@@ -24,7 +24,7 @@ import { CalendarPlus, ChevronDown, Clock, CreditCard, FileText, Loader2, Pencil
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import RentalExtensionDialog from './RentalExtensionDialog';
+import RentalExtensionDialog from './rentalExtensionDialog';
 
 interface RentalActionsCardProps {
     rental: {
