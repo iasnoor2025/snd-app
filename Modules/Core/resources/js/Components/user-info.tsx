@@ -17,8 +17,25 @@ export function UserInfo({ user, showName = true }: UserInfoProps) {
     const { auth } = usePage<SharedData>().props;
     const currentUser = user || auth.user;
     const getInitials = useInitials();
+    // Defensive: handle guest (no user)
+    if (!currentUser) {
+        return (
+            <div className="flex items-center gap-2">
+                <SmartAvatar>
+                    <Avatar>
+                        <AvatarFallback>G</AvatarFallback>
+                    </Avatar>
+                </SmartAvatar>
+                {showName && (
+                    <div className="flex flex-col min-w-0">
+                        <span className="text-sm font-medium truncate">Guest</span>
+                        <span className="text-xs text-muted-foreground truncate">&nbsp;</span>
+                    </div>
+                )}
+            </div>
+        );
+    }
     const initials = getInitials(currentUser.name);
-
     return (
         <div className="flex items-center gap-2">
             <SmartAvatar>

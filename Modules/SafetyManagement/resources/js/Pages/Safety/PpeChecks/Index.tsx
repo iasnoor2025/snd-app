@@ -2,6 +2,7 @@ import { Card, Table, Button } from '@/Core/Components/ui';
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import AppLayout from '@/Core/layouts/AppLayout';
 
 interface PpeCheck {
     id: number;
@@ -18,32 +19,34 @@ const PpeChecksIndex: React.FC<Props> = ({ ppeChecks }) => {
     // Defensive: ensure ppeChecks is always an array
     const safePpeChecks = Array.isArray(ppeChecks) ? ppeChecks : [];
     return (
-        <Card className="p-6">
-            <div className="mb-4 flex items-center justify-between">
-                <h1 className="text-2xl font-bold">{t('safety:ppe_checks.title')}</h1>
-                <Button href="/safety/ppe-checks/create">{t('safety:ppe_checks.create')}</Button>
-            </div>
-            <Table>
-                <thead>
-                    <tr>
-                        <th>{t('safety:ppe_checks.check_date')}</th>
-                        <th>{t('safety:ppe_checks.status')}</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {safePpeChecks.map((ppeCheck) => (
-                        <tr key={ppeCheck.id}>
-                            <td>{ppeCheck.check_date}</td>
-                            <td>{t(`safety:ppe_checks.status_${ppeCheck.status}`)}</td>
-                            <td>
-                                <Button href={`/safety/ppe-checks/${ppeCheck.id}`}>{t('safety:ppe_checks.view')}</Button>
-                            </td>
+        <AppLayout>
+            <Card className="p-6">
+                <div className="mb-4 flex items-center justify-between">
+                    <h1 className="text-2xl font-bold">{t('safety:ppe_checks.title')}</h1>
+                    <Button href="/safety/ppe-checks/create">{t('safety:ppe_checks.create')}</Button>
+                </div>
+                <Table>
+                    <thead>
+                        <tr>
+                            <th>{t('safety:ppe_checks.check_date')}</th>
+                            <th>{t('safety:ppe_checks.status')}</th>
+                            <th></th>
                         </tr>
-                    ))}
-                </tbody>
-            </Table>
-        </Card>
+                    </thead>
+                    <tbody>
+                        {safePpeChecks.map((ppeCheck) => (
+                            <tr key={ppeCheck.id}>
+                                <td>{ppeCheck.check_date}</td>
+                                <td>{t(`safety:ppe_checks.status_${ppeCheck.status}`)}</td>
+                                <td>
+                                    <Button href={`/safety/ppe-checks/${ppeCheck.id}`}>{t('safety:ppe_checks.view')}</Button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
+            </Card>
+        </AppLayout>
     );
 };
 

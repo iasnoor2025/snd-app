@@ -2,6 +2,7 @@ import { Card, Table, Button } from '@/Core/Components/ui';
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import AppLayout from '@/Core/layouts/AppLayout';
 
 interface Risk {
     id: number;
@@ -19,34 +20,36 @@ const RisksIndex: React.FC<Props> = ({ risks }) => {
     // Defensive: ensure risks is always an array
     const safeRisks = Array.isArray(risks) ? risks : [];
     return (
-        <Card className="p-6">
-            <div className="mb-4 flex items-center justify-between">
-                <h1 className="text-2xl font-bold">{t('safety:risks.title')}</h1>
-                <Button href="/safety/risks/create">{t('safety:risks.create')}</Button>
-            </div>
-            <Table>
-                <thead>
-                    <tr>
-                        <th>{t('safety:risks.title')}</th>
-                        <th>{t('safety:risks.risk_score')}</th>
-                        <th>{t('safety:risks.status')}</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {safeRisks.map((risk) => (
-                        <tr key={risk.id}>
-                            <td>{risk.title}</td>
-                            <td>{risk.risk_score}</td>
-                            <td>{t(`safety:risks.status_${risk.status}`)}</td>
-                            <td>
-                                <Button href={`/safety/risks/${risk.id}`}>{t('safety:risks.view')}</Button>
-                            </td>
+        <AppLayout>
+            <Card className="p-6">
+                <div className="mb-4 flex items-center justify-between">
+                    <h1 className="text-2xl font-bold">{t('safety:risks.title')}</h1>
+                    <Button href="/safety/risks/create">{t('safety:risks.create')}</Button>
+                </div>
+                <Table>
+                    <thead>
+                        <tr>
+                            <th>{t('safety:risks.title')}</th>
+                            <th>{t('safety:risks.risk_score')}</th>
+                            <th>{t('safety:risks.status')}</th>
+                            <th></th>
                         </tr>
-                    ))}
-                </tbody>
-            </Table>
-        </Card>
+                    </thead>
+                    <tbody>
+                        {safeRisks.map((risk) => (
+                            <tr key={risk.id}>
+                                <td>{risk.title}</td>
+                                <td>{risk.risk_score}</td>
+                                <td>{t(`safety:risks.status_${risk.status}`)}</td>
+                                <td>
+                                    <Button href={`/safety/risks/${risk.id}`}>{t('safety:risks.view')}</Button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
+            </Card>
+        </AppLayout>
     );
 };
 
