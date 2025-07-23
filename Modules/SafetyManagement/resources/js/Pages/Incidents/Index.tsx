@@ -1,4 +1,5 @@
 import { Card, Table, Button } from '@/Core/Components/ui';
+import { Link } from '@inertiajs/react';
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -26,7 +27,9 @@ const IncidentsIndex: React.FC<Props> = ({ incidents }) => {
             <Card className="p-6">
                 <div className="mb-4 flex items-center justify-between">
                     <h1 className="text-2xl font-bold">{t('safety:incidents.title')}</h1>
-                    <Button href="/safety/incidents/create">{t('safety:incidents.create')}</Button>
+                    <Button asChild>
+                        <Link href="/safety/incidents/create">{t('safety:incidents.create')}</Link>
+                    </Button>
                 </div>
                 <Table>
                     <thead>
@@ -46,7 +49,9 @@ const IncidentsIndex: React.FC<Props> = ({ incidents }) => {
                                 <td>{t(`safety:incidents.severity_${incident.severity}`)}</td>
                                 <td>{t(`safety:incidents.status_${incident.status}`)}</td>
                                 <td>
-                                    <Button href={`/safety/incidents/${incident.id}`}>{t('safety:incidents.view')}</Button>
+                                    <Button asChild>
+                                        <Link href={`/safety/incidents/${incident.id}`}>{t('safety:incidents.view')}</Link>
+                                    </Button>
                                 </td>
                             </tr>
                         ))}

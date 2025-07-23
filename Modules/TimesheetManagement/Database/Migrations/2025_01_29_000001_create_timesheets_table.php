@@ -23,7 +23,7 @@ return new class extends Migration
             // Legacy columns for backward compatibility
             $table->unsignedBigInteger('project_id')->nullable()->comment('Legacy - use assignment_id instead');
             $table->unsignedBigInteger('rental_id')->nullable()->comment('Legacy - use assignment_id instead');
-            
+
             $table->text('description')->nullable();
             $table->date('date');
             $table->time('start_time');

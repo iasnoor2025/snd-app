@@ -14,8 +14,16 @@ interface UserInfoProps {
 }
 
 export function UserInfo({ user, showName = true }: UserInfoProps) {
-    const { auth } = usePage<SharedData>().props;
-    const currentUser = user || auth.user;
+    let currentUser = user;
+    try {
+        // Defensive: handle missing props or auth
+        const page = usePage<SharedData>();
+        if (!currentUser && page && page.props && page.props.auth) {
+            currentUser = page.props.auth.user;
+        }
+    } catch (e) {
+        // If usePage throws, fallback to guest
+    }
     const getInitials = useInitials();
     // Defensive: handle guest (no user)
     if (!currentUser) {

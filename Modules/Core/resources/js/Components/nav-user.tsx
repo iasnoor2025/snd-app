@@ -12,6 +12,19 @@ export function NavUser() {
     const { isCollapsed } = useSidebar();
     const isMobile = useIsMobile();
 
+    // Defensive: handle guest (no auth or no user)
+    if (!auth || !auth.user) {
+        return (
+            <SidebarMenu>
+                <SidebarMenuItem>
+                    <SidebarMenuButton size="lg" className="group text-sidebar-accent-foreground">
+                        <UserInfo user={undefined} showName={!isCollapsed} />
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+            </SidebarMenu>
+        );
+    }
+
     return (
         <SidebarMenu>
             <SidebarMenuItem>
