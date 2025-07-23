@@ -1,6 +1,6 @@
-import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/../../Modules/Core/resources/js/components/ui/dialog';
+import { Button } from '@/../../Modules/Core/resources/js/Components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/Components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/../../Modules/Core/resources/js/Components/ui/dialog';
 import axios from 'axios';
 import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useState } from 'react';

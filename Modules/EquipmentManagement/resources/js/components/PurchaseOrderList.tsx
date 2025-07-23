@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/Components/ui/card';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 

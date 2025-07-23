@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/Components/ui/card';
 import { formatDateMedium } from '@/Core/utils/dateFormatter';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -1,6 +1,6 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/../../Modules/Core/resources/js/components/ui/avatar';
-import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/../../Modules/Core/resources/js/Components/ui/avatar';
+import { Button } from '@/../../Modules/Core/resources/js/Components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/Components/ui/card';
 import {
     Dialog,
     DialogContent,
@@ -8,7 +8,7 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from '@/../../Modules/Core/resources/js/components/ui/dialog';
+} from '@/../../Modules/Core/resources/js/Components/ui/dialog';
 import { useEffect, useRef, useState } from 'react';
 import { Tree } from 'react-d3-tree';
 import { toast } from 'sonner';

@@ -1,7 +1,7 @@
-import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/components/ui/card';
-import { Input } from '@/../../Modules/Core/resources/js/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/../../Modules/Core/resources/js/components/ui/select';
+import { Button } from '@/../../Modules/Core/resources/js/Components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/Components/ui/card';
+import { Input } from '@/../../Modules/Core/resources/js/Components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/../../Modules/Core/resources/js/Components/ui/select';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
