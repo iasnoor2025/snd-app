@@ -139,6 +139,31 @@ const customerPages: Record<string, string> = {
     'Customers/Show': './Modules/CustomerManagement/resources/js/pages/Customers/Show.tsx',
 };
 
+// Safety Management module pages
+const safetyPages: Record<string, string> = {
+    'SafetyManagement/Incidents/Index': './Modules/SafetyManagement/resources/js/Pages/Incidents/Index.tsx',
+    'SafetyManagement/Incidents/Create': './Modules/SafetyManagement/resources/js/Pages/Incidents/Create.tsx',
+    'SafetyManagement/Incidents/Show': './Modules/SafetyManagement/resources/js/Pages/Incidents/Show.tsx',
+    'SafetyManagement/Incidents/Edit': './Modules/SafetyManagement/resources/js/Pages/Incidents/Edit.tsx',
+    'Safety/Risks/Index': './Modules/SafetyManagement/resources/js/Pages/Safety/Risks/Index.tsx',
+    'Safety/Risks/Create': './Modules/SafetyManagement/resources/js/Pages/Safety/Risks/Create.tsx',
+    'Safety/Risks/Show': './Modules/SafetyManagement/resources/js/Pages/Safety/Risks/Show.tsx',
+    'Safety/Risks/Edit': './Modules/SafetyManagement/resources/js/Pages/Safety/Risks/Edit.tsx',
+    'Safety/Inspections/Index': './Modules/SafetyManagement/resources/js/Pages/Safety/Inspections/Index.tsx',
+    'Safety/Inspections/Create': './Modules/SafetyManagement/resources/js/Pages/Safety/Inspections/Create.tsx',
+    'Safety/Inspections/Show': './Modules/SafetyManagement/resources/js/Pages/Safety/Inspections/Show.tsx',
+    'Safety/Inspections/Edit': './Modules/SafetyManagement/resources/js/Pages/Safety/Inspections/Edit.tsx',
+    'Safety/PpeChecks/Index': './Modules/SafetyManagement/resources/js/Pages/Safety/PpeChecks/Index.tsx',
+    'Safety/PpeChecks/Create': './Modules/SafetyManagement/resources/js/Pages/Safety/PpeChecks/Create.tsx',
+    'Safety/PpeChecks/Show': './Modules/SafetyManagement/resources/js/Pages/Safety/PpeChecks/Show.tsx',
+    'Safety/PpeChecks/Edit': './Modules/SafetyManagement/resources/js/Pages/Safety/PpeChecks/Edit.tsx',
+    'Safety/SafetyActions/Index': './Modules/SafetyManagement/resources/js/Pages/Safety/SafetyActions/Index.tsx',
+    'Safety/SafetyActions/Create': './Modules/SafetyManagement/resources/js/Pages/Safety/SafetyActions/Create.tsx',
+    'Safety/SafetyActions/Show': './Modules/SafetyManagement/resources/js/Pages/Safety/SafetyActions/Show.tsx',
+    'Safety/SafetyActions/Edit': './Modules/SafetyManagement/resources/js/Pages/Safety/SafetyActions/Edit.tsx',
+    'Safety/Dashboard/Index': './Modules/SafetyManagement/resources/js/Pages/Safety/Dashboard/Index.tsx',
+};
+
 // Leave Management module pages
 const leaveRequestPages: Record<string, string> = {
     'LeaveRequests/Index': './Modules/LeaveManagement/resources/js/pages/LeaveRequests/Index.tsx',
@@ -175,6 +200,7 @@ const allPageMappings: Record<string, string> = {
     ...rentalPages,
     ...timesheetPages,
     ...customerPages,
+    ...safetyPages,
     ...leaveRequestPages,
     ...corePages,
 };
@@ -194,6 +220,7 @@ const moduleMap: Record<string, string[]> = {
     LeaveRequests: ['LeaveManagement'],
     Equipment: ['EquipmentManagement'],
     Customers: ['CustomerManagement'],
+    SafetyManagement: ['SafetyManagement'],
     Users: ['Core'],
     Roles: ['Core'],
     Permissions: ['Core'],

@@ -3,7 +3,7 @@ import { PageProps } from '@/Core/types';
 import { Head } from '@inertiajs/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import TimesheetForm from '../../components/rentals/timesheets/TimesheetForm';
+import TimesheetForm from '../../Components/rentals/timesheets/TimesheetForm';
 
 // Icons
 import { AlertCircle } from 'lucide-react';

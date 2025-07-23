@@ -1,0 +1,65 @@
+{
+    "incidents": {
+        "title": "Safety Incidents",
+        "create": "Create Incident",
+        "edit": "Edit Incident",
+        "details": "Incident Details",
+        "save": "Save Incident",
+        "view": "View",
+        "date": "Date",
+        "location": "Location",
+        "description": "Description",
+        "severity": "Severity",
+        "status": "Status",
+        "severity_low": "Low",
+        "severity_medium": "Medium",
+        "severity_high": "High",
+        "severity_critical": "Critical",
+        "status_open": "Open",
+        "status_in_progress": "In Progress",
+        "status_closed": "Closed"
+    },
+    "risks": {
+        "title": "Risk Management",
+        "create": "Create Risk",
+        "edit": "Edit Risk",
+        "details": "Risk Details",
+        "save": "Save Risk",
+        "view": "View",
+        "title": "Title",
+        "risk_score": "Risk Score",
+        "status": "Status",
+        "description": "Description"
+    },
+    "inspections": {
+        "title": "Safety Inspections",
+        "create": "Create Inspection",
+        "edit": "Edit Inspection",
+        "details": "Inspection Details",
+        "save": "Save Inspection",
+        "view": "View"
+    },
+    "ppe_checks": {
+        "title": "PPE Checks",
+        "create": "Create PPE Check",
+        "edit": "Edit PPE Check",
+        "details": "PPE Check Details",
+        "save": "Save PPE Check",
+        "view": "View"
+    },
+    "safety_actions": {
+        "title": "Safety Actions",
+        "create": "Create Safety Action",
+        "edit": "Edit Safety Action",
+        "details": "Safety Action Details",
+        "save": "Save Safety Action",
+        "view": "View"
+    },
+    "dashboard": {
+        "title": "Safety Dashboard",
+        "loading": "Loading...",
+        "incident_rate": "Incident Rate",
+        "overdue_actions": "Overdue Actions",
+        "training_compliance": "Training Compliance"
+    }
+}
