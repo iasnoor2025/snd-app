@@ -16,7 +16,7 @@ import {
     X as XIcon,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { ApprovalDialog } from '../../Components/ApprovalDialog';
+import { ApprovalDialog } from '../../components/ApprovalDialog';
 import { toast } from 'sonner';
 import { Badge, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/Core/Components/ui';
 
