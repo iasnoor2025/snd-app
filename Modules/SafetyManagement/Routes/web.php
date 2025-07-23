@@ -8,9 +8,8 @@ use Modules\SafetyManagement\Http\Controllers\TrainingRecordController;
 use Modules\SafetyManagement\Http\Controllers\PpeCheckController;
 use Modules\SafetyManagement\Http\Controllers\SafetyActionController;
 
-Route::middleware(['auth', 'verified'])->prefix('safety')->name('safety.')->group(function () {
-    Route::resource('incidents', IncidentController::class)
-        ->middleware('permission:incidents.view');
+Route::middleware(['auth'])->prefix('safety')->name('safety.')->group(function () {
+    Route::resource('incidents', IncidentController::class);
     Route::post('incidents/{incident}/close', [IncidentController::class, 'close'])
         ->name('incidents.close')->middleware('permission:incidents.edit');
 

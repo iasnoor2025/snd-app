@@ -2,8 +2,8 @@ import { Breadcrumbs, Button, Tabs, TabsContent, TabsList, TabsTrigger } from '@
 import { ArrowLeft, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import PerformanceReviewForm from '../../Components/employees/PerformanceReviewForm';
-import PerformanceReviewList from '../../Components/employees/PerformanceReviewList';
+import PerformanceReviewForm from '../../components/employees/PerformanceReviewForm';
+import PerformanceReviewList from '../../components/employees/PerformanceReviewList';
 import { PerformanceReview } from '../../types/employee';
 
 export default function PerformanceManagement({ employeeId }: { employeeId?: string }) {
@@ -84,7 +84,7 @@ export default function PerformanceManagement({ employeeId }: { employeeId?: str
                     <PerformanceReviewList
                         employeeId={employeeId ? parseInt(employeeId) : undefined}
                         onCreateNew={handleCreateNew}
-                        onEdit={handleEdit}
+                        onEdit={handleEdit} 
                     />
                 </TabsContent>
 
