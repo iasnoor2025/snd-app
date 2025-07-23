@@ -8,11 +8,11 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import CertificationsTab from '../../Components/employees/create/tabs/CertificationsTab';
-import DocumentsTab from '../../Components/employees/create/tabs/DocumentsTab';
-import EmploymentDetailsTab from '../../Components/employees/create/tabs/EmploymentDetailsTab';
-import PersonalInfoTab from '../../Components/employees/create/tabs/PersonalInfoTab';
-import SalaryInfoTab from '../../Components/employees/create/tabs/SalaryInfoTab';
+import CertificationsTab from '../../components/employees/create/tabs/CertificationsTab';
+import DocumentsTab from '../../components/employees/create/tabs/DocumentsTab';
+import EmploymentDetailsTab from '../../components/employees/create/tabs/EmploymentDetailsTab';
+import PersonalInfoTab from '../../components/employees/create/tabs/PersonalInfoTab';
+import SalaryInfoTab from '../../components/employees/create/tabs/SalaryInfoTab';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Core/Components/ui';
 
 
