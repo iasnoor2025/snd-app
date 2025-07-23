@@ -1,5 +1,5 @@
 import { AppLayout, Badge, Button, Card, CardContent, CardHeader, CardTitle, getTranslation, Separator } from '@/Core';
-import Link from '@/Core/components/text-link';
+import Link from '@/Core/Components/text-link';
 import { PageProps } from '@/Core/types';
 import { formatDateMedium } from '@/Core/utils/dateFormatter';
 import { Head, router } from '@inertiajs/react';

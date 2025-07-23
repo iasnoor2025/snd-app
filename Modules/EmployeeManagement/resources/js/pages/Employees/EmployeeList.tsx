@@ -1,4 +1,4 @@
-import { Button } from '@/Core/components/Common/Button';
+import { Button } from '@/Core/Components/Common/Button';
 import { useTranslation } from 'react-i18next';
 
 export default function EmployeeList() {
