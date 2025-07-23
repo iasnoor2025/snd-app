@@ -7,6 +7,12 @@ use Modules\SafetyManagement\Domain\Models\Incident;
 
 class IncidentPolicy
 {
+    public function viewAny(User $user)
+    {
+        // Allow all admins, supervisors, safety managers, and anyone with incidents.view permission
+        return $user->hasRole(['admin', 'supervisor', 'safety_manager']) || $user->can('incidents.view');
+    }
+
     public function view(User $user, Incident $incident)
     {
         return $user->id === $incident->user_id || $user->hasRole(['supervisor', 'safety_manager']);

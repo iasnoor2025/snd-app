@@ -18,6 +18,8 @@ interface Props {
 
 const IncidentsIndex: React.FC<Props> = ({ incidents }) => {
     const { t } = useTranslation();
+    // Defensive: ensure incidents is always an array
+    const safeIncidents = Array.isArray(incidents) ? incidents : [];
     return (
         <Card className="p-6">
             <div className="mb-4 flex items-center justify-between">
@@ -35,7 +37,7 @@ const IncidentsIndex: React.FC<Props> = ({ incidents }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {incidents.map((incident) => (
+                    {safeIncidents.map((incident) => (
                         <tr key={incident.id}>
                             <td>{incident.date}</td>
                             <td>{incident.location}</td>

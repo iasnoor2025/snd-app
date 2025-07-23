@@ -12,7 +12,15 @@ class IncidentController extends Controller
     public function index()
     {
         $incidents = Incident::latest()->paginate(20);
-        return Inertia::render('SafetyManagement/Incidents/Index', ['incidents' => $incidents]);
+        return Inertia::render('SafetyManagement/Incidents/Index', [
+            'incidents' => $incidents->items() ?? [],
+            'pagination' => [
+                'total' => $incidents->total(),
+                'per_page' => $incidents->perPage(),
+                'current_page' => $incidents->currentPage(),
+                'last_page' => $incidents->lastPage(),
+            ],
+        ]);
     }
 
     public function create()
