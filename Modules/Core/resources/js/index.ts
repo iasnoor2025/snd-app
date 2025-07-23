@@ -191,4 +191,4 @@ export { Alert, AlertDescription, AlertTitle } from './Components/ui';
 export { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from './Components/ui';
 export { AlertDialogTrigger } from './Components/ui';
 export { useToast } from './Components/ui';
-export { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from './components/ui/breadcrumb';
+export { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from './Components/ui/breadcrumb';
