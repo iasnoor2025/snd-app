@@ -1,7 +1,7 @@
 import { ApplicationLogo, Dropdown, NavLink, ResponsiveNavLink } from '@/Core';
 import { Link, usePage } from '@inertiajs/react';
 import React, { PropsWithChildren, useState } from 'react';
-import { SmartAvatar } from '../components/ui/smart-avatar';
+import { SmartAvatar } from '../Components/ui/smart-avatar';
 import type { User } from '../types/index.d';
 
 interface PageProps {

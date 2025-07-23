@@ -1,6 +1,6 @@
 import { Loader2, X } from 'lucide-react';
 import React, { HTMLAttributes, forwardRef } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '../../components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '../../Components/ui/dialog';
 import { cn } from '../../lib/utils';
 import { Button } from './Button';
 

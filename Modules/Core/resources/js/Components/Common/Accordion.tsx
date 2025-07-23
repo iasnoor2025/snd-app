@@ -1,5 +1,5 @@
 import React, { HTMLAttributes, forwardRef } from 'react';
-import { AccordionContent, AccordionItem, AccordionTrigger, Accordion as ShadcnAccordion } from '../../components/ui/accordion';
+import { AccordionContent, AccordionItem, AccordionTrigger, Accordion as ShadcnAccordion } from '../../Components/ui/accordion';
 import { cn } from '../../lib/utils';
 
 export interface AccordionItem {

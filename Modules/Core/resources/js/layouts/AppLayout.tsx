@@ -2,9 +2,9 @@ import { Head } from '@inertiajs/react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Toaster } from 'sonner';
-import { AppShell } from '../components/app-shell';
-import { AppSidebar } from '../components/app-sidebar';
-import { AppSidebarHeader } from '../components/app-sidebar-header';
+import { AppShell } from '../Components/app-shell';
+import { AppSidebar } from '../Components/app-sidebar';
+import { AppSidebarHeader } from '../Components/app-sidebar-header';
 import type { BreadcrumbItem } from '../types';
 
 interface AppLayoutProps {

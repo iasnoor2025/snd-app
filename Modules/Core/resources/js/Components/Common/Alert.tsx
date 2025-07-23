@@ -1,6 +1,6 @@
 import { AlertCircle, CheckCircle, Info, X, XCircle } from 'lucide-react';
 import React, { HTMLAttributes, forwardRef } from 'react';
-import { AlertDescription, AlertTitle, Alert as ShadcnAlert } from '../../components/ui/alert';
+import { AlertDescription, AlertTitle, Alert as ShadcnAlert } from '../../Components/ui/alert';
 import { cn } from '../../lib/utils';
 
 /**

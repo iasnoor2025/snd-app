@@ -1,8 +1,8 @@
 import { HelpCircle } from 'lucide-react';
 import React, { InputHTMLAttributes, forwardRef } from 'react';
-import { Input as ShadcnInput } from '../../components/ui/input';
-import { Label } from '../../components/ui/label';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../../components/ui/tooltip';
+import { Input as ShadcnInput } from '../../Components/ui/input';
+import { Label } from '../../Components/ui/label';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../../Components/ui/tooltip';
 import { cn } from '../../lib/utils';
 
 /**

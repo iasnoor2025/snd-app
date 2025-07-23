@@ -1,6 +1,6 @@
 import { HelpCircle } from 'lucide-react';
 import React, { SelectHTMLAttributes, forwardRef } from 'react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../../components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../../Components/ui/tooltip';
 import { cn } from '../../lib/utils';
 import { Label } from '../ui/label';
 

@@ -1,6 +1,6 @@
 import { Loader2 } from 'lucide-react';
 import React, { HTMLAttributes, forwardRef } from 'react';
-import { CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Card as ShadcnCard } from '../../components/ui/card';
+import { CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Card as ShadcnCard } from '../../Components/ui/card';
 import { cn } from '../../lib/utils';
 
 /**

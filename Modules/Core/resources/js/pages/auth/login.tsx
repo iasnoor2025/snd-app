@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 
 
-import AppLogo from '../../components/app-logo';
+import AppLogo from '../../Components/app-logo';
 import { FaEnvelope, FaLock, FaGoogle } from 'react-icons/fa';
 import { Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Input } from '@/Core/Components/ui';
 

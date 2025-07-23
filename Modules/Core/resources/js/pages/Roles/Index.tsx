@@ -22,8 +22,8 @@ import { useState } from 'react';
 import { Edit, Eye, Plus, Search, Shield, Trash2, Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/ui/select';
-import { Table } from '../../components/Common/Table';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../Components/ui/select';
+import { Table } from '../../Components/Common/Table';
 import { CrudButtons } from '@/Core';
 
 const breadcrumbs: BreadcrumbItem[] = [
