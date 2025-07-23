@@ -26,14 +26,16 @@ const InspectionsIndex: React.FC<Props> = ({ inspections }) => {
             <Table>
                 <thead>
                     <tr>
-                        <th>{t('safety:inspections.details')}</th>
+                        <th>{t('safety:inspections.scheduled_date')}</th>
+                        <th>{t('safety:inspections.status')}</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     {safeInspections.map((inspection) => (
                         <tr key={inspection.id}>
-                            <td>{inspection.details}</td>
+                            <td>{inspection.scheduled_date}</td>
+                            <td>{t(`safety:inspections.status_${inspection.status}`)}</td>
                             <td>
                                 <Button href={`/safety/inspections/${inspection.id}`}>{t('safety:inspections.view')}</Button>
                             </td>

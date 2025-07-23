@@ -26,14 +26,16 @@ const PpeChecksIndex: React.FC<Props> = ({ ppeChecks }) => {
             <Table>
                 <thead>
                     <tr>
-                        <th>{t('safety:ppe_checks.details')}</th>
+                        <th>{t('safety:ppe_checks.check_date')}</th>
+                        <th>{t('safety:ppe_checks.status')}</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     {safePpeChecks.map((ppeCheck) => (
                         <tr key={ppeCheck.id}>
-                            <td>{ppeCheck.details}</td>
+                            <td>{ppeCheck.check_date}</td>
+                            <td>{t(`safety:ppe_checks.status_${ppeCheck.status}`)}</td>
                             <td>
                                 <Button href={`/safety/ppe-checks/${ppeCheck.id}`}>{t('safety:ppe_checks.view')}</Button>
                             </td>

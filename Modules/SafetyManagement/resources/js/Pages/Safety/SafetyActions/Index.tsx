@@ -1,9 +1,6 @@
-import { Card } from '@/../../Modules/Core/resources/js/Components/ui/card';
-import { Table } from '@/Core/Components/ui/table';
-
+import { Card, Table, Button } from '@/Core/Components/ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/Core/Components/ui';
 
 interface SafetyAction {
     id: number;
@@ -28,14 +25,16 @@ const SafetyActionsIndex: React.FC<Props> = ({ actions }) => {
             <Table>
                 <thead>
                     <tr>
-                        <th>{t('safety:safety_actions.details')}</th>
+                        <th>{t('safety:safety_actions.due_date')}</th>
+                        <th>{t('safety:safety_actions.status')}</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     {safeActions.map((action) => (
                         <tr key={action.id}>
-                            <td>{action.details}</td>
+                            <td>{action.due_date}</td>
+                            <td>{t(`safety:safety_actions.status_${action.status}`)}</td>
                             <td>
                                 <Button href={`/safety/safety-actions/${action.id}`}>{t('safety:safety_actions.view')}</Button>
                             </td>
