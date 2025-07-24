@@ -1,5 +1,5 @@
 import { Button } from '@/Core/Components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableRow } from '@/Core/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableRow } from '@/Core/Components/ui/table';
 import { Link } from '@inertiajs/react';
 import React from 'react';
 import { toast } from 'sonner';
