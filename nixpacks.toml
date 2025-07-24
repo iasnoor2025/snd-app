@@ -1,6 +1,6 @@
 [phases.setup]
 nixPkgs = [
-    "composer",
+    "composer2",
     "python311Packages.supervisor"
 ]
 
