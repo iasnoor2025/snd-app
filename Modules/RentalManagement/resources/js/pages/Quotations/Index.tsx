@@ -3,7 +3,7 @@ import { DataTable } from '@/Core/components/ui/data-table';
 import AppLayout from '@/Core/layouts/AppLayout';
 import React from 'react';
 import { Eye, Download } from 'lucide-react';
-import { Badge } from '@/Core/components/ui/badge';
+import { Badge } from '@/Core/Components/ui/badge';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/Core/components/ui/select';
 import { useState } from 'react';
 

@@ -1,4 +1,4 @@
-import { Badge } from '@/Core/components/ui/badge';
+import { Badge } from '@/Core/Components/ui/badge';
 import { Button } from '@/Core/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/components/ui/table';
