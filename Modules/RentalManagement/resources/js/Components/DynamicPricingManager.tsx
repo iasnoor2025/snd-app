@@ -8,12 +8,13 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from '@/../../Modules/Core/resources/js/components/ui/dialog';
-import { Input } from '@/../../Modules/Core/resources/js/components/ui/input';
-import { Label } from '@/../../Modules/Core/resources/js/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/../../Modules/Core/resources/js/components/ui/select';
-import { Switch } from '@/../../Modules/Core/resources/js/components/ui/switch';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/../../Modules/Core/resources/js/components/ui/table';
+    DialogTrigger,
+} from '@/Core/Components/ui/dialog';
+import { Input } from '@/Core/Components/ui/input';
+import { Label } from '@/Core/Components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Core/Components/ui/select';
+import { Switch } from '@/Core/Components/ui/switch';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core/Components/ui/table';
 import { formatDateMedium } from '@/Core/utils/dateFormatter';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
