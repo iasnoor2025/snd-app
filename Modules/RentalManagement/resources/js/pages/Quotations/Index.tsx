@@ -4,7 +4,7 @@ import AppLayout from '@/Core/layouts/AppLayout';
 import React from 'react';
 import { Eye, Download } from 'lucide-react';
 import { Badge } from '@/Core/Components/ui/badge';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/Core/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Core/Components/ui/select';
 import { useState } from 'react';
 
 interface Quotation {
