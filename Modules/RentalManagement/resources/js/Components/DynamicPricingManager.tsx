@@ -1,6 +1,6 @@
-import { Button } from '@/../../Modules/Core/resources/js/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/../../Modules/Core/resources/js/components/ui/card';
-import { DatePicker } from '@/../../Modules/Core/resources/js/components/ui/date-picker';
+import { Button } from '@/Core/Components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Core/Components/ui/card';
+import { DatePicker } from '@/Core/Components/ui/date-picker';
 import {
     Dialog,
     DialogContent,
