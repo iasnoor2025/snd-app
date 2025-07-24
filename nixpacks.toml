@@ -1,3 +1,8 @@
+[phases.setup]
+nixPkgs = [
+    "python311Packages.supervisor"
+]
+
 [phases.build]
 cmds = [
     "composer install --no-dev --optimize-autoloader",

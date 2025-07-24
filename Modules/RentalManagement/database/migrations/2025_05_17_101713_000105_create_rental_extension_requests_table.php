@@ -1,5 +1,5 @@
 <?php
-namespace Modules\RentalManagement\database\migrations;
+namespace Modules\RentalManagement\Database\Migrations;
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
