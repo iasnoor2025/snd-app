@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 // Shadcn UI Components
 import { Badge, Button, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/Core';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/Core/components/ui/dialog';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/Core/Components/ui/dialog';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { DynamicPricingManager } from '../DynamicPricingManager';
