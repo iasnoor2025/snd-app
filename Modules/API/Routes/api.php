@@ -96,17 +96,6 @@ Route::group(['prefix' => 'v1'], function () {
     // Settings routes (Handled by web routes in API module)
     // Route::apiResource('settings', 'Modules\Settings\Http\Controllers\Api\SettingController');
 
-    // Notification routes
-    Route::apiResource('notifications', 'Modules\Notifications\Http\Controllers\Api\NotificationController', [
-        'names' => [
-            'index' => 'api.notifications.index',
-            'store' => 'api.notifications.store',
-            'show' => 'api.notifications.show',
-            'update' => 'api.notifications.update',
-            'destroy' => 'api.notifications.destroy',
-        ]
-    ]);
-
     // Report routes (Use Reporting module API routes instead)
     // Route::apiResource('reports', 'Modules\Reporting\Http\Controllers\ReportController');
 });

@@ -51,7 +51,6 @@ class DatabaseSeeder extends Seeder
         $this->call(\Modules\ProjectManagement\database\seeders\ProjectManagementDatabaseSeeder::class);
         $this->call(\Modules\RentalManagement\database\seeders\RentalDatabaseSeeder::class);
         $this->call(\Modules\AuditCompliance\database\Seeders\AuditComplianceDatabaseSeeder::class);
-        $this->call(\Modules\Notifications\Database\Seeders\NotificationsDatabaseSeeder::class);
         $this->call(\Modules\PayrollManagement\database\Seeders\PayrollDatabaseSeeder::class);
         $this->call(\Modules\TimesheetManagement\Database\Seeders\TimesheetManagementDatabaseSeeder::class);
         $this->call(\Modules\Reporting\Database\Seeders\ReportingDatabaseSeeder::class);
