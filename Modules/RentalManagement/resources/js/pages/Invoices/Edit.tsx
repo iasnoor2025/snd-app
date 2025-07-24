@@ -2,7 +2,7 @@ import { FormField, FormItem, FormLabel, FormMessage } from '@/../../Modules/Cor
 import { Input } from '@/../../Modules/Core/resources/js/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/../../Modules/Core/resources/js/components/ui/select';
 import { Textarea } from '@/../../Modules/Core/resources/js/components/ui/textarea';
-import { Button } from '@/Core/components/ui/button';
+import { Button } from '@/Core/Components/ui/button';
 import AppLayout from '@/Core/layouts/AppLayout';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Inertia } from '@inertiajs/inertia';

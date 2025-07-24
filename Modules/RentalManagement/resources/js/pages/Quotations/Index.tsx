@@ -1,4 +1,4 @@
-import { Button } from '@/Core/components/ui/button';
+import { Button } from '@/Core/Components/ui/button';
 import { DataTable } from '@/Core/components/ui/data-table';
 import AppLayout from '@/Core/layouts/AppLayout';
 import React from 'react';
