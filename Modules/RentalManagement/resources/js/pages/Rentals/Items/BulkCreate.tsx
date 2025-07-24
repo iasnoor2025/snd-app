@@ -17,7 +17,7 @@ import { Head, useForm } from '@inertiajs/react';
 import { Plus, Trash2 } from 'lucide-react';
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RentalToastService } from '../../../Services/RentalToastService';
+import { RentalToastService } from '../../../services/RentalToastService';
 
 interface Props {
     rental: {
