@@ -81,16 +81,18 @@ class APIServiceProvider extends ServiceProvider
     protected function registerViews()
     {
         $viewPath = resource_path('views/modules/api');
-
         $sourcePath = module_path('API', 'Resources/views');
 
-        $this->publishes([
-            $sourcePath => $viewPath
-        ],'views');
+        // Only register and publish views if the source directory exists
+        if (is_dir($sourcePath)) {
+            $this->publishes([
+                $sourcePath => $viewPath
+            ], 'views');
 
-        $this->loadViewsFrom(array_merge(array_map(function ($path) {
-            return $path . '/modules/api';
-        }, \Config::get('view.paths')), [$sourcePath]), 'api');
+            $this->loadViewsFrom(array_merge(array_map(function ($path) {
+                return $path . '/modules/api';
+            }, \Config::get('view.paths')), [$sourcePath]), 'api');
+        }
     }
 
     /**
