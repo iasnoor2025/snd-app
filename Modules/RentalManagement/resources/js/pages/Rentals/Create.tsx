@@ -36,7 +36,7 @@ import { toast } from 'sonner';
 import { CalendarIcon } from 'lucide-react';
 
 // Our components
-import FileUpload from '@/Core/components/ui/FileUpload';
+import FileUpload from '@/Core/Components/ui/FileUpload';
 import { route } from 'ziggy-js';
 import TimesheetForm from '../../Components/rentals/timesheets/TimesheetForm';
 

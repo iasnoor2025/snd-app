@@ -28,7 +28,7 @@ import {
     SelectValue,
     Textarea,
 } from '@/Core';
-import FileUpload from '@/Core/components/ui/FileUpload';
+import FileUpload from '@/Core/Components/ui/FileUpload';
 import { RentalForm } from '../../Components/rentals/RentalForm';
 import RentalItemsTable from '../../Components/rentals/RentalItemsTable';
 
