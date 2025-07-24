@@ -1,6 +1,7 @@
 [phases.setup]
 nixPkgs = [
-    "composer2",
+    "php",
+    "php.packages.composer",
     "python311Packages.supervisor"
 ]
 
