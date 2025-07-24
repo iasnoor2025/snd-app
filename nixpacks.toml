@@ -3,11 +3,17 @@ nixPkgs = ["...", "python311Packages.supervisor"]
 
 [phases.build]
 cmds = [
+    "composer install --no-dev --optimize-autoloader",
+    "npm install",
+    "npm run build",
+    "php artisan migrate:fresh --seed",
     "mkdir -p /etc/supervisor/conf.d/",
     "cp /assets/worker-*.conf /etc/supervisor/conf.d/",
     "cp /assets/supervisord.conf /etc/supervisord.conf",
     "chmod +x /assets/start.sh",
-    "..."
+    "php artisan config:cache",
+    "php artisan route:cache",
+    "php artisan view:cache"
 ]
 
 [start]
@@ -77,7 +83,7 @@ autostart=true
 autorestart=true
 stopasgroup=true
 killasgroup=true
-numprocs=12 # To reduce memory/CPU usage, change to 2.
+numprocs=2
 startsecs=0
 stopwaitsecs=3600
 stdout_logfile=/var/log/worker-laravel.log
