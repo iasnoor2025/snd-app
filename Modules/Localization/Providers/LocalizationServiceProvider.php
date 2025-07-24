@@ -120,16 +120,18 @@ class LocalizationServiceProvider extends ServiceProvider
     public function registerViews()
     {
         $viewPath = resource_path('views/modules/' . $this->moduleNameLower);
-
         $sourcePath = $this->getModulePath('resources/views');
 
-        $this->publishes([
-            $sourcePath => $viewPath
-        ], ['views', $this->moduleNameLower . '-module-views']);
+        // Only register and publish views if the source directory exists
+        if (is_dir($sourcePath)) {
+            $this->publishes([
+                $sourcePath => $viewPath
+            ], ['views', $this->moduleNameLower . '-module-views']);
 
-        $this->loadViewsFrom(array_merge(array_map(function ($path) {
-            return $path . '/modules/' . $this->moduleNameLower;
-        }, \Config::get('view.paths')), [$sourcePath]), $this->moduleNameLower);
+            $this->loadViewsFrom(array_merge(array_map(function ($path) {
+                return $path . '/modules/' . $this->moduleNameLower;
+            }, \Config::get('view.paths')), [$sourcePath]), $this->moduleNameLower);
+        }
     }
 
     /**
