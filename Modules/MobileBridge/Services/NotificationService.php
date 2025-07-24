@@ -15,7 +15,7 @@ use Exception;
 
 class NotificationService
 {
-    private WebPush $webPush;
+    private ?WebPush $webPush = null;
     private array $config;
 
     public function __construct()
@@ -26,6 +26,7 @@ class NotificationService
         if ($this->hasValidVapidConfiguration()) {
             $this->initializeWebPush();
         } else {
+            Log::warning('VAPID keys not configured. Push notifications disabled.');
             $this->webPush = null;
         }
     }
@@ -45,20 +46,25 @@ class NotificationService
      */
     private function initializeWebPush(): void
     {
-        $auth = [
-            'VAPID' => [
-                'subject' => $this->config['push_notifications']['vapid']['subject'],
-                'publicKey' => $this->config['push_notifications']['vapid']['public_key'],
-                'privateKey' => $this->config['push_notifications']['vapid']['private_key'],
-            ],
-        ];
+        try {
+            $auth = [
+                'VAPID' => [
+                    'subject' => $this->config['push_notifications']['vapid']['subject'],
+                    'publicKey' => $this->config['push_notifications']['vapid']['public_key'],
+                    'privateKey' => $this->config['push_notifications']['vapid']['private_key'],
+                ],
+            ];
 
-        $this->webPush = new WebPush($auth);
-        $this->webPush->setDefaultOptions([
-            'TTL' => 300, // 5 minutes
-            'urgency' => 'normal',
-            'topic' => 'general'
-        ]);
+            $this->webPush = new WebPush($auth);
+            $this->webPush->setDefaultOptions([
+                'TTL' => 300, // 5 minutes
+                'urgency' => 'normal',
+                'topic' => 'general'
+            ]);
+        } catch (\Exception $e) {
+            Log::warning('Failed to initialize WebPush: ' . $e->getMessage());
+            $this->webPush = null;
+        }
     }
 
     /**
