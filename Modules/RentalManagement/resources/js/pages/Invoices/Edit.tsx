@@ -1,4 +1,4 @@
-import { FormField, FormItem, FormLabel, FormMessage } from '@/../../Modules/Core/resources/js/components/ui/form';
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from '@/Core/Components/ui/form';
 import { Input } from '@/../../Modules/Core/resources/js/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/../../Modules/Core/resources/js/components/ui/select';
 import { Textarea } from '@/../../Modules/Core/resources/js/components/ui/textarea';
