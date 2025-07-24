@@ -49,7 +49,7 @@ class RentalManagementServiceProvider extends ServiceProvider
         RentalOperatorAssignment::observe(RentalOperatorAssignmentObserver::class);
         Rental::observe(RentalObserver::class);
         RentalItem::observe(RentalItemObserver::class);
-        $this->loadViewsFrom(__DIR__ . '/../../Resources/views', 'RentalManagement');
+        $this->loadViewsFrom(base_path('Modules/RentalManagement/Resources/views'), 'RentalManagement');
         $this->registerTranslations();
         $this->registerConfig();
         // Only set pgsql as default if not running tests

@@ -24,15 +24,14 @@
                         <!-- Logo -->
                         <div class="shrink-0 flex items-center">
                             <a href="{{ route('home') }}">
-                                <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+                                <img src="/logo.svg" alt="Logo" class="block h-9 w-auto" />
                             </a>
                         </div>
 
                         <!-- Navigation Links -->
                         <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                            <x-nav-link :href="route('home')" :active="request()->routeIs('home')">
-                                {{ __('Core::layout.home') }}
-                            </x-nav-link>
+                            {{-- <x-nav-link :href="route('home')" :active="request()->routeIs('home')">Home</x-nav-link> --}}
+                            <a href="{{ route('home') }}" class="text-gray-800 hover:text-gray-600 px-3 py-2 rounded-md text-sm font-medium @if(request()->routeIs('home')) bg-gray-200 @endif">Home</a>
                         </div>
                     </div>
                 </div>
