@@ -81,7 +81,7 @@ export default function Create({ auth, employee, initialData }: Props) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('payroll.final-settlements.store'));
+        post(route('hr.payroll.final-settlements.store'));
     };
 
     return (
@@ -91,7 +91,7 @@ export default function Create({ auth, employee, initialData }: Props) {
             <div className="flex h-full flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
                 <div className="flex items-center gap-4">
                     <Button variant="outline" size="sm" asChild>
-                        <a href={route('payroll.final-settlements.final-settlements.index')}>
+                        <a href={route('hr.payroll.final-settlements.final-settlements.index')}>
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             Back
                         </a>

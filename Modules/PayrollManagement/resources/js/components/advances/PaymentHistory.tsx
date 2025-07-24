@@ -104,7 +104,7 @@ export function PaymentHistory({
         }
 
         router.delete(
-            route('payroll.employees.advances.payment-history.delete', {
+            route('hr.payroll.employees.advances.payment-history.delete', {
                 employee: employeeId,
                 payment: paymentId,
             }),
@@ -151,7 +151,7 @@ export function PaymentHistory({
                     <span className="text-sm text-muted-foreground">Total: SAR {totalRepaidAmount.toFixed(2)}</span>
                     {showOnlyLast && (
                         <Button variant="outline" size="sm" asChild>
-                            <Link href={route('payroll.employees.advances.payment-history', { employee: employeeId })}>View Full History</Link>
+                            <Link href={route('hr.payroll.employees.advances.payment-history', { employee: employeeId })}>View Full History</Link>
                         </Button>
                     )}
                 </div>
@@ -188,7 +188,7 @@ export function PaymentHistory({
                                                     size="icon"
                                                     className="h-8 w-8"
                                                     onClick={() => {
-                                                        const url = route('payroll.employees.advances.payment.receipt', {
+                                                        const url = route('hr.payroll.employees.advances.payment.receipt', {
                                                             employee: employeeId,
                                                             payment: payment.id,
                                                         });

@@ -92,24 +92,24 @@ export default function Index({ taxDocuments, employees, summary, filters, avail
         if (selectedYear) params.year = selectedYear;
         if (selectedEmployee) params.employee_id = selectedEmployee;
 
-        router.get(route('payroll.tax-documentation.index'), params);
+        router.get(route('hr.payroll.tax-documentation.index'), params);
     };
 
     const handleClearFilters = () => {
         setSelectedYear('');
         setSelectedEmployee('');
-        router.get(route('payroll.tax-documentation.index'));
+        router.get(route('hr.payroll.tax-documentation.index'));
     };
 
     const handleGenerate = (employeeId: number, year: number) => {
-        router.post(route('payroll.tax-documentation.generate'), {
+        router.post(route('hr.payroll.tax-documentation.generate'), {
             employee_id: employeeId,
             tax_year: year,
         });
     };
 
     const handleBulkGenerate = () => {
-        router.post(route('payroll.tax-documentation.bulk-generate'), {
+        router.post(route('hr.payroll.tax-documentation.bulk-generate'), {
             tax_year: parseInt(bulkYear),
             employee_ids: selectedEmployees.length > 0 ? selectedEmployees.map((id) => parseInt(id)) : undefined,
         });
@@ -122,7 +122,7 @@ export default function Index({ taxDocuments, employees, summary, filters, avail
         params.append('tax_year', selectedYear || filters.year.toString());
         if (selectedEmployee) params.append('employee_id', selectedEmployee);
 
-        window.open(route('payroll.tax-documentation.export') + '?' + params.toString());
+        window.open(route('hr.payroll.tax-documentation.export') + '?' + params.toString());
     };
 
     const getStatusColor = (status: string) => {
@@ -363,12 +363,12 @@ export default function Index({ taxDocuments, employees, summary, filters, avail
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex items-center gap-2">
-                                                    <Link href={route('payroll.tax-documentation.show', document.id)}>
+                                                    <Link href={route('hr.payroll.tax-documentation.show', document.id)}>
                                                         <Button variant="outline" size="sm">
                                                             <Eye className="h-4 w-4" />
                                                         </Button>
                                                     </Link>
-                                                    <Link href={route('payroll.tax-documentation.download', document.id)}>
+                                                    <Link href={route('hr.payroll.tax-documentation.download', document.id)}>
                                                         <Button variant="outline" size="sm">
                                                             <Download className="h-4 w-4" />
                                                         </Button>

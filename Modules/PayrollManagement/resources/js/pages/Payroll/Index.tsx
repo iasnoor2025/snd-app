@@ -164,7 +164,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
     };
 
     const handleFilter = (key: string, value: string) => {
-        router.get(route('payroll.index'), { ...filters, [key]: value }, { preserveState: true });
+        router.get(route('hr.payroll.index'), { ...filters, [key]: value }, { preserveState: true });
     };
 
     const handleSelectPayroll = (payrollId: number, checked: boolean) => {
@@ -197,7 +197,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
         if (selectedPayrolls.length === 0) return;
 
         setBulkDeleteProcessing(true);
-        router.post(route('payroll.bulk-delete'), { payroll_ids: selectedPayrolls }, {
+        router.post(route('hr.payroll.bulk-delete'), { payroll_ids: selectedPayrolls }, {
             onSuccess: () => {
                 setSelectedPayrolls([]);
                 setShowBulkDeleteModal(false);
@@ -242,7 +242,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
             setShowConfirmDialog(false);
 
             // Use the simple payroll generation route
-            const routeUrl = route('payroll.generate-payroll');
+            const routeUrl = route('hr.payroll.generate-payroll');
             console.log('Route URL:', routeUrl);
 
             // Show loading state
@@ -306,7 +306,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
             toast.info(`Generating PDF with ${payrollIds.length} payslips...`);
 
             // Create a single PDF with all payslips
-            const response = await fetch(route('payroll.payslip.bulk-pdf'), {
+            const response = await fetch(route('hr.payroll.payslip.bulk-pdf'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -345,7 +345,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
     };
 
     return (
-        <AppLayout title="Payroll Management" breadcrumbs={[{ title: 'Payroll', href: route('payroll.index') }]} requiredPermission="payroll.view">
+        <AppLayout title="Payroll Management" breadcrumbs={[{ title: 'Payroll', href: route('hr.payroll.index') }]} requiredPermission="payroll.view">
             <Head title="Payroll Management" />
 
             <div className="container mx-auto py-6">
@@ -631,14 +631,14 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                                         <Button
                                                             variant="ghost"
                                                             size="sm"
-                                                            onClick={() => router.get(route('payroll.show', { payroll: payroll.id }))}
+                                                            onClick={() => router.get(route('hr.payroll.show', { payroll: payroll.id }))}
                                                         >
                                                             View
                                                         </Button>
                                                         <Button
                                                             variant="outline"
                                                             size="sm"
-                                                            onClick={() => router.get(route('payroll.payslip.view', { payroll: payroll.id }))}
+                                                            onClick={() => router.get(route('hr.payroll.payslip.view', { payroll: payroll.id }))}
                                                         >
                                                             Payslip
                                                         </Button>
@@ -689,7 +689,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                                 onValueChange={(value) => {
                                                     console.log('Changing per_page to:', value);
                                                     router.get(
-                                                        route('payroll.index'),
+                                                        route('hr.payroll.index'),
                                                         {
                                                             per_page: value,
                                                             month: filters.month,
@@ -729,7 +729,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                                         const currentPage = payrolls?.current_page || 1;
                                                         if (currentPage > 1) {
                                                             router.get(
-                                                                route('payroll.index'),
+                                                                route('hr.payroll.index'),
                                                                 {
                                                                     page: currentPage - 1,
                                                                     per_page: payrolls?.per_page || 10,
@@ -772,7 +772,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                                                 className="h-8 w-8 p-0"
                                                                 onClick={() => {
                                                                     router.get(
-                                                                        route('payroll.index'),
+                                                                        route('hr.payroll.index'),
                                                                         {
                                                                             page: pageNumber,
                                                                             per_page: payrolls?.per_page || 10,
@@ -803,7 +803,7 @@ export default function Index({ auth, payrolls, employees, filters, hasRecords }
                                                         const lastPage = payrolls?.last_page || 1;
                                                         if (currentPage < lastPage) {
                                                             router.get(
-                                                                route('payroll.index'),
+                                                                route('hr.payroll.index'),
                                                                 {
                                                                     page: currentPage + 1,
                                                                     per_page: payrolls?.per_page || 10,

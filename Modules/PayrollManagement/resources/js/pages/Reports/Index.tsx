@@ -8,7 +8,7 @@ import { Button, buttonVariants } from '@/Core/Components/ui';
 export default function PayrollReportsIndex() {
     const { t } = useTranslation();
 
-    const breadcrumbs = [{ title: t('PayrollManagement:pages.reports'), href: route('payroll.reports.index') }];
+    const breadcrumbs = [{ title: t('PayrollManagement:pages.reports'), href: route('hr.payroll.reports.index') }];
 
     return (
         <AppLayout title={t('PayrollManagement:pages.reports')} breadcrumbs={breadcrumbs} requiredPermission="payroll.reports.view">

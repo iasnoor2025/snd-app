@@ -18,7 +18,7 @@ use Modules\PayrollManagement\Http\Controllers\LoanController;
 |
 */
 
-Route::prefix('hr/payroll')->name('payroll.')->middleware('auth')->group(function () {
+Route::prefix('hr/payroll')->name('hr.payroll.')->middleware('auth')->group(function () {
     // Payroll listing and management
     Route::get('/', [PayrollController::class, 'index'])
         ->middleware('permission:payroll.view')
@@ -86,15 +86,15 @@ Route::prefix('hr/payroll')->name('payroll.')->middleware('auth')->group(functio
         Route::get('/{payrollRun}', [PayrollController::class, 'showPayrollRun'])
             ->where('payrollRun', '[0-9]+')
             ->middleware('permission:payroll.view')
-            ->name('show');
+            ->name('show-payroll-run');
         Route::post('/{payrollRun}/approve', [PayrollController::class, 'approvePayrollRun'])
             ->where('payrollRun', '[0-9]+')
             ->middleware('permission:payroll.edit')
-            ->name('approve');
+            ->name('approve-payroll-run');
         Route::post('/{payrollRun}/reject', [PayrollController::class, 'rejectPayrollRun'])
             ->where('payrollRun', '[0-9]+')
             ->middleware('permission:payroll.edit')
-            ->name('reject');
+            ->name('reject-payroll-run');
     });
     // Salary Advance routes
     Route::resource('salary-advances', SalaryAdvanceController::class)->middleware([

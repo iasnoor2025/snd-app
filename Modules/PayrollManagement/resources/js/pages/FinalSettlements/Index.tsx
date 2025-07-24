@@ -203,7 +203,7 @@ export default function Index({ auth, settlements, filters }: Props) {
                                                 </TableCell>
                                                 <TableCell>
                                                     <Button variant="outline" size="sm" asChild>
-                                                        <Link href={route('payroll.final-settlements.show', settlement.id)}>
+                                                        <Link href={route('hr.payroll.final-settlements.show', settlement.id)}>
                                                             {t('employee:ttl_view_details')}
                                                         </Link>
                                                     </Button>
@@ -225,7 +225,7 @@ export default function Index({ auth, settlements, filters }: Props) {
                                     {Array.from({ length: settlements.meta.last_page }, (_, i) => i + 1).map((page) => (
                                         <Button key={page} variant={page === settlements.meta.current_page ? 'default' : 'outline'} size="sm" asChild>
                                             <Link
-                                                href={route('payroll.final-settlements.final-settlements.index', {
+                                                href={route('hr.payroll.final-settlements.final-settlements.index', {
                                                     page,
                                                     ...filters,
                                                 })}

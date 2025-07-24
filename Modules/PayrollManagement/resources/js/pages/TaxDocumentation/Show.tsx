@@ -159,7 +159,7 @@ export default function Show({ taxDocument }: Props) {
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <Link href={route('payroll.tax-documentation.index')}>
+                        <Link href={route('hr.payroll.tax-documentation.index')}>
                             <Button variant="outline" size="sm">
                                 <ArrowLeft className="mr-2 h-4 w-4" />
                                 Back
@@ -174,7 +174,7 @@ export default function Show({ taxDocument }: Props) {
                     </div>
                     <div className="flex gap-2">
                         <Badge className={getStatusColor(taxDocument.status)}>{taxDocument.status}</Badge>
-                        <Link href={route('payroll.tax-documentation.download', taxDocument.id)}>
+                        <Link href={route('hr.payroll.tax-documentation.download', taxDocument.id)}>
                             <Button>
                                 <Download className="mr-2 h-4 w-4" />
                                 Download PDF
