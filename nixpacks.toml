@@ -20,9 +20,33 @@ cmds = [
 [start]
 cmd = '/assets/start.sh'
 
+[variables]
+APP_NAME = "SND Rental Management System"
+APP_ENV = "production"
+APP_DEBUG = "false"
+LOG_CHANNEL = "stack"
+LOG_LEVEL = "debug"
+DB_CONNECTION = "mysql"
+CACHE_DRIVER = "file"
+QUEUE_CONNECTION = "sync"
+SESSION_DRIVER = "file"
+SESSION_LIFETIME = "120"
+
 [staticAssets]
 "start.sh" = '''
 #!/bin/bash
+
+# Set default environment variables if not provided
+export APP_NAME="${APP_NAME:-SND Rental Management System}"
+export APP_ENV="${APP_ENV:-production}"
+export APP_DEBUG="${APP_DEBUG:-false}"
+export LOG_CHANNEL="${LOG_CHANNEL:-stack}"
+export LOG_LEVEL="${LOG_LEVEL:-debug}"
+export DB_CONNECTION="${DB_CONNECTION:-mysql}"
+export CACHE_DRIVER="${CACHE_DRIVER:-file}"
+export QUEUE_CONNECTION="${QUEUE_CONNECTION:-sync}"
+export SESSION_DRIVER="${SESSION_DRIVER:-file}"
+export SESSION_LIFETIME="${SESSION_LIFETIME:-120}"
 
 # Generate application key if not set
 php artisan key:generate --no-interaction
