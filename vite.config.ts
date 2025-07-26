@@ -56,6 +56,7 @@ export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => ({
     target: 'esnext',
     outDir: 'public/build',
     assetsDir: 'assets',
+    manifest: true,
     cssCodeSplit: true,
     modulePreload: true,
     // @ts-ignore - Not a Vite field, but does no harm
