@@ -26,9 +26,9 @@ APP_ENV = "production"
 APP_DEBUG = "false"
 LOG_CHANNEL = "stack"
 LOG_LEVEL = "debug"
-DB_CONNECTION = "mysql"
+
 CACHE_DRIVER = "file"
-QUEUE_CONNECTION = "sync"
+QUEUE_CONNECTION = "database"
 SESSION_DRIVER = "file"
 SESSION_LIFETIME = "120"
 
@@ -42,9 +42,9 @@ export APP_ENV="${APP_ENV:-production}"
 export APP_DEBUG="${APP_DEBUG:-false}"
 export LOG_CHANNEL="${LOG_CHANNEL:-stack}"
 export LOG_LEVEL="${LOG_LEVEL:-debug}"
-export DB_CONNECTION="${DB_CONNECTION:-mysql}"
+
 export CACHE_DRIVER="${CACHE_DRIVER:-file}"
-export QUEUE_CONNECTION="${QUEUE_CONNECTION:-sync}"
+export QUEUE_CONNECTION="${QUEUE_CONNECTION:-database}"
 export SESSION_DRIVER="${SESSION_DRIVER:-file}"
 export SESSION_LIFETIME="${SESSION_LIFETIME:-120}"
 
