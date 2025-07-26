@@ -3,8 +3,7 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build:client": "cross-env BUILD_TARGET=client vite build && npm run postbuild:client",
-        "postbuild:client": "cp public/build-client/.vite/manifest.json public/build-client/manifest.json",
+        "build:client": "cross-env BUILD_TARGET=client vite build",
         "build:ssr": "cross-env BUILD_TARGET=ssr vite build --ssr",
         "build": "npm run build:client && npm run build:ssr",
         "build:analyze": "cross-env ANALYZE=true BUILD_TARGET=client vite build",

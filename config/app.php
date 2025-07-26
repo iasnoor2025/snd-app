@@ -160,6 +160,8 @@ return [
         App\Providers\AppServiceProvider::class,
         App\Providers\AvatarServiceProvider::class,
         App\Providers\PermissionMiddlewareServiceProvider::class,
+        // Only load Pail in non-production
+        App::environment(['local', 'development', 'testing']) ? Laravel\Pail\PailServiceProvider::class : null,
     ],
 
 ];

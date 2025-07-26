@@ -10,9 +10,9 @@ import { visualizer } from 'rollup-plugin-visualizer';
 const BUILD_TARGET = process.env.BUILD_TARGET || 'client';
 
 export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => {
-  // Pick output dir and ssr setting based on target
+  // Always output client build to public/build (NOT build-client)
   const isSSR = BUILD_TARGET === 'ssr';
-  const outDir = isSSR ? 'public/build-ssr' : 'public/build-client';
+  const outDir = isSSR ? 'public/build-ssr' : 'public/build';
 
   return {
     plugins: [
@@ -60,7 +60,7 @@ export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => {
 
     build: {
       target: 'esnext',
-      outDir,
+      outDir, // public/build or public/build-ssr
       assetsDir: 'assets',
       manifest: !isSSR, // manifest.json only for client
       cssCodeSplit: true,
