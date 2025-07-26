@@ -8,6 +8,16 @@ nixPkgs = [
 
 [phases.build]
 cmds = [
+    "echo 'APP_NAME=\"SND Rental Management System\"' > .env",
+    "echo 'APP_ENV=production' >> .env",
+    "echo 'APP_DEBUG=false' >> .env",
+    "echo 'APP_KEY=' >> .env",
+    "echo 'LOG_CHANNEL=stack' >> .env",
+    "echo 'LOG_LEVEL=debug' >> .env",
+    "echo 'CACHE_DRIVER=file' >> .env",
+    "echo 'QUEUE_CONNECTION=database' >> .env",
+    "echo 'SESSION_DRIVER=file' >> .env",
+    "echo 'SESSION_LIFETIME=120' >> .env",
     "composer install --no-dev --optimize-autoloader",
     "npm install",
     "npm run build",
