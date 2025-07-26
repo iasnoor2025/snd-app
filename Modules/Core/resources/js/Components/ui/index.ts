@@ -64,3 +64,7 @@ export { default as FileUpload } from './FileUpload';
 export { cn } from '../../lib/utils';
 export { TimePicker } from './time-picker';
 export { ErrorAlert } from './error-alert';
+export { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut } from './command';
+export { HoverCard, HoverCardContent, HoverCardTrigger } from './hover-card';
+export { Menubar, MenubarCheckboxItem, MenubarContent, MenubarGroup, MenubarItem, MenubarLabel, MenubarMenu, MenubarPortal, MenubarRadioGroup, MenubarRadioItem, MenubarSeparator, MenubarShortcut, MenubarSub, MenubarSubContent, MenubarSubTrigger, MenubarTrigger } from './menubar';
+export { ResizableHandle, ResizablePanel, ResizablePanelGroup } from './resizable';
