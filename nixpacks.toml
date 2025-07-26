@@ -14,11 +14,8 @@ cmds = [
     "mkdir -p /etc/supervisor/conf.d/",
     "cp /assets/worker-*.conf /etc/supervisor/conf.d/",
     "cp /assets/supervisord.conf /etc/supervisord.conf",
-    "chmod +x /assets/start.sh",
-    "php artisan config:cache",
-    "php artisan route:cache"
+    "chmod +x /assets/start.sh"
 ]
-
 
 [start]
 cmd = '/assets/start.sh'
@@ -26,6 +23,13 @@ cmd = '/assets/start.sh'
 [staticAssets]
 "start.sh" = '''
 #!/bin/bash
+
+# Generate application key if not set
+php artisan key:generate --no-interaction
+
+# Cache configuration and routes for production
+php artisan config:cache --no-interaction
+php artisan route:cache --no-interaction
 
 # Transform the nginx configuration
 node /assets/scripts/prestart.mjs /assets/nginx.template.conf /etc/nginx.conf
