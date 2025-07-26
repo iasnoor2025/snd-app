@@ -95,6 +95,7 @@ export default defineConfig(
             minify: 'esbuild',
             sourcemap: false,
             reportCompressedSize: false,
+            manifest: true, // <--- added this line!
         },
         resolve: {
             alias: {
