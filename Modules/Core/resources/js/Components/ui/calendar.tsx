@@ -13,8 +13,12 @@ import { Button, buttonVariants } from "./button"
 // Persian calendar support
 let PersianDatePicker: any = null
 try {
-  // Import the Persian calendar package
-  PersianDatePicker = require("@skhazaei/persian-date-picker").default
+  // Use dynamic import instead of require for browser compatibility
+  import("@skhazaei/persian-date-picker").then((module) => {
+    PersianDatePicker = module.default
+  }).catch((error) => {
+    console.warn("Persian calendar package not available:", error)
+  })
 } catch (error) {
   console.warn("Persian calendar package not available:", error)
 }

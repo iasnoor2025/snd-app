@@ -132,6 +132,9 @@ require __DIR__.'/customer-avatar.php';
 require __DIR__.'/profile.php';
 // require base_path('Modules/PayrollManagement/Routes/web.php');
 
+// Include Core module routes directly
+require base_path('Modules/Core/Routes/web.php');
+
 
 // RTL Test Route
 Route::get('/rtl-test', function () {

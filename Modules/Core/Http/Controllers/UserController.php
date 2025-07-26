@@ -2,6 +2,7 @@
 
 namespace Modules\Core\Http\Controllers;
 
+use Illuminate\Routing\Controller;
 use Modules\Core\Domain\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -33,13 +34,31 @@ class UserController extends Controller
      */
     public function create()
     {
-        $roles = Role::all();
-        $permissions = \Spatie\Permission\Models\Permission::all();
+        try {
+            $roles = Role::all();
+            $permissions = \Spatie\Permission\Models\Permission::all();
 
-        return Inertia::render('Users/Create', [
-            'roles' => $roles,
-            'permissions' => $permissions,
-        ]);
+            \Log::info('UserController@create called', [
+                'roles_count' => $roles->count(),
+                'permissions_count' => $permissions->count(),
+                'user' => auth()->user() ? auth()->user()->id : 'not authenticated'
+            ]);
+
+            return Inertia::render('Users/Create', [
+                'roles' => $roles,
+                'permissions' => $permissions,
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error in UserController@create', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'error' => 'Internal server error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
