@@ -26,7 +26,7 @@ export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => ({
       },
     }),
     tailwindcss(),
-    // Only add visualizer in analyze mode
+    // Visualizer for analyze mode
     mode === 'analyze' &&
       visualizer({
         filename: './stats.html',
@@ -58,6 +58,7 @@ export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => ({
     assetsDir: 'assets',
     cssCodeSplit: true,
     modulePreload: true,
+    // @ts-ignore - Not a Vite field, but does no harm
     cssMinify: true,
     cssTarget: 'esnext',
     dynamicImportVarsOptions: {
