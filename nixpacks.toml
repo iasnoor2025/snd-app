@@ -3,7 +3,8 @@ nixPkgs = [
   "nginx",
   "php82",
   "php82Packages.composer",
-  "python311Packages.supervisor"
+  "python311Packages.supervisor",
+  "nodejs_20"          # <-- Add this line!
 ]
 
 [phases.build]
