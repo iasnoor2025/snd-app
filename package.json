@@ -3,8 +3,10 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build && vite build --ssr",
-        "build:analyze": "cross-env ANALYZE=true vite build",
+        "build:client": "cross-env BUILD_TARGET=client vite build",
+        "build:ssr": "cross-env BUILD_TARGET=ssr vite build --ssr",
+        "build": "npm run build:client && npm run build:ssr",
+        "build:analyze": "cross-env ANALYZE=true BUILD_TARGET=client vite build",
         "lint": "eslint . --ext .ts,.tsx",
         "format": "prettier --write .",
         "type-check": "tsc --noEmit",
