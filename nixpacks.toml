@@ -1,9 +1,9 @@
 [phases.setup]
 nixPkgs = [
-    "php",
-    "php.packages.composer",
-    "nodejs",
-    "python311Packages.supervisor"
+  "nginx",
+  "php82",
+  "php82Packages.composer",
+  "python311Packages.supervisor"
 ]
 
 [phases.build]
